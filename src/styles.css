@@ -46,25 +46,40 @@ button, select, input { font-family: inherit; }
 .menu-item.disabled { color: #9a9a9a; } .menu-item.disabled:hover { background: #f4f2f0; color: #9a9a9a; }
 .menu-sep { border-top: 1px solid #b8b8b8; margin: 3px 2px; }
 
-/* explorer */
+/* explorer — Softimage Explorer: scope / View / filter buttons, classic +/- tree with dotted guides, type-coloured names */
 .explorer { display: flex; flex-direction: column; height: 100%; font-size: 11px; }
-.explorer-head { display: flex; gap: 2px; padding: 3px; background: var(--bg2); border-bottom: 1px solid var(--line); align-items: center; }
-.xp-scope { background: #f4f2f0; color: var(--text); border: 1px solid var(--line); font-size: 11px; padding: 1px 2px; min-width: 70px; }
-.xp-btn { background: linear-gradient(var(--btn-top), var(--btn-bot)); color: var(--text); border: 1px solid var(--line); border-radius: 2px; padding: 2px 5px; font-size: 10px; cursor: pointer; white-space: nowrap; }
-.xp-search { flex: 1; min-width: 30px; background: #f4f2f0; color: var(--text); border: 1px solid var(--line); font-size: 10px; padding: 2px; }
+.explorer-head { display: flex; gap: 2px; padding: 2px 3px; background: var(--bg2); border-bottom: 1px solid var(--line); align-items: center; }
+.xp-btn { background: linear-gradient(var(--btn-top), var(--btn-bot)); color: var(--text); border: 1px solid var(--line); border-radius: 2px; padding: 1px 4px 1px 5px; font-size: 10px; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: flex-end; gap: 3px; }
+.xp-arrow { font-size: 7px; color: #333; }
+.xp-icons { display: inline-flex; gap: 2px; margin-left: 2px; }
+.xp-ico { display: inline-block; width: 15px; height: 14px; text-align: center; font-size: 9px; line-height: 13px; border: 1px solid var(--line); border-radius: 2px; background: linear-gradient(var(--btn-top), var(--btn-bot)); color: #333; cursor: pointer; }
+.xp-ico.on { background: var(--sel); }
+.xp-search { flex: 1; min-width: 24px; background: #f4f2f0; color: var(--text); border: 1px solid var(--line); font-size: 10px; padding: 1px 3px; }
 .xp-edit { font-size: 11px; padding: 0 2px; border: 1px solid #333; background: #fff; color: #000; width: 110px; }
-.explorer-body { flex: 1; overflow: auto; padding: 2px; background: #b9b5b2; outline: none; }
-.tree-node { white-space: nowrap; }
-.tree-row { display: flex; align-items: center; gap: 4px; padding: 1px 2px; cursor: default; border-radius: 1px; height: 17px; }
-.tree-row:hover { background: #c9c5c2; } .tree-row.selected { background: var(--sel); color: var(--sel-text); } .tree-row.drop { outline: 1px dashed #333; }
-.tree-row.param { color: #333; height: 16px; } .tree-row.param:hover { background: #c3bfbc; }
-.tree-toggle { width: 11px; text-align: center; font-size: 8px; color: #333; cursor: pointer; }
-.tree-icon { width: 15px; height: 13px; border-radius: 2px; display: inline-block; font-size: 8px; text-align: center; line-height: 13px; color: #fff; font-weight: bold; flex: none; }
-.ic-object { background: #c08c30; } .t-null { background: #6a8a3a; } .t-camera { background: #3a7a9a; } .t-light { background: #d0b020; } .t-bone, .t-root, .t-eff { background: #b06a30; } .t-crvlist { background: #2a9ad0; } .t-surfmsh { background: #2a6ab0; } .t-lattice { background: #a07020; } .t-implicit { background: #5aa070; } .t-pointcloud { background: #6a6a9a; }
-.ic-model { background: #3a6ab0; } .ic-property { background: #5a8a3a; } .ic-primitive { background: #b04040; } .ic-operator { background: #8a4ab0; } .ic-material { background: #c07020; } .ic-shader { background: #d0a020; } .ic-kinematics { background: #2a9aa0; } .ic-scene { background: #555; } .ic-layer { background: #4a9a7a; } .ic-pass { background: #9a7a5a; }
-.tree-name { overflow: hidden; text-overflow: ellipsis; } .hidden-obj { color: #777; font-style: italic; }
+.explorer-body { flex: 1; overflow: auto; padding: 2px; background: var(--bg); outline: none; }
+.tree-node { white-space: nowrap; position: relative; }
+.tree-children { position: relative; }
+.tree-children::before { content: ''; position: absolute; left: 0; top: 0; bottom: 8px; border-left: 1px dotted #6a6663; }
+.tree-children .tree-row::before { content: ''; position: absolute; width: 10px; border-top: 1px dotted #6a6663; margin-left: -12px; top: 8px; }
+.tree-row { display: flex; align-items: center; gap: 3px; padding: 0 2px; cursor: default; height: 16px; position: relative; }
+.tree-row:hover { background: #bcb8b5; }
+.tree-row.selected .tree-name { background: #fff; color: #000; border: 1px solid #333; padding: 0 2px; margin: -1px 0; font-style: normal; }
+.tree-row.drop { outline: 1px dashed #333; }
+.tree-row.param { color: #333; height: 15px; } .tree-row.param:hover { background: #c3bfbc; }
+.tree-toggle { width: 9px; height: 9px; font-size: 9px; line-height: 7px; text-align: center; color: #222; flex: none; }
+.tree-toggle.has { border: 1px solid #555; background: #f2f0ee; cursor: pointer; }
+.tree-icon { width: 14px; height: 13px; display: inline-block; font-size: 10px; text-align: center; line-height: 13px; color: #333; flex: none; }
+.ic-object { color: #3a3a3a; } .t-camera { color: #3a5ab0; } .t-light { color: #d09a10; } .t-null { color: #4a8a3a; } .t-crvlist { color: #2a8aa0; } .t-surfmsh { color: #2a6ab0; } .t-bone, .t-root, .t-eff { color: #a06030; } .t-lattice { color: #a07020; }
+.ic-model, .ic-scene { color: #222; } .ic-property { color: #333; } .ic-primitive { color: #222; } .ic-operator { color: #222; } .ic-material { color: #3a4ad0; } .ic-shader { color: #c07020; } .ic-kinematics { color: #333; font-weight: bold; } .ic-layer { color: #4a9a7a; } .ic-pass { color: #9a7a5a; }
+.tree-row.marker-secondaryshape .tree-icon, .tree-row.marker-secondaryshape .tree-name { color: #b02a2a; }
+.tree-row.marker-animation .tree-icon, .tree-row.marker-animation .tree-name { color: #2a8a3a; }
+.tree-row.marker-shape .tree-icon, .tree-row.marker-shape .tree-name { color: #4a7ad0; }
+.tree-row.marker-modeling .tree-icon, .tree-row.marker-modeling .tree-name { color: #c04a5a; }
+.tree-row.shared .tree-name { font-style: italic; color: #333; }
+.tree-name { overflow: hidden; text-overflow: ellipsis; color: #1a1a1a; }
+.tree-name.c-model { color: #1f7a1f; } .tree-name.c-camera { color: #2a4ad0; } .tree-name.c-light { color: #c07a10; } .tree-name.c-null { color: #2a8a3a; }
+.hidden-obj { color: #777 !important; font-style: italic; }
 .tree-pname { color: #333; } .tree-pvalue { margin-left: auto; padding-right: 6px; color: #1a3a6a; font-family: Consolas, monospace; font-size: 10px; }
-.tree-children { }
 .tree-anim { color: #c05a10; font-size: 8px; }
 
 /* property editor — matches Softimage's PPG: dark value fields, light slider track, collapsible groups */

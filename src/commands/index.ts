@@ -206,7 +206,7 @@ export function registerBuiltins(app: App) {
     execute(app, a) {
       for (const o of app.targets(a.InputObjs)) {
         let p: Property;
-        if (a.PresetObj === 'Display') p = makeDisplay(); else if (a.PresetObj === 'Geometry Approximation') p = makeGeomApprox();
+        if (a.PresetObj === 'Display') p = makeDisplay(false); else if (a.PresetObj === 'Geometry Approximation') p = makeGeomApprox(false);
         else if (a.PresetObj === 'Annotation') p = new Property('Annotation', 'annotation', [{ name: 'text', label: 'Text', type: 'string', value: 'Note' }]);
         else if (a.PresetObj === 'CustomProperty' || a.PresetObj === 'Custom Parameter Set') p = new Property(app.scene.uniqueName('CustomPSet'), 'customparamset', [num('value', 0, 'Value', { keyable: true })]);
         else if (a.PresetObj === 'Synoptic') p = new Property('Synoptic', 'synoptic', [{ name: 'file', label: 'Synoptic File', type: 'string', value: '' }]);

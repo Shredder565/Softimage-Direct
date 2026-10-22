@@ -2,7 +2,7 @@
 // Tree with per-type icons, parameter rows (with animation icons and inline editing), rename (F2 / double-click),
 // drag-and-drop reparenting, keyboard navigation, track-selection and right-click context menus.
 import { App } from '../core/commands';
-import { Node, X3DObject, Scene, Layer, Material } from '../core/scene';
+import { Node, X3DObject, Scene, Layer, Material, MarkerNode, Property, Model, Camera, Light, Null } from '../core/scene';
 import { Parameter } from '../core/params';
 
 type Scope = 'Scene' | 'Layers' | 'Passes' | 'Materials' | 'Selection' | 'Application';
@@ -14,19 +14,25 @@ const FLATTEN = ['Flatten None', 'Flatten Parameters', 'Flatten Properties', 'Fl
 export function explorerView(app: App, host: HTMLElement) {
   const root = document.createElement('div'); root.className = 'explorer';
   const head = document.createElement('div'); head.className = 'explorer-head';
-  const state = { scope: 'Scene' as Scope, filter: 'All' as (typeof FILTERS)[number], show: 'No Parameters' as (typeof SHOW_PARAMS)[number], sort: 'None (creation)' as (typeof SORT)[number], flatten: 'Flatten None' as (typeof FLATTEN)[number], track: true, lock: false, values: true, scriptNames: false };
-  const scope = document.createElement('select'); scope.className = 'xp-scope'; for (const o of ['Scene', 'Layers', 'Passes', 'Materials', 'Selection', 'Application']) { const e = document.createElement('option'); e.value = o; e.textContent = o; scope.appendChild(e); }
-  scope.onchange = () => { state.scope = scope.value as Scope; render(); };
-  const menuBtn = (label: string, build: () => { label: string; checked?: boolean; sep?: boolean; fn?: () => void }[]) => {
-    const b = document.createElement('button'); b.className = 'xp-btn'; b.textContent = label + ' ▾';
-    b.onclick = (e) => { e.stopPropagation(); const r = b.getBoundingClientRect(); popup(build(), r.left, r.bottom); }; return b;
+  const state = { scope: 'Scene' as Scope, filter: 'All except parameters' as (typeof FILTERS)[number], show: 'No Parameters' as (typeof SHOW_PARAMS)[number], sort: 'None (creation)' as (typeof SORT)[number], flatten: 'Flatten None' as (typeof FLATTEN)[number], track: true, lock: false, values: true, scriptNames: false };
+  const menuBtn = (label: () => string, build: () => { label: string; checked?: boolean; sep?: boolean; fn?: () => void }[]) => {
+    const b = document.createElement('button'); b.className = 'xp-btn'; const refreshLabel = () => { b.innerHTML = label() + '<span class="xp-arrow">▾</span>'; }; refreshLabel();
+    b.onclick = (e) => { e.stopPropagation(); const r = b.getBoundingClientRect(); popup(build(), r.left, r.bottom); }; (b as any)._refresh = refreshLabel; return b;
   };
   const radio = <T extends string>(items: readonly T[], get: () => T, set: (v: T) => void) => items.map(i => ({ label: i, checked: get() === i, fn: () => { set(i); render(); } }));
-  const filtersBtn = menuBtn('Filters', () => radio(FILTERS, () => state.filter, v => { state.filter = v; }));
-  const showBtn = menuBtn('Show', () => [...radio(SHOW_PARAMS, () => state.show, v => { state.show = v; }), { label: '', sep: true }, ...radio(FLATTEN, () => state.flatten, v => { state.flatten = v; }), { label: '', sep: true }, { label: 'Parameter Values', checked: state.values, fn: () => { state.values = !state.values; render(); } }, { label: 'Use Script Names', checked: state.scriptNames, fn: () => { state.scriptNames = !state.scriptNames; render(); } }, { label: 'Track Selection', checked: state.track, fn: () => { state.track = !state.track; render(); } }, { label: 'Lock', checked: state.lock, fn: () => { state.lock = !state.lock; } }, { label: '', sep: true }, { label: 'Expand All', fn: () => { expandAll(true); render(); } }, { label: 'Collapse All', fn: () => { expandAll(false); render(); } }]);
-  const sortBtn = menuBtn('Sort', () => radio(SORT, () => state.sort, v => { state.sort = v; }));
+  const SCOPES: Scope[] = ['Scene', 'Layers', 'Passes', 'Materials', 'Selection', 'Application'];
+  const scopeLabel = () => state.scope === 'Scene' ? app.scene.root.name : state.scope;
+  const scope = menuBtn(scopeLabel, () => radio(SCOPES, () => state.scope, v => { state.scope = v; }));
+  const viewBtn = menuBtn(() => 'View', () => [...radio(SHOW_PARAMS, () => state.show, v => { state.show = v; }), { label: '', sep: true }, ...radio(SORT, () => state.sort, v => { state.sort = v; }), { label: '', sep: true }, ...radio(FLATTEN, () => state.flatten, v => { state.flatten = v; }), { label: '', sep: true }, { label: 'Parameter Values', checked: state.values, fn: () => { state.values = !state.values; render(); } }, { label: 'Use Script Names', checked: state.scriptNames, fn: () => { state.scriptNames = !state.scriptNames; render(); } }, { label: 'Track Selection', checked: state.track, fn: () => { state.track = !state.track; render(); } }, { label: '', sep: true }, { label: 'Expand All', fn: () => { expandAll(true); render(); } }, { label: 'Collapse All', fn: () => { expandAll(false); render(); } }]);
+  const FILTER_SHORT: Record<string, string> = { 'All': 'All', 'All + Animatable Parameters': 'All + Anim. Params', 'All except parameters': 'All Except Params', 'Objects only': 'Objects', 'Models only': 'Models', 'Primitives and Properties': 'Prims & Props', 'Geometry Operators': 'Geom. Operators', 'Materials and Shaders': 'Materials', 'Animated Parameters': 'Animated Params' };
+  const filtersBtn = menuBtn(() => FILTER_SHORT[state.filter] ?? state.filter, () => radio(FILTERS, () => state.filter, v => { state.filter = v; }));
+  const icons = document.createElement('span'); icons.className = 'xp-icons';
+  const lockBtn = document.createElement('span'); lockBtn.className = 'xp-ico'; lockBtn.textContent = '🔒'; lockBtn.title = 'Lock (keep the current scope when the selection changes)'; lockBtn.onclick = () => { state.lock = !state.lock; lockBtn.classList.toggle('on', state.lock); };
+  const refreshBtn = document.createElement('span'); refreshBtn.className = 'xp-ico'; refreshBtn.textContent = '↻'; refreshBtn.title = 'Refresh'; refreshBtn.onclick = () => render();
+  const helpBtn = document.createElement('span'); helpBtn.className = 'xp-ico'; helpBtn.textContent = '?'; helpBtn.title = 'Explorer: click to select, double-click a name to rename, drag onto an object to parent, right-click for commands';
+  icons.append(lockBtn, refreshBtn, helpBtn);
   const search = document.createElement('input'); search.placeholder = 'find'; search.className = 'xp-search';
-  head.append(scope, filtersBtn, showBtn, sortBtn, search);
+  head.append(scope, viewBtn, filtersBtn, icons, search);
   const body = document.createElement('div'); body.className = 'explorer-body'; body.tabIndex = 0;
   root.append(head, body); host.appendChild(root);
   const expanded = new Set<number>(); let first = true; let renaming: Node | null = null;
@@ -52,6 +58,7 @@ export function explorerView(app: App, host: HTMLElement) {
   const sortKids = (kids: Node[]) => { if (state.sort === 'Alphabetical') return [...kids].sort((a, b) => a.name.localeCompare(b.name)); if (state.sort === 'Type + Alphabetical') return [...kids].sort((a, b) => a.kind.localeCompare(b.kind) || a.name.localeCompare(b.name)); return kids; };
   const childrenOf = (n: Node): Node[] => {
     let kids = n.explorerChildren();
+    if (n === app.scene.root && state.filter !== 'All') kids = kids.filter(k => k instanceof X3DObject); // Softimage lists only objects under Scene_Root
     if (state.flatten !== 'Flatten None' && n instanceof X3DObject) { // flatten: hide property/primitive layers, keep objects
       const keepProps = state.flatten === 'Flatten Parameters'; kids = kids.filter(k => k.kind === 'object' || k.kind === 'model' || (keepProps && k.kind !== 'kinematics')); }
     return sortKids(kids.filter(passes));
@@ -64,6 +71,7 @@ export function explorerView(app: App, host: HTMLElement) {
   };
 
   const render = () => {
+    for (const b of [scope, viewBtn, filtersBtn]) (b as any)._refresh?.();
     if (first) { for (const r of roots()) expanded.add(r.id); first = false; }
     if (state.track) for (const n of app.selection) { let p = n.parent; while (p) { expanded.add(p.id); p = p.parent; } }
     body.innerHTML = ''; rows.length = 0;
@@ -76,11 +84,11 @@ export function explorerView(app: App, host: HTMLElement) {
     const wrap = document.createElement('div'); wrap.className = 'tree-node';
     const kids = childrenOf(n); const params = flatParams(n); const q = search.value.trim().toLowerCase();
     const hasKids = kids.length > 0 || params.length > 0; const matches = !q || n.name.toLowerCase().includes(q);
-    const row = document.createElement('div'); row.className = 'tree-row' + (app.selection.includes(n) ? ' selected' : ''); row.style.paddingLeft = (depth * 14 + 2) + 'px'; row.draggable = n instanceof X3DObject && n !== app.scene.root;
-    const tg = document.createElement('span'); tg.className = 'tree-toggle'; tg.textContent = hasKids ? (expanded.has(n.id) || q ? '▼' : '▶') : '';
+    const row = document.createElement('div'); row.className = 'tree-row' + (app.selection.includes(n) ? ' selected' : '') + ' kind-' + n.kind + (n instanceof MarkerNode ? ' marker-' + n.mode : '') + (n instanceof Property && n.shared ? ' shared' : ''); row.style.paddingLeft = (depth * 16 + 2) + 'px'; row.draggable = n instanceof X3DObject && n !== app.scene.root;
+    const tg = document.createElement('span'); tg.className = 'tree-toggle' + (hasKids ? ' has' : ''); tg.textContent = hasKids ? (expanded.has(n.id) || q ? '−' : '+') : '';
     tg.onclick = (e) => { e.stopPropagation(); if (expanded.has(n.id)) expanded.delete(n.id); else expanded.add(n.id); render(); };
-    const ic = document.createElement('span'); ic.className = 'tree-icon ic-' + n.kind + (n instanceof X3DObject ? ' t-' + n.type : ''); ic.textContent = iconLetter(n); ic.title = n.type;
-    const nm = document.createElement('span'); nm.className = 'tree-name'; nm.textContent = state.scriptNames ? n.name.replace(/ /g, '_') : n.name;
+    const ic = document.createElement('span'); ic.className = 'tree-icon ic-' + n.kind + (n instanceof X3DObject ? ' t-' + n.type : '') + (n instanceof MarkerNode ? ' ic-marker' : ''); ic.innerHTML = iconGlyph(n); ic.title = n.type;
+    const nm = document.createElement('span'); nm.className = 'tree-name' + nameColor(n); nm.textContent = state.scriptNames ? n.name.replace(/ /g, '_') : n.name;
     if (n instanceof X3DObject && !n.visible) nm.classList.add('hidden-obj');
     row.append(tg, ic, nm);
     if (n.params.some(p => app.anim.isAnimated(p))) { const a = document.createElement('span'); a.className = 'tree-anim'; a.textContent = '◆'; a.title = 'animated'; row.appendChild(a); }
@@ -148,6 +156,24 @@ function iconLetter(n: Node) {
 }
 
 let openPopup: HTMLElement | null = null;
+/** Explorer glyphs (Unicode stand-ins for Softimage's icon set). */
+function iconGlyph(n: Node): string {
+  if (n instanceof MarkerNode) return '⚑';
+  if (n.kind === 'folder') return '▭';
+  if (n instanceof Scene || n instanceof Model) return '웃';
+  if (n instanceof Camera) return '🎥';
+  if (n instanceof Light) return '💡';
+  if (n instanceof Null) return '▲';
+  if (n instanceof X3DObject) { if (n.type === 'crvlist') return '∿'; if (n.type === 'surfmsh') return '▦'; if (n.type === 'bone' || n.type === 'root' || n.type === 'eff') return '⟋'; if (n.type === 'lattice') return '⌗'; return '⬚'; }
+  if (n.kind === 'primitive') return '⬢'; if (n.kind === 'operator') return '⚙'; if (n.kind === 'kinematics') return 'K'; if (n.kind === 'material') return '●'; if (n.kind === 'shader') return '◐'; if (n.kind === 'property') return '▮'; if (n.kind === 'layer') return '▤'; if (n.kind === 'pass') return '▧';
+  return '·';
+}
+/** Name colours as in Softimage's Explorer: models green, cameras blue, lights orange, markers by construction mode. */
+function nameColor(n: Node): string {
+  if (n instanceof Scene || n instanceof Model) return ' c-model';
+  if (n instanceof Camera) return ' c-camera'; if (n instanceof Light) return ' c-light'; if (n instanceof Null) return ' c-null';
+  return '';
+}
 function popup(items: { label: string; checked?: boolean; sep?: boolean; fn?: () => void }[], x: number, y: number) {
   openPopup?.remove(); const m = document.createElement('div'); m.className = 'menu'; m.style.left = x + 'px'; m.style.top = y + 'px';
   for (const it of items) { if (it.sep) { const s = document.createElement('div'); s.className = 'menu-sep'; m.appendChild(s); continue; } const r = document.createElement('div'); r.className = 'menu-item' + (it.fn ? '' : ' disabled'); r.textContent = (it.checked === undefined ? '' : it.checked ? '✓ ' : '   ') + it.label; if (it.fn) r.onclick = () => { m.remove(); openPopup = null; it.fn!(); }; m.appendChild(r); }

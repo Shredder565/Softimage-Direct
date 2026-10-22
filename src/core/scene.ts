@@ -23,8 +23,13 @@ export class Node extends ParamSet {
 
 // ------------------------------------------------------------- properties
 export class Property extends Node {
+  /** Shared (inherited scene default) until a value is changed or the property was added explicitly — the Explorer shows shared ones in italics. */
+  shared = false;
   constructor(name: string, type: string, defs: any[]) { super(name, type, 'property', defs); }
+  notify(p: any, old: any) { this.shared = false; super.notify(p, old); }
 }
+/** Explorer-only pseudo nodes: construction-mode markers and the Clusters folder under a primitive. */
+export class MarkerNode extends Node { constructor(name: string, type: string, readonly mode: string) { super(name, type, 'folder'); } }
 
 export function makeVisibility() {
   return new Property('Visibility', 'visibility', [
@@ -36,20 +41,20 @@ export function makeVisibility() {
     bool('refrcast', true, 'Caster in Refractions', { group: 'Rendering' }), bool('trnscast', true, 'Caster in Transparency', { group: 'Rendering' }),
   ]);
 }
-export function makeDisplay() {
-  return new Property('Display', 'display', [
+export function makeDisplay(shared = true) {
+  const p = new Property('Display', 'display', [
     enumP('staticsel', 8, [{ label: 'Bounding Box', value: 0 }, { label: 'Wireframe', value: 1 }, { label: 'Shaded', value: 7 }, { label: 'Default', value: 8 }], 'Static (selected)'),
     enumP('intsel', 8, [{ label: 'Bounding Box', value: 0 }, { label: 'Wireframe', value: 1 }, { label: 'Shaded', value: 7 }, { label: 'Default', value: 8 }], 'Interactive (selected)'),
     bool('wirecol', false, 'Use Wireframe Color'), color('wirecolorrgb', [0.7, 0.7, 0.7], 'Wireframe Color'),
     num('xray', 1.0, 'X-Ray Opacity', { min: 0, max: 1 }), num('neardist', 100, 'Near Distance'),
-  ]);
+  ]); p.shared = shared; return p;
 }
-export function makeGeomApprox() {
-  return new Property('Geometry Approximation', 'geomapprox', [
+export function makeGeomApprox(shared = true) {
+  const p = new Property('Geometry Approximation', 'geomapprox', [
     int('gapproxmordrsl', 0, 'Subdivision Level', { min: 0, max: 5, animatable: false, group: 'Polygon Mesh' }),
     bool('gapproxmoad', false, 'Adaptive', { group: 'Polygon Mesh' }),
     num('gapproxmoan', 60, 'Discontinuity Angle', { min: 0, max: 180, group: 'Polygon Mesh' }),
-  ]);
+  ]); p.shared = shared; return p;
 }
 
 // ---------------------------------------------------------------- material
@@ -245,7 +250,13 @@ export class Primitive extends Node {
   mesh(): MeshData | null { const g = this.geom(); return g && g.positions ? g as MeshData : null; }
   curve(): CurveData | null { const g = this.geom(); return g && g.cvs ? g as CurveData : null; }
   lattice(): LatticeData | null { const g = this.geom(); return g && g.sub ? g as LatticeData : null; }
-  explorerChildren() { return [...this.operators].reverse(); }
+  private markers: MarkerNode[] | null = null; private clustersFolder: Node | null = null;
+  /** Like Softimage: the four construction-mode markers, then the operators (newest first), then the Clusters folder. */
+  explorerChildren(): Node[] {
+    if (!this.markers) { this.markers = [new MarkerNode('Secondary Shape Modeling', 'secondaryshapemarker', 'secondaryshape'), new MarkerNode('Animation', 'animationmarker', 'animation'), new MarkerNode('Shape Modeling', 'shapemarker', 'shape'), new MarkerNode('Modeling', 'modelingmarker', 'modeling')]; for (const m of this.markers) m.parent = this; }
+    if (!this.clustersFolder) { this.clustersFolder = new Node('Clusters', 'clusters', 'folder'); this.clustersFolder.parent = this; }
+    return [...this.markers, ...[...this.operators].reverse(), this.clustersFolder];
+  }
   notify(p: any, old: any) { this.dirty = true; super.notify(p, old); }
 }
 
@@ -318,13 +329,19 @@ export class X3DObject extends Node {
     (G.get('sclx') as any)._value = s.x; (G.get('scly') as any)._value = s.y; (G.get('sclz') as any)._value = s.z;
   }
   *descendants(): Generator<X3DObject> { for (const c of this.children) { yield c; yield* c.descendants(); } }
+  /** Softimage order: Polygon Mesh, Kinematics, Visibility, Material, (shared) Ambient Lighting, Display, Geometry Approximation, children. */
   explorerChildren(): Node[] {
-    const out: Node[] = [this.kinematics, ...this.properties];
-    if (this.material) out.push(this.material);
+    const out: Node[] = [];
     if (this.primitive) out.push(this.primitive);
-    out.push(...this.clusters, ...this.children);
+    out.push(this.kinematics);
+    const vis = this.properties.filter(p => p.type === 'visibility'), rest = this.properties.filter(p => p.type !== 'visibility');
+    out.push(...vis);
+    if (this.material) out.push(this.material);
+    if (!this.ambientNode) { this.ambientNode = new Property('Ambient Lighting', 'AmbientLighting', [color('ambience', [0.2, 0.2, 0.2], 'Ambience')]); this.ambientNode.shared = true; this.ambientNode.parent = this; }
+    out.push(this.ambientNode, ...rest, ...this.clusters, ...this.children);
     return out;
   }
+  private ambientNode: Property | null = null;
 }
 
 export class Model extends X3DObject {
