@@ -3,6 +3,8 @@
 import * as THREE from 'three';
 import { App, InteractiveTool } from '../core/commands';
 import { X3DObject, Primitive, Property, makeDisplay, makeGeomApprox, makePhong, makeLambert, Shader, Null, Camera, Light, Operator, makeTopologyOperator, TopologyOperator, MoveComponentOperator } from '../core/scene';
+import { topoDefs } from '../core/scene';
+import { siName } from '../core/opdefs';
 import * as S2 from '../core/scene2';
 import * as T2 from '../core/topology2';
 import { num, int, bool, str, enumP, color } from '../core/params';
@@ -89,7 +91,7 @@ export function registerModelCommands(app: App) {
       }
       let obj: X3DObject | null = null;
       const gen = S2.makeGeneratorOperator(g.preset, inputs, () => obj)!;
-      if (g.preset === 'Boolean') { gen.set('operation', /Difference/.test(a.PresetObj) ? 0 : /Intersect/.test(a.PresetObj) ? 1 : 2); S2.loadCSG().then(() => { if (obj?.primitive) { obj.primitive.dirty = true; app.events.emit('scene'); } }); }
+      if (g.preset === 'Boolean') { gen.set('booleanmode', /Difference/.test(a.PresetObj) ? 2 : /Intersect/.test(a.PresetObj) ? 0 : 1); S2.loadCSG().then(() => { if (obj?.primitive) { obj.primitive.dirty = true; app.events.emit('scene'); } }); }
       obj = newGeomObject(app, g.preset.toLowerCase().replace(/[^a-z]+/g, '_'), a.Target === 'NurbsSurface' && g.out === 'polymsh' ? 'surfmsh' : g.out, gen);
       addObject(app, obj); if (g.preset === 'Boolean' || g.preset === 'Merge Meshes') for (const i of inputs) app.setParam(i.property('visibility')!.get('viewvis')!, false, 'Hide input');
       app.select([gen]); return obj;
@@ -125,7 +127,7 @@ export function registerModelCommands(app: App) {
   // ------------------------------------------------------------ deformers with references / new deformers
   const opBase = app.commands.get('ApplyOp')!; const opCan = opBase.canRun!, opExec = opBase.execute;
   const REF: Record<string, string> = { Lattice: 'by Lattice', 'Deform by Lattice': 'by Lattice', CrvDeform: 'by Curve', 'Deform by Curve': 'by Curve', ShrinkWrap: 'Shrink Wrap', 'Shrink Wrap': 'Shrink Wrap', ClusterCenter: 'Cluster Center', 'Deform by Cluster Center': 'Cluster Center', SrfDeform: 'Shrink Wrap', 'Deform by Surface': 'Shrink Wrap' };
-  const D2: Record<string, string> = { Bend: 'Bend', Fold: 'Fold', Wave: 'Wave', 'Deform by Wave': 'Wave', ShapeJitter: 'Shape Jitter', 'Shape Jitter': 'Shape Jitter', QStretch: 'Quick Stretch', 'Quick Stretch': 'Quick Stretch' };
+  const D2: Record<string, string> = { Wave: 'Wave', 'Deform by Wave': 'Wave', ShapeJitter: 'Shape Jitter', 'Shape Jitter': 'Shape Jitter', QStretch: 'Quick Stretch', 'Quick Stretch': 'Quick Stretch' };
   opBase.canRun = (a) => opCan(a) || !!(REF[a.PresetObj] ?? REF[a.Preset]) || !!(D2[a.PresetObj] ?? D2[a.Preset]) || ['Mark Hard Edge Vertex', 'Set Edge Crease Value', 'Turn Polygon Internal Edges', 'Constrain to Bounding Box'].includes(a.PresetObj);
   opBase.execute = (app, a) => {
     const r = REF[a.PresetObj] ?? REF[a.Preset];
@@ -296,28 +298,33 @@ function fitThrough(pts: V3[], degree: number): V3[] {
 /** Topology operators from topology2 (bevel, bridge, dissolve...). */
 export class TopologyOperator2 extends Operator {
   plane: { n: V3; d: number } | null = null;
+  readonly siType: string;
   constructor(readonly preset: string, readonly sel: any) {
-    super(preset, 'topo', [...(preset === 'Bevel' ? [num('amount', 0.3, 'Bevel Amount', { min: 0.01, max: 0.95 })] : preset === 'Bridge Polygons' ? [int('subdiv', 1, 'Subdivisions', { min: 1, max: 20 })] : preset === 'Slice' ? [enumP('axis', 1, [{ label: 'X', value: 0 }, { label: 'Y', value: 1 }, { label: 'Z', value: 2 }], 'Axis'), num('offset', 0, 'Offset', { min: -50, max: 50 })] : preset === 'Dice' ? [num('size', 2, 'Cell Size', { min: 0.1, max: 50 })] : preset === 'Polygon Reduction' ? [num('ratio', 0.5, 'Ratio', { min: 0.05, max: 1 })] : preset === 'Split Edges' ? [num('ratio', 0.5, 'Split Ratio', { min: 0.01, max: 0.99 })] : preset === 'Filter Points' ? [num('strength', 0.5, 'Strength', { min: 0, max: 1 })] : preset === 'Symmetrize Polygons' ? [enumP('axis', 0, [{ label: 'X', value: 0 }, { label: 'Y', value: 1 }, { label: 'Z', value: 2 }], 'Mirror Axis')] : []), bool('mute', false, 'Mute')]);
+    const legacy = preset === 'Bevel' ? [num('amount', 0.3, 'Bevel Amount', { min: 0.01, max: 0.95 })] : preset === 'Bridge Polygons' ? [int('subdiv', 1, 'Subdivisions', { min: 1, max: 20 })] : preset === 'Slice' ? [enumP('axis', 1, [{ label: 'X', value: 0 }, { label: 'Y', value: 1 }, { label: 'Z', value: 2 }], 'Axis'), num('offset', 0, 'Offset', { min: -50, max: 50 })] : preset === 'Dice' ? [num('size', 2, 'Cell Size', { min: 0.1, max: 50 })] : preset === 'Polygon Reduction' ? [num('ratio', 0.5, 'Ratio', { min: 0.05, max: 1 })] : preset === 'Split Edges' ? [num('ratio', 0.5, 'Split Ratio', { min: 0.01, max: 0.99 })] : preset === 'Filter Points' ? [num('strength', 0.5, 'Strength', { min: 0, max: 1 })] : preset === 'Symmetrize Polygons' ? [enumP('axis', 0, [{ label: 'X', value: 0 }, { label: 'Y', value: 1 }, { label: 'Z', value: 2 }], 'Mirror Axis')] : [];
+    const td = topoDefs(preset, legacy);
+    super(siName(td.type, preset), td.type, [...td.defs, bool('mute', false, 'Mute')]);
+    this.siType = td.type; this.layout = td.layout;
   }
+  p(si: string, legacy?: string, dflt = 0): number { const a = this.get(si); if (a) return Number(a.value); const b = legacy ? this.get(legacy) : undefined; return b ? Number(b.value) : dflt; }
   apply(m: any) {
     if (!m || !m.positions || this.val('mute')) return m; const v = (n: string) => Number(this.val(n));
     switch (this.preset) {
-      case 'Bevel': return T2.bevel(m, this.sel, v('amount'));
-      case 'Bridge Polygons': return T2.bridgePolygons(m, this.sel, v('subdiv'));
+      case 'Bevel': return T2.bevel(m, this.sel, this.get('ratio') ? Math.min(0.95, Math.max(0.01, this.p('ratio') * 0.5)) : v('amount'));
+      case 'Bridge Polygons': return T2.bridgePolygons(m, this.sel, Math.max(1, this.p('subdivs', 'subdiv', 1)));
       case 'Cap Hole': return T2.capHoles(m, this.sel);
       case 'Quadrangulate': return T2.quadrangulate(m, this.sel);
       case 'Dissolve': return T2.dissolve(m, this.sel);
       case 'Disconnect': return T2.disconnect(m, this.sel);
-      case 'Spin Edges': return T2.spinEdges(m, this.sel, true);
-      case 'Slice': return T2.slice(m, this.sel, v('axis'), v('offset'));
+      case 'Spin Edges': return T2.spinEdges(m, this.sel, this.get('spin') ? this.p('spin') >= 0 : true);
+      case 'Slice': return T2.slice(m, this.sel, Math.min(2, this.p('sliceplane', 'axis', 1)), this.p('planeoffset', 'offset'));
       case 'Slice Plane': return this.plane ? T2.slicePlane(m, this.sel, this.plane.n, this.plane.d) : m;
-      case 'Dice': return T2.dice(m, this.sel, v('size'));
-      case 'Polygon Reduction': return T2.polygonReduction(m, v('ratio'));
+      case 'Dice': return T2.dice(m, this.sel, this.get('gridsize') ? this.p('gridsize') * 2 : v('size'));
+      case 'Polygon Reduction': { const r = this.p('ratio', undefined, 0.5); return T2.polygonReduction(m, r > 1 ? r / 100 : r); }
       case 'Subdivide Polygons': return makeTopologyOperator('Subdivide Polygons', this.sel)!.apply(m);
-      case 'Split Edges': return splitEdges(m, this.sel, v('ratio'));
+      case 'Split Edges': { const r = this.p('ratioedge', 'ratio', 0.5); return splitEdges(m, this.sel, r > 1 ? r / 100 : r); }
       case 'Weld Points': return weldPoints(m, this.sel);
       case 'Filter Points': return makeTopologyOperator('Filter Points', this.sel)!.apply(m);
-      case 'Symmetrize Polygons': { const op = makeTopologyOperator('Symmetrize Polygons', this.sel)!; op.set('axis', v('axis')); return op.apply(m); }
+      case 'Symmetrize Polygons': { const op = makeTopologyOperator('Symmetrize Polygons', this.sel)!; op.set('symmetryplane', this.p('symmetryplane', 'axis')); return op.apply(m); }
       case 'Invert Polygons': return makeTopologyOperator('Invert Polygons', this.sel)!.apply(m);
       case 'Connect Points': { const [a, b] = this.sel.indices as number[]; const { verts, faces } = toPolys(m); const fi = faces.findIndex(f => f.includes(a) && f.includes(b) && Math.abs(f.indexOf(a) - f.indexOf(b)) > 1 && Math.abs(f.indexOf(a) - f.indexOf(b)) !== f.length - 1); if (fi < 0) return m; const f = faces[fi]; const ia = f.indexOf(a), ib = f.indexOf(b); const one: number[] = []; for (let i = ia; ; i = (i + 1) % f.length) { one.push(f[i]); if (i === ib) break; } const two: number[] = []; for (let i = ib; ; i = (i + 1) % f.length) { two.push(f[i]); if (i === ia) break; } faces[fi] = one; faces.push(two); return fromPolys(verts, faces); }
     }

@@ -1,5 +1,6 @@
 // Object types and operators beyond polygon meshes: NURBS curves and surfaces, generators that reference
 // other objects, lattices, implicit primitives, skeleton chains, text, and the richer deformers.
+import { siParamDefs, siLayout, siName } from './opdefs';
 import * as THREE from 'three';
 import { X3DObject, Primitive, Operator, Node, makeDisplay, makeGeomApprox } from './scene';
 import { num, int, bool, enumP, str } from './params';
@@ -91,9 +92,18 @@ export function makeSurfaceGeomOperator(preset: string) {
 
 // -------------------------------------------------------------- generators
 /** Generators read other objects' geometry (curves or meshes) at evaluation time. */
+/** Softimage op type for each generator preset (ApplyGenOp PresetObj). */
+export const GEN_TYPES: Record<string, string> = { 'Extrusion Along Axis': 'extrusion', 'Revolution Around Axis': 'revolution', 'Loft': 'loft', 'Extrusion Along Curve': 'extrusion', 'Birail': 'birail', 'Four-Sided': 'foursided', 'Curve Net': 'crvnet', 'Curves To Mesh': 'CurveListToMesh', 'Boolean': 'booleansrftopoop', 'Blend': 'blendcrv', 'Merge Curves': 'mergecrv', 'Merge Meshes': 'mergemesh', 'Nurbs To Mesh': 'nurbstomesh', 'Extract Curve From Surface': 'extractcrvseg' };
 export class GeneratorOperator extends Operator {
   private inputVersions: number[] = [];
-  constructor(readonly preset: string, readonly inputs: X3DObject[], readonly owner: () => X3DObject | null, defs: any[]) { super(preset, 'genop', defs); }
+  readonly siType: string;
+  constructor(readonly preset: string, readonly inputs: X3DObject[], readonly owner: () => X3DObject | null, defs: any[]) {
+    const t = GEN_TYPES[preset] ?? 'genop'; const si = siParamDefs(t); const names = new Set(si.map(d => d.name));
+    super(siName(t, preset), t, [...si, ...defs.filter(d => !names.has(d.name))]);
+    this.siType = t; this.layout = siLayout(t);
+  }
+  /** Read a Softimage parameter, falling back to a legacy name. */
+  p(si: string, legacy?: string, dflt = 0): number { const a = this.get(si); if (a) return Number(a.value); const b = legacy ? this.get(legacy) : undefined; return b ? Number(b.value) : dflt; }
   inputsChanged() { const vs = this.inputs.map(o => o.primitive?.version ?? -1); const ch = vs.some((v, i) => v !== this.inputVersions[i]); this.inputVersions = vs; return ch; }
   apply(): any {
     const v = (n: string) => Number(this.val(n));
@@ -101,21 +111,23 @@ export class GeneratorOperator extends Operator {
     const curveOf = (o: X3DObject): CurveData | null => { const c = o.primitive?.curve(); if (!c) return null; const M = invMe.clone().multiply(o.globalMatrix()); return { ...c, cvs: c.cvs.map(p => { const q = new THREE.Vector3(p[0], p[1], p[2]).applyMatrix4(M); return [q.x, q.y, q.z, p[3]] as [number, number, number, number]; }) }; };
     const meshOf = (o: X3DObject) => { const m = o.primitive?.mesh(); if (!m) return null; return T2.mergeMeshes([{ mesh: m, matrix: invMe.clone().multiply(o.globalMatrix()).elements as any }]); };
     const curves = this.inputs.map(curveOf).filter((c): c is CurveData => !!c);
-    const ax = (): V3 => [[1, 0, 0], [0, 1, 0], [0, 0, 1]][this.val('axis')] as V3;
+    // Softimage axis flags (alongx/alongy/alongz, revx/revy/revz) or the legacy axis enum
+    const flagAxis = (pre: string): V3 => { if (this.get(pre + 'x')) { const f = [!!this.val(pre + 'x'), !!this.val(pre + 'y'), !!this.val(pre + 'z')]; const i = f.indexOf(true); return [[1, 0, 0], [0, 1, 0], [0, 0, 1]][i < 0 ? 1 : i] as V3; } return [[1, 0, 0], [0, 1, 0], [0, 0, 1]][Number(this.val('axis') ?? 1)] as V3; };
+    const U = () => Math.max(1, this.p('subdivu', 'usub', 10)), W = () => Math.max(1, this.p('subdivv', 'vsub', 10));
     switch (this.preset) {
-      case 'Extrusion Along Axis': return curves[0] ? C.extrudeAlongAxis(curves[0], ax(), v('length'), v('subdivs'), v('usub')) : null;
-      case 'Revolution Around Axis': return curves[0] ? C.revolve(curves[0], ax(), v('angle'), v('usub'), v('vsub')) : null;
-      case 'Loft': return curves.length >= 2 ? C.loft(curves, v('usub'), v('vsub')) : null;
-      case 'Extrusion Along Curve': return curves.length >= 2 ? C.extrudeAlongCurve(curves[0], curves[1], v('usub'), v('vsub')) : null;
-      case 'Birail': return curves.length >= 3 ? C.birail(curves[0], curves[1], curves[2], v('usub'), v('vsub')) : null;
-      case 'Four-Sided': return curves.length >= 4 ? C.fourSided(curves.slice(0, 4), v('usub'), v('vsub')) : null;
-      case 'Curve Net': return curves.length >= 2 ? C.curveNet(curves, [], v('usub'), v('vsub')) : null;
-      case 'Curves To Mesh': return curves[0] ? C.curveToMesh(curves[0], v('segments')) : null;
+      case 'Extrusion Along Axis': return curves[0] ? C.extrudeAlongAxis(curves[0], flagAxis('along'), this.p('length', undefined, 10), W(), U()) : null;
+      case 'Revolution Around Axis': return curves[0] ? C.revolve(curves[0], flagAxis('rev'), this.p('ang', 'angle', 360), U(), W()) : null;
+      case 'Loft': return curves.length >= 2 ? C.loft(curves, U(), W()) : null;
+      case 'Extrusion Along Curve': return curves.length >= 2 ? C.extrudeAlongCurve(curves[0], curves[1], U(), W()) : null;
+      case 'Birail': return curves.length >= 3 ? C.birail(curves[0], curves[1], curves[2], U(), W()) : null;
+      case 'Four-Sided': return curves.length >= 4 ? C.fourSided(curves.slice(0, 4), U(), W()) : null;
+      case 'Curve Net': return curves.length >= 2 ? C.curveNet(curves, [], U(), W()) : null;
+      case 'Curves To Mesh': return curves[0] ? C.curveToMesh(curves[0], Math.max(3, this.p('stepcontour', 'segments', 3) * 8)) : null;
       case 'Blend': return curves.length >= 2 ? C.blendCurves(curves[0], curves[1]) : null;
       case 'Merge Curves': return curves.length >= 2 ? C.mergeCurves(curves[0], curves[1]) : null;
       case 'Merge Meshes': { const parts = this.inputs.map(meshOf).filter((m): m is MeshData => !!m); return parts.length ? T2.mergeMeshes(parts.map(m => ({ mesh: m, matrix: new THREE.Matrix4().elements as any }))) : null; }
       case 'Nurbs To Mesh': return this.inputs[0] ? meshOf(this.inputs[0]) : null;
-      case 'Boolean': { const parts = this.inputs.map(meshOf).filter((m): m is MeshData => !!m); if (parts.length < 2) return null; return booleanOp(parts[0], parts[1], this.val('operation')); }
+      case 'Boolean': { const parts = this.inputs.map(meshOf).filter((m): m is MeshData => !!m); if (parts.length < 2) return null; const bm = this.get('booleanmode') ? [1, 2, 0][Number(this.val('booleanmode'))] : this.val('operation'); return booleanOp(parts[0], parts[1], bm); }
       case 'Extract Curve From Surface': { const m = this.inputs[0] ? meshOf(this.inputs[0]) : null; if (!m) return null; const f = m.polygons[0] ?? []; return C.makeCurve(f.map(i => [m.positions[i * 3], m.positions[i * 3 + 1], m.positions[i * 3 + 2]] as V3), 1, true); }
     }
     return null;

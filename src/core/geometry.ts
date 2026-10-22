@@ -7,7 +7,7 @@ export interface MeshData {
   triPoly: Uint32Array;      // polygon index per triangle (for picking)
 }
 
-function build(verts: number[][], faces: number[][]): MeshData {
+export function build(verts: number[][], faces: number[][]): MeshData {
   const positions = new Float32Array(verts.length * 3);
   verts.forEach((v, i) => { positions[i * 3] = v[0]; positions[i * 3 + 1] = v[1]; positions[i * 3 + 2] = v[2]; });
   const tris: number[] = [], triPoly: number[] = [];

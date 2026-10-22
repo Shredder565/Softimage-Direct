@@ -3,7 +3,10 @@
 // construction history (operator stack), Properties, a Material, Clusters.
 import * as THREE from 'three';
 import { ParamSet, num, int, bool, str, enumP, color } from './params';
-import { MeshData, cube, sphere, cylinder, cone, torus, grid, disc, platonic, deformers, rhombicosidodecahedron, soccerBall, emptyMesh } from './geometry';
+import { siParamDefs, siLayout, siName, menuDefaults } from './opdefs';
+import { siDeformers } from './sideform';
+import { siCube, siSphere, siCylinder, siCone, siTorus, siGrid, siDisc } from './siprims';
+import { MeshData, platonic, rhombicosidodecahedron, soccerBall, emptyMesh } from './geometry';
 import * as topo from './topology';
 import type { CompSel } from './topology';
 import type { CurveData } from './curves';
@@ -82,83 +85,106 @@ export class Operator extends Node {
   apply(input: any): any { return input; }
 }
 
-/** The generator at the bottom of the stack that makes the primitive geometry. */
+/** The generator at the bottom of the stack that makes the primitive geometry. Like Softimage, it carries the shape
+ *  parameters of the implicit input primitive (cube.cube: length…) and the Geometry converter parameters (subdivisions). */
 export class GeomOperator extends Operator {
-  constructor(readonly preset: string, defs: any[]) { super('Geometry', 'geom', defs); }
+  constructor(readonly preset: string, readonly geomKind: 'Polygon Mesh' | 'Surface' | 'Point Cloud' | 'Curve', defs: any[]) { super('Geometry', 'geom', defs); }
+  /** Shape parameters (first PPG tab, named after the primitive) vs converter parameters (the "Geometry" tab). */
+  get shapeParams() { return this.params.filter(p => p.def.group === this.preset); }
+  get geometryParams() { return this.params.filter(p => p.def.group !== this.preset); }
   apply(): MeshData | null {
-    const v = (n: string) => Number(this.val(n));
+    const v: Record<string, any> = {}; for (const p of this.params) v[p.name] = p.value;
     switch (this.preset) {
-      case 'Cube': return cube(v('length'), v('subdivu'));
-      case 'Sphere': return sphere(v('radius'), v('subdivu'), v('subdivv'));
-      case 'Cylinder': return cylinder(v('radius'), v('height'), v('subdivu'), v('subdivv'));
-      case 'Cone': return cone(v('radius'), v('height'), v('subdivu'), v('subdivv'));
-      case 'Torus': return torus(v('radius'), v('innerradius'), v('subdivu'), v('subdivv'));
-      case 'Grid': return grid(v('ulength'), v('vlength'), v('subdivu'), v('subdivv'));
-      case 'Disc': return disc(v('radius'), v('innerradius'), v('subdivu'), v('subdivv'));
-      case 'Tetrahedron': case 'Octahedron': case 'Icosahedron': case 'Dodecahedron': return platonic(this.preset.toLowerCase() as any, v('radius'));
-      case 'Rhombicosidodecahedron': return rhombicosidodecahedron(v('radius'));
-      case 'Soccer Ball': case 'SoccerBall': return soccerBall(v('radius'));
+      case 'Cube': return siCube(v);
+      case 'Sphere': return siSphere(v);
+      case 'Cylinder': return siCylinder(v);
+      case 'Cone': return siCone(v);
+      case 'Torus': return siTorus(v);
+      case 'Grid': return siGrid(v);
+      case 'Disc': return siDisc(v);
+      case 'Tetrahedron': case 'Octahedron': case 'Icosahedron': case 'Dodecahedron': return platonic(this.preset.toLowerCase() as any, Number(v.radius ?? 4));
+      case 'Rhombicosidodecahedron': return rhombicosidodecahedron(Number(v.radius ?? 4));
+      case 'Soccer Ball': case 'SoccerBall': return soccerBall(Number(v.radius ?? 4));
       case 'Empty': return emptyMesh();
     }
     return null;
   }
 }
-export function makeGeomOperator(preset: string): GeomOperator {
-  const common = (extra: any[]) => [...extra, int('subdivu', 8, 'Subdivisions U', { min: 1, max: 128 }), int('subdivv', 8, 'Subdivisions V', { min: 1, max: 128 })];
-  switch (preset) {
-    case 'Cube': return new GeomOperator(preset, [num('length', 8, 'Length', { min: 0.01 }), int('subdivu', 1, 'Subdivisions', { min: 1, max: 64 })]);
-    case 'Sphere': return new GeomOperator(preset, common([num('radius', 4, 'Radius', { min: 0.01 })]));
-    case 'Cylinder': return new GeomOperator(preset, common([num('radius', 4, 'Radius', { min: 0.01 }), num('height', 8, 'Height', { min: 0.01 })]));
-    case 'Cone': return new GeomOperator(preset, common([num('radius', 4, 'Radius', { min: 0.01 }), num('height', 8, 'Height', { min: 0.01 })]));
-    case 'Torus': return new GeomOperator(preset, common([num('radius', 4, 'Radius', { min: 0.01 }), num('innerradius', 1.5, 'Inner Radius', { min: 0.01 })]));
-    case 'Grid': return new GeomOperator(preset, common([num('ulength', 8, 'U Length', { min: 0.01 }), num('vlength', 8, 'V Length', { min: 0.01 })]));
-    case 'Disc': return new GeomOperator(preset, common([num('radius', 4, 'Radius', { min: 0.01 }), num('innerradius', 0.5, 'Inner Radius', { min: 0 })]));
-    default: return new GeomOperator(preset, [num('radius', 4, 'Radius', { min: 0.01 })]);
-  }
+export function makeGeomOperator(preset: string, kind: 'Polygon Mesh' | 'Surface' | 'Point Cloud' | 'Curve' = 'Polygon Mesh'): GeomOperator {
+  const shapeKey = 'shape:' + kind + '/' + preset, geomKey = 'geom:' + preset + (kind === 'Polygon Mesh' ? '' : ':' + kind);
+  let shape = siParamDefs(shapeKey, {}, { group: preset });
+  if (!shape.length) shape = siParamDefs('shape:Polygon Mesh/' + preset, {}, { group: preset });
+  if (!shape.length && !['Empty'].includes(preset)) shape = [num('radius', 4, 'Radius', { min: 0.01, uimin: 0.01, uimax: 50, group: preset })];
+  let geom = siParamDefs(geomKey, {}, { group: 'Geometry' });
+  if (!geom.length) geom = siParamDefs('geom:' + preset, {}, { group: 'Geometry' });
+  const op = new GeomOperator(preset, kind, [...shape, ...geom]);
+  return op;
 }
 
+/** Softimage op type for each Deform menu preset (ApplyOp PresetObj). */
+export const DEFORM_TYPES: Record<string, string> = { Twist: 'twistop', Bend: 'bendop', Taper: 'taperop', Bulge: 'bulgeop', Shear: 'shearop', Push: 'pushop', Randomize: 'randomizeop', Smooth: 'smoothop', Relax: 'smoothop', Fold: 'foldop' };
 export class DeformOperator extends Operator {
-  constructor(readonly preset: string, defs: any[]) { super(preset + ' Op', preset.toLowerCase() + 'op', [...defs, bool('mute', false, 'Mute')]); }
+  constructor(readonly preset: string, readonly siType: string, defs: any[]) {
+    super(siName(siType, preset + ' Op'), siType, [...defs, bool('mute', false, 'Mute')]);
+    this.layout = siLayout(siType);
+  }
   apply(input: MeshData | null) {
     if (!input || this.val('mute')) return input;
-    const fn = deformers[this.preset]; if (!fn) return input;
-    const v: Record<string, number> = {}; for (const p of this.params) v[p.name] = Number(p.value);
+    const fn = siDeformers[this.siType]; if (!fn) return input;
+    const v: Record<string, any> = {}; for (const p of this.params) v[p.name] = p.value;
     return fn(input, v);
   }
 }
 export function makeDeformOperator(preset: string): DeformOperator | null {
-  switch (preset) {
-    case 'Twist': case 'Bend': return new DeformOperator(preset, [num('angle', 45, 'Angle', { min: -720, max: 720 })]);
-    case 'Taper': return new DeformOperator(preset, [num('factor', 0.5, 'Factor', { min: -5, max: 5 })]);
-    case 'Bulge': case 'Shear': return new DeformOperator(preset, [num('factor', 0.5, 'Factor', { min: -5, max: 5 })]);
-    case 'Push': return new DeformOperator(preset, [num('amplitude', 1, 'Amplitude', { min: -50, max: 50 })]);
-    case 'Randomize': return new DeformOperator(preset, [num('displacement', 0.5, 'Displacement', { min: 0, max: 50 }), int('seed', 0, 'Seed', { min: 0 })]);
-    case 'Smooth': case 'Relax': return new DeformOperator('Smooth', [num('strength', 0.5, 'Strength', { min: 0, max: 1 }), int('iterations', 2, 'Iterations', { min: 1, max: 50 })]);
-  }
-  return null;
+  const t = DEFORM_TYPES[preset]; if (!t) return null;
+  const menu = menuDefaults('Modify/Deform/' + preset);
+  return new DeformOperator(preset, t, siParamDefs(t, menu?.values ?? {}));
 }
 
 // ----------------------------------------------------------- topology ops
+/** Softimage op type for each topology preset; parameters come from the real definitions (opdefs.json). */
+export const TOPO_TYPES: Record<string, string> = {
+  'Extrude Along Normal': 'extrudenormalop', 'Inset Polygons': 'extrudecompaxisop', 'Split Edges': 'splitedgeop', 'Weld Points': 'weldpointsop',
+  'Filter Points': 'filterpointsbydistancesop', 'Symmetrize Polygons': 'symmetrizepolygonop', 'Subdivide Polygons': 'subdividepolygonop', 'Triangulate': 'subdividepolygonop',
+  'Collapse Components': 'collapseop', 'Invert Polygons': 'invertpolygonop', 'Delete Components': 'deletecomponentop', 'Bevel': 'bevelop', 'Bridge Polygons': 'bridgeop',
+  'Quadrangulate': 'quadrangulateop', 'Dissolve': 'dissolvecompop', 'Disconnect': 'disconnectcompop', 'Spin Edges': 'spinedgeop', 'Slice': 'slicepolygonsop',
+  'Slice Plane': 'slicepolygonsop', 'Dice': 'dicepolygonsop', 'Polygon Reduction': 'polygonreductionop', 'Apply Thickness': 'thicknessop', 'Duplicate Polygons': 'extrudecompaxisop',
+  'Cap Hole': 'capholeop', 'Connect Points': 'addedgeop', 'Local Subdivision': 'meshlocalsubdivisionop',
+};
+const TOPO_NAMES: Record<string, string> = { 'Triangulate': 'Triangulate', 'Duplicate Polygons': 'Duplicate Op' };
+/** Build the parameter list for a topology preset: Softimage definitions first, then any legacy defs not covered. */
+export function topoDefs(preset: string, legacy: any[] = []): { type: string; defs: any[]; layout?: any } {
+  const t = TOPO_TYPES[preset] ?? 'topo';
+  const over: Record<string, any> = preset === 'Triangulate' ? { subdivtype: 3 } : preset === 'Duplicate Polygons' ? { duplicate: true, length: 1, inset: 0 } : {};
+  const si = siParamDefs(t, over); const names = new Set(si.map(d => d.name));
+  return { type: t, defs: [...si, ...legacy.filter(d => !names.has(d.name))], layout: siLayout(t) };
+}
 /** A topology operator records the component selection it was applied to (like Softimage's connection set). */
 export class TopologyOperator extends Operator {
-  constructor(readonly preset: string, readonly sel: CompSel, defs: any[]) { super(preset, 'topo', [...defs, bool('mute', false, 'Mute')]); }
+  readonly siType: string;
+  constructor(readonly preset: string, readonly sel: CompSel, defs: any[]) {
+    const td = topoDefs(preset, defs);
+    super(TOPO_NAMES[preset] ?? siName(td.type, preset), td.type, [...td.defs, bool('mute', false, 'Mute')]);
+    this.siType = td.type; this.layout = td.layout;
+  }
+  /** Read a Softimage parameter, falling back to a legacy name. */
+  p(si: string, legacy?: string, dflt = 0): number { const a = this.get(si); if (a) return Number(a.value); const b = legacy ? this.get(legacy) : undefined; return b ? Number(b.value) : dflt; }
   apply(input: MeshData | null): MeshData | null {
     if (!input || this.val('mute')) return input;
-    const v = (n: string) => Number(this.val(n));
     switch (this.preset) {
-      case 'Extrude Along Normal': return topo.extrudeAlongNormal(input, this.sel, v('length'), v('inset'));
-      case 'Inset Polygons': return topo.insetPolygons(input, this.sel, v('inset'));
+      case 'Extrude Along Normal': return topo.extrudeAlongNormal(input, this.sel, this.p('length'), this.p('inset'));
+      case 'Inset Polygons': return topo.insetPolygons(input, this.sel, this.p('inset', undefined, 0.2));
       case 'Delete Components': return topo.deleteComponents(input, this.sel);
-      case 'Duplicate Polygons': return topo.duplicatePolygons(input, this.sel, v('offset'));
-      case 'Subdivide Polygons': return topo.subdividePolygons(input, this.sel);
-      case 'Split Edges': return topo.splitEdges(input, this.sel, v('ratio'));
+      case 'Duplicate Polygons': return topo.duplicatePolygons(input, this.sel, this.p('length', 'offset', 1));
+      case 'Subdivide Polygons': return this.p('subdivtype') === 3 ? topo.triangulate(input, this.sel) : topo.subdividePolygons(input, this.sel);
+      case 'Split Edges': { const r = this.p('ratioedge', 'ratio', 0.5); return topo.splitEdges(input, this.sel, r > 1 ? r / 100 : r); }
       case 'Weld Points': return topo.weldPoints(input, this.sel);
       case 'Collapse Components': return topo.collapseComponents(input, this.sel);
       case 'Invert Polygons': return topo.invertPolygons(input, this.sel);
       case 'Triangulate': return topo.triangulate(input, this.sel);
-      case 'Apply Thickness': return topo.applyThickness(input, v('amount'));
-      case 'Filter Points': return topo.filterPoints(input, this.sel, v('strength'));
-      case 'Symmetrize Polygons': return topo.symmetrize(input, this.sel, this.val('axis'));
+      case 'Apply Thickness': return topo.applyThickness(input, this.p('thickness', 'amount', 0.5));
+      case 'Filter Points': return topo.filterPoints(input, this.sel, this.p('distance', 'strength', 0.5));
+      case 'Symmetrize Polygons': return topo.symmetrize(input, this.sel, Math.min(2, this.p('symmetryplane', 'axis')) as 0 | 1 | 2);
     }
     return input;
   }
@@ -202,7 +228,8 @@ export class Primitive extends Node {
   dirty = true;
   version = 0;                            // bumps whenever the result changes (dependents re-evaluate)
   constructor(name: string, type: string) {
-    super(name, type, 'primitive', type === 'polymsh' ? [enumP('subdrule', 0, [{ label: 'Catmull-Clark', value: 0 }, { label: 'Linear', value: 1 }], 'Subdivision Rule')] : []);
+    super(name, type, 'primitive', type === 'polymsh' ? (siParamDefs('prim:Polygon Mesh/Cube').length ? siParamDefs('prim:Polygon Mesh/Cube') : [enumP('subdrule', 0, [{ label: 'Catmull-Clark', value: 0 }, { label: 'XSI-Doo-Sabin', value: 2 }, { label: 'Linear', value: 3 }], 'Rule')]) : []);
+    if (type === 'polymsh') this.layout = siLayout('prim:Polygon Mesh/Cube');
   }
   addOperator(op: Operator) { op.parent = this; this.operators.push(op); this.dirty = true; }
   removeOperator(op: Operator) { const i = this.operators.indexOf(op); if (i >= 0) { this.operators.splice(i, 1); op.parent = null; this.dirty = true; } }

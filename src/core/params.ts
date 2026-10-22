@@ -8,9 +8,12 @@ export interface ParamDef {
   label?: string;        // UI label, e.g. "Position X"
   type: ParamType;
   value: any;
-  min?: number;
+  min?: number;          // hard clamp (Softimage Range)
   max?: number;
+  uimin?: number;        // slider range (Softimage UIRange)
+  uimax?: number;
   step?: number;
+  desc?: string;
   items?: { label: string; value: any }[]; // for enum
   animatable?: boolean;
   keyable?: boolean;
@@ -58,6 +61,8 @@ export class ParamSet {
   type: string;
   parent: ParamSet | null = null;
   readonly params: Parameter[] = [];
+  /** Optional Softimage PPG layout tree (groups/rows); the Property Editor renders it when present. */
+  layout?: import('./opdefs').LayoutNode[];
   private byName = new Map<string, Parameter>();
   private listeners = new Set<Listener>();
 

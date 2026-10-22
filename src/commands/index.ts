@@ -32,7 +32,7 @@ export function registerBuiltins(app: App) {
       const name = app.scene.uniqueName(a.Name || a.PresetObj.toLowerCase());
       const obj = new X3DObject(name, a.GeometryType === 'PointCloud' ? 'pointcloud' : 'polymsh');
       const prim = new Primitive('Polygon Mesh', 'polymsh');
-      prim.addOperator(makeGeomOperator(a.PresetObj));
+      prim.addOperator(makeGeomOperator(a.PresetObj, a.GeometryType === 'PointCloud' ? 'Point Cloud' : 'Polygon Mesh'));
       obj.setPrimitive(prim); obj.addProperty(makeDisplay()); obj.addProperty(makeGeomApprox());
       addObject(app, obj, a.Parent ? app.scene.find(a.Parent) : null);
       app.select([obj]);
