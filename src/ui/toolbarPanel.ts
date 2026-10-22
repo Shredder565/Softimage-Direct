@@ -39,6 +39,7 @@ export function toolbarPanel(app: App, host: HTMLElement) {
 let openMenus: HTMLElement[] = [];
 function closeMenus(from = 0) { openMenus.splice(from).forEach(m => m.remove()); }
 document.addEventListener('pointerdown', (e) => { if (!(e.target as HTMLElement).closest('.menu')) closeMenus(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.querySelector('.menu')) { closeMenus(); } }, true);
 
 export function openMenu(app: App, items: MenuItem[], x: number, y: number, path: string[], level = 0) {
   closeMenus(level);
