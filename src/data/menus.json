@@ -1,0 +1,3820 @@
+{
+ "Model": [
+  {
+   "label": "Get",
+   "items": [
+    {
+     "label": "Primitive",
+     "items": [
+      {
+       "label": "Null",
+       "id": 32823
+      },
+      {
+       "label": "Curve",
+       "items": [
+        {
+         "label": "Arc",
+         "id": 32834
+        },
+        {
+         "label": "Circle",
+         "id": 32837
+        },
+        {
+         "label": "Spiral",
+         "id": 32841
+        },
+        {
+         "label": "Square",
+         "id": 32842
+        }
+       ]
+      },
+      {
+       "label": "Polygon Mesh",
+       "items": [
+        {
+         "label": "Cone",
+         "id": 32844
+        },
+        {
+         "label": "Cube",
+         "id": 32845
+        },
+        {
+         "label": "Cylinder",
+         "id": 32846
+        },
+        {
+         "label": "Disc",
+         "id": 32847
+        },
+        {
+         "label": "Grid",
+         "id": 32850
+        },
+        {
+         "label": "Sphere",
+         "id": 32855
+        },
+        {
+         "label": "Torus",
+         "id": 32853
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Dodecahedron",
+         "id": 32848
+        },
+        {
+         "label": "Icosahedron",
+         "id": 32851
+        },
+        {
+         "label": "Octahedron",
+         "id": 32852
+        },
+        {
+         "label": "Tetrahedron",
+         "id": 32857
+        },
+        {
+         "label": "Rhombicosidodecahedron",
+         "id": 41137
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Soccer Ball",
+         "id": 41136
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Empty",
+         "id": 41547
+        }
+       ]
+      },
+      {
+       "label": "Surface",
+       "items": [
+        {
+         "label": "Cone",
+         "id": 32858
+        },
+        {
+         "label": "Cube",
+         "id": 32859
+        },
+        {
+         "label": "Cylinder",
+         "id": 32860
+        },
+        {
+         "label": "Disc",
+         "id": 32861
+        },
+        {
+         "label": "Grid",
+         "id": 32862
+        },
+        {
+         "label": "Sphere",
+         "id": 32863
+        },
+        {
+         "label": "Torus",
+         "id": 32865
+        }
+       ]
+      },
+      {
+       "label": "Point Cloud",
+       "items": [
+        {
+         "label": "Cone",
+         "id": 41531
+        },
+        {
+         "label": "Cube",
+         "id": 41532
+        },
+        {
+         "label": "Cylinder",
+         "id": 41533
+        },
+        {
+         "label": "Disc",
+         "id": 41534
+        },
+        {
+         "label": "Grid",
+         "id": 41535
+        },
+        {
+         "label": "Sphere",
+         "id": 41536
+        },
+        {
+         "label": "Torus",
+         "id": 41537
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Empty",
+         "id": 41546
+        }
+       ]
+      },
+      {
+       "label": "Implicit",
+       "items": [
+        {
+         "label": "Arc",
+         "id": 33020
+        },
+        {
+         "label": "Circle",
+         "id": 33019
+        },
+        {
+         "label": "Spiral",
+         "id": 33021
+        },
+        {
+         "label": "Square",
+         "id": 33026
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Bone",
+         "id": 33024
+        },
+        {
+         "label": "Cone",
+         "id": 33023
+        },
+        {
+         "label": "Cube",
+         "id": 33018
+        },
+        {
+         "label": "Cylinder",
+         "id": 33025
+        },
+        {
+         "label": "Disc",
+         "id": 40190
+        },
+        {
+         "label": "Grid",
+         "id": 33017
+        },
+        {
+         "label": "Sphere",
+         "id": 33015
+        },
+        {
+         "label": "Torus",
+         "id": 33016
+        }
+       ]
+      },
+      {
+       "label": "Control Object",
+       "items": [
+        {
+         "label": "Wave",
+         "id": 40034
+        },
+        {
+         "label": "Volume Deform",
+         "id": 41090
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Attractor",
+         "id": 40908
+        },
+        {
+         "label": "Drag",
+         "id": 41155
+        },
+        {
+         "label": "Eddy",
+         "id": 41117
+        },
+        {
+         "label": "Fan",
+         "id": 41118
+        },
+        {
+         "label": "Gravity",
+         "id": 40906
+        },
+        {
+         "label": "Toric",
+         "id": 41332
+        },
+        {
+         "label": "Turbulence",
+         "id": 41156
+        },
+        {
+         "label": "Vortex",
+         "id": 40909
+        },
+        {
+         "label": "Wind",
+         "id": 40907
+        }
+       ]
+      },
+      {
+       "label": "Lattice",
+       "id": 33040
+      },
+      {
+       "label": "Stand-in",
+       "id": 41554
+      },
+      {
+       "label": "Geometry Shader Primitive",
+       "id": 41171
+      },
+      {
+       "label": "Annotation",
+       "id": 41633
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Camera",
+       "items": [
+        {
+         "label": "Perspective",
+         "id": 32891
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Telephoto",
+         "id": 40638
+        },
+        {
+         "label": "Wide Angle",
+         "id": 40639
+        },
+        {
+         "label": "Orthographic",
+         "id": 40640
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "More...",
+         "id": 40586
+        }
+       ]
+      },
+      {
+       "label": "Light",
+       "items": [
+        {
+         "label": "Infinite",
+         "id": 40648
+        },
+        {
+         "label": "Light Box",
+         "id": 40644
+        },
+        {
+         "label": "Neon",
+         "id": 40587
+        },
+        {
+         "label": "Point",
+         "id": 40649
+        },
+        {
+         "label": "Spot",
+         "id": 40650
+        },
+        {
+         "label": "Flat",
+         "id": 41591
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "More...",
+         "id": 40590
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Associate Light",
+         "id": 41190
+        },
+        {
+         "label": "Light Rig from Image",
+         "id": 41256
+        }
+       ]
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Model",
+       "items": [
+        {
+         "label": "Skeleton - Man - Basic",
+         "id": 41073
+        },
+        {
+         "label": "Skeleton - Man - Complete",
+         "id": 41074
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Skeleton - Woman - Basic",
+         "id": 41076
+        },
+        {
+         "label": "Skeleton - Woman - Complete",
+         "id": 41077
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Biped - Box",
+         "id": 41227
+        },
+        {
+         "label": "Biped - SI|3D Skeleton",
+         "id": 41228
+        },
+        {
+         "label": "Biped - Skeleton",
+         "id": 41229
+        },
+        {
+         "label": "Biped - Rig",
+         "id": 41230
+        },
+        {
+         "label": "Quadruped - Rig",
+         "id": 41231
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Body - Man",
+         "id": 41060
+        },
+        {
+         "label": "Body - Woman",
+         "id": 41061
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Face - Man",
+         "id": 41042
+        },
+        {
+         "label": "Face - Woman",
+         "id": 41068
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Character - Man",
+         "id": 41255
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Mesh - Bull",
+         "id": 41634
+        },
+        {
+         "label": "Mesh - Car",
+         "id": 41635
+        },
+        {
+         "label": "Mesh - Fish",
+         "id": 41636
+        },
+        {
+         "label": "Mesh - Horse",
+         "id": 41637
+        },
+        {
+         "label": "Mesh - Lizard",
+         "id": 41638
+        },
+        {
+         "label": "Mesh - Male",
+         "id": 41639
+        },
+        {
+         "label": "Mesh - T.rex",
+         "id": 41640
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "label": "Material",
+     "items": [
+      {
+       "label": "Assign Material",
+       "id": 41314
+      },
+      {
+       "label": "UnAssign Material",
+       "id": 41324
+      },
+      {
+       "label": "Make Material Local",
+       "id": 41326
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Phong",
+       "id": 40932
+      },
+      {
+       "label": "Lambert",
+       "id": 40933
+      },
+      {
+       "label": "Blinn",
+       "id": 40934
+      },
+      {
+       "label": "Cook-Torrance",
+       "id": 40935
+      },
+      {
+       "label": "Strauss",
+       "id": 40936
+      },
+      {
+       "label": "Anisotropic",
+       "id": 40937
+      },
+      {
+       "label": "Constant",
+       "id": 41066
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "ICE Particle Volume",
+       "id": 41577
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Ambient Occlusion",
+       "id": 41576
+      },
+      {
+       "label": "Architectural",
+       "id": 41568
+      },
+      {
+       "label": "Car Paint",
+       "id": 41570
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Toon Host",
+       "id": 41145
+      },
+      {
+       "label": "Toon Paint",
+       "id": 41144
+      },
+      {
+       "label": "Toon Paint Ambient",
+       "id": 41183
+      },
+      {
+       "label": "Toon Paint and Host",
+       "id": 41143
+      },
+      {
+       "label": "Toon Paint Highlight",
+       "id": 41184
+      },
+      {
+       "label": "Toon Paint Rimlight",
+       "id": 41185
+      },
+      {
+       "label": "Toon Paint Rounded",
+       "id": 41186
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "More...",
+       "id": 40753
+      }
+     ]
+    },
+    {
+     "label": "Property",
+     "items": [
+      {
+       "label": "Texture Projection",
+       "items": [
+        {
+         "label": "Create New Projection...",
+         "id": 40561
+        },
+        {
+         "label": "UV",
+         "id": 40970
+        },
+        {
+         "label": "Planar XY",
+         "id": 40971
+        },
+        {
+         "label": "Planar YZ",
+         "id": 40972
+        },
+        {
+         "label": "Planar XZ",
+         "id": 40973
+        },
+        {
+         "label": "Cylindrical",
+         "id": 40974
+        },
+        {
+         "label": "Spherical",
+         "id": 40975
+        },
+        {
+         "label": "Spatial",
+         "id": 40977
+        },
+        {
+         "label": "Cubic",
+         "id": 41300
+        },
+        {
+         "label": "Camera Projection",
+         "id": 40976
+        },
+        {
+         "label": "Unique UVs (polymesh)",
+         "id": 1900
+        },
+        {
+         "label": "Contour Stretch UVs",
+         "id": 1901
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Connect to Projection",
+         "id": 33177
+        },
+        {
+         "label": "Connect to Support",
+         "id": 33176
+        },
+        {
+         "label": "Constrain Support to Bounding Box",
+         "id": 40203
+        }
+       ]
+      },
+      {
+       "label": "Texture Map",
+       "items": [
+        {
+         "label": "Texture Map",
+         "id": 41101
+        },
+        {
+         "label": "UV",
+         "id": 41102
+        },
+        {
+         "label": "XY",
+         "id": 41103
+        },
+        {
+         "label": "YZ",
+         "id": 41104
+        },
+        {
+         "label": "XZ",
+         "id": 41105
+        },
+        {
+         "label": "Cylindrical",
+         "id": 41106
+        },
+        {
+         "label": "Spherical",
+         "id": 41107
+        },
+        {
+         "label": "Camera",
+         "id": 41108
+        },
+        {
+         "label": "Cubic",
+         "id": 41301
+        },
+        {
+         "label": "Spatial",
+         "id": 41109
+        }
+       ]
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Color At Vertices Map",
+       "id": 40980
+      },
+      {
+       "label": "Render Map",
+       "id": 41095
+      },
+      {
+       "label": "Symmetry Map",
+       "id": 40591
+      },
+      {
+       "label": "User Data Map",
+       "items": [
+        {
+         "label": "New Template",
+         "id": 41177
+        },
+        {
+         "label": "New Template Parameter",
+         "id": 41179
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "New Templated Data Map",
+         "id": 41180
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Set User Data Value",
+         "id": 41181
+        },
+        {
+         "label": "Edit User Data Value",
+         "id": 41182
+        }
+       ]
+      },
+      {
+       "label": "Weight Map",
+       "id": 40248
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "GATOR",
+       "id": 41333
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Map Paint Tools",
+       "items": [
+        {
+         "label": "Paint Tool",
+         "id": 40707
+        },
+        {
+         "label": "Paint Push Tool",
+         "id": 41038
+        },
+        {
+         "label": "Paint Vertex Color Tool",
+         "id": 41070
+        },
+        {
+         "label": "Brush Properties...",
+         "id": 40506
+        }
+       ]
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Annotation",
+       "id": 41067
+      },
+      {
+       "label": "Attribute Display",
+       "id": 40619
+      },
+      {
+       "label": "Display",
+       "id": 40614
+      },
+      {
+       "label": "Polygon Cluster Visibility",
+       "id": 41223
+      },
+      {
+       "label": "Geometry Approximation",
+       "id": 40615
+      },
+      {
+       "label": "Static KineState",
+       "id": 40623
+      },
+      {
+       "label": "Synoptic",
+       "id": 41096
+      },
+      {
+       "label": "Transform Setup",
+       "id": 33178
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Override",
+       "id": 40794
+      },
+      {
+       "label": "Store in Override",
+       "items": [
+        {
+         "label": "Materials",
+         "id": 40903
+        },
+        {
+         "label": "Visibility",
+         "id": 40913
+        },
+        {
+         "label": "Geometry Approximation",
+         "id": 40911
+        },
+        {
+         "label": "Selected Properties",
+         "id": 40912
+        }
+       ]
+      },
+      {
+       "label": "Delete Override",
+       "id": 41071
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "label": "Create",
+   "items": [
+    {
+     "label": "Curve",
+     "items": [
+      {
+       "label": "Draw Cubic by CVs",
+       "id": 40567
+      },
+      {
+       "label": "Draw Cubic by Bezier-Knot Points",
+       "id": 41343
+      },
+      {
+       "label": "Draw Cubic by Knot Points",
+       "id": 32840
+      },
+      {
+       "label": "Draw Linear",
+       "id": 32839
+      },
+      {
+       "label": "Sketch",
+       "id": 40542
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Extract Segment",
+       "id": 40033
+      },
+      {
+       "label": "Extract from Edges",
+       "id": 41313
+      },
+      {
+       "label": "Extract from Surface",
+       "id": 32964
+      },
+      {
+       "label": "Extract from Subcurves",
+       "id": 41099
+      },
+      {
+       "label": "Fit on Curve",
+       "id": 32836
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Blend",
+       "id": 40757
+      },
+      {
+       "label": "Fillet Intersection",
+       "id": 40530
+      },
+      {
+       "label": "Intersect Surfaces",
+       "id": 32914
+      },
+      {
+       "label": "Merge",
+       "id": 40528
+      }
+     ]
+    },
+    {
+     "label": "Surf. Mesh",
+     "items": [
+      {
+       "label": "Birail",
+       "id": 32911
+      },
+      {
+       "label": "Curve Net",
+       "id": 40510
+      },
+      {
+       "label": "Extrusion Along Axis",
+       "id": 41055
+      },
+      {
+       "label": "Extrusion Along Curve",
+       "id": 40036
+      },
+      {
+       "label": "Extrusion - 2 Profiles",
+       "id": 40531
+      },
+      {
+       "label": "Four-Sided",
+       "id": 32922
+      },
+      {
+       "label": "Loft",
+       "id": 32923
+      },
+      {
+       "label": "Revolution Around Axis",
+       "id": 41054
+      },
+      {
+       "label": "Revolution Around Curve",
+       "id": 32918
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Blend",
+       "id": 32913
+      },
+      {
+       "label": "Fit",
+       "id": 40991
+      },
+      {
+       "label": "Fillet Intersection",
+       "id": 32912
+      },
+      {
+       "label": "Merge",
+       "id": 40758
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Assemble",
+       "id": 40755
+      },
+      {
+       "label": "Continuity Manager",
+       "id": 40756
+      },
+      {
+       "label": "Snap Boundary",
+       "id": 40759
+      }
+     ]
+    },
+    {
+     "label": "Poly. Mesh",
+     "items": [
+      {
+       "label": "Birail",
+       "id": 41263
+      },
+      {
+       "label": "Curve Net",
+       "id": 41264
+      },
+      {
+       "label": "Extrusion Along Axis",
+       "id": 41265
+      },
+      {
+       "label": "Extrusion Along Curve",
+       "id": 41266
+      },
+      {
+       "label": "Extrusion - 2 Profiles",
+       "id": 41267
+      },
+      {
+       "label": "Four-Sided",
+       "id": 41268
+      },
+      {
+       "label": "Loft",
+       "id": 41269
+      },
+      {
+       "label": "Revolution Around Axis",
+       "id": 41270
+      },
+      {
+       "label": "Revolution Around Curve",
+       "id": 41271
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Blend",
+       "id": 41024
+      },
+      {
+       "label": "Boolean",
+       "items": [
+        {
+         "label": "Difference",
+         "id": 41046
+        },
+        {
+         "label": "Intersect",
+         "id": 41048
+        },
+        {
+         "label": "Union",
+         "id": 41047
+        }
+       ]
+      },
+      {
+       "label": "Extract Polygons (delete)",
+       "id": 41262
+      },
+      {
+       "label": "Extract Polygons (keep)",
+       "id": 41100
+      },
+      {
+       "label": "Merge",
+       "id": 41023
+      },
+      {
+       "label": "Subdivision",
+       "id": 41040
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Curves To Mesh",
+       "id": 41081
+      },
+      {
+       "label": "Nurbs To Mesh",
+       "id": 41039
+      }
+     ]
+    },
+    {
+     "label": "Skeleton",
+     "items": [
+      {
+       "label": "2D Chain",
+       "id": 40789
+      },
+      {
+       "label": "3D Chain",
+       "id": 40788
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Inspect Chain Properties...",
+       "id": 41178
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Chain Up-Vector",
+       "id": 40930
+      },
+      {
+       "label": "Chain Preferred Axis",
+       "id": 40931
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Add Bone to Chain",
+       "id": 40924
+      },
+      {
+       "label": "Break Chain at Bone",
+       "id": 40927
+      },
+      {
+       "label": "Move Joint/Branch",
+       "id": 41214
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Set Minimum Rotation Limit",
+       "id": 40925
+      },
+      {
+       "label": "Set Maximum Rotation Limit",
+       "id": 40926
+      },
+      {
+       "label": "Reset Bone to Preferred Rotation",
+       "id": 41036
+      },
+      {
+       "label": "Align Root to First Bone",
+       "id": 41211
+      },
+      {
+       "label": "Key All Bone Rotations",
+       "id": 40929
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Create Chain from Curve",
+       "id": 40928
+      },
+      {
+       "label": "Create Spine",
+       "id": 41213
+      },
+      {
+       "label": "Create Tail",
+       "id": 41322
+      },
+      {
+       "label": "Create Control Splines",
+       "id": 41323
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Duplicate Symmetry",
+       "id": 41005
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Store Skeleton Pose",
+       "id": 41010
+      },
+      {
+       "label": "Apply Skeleton Pose",
+       "id": 41011
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Set Neutral Pose",
+       "id": 41310
+      },
+      {
+       "label": "Remove Neutral Pose",
+       "id": 41309
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "SI|3D Skeleton Drawing",
+       "id": 41164
+      },
+      {
+       "label": "Align Root to First Bone When Drawing",
+       "id": 41259
+      }
+     ]
+    },
+    {
+     "label": "Model",
+     "items": [
+      {
+       "label": "New Model",
+       "id": 40787
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "New Referenced Model",
+       "id": 41475
+      },
+      {
+       "label": "New Empty Referenced Model",
+       "id": 41476
+      }
+     ]
+    },
+    {
+     "label": "Text",
+     "items": [
+      {
+       "label": "Curves",
+       "id": 41092
+      },
+      {
+       "label": "Planar Mesh",
+       "id": 41093
+      },
+      {
+       "label": "Solid Mesh",
+       "id": 41094
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "label": "Modify",
+   "items": [
+    {
+     "label": "Component",
+     "items": [
+      {
+       "label": "Move Point Tool",
+       "id": 40823
+      },
+      {
+       "label": "Tweak Component Tool",
+       "id": 40820
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Tweak User Normals Tool",
+       "id": 40880
+      },
+      {
+       "label": "Set User Normals",
+       "items": [
+        {
+         "label": "Average",
+         "id": 40884
+        },
+        {
+         "label": "Vertex",
+         "id": 40885
+        },
+        {
+         "label": "Polygon",
+         "id": 40886
+        },
+        {
+         "label": "Invert",
+         "id": 40887
+        },
+        {
+         "label": "Normalize",
+         "id": 40888
+        },
+        {
+         "label": "Set Value...",
+         "id": 40892
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Copy",
+         "id": 40889
+        },
+        {
+         "label": "Paste",
+         "id": 40890
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Reset",
+         "id": 40881
+        },
+        {
+         "label": "User",
+         "id": 40882
+        },
+        {
+         "label": "Auto",
+         "id": 40883
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Settings...",
+         "id": 40891
+        }
+       ]
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "View Plane Proportional Transform Tool",
+       "id": 40825
+      },
+      {
+       "label": "View Plane Pivot Transform Tool",
+       "id": 40826
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Relative Mode",
+       "id": 41026
+      },
+      {
+       "label": "Proportional",
+       "id": 40249
+      },
+      {
+       "label": "Proportional Setup...",
+       "id": 41030
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Attach/Detach Volume Deform",
+       "id": 41013
+      },
+      {
+       "label": "Inspect Volume Deform...",
+       "id": 40995
+      },
+      {
+       "label": "Volume Deform Setup...",
+       "id": 41012
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Mark Hard Edge/Vertex",
+       "id": 40985
+      },
+      {
+       "label": "Set Edge/Vertex Crease Value",
+       "id": 40986
+      }
+     ]
+    },
+    {
+     "label": "Curve",
+     "items": [
+      {
+       "label": "Tweak Curve",
+       "id": 41334
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Add-Point Tool by CVs",
+       "id": 41306
+      },
+      {
+       "label": "Add-Point Tool by Bezier-Knot Points",
+       "id": 41341
+      },
+      {
+       "label": "Add-Point Tool by Knot Points",
+       "id": 41305
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Delete Point Tool",
+       "id": 33031
+      },
+      {
+       "label": "Remove Knots",
+       "id": 40999
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Align Bezier Handles",
+       "id": 41351
+      },
+      {
+       "label": "Align Bezier Handles Back to Forward",
+       "id": 41355
+      },
+      {
+       "label": "Align Bezier Handles Forward to Back",
+       "id": 41353
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Make Knots Bezier",
+       "id": 41346
+      },
+      {
+       "label": "Make Bezier-Knots Corners",
+       "id": 41349
+      },
+      {
+       "label": "Make Knot Segments Linear",
+       "id": 41361
+      },
+      {
+       "label": "Make Knots Non-Bezier",
+       "id": 41347
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Insert Bezier-Knot",
+       "id": 41360
+      },
+      {
+       "label": "Insert Knot",
+       "id": 40998
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Inverse",
+       "id": 33036
+      },
+      {
+       "label": "Open/Close",
+       "id": 40045
+      },
+      {
+       "label": "Shift U",
+       "id": 33037
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Clean",
+       "id": 40557
+      },
+      {
+       "label": "Raise Degree",
+       "id": 41338
+      },
+      {
+       "label": "Reparameterize",
+       "id": 33174
+      },
+      {
+       "label": "Set Knots Multiplicity",
+       "id": 41335
+      },
+      {
+       "label": "Stitch",
+       "id": 40529
+      }
+     ]
+    },
+    {
+     "label": "Surf. Mesh",
+     "items": [
+      {
+       "label": "Insert Knot Curve",
+       "id": 40955
+      },
+      {
+       "label": "Remove Knot",
+       "id": 40956
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Invert Normals",
+       "id": 33035
+      },
+      {
+       "label": "Open/Close",
+       "id": 40048
+      },
+      {
+       "label": "Shift UV",
+       "id": 33038
+      },
+      {
+       "label": "Swap UV",
+       "id": 33039
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Clean",
+       "id": 40526
+      },
+      {
+       "label": "Reparameterize",
+       "id": 33175
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Extend to Curve",
+       "id": 40525
+      },
+      {
+       "label": "Stitch",
+       "id": 32899
+      },
+      {
+       "label": "Snip",
+       "id": 40993
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Trim by Projection",
+       "id": 41157
+      },
+      {
+       "label": "Delete Trim",
+       "id": 41158
+      }
+     ]
+    },
+    {
+     "label": "Poly. Mesh",
+     "items": [
+      {
+       "label": "Add/Edit Polygon Tool",
+       "id": 40997
+      },
+      {
+       "label": "Add Edge Tool",
+       "id": 41002
+      },
+      {
+       "label": "Add Smooth Edge Loop Tool",
+       "id": 41014
+      },
+      {
+       "label": "Add Vertex Tool",
+       "id": 41072
+      },
+      {
+       "label": "Knife Tool",
+       "id": 41295
+      },
+      {
+       "label": "Split Edge Tool",
+       "id": 41003
+      },
+      {
+       "label": "Split Polygon Tool",
+       "id": 41033
+      },
+      {
+       "label": "Weld Point Tool",
+       "id": 40824
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Bevel Components",
+       "id": 41004
+      },
+      {
+       "label": "Collapse Components",
+       "id": 40984
+      },
+      {
+       "label": "Delete Components",
+       "id": 41000
+      },
+      {
+       "label": "Disconnect Components",
+       "id": 41261
+      },
+      {
+       "label": "Dissolve Components",
+       "id": 41056
+      },
+      {
+       "label": "Dissolve and Clean Adjacent Vertices",
+       "id": 41238
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Duplicate Polygons",
+       "id": 41303
+      },
+      {
+       "label": "Duplicate Polygons Along Curve",
+       "id": 41304
+      },
+      {
+       "label": "Extrude Along Normal",
+       "id": 41016
+      },
+      {
+       "label": "Extrude Along Axis",
+       "id": 41007
+      },
+      {
+       "label": "Extrude Along Curve",
+       "id": 41006
+      },
+      {
+       "label": "Inset Polygons",
+       "id": 41276
+      },
+      {
+       "label": "Offset Polygons Contour",
+       "id": 41277
+      },
+      {
+       "label": "Apply Thickness",
+       "id": 41641
+      },
+      {
+       "label": "Apply Slice Between Two Vertices",
+       "id": 41643
+      },
+      {
+       "label": "Cap Hole",
+       "id": 41642
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Split Edges (with split control)",
+       "id": 41025
+      },
+      {
+       "label": "Subdivide Polygons/Edges",
+       "id": 40996
+      },
+      {
+       "label": "Local Subdivision Refinement",
+       "id": 41035
+      },
+      {
+       "label": "Bridge Polygons",
+       "id": 41032
+      },
+      {
+       "label": "Dice Polygons",
+       "id": 41297
+      },
+      {
+       "label": "Invert Polygons",
+       "id": 41034
+      },
+      {
+       "label": "Slice Polygons",
+       "id": 41279
+      },
+      {
+       "label": "Symmetrize Polygons",
+       "id": 41258
+      },
+      {
+       "label": "Spin Edges",
+       "id": 41592
+      },
+      {
+       "label": "Turn Polygon Internal Edges",
+       "id": 41583
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Boolean",
+       "items": [
+        {
+         "label": "Difference",
+         "id": 41043
+        },
+        {
+         "label": "Intersect",
+         "id": 41045
+        },
+        {
+         "label": "Union",
+         "id": 41044
+        }
+       ]
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Filter Edges",
+       "id": 41116
+      },
+      {
+       "label": "Filter Points",
+       "id": 41311
+      },
+      {
+       "label": "Filter Polygons",
+       "id": 41084
+      },
+      {
+       "label": "Polygon Reduction",
+       "id": 41294
+      },
+      {
+       "label": "Quadrangulate",
+       "id": 41260
+      },
+      {
+       "label": "Triangulate",
+       "id": 41272
+      },
+      {
+       "label": "Weld Points To Target",
+       "id": 41138
+      },
+      {
+       "label": "Weld Boundary Points/Edges",
+       "id": 41139
+      },
+      {
+       "label": "Bridge Boundary Points/Edges",
+       "id": 41147
+      }
+     ]
+    },
+    {
+     "label": "Deform",
+     "items": [
+      {
+       "label": "by Curve",
+       "id": 32958
+      },
+      {
+       "label": "by Cage",
+       "id": 41080
+      },
+      {
+       "label": "by Lattice",
+       "id": 32960
+      },
+      {
+       "label": "by Spine",
+       "id": 40709
+      },
+      {
+       "label": "by Surface",
+       "id": 32959
+      },
+      {
+       "label": "by Volume",
+       "id": 41089
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Bend",
+       "id": 32953
+      },
+      {
+       "label": "Bulge",
+       "id": 40142
+      },
+      {
+       "label": "Shear",
+       "id": 40143
+      },
+      {
+       "label": "Taper",
+       "id": 32955
+      },
+      {
+       "label": "Twist",
+       "id": 32954
+      },
+      {
+       "label": "Fold",
+       "id": 41369
+      },
+      {
+       "label": "Footprints  (ice)",
+       "id": 41557
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Push",
+       "id": 40568
+      },
+      {
+       "label": "Relax",
+       "id": 41298
+      },
+      {
+       "label": "Smooth",
+       "id": 41273
+      },
+      {
+       "label": "Shrink Wrap",
+       "id": 40901
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Quick Stretch",
+       "id": 32951
+      },
+      {
+       "label": "Wave",
+       "id": 32961
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Randomize",
+       "id": 32962
+      },
+      {
+       "label": "Shape Jitter",
+       "id": 32963
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Cluster Center",
+       "id": 40730
+      }
+     ]
+    },
+    {
+     "label": "Model",
+     "items": [
+      {
+       "label": "Convert To Reference...",
+       "id": 41456
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Update Referenced Model",
+       "id": 41028
+      },
+      {
+       "label": "Set Resolution",
+       "items": [
+        {
+         "label": "OffLoaded",
+         "id": 41215
+        },
+        {
+         "label": "First Resolution",
+         "id": 41216
+        },
+        {
+         "label": "Second Resolution",
+         "id": 41217
+        },
+        {
+         "label": "Third Resolution",
+         "id": 41218
+        }
+       ]
+      },
+      {
+       "label": "Make Referenced Model Local",
+       "id": 41029
+      },
+      {
+       "label": "Advanced",
+       "items": [
+        {
+         "label": "Commit To Reference",
+         "id": 41455
+        }
+       ]
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Add Empty Delta",
+       "id": 41548
+      },
+      {
+       "label": "Import Delta",
+       "id": 41457
+      },
+      {
+       "label": "Export Delta",
+       "id": 41458
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "Animate": [
+  {
+   "label": "Get",
+   "items": [
+    {
+     "label": "Primitive",
+     "items": [
+      {
+       "label": "Null",
+       "id": 32823
+      },
+      {
+       "label": "Curve",
+       "items": [
+        {
+         "label": "Arc",
+         "id": 32834
+        },
+        {
+         "label": "Circle",
+         "id": 32837
+        },
+        {
+         "label": "Spiral",
+         "id": 32841
+        },
+        {
+         "label": "Square",
+         "id": 32842
+        }
+       ]
+      },
+      {
+       "label": "Polygon Mesh",
+       "items": [
+        {
+         "label": "Cone",
+         "id": 32844
+        },
+        {
+         "label": "Cube",
+         "id": 32845
+        },
+        {
+         "label": "Cylinder",
+         "id": 32846
+        },
+        {
+         "label": "Disc",
+         "id": 32847
+        },
+        {
+         "label": "Grid",
+         "id": 32850
+        },
+        {
+         "label": "Sphere",
+         "id": 32855
+        },
+        {
+         "label": "Torus",
+         "id": 32853
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Dodecahedron",
+         "id": 32848
+        },
+        {
+         "label": "Icosahedron",
+         "id": 32851
+        },
+        {
+         "label": "Octahedron",
+         "id": 32852
+        },
+        {
+         "label": "Tetrahedron",
+         "id": 32857
+        },
+        {
+         "label": "Rhombicosidodecahedron",
+         "id": 41137
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Soccer Ball",
+         "id": 41136
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Empty",
+         "id": 41547
+        }
+       ]
+      },
+      {
+       "label": "Surface",
+       "items": [
+        {
+         "label": "Cone",
+         "id": 32858
+        },
+        {
+         "label": "Cube",
+         "id": 32859
+        },
+        {
+         "label": "Cylinder",
+         "id": 32860
+        },
+        {
+         "label": "Disc",
+         "id": 32861
+        },
+        {
+         "label": "Grid",
+         "id": 32862
+        },
+        {
+         "label": "Sphere",
+         "id": 32863
+        },
+        {
+         "label": "Torus",
+         "id": 32865
+        }
+       ]
+      },
+      {
+       "label": "Point Cloud",
+       "items": [
+        {
+         "label": "Cone",
+         "id": 41531
+        },
+        {
+         "label": "Cube",
+         "id": 41532
+        },
+        {
+         "label": "Cylinder",
+         "id": 41533
+        },
+        {
+         "label": "Disc",
+         "id": 41534
+        },
+        {
+         "label": "Grid",
+         "id": 41535
+        },
+        {
+         "label": "Sphere",
+         "id": 41536
+        },
+        {
+         "label": "Torus",
+         "id": 41537
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Empty",
+         "id": 41546
+        }
+       ]
+      },
+      {
+       "label": "Implicit",
+       "items": [
+        {
+         "label": "Arc",
+         "id": 33020
+        },
+        {
+         "label": "Circle",
+         "id": 33019
+        },
+        {
+         "label": "Spiral",
+         "id": 33021
+        },
+        {
+         "label": "Square",
+         "id": 33026
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Bone",
+         "id": 33024
+        },
+        {
+         "label": "Cone",
+         "id": 33023
+        },
+        {
+         "label": "Cube",
+         "id": 33018
+        },
+        {
+         "label": "Cylinder",
+         "id": 33025
+        },
+        {
+         "label": "Disc",
+         "id": 40190
+        },
+        {
+         "label": "Grid",
+         "id": 33017
+        },
+        {
+         "label": "Sphere",
+         "id": 33015
+        },
+        {
+         "label": "Torus",
+         "id": 33016
+        }
+       ]
+      },
+      {
+       "label": "Control Object",
+       "items": [
+        {
+         "label": "Wave",
+         "id": 40034
+        },
+        {
+         "label": "Volume Deform",
+         "id": 41090
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Attractor",
+         "id": 40908
+        },
+        {
+         "label": "Drag",
+         "id": 41155
+        },
+        {
+         "label": "Eddy",
+         "id": 41117
+        },
+        {
+         "label": "Fan",
+         "id": 41118
+        },
+        {
+         "label": "Gravity",
+         "id": 40906
+        },
+        {
+         "label": "Turbulence",
+         "id": 41156
+        },
+        {
+         "label": "Vortex",
+         "id": 40909
+        },
+        {
+         "label": "Wind",
+         "id": 40907
+        }
+       ]
+      },
+      {
+       "label": "Lattice",
+       "id": 33040
+      },
+      {
+       "label": "Stand-in",
+       "id": 41554
+      },
+      {
+       "label": "Geometry Shader Primitive",
+       "id": 41171
+      },
+      {
+       "label": "Annotation",
+       "id": 41633
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Camera",
+       "items": [
+        {
+         "label": "Perspective",
+         "id": 32891
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Telephoto",
+         "id": 40638
+        },
+        {
+         "label": "Wide Angle",
+         "id": 40639
+        },
+        {
+         "label": "Orthographic",
+         "id": 40640
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "More...",
+         "id": 40586
+        }
+       ]
+      },
+      {
+       "label": "Light",
+       "items": [
+        {
+         "label": "Infinite",
+         "id": 40648
+        },
+        {
+         "label": "Light Box",
+         "id": 40644
+        },
+        {
+         "label": "Neon",
+         "id": 40587
+        },
+        {
+         "label": "Point",
+         "id": 40649
+        },
+        {
+         "label": "Spot",
+         "id": 40650
+        },
+        {
+         "label": "Flat",
+         "id": 41591
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "More...",
+         "id": 40590
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Associate Light",
+         "id": 41190
+        },
+        {
+         "label": "Light Rig from Image",
+         "id": 41256
+        }
+       ]
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Model",
+       "items": [
+        {
+         "label": "Skeleton - Man - Basic",
+         "id": 41073
+        },
+        {
+         "label": "Skeleton - Man - Complete",
+         "id": 41074
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Skeleton - Woman - Basic",
+         "id": 41076
+        },
+        {
+         "label": "Skeleton - Woman - Complete",
+         "id": 41077
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Biped - Box",
+         "id": 41227
+        },
+        {
+         "label": "Biped - SI|3D Skeleton",
+         "id": 41228
+        },
+        {
+         "label": "Biped - Skeleton",
+         "id": 41229
+        },
+        {
+         "label": "Biped - Rig",
+         "id": 41230
+        },
+        {
+         "label": "Quadruped - Rig",
+         "id": 41231
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Body - Man",
+         "id": 41060
+        },
+        {
+         "label": "Body - Woman",
+         "id": 41061
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Face - Man",
+         "id": 41042
+        },
+        {
+         "label": "Face - Woman",
+         "id": 41068
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Character - Man",
+         "id": 41255
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Mesh - Bull",
+         "id": 41634
+        },
+        {
+         "label": "Mesh - Car",
+         "id": 41635
+        },
+        {
+         "label": "Mesh - Fish",
+         "id": 41636
+        },
+        {
+         "label": "Mesh - Horse",
+         "id": 41637
+        },
+        {
+         "label": "Mesh - Lizard",
+         "id": 41638
+        },
+        {
+         "label": "Mesh - Male",
+         "id": 41639
+        },
+        {
+         "label": "Mesh - T.rex",
+         "id": 41640
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "label": "Material",
+     "items": [
+      {
+       "label": "Assign Material",
+       "id": 41314
+      },
+      {
+       "label": "UnAssign Material",
+       "id": 41324
+      },
+      {
+       "label": "Make Material Local",
+       "id": 41326
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Phong",
+       "id": 40932
+      },
+      {
+       "label": "Lambert",
+       "id": 40933
+      },
+      {
+       "label": "Blinn",
+       "id": 40934
+      },
+      {
+       "label": "Cook-Torrance",
+       "id": 40935
+      },
+      {
+       "label": "Strauss",
+       "id": 40936
+      },
+      {
+       "label": "Anisotropic",
+       "id": 40937
+      },
+      {
+       "label": "Constant",
+       "id": 41066
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "ICE Particle Volume",
+       "id": 41577
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Ambient Occlusion",
+       "id": 41576
+      },
+      {
+       "label": "Architectural",
+       "id": 41568
+      },
+      {
+       "label": "Car Paint",
+       "id": 41570
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Toon Host",
+       "id": 41145
+      },
+      {
+       "label": "Toon Paint",
+       "id": 41144
+      },
+      {
+       "label": "Toon Paint Ambient",
+       "id": 41183
+      },
+      {
+       "label": "Toon Paint and Host",
+       "id": 41143
+      },
+      {
+       "label": "Toon Paint Highlight",
+       "id": 41184
+      },
+      {
+       "label": "Toon Paint Rimlight",
+       "id": 41185
+      },
+      {
+       "label": "Toon Paint Rounded",
+       "id": 41186
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "More...",
+       "id": 40753
+      }
+     ]
+    },
+    {
+     "label": "Property",
+     "items": [
+      {
+       "label": "Texture Projection",
+       "items": [
+        {
+         "label": "Create New Projection...",
+         "id": 40561
+        },
+        {
+         "label": "UV",
+         "id": 40970
+        },
+        {
+         "label": "Planar XY",
+         "id": 40971
+        },
+        {
+         "label": "Planar YZ",
+         "id": 40972
+        },
+        {
+         "label": "Planar XZ",
+         "id": 40973
+        },
+        {
+         "label": "Cylindrical",
+         "id": 40974
+        },
+        {
+         "label": "Spherical",
+         "id": 40975
+        },
+        {
+         "label": "Spatial",
+         "id": 40977
+        },
+        {
+         "label": "Cubic",
+         "id": 41300
+        },
+        {
+         "label": "Camera Projection",
+         "id": 40976
+        },
+        {
+         "label": "Unique UVs (polymesh)",
+         "id": 1900
+        },
+        {
+         "label": "Contour Stretch UVs",
+         "id": 1901
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Connect to Projection",
+         "id": 33177
+        },
+        {
+         "label": "Connect to Support",
+         "id": 33176
+        },
+        {
+         "label": "Constrain Support to Bounding Box",
+         "id": 40203
+        }
+       ]
+      },
+      {
+       "label": "Texture Map",
+       "items": [
+        {
+         "label": "Texture Map",
+         "id": 41101
+        },
+        {
+         "label": "UV",
+         "id": 41102
+        },
+        {
+         "label": "XY",
+         "id": 41103
+        },
+        {
+         "label": "YZ",
+         "id": 41104
+        },
+        {
+         "label": "XZ",
+         "id": 41105
+        },
+        {
+         "label": "Cylindrical",
+         "id": 41106
+        },
+        {
+         "label": "Spherical",
+         "id": 41107
+        },
+        {
+         "label": "Camera",
+         "id": 41108
+        },
+        {
+         "label": "Cubic",
+         "id": 41301
+        },
+        {
+         "label": "Spatial",
+         "id": 41109
+        }
+       ]
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Color At Vertices Map",
+       "id": 40980
+      },
+      {
+       "label": "Render Map",
+       "id": 41095
+      },
+      {
+       "label": "Symmetry Map",
+       "id": 40591
+      },
+      {
+       "label": "User Data Map",
+       "items": [
+        {
+         "label": "New Template",
+         "id": 41177
+        },
+        {
+         "label": "New Template Parameter",
+         "id": 41179
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "New Templated Data Map",
+         "id": 41180
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "Set User Data Value",
+         "id": 41181
+        },
+        {
+         "label": "Edit User Data Value",
+         "id": 41182
+        }
+       ]
+      },
+      {
+       "label": "Weight Map",
+       "id": 40248
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "GATOR",
+       "id": 41333
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Map Paint Tools",
+       "items": [
+        {
+         "label": "Paint Tool",
+         "id": 40707
+        },
+        {
+         "label": "Paint Push Tool",
+         "id": 41038
+        },
+        {
+         "label": "Paint Vertex Color Tool",
+         "id": 41070
+        },
+        {
+         "label": "Brush Properties...",
+         "id": 40506
+        }
+       ]
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Annotation",
+       "id": 41067
+      },
+      {
+       "label": "Attribute Display",
+       "id": 40619
+      },
+      {
+       "label": "Display",
+       "id": 40614
+      },
+      {
+       "label": "Polygon Cluster Visibility",
+       "id": 41223
+      },
+      {
+       "label": "Geometry Approximation",
+       "id": 40615
+      },
+      {
+       "label": "Static KineState",
+       "id": 40623
+      },
+      {
+       "label": "Synoptic",
+       "id": 41096
+      },
+      {
+       "label": "Transform Setup",
+       "id": 33178
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Override",
+       "id": 40794
+      },
+      {
+       "label": "Store in Override",
+       "items": [
+        {
+         "label": "Materials",
+         "id": 40903
+        },
+        {
+         "label": "Visibility",
+         "id": 40913
+        },
+        {
+         "label": "Geometry Approximation",
+         "id": 40911
+        },
+        {
+         "label": "Selected Properties",
+         "id": 40912
+        }
+       ]
+      },
+      {
+       "label": "Delete Override",
+       "id": 41071
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "label": "Create",
+   "items": [
+    {
+     "label": "Parameter",
+     "items": [
+      {
+       "label": "New Custom Parameter Set",
+       "id": 40711
+      },
+      {
+       "label": "Edit Custom Parameter Sets...",
+       "id": 40786
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "New Custom Parameter",
+       "id": 40170
+      },
+      {
+       "label": "Remove Custom Parameter",
+       "id": 40797
+      },
+      {
+       "label": "Edit Parameter Definition...",
+       "id": 40144
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Set Expression...",
+       "id": 40171
+      },
+      {
+       "label": "Edit Expression...",
+       "id": 40166
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "New Proxy Parameter",
+       "id": 40989
+      },
+      {
+       "label": "Remove Proxy Parameter",
+       "id": 40990
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "New DisplayInfo from Marked Parameters",
+       "id": 41187
+      },
+      {
+       "label": "Randomize Marked Parameters",
+       "items": [
+        {
+         "label": "10% Relative",
+         "id": 41172
+        },
+        {
+         "label": "25% Relative",
+         "id": 41173
+        },
+        {
+         "label": "50% Relative",
+         "id": 41174
+        },
+        {
+         "separator": true
+        },
+        {
+         "label": "75% Absolute",
+         "id": 41175
+        },
+        {
+         "label": "100%  Absolute",
+         "id": 41176
+        }
+       ]
+      },
+      {
+       "label": "Sample/Bracket Parameter Values...",
+       "id": 41188
+      }
+     ]
+    },
+    {
+     "label": "Curve",
+     "items": [
+      {
+       "label": "Draw Cubic by CVs",
+       "id": 40567
+      },
+      {
+       "label": "Draw Cubic by Bezier-Knot Points",
+       "id": 41343
+      },
+      {
+       "label": "Draw Cubic by Knot Points",
+       "id": 32840
+      },
+      {
+       "label": "Draw Linear",
+       "id": 32839
+      },
+      {
+       "label": "Sketch",
+       "id": 40542
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Extract Segment",
+       "id": 40033
+      },
+      {
+       "label": "Extract from Edges",
+       "id": 41313
+      },
+      {
+       "label": "Extract from Surface",
+       "id": 32964
+      },
+      {
+       "label": "Extract from Subcurves",
+       "id": 41099
+      },
+      {
+       "label": "Fit on Curve",
+       "id": 32836
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Blend",
+       "id": 40757
+      },
+      {
+       "label": "Fillet Intersection",
+       "id": 40530
+      },
+      {
+       "label": "Intersect Surfaces",
+       "id": 32914
+      },
+      {
+       "label": "Merge",
+       "id": 40528
+      }
+     ]
+    },
+    {
+     "label": "Path",
+     "items": [
+      {
+       "label": "Set Path",
+       "id": 40177
+      },
+      {
+       "label": "Set Trajectory",
+       "id": 40178
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Save Key on Path",
+       "id": 40749
+      },
+      {
+       "label": "Save Locked Key on Path",
+       "id": 40750
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Convert Position Fcurves to Path",
+       "id": 40176
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Path Retime",
+       "id": 41082
+      }
+     ]
+    },
+    {
+     "label": "Skeleton",
+     "items": [
+      {
+       "label": "Draw 2D Chain",
+       "id": 40789
+      },
+      {
+       "label": "Draw 3D Chain",
+       "id": 40788
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Inspect Chain Properties...",
+       "id": 41178
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Chain Up Vector",
+       "id": 40930
+      },
+      {
+       "label": "Chain Preferred Axis",
+       "id": 40931
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Add Bone to Chain",
+       "id": 40924
+      },
+      {
+       "label": "Break Chain at Bone",
+       "id": 40927
+      },
+      {
+       "label": "Move Joint/Branch",
+       "id": 41214
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Set Minimum Rotation Limit",
+       "id": 40925
+      },
+      {
+       "label": "Set Maximum Rotation Limit",
+       "id": 40926
+      },
+      {
+       "label": "Reset Bone to Preferred Rotation",
+       "id": 41036
+      },
+      {
+       "label": "Align Root to First Bone",
+       "id": 41211
+      },
+      {
+       "label": "Key All Bone Rotations",
+       "id": 40929
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Create Chain from Curve",
+       "id": 40928
+      },
+      {
+       "label": "Create Spine",
+       "id": 41213
+      },
+      {
+       "label": "Create Tail",
+       "id": 41322
+      },
+      {
+       "label": "Create Control Splines",
+       "id": 41323
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Duplicate Symmetry",
+       "id": 41005
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Store Skeleton Pose",
+       "id": 41010
+      },
+      {
+       "label": "Apply Skeleton Pose",
+       "id": 41011
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Set Neutral Pose",
+       "id": 41310
+      },
+      {
+       "label": "Remove Neutral Pose",
+       "id": 41309
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "SI|3D Skeleton Drawing",
+       "id": 41164
+      },
+      {
+       "label": "Align Root to First Bone When Drawing",
+       "id": 41259
+      }
+     ]
+    },
+    {
+     "label": "Character",
+     "items": [
+      {
+       "label": "Biped Guide",
+       "id": 41123
+      },
+      {
+       "label": "Biped Dog Leg Guide",
+       "id": 41315
+      },
+      {
+       "label": "Quadruped Guide",
+       "id": 41197
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Rig from Biped Guide",
+       "id": 41130
+      },
+      {
+       "label": "Rig from Biped Dog Leg Guide",
+       "id": 41316
+      },
+      {
+       "label": "Rig from Quadruped Guide",
+       "id": 41199
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Hierarchy from Guide",
+       "id": 41200
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Biped Tags",
+       "items": [
+        {
+         "label": "Center of Gravity",
+         "id": 41201
+        },
+        {
+         "label": "Left Foot",
+         "id": 41202
+        },
+        {
+         "label": "Right Foot",
+         "id": 41203
+        }
+       ]
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Biped - Define Step Marks",
+       "id": 41204
+      },
+      {
+       "label": "Biped - Deform Motion",
+       "id": 41205
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Constraints Outside Model Boundaries",
+       "items": [
+        {
+         "label": "Select",
+         "id": 41206
+        },
+        {
+         "label": "Activate",
+         "id": 41208
+        },
+        {
+         "label": "Deactivate",
+         "id": 41207
+        },
+        {
+         "label": "Remove",
+         "id": 41209
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "label": "Deform",
+   "items": [
+    {
+     "label": "Shape",
+     "items": [
+      {
+       "label": "Shape Manager...",
+       "id": 41336
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Store and Apply Shape Key",
+       "id": 40773
+      },
+      {
+       "label": "Store Shape Key",
+       "id": 40772
+      },
+      {
+       "label": "Select Shape Key",
+       "id": 40774
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Replace Shape Key",
+       "id": 40775
+      },
+      {
+       "label": "Apply Shape Key",
+       "id": 40776
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Modulate Shape Key with Weight Map",
+       "id": 40090
+      },
+      {
+       "label": "Convert Shape Reference Mode...",
+       "id": 41146
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Deform Keys",
+       "items": [
+        {
+         "label": "Link Deform with...",
+         "id": 41112
+        },
+        {
+         "label": "Link Deform with Orientation...",
+         "id": 41115
+        },
+        {
+         "label": "Save Deform Key",
+         "id": 41113
+        },
+        {
+         "label": "Apply Deform Key",
+         "id": 41114
+        }
+       ]
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Preferences...",
+       "id": 41337
+      }
+     ]
+    },
+    {
+     "label": "Envelope",
+     "items": [
+      {
+       "label": "Set Envelope",
+       "id": 40101
+      },
+      {
+       "label": "Set Reference Poses",
+       "id": 40900
+      },
+      {
+       "label": "Reset Actor",
+       "id": 41098
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Reassign Locally",
+       "id": 40754
+      },
+      {
+       "label": "Assign to No Deformer",
+       "id": 40917
+      },
+      {
+       "label": "Edit Weights...",
+       "id": 40918
+      },
+      {
+       "label": "Smooth Envelope Weights",
+       "id": 41079
+      },
+      {
+       "label": "Mirror Weights",
+       "id": 41119
+      },
+      {
+       "label": "Create Symmetry Mapping Template",
+       "id": 41120
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Lock Weights",
+       "id": 41329
+      },
+      {
+       "label": "Unlock Weights",
+       "id": 41330
+      },
+      {
+       "label": "Clear Weight Locks",
+       "id": 41331
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Remove Deformers",
+       "id": 40920
+      },
+      {
+       "label": "Remove Envelope",
+       "id": 40919
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Select Deformer from Envelope",
+       "id": 41189
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Create Bounding Volume",
+       "items": [
+        {
+         "label": "Box",
+         "id": 41194
+        },
+        {
+         "label": "Sphere",
+         "id": 41195
+        }
+       ]
+      },
+      {
+       "label": "Associate Bounding Volume",
+       "items": [
+        {
+         "label": "Inclusive",
+         "id": 41191
+        },
+        {
+         "label": "Exclusive",
+         "id": 41192
+        },
+        {
+         "label": "Limit",
+         "id": 41193
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "label": "Deform",
+     "items": [
+      {
+       "label": "by Curve",
+       "id": 32958
+      },
+      {
+       "label": "by Cage",
+       "id": 41080
+      },
+      {
+       "label": "by Lattice",
+       "id": 32960
+      },
+      {
+       "label": "by Spine",
+       "id": 40709
+      },
+      {
+       "label": "by Surface",
+       "id": 32959
+      },
+      {
+       "label": "by Volume",
+       "id": 41089
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Bend",
+       "id": 32953
+      },
+      {
+       "label": "Bulge",
+       "id": 40142
+      },
+      {
+       "label": "Shear",
+       "id": 40143
+      },
+      {
+       "label": "Taper",
+       "id": 32955
+      },
+      {
+       "label": "Twist",
+       "id": 32954
+      },
+      {
+       "label": "Fold",
+       "id": 41369
+      },
+      {
+       "label": "Footprints  (ice)",
+       "id": 41557
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Push",
+       "id": 40568
+      },
+      {
+       "label": "Relax",
+       "id": 41298
+      },
+      {
+       "label": "Smooth",
+       "id": 41273
+      },
+      {
+       "label": "Shrink Wrap",
+       "id": 40901
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Quick Stretch",
+       "id": 32951
+      },
+      {
+       "label": "Wave",
+       "id": 32961
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Randomize",
+       "id": 32962
+      },
+      {
+       "label": "Shape Jitter",
+       "id": 32963
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Cluster Center",
+       "id": 40730
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "label": "Actions",
+   "items": [
+    {
+     "label": "Store",
+     "items": [
+      {
+       "label": "Transformations - Current Values",
+       "id": 40760
+      },
+      {
+       "label": "Marked Parameters - Current Values",
+       "id": 40766
+      },
+      {
+       "label": "Keyable Parameters - Current Values",
+       "id": 41472
+      },
+      {
+       "label": "Character Key Set - Current Values",
+       "id": 41525
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Transformations - Fcurves",
+       "id": 40769
+      },
+      {
+       "label": "Marked Parameters - Fcurves",
+       "id": 40768
+      },
+      {
+       "label": "Animated Parameters - Fcurves",
+       "id": 41008
+      },
+      {
+       "label": "Keyable Parameters - Fcurves",
+       "id": 41471
+      },
+      {
+       "label": "Character Key Set - Fcurves",
+       "id": 41526
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Transformations - All Sources",
+       "id": 40767
+      },
+      {
+       "label": "Marked Parameters - All Sources",
+       "id": 40762
+      },
+      {
+       "label": "Animated Parameters - Fcurves  Expressions",
+       "id": 41009
+      },
+      {
+       "label": "Keyable Parameters - All Sources",
+       "id": 41528
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Local Transformations - Animation or Current Values",
+       "id": 41148
+      },
+      {
+       "label": "Marked Parameters - Animation or Current Values",
+       "id": 41149
+      },
+      {
+       "label": "Keyable Parameters - Animation or Current Values",
+       "id": 41524
+      },
+      {
+       "label": "Character Key Set - Animation or Current Values",
+       "id": 41527
+      }
+     ]
+    },
+    {
+     "label": "Apply",
+     "items": [
+      {
+       "label": "Action",
+       "id": 40763
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Paste Action...",
+       "id": 41222
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Reconnect Animation Mixer",
+       "id": 41240
+      }
+     ]
+    },
+    {
+     "label": "Templates",
+     "items": [
+      {
+       "label": "Create Empty Cnx Template",
+       "id": 40809
+      },
+      {
+       "label": "Create Empty Value Template",
+       "id": 40810
+      },
+      {
+       "label": "Create Connection Template",
+       "id": 40798
+      },
+      {
+       "label": "Create Value Template",
+       "id": 40799
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "label": "Tools",
+   "items": [
+    {
+     "label": "Plot",
+     "items": [
+      {
+       "label": "All Transformations",
+       "id": 40181
+      },
+      {
+       "label": "Shearing and SRT",
+       "id": 41529
+      },
+      {
+       "label": "Rotations",
+       "id": 41166
+      },
+      {
+       "label": "Positions",
+       "id": 41167
+      },
+      {
+       "label": "Marked Parameters",
+       "id": 40183
+      },
+      {
+       "label": "Keyable Parameters",
+       "id": 41521
+      },
+      {
+       "label": "Constrained Transforms",
+       "id": 41224
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Shape",
+       "id": 40182
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Curve",
+       "id": 40180
+      }
+     ]
+    },
+    {
+     "label": "Devices",
+     "items": [
+      {
+       "label": "Manage Device Drivers",
+       "id": 41233
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Start Capture",
+       "id": 41234
+      },
+      {
+       "label": "Stop Capture",
+       "id": 41235
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Enable All Devices",
+       "id": 41237
+      },
+      {
+       "label": "Disable All Devices",
+       "id": 41239
+      }
+     ]
+    },
+    {
+     "label": "Import/Export",
+     "items": [
+      {
+       "label": "Import Mixer (replace)",
+       "id": 41168
+      },
+      {
+       "label": "Import Action",
+       "id": 40765
+      },
+      {
+       "label": "Import Referenced Action",
+       "id": 41325
+      },
+      {
+       "separator": true
+      },
+      {
+       "label": "Export Mixer",
+       "id": 41169
+      },
+      {
+       "label": "Export Action",
+       "id": 40764
+      }
+     ]
+    },
+    {
+     "label": "MOTOR",
+     "items": [
+      {
+       "label": "Anchor-to-Delete",
+       "id": 41522
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

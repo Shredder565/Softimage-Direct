@@ -1,0 +1,655 @@
+{
+ "toolbars": [], 
+ "layouts": [], 
+ "version": "13.2.163.0", 
+ "preferences": [
+  "preferences.animation_editor", 
+  "preferences.animation_mixer", 
+  "preferences.camera_sequencer", 
+  "preferences.dopesheet", 
+  "preferences.explorer", 
+  "preferences.fcurve_editor", 
+  "preferences.keying_panel", 
+  "preferences.layercontrol", 
+  "preferences.MaterialManager", 
+  "preferences.MaterialPanel", 
+  "preferences.icetree", 
+  "preferences.netview", 
+  "preferences.objectview", 
+  "preferences.SceneDebugging", 
+  "preferences.preset_manager", 
+  "preferences.render_tree", 
+  "preferences.scene_search", 
+  "preferences.schematic", 
+  "preferences.scripteditor", 
+  "preferences.texture_editor", 
+  "preferences.texture_layer_editor", 
+  "preferences.weighteditor", 
+  "preferences.xsi_explorer", 
+  "preferences.Cg_Display", 
+  "preferences.ICEOperators", 
+  "preferences.duplicate", 
+  "preferences.transformgroup", 
+  "preferences.Camera", 
+  "preferences.Polygon", 
+  "preferences.Select", 
+  "preferences.SnapProperties", 
+  "preferences.SymmetryProperties", 
+  "preferences.TransformProperties", 
+  "preferences.Tweak", 
+  "preferences.TweakNormals", 
+  "preferences.animation", 
+  "preferences.shape_animation", 
+  "preferences.Compositing", 
+  "preferences.data_management", 
+  "preferences.plugin_manager", 
+  "preferences.Display", 
+  "preferences.General", 
+  "preferences.FaceRobot", 
+  "preferences.Interaction", 
+  "preferences.modeling", 
+  "preferences.output_format", 
+  "preferences.rendering", 
+  "preferences.shaderball", 
+  "preferences.Scenecolors", 
+  "preferences.scripting", 
+  "preferences.simulation", 
+  "preferences.time", 
+  "preferences.units", 
+  "preferences.ViewCube"
+ ], 
+ "filters": [
+  {
+   "type": "Filter3DObjectType", 
+   "name": "object"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Null"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Curve"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "PolygonMesh"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "SurfaceMesh"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "PointCloud"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Implicit"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Geometry"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "SceneObject"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Annotation_Object"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Model"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "UserGroup"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Transform_Group"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Light"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Camera"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "TextureControl"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "ControlObject"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Lattice"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "ChainElement"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Bone"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Effector"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Chain_Root"
+  }, 
+  {
+   "type": "FilterPropertyType", 
+   "name": "Joint"
+  }, 
+  {
+   "type": "FilterPropertyType", 
+   "name": "Constraint"
+  }, 
+  {
+   "type": "FilterPropertyType", 
+   "name": "Operator"
+  }, 
+  {
+   "type": "FilterPropertyType", 
+   "name": "MaterialProperty"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "CurveBoundary"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "TrimCurve"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Edge"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Polygon"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "SurfaceCurve"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "NonImplicitSurface"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "AnyCurve"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "CurvePoint"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "PolygonMeshComponent"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "CurveOrAnytingOnACurve"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "PolygonMeshOrEdge"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "PolygonMeshOrPolygon"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "CurveListSubCurves"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "PolygonMeshOrVertex"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "ReferencePlaneObject"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "TwoOrMoreBorderEdges"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "NURBSCurveKnot"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "NURBSCurveOrCurveKnot"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "AnyCluster"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "center"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "ClusterProperty"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "CurveOnSurface"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "DeletableNURBSCurveCV"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "NURBSCurvePoint"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "NURBSBoundary"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "OneVertex"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "MeshComponent"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "NURBSCurveCV"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "NURBSSubCurve"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "ParticlePoint"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "PolygonMeshComponentOrCluster"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "PolygonMeshVertex"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "TwoMeshEdges"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "TwoMeshPoints"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "TwoVertice"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Vertex"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Anything"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Cluster"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "BoundingVolumeObject"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "DeformableComponent"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "DeformSimulation"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Group"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "layer"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "lightpartition"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "NURBSCurve"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "NURBSCurveList"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "NURBSSurfaceMesh"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "NURBSSurfaceMeshWithOneFace"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "NURBSTextureControl"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "objectpartition"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "ParticleCloud"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "PathCurve"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "PolygonMeshPNet"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Property"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "SamplePoint"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Scene"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Subcomponent"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Surface"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Text"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "TextureSupport"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "TextureProjection"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "TexturableComponent"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "UserCluster"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "VolumeDeformObject"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Wave"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Shader"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Emitter"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Clip"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Environment"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "CloudOrPType"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Primitive"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Decay"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "PType"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Force"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "SceneElementOrComponents"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "SurfaceOrSubSurfaceCluster"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Knot"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "UKnotCurve"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "VKnotCurve"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "UIsoline"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "VIsoline"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "SubSurface"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "SampledPoint"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Tip"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Boundary"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Point"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "PolyNode"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Strand_Root"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "SubCurve"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Isopoint"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Strand"
+  }, 
+  {
+   "type": "Undefined Filter", 
+   "name": "Filter"
+  }, 
+  {
+   "type": "FilterObjectType", 
+   "name": "frf_bone"
+  }, 
+  {
+   "type": "FilterObjectType", 
+   "name": "frf_facestate"
+  }, 
+  {
+   "type": "FilterObjectType", 
+   "name": "frf_groups"
+  }, 
+  {
+   "type": "FilterObjectType", 
+   "name": "frf_visgroup"
+  }, 
+  {
+   "type": "FilterObjectType", 
+   "name": "FaceRobotControl"
+  }, 
+  {
+   "type": "FilterObjectType", 
+   "name": "With_Generator_Operator"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "frf_polyandsurfmesh"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Obj_w_Annotation"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Obj_w_Custom_PSet"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Obj_w_Marking_Set"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Obj_w_Synoptic"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Obj_w_Fcv_Anim"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Obj_w_Expression"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Obj_w_Constraint"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Obj_w_Mixer_Anim"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Obj_w_Shapes"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Obj_w_Custom_Op"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Obj_w_Dynamics"
+  }, 
+  {
+   "type": "Filter3DObjectType", 
+   "name": "Dynamic_Cns"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Border_Edge"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Crease_Edge"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Border_Point"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Crease_Point"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Polygon_Island"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Triangle"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Quad"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "N-gon"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Curve_Bezier_Knot"
+  }, 
+  {
+   "type": "FilterSubComponentType", 
+   "name": "Curve_NonBezier_Knot"
+  }, 
+  {
+   "type": "FilterPropertyType", 
+   "name": "Local_Material"
+  }
+ ]
+}
