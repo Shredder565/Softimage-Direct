@@ -149,7 +149,7 @@ export const TOPO_TYPES: Record<string, string> = {
   'Collapse Components': 'collapseop', 'Invert Polygons': 'invertpolygonop', 'Delete Components': 'deletecomponentop', 'Bevel': 'bevelop', 'Bridge Polygons': 'bridgeop',
   'Quadrangulate': 'quadrangulateop', 'Dissolve': 'dissolvecompop', 'Disconnect': 'disconnectcompop', 'Spin Edges': 'spinedgeop', 'Slice': 'slicepolygonsop',
   'Slice Plane': 'slicepolygonsop', 'Dice': 'dicepolygonsop', 'Polygon Reduction': 'polygonreductionop', 'Apply Thickness': 'thicknessop', 'Duplicate Polygons': 'extrudecompaxisop',
-  'Cap Hole': 'capholeop', 'Connect Points': 'addedgeop', 'Local Subdivision': 'meshlocalsubdivisionop',
+  'Cap Hole': 'capholeop', 'Connect Points': 'addedgeop', 'Local Subdivision': 'meshlocalsubdivisionop', 'Offset Polygons': 'offsetpolygonsop',
 };
 const TOPO_NAMES: Record<string, string> = { 'Triangulate': 'Triangulate', 'Duplicate Polygons': 'Duplicate Op' };
 /** Build the parameter list for a topology preset: Softimage definitions first, then any legacy defs not covered. */
@@ -172,12 +172,14 @@ export class TopologyOperator extends Operator {
   apply(input: MeshData | null): MeshData | null {
     if (!input || this.val('mute')) return input;
     switch (this.preset) {
-      case 'Extrude Along Normal': return topo.extrudeAlongNormal(input, this.sel, this.p('length'), this.p('inset'));
-      case 'Inset Polygons': return topo.insetPolygons(input, this.sel, this.p('inset', undefined, 0.2));
+      case 'Extrude Along Normal': return topo.extrudeAlongNormal(input, this.sel, this.p('length'), this.p('inset'), this.p('subdivs'), !!this.val('duplicate'));
+      case 'Inset Polygons': return topo.extrudeAlongNormal(input, this.sel, this.p('length', undefined, 0), this.p('inset', undefined, 0.2), this.p('subdivs'), !!this.val('duplicate'));
+      case 'Offset Polygons': return topo.offsetPolygons(input, this.sel, this.p('offset', undefined, 0.2));
+      case 'Local Subdivision': return topo.localSubdivision(input, this.sel, Math.max(1, this.p('subdivisionlevel', undefined, 1)));
       case 'Delete Components': return topo.deleteComponents(input, this.sel);
       case 'Duplicate Polygons': return topo.duplicatePolygons(input, this.sel, this.p('length', 'offset', 1));
-      case 'Subdivide Polygons': return this.p('subdivtype') === 3 ? topo.triangulate(input, this.sel) : topo.subdividePolygons(input, this.sel);
-      case 'Split Edges': { const r = this.p('ratioedge', 'ratio', 0.5); return topo.splitEdges(input, this.sel, r > 1 ? r / 100 : r); }
+      case 'Subdivide Polygons': return topo.subdividePolygons(input, this.sel, this.p('subdivtype'), Math.max(1, this.p('subdivisions', undefined, 1)));
+      case 'Split Edges': { const r = this.p('ratioedge', 'ratio', 0.5); return topo.splitEdges(input, this.sel, r > 1 ? r / 100 : r, this.get('connect') ? !!this.val('connect') : true); }
       case 'Weld Points': return topo.weldPoints(input, this.sel);
       case 'Collapse Components': return topo.collapseComponents(input, this.sel);
       case 'Invert Polygons': return topo.invertPolygons(input, this.sel);
@@ -198,7 +200,7 @@ export function makeTopologyOperator(preset: string, sel: CompSel): TopologyOper
     case 'Apply Thickness': return new TopologyOperator(preset, sel, [num('amount', 0.5, 'Thickness', { min: -50, max: 50 })]);
     case 'Filter Points': return new TopologyOperator(preset, sel, [num('strength', 0.5, 'Strength', { min: 0, max: 1 })]);
     case 'Symmetrize Polygons': return new TopologyOperator(preset, sel, [enumP('axis', 0, [{ label: 'X', value: 0 }, { label: 'Y', value: 1 }, { label: 'Z', value: 2 }], 'Mirror Axis')]);
-    case 'Delete Components': case 'Subdivide Polygons': case 'Weld Points': case 'Collapse Components': case 'Invert Polygons': case 'Triangulate': return new TopologyOperator(preset, sel, []);
+    case 'Delete Components': case 'Subdivide Polygons': case 'Weld Points': case 'Collapse Components': case 'Invert Polygons': case 'Triangulate': case 'Offset Polygons': case 'Local Subdivision': return new TopologyOperator(preset, sel, []);
   }
   return null;
 }

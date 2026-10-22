@@ -10,7 +10,7 @@ import * as T2 from '../core/topology2';
 import { num, int, bool, str, enumP, color } from '../core/params';
 import type { V3 } from '../core/curves';
 import * as C from '../core/curves';
-import { edgeKey, fromPolys, toPolys, splitEdges, weldPoints } from '../core/topology';
+import { edgeKey, fromPolys, toPolys, splitEdges, weldPoints, dissolvePolygons, disconnectPolygons, sliceAxis, dicePolygons, reducePolygons } from '../core/topology';
 
 const CURVE_PRESETS = ['Arc', 'Circle', 'Spiral', 'Square'];
 const SURF_PRESETS = ['Sphere', 'Torus', 'Cylinder', 'Cone', 'Disc', 'Grid', 'Cube'];
@@ -102,7 +102,7 @@ export function registerModelCommands(app: App) {
   // ------------------------------------------------------------ topology extensions (curve + mesh)
   const topoBase = app.commands.get('ApplyTopoOp')!; const topoCan = topoBase.canRun!, topoExec = topoBase.execute;
   const CURVE_OPS: Record<string, string> = { CrvInverse: 'Inverse', CrvOpenClose: 'Open/Close', CrvShift: 'Shift U', CrvClean: 'Clean', RaiseNurbsCrvDegree: 'Raise Degree', CrvReparam: 'Reparameterize', InsertNurbsCrvKnot: 'Insert Knot', RemoveNurbsCrvKnot: 'Remove Knots', 'Curve Inverse': 'Inverse', 'Curve Open/Close': 'Open/Close', 'Curve Shift': 'Shift U', 'Curve Clean': 'Clean', 'Raise Nurbs Curve Degree': 'Raise Degree', 'Curve Reparameterize': 'Reparameterize', 'Insert Curve Knot': 'Insert Knot', 'Curve Remove Knot': 'Remove Knots', 'Make Knots Bezier': 'Raise Degree', 'Make Bezier Knots Corners': 'Insert Knot', 'Make Knot Segments Linear': 'Insert Knot', 'Make Knots Non-Bezier': 'Reparameterize', 'Curve Stitch': 'Clean' };
-  const MESH_OPS2: Record<string, string> = { Bevel: 'Bevel', 'Bridge Polygon': 'Bridge Polygons', 'Bridge Edges': 'Bridge Polygons', Quadrangulate: 'Quadrangulate', 'Dissolve Component': 'Dissolve', 'Disconnect Component': 'Disconnect', 'Slice Polygons': 'Slice', 'Dice Polygons': 'Dice', 'Polygon Reduction': 'Polygon Reduction', 'Local Subdivision': 'Subdivide Polygons', MeshLocalSubdivision: 'Subdivide Polygons', 'Filter Edges': 'Filter Points', 'Filter Polygons': 'Filter Points', 'Weld Points to Target': 'Weld Points', 'Symmetrize Polygons': 'Symmetrize Polygons', 'Spin Edge Forward': 'Spin Edges', 'Invert All Normals': 'Invert Polygons', Inverse: 'Invert Polygons', 'Boolean Difference': 'BOOL0', 'Boolean Union': 'BOOL2', 'Boolean Intersection': 'BOOL1', 'Surface Clean': 'Noop', 'Surface Reparameterize': 'Noop', 'Insert Surface Knot': 'SURF+', 'Remove Surface Knot': 'SURF-', 'Surface Swap': 'Noop', 'Surface Shift': 'Noop' };
+  const MESH_OPS2: Record<string, string> = { Bevel: 'Bevel', 'Bridge Polygon': 'Bridge Polygons', 'Bridge Edges': 'Bridge Polygons', Quadrangulate: 'Quadrangulate', 'Dissolve Component': 'Dissolve', 'Disconnect Component': 'Disconnect', 'Slice Polygons': 'Slice', 'Dice Polygons': 'Dice', 'Polygon Reduction': 'Polygon Reduction', MeshLocalSubdivision: 'Local Subdivision', 'Filter Edges': 'Filter Points', 'Filter Polygons': 'Filter Points', 'Weld Points to Target': 'Weld Points', 'Symmetrize Polygons': 'Symmetrize Polygons', 'Spin Edge Forward': 'Spin Edges', 'Invert All Normals': 'Invert Polygons', Inverse: 'Invert Polygons', 'Boolean Difference': 'BOOL0', 'Boolean Union': 'BOOL2', 'Boolean Intersection': 'BOOL1', 'Surface Clean': 'Noop', 'Surface Reparameterize': 'Noop', 'Insert Surface Knot': 'SURF+', 'Remove Surface Knot': 'SURF-', 'Surface Swap': 'Noop', 'Surface Shift': 'Noop' };
   topoBase.canRun = (a) => topoCan(a) || !!(CURVE_OPS[a.PresetObj] ?? CURVE_OPS[a.Preset]) || !!(MESH_OPS2[a.PresetObj] ?? MESH_OPS2[a.Preset]);
   topoBase.execute = (app, a) => {
     const cv = CURVE_OPS[a.PresetObj] ?? CURVE_OPS[a.Preset];
@@ -313,15 +313,15 @@ export class TopologyOperator2 extends Operator {
       case 'Bridge Polygons': return T2.bridgePolygons(m, this.sel, Math.max(1, this.p('subdivs', 'subdiv', 1)));
       case 'Cap Hole': return T2.capHoles(m, this.sel);
       case 'Quadrangulate': return T2.quadrangulate(m, this.sel);
-      case 'Dissolve': return T2.dissolve(m, this.sel);
-      case 'Disconnect': return T2.disconnect(m, this.sel);
+      case 'Dissolve': return dissolvePolygons(m, this.sel);
+      case 'Disconnect': return disconnectPolygons(m, this.sel);
       case 'Spin Edges': return T2.spinEdges(m, this.sel, this.get('spin') ? this.p('spin') >= 0 : true);
-      case 'Slice': return T2.slice(m, this.sel, Math.min(2, this.p('sliceplane', 'axis', 1)), this.p('planeoffset', 'offset'));
+      case 'Slice': { const sp = Math.min(2, this.p('sliceplane', 'axis', 0)) as 0 | 1 | 2; return sliceAxis(m, this.sel, sp, this.p('planeoffset', 'offset'), this.get('usebbox') ? !!this.val('usebbox') : true, this.p('planeoffsetbboxpercentage', undefined, 50)); }
       case 'Slice Plane': return this.plane ? T2.slicePlane(m, this.sel, this.plane.n, this.plane.d) : m;
-      case 'Dice': return T2.dice(m, this.sel, this.get('gridsize') ? this.p('gridsize') * 2 : v('size'));
-      case 'Polygon Reduction': { const r = this.p('ratio', undefined, 0.5); return T2.polygonReduction(m, r > 1 ? r / 100 : r); }
-      case 'Subdivide Polygons': return makeTopologyOperator('Subdivide Polygons', this.sel)!.apply(m);
-      case 'Split Edges': { const r = this.p('ratioedge', 'ratio', 0.5); return splitEdges(m, this.sel, r > 1 ? r / 100 : r); }
+      case 'Dice': return this.get('style') ? dicePolygons(m, this.sel, this.p('style', undefined, 2), [this.p('nbslicesx', undefined, 1), this.p('nbslicesy', undefined, 1), this.p('nbslicesz', undefined, 1)], !!this.val('gridlike'), this.p('gridsize', undefined, 1)) : T2.dice(m, this.sel, v('size'));
+      case 'Polygon Reduction': { const r = this.p('ratio', undefined, 0.5); return reducePolygons(m, r > 1 ? r / 100 : r); }
+      case 'Subdivide Polygons': { const op = makeTopologyOperator('Subdivide Polygons', this.sel)!; op.set('subdivtype', this.p('subdivtype')); op.set('subdivisions', this.p('subdivisions', undefined, 1)); return op.apply(m); }
+      case 'Split Edges': { const r = this.p('ratioedge', 'ratio', 0.5); return splitEdges(m, this.sel, r > 1 ? r / 100 : r, this.get('connect') ? !!this.val('connect') : true); }
       case 'Weld Points': return weldPoints(m, this.sel);
       case 'Filter Points': return makeTopologyOperator('Filter Points', this.sel)!.apply(m);
       case 'Symmetrize Polygons': { const op = makeTopologyOperator('Symmetrize Polygons', this.sel)!; op.set('symmetryplane', this.p('symmetryplane', 'axis')); return op.apply(m); }
