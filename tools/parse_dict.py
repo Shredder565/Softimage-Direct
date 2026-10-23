@@ -6,7 +6,7 @@ def parse(path):
         if pos + 4 > len(d): break
         sid = struct.unpack_from('>I', d, pos)[0]; pos += 4; s = pos
         while pos + 1 < len(d) and d[pos:pos + 2] != b'\x00\x00': pos += 2
-        out[sid] = d[s:pos].decode('utf-16le', 'replace'); pos += 2
+        out[sid] = d[s:pos].decode('utf-16le', 'replace').replace('\ufffd', ''); pos += 2
     return out
 if __name__ == '__main__':
     res = {}
