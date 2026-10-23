@@ -1,0 +1,222 @@
+SPDL
+Version = "2.0.0.0";
+Reference = "{580CCE23-E834-402A-A793-4B9C1CBDB963}"; 
+	PropertySet "sib_texture_lookup_params"
+	{
+		Parameter "out" output
+		{
+			title = "out";
+			guid = "{4C6879FF-7EC8-11D0-8E3B-00A0C90640EC}";
+			type = color;
+			flags  = 1;
+		}
+		Parameter "tex" input
+		{
+			title = "tex";
+			guid = "{98756853-512C-46A3-B540-E445A6484EEE}";
+			type = texture;
+			texturable = on;
+			flags  = 1;
+		}
+		Parameter "coord" input
+		{
+			title = "coord";
+			guid = "{237EA636-47E8-4740-A27E-03CA8587E42C}";
+			type = vector;
+			texturable = on;
+			flags  = 1;
+			value = 1.0 1.0 1.0;
+		}
+		Parameter "remap" input
+		{
+			title = "remap";
+			guid = "{D9AA2BDD-90E9-401D-9B60-90FE60BC21FC}";
+			type = texture;
+			texturable = off;
+			flags  = 1;
+		}
+		Parameter "clamp" input
+		{
+			title = "clamp";
+			guid = "{28B956C0-2E55-450C-96B1-1A9CBFEA05B3}";
+			type = boolean;
+			texturable = on;
+			flags = 1;
+			value = on;
+		}
+		Parameter "filtered" input
+		{
+			title = "filtered";
+			guid = "{0211729C-FF58-4E19-AD8E-4298BD4841F1}";
+			type = boolean;
+			texturable = on;
+			flags  = 1;
+			value = on;
+		}
+		Parameter "eccmax" input
+		{
+			title = "eccmax";
+			guid = "{BBD63163-9324-42E1-8535-3D2A8E97DCC3}";
+			type = scalar;
+			texturable = on;
+			flags  = 1;
+			value = 0.01;
+			value minimum = 0.0;
+			value maximum = 1.0;
+		}
+		Parameter "maxminor" input
+		{
+			title = "maxminor";
+			guid = "{6C7096AD-C022-4128-AA12-AEF4A7D1EA46}";
+			type = scalar;
+			texturable = on;
+			flags  = 1;
+			value = 8.0;
+			value minimum = 0.0;
+			value maximum = 64.0;
+		}
+		Parameter "disc_r" input
+		{
+			title = "disc_r";
+			guid = "{CF770944-C70F-4F1C-98BB-A7B059B77B30}";
+			type = scalar;
+			texturable = on;
+			flags  = 1;
+			value = 0.3;
+			value minimum = 0.0;
+			value maximum = 1.0;
+		}
+		Parameter "bilinear" input
+		{
+			title = "bilinear";
+			guid = "{504DB600-F924-4B13-9932-CFEE88A79AF8}";
+			type = boolean;
+			texturable = on;
+			flags  = 1;
+			value = on;
+		}
+		Parameter "space" input
+		{
+			title = "space";
+			guid = "{9EB7FD8F-AF22-4FC3-95E9-BBF499C347E5}";
+			type = texturespace;
+			texturable = on;
+			flags  = 1;
+			value = 0;
+			value minimum = 0;
+			value maximum = 63;
+		}
+	}
+	
+	MetaShader "sib_texture_lookup_declare"
+	{
+		Name = "Image Lookup";
+		Type = texture;
+		Renderer "mental ray"
+		{
+			Name = "sib_texture_lookup";
+			FileName = "sibase.{EXT}";
+			Options
+			{
+				"version" = 1;
+			}
+		}
+	}
+
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+	Defaults
+	{
+		tex
+		{
+			Name = "Image";
+			Description = "Image";
+			UIType = "ImageBrowserItem.ImageBrowserItem.1";
+		}
+		coord
+		{
+			Name = "Coordinate";
+			Description = "Coordinate";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 1.0 by 0.001;
+		}
+		filtered
+		{
+			Name = "Filtered";
+			Description = "Perform filtered lookup";
+		}
+		clamp
+		{
+			Name = "Clamp";
+			Description = "Clamp to 0,0x1,1";
+		}
+		eccmax
+		{
+			Name = "Maximum eccentricity";
+			Description = "Maximum eccentricity";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		maxminor
+		{
+			Name = "Maximum pixel";
+			Description = "Maximum pixel for minimum radius";
+			UIRange = 0.0 to 64.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		disc_r
+		{
+			Name = "Disc Radius";
+			Description = "Disc Radius";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		bilinear
+		{
+			Name = "Bilinear Interpolation";
+			Description = "Bilinear Interpolation";
+		}
+		space
+		{
+			Name = "Texture Support";
+			Description = "Texture Support";
+			UIType = "TextureSpaceItem.TextureSpaceItem.1";
+		}
+		remap
+		{
+			Name = "Shader texture remap";
+			Description = "Shader texture remap";
+		}
+	}
+
+	Logic
+	{
+		Sub filtered_OnChanged()
+				pset.eccmax.Enable(pset.filtered.value)
+				pset.maxminor.Enable(pset.filtered.value)
+				pset.disc_r.Enable(pset.filtered.value)
+				pset.bilinear.Enable(pset.filtered.value)
+		End Sub
+
+		Sub OnInit
+			filtered_OnChanged()
+		End Sub
+	}
+
+	Layout "Default"
+	{
+		Name;
+		tex;
+		coord;
+		clamp;
+
+		Group "Elliptical Filtering"
+		{
+			filtered;
+			eccmax;
+			maxminor;
+			disc_r;
+			bilinear;
+		}
+	}
+END

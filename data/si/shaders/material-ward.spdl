@@ -1,0 +1,897 @@
+SPDL
+version = "2.0.0.0";
+Reference = "{3156B433-FDDD-11D2-8B06-00A0C9892542}";
+
+DEFINE_GUID(GUID_Texture_Use_Alpha, 0x47b53aba, 0x8eb7, 0x4a05, 0x87, 0x47, 0xa2, 0xf6, 0xff, 0xe4, 0x74, 0xcd);
+DEFINE_GUID(GUID_Texture_Invert_Alpha, 0x20d3d3be, 0x4655, 0x47fd, 0x9d, 0xaf, 0x20, 0x77, 0xee, 0xe6, 0xa4, 0x6c);
+
+	PropertySet "material-ward_params"
+	{
+		Parameter "out" output
+		{
+			title = "Anisotropic";
+			guid = "{4C6879FF-7EC8-11D0-8E3B-00A0C90640EC}";
+			type = color;
+		}
+		Parameter "image" input
+		{
+			title = "image";
+			guid = "{2581372C-0FA3-11D3-8B10-00A0C9892542}";
+			type = color;
+			texturable = on;
+		}
+		Parameter "surfderiv_mode" input
+		{
+			title = "Surface Derivative Mode";
+			guid = "{2581374F-0FA3-11D3-8B10-00A0C9892542}";
+			type = integer;
+			value = -5;
+			texturable = on;
+		}
+		Parameter "mode" input
+		{
+			title = "mode";
+			guid = "{2581373C-0FA3-11D3-8B10-00A0C9892542}";
+			type = integer;
+			value = 0;
+			texturable = off;
+			inspectable = off;
+		}
+		Parameter "lights" input
+		{
+			title = "Light List";
+			guid = "{2581373D-0FA3-11D3-8B10-00A0C9892542}";
+			inspectable = off;
+			texturable = off;
+			type = array
+				{
+				Parameter "lights" input
+				{
+					title = "Light";
+					guid = "{64E1DE8F-BF2F-44b0-9599-FC492334F337}";
+					type = light;
+					texturable = off;
+				}
+			};
+		}
+		Parameter "ambience" input
+		{
+			title = "Scene Ambience";
+			guid = "{2581373E-0FA3-11D3-8B10-00A0C9892542}"; // This ain't the normal Ambience GUID. Leave it like that for backcomp. 
+			type = color;
+			value = 0.1 0.1 0.1;
+			flags  = 1;
+			inspectable = off;
+			texturable = off;
+			ui "ambience" = on;
+		}
+		Parameter "ambient" input
+		{
+			title = "Ambient";
+			guid = "{2581373F-0FA3-11D3-8B10-00A0C9892542}";
+			ui "mapping" = "{3515CC71-082C-11D0-91DE-00A024C78EE3}";
+			type = color;
+			flags = 1;
+			value = 0.3 0.3 0.3;
+			flags  = 1;
+			texturable = on;
+		}
+		Parameter "diffuse" input
+		{
+			title = "Diffuse";
+			guid = "{25813740-0FA3-11D3-8B10-00A0C9892542}";
+			ui "mapping" = "{3515CC72-082C-11D0-91DE-00A024C78EE3}";
+			type = color;
+			flags = 1;
+			value = 0.7 0.7 0.7;
+			flags  = 1;
+			texturable = on;
+		}
+		Parameter "glossy" input
+		{
+			title = "glossy";
+			guid = "{25813741-0FA3-11D3-8B10-00A0C9892542}";
+			ui "mapping" = "{3515CC73-082C-11D0-91DE-00A024C78EE3}";
+			type = color;
+			value = 1.0 1.0 1.0 0.0;
+			flags  = 1;
+			texturable = on;
+		}
+		Parameter "shiny_u" input
+		{
+			title = "shiny_u";
+			guid = "{25813742-0FA3-11D3-8B10-00A0C9892542}";
+			type = scalar;
+			value = 4.0;
+			flags  = 1;
+			ui "mapping" = "{D97375C5-05AE-11D0-91DE-00A024C78EE3}";
+			texturable = on;
+		}
+		Parameter "shiny_v" input
+		{
+			title = "shiny_v";
+			guid = "{25813743-0FA3-11D3-8B10-00A0C9892542}";
+			type = scalar;
+			value = 4.0;
+			flags  = 1;
+			texturable = on;
+		}
+		Parameter "transparency" input
+		{
+			title = "Transparency";
+			guid = "{25813744-0FA3-11D3-8B10-00A0C9892542}";
+			ui "mapping" = "{D97375C6-05AE-11D0-91DE-00A024C78EE3}";
+			type = color;
+			value = 0.0 0.0 0.0;
+			texturable = on;
+		}
+		Parameter "trans_glossy" input
+		{
+			title = "Transparent Glossy";
+			guid = "{25813745-0FA3-11D3-8B10-00A0C9892542}";
+			type = scalar;
+			value = 0.0;
+			texturable = on;
+		}
+		Parameter "transparent_samples" input
+		{
+			title = "Transparent Samples";
+			guid = "{25813746-0FA3-11D3-8B10-00A0C9892542}";
+			type = integer;
+			value = 0;
+		}
+		Parameter "reflectivity" input
+		{
+			title = "Reflectivity";
+			guid = "{25813747-0FA3-11D3-8B10-00A0C9892542}";
+			ui "mapping" = "{D97375C7-05AE-11D0-91DE-00A024C78EE3}";
+			type = color;
+			value = 0.0 0.0 0.0;
+			texturable = on;
+		}
+		Parameter "reflect_glossy" input
+		{
+			title = "Reflect Glossy";
+			guid = "{25813748-0FA3-11D3-8B10-00A0C9892542}";
+			type = scalar;
+			value = 0.0;
+			texturable = on;
+		}
+		Parameter "reflect_samples" input
+		{
+			title = "Reflect Samples";
+			guid = "{2581374A-0FA3-11D3-8B10-00A0C9892542}";
+			type = integer;
+			value = 0;
+		}
+		Parameter "index_of_refraction" input
+		{
+			title = "Index Of Refraction";
+			guid = "{2581374B-0FA3-11D3-8B10-00A0C9892542}";
+			type = scalar;
+			value = 1.0;
+			texturable = on;
+		}
+		Parameter "translucency" input
+		{
+			title = "Translucency";
+			guid = "{2581374C-0FA3-11D3-8B10-00A0C9892542}";
+			type = scalar;
+			value = 0.0;
+			texturable = on;
+		}
+		Parameter "incandescence" input
+		{
+			title = "Incandescence";
+			guid = "{2581374D-0FA3-11D3-8B10-00A0C9892542}";
+			type = color;
+			flags = 1;
+			value = 1.0 1.0 1.0;
+			texturable = on;
+		}
+		Parameter "inc_inten" input
+		{
+			title = "Incandescence Intensity";
+			guid = "{2581374E-0FA3-11D3-8B10-00A0C9892542}";
+			type = scalar;
+			flags = 1;
+			value = 0.0;
+			texturable = on;
+		}
+		Parameter "notrace" input
+		{
+			title = "Reflection Mode";
+			guid = "{AAF1D340-B3DA-11D3-B8F1-00E08100004B}";
+			type = boolean;
+			value = off;
+			texturable = on;
+		}
+		Parameter "diffuse_inuse" input
+		{
+			title = "Enable Diffuse";
+			guid = "{AAF1D341-B3DA-11D3-B8F1-00E08100004B}";
+			type = boolean;
+			flags  = 1;
+			value = on;
+			texturable = on;
+		}
+		Parameter "specular_inuse" input
+		{
+			title = "Enable Specular";
+			guid = "{AAF1D342-B3DA-11D3-B8F1-00E08100004B}";
+			type = boolean;
+			flags  = 1;
+			value = on;
+			texturable = on;
+		}
+		Parameter "reflect_inuse" input
+		{
+			title = "Enable Reflectivity";
+			guid = "{AAF1D343-B3DA-11D3-B8F1-00E08100004B}";
+			type = boolean;
+			value = on;
+			texturable = on;
+		}
+		Parameter "refract_inuse" input
+		{
+			title = "Enable Transparency";
+			guid = "{AAF1D344-B3DA-11D3-B8F1-00E08100004B}";
+			ui "mapping" = "{C42DE44F-12AC-4d89-A187-2EF2B6E53E7F}";
+			type = boolean;
+			value = on;
+			texturable = on;
+		}
+		Parameter "incand_inuse" input
+		{
+			title = "Enable incandesence";
+			guid = "{AAF1D345-B3DA-11D3-B8F1-00E08100004B}";
+			type = boolean;
+			flags  = 1;
+			value = on;
+			texturable = on;
+		}
+		Parameter "translucent_inuse" input
+		{
+			title = "Enable translucent";
+			guid = "{AAF1D346-B3DA-11D3-B8F1-00E08100004B}";
+			type = boolean;
+			value = on;
+			texturable = on;
+		}
+		Parameter "radiance" input
+		{
+			title = "Radiance";
+			guid = "{072C1745-94CC-11D4-86A9-00E08100004B}";
+			type = color;
+			value = 1.0 1.0 1.0 1.0;
+			texturable = on;
+			flags = 1;
+		}
+		Parameter "radiance_filter" input
+		{
+			title = "Radiance Filter";
+			guid = "{410240C9-144E-427F-85BE-CF9A9D665103}";
+			type = boolean;
+			value = true;
+			texturable = on;
+		}
+		Parameter  "scaletrans" input
+		{
+			title = "Scale";
+			guid = "{43C4E880-199E-441C-98C0-51BA09F5406C}";
+			ui "mapping" = "{A54BCD3B-2265-4007-9170-FAB02C851E9E}";
+			type = scalar;
+			flags  = 1;
+			value = 1.0;
+			texturable = on;
+		}
+		Parameter  "inverttrans" input
+		{
+			title = "Invert";
+			guid = "{AFD6038C-569A-42AB-9AB2-A7923F5F79F8}";
+			ui "mapping" = GUID_Texture_Invert_Alpha;
+			type = boolean;
+			flags  = 1;
+			value = false;
+			texturable = on;
+		}
+		Parameter  "usealphatrans" input
+		{
+			title = "Use Alpha";
+			guid = "{2C391057-A5FA-4DC1-AD8B-F799AC76132E}";
+			ui "mapping" = GUID_Texture_Use_Alpha;
+			type = boolean;
+			flags  = 1;
+			value = false;
+			texturable = on;
+		}
+		Parameter  "scalerefl" input
+		{
+			title = "Scale";
+			guid = "{9537331C-F958-48D8-A2E2-A6CFCDAC2563}";
+			type = scalar;
+			flags  = 1;
+			value = 1.0;
+			texturable = on;
+		}
+		Parameter  "invertrefl" input
+		{
+			title = "Invert";
+			guid = "{AF131C5A-DCD7-4863-B190-B1B7E00CAB0F}";
+			type = boolean;
+			flags  = 1;
+			value = false;
+			texturable = on;
+		}
+		Parameter  "usealpharefl" input
+		{
+			title = "Use Alpha";
+			guid = "{7A77437A-84C5-4D38-8A19-716F28B5BBEE}";
+			type = boolean;
+			flags  = 1;
+			value = false;
+			texturable = on;
+		}
+	}	
+
+	MetaShader "material-ward_declare"
+	{
+		Name = "Anisotropic";
+		Type = material, shadow, material photon;
+		Renderer "mental ray"
+		{
+			Name = "material-ward";
+			Options
+			{
+				"derivative1" = on;
+				"derivative2" = on;
+				"pass channel" = "Ambient,Diffuse,Specular,Irradiance,Reflection,Refraction";
+				"version" = 1;
+			}
+			BeginText
+			
+			Node "convert"			= guid "{865EBB7A-BCFA-11D1-90E9-0000F804EB21}";
+			Node "surfderiv"		= guid "{4E3FD560-B473-11D1-90E1-0000F804EB21}";
+			Node "rotate"			= guid "{4E9E0243-B473-11D1-90E1-0000F804EB21}";
+			Node "ward"				= guid "{44157F60-1D27-11D4-AE61-00A0C96E63E1}";
+			Node "rayswitch"		= guid "{8604221E-BCFA-11D1-90E9-0000F804EB21}";
+			Node "photon"			= guid "{6D228369-EB66-11D1-8054-00A0C906835D}";
+			Node "scalar2color1"	= guid "{8677C42B-BCFA-11D1-90E9-0000F804EB21}";
+			Node "scalar2color2"	= guid "{8677C42B-BCFA-11D1-90E9-0000F804EB21}";
+			Node "mixer"			= guid "{3A3BD020-A9BD-11D3-AE56-00A0C96E63E1}";
+			Node "mixer2"			= guid "{3A3BD020-A9BD-11D3-AE56-00A0C96E63E1}";
+			Node "translucent"		= guid "{E22730A1-BDD4-11D1-90EB-0000F804EB21}";
+			Node "index_of_ref"		= guid "{50F33F54-B473-11D1-90E1-0000F804EB21}";
+			Node "refract"			= guid "{8A97F5E9-BCFA-11D1-90E9-0000F804EB21}";
+			Node "reflect"			= guid "{8A64B35A-BCFA-11D1-90E9-0000F804EB21}";
+			Node "shadow"			= guid "{1EDE3A06-BF3A-11D1-90EC-0000F804EB21}";
+			
+			Connection "surfderiv::select"		= interface "surfderiv_mode";
+			Connection "surfderiv::selspace"	= value 1;
+			Connection "surfderiv::vertex"		= value 0;
+			Connection "surfderiv::project"		= value 0;
+			
+			Connection "convert::input"			= interface "image";
+			Connection "rotate::input"			= "surfderiv";
+			Connection "rotate::angle"			= "convert";
+			Connection "rotate::min"			= value 0.0;
+			Connection "rotate::max"			= value 1.0;
+			
+			Connection "ward::ambience"			= interface "ambience";
+			Connection "ward::ambient"			= interface "ambient";
+			Connection "ward::diffuse"			= interface "diffuse";
+			Connection "ward::glossy"			= interface "glossy";
+			Connection "ward::shiny_u"			= interface "shiny_u";
+			Connection "ward::shiny_v"			= interface "shiny_v";
+			Connection "ward::u"				= "rotate::u";
+			Connection "ward::v"				= "rotate::v";
+			Connection "ward::radiance"			= interface "radiance";
+			Connection "ward::radiance_filter"	= interface "radiance_filter";
+			
+			Connection "translucent::diffuse"		= interface "diffuse";
+			
+			Connection "index_of_ref::mtl_ior"		= interface "index_of_refraction";
+			
+			Connection "photon::diffuse"				= interface "diffuse";
+			Connection "photon::specular"				= interface "glossy";
+			Connection "photon::transpenabled"			= interface "refract_inuse";
+			Connection "photon::transparency"			= interface "transparency";
+			Connection "photon::usealphatrans"			= interface "usealphatrans";
+			Connection "photon::inverttrans"			= interface "inverttrans";
+			Connection "photon::scaletrans"				= interface "scaletrans";
+			Connection "photon::reflenabled"			= interface "reflect_inuse";
+			Connection "photon::reflectivity"			= interface "reflectivity";
+			Connection "photon::usealpharefl"			= interface "usealpharefl";
+			Connection "photon::invertrefl"				= interface "invertrefl";
+			Connection "photon::scalerefl"				= interface "scalerefl";
+			Connection "photon::index_of_refraction"	= "index_of_ref::ior";
+			
+			Connection "shadow::diffuse"			= interface "diffuse";
+			Connection "shadow::transpenabled"		= interface "refract_inuse";
+			Connection "shadow::transparency"		= interface "transparency";
+			Connection "shadow::scaletrans"			= interface "scaletrans";
+			Connection "shadow::inverttrans"		= interface "inverttrans";
+			Connection "shadow::usealphatrans"		= interface "usealphatrans";
+			
+			Connection "refract::input"				= "mixer";
+			Connection "refract::enabled"			= interface "refract_inuse";
+			Connection "refract::refract"			= interface "transparency";
+			Connection "refract::usealpha"			= interface "usealphatrans";
+			Connection "refract::scale"				= interface "scaletrans";
+			Connection "refract::invert"			= interface "inverttrans";
+			Connection "refract::alpha"				= value on;
+			Connection "refract::ior"				= "index_of_ref::ior";
+			Connection "refract::glossy"			= interface "trans_glossy";
+			Connection "refract::samples"			= interface "transparent_samples";
+			Connection "refract::max_depth"			= value 1;
+			
+			Connection "reflect::input"				= "refract";
+			Connection "reflect::enabled"			= interface "reflect_inuse";
+			Connection "reflect::reflect"			= interface "reflectivity";
+			Connection "reflect::usealpha"			= interface "usealpharefl";
+			Connection "reflect::scale"				= interface "scalerefl";
+			Connection "reflect::invert"			= interface "invertrefl";
+			Connection "reflect::notrace"			= interface "notrace";
+			Connection "reflect::samples"			= interface "reflect_samples";
+			Connection "reflect::glossy"			= interface "reflect_glossy";
+			Connection "reflect::max_depth"			= value 1;
+			
+			Connection "mixer::mixersize"		= value 4;
+			Connection "mixer::base_color"		= value 0.0 0.0 0.0 0.0;
+			
+			Connection "mixer::color1"			= "ward::surface";
+			Connection "mixer::mode1"			= value 2;
+			Connection "mixer::weight1"			= value 1.0 1.0 1.0 1.0;
+			Connection "mixer::inuse1"			= interface "diffuse_inuse";
+			Connection "mixer::alpha1"			= value off;
+			
+			Connection "mixer::color2"			= "translucent";
+			Connection "mixer::mode2"			= value 2;
+			Connection "scalar2color1::input"	= interface "translucency";
+			Connection "mixer::weight2"			= "scalar2color1";
+			Connection "mixer::inuse2"			= interface "translucent_inuse";
+			Connection "mixer::alpha2"			= value off;
+			
+			Connection "mixer::color3"			= interface "incandescence";
+			Connection "mixer::mode3"			= value 2;
+			Connection "scalar2color2::input"	= interface "inc_inten";
+			Connection "mixer::weight3"			= "scalar2color2";
+			Connection "mixer::inuse3"			= interface "incand_inuse";
+			Connection "mixer::alpha3"			= value off;
+			
+			Connection "mixer2::mixersize"		= value 2;
+			Connection "mixer2::base_color"		= "reflect";
+			
+			Connection "mixer2::color1"			= "ward::specular";
+			Connection "mixer2::mode1"			= value 2;
+			Connection "mixer2::weight1"			= value 1.0 1.0 1.0 0.0;
+			Connection "mixer2::inuse1"			= interface "specular_inuse";
+			Connection "mixer2::alpha1"			= value off;
+			
+			Connection "rayswitch::shadow"		= "shadow";
+			Connection "rayswitch::photon"		= "photon";
+			Connection "rayswitch::eye"			= "mixer2";
+			Connection "rayswitch::refraction"	= "mixer2";
+			Connection "rayswitch::reflection"	= "mixer2";
+			
+			Connection root						= "rayswitch";
+			EndText
+		}
+		
+		Renderer "MetaSL"
+		{
+			Name = "msl_soft_aniward";
+			FileName = "softimage.msl";
+		}
+	}
+
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets641.htm";
+
+	Defaults
+	{
+		radiance
+		{
+			Name = "Radiance";
+			Description = "Radiance";
+			UIType = "rgb",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		image
+		{
+			Name = "Anisotropic Orientation";
+			Description = "Determine the orientation of the anisotropic specular. RenderCost:1";
+			UIType = "rgb",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		surfderiv_mode
+		{
+			Name = "Orientation";
+			Description = "Orientation Mode RenderCost:1";
+			UIType = "combo";
+			Items
+			{
+				"Surface U Orientation" = -5,
+				"Surface V Orientation" = -6,
+				//"Surface U Curvature" = -7,
+				//"Surface V Curvature" = -8,
+			}
+		}
+		ambience
+		{
+			Name = "Ambience";
+			Description = "Ambience is a parameter shared in the entire scene, it determines the Global Indirect Scene Illumination. RenderCost:1";
+			UIType = "rgb",4;
+		}
+		ambient
+		{
+			Name = "Ambient";
+			Description = "Ambient Color determine how strong the Global Ambience (indirect illumination) will affect the object. RenderCost:1";
+			UIType = "rgb",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		diffuse
+		{
+			Name = "Diffuse";
+			Description = "Diffuse Color determine the surface color in the illuminated area of the object. This value get blended with Ambient color. RenderCost:1";
+			UIType = "rgb",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		glossy
+		{
+			Name = "Glossy";
+			Description = "RenderCost:1";
+			UIType = "rgb",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		shiny_u
+		{
+			Name = "Shiny U";
+			Description = "RenderCost:1";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		shiny_v
+		{
+			Name = "Shiny V";
+			Description = "RenderCost:1";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		transparency
+		{
+			Name = "Color";
+			Description = "Transparency color. RenderCost:2";
+			UIType = "rgba",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		trans_glossy
+		{
+			Name = "Frost";
+			Description = "Transparency Frost. RenderCost:3";
+			UIRange = 0.0 to 0.5 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		transparent_samples
+		{
+			Name = "Samples";
+			Description = "Transparency Frost Samples. RenderCost:3";
+			UIRange = 0 to 10 by 0.01;
+		}
+		reflectivity
+		{
+			Name = "Color";
+			Description = "Reflectivity Color. RenderCost:2";
+			UIType = "rgba",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		reflect_glossy
+		{
+			Name = "Gloss";
+			Description = "Reflectivity Gloss. RenderCost:3";
+			UIRange = 0.0 to 0.5 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		reflect_samples
+		{
+			Name = "Samples";
+			Description = "Reflectivity Gloss Samples. RenderCost:3";
+			UIRange = 0 to 10 by 0.01;
+		}
+		index_of_refraction
+		{
+			Name = "Index of Refraction";
+			Description = "Index of Refraction. RenderCost:1";
+			UIRange = 0.0 to 5.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		translucency
+		{
+			Name = "Translucency";
+			Description = "Translucency factor determine the blending factor between front/back illumination. 0.0 = no blending at all. RenderCost:1";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		incandescence
+		{
+			Name = "Incandescence";
+			Description = "Incandescence is color being added to object's ambience. RenderCost:1";
+			UIType = "rgb",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		inc_inten
+		{
+			Name = "Intensity";
+			Description = "Incandescence Intensity set the stenght of the incandescence color. 0.0: no visibile incandesence RenderCost:1";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		diffuse_inuse
+		{
+			Name = "Enable";
+			Description = "Enable Diffuse";
+			UIType = "check";			
+		}		
+		specular_inuse
+		{
+			Name = "Enable";
+			Description = "Enable Specular";
+			UIType = "check";			
+		}		
+		reflect_inuse
+		{
+			Name = "Enable";
+			Description = "Enable Reflection";
+			UIType = "check";			
+		}		
+		refract_inuse
+		{
+			Name = "Enable";
+			Description = "Enable Transparency and Refraction";
+			UIType = "check";			
+		}		
+		incand_inuse
+		{
+			Name = "Enable";
+			Description = "Enable Incandescence";
+			UIType = "check";			
+		}		
+		translucent_inuse
+		{
+			Name = "Enable";
+			Description = "Enable Translucency";
+			UIType = "check";			
+		}		
+		notrace
+		{
+			Name = "Reflection Mode";
+			Description = "Reflection Mode";
+			UIType = "combo";
+			Items
+			{
+				"Raytracing Enable" = 0,
+				"Environment Only" = 1,
+			}
+		}
+		scaletrans
+		{
+			Name = "Scale";
+			Description = "Amount to scale the transparency color";
+			UIRange = 0 to 1 by 0.01;
+		}
+		inverttrans
+		{
+			Name = "Invert";
+			Description = "Interpret as opacity";
+		}
+		usealphatrans
+		{
+			Name = "Use Alpha";
+			Description = "Use the alpha of the transparency color";
+		}
+		scalerefl
+		{
+			Name = "Scale";
+			Description = "Amount to scale the reflect color";
+			UIRange = 0 to 1 by 0.01;
+		}
+		invertrefl
+		{
+			Name = "Invert";
+			Description = "Invert reflect color";
+		}
+		usealpharefl
+		{
+			Name = "Use Alpha";
+			Description = "Use the alpha of the reflect color";
+		}
+		radiance_filter
+		{
+			Name = "Filter Radiance with Diffuse";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+	}
+
+	Logic
+	{
+		sub diffuse_inuse_Onchanged()
+			pset.diffuse.Enable(pset.diffuse_inuse.Value = TRUE)
+			pset.ambient.Enable(pset.diffuse_inuse.Value = TRUE)
+		end sub
+
+		sub specular_inuse_Onchanged()
+			pset.glossy.Enable(pset.specular_inuse.Value = TRUE)
+			pset.surfderiv_mode.Enable(pset.specular_inuse.Value = TRUE)
+			pset.shiny_u.Enable(pset.specular_inuse.Value = TRUE)
+			pset.shiny_v.Enable(pset.specular_inuse.Value = TRUE)
+		end sub
+
+		sub reflect_inuse_Onchanged()
+			enabled = (pset.reflect_inuse.Value = TRUE)
+			pset.reflectivity.Enable(enabled)
+			pset.reflect_glossy.Enable(enabled)
+			pset.reflect_samples.Enable(enabled)
+			pset.notrace.Enable(enabled)
+			pset.scalerefl.Enable(enabled)
+			pset.invertrefl.Enable(enabled)
+			pset.usealpharefl.Enable(enabled)
+		end sub
+
+		sub refract_inuse_Onchanged()
+			enabled = (pset.refract_inuse.Value = TRUE)
+			pset.transparency.Enable(enabled)
+			pset.trans_glossy.Enable(enabled)
+			pset.transparent_samples.Enable(enabled)
+			pset.index_of_refraction.Enable(enabled)
+			pset.scaletrans.Enable(enabled)
+			pset.inverttrans.Enable(enabled)
+			pset.usealphatrans.Enable(enabled)
+		end sub
+
+		sub translucent_inuse_Onchanged()
+			pset.translucency.Enable(pset.translucent_inuse.Value = TRUE)
+		end sub
+		
+		sub incand_inuse_Onchanged()
+			pset.incandescence.Enable(pset.incand_inuse.Value = TRUE)
+			pset.inc_inten.Enable(pset.incand_inuse.Value = TRUE)
+		end sub
+
+		Sub OnInit
+			diffuse_inuse_Onchanged
+			specular_inuse_Onchanged
+			reflect_inuse_Onchanged
+			refract_inuse_Onchanged
+			translucent_inuse_Onchanged
+			incand_inuse_Onchanged
+		End Sub
+	}
+
+	Layout "Default"
+	{
+		Tab "Illumination"
+		{
+			Name;
+			Group "Diffuse"
+			{
+				diffuse_inuse;
+				diffuse;
+				ambient;
+			}
+			Group "Anisotropic Specular"
+			{
+				specular_inuse;
+				glossy;
+				surfderiv_mode;
+				image;
+				shiny_u;
+				shiny_v;
+			}
+		}
+		Tab "Transparency / Reflection"
+		{
+			Name;
+			Group "Transparency"
+			{
+				refract_inuse;
+				Group "Mix color"
+				{
+					transparency;
+					usealphatrans,continue,AlignRight;
+					inverttrans,AlignRight;
+					scaletrans;
+				}
+				trans_glossy;
+				transparent_samples;
+				index_of_refraction;
+			}
+			Group "Reflection"
+			{
+				reflect_inuse;
+				Group "Mix color"
+				{
+					reflectivity;
+					usealpharefl,continue,AlignRight;
+					invertrefl,AlignRight;
+					scalerefl;
+				}
+				reflect_glossy;
+				reflect_samples;			
+				notrace;
+			}
+		}
+		Tab "Indirect Illumination"
+		{
+			Name;
+			Group "Global Illumination / Caustics / Final Gathering"
+			{
+				radiance;
+				radiance_filter;
+			}
+			Group "Translucency"
+			{
+				translucent_inuse;
+				translucency;
+			}
+			Group "Incandescence"
+			{
+				incand_inuse;
+				incandescence;
+				inc_inten;
+			}
+		}
+	}
+
+	Layout "RenderTree"
+	{
+		Group "Illumination"
+		{
+			ambient;
+			diffuse;
+			glossy;
+			surfderiv_mode;
+			image;
+			shiny_u;
+			shiny_v;
+			diffuse_inuse;
+			specular_inuse;
+		}
+		Group "Transparency"
+		{
+			refract_inuse;
+			transparency;
+			usealphatrans;
+			inverttrans;
+			scaletrans;
+			trans_glossy;
+			transparent_samples;
+			index_of_refraction;
+		}
+		Group "Reflection"
+		{
+			reflect_inuse;
+			reflectivity;
+			usealpharefl;
+			invertrefl;
+			scalerefl;
+			reflect_glossy;
+			reflect_samples;			
+			notrace;
+		}
+		Group "Indirect Illumination"
+		{
+			radiance;
+			radiance_filter;
+			translucent_inuse;
+			translucency;
+			incand_inuse;
+			incandescence;
+			inc_inten;
+		}
+	}
+
+	
+	Shaderball
+	{
+		Dimension = Spatial;
+	}
+
+END

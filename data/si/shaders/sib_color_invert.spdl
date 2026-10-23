@@ -1,0 +1,115 @@
+SPDL 
+Version = "2.0.0.0";
+Reference = "{87AEE70C-BCFA-11D1-90E9-0000F804EB21}";
+	PropertySet "sib_color_invert_params"
+	{
+		Parameter "out" output
+		{
+			title = "Color Invert";
+			guid = "{4C6879FF-7EC8-11D0-8E3B-00A0C90640EC}";
+			type = color;
+			flags  = 1;
+		}
+		Parameter "input" input
+		{
+			title = "Input";
+			guid = "{6EC46FC0-CC1B-11D2-8BF3-00A0243E3672}";
+			type = color;
+			flags  = 1;
+			value = 0.0 0.0 0.0 1.0;
+			texturable = on;
+			ui "main input" = true;
+			ui "conversion" = true;
+		}
+		Parameter "alpha" input
+		{
+			title = "Alpha";
+			guid = "{6EC90550-CC1B-11D2-8BF3-00A0243E3672}";
+			type = boolean;
+			flags  = 1;
+			texturable = on;
+		}
+	}
+
+	MetaShader "sib_color_invert_declare"
+	{
+		Name = "sib_color_invert";
+		Type = texture;
+		Renderer "mental ray"
+		{
+			Name = "sib_color_invert";
+			Options
+			{
+				"version" = 1;
+			}
+			BeginText
+			
+			Node "math" 			= guid "{6EE27300-A1E2-11D3-AE51-00A0C96E63E1}";
+			Connection "math::input1"			= value 1 1 1 1;
+			Connection "math::input2"			= interface "input";
+			Connection "math::op"				= value 1;
+			Connection "math::alpha"			= interface "alpha";
+			Connection Root 					= "math";
+			EndText
+		}
+		
+		Renderer "MetaSL"
+		{
+			Name = "msl_soft_color_invert";
+			FileName = "softimage.msl";
+		}
+		
+Renderer "Cg"
+{
+Name = "sib_color_invert_cg";
+Options
+{
+	"param0" = "input";
+	"param1" = "alpha";
+}
+BeginText
+{
+	float4	retcolor;
+
+	retcolor.x=1.0-input.x;
+	retcolor.y=1.0-input.y;
+	retcolor.z=1.0-input.z;
+
+	if ( alpha.x == 1 )
+	{
+		retcolor.w = 1.0-input.w;
+	} else {
+		retcolor.w = input.w;
+	}
+
+	return retcolor;
+}
+EndText
+}
+	}
+
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/XSI/xsidocs.chm::/shaderpresets126.htm";
+	Defaults
+	{
+		input
+		{
+			Name = "Input";
+			Description = "Input";
+			UIType = "rgba",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		alpha
+		{
+			Name = "Alpha";
+			Description = "Alpha";
+		}
+	}
+
+	Layout "Default"
+	{
+		Name;
+		input;
+		alpha;
+	}
+END

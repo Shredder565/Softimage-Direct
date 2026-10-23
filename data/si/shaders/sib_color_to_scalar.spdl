@@ -1,0 +1,56 @@
+SPDL 
+Version = "2.0.0.0";
+Reference = "{660E17FD-6B35-4B4D-81A6-C7B11B23EA33}";
+PropertySet
+{
+	Parameter "out" output
+	{
+		GUID = "{2FCA8A77-B92C-4152-8979-772CD7294AB8}";
+		Type = scalar;
+	}
+	Parameter "input" input
+	{
+		GUID = "{D1EA8543-01D5-4281-B2E2-DA2436198DD8}";
+		Type = color;
+		Value = 1.0 1.0 1.0 1.0;
+		Texturable = on;
+		UI "main input" = true;
+		UI "conversion" = true;
+	}
+}
+
+MetaShader
+{
+	Name = "Color To Scalar";
+	Type = texture;
+	Renderer "mental ray"
+	{
+		Name = "sib_color_to_scalar";
+		FileName = "sibase.{EXT}";
+		Options
+		{
+			"version" = 1;
+		}
+	}
+	Renderer "MetaSL"
+	{
+		Name = "msl_soft_color_to_scalar";
+		FileName = "softimage.msl";						
+	}
+}
+
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets91.htm";
+Defaults
+{
+	input
+	{
+		Name = "Input";
+		UIType = "rgba",4;
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+	}
+}
+
+Layout
+{
+	input;
+}

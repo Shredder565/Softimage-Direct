@@ -1,0 +1,309 @@
+SPDL 
+Version = "2.0.0.0";
+Reference = "{139CF1C1-274A-11D4-AE61-00A0C96E63E1}";
+	PropertySet "simple_phong_params"
+	{
+		Parameter "out" output
+		{
+			title = "Phong Shading";
+			guid = "{4C6879FF-7EC8-11D0-8E3B-00A0C90640EC}";
+			type = color;
+		}
+		Parameter "mode" input
+		{
+			title = "mode";
+			guid = "{AFE986B0-2778-11D4-AE61-00A0C96E63E1}";
+			type = integer;
+			value = 0;
+			flags  = 1;
+			texturable = off;
+			inspectable = off;
+		}
+		Parameter "lights" input
+		{
+			title = "Light List";
+			guid = "{AFE986B1-2778-11D4-AE61-00A0C96E63E1}";
+			texturable = off;
+			type = array
+			{
+				Parameter "lights" input
+				{
+					title = "Light";
+					guid = "{AFE986B2-2778-11D4-AE61-00A0C96E63E1}";
+					texturable = off;
+					type = light;
+					flags  = 1;
+				}
+			};
+		}
+		Parameter "ambient" input
+		{
+			title = "Ambient";
+			guid = "{AFE986B3-2778-11D4-AE61-00A0C96E63E1}";
+			ui "mapping" = "{3515CC71-082C-11D0-91DE-00A024C78EE3}";
+			type = color;
+			value = 0.3 0.3 0.3;
+			texturable = Default;
+		}
+		Parameter "diffuse" input
+		{
+			title = "Diffuse";
+			guid = "{AFE986B4-2778-11D4-AE61-00A0C96E63E1}";
+			ui "mapping" = "{3515CC72-082C-11D0-91DE-00A024C78EE3}";
+			type = color;
+			value = 0.7 0.7 0.7;
+			texturable = Default;
+		}
+		Parameter "specular" input
+		{
+			title = "Specular";
+			guid = "{AFE986B5-2778-11D4-AE61-00A0C96E63E1}";
+			ui "mapping" = "{3515CC73-082C-11D0-91DE-00A024C78EE3}";
+			type = color;
+			value = 1.0 1.0 1.0;
+			texturable = on;
+		}
+		Parameter "ambience" input
+		{
+			title = "Scene Ambience";
+			guid = "{3515CC74-082C-11D0-91DE-00A024C78EE3}";
+			type = color;
+			value = 0.1 0.1 0.1;
+			flags  = 1;
+			inspectable = off;
+			texturable = off;
+		}
+		Parameter "shiny" input
+		{
+			title = "Specular Decay";
+			guid = "{AFE986B6-2778-11D4-AE61-00A0C96E63E1}";
+			ui "mapping" = "{D97375C5-05AE-11D0-91DE-00A024C78EE3}";
+			type = scalar;
+			value = 50.0;
+			texturable = on;
+		}
+		Parameter "bump" input
+		{
+			title = "Bump";
+			guid = "{AFE986B7-2778-11D4-AE61-00A0C96E63E1}";
+			type = vector;
+			value = 0.0 0.0 0.0;
+			texturable = on;
+			flags = 1;
+		}
+ 		Parameter "radiance" input
+		{
+			title = "Radiance";
+			guid = "{072C1727-94CC-11D4-86A9-00E08100004B}";
+			type = color;
+			value = 1.0 1.0 1.0 1.0;
+			texturable = on;
+			flags = 1;
+		}
+	}
+
+	MetaShader "simple_phong_declare"
+	{
+		Name = "Simple Phong";
+		Type = material;
+		Renderer "mental ray"
+		{
+			Name = "simple_phong";
+			Options
+			{
+				"version" = 1;
+			}
+			BeginText
+			
+			Node "basicphong"	= guid "{89C75826-BCFA-11D1-90E9-0000F804EB21}";   # sib_illum_phong
+			Node "passthrough"  = guid "{BDE291BB-077A-11D2-8A1A-00A0C9892542}";   # sib_color_passthrought
+			
+			Connection "basicphong::ambient"	=	interface "ambient";
+			Connection "basicphong::ambience"	=	interface "ambience";
+			Connection "basicphong::diffuse"	=	interface "diffuse";
+			Connection "basicphong::specular"	=	interface "specular";
+			Connection "basicphong::shiny"		=	interface "shiny";
+			Connection "basicphong::bump"		=	interface "bump";
+			Connection "basicphong::radiance"	=	interface "radiance";
+			Connection "passthrough::input"		=	"basicphong::combined";
+			Connection root						=	"passthrough";
+			EndText
+		}
+Renderer "Cg"
+{
+Name = "simple_phong_cg";
+Options
+{
+	"param0" = "ambient";
+	"param1" = "diffuse";
+	"param2" = "specular";
+	"param3" = "ambience";
+	"param4" = "shiny";
+	"param5" = "radiance";
+}
+BeginText
+{
+	float4 retval;
+	
+	float4 EPos = mul(mv, Vd.position);      //The eye-space vertex position
+		
+	float3 normal = normalize( mul( (float3x3)mvit, Vd.normal.xyz ) );
+
+	float4 ambient_light = xsiLights[1];
+	ambient_light.w = 1.0f;
+
+	float4 diffuse_light = xsiLights[2];
+	diffuse_light.w = 1.0f;
+
+	float4 specular_light = xsiLights[3];
+	specular_light.w = 1.0f;
+	float3 vdir = normalize(-EPos);
+	float4 coeffs;
+	float3 vert2light = xsiLights[4].xyz - EPos;
+	float d = length(vert2light);
+	float3 ldir = vert2light/d;           //light direction
+	float3 lightDir;
+	float3 half;
+
+
+	if ( xsiLights[5].y == 0 )	// DIRECTIONAL
+	{	
+
+		// hack in a light vector for now
+		float4 LightVec = xsiLights[4];
+		lightDir = normalize(LightVec.xyz);
+
+		half = normalize(vdir - lightDir);
+
+		coeffs = lit(dot(normal, - lightDir), dot(normal,half),shiny.x);
+		
+	
+
+		// Compute the standard shading model
+		retval = ambient_light*ambient +               //ambient term
+			diffuse_light*diffuse*coeffs.y +            //diffuse term
+			specular_light*specular*coeffs.z;             //specular term	
+	}
+
+	if ( xsiLights[5].y == 1 )	// POINT
+	{
+		
+		float3 halfv = normalize(ldir + vdir); //halfway vector
+		coeffs = lit(dot(normal,ldir), dot(normal,halfv), shiny.x);
+	
+		// Compute the standard shading model
+		retval = 1/(xsiLights[0].y + d*xsiLights[0].z + d*d*xsiLights[0].w) *
+						 (ambient_light*ambient +                       
+				  diffuse_light*diffuse*coeffs.y +            
+				  specular_light*specular*coeffs.z);            
+	
+	}
+
+	if ( xsiLights[5].y == 2 )	// SPOT
+	{
+		
+		half = normalize(ldir + vdir); //halfway vector
+	
+		// Compute the diffuse and specular coefficients
+		coeffs = lit(dot(normal,ldir), dot(normal,half), shiny.x);
+	
+		// Compute spotlight effect
+		lightDir = normalize(xsiLights[4].xyz);
+		float spotDot = dot(ldir, -lightDir);
+		float4 spot  = lit(spotDot - xsiLights[5].x, spotDot, xsiLights[7].x);
+	
+		// Compute the standard shading model
+		retval = 1/(xsiLights[0].y + d*xsiLights[0].z + d*d*xsiLights[0].w) *   //attenuation term
+						 (ambient_light*ambient +                       //ambient term
+				  diffuse_light*diffuse*coeffs.y +            //diffuse term
+				  specular_light*specular*coeffs.z);            //specular term
+	
+	}
+
+	return retval;
+
+}
+EndText
+}
+	}
+
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets117.htm";
+	Defaults
+	{
+		radiance
+		{
+			Name = "Radiance";
+			Description = "Radiance";
+			UIType = "rgb",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		ambient
+		{
+			Name = "Ambient";
+			Description = "Ambient";
+			UIType = "rgb",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		diffuse
+		{
+			Name = "Diffuse";
+			Description = "Diffuse";
+			UIType = "rgb",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		specular
+		{
+			Name = "Specular";
+			Description = "Specular";
+			UIType = "rgb",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		ambience
+		{
+			Name = "Scene Ambience";
+			Description = "Ambience";
+			UIType = "rgb",4;
+		}
+		shiny
+		{
+			Name = "Specular Decay";
+			Description = "Specular Decay";
+			UIRange = 0.0 to 300.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		bump
+		{
+			Name = "Bump";
+			Description = "Bump";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 1.0 by 0.001;
+		}
+	}
+
+	Layout "Default"
+	{
+		Name;
+		Group "Diffuse"
+		{
+			diffuse;
+			ambient;
+		}
+		Group "Specular"
+		{
+			specular;
+			shiny;
+		}
+		Group "Global Illumination / Caustics / Final Gathering"
+		{
+			radiance;
+		}
+	}
+	
+	Shaderball
+	{
+		Dimension = Spatial;
+	}
+
+END

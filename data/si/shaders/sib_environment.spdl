@@ -1,0 +1,262 @@
+SPDL
+Version = "2.0.0.0";
+Reference = "{AD97C8B1-E1AE-4E3B-ABF5-1754616A6B63}";
+PropertySet "sib_environment_params"
+{
+	Parameter "out" output
+	{
+		title = "sib_environment output parameter";
+		guid = "{4C6879FF-7EC8-11D0-8E3B-00A0C90640EC}";
+		type = color;
+	}
+	Parameter "tex" input
+	{
+		title = "image color input";
+		guid = "{A02A08CC-E9FD-484E-A7CC-645BF4B6CD67}";
+		type = texture;
+		texturable = on;
+	}
+	Parameter "mode" input
+	{
+		title = "env mapping mode";
+		guid = "{DAD182AA-8470-4990-B1F5-AF0A72CDE928}";
+		type = integer;
+		texturable = on;
+		value = 0;
+		value minimum = 0;
+		value maximum = 4;
+	}
+	Parameter "reflection_intensity" input
+	{
+		title = "env mapping reflection intensity";
+		guid = "{05357547-DA16-4297-9C62-9E032E792E53}";
+		type = scalar;
+		texturable = on;
+		value = 1;
+		value minimum = 0;
+	}
+	Parameter "background_intensity" input
+	{
+		title = "env mapping background  intensity";
+		guid = "{C10499E6-26A0-436D-9659-4848AF0EC56E}";
+		type = scalar;
+		texturable = on;
+		value = 1;
+		value minimum = 0;
+	}
+	Parameter "fg_intensity" input
+	{
+		title = "env mapping  final gathering  intensity";
+		guid = "{17B1F556-B583-45B5-84E5-0C2EB0C0FEC9}";
+		type = scalar;
+		texturable = on;
+		value = 1;
+		value minimum = 0;
+		value maximum = 1000000000;
+	}
+	Parameter "open" input
+	{
+		title = "env mapping cylindrical opening angle";
+		guid = "{DED82982-053A-4AB8-8D96-DB50132C0E0A}";
+		type = scalar;
+		texturable = off;
+		value = 0;
+		value minimum = 0;
+		value maximum = 360;
+	}
+	Parameter "close" input
+	{
+		title = "env mapping cylindrical closing angle";
+		guid = "{C83D5143-859B-4CB5-8D48-D45ACD9017D0}";
+		type = scalar;
+		texturable = off;
+		value = 360;
+		value minimum = 0;
+		value maximum = 360;
+	}
+	Parameter "transform" input
+	{
+		title = "env mapping transformation";
+		guid = "{756640C2-70F5-425B-9C85-ACF5DAEC1828}";
+		type = matrix;
+		value = 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0;
+		texturable = on;
+	}
+	Parameter "exposure" input
+	{
+		guid = "{9AB5DB0E-57D6-4CF9-A8BE-591FAD59BFBE}";
+		type = scalar;
+		writable = off;
+		inspectable = off;
+		value = 0.0;
+		ui "value mapping" = "tex.Exposure";
+	}
+	Parameter "gamma_enable" input
+	{
+		guid = "{98559B4A-7C68-44F4-873C-702D62C8B3AB}";
+		type = boolean;
+		writable = off;
+		inspectable = off;
+		value = off;
+		ui "value mapping" = "tex.RenderGammaEnable";
+	}
+	Parameter "gamma" input
+	{
+		guid = "{272B9F5C-4C77-4653-97B3-C9005EC04DF9}";
+		type = scalar;
+		writable = off;
+		inspectable = off;
+		value = 1.0;
+		ui "value mapping" = "tex.RenderGamma";
+	}
+	Parameter "srgb_enable" input
+	{
+		title = "srgb_enable";
+		guid = "{65D8FA37-0FB3-4EEA-B98E-AF2893FFA2BD}";
+		type = boolean;
+		writable = off;
+		inspectable = off;
+		value = off;
+		ui "value mapping" = "tex.RenderColorProfile_SRGB";
+	}
+}
+MetaShader "sib_environment_declare"
+{
+	Name = "Environment";
+	Type = environment;
+	Renderer "mental ray"
+	{
+		Name = "sib_environment";
+		FileName = "sibase.{EXT}";
+		Options
+		{
+			"version" = 1;
+		}
+	}
+	Renderer "MetaSL"
+	{
+		Name = "msl_soft_environment";
+		FileName = "softimage.msl";
+	}
+}
+
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets732.htm";
+Defaults
+{
+	tex
+	{
+		Name = "Image";
+		Description = "image color input";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		UIType = "ImageBrowserItem.ImageBrowserItem.1";
+	}
+	mode
+	{
+		Name = "Environment Mode";
+		Description = "env mapping mode";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		UItype = "combo";
+		items
+		{
+			"Spherical" = 0,
+			"Cylindrical" = 1,
+			"Cubic strip" = 2,
+			"Cube Cross Sideways" = 3,
+			"Cube Cross" = 4,
+		}
+	}
+	reflection_intensity
+	{
+		Name = "Reflections";
+		Description = "env mapping reflection intensity";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uiRange = 0 to 1 by 0.001;
+	}
+	background_intensity
+	{
+		Name = "Background";
+		Description = "env mapping background  intensity";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uiRange = 0 to 1 by 0.001;
+	}
+	fg_intensity
+	{
+		Name = "Image";
+		Description = "env mapping  final gathering  intensity";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uiRange = 0 to 1 by 0.001;
+	}
+	open
+	{
+		Name = "Cylinder Open Angle";
+		Description = "Cylindrical Open angle";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = -360 to 360 by 0.001;
+	}
+	close
+	{
+		Name = "Cylinder Close Angle";
+		Description = "Cylindrical Close angle";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = -360 to 360 by 0.001;
+	}
+	transform
+	{
+		Name = "Transformation";
+		Description = "Transformation";
+		UIType = "SRTTexture.SRTTexture.1";
+	}
+}
+Layout "Default"
+{
+	Name;
+	tex,nolabel;
+	mode;
+	Group "Intensity"
+	{
+		background_intensity;
+		reflection_intensity;
+		fg_intensity;
+	}
+	transform;
+}
+
+Layout "X3D"
+{
+	tex,nolabel;
+	mode;
+	Group "Intensity"
+	{
+		background_intensity;
+		reflection_intensity;
+		fg_intensity;
+	}
+	transform;
+
+	Button LightHalf, continue = "Halve all lights intensity";
+	Button LightDouble, continue  = "Double all lights intensity";
+}
+
+Logic
+{
+	Sub LightHalf_OnClicked()
+		set lst = SIFilter( "*", "light" )
+
+		for each itm in lst
+			oVal = GetValue( itm.fullname & ".soft_light.Intensity")
+			SetValue itm.fullname & ".soft_light.Intensity" ,oVal/2
+		next
+	End Sub
+	
+	Sub LightDouble_OnClicked()
+		set lst = SIFilter( "*", "light" )
+
+		for each itm in lst
+			oVal = GetValue( itm.fullname & ".soft_light.Intensity")
+			SetValue itm.fullname & ".soft_light.Intensity" ,oVal*2
+		next
+	End Sub
+
+}
+END

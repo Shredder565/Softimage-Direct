@@ -1,0 +1,223 @@
+SPDL
+Version = "2.0.0.0";
+Reference = "{6EE27300-A1E2-11D3-AE51-00A0C96E63E1}";
+	PropertySet "sib_color_math_basic_params"
+	{
+		Parameter "out" output
+		{
+			title = "Color Math Basic";
+			guid = "{4C6879FF-7EC8-11D0-8E3B-00A0C90640EC}";
+			type = color;
+			flags  = 1;
+		}
+
+		Parameter "input1" input
+		{
+			title = "Input 1";
+			guid = "{6EE27301-A1E2-11D3-AE51-00A0C96E63E1}";
+			type = color;
+			flags = 1;
+			value = 0.0 0.0 0.0;
+			texturable = on;
+			ui "main input" = true;
+		}
+
+		Parameter "input2" input
+		{
+			title = "Input 2";
+			guid = "{6EE27302-A1E2-11D3-AE51-00A0C96E63E1}";
+			type = color;
+			flags = 1;
+			value = 1.0 1.0 1.0;
+			texturable = on;
+		}
+
+		Parameter "op" input
+		{
+			title = "Operation";
+			guid = "{6EE27303-A1E2-11D3-AE51-00A0C96E63E1}";
+			type = integer;
+			flags  = 1;
+			value = 0;
+			texturable = on;
+		}
+
+		Parameter "alpha" input
+		{
+			title = "Alpha";
+			guid = "{6EE27304-A1E2-11D3-AE51-00A0C96E63E1}";
+			type = boolean;
+			flags = 1;
+			value = off;
+			texturable = on;
+		}
+	}
+
+	MetaShader "sib_color_math_basic_declare"
+	{
+		Name = "Color Basic Math";
+		Type = texture;
+		Renderer "mental ray"
+		{
+			Name = "sib_color_math_basic";
+			FileName = "sibase.{EXT}";
+			Options
+			{
+				"version" = 1;
+			}
+		}
+		Renderer "MetaSL"
+		{
+			Name = "msl_soft_color_math_basic";
+			FileName = "softimage.msl";		
+		}
+		Renderer "Cg"
+		{
+			Name = "sib_color_math_basic_cg";
+			Options
+			{
+				"param0" = "input1";
+				"param1" = "input2";
+				"param2" = "alpha";
+				"const0" = "op";
+			}
+			BeginText
+			{
+			#define sib_color_math_basic_SCALAR_EPSILON 0.00001
+			#define sib_color_math_basic_HUGE_SCALAR	1000000000.0
+
+				float4	retcolor;
+
+			#if ( op == 0 )
+				retcolor.x = input1.x + input2.x;
+				retcolor.y = input1.y + input2.y;
+				retcolor.z = input1.z + input2.z;
+				retcolor.w = input1.w + input2.w;
+			#endif
+
+			#if ( op == 1 )
+				retcolor.x = input1.x - input2.x;
+				retcolor.y = input1.y - input2.y;
+				retcolor.z = input1.z - input2.z;
+				retcolor.w = input1.w - input2.w;
+			#endif
+
+			#if ( op == 2 )
+				retcolor.x = input1.x * input2.x;
+				retcolor.y = input1.y * input2.y;
+				retcolor.z = input1.z * input2.z;
+				retcolor.w = input1.w * input2.w;
+			#endif
+
+			#if ( op == 3 )
+				if (abs(input2.x) < sib_color_math_basic_SCALAR_EPSILON)
+				{
+					retcolor.x = (miScalar)((input2.x>=0)?sib_color_math_basic_HUGE_SCALAR:-sib_color_math_basic_HUGE_SCALAR);
+				}
+				else
+				{
+					retcolor.x = input1.x/input2.x;
+				}
+
+				if (abs(input2.y) < sib_color_math_basic_SCALAR_EPSILON)
+				{
+					retcolor.y = (miScalar)((input2.y>=0)?sib_color_math_basic_HUGE_SCALAR:-sib_color_math_basic_HUGE_SCALAR);
+				}
+				else
+				{
+					retcolor.y = input1.y/input2.y;
+				}
+				
+				if (abs(input2.z) < sib_color_math_basic_SCALAR_EPSILON)
+				{
+					retcolor.z = (miScalar)((input2.z>=0)?sib_color_math_basic_HUGE_SCALAR:-sib_color_math_basic_HUGE_SCALAR);
+				}
+				else
+				{
+					retcolor.z = input1.z/input2.z;
+				}
+				
+				if (abs(input2.w) < sib_color_math_basic_SCALAR_EPSILON)
+				{
+					retcolor.w = (miScalar)((input2.w>=0)?sib_color_math_basic_HUGE_SCALAR:-sib_color_math_basic_HUGE_SCALAR);
+				}
+				else
+				{
+					retcolor.w = input1.w/input2.w;
+				}
+			#endif
+
+			#if ( op == 4 )
+				retcolor.x = min ( input1.x, input2.x );
+				retcolor.y = min ( input1.y, input2.y );
+				retcolor.z = min ( input1.z, input2.z );
+				retcolor.w = min ( input1.w, input2.w );
+			#endif
+
+			#if ( op == 5 )
+				retcolor.x = max ( input1.x, input2.x );
+				retcolor.y = max ( input1.y, input2.y );
+				retcolor.z = max ( input1.z, input2.z );
+				retcolor.w = max ( input1.w, input2.w );
+			#endif
+
+				if ( alpha.x == 0 )
+				{
+					retcolor.w = input1.w;
+				}
+
+				return retcolor;
+			}
+			EndText
+		}
+	}
+
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets630.htm";
+Defaults
+{
+		input1
+		{
+			Name = "Input 1";
+			Description = "Input 1";
+			UIType = "rgba",4;
+			Commands = "{F5C75F11-2F05-11D3-AA95-00AA0068D2C0}";
+		}
+		input2
+		{
+			Name = "Input 2";
+			Description = "Input 2";
+			UIType = "rgba",4;
+			Commands = "{F5C75F11-2F05-11D3-AA95-00AA0068D2C0}";
+		}
+		op
+		{
+			Name = "Operation";
+			Description = "Math Operation";
+			UIType = "combo";
+			Items {
+				"Add"		= 0,
+				"Subtract"	= 1,
+				"Multiply"	= 2,
+				"Divide"	= 3,
+				"Minimum"	= 4,
+				"Maximum"	= 5
+			}
+		}
+		alpha
+		{
+			Name = "Apply to Alpha";
+			Description = "Apply to Alpha";
+		}
+}
+
+Layout "Default"
+{
+			Name;	
+			input1;
+			input2;
+			op;
+			alpha;
+}
+END
+

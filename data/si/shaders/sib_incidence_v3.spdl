@@ -1,0 +1,260 @@
+SPDL
+Version = "2.0.0.0";
+Reference = "{AB202601-FE3F-4269-AF90-A7DEE5E50F53}";
+PropertySet "sib_incidence_v3_params"
+{
+	Parameter "out" output
+	{
+		title = "sib_incidence_v3 output parameter";
+		guid = "{3BEF7B9D-2BC5-46DD-83F5-582DDAFE5B28}";
+		type = scalar;
+	}
+	Parameter "mode" input
+	{
+		title = "mode";
+		guid = "{5DD021CF-7F92-4C1F-9532-092D76A29B48}";
+		type = integer;
+		value = 6;
+		texturable = on;
+	}
+	Parameter "bias" input
+	{
+		title = "incidence bias";
+		guid = "{4A561CD8-BD14-425F-BB54-0E9F028D66AF}";
+		type = scalar;
+		value = 0.5;
+		texturable = on;
+	}
+	Parameter "gain" input
+	{
+		title = "incidence gain";
+		guid = "{DF8C9637-EE0D-470A-A765-D62AC6AE62A2}";
+		type = scalar;
+		value = 0.5;
+		texturable = on;
+	}
+	Parameter "bump" input
+	{
+		title = "bump";
+		guid = "{93C7A181-933C-41E9-81CC-EF5079E75B1E}";
+		type = vector;
+		value = 0.0 0.0 0.0;
+		texturable = on;
+	}
+	Parameter "custom_vector" input
+	{
+		title = "custom vector";
+		guid = "{501F540C-7D45-438E-B567-44E7DBB888A6}";
+		type = vector;
+		value = 0.0 1.0 0.0;
+		texturable = on;
+	}
+	Parameter "invert" input
+	{
+		title = "invert incidence";
+		guid = "{3893C4C9-F61A-4E25-BFE5-7242E8255E6E}";
+		type = boolean;
+		texturable = on;
+	}
+	Parameter "light_intensity" input
+	{
+		title = "incorporate light intensity";
+		guid = "{B9705065-8961-41CC-85B5-1260C43E92AD}";
+		type = boolean;
+		value = true;
+		texturable = on;
+	}
+	Parameter "normal_shading" input
+	{
+		title = "shading range";
+		guid = "{354BE47A-86CF-4278-8691-15EBDD255179}";
+		type = boolean;
+		value = true;
+		texturable = on;
+	}
+	Parameter "lights" input
+	{
+		title = "global light list";
+		guid = "{78481893-8ECD-4A7F-A3B0-6CC05AEDAFC9}";
+		texturable = off;
+		inspectable = off;
+		type = array
+		{
+			Parameter "lights" input
+			{
+				title = "global light list";
+				guid = "{30401E9B-9852-4CD9-9FB7-69C3B5DB588C}";
+				texturable = off;
+				type = light;
+			}
+		};
+	}
+	Parameter "customlights" input
+	{
+		title = "custom light list";
+		guid = "{40E3A068-FEBB-4007-B62C-9DE22944608F}";
+		texturable = off;
+		type = array
+		{
+			Parameter "customlights" input
+			{
+				title = "custom light list";
+				guid = "{B1195968-A0C7-413D-8E55-76378869FECC}";
+				texturable = off;
+				type = light;
+				ui "no label" = true;
+			}
+		};
+	}
+}
+MetaShader "sib_incidence_v3_declare"
+{
+	Name = "Incidence2";
+	Type = texture;
+	Renderer "mental ray"
+	{
+		Name = "sib_incidence_v2";
+		FileName = "sibase.{EXT}";
+		Options
+		{
+			"version" = 2;
+		}
+	}
+	Renderer "MetaSL"
+	{
+		Name = "msl_soft_incidence";
+		FileName = "softimage.msl";
+	}
+}
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets722.htm";
+Defaults
+{
+	mode
+	{
+		Name = "Mode";
+		Description = "incidence mode";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uitype = "combo";
+		items
+		{
+			"Camera / Lights" = 11,
+			"Camera / Lights (Light List)" = 10,
+			"Surface / Lights" = 9,
+			"Surface / Lights (Light List)" = 8,
+			"Surface / Camera" = 6,
+			"Surface / Vector" = 7,
+			"+X Axis" = 0,
+			"-X Axis" = 1,
+			"+Y Axis" = 2,
+			"-Y Axis" = 3,
+			"+Z Axis" = 4,
+			"-Z Axis" = 5,
+		}
+	}
+	custom_vector
+	{
+		Name = "Vector";
+		Description = "custom_vector";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		UIType = "vector";
+		uirange = 0 to 1 by 0.001;
+	}
+	bias
+	{
+		Name = "Bias";
+		Description = "incidence bias";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	gain
+	{
+		Name = "Gain";
+		Description = "incidence gain";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	invert
+	{
+		Name = "Invert";
+		Description = "invert incidence";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+	}
+	light_intensity
+	{
+		Name = "Illuminance";
+		Description = "incorporate light intensity";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+	}
+	normal_shading
+	{
+		Name = "Shading Range";
+		Description = "shading range";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		UIType = "combo";
+		Items
+		{
+			"90-degree" = 1,
+			"180-degree" = 0,
+		}
+	}
+	customlights
+	{
+		Name = "Lights";
+		Description = "custom light list";
+		UIType = "LightListParamItem.LightListParamItem.1";
+	}
+
+}
+Logic
+{
+	Sub mode_Onchanged()
+		pset.custom_vector.show(pset.mode.value = 7)
+		pset.customlights.show(pset.mode.value = 8 or pset.mode.value = 10)
+		pset.light_intensity.show((pset.mode.value = 8 or pset.mode.value = 9 )  and pset.normal_shading.value = true)
+		pset.normal_shading.show(pset.mode.value = 8 or pset.mode.value = 9 )
+	End Sub
+
+	Sub normal_shading_OnChanged()
+		pset.light_intensity.show(true)
+		pset.light_intensity.enable((pset.mode.value = 8 or pset.mode.value = 9 )  and pset.normal_shading.value = true)
+	End Sub
+
+	Sub onInit
+		pset.custom_vector.enable(true)
+		pset.customlights.enable(true)
+		pset.light_intensity.enable(true)
+		pset.normal_shading.enable(true)
+		pset.custom_vector.show(true)
+		pset.customlights.show(true)
+		pset.light_intensity.show(true)
+		pset.normal_shading.show(true)
+		mode_onchanged()
+		normal_shading_OnChanged()
+	End Sub 
+}
+Layout "Default"
+{
+	Name;
+	mode;
+	custom_vector;
+	customlights;
+	normal_shading,aligncenter;
+	light_intensity,aligncenter;
+	Group "Modify"
+	{
+		invert,aligncenter;
+		bias;
+		gain;
+	}
+}
+Layout "Rendertree"
+{
+	mode;
+	custom_vector;
+	normal_shading;
+	light_intensity;
+	invert;
+	bias;
+	gain;
+	bump;
+}

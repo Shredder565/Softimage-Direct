@@ -6,6 +6,7 @@ import { registerUICommands } from './commands/ui';
 import { registerPresetModels } from './commands/presets';
 import { registerModelCommands2 } from './commands/model2';
 import { registerAnimCommands } from './commands/anim';
+import { registerRenderCommands } from './commands/render';
 import { playbackPanel, animationPanel, timerange, layerManager, xsiExplorer, scriptHistory } from './ui/views';
 import { LayoutEngine, DEFAULT_LAYOUT } from './ui/layout';
 import { toolbarPanel, menuStatus, runMenuPath } from './ui/toolbarPanel';
@@ -30,6 +31,7 @@ registerUICommands(app);
 registerPresetModels(app);
 registerModelCommands2(app);
 registerAnimCommands(app);
+registerRenderCommands(app);
 (window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
 
 const appEl = document.getElementById('app')!;
@@ -50,7 +52,7 @@ layout.registerView('MCP', h => mcpPanel(app, h));
 installKeymap(app);
 layout.registerView('Keying Panel', h => keyingPanel(app, h));
 layout.registerView('Layer Control', h => layerControl(app, h));
-layout.registerView('Property Editor', h => propertyEditor(app, h));
+layout.registerView('Property Editor', h => { propertyEditor(app, h); });
 layout.registerView('Panel Switcher', h => panelSwitcher(app, h));
 layout.registerView('Command Line', h => commandLine(app, h));
 layout.registerView('Playback Panel', h => playbackPanel(app, h));
@@ -89,7 +91,8 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
 // editor, like Softimage's "Scene_Root : sphere (General)" window, rather than switching the MCP tray.
 let floatPPG: { win: ReturnType<typeof openFloating>; node: any } | null = null;
 const openFloatingPPG = (node: any) => {
-  if (floatPPG) { floatPPG.node = node; app.events.emit('selection'); return; }
+  if (floatPPG && app.recyclePPG) { floatPPG.node = node; app.events.emit('selection'); return; }
+  if (floatPPG && !app.recyclePPG) { const fixed = node; openFloating('', (body, w) => { propertyEditor(app, body, () => fixed); setTimeout(() => w.setTitle(body.querySelector('.ppg-title')?.textContent ?? '')); }, { w: 420, cls: 'ppg-window' }); return; }
   const state = { win: null as any, node }; floatPPG = state;
   state.win = openFloating('', (body, w) => { propertyEditor(app, body, () => floatPPG?.node); const sync = () => w.setTitle(body.querySelector('.ppg-title')?.textContent ?? ''); setTimeout(sync); app.events.on('selection', () => setTimeout(sync)); app.events.on('scene', () => setTimeout(sync)); }, { w: 420, x: 60, y: 40, cls: 'ppg-window' });
   const win = state.win;

@@ -9072,6 +9072,11 @@
 ],
 "layout": []
 },
+"C3DSceneAmbience": {
+"label": "Ambient Lighting",
+"params": [],
+"layout": []
+},
 "C3DTransformProps": {
 "label": "Transform",
 "params": [
@@ -9782,6 +9787,278 @@
 ]
 }
 ]
+},
+"C3DMaterial": {
+"label": "Image Clip",
+"params": [
+{
+"sn": "envmode",
+"label": "Mode",
+"type": "enum",
+"default": 0,
+"items": [
+[
+"Shaded (Modulate)",
+"MODULATE"
+],
+[
+"Constant (Decal)",
+"DECAL"
+]
+],
+"desc": "Texture Display Mode"
+},
+{
+"sn": "wrapu",
+"label": "Wrap U",
+"type": "enum",
+"default": 0,
+"items": [
+[
+"Clamp",
+"CLAMP"
+],
+[
+"Repeat",
+"REPEAT"
+]
+],
+"desc": "Wrapping Method in U"
+},
+{
+"sn": "wrapv",
+"label": "Wrap V",
+"type": "enum",
+"default": 0,
+"items": [
+[
+"Clamp",
+"CLAMP"
+],
+[
+"Repeat",
+"REPEAT"
+]
+],
+"desc": "Wrapping Method in V"
+},
+{
+"sn": "dispcounter",
+"label": "Displacement Counter",
+"type": "int",
+"default": 0
+},
+{
+"sn": "ogltexture",
+"label": "Display Texture",
+"type": "string",
+"default": ""
+},
+{
+"sn": "oldUV",
+"label": "UV Space",
+"type": "string",
+"default": ""
+},
+{
+"sn": "ImageClip",
+"label": "Image Clip",
+"type": "string",
+"default": ""
+},
+{
+"sn": "CAV",
+"label": "Vertex Color Property",
+"type": "string",
+"default": ""
+},
+{
+"sn": "UV",
+"label": "UV Property",
+"type": "string",
+"default": ""
+},
+{
+"sn": "TextureSel",
+"label": "Texture Selection",
+"type": "enum",
+"default": 1,
+"items": [
+[
+"No OGL texture",
+0
+],
+[
+"Track render tree",
+1
+],
+[
+"Track shader",
+2
+],
+[
+"Use specific Image/UV pair",
+3
+]
+],
+"desc": "How to decide what texture to display in the OGL view."
+},
+{
+"sn": "TrackedShader",
+"label": "Shader",
+"type": "string",
+"default": ""
+},
+{
+"sn": "TextureOverriden",
+"label": "Overriden by Texture Editor Selection",
+"type": "bool",
+"default": false
+},
+{
+"sn": "WrinklesEnabled",
+"label": "Enabled",
+"type": "bool",
+"default": false
+},
+{
+"sn": "WrinkleRest",
+"label": "Rest Skin Pose",
+"type": "string",
+"default": ""
+},
+{
+"sn": "WrinkleIntensity",
+"label": "Global Intensity",
+"type": "double",
+"default": 0
+},
+{
+"sn": "BumpmapEnabled",
+"label": "Enabled",
+"type": "bool",
+"default": false
+},
+{
+"sn": "BumpmapIntensity",
+"label": "Bumpmap Intensity",
+"type": "double",
+"default": 0
+},
+{
+"sn": "alphamask",
+"label": "Use Alpha Mask",
+"type": "bool",
+"default": false,
+"desc": "Use Alpha Mask"
+}
+],
+"layout": [
+{
+"tab": "Name",
+"items": [
+{
+"param": "Name",
+"opts": [
+"NoLabel"
+]
+}
+]
+},
+{
+"tab": "OpenGL Display",
+"items": [
+{
+"group": "Texture Selection",
+"items": [
+{
+"group": "",
+"items": [
+{
+"param": "TextureOverriden",
+"opts": [
+"continue"
+]
+}
+]
+},
+{
+"param": "TextureSel"
+},
+{
+"param": "TrackedShader"
+},
+{
+"group": "Image Clip",
+"items": [
+{
+"param": "ImageClipName",
+"opts": [
+"NoLabel"
+]
+}
+]
+},
+{
+"group": "UV Property",
+"items": [
+{
+"param": "UV",
+"opts": [
+"NoLabel"
+]
+}
+]
+},
+{
+"param": "Button InspectCurrentClip",
+"opts": [
+"aligncenter = \"Inspect Current Image Clip\""
+]
+}
+]
+},
+{
+"group": "Texture Display",
+"items": [
+{
+"param": "envmode"
+},
+{
+"param": "wrapu"
+},
+{
+"param": "wrapv"
+},
+{
+"param": "alphamask"
+}
+]
+},
+{
+"group": "Vertex Color Display Property",
+"items": [
+{
+"param": "CAV",
+"opts": [
+"NoLabel"
+]
+}
+]
+}
+]
+}
+]
+},
+"C3DSpotRoot": {
+"label": "Spot Root",
+"params": [],
+"layout": []
+},
+"C3DSpotInterest": {
+"label": "Spot Interest",
+"params": [],
+"layout": []
 },
 "C3DPrefsAnimation": {
 "label": "Animation",

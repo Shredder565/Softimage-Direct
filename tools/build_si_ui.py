@@ -152,7 +152,7 @@ def views():
 
 # ---------------------------------------------------------------- built-in property sets + preference pages (SPDL)
 VT = {'VT_R8': 'double', 'VT_R4': 'double', 'VT_I4': 'int', 'VT_UI4': 'int', 'VT_I2': 'int', 'VT_UI2': 'int', 'VT_BOOL': 'bool', 'VT_BSTR': 'string', 'siDisplayMode': 'int'}
-PROPSETS = ['C3DKineState', 'C3DVisibilityAndDisplay', 'C3DDisplayProp', 'C3DGeomApprox', 'C3DCamera', 'C3DCameraVisibilityProp', 'C3DCameraDisplayProp', 'C3DLightPoint', 'C3DSceneColors', 'C3DAmbientLighting', 'C3DTransformProps']
+PROPSETS = ['C3DKineState', 'C3DVisibilityAndDisplay', 'C3DDisplayProp', 'C3DGeomApprox', 'C3DCamera', 'C3DCameraVisibilityProp', 'C3DCameraDisplayProp', 'C3DLightPoint', 'C3DSceneColors', 'C3DSceneAmbience', 'C3DTransformProps', 'C3DMaterial', 'C3DSpotRoot', 'C3DSpotInterest']
 def propsets():
     spdl = json.load(open(os.path.join(ROOT, 'data', 'spdl', 'spdl.json')))
     keys = PROPSETS + [k[:-5] for k in spdl if k.startswith('C3DPrefs')]

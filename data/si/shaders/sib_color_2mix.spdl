@@ -1,0 +1,656 @@
+SPDL
+Version = "2.0.0.0";
+Reference = "{C99D3610-9D58-11D3-AE50-00A0C96E63E1}";
+	PropertySet "sib_color_2mix_params"
+	{
+		Parameter "out" output
+		{
+			title = "Blend 2 Colors";
+			guid = "{4C6879FF-7EC8-11D0-8E3B-00A0C90640EC}";
+			type = color;
+			flags  = 1;
+		}
+
+		Parameter "mixersize" input
+		{
+			title = "Number of inputs";
+			guid = "{C99D3611-9D58-11D3-AE50-00A0C96E63E1}";
+			type = integer;
+			flags = 1;
+			value = 2;
+			texturable = off;
+		}
+
+		Parameter "base_color" input
+		{
+			title = "Base Color";
+			guid = "{C99D3612-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 0.0 1.0 0.0;
+			texturable = on;
+		}
+
+#####################################
+#COLOR1
+		Parameter "color1" input
+		{
+			title = "Color 1";
+			guid = "{C99D3613-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 0.0 0.0 1.0;
+			texturable = on;
+		}
+		Parameter "mode1" input
+		{
+			title = "Mode";
+			guid = "{C99D3614-9D58-11D3-AE50-00A0C96E63E1}";
+			type = integer;
+			flags  = 1;
+			value = 1;
+		}
+		Parameter "weight1" input
+		{
+			title = "Weight";
+			guid = "{C99D3615-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 0.5 0.5 0.5;
+			texturable = on;
+		}
+		Parameter "alpha1" input
+		{
+			title = "Multiply weight by Alpha";
+			guid = "{C99D3616-9D58-11D3-AE50-00A0C96E63E1}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = on;
+		}
+		Parameter "inuse1" input
+		{
+			title = "In use";
+			guid = "{C99D3617-9D58-11D3-AE50-00A0C96E63E1}";
+			type = boolean;
+			flags  = 1;
+			value = on;
+			texturable = off;
+		}
+
+#####################################
+#COLOR2
+		Parameter "color2" input
+		{
+			title = "Color 2";
+			guid = "{C99D3618-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 1.0 1.0 1.0;
+			texturable = off;
+		}
+		Parameter "mode2" input
+		{
+			title = "Mode";
+			guid = "{C99D3619-9D58-11D3-AE50-00A0C96E63E1}";
+			type = integer;
+			flags  = 1;
+			value = 1;
+		}
+		Parameter "weight2" input
+		{
+			title = "Weight";
+			guid = "{C99D361A-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 0.5 0.5 0.5;
+			texturable = off;
+		}
+		Parameter "alpha2" input
+		{
+			title = "Multiply weight by Alpha";
+			guid = "{C99D361B-9D58-11D3-AE50-00A0C96E63E1}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+		Parameter "inuse2" input
+		{
+			title = "In use";
+			guid = "{C99D361C-9D58-11D3-AE50-00A0C96E63E1}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+#####################################
+#COLOR3
+		Parameter "color3" input
+		{
+			title = "Color 3";
+			guid = "{C99D361D-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 1.0 1.0 1.0;
+			texturable = off;
+		}
+		Parameter "mode3" input
+		{
+			title = "Mode";
+			guid = "{C99D361E-9D58-11D3-AE50-00A0C96E63E1}";
+			type = integer;
+			flags  = 1;
+			value = 1;
+		}
+		Parameter "weight3" input
+		{
+			title = "Weight";
+			guid = "{C99D361F-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 0.5 0.5 0.5;
+			texturable = off;
+		}
+		Parameter "alpha3" input
+		{
+			title = "Multiply weight by Alpha";
+			guid = "{C99D3620-9D58-11D3-AE50-00A0C96E63E1}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+		Parameter "inuse3" input
+		{
+			title = "In use";
+			guid = "{C99D3621-9D58-11D3-AE50-00A0C96E63E1}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+#####################################
+#COLOR4
+		Parameter "color4" input
+		{
+			title = "Color 4";
+			guid = "{C99D3622-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 1.0 1.0 1.0;
+			texturable = off;
+		}
+		Parameter "mode4" input
+		{
+			title = "Mode";
+			guid = "{C99D3623-9D58-11D3-AE50-00A0C96E63E1}";
+			type = integer;
+			flags  = 1;
+			value = 1;
+		}
+		Parameter "weight4" input
+		{
+			title = "Weight";
+			guid = "{C99D3624-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 0.5 0.5 0.5;
+			texturable = off;
+		}
+		Parameter "alpha4" input
+		{
+			title = "Multiply weight by Alpha";
+			guid = "{C99D3625-9D58-11D3-AE50-00A0C96E63E1}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+		Parameter "inuse4" input
+		{
+			title = "In use";
+			guid = "{C99D3626-9D58-11D3-AE50-00A0C96E63E1}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+#####################################
+#COLOR5
+		Parameter "color5" input
+		{
+			title = "Color 5";
+			guid = "{C99D3627-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 1.0 1.0 1.0;
+			texturable = off;
+		}
+		Parameter "mode5" input
+		{
+			title = "Mode";
+			guid = "{C99D3628-9D58-11D3-AE50-00A0C96E63E1}";
+			type = integer;
+			flags  = 1;
+			value = 1;
+		}
+		Parameter "weight5" input
+		{
+			title = "Weight";
+			guid = "{C99D3629-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 0.5 0.5 0.5;
+			texturable = off;
+		}
+		Parameter "alpha5" input
+		{
+			title = "Multiply weight by Alpha";
+			guid = "{C99D362A-9D58-11D3-AE50-00A0C96E63E1}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+		Parameter "inuse5" input
+		{
+			title = "In use";
+			guid = "{C99D362B-9D58-11D3-AE50-00A0C96E63E1}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+#####################################
+#COLOR6
+		Parameter "color6" input
+		{
+			title = "Color 6";
+			guid = "{C99D362C-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 1.0 1.0 1.0;
+			texturable = off;
+		}
+		Parameter "mode6" input
+		{
+			title = "Mode";
+			guid = "{C99D362D-9D58-11D3-AE50-00A0C96E63E1}";
+			type = integer;
+			flags  = 1;
+			value = 1;
+		}
+		Parameter "weight6" input
+		{
+			title = "Weight";
+			guid = "{C99D362E-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 0.5 0.5 0.5;
+			texturable = off;
+		}
+		Parameter "alpha6" input
+		{
+			title = "Multiply weight by Alpha";
+			guid = "{C99D362F-9D58-11D3-AE50-00A0C96E63E1}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+		Parameter "inuse6" input
+		{
+			title = "In use";
+			guid = "{C99D3630-9D58-11D3-AE50-00A0C96E63E1}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+####################################
+#COLOR7
+		Parameter "color7" input
+		{
+			title = "Color 7";
+			guid = "{C99D3631-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 1.0 1.0 1.0;
+			texturable = off;
+		}
+		Parameter "mode7" input
+		{
+			title = "Mode";
+			guid = "{C99D3632-9D58-11D3-AE50-00A0C96E63E1}";
+			type = integer;
+			flags  = 1;
+			value = 1;
+		}
+		Parameter "weight7" input
+		{
+			title = "Weight";
+			guid = "{C99D3633-9D58-11D3-AE50-00A0C96E63E1}";
+			type = color;
+			flags  = 1;
+			value = 0.5 0.5 0.5;
+			texturable = off;
+		}
+		Parameter "alpha7" input
+		{
+			title = "Multiply weight by Alpha";
+			guid = "{C99D3634-9D58-11D3-AE50-00A0C96E63E1}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+		Parameter "inuse7" input
+		{
+			title = "In use";
+			guid = "{C99D3635-9D58-11D3-AE50-00A0C96E63E1}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+	}
+
+	MetaShader "sib_color_2mix_declare"
+	{
+		Name = "Color 2 Channel Mixer";
+		Type = texture;
+		Renderer "mental ray"
+		{
+			Name = "sib_color_2mix";
+			FileName = "sibase.{EXT}";
+			Options
+			{
+				"version" = 1;
+			}
+		}
+		Renderer "MetaSL"
+		{
+			Name = "msl_soft_color_2mix";
+			FileName = "softimage.msl";
+		}
+
+Renderer "Cg"
+{
+Name = "sib_color_2mix_cg";
+Options
+{
+	"param0" = "base_color";
+	"param1" = "color1";
+	"param2" = "weight1";
+	"param3" = "alpha1";
+	"const0" = "mode1";
+}
+BeginText
+{
+#define miEPS		0.0001
+#define _SCL(r,s1,e1,s2,e2)		((((r)-(s1)/(e1-s1))*(e2-s2))+s2)
+
+	float4 retval;
+
+	retval = base_color;
+
+	if (alpha1.x)
+	{
+		weight1.x *= color1.w;
+		weight1.y *= color1.w;
+		weight1.z *= color1.w;
+		weight1.w *= color1.w;
+	}
+
+#if (mode1==0)
+	retval.x = (base_color.x*(1.0-color1.x*weight1.x)+color1.x*weight1.x);
+	retval.y = (base_color.y*(1.0-color1.y*weight1.y)+color1.y*weight1.y);
+	retval.z = (base_color.z*(1.0-color1.z*weight1.z)+color1.z*weight1.z);
+	retval.w = (base_color.w*(1.0-color1.w*weight1.w)+color1.w*weight1.w);
+#endif
+
+#if (mode1==1)
+	retval.x = (base_color.x*(1.0-weight1.x)+color1.x*weight1.x);
+	retval.y = (base_color.y*(1.0-weight1.y)+color1.y*weight1.y);
+	retval.z = (base_color.z*(1.0-weight1.z)+color1.z*weight1.z);
+	retval.w = (base_color.w*(1.0-weight1.w)+color1.w*weight1.w);
+#endif
+
+#if (mode1==2)
+		retval = base_color + (color1*weight1);
+#endif
+
+#if (mode1==3)	// ADD BOUND
+		float4 tmp0 = base_color + ( color1 * weight1 );
+		retval.x = clamp(tmp0.x,0.0,1.0);
+		retval.y = clamp(tmp0.y,0.0,1.0);
+		retval.z = clamp(tmp0.z,0.0,1.0);
+		retval.w = clamp(tmp0.w,0.0,1.0);
+#endif
+
+#if (mode1==4) // MULTIPLY
+		retval = base_color * (color1 * weight1);
+#endif
+
+#if (mode1==5)	// BOUNDED MULTIPLY
+		retval = base_color * (color1 * weight1);
+		
+		retval.x = clamp(retval.x,0.0,1.0);
+		retval.y = clamp(retval.y,0.0,1.0);
+		retval.z = clamp(retval.z,0.0,1.0);
+		retval.w = clamp(retval.w,0.0,1.0);
+#endif
+
+#if (mode1==6)	// RGB INTENSITY
+		float4 tmpINTENSITY;
+		tmpINTENSITY.x = (0.299 * color1.x) + ( 0.587 * color1.y) + ( 0.114 * color1.z );
+		float4 tmpINTENSITY1;
+		tmpINTENSITY1.x = weight1.x * tmpINTENSITY.x;
+		tmpINTENSITY1.y = weight1.y * tmpINTENSITY.y;
+		tmpINTENSITY1.z = weight1.z * tmpINTENSITY.z;
+		tmpINTENSITY1.w = weight1.w * tmpINTENSITY.w;
+	
+		retval.x =(base_color.x*(1.0-tmpINTENSITY1.x)+color1.x*tmpINTENSITY1.x);
+		retval.y =(base_color.y*(1.0-tmpINTENSITY1.y)+color1.y*tmpINTENSITY1.y);
+		retval.z =(base_color.z*(1.0-tmpINTENSITY1.z)+color1.z*tmpINTENSITY1.z);
+		retval.w =(base_color.w*(1.0-tmpINTENSITY1.w)+color1.w*tmpINTENSITY1.w);
+#endif
+#if (mode1==7)	// DARKER
+		retval.x = min(base_color.x,color1.x*weight1.x);
+		retval.y = min(base_color.y,color1.y*weight1.y);
+		retval.z = min(base_color.z,color1.z*weight1.z);
+		retval.w = min(base_color.w,color1.w*weight1.w);
+#endif
+#if (mode1==8)	// LIGHTER
+		retval.x = max(base_color.x,color1.x*weight1.x);
+		retval.y = max(base_color.y,color1.y*weight1.y);
+		retval.z = max(base_color.z,color1.z*weight1.z);
+		retval.w = max(base_color.w,color1.w*weight1.w);
+#endif
+
+#if (mode1==9)	// DIFFERENCE
+		retval.x = abs(base_color.x-color1.x*weight1.x);
+		retval.y = abs(base_color.y-color1.y*weight1.y);
+		retval.z = abs(base_color.z-color1.z*weight1.z);
+		retval.w = abs(base_color.w-color1.w*weight1.w);
+#endif
+
+#if (mode1==10)	// DIFFERENCE
+		float4 tmp0;
+		tmp0.x = color1.x * weight1.x;
+		tmp0.y = color1.y * weight1.y;
+		tmp0.z = color1.z * weight1.z;
+		tmp0.w = color1.w * weight1.w;
+		
+		retval.x = ((color1.x<0.5) ? (2.0*tmp0.x*base_color.x) : 1.0-2.0*(1.0-tmp0.x)*(1.0-base_color.x));
+		retval.y = ((color1.y<0.5) ? (2.0*tmp0.y*base_color.y) : 1.0-2.0*(1.0-tmp0.y)*(1.0-base_color.y));
+		retval.z = ((color1.z<0.5) ? (2.0*tmp0.z*base_color.z) : 1.0-2.0*(1.0-tmp0.z)*(1.0-base_color.z));
+		retval.w = ((color1.w<0.5) ? (2.0*tmp0.w*base_color.w) : 1.0-2.0*(1.0-tmp0.w)*(1.0-base_color.w));
+#endif
+#if (mode1== 11)	//OVERLAY
+		float4 tmp0;
+		tmp0.x = color1.x * weight1.x;
+		tmp0.y = color1.y * weight1.y;
+		tmp0.z = color1.z * weight1.z;
+		tmp0.w = color1.w * weight1.w;
+
+		retval.x = ((base_color.x<0.5) ? (2.0*tmp0.x*base_color.x) : 1.0-2.0*(1.0-tmp0.x)*(1.0-base_color.x));
+		retval.y = ((base_color.y<0.5) ? (2.0*tmp0.y*base_color.y) : 1.0-2.0*(1.0-tmp0.y)*(1.0-base_color.y));
+		retval.z = ((base_color.z<0.5) ? (2.0*tmp0.z*base_color.z) : 1.0-2.0*(1.0-tmp0.z)*(1.0-base_color.z));
+		retval.w = ((base_color.w<0.5) ? (2.0*tmp0.w*base_color.w) : 1.0-2.0*(1.0-tmp0.w)*(1.0-base_color.w));
+#endif
+		
+#if (mode1== 12)	//SCREEN
+		
+		float4 tmp0;
+		tmp0.x = color1.x * weight1.x;
+		tmp0.y = color1.y * weight1.y;
+		tmp0.z = color1.z * weight1.z;
+		tmp0.w = color1.w * weight1.w;
+
+		retval.x = (1.0 - ((1.0-base_color.x)*(1.0-tmp0.x)) );
+		retval.y = (1.0 - ((1.0-base_color.y)*(1.0-tmp0.y)) );
+		retval.z = (1.0 - ((1.0-base_color.z)*(1.0-tmp0.z)) );
+		retval.w = (1.0 - ((1.0-base_color.w)*(1.0-tmp0.w)) );
+#endif
+		
+#if (mode1== 13)	//SOFT LIGHT
+		
+
+
+		float4 tmp0;
+		tmp0.x = color1.x * weight1.x;
+		tmp0.y = color1.y * weight1.y;
+		tmp0.z = color1.z * weight1.z;
+		tmp0.w = color1.w * weight1.w;
+		
+		retval.x = ((tmp0.x<0.5) ? 2*_SCL(base_color.x,0.0,1.0,0.25,0.75)*tmp0.x :
+											 1.0-(2*(1.0-_SCL(base_color.x,0.0,1.0,0.25,0.75)*(1.0-tmp0.x))) );
+		retval.y = ((tmp0.y<0.5) ? 2*_SCL(base_color.y,0.0,1.0,0.25,0.75)*tmp0.y :
+											 1.0-(2*(1.0-_SCL(base_color.y,0.0,1.0,0.25,0.75)*(1.0-tmp0.y))) );
+		retval.z = ((tmp0.z<0.5) ? 2*_SCL(base_color.z,0.0,1.0,0.25,0.75)*tmp0.z :
+											 1.0-(2*(1.0-_SCL(base_color.z,0.0,1.0,0.25,0.75)*(1.0-tmp0.z))) );
+		retval.w = ((tmp0.w<0.5) ? 2*_SCL(base_color.w,0.0,1.0,0.25,0.75)*tmp0.w :
+													 1.0-(2*(1.0-_SCL(base_color.w,0.0,1.0,0.25,0.75)*(1.0-tmp0.w))) );
+#endif
+		
+#if (mode1== 14)	//Decal or SI3D "without" mode 
+		
+		float4 tmpINTENSITY;
+		tmpINTENSITY.x = (0.299 * color1.x) + ( 0.587 * color1.y) + ( 0.114 * color1.z );
+
+		if ( color1.w >= miEPS || tmpINTENSITY.x >= miEPS)
+		{
+			retval.x = (base_color.x*(1.0-weight1.x)+color1.x*weight1.x);
+			retval.y = (base_color.y*(1.0-weight1.y)+color1.y*weight1.y);
+			retval.z = (base_color.z*(1.0-weight1.z)+color1.z*weight1.z);
+			retval.w = (base_color.w*(1.0-weight1.w)+color1.w*weight1.w);
+		}
+#endif
+	
+#if (mode1== 15)	//SI3D "Alpha" mode 
+		
+		retval.x = (base_color.x*(1.0-weight1.x*color1.w)+color1.x*weight1.x*color1.w);
+		retval.y = (base_color.y*(1.0-weight1.y*color1.w)+color1.y*weight1.y*color1.w);
+		retval.z = (base_color.z*(1.0-weight1.z*color1.w)+color1.z*weight1.z*color1.w);
+		retval.w = (base_color.w*(1.0-weight1.w)+color1.w*weight1.w);
+#endif
+		
+#if (mode1== 16)	//SI3D RGB Modulate mode 
+		
+		float4 tmpINTENSITY;
+		tmpINTENSITY.x = (0.299 * color1.x) + ( 0.587 * color1.y) + ( 0.114 * color1.z );
+
+		if ( color1.w >= miEPS || tmpINTENSITY.x >= miEPS)
+		{
+			retval.x *= color1.x * weight1.x;
+			retval.y *= color1.y * weight1.y;
+			retval.z *= color1.z * weight1.z;
+			retval.w *= color1.w * weight1.w;
+		}
+#endif
+	
+	return retval;
+
+}
+EndText
+}
+
+}
+
+
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets138.htm";
+Defaults
+{
+		mode1
+		{
+			Name = "Mode";
+			Description = "Combination Mode";
+			UIType = "combo";
+			Items {
+				"Alpha"		= 15,
+				"Decal"		= 14,
+				"RGB Modulate"	= 16,
+				"Mix"	= 1,
+				"RGB Intensity"	= 6,
+				"Hide/Reveal(Multiply)"	= 4,
+				"Hide/Reveal Bound (Multiply)"	= 5,
+				"Add"			= 2,
+				"Add Compensate (Blend)" = 0,
+				"Add Bound"	= 3,
+				"Lighter"		= 8,
+				"Darker"		= 7,
+				"Soft Light"	= 13,
+				"Hard Light"	= 10,
+				"Difference (Subtract)"	= 9,
+				"Hue Offset (Overlay)"	= 11,
+				"Screen"		= 12,
+			}
+		}
+		base_color
+		{
+			Name = "Base Color";
+			Description = "Base Color";
+			UIType = "rgba",4;
+			Commands = "{F5C75F11-2F05-11D3-AA95-00AA0068D2C0}";
+		}
+		color1
+		{
+			Name = "Color";
+			Description = "Color 1";
+			UIType = "rgba",4;
+			Commands = "{F5C75F11-2F05-11D3-AA95-00AA0068D2C0}";
+		}
+		weight1
+		{
+			Name = "Weight";
+			Description = "Weight";
+			UIType = "rgba",4;
+			Commands = "{F5C75F11-2F05-11D3-AA95-00AA0068D2C0}";
+		}
+		alpha1
+		{
+			Name = "Multiply weight by Alpha";
+			Description = "Multiply weight by Alpha";
+		}
+}
+
+Layout "Default"
+{	
+			Name;
+			Group "Base Color"
+			{
+				base_color;
+			}
+			Group "Mix Layer"
+			{
+				color1;
+				weight1;
+				mode1;
+				alpha1;
+			}
+}
+
+END

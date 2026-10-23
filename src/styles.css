@@ -319,3 +319,8 @@ button, select, input { font-family: inherit; }
 .mcp.mini { width: 200px; }
 
 .kp-row .nm.marked { background: #ffd34d; color: #111; }
+
+.ppg-bmp { position: relative; height: 25px; flex: none; image-rendering: pixelated; }
+.ppg-bmp.nav { width: 71px; } .ppg-bmp.tools { width: 66px; } .ppg-bmp { background-repeat: no-repeat; }
+.ppg-port select, .ppg-anim-info { font-size: 10px; } .ppg-anim-info { display: flex; align-items: center; gap: 4px; } .ppg-anim-info canvas { border: 1px solid #333; }
+.ppg-row.ppg-anim { grid-template-columns: 12px 110px 1fr 20px; }

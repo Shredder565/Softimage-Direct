@@ -1,0 +1,197 @@
+SPDL 
+Version = "2.0.0.0";
+Reference = "{89C75826-BCFA-11D1-90E9-0000F804EB21}";
+	PropertySet "sib_illum_phong_params"
+	{
+			Parameter "out" output
+			{
+				title = "Phong Shading";
+				guid = "{7220BE50-CC1B-11D2-8BF3-00A0243E3672}";
+				type = struct
+					{
+							Parameter "surface" output
+							{
+								title = "Surface";
+								guid = "{722553E0-CC1B-11D2-8BF3-00A0243E3672}";
+								type = color;
+							}
+							Parameter "specular" output
+							{
+								title = "Specular";
+								guid = "{722CF7D0-CC1B-11D2-8BF3-00A0243E3672}";
+								type = color;
+							}
+							Parameter "combined" output
+							{
+								title = "Combined";
+								guid = "{72331490-CC1B-11D2-8BF3-00A0243E3672}";
+								type = color;
+							}
+					};
+			}
+		Parameter "ambient" input
+		{
+			title = "Ambient";
+			guid = "{72487930-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{3515CC71-082C-11D0-91DE-00A024C78EE3}";
+			type = color;
+			value = 0.3 0.3 0.3;
+			texturable = Default;
+			flags  = 1;
+		}
+		Parameter "diffuse" input
+		{
+			title = "Diffuse";
+			guid = "{72501D20-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{3515CC72-082C-11D0-91DE-00A024C78EE3}";
+			type = color;
+			value = 0.7 0.7 0.7;
+			texturable = Default;
+			flags  = 1;
+		}
+		Parameter "specular" input
+		{
+			title = "Specular";
+			guid = "{7254B2B0-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{3515CC73-082C-11D0-91DE-00A024C78EE3}";
+			type = color;
+			value = 1.0 1.0 1.0;
+			texturable = on;
+			flags  = 1;
+		}
+		Parameter "ambience" input
+		{
+			title = "Scene Ambience";
+			guid = "{3515CC74-082C-11D0-91DE-00A024C78EE3}";
+			type = color;
+			value = 0.1 0.1 0.1;
+			flags  = 1;
+			inspectable = off;
+			texturable = off;
+		}
+		Parameter "shiny" input
+		{
+			title = "Specular Decay";
+			guid = "{7260EC30-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{D97375C5-05AE-11D0-91DE-00A024C78EE3}";
+			type = scalar;
+			value = 50.0;
+			texturable = on;
+		}
+		Parameter "bump" input
+		{
+			title = "Bump";
+			guid = "{726708F0-CC1B-11D2-8BF3-00A0243E3672}";
+			type = vector;
+			value = 0.0 0.0 0.0;
+			texturable = on;
+		}
+		Parameter "radiance" input
+		{
+			title = "Radiance";
+			guid = "{072C1721-94CC-11D4-86A9-00E08100004B}";
+			type = color;
+			value = 1.0 1.0 1.0 1.0;
+			texturable = on;
+			flags = 1;
+		}
+		Parameter "radiance_filter" input
+		{
+			title = "Radiance Filter";
+			guid = "{410240C9-144E-427F-85BE-CF9A9D665103}";
+			type = boolean;
+			value = true;
+			texturable = on;
+		}
+	}
+
+	MetaShader "sib_illum_phong_declare"
+	{
+		Name = "Phong";
+		Type = material;
+		Renderer "mental ray"
+		{
+			Name = "sib_illum_phong";
+			FileName = "sibase.{EXT}";
+			Options
+			{
+				"version" = 2;
+			}
+		}
+	}
+
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets117.htm";
+	Defaults
+	{
+		radiance
+		{
+			Name = "Radiance";
+			Description = "Radiance";
+			UIType = "rgb",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		ambient
+		{
+			Name = "Ambient";
+			Description = "Ambient";
+			UIType = "rgb",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		diffuse
+		{
+			Name = "Diffuse";
+			Description = "Diffuse";
+			UIType = "rgb",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		specular
+		{
+			Name = "Specular";
+			Description = "Specular";
+			UIType = "rgb",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		ambience
+		{
+			Name = "Scene Ambience";
+			Description = "Ambience";
+			UIType = "rgb",4;
+		}
+		shiny
+		{
+			Name = "Specular Decay";
+			Description = "Specular Decay";
+			UIRange = 0.0 to 300.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		bump
+		{
+			Name = "Bump";
+			Description = "Bump";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 1.0 by 0.001;
+		}
+		radiance_filter
+		{
+			Name = "Filter Radiance with Diffuse";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+	}
+
+	Layout "Default"
+	{
+		Name;
+		diffuse;
+		ambient;
+		specular;
+		shiny;
+		bump;
+		Group "Global Illumination / Caustics / Final Gathering"
+		{
+			radiance;
+			radiance_filter;
+		}
+	}
+END

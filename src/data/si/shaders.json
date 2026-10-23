@@ -1,0 +1,14547 @@
+{
+"light-exponent": {
+"file": "light-exponent.spdl",
+"propset": "light-exponent_params",
+"params": [
+{
+"sn": "out",
+"label": "out",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "color",
+"label": "Light Color",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "intensity",
+"label": "Intensity",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "shadow",
+"label": "Shadow On/Off",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "shadow_attenuation",
+"label": "Shadow Attenutation",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "spread",
+"label": "Spread",
+"type": "scalar",
+"value": 0.8,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "min_distance",
+"label": "Minimum Distance",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "start",
+"label": "Attenuation Start Distance",
+"type": "scalar",
+"value": 0.01,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "stop",
+"label": "Attenuation Stop Distance",
+"type": "scalar",
+"value": 100000.0,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "exponent",
+"label": "Attenuation Exponent",
+"type": "scalar",
+"value": 2.0,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "out",
+"output": "color",
+"layout": [
+{
+"tab": "Default",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Default_Group",
+"items": [
+{
+"param": "exponent"
+},
+{
+"param": "color"
+},
+{
+"param": "intensity"
+},
+{
+"param": "shadow"
+},
+{
+"param": "shadow_attenuation"
+},
+{
+"param": "spread"
+},
+{
+"param": "min_distance"
+},
+{
+"param": "start"
+},
+{
+"param": "stop"
+}
+]
+}
+]
+}
+]
+},
+"material-blinn": {
+"file": "material-blinn.spdl",
+"propset": "material-blinn_params",
+"params": [
+{
+"sn": "out",
+"label": "Blinn",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "mode",
+"label": "mode",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "lights",
+"label": "Light List",
+"texturable": false,
+"inspectable": false,
+"type": "light",
+"dir": "input"
+},
+{
+"sn": "ambience",
+"label": "Scene Ambience",
+"type": "color",
+"value": [
+0.1,
+0.1,
+0.1
+],
+"inspectable": false,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "ambient",
+"label": "Ambient",
+"type": "color",
+"value": [
+0.3,
+0.3,
+0.3
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "diffuse",
+"label": "Diffuse",
+"type": "color",
+"texturable": true,
+"value": [
+0.7,
+0.7,
+0.7
+],
+"dir": "input"
+},
+{
+"sn": "specular",
+"label": "Specular",
+"type": "color",
+"texturable": true,
+"value": [
+1.0,
+1.0,
+1.0
+],
+"dir": "input"
+},
+{
+"sn": "roughness",
+"label": "Roughness",
+"type": "scalar",
+"texturable": true,
+"value": 0.3,
+"dir": "input"
+},
+{
+"sn": "ior",
+"label": "Ior",
+"type": "scalar",
+"texturable": true,
+"value": 10.0,
+"dir": "input"
+},
+{
+"sn": "transparency",
+"label": "Transparency",
+"type": "color",
+"texturable": true,
+"value": [
+0.0,
+0.0,
+0.0
+],
+"dir": "input"
+},
+{
+"sn": "trans_glossy",
+"label": "Transparent Glossy",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "transparent_samples",
+"label": "Transparent Samples",
+"type": "integer",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "reflectivity",
+"label": "Reflectivity",
+"type": "color",
+"texturable": true,
+"value": [
+0.0,
+0.0,
+0.0
+],
+"dir": "input"
+},
+{
+"sn": "reflect_glossy",
+"label": "Reflect Glossy",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "reflect_samples",
+"label": "Reflect Samples",
+"type": "integer",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "index_of_refraction",
+"label": "Index Of Refraction",
+"type": "scalar",
+"texturable": true,
+"value": 1.0,
+"dir": "input"
+},
+{
+"sn": "translucency",
+"label": "Translucency",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "incandescence",
+"label": "Incandescence",
+"type": "color",
+"texturable": true,
+"value": [
+1.0,
+1.0,
+1.0
+],
+"dir": "input"
+},
+{
+"sn": "inc_inten",
+"label": "Incandescence Intensity",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "notrace",
+"label": "Reflection Mode",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "diffuse_inuse",
+"label": "Enable Diffuse",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "specular_inuse",
+"label": "Enable Specular",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "reflect_inuse",
+"label": "Enable Reflectivity",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "refract_inuse",
+"label": "Enable Transparency",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "incand_inuse",
+"label": "Enable incandesence",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "translucent_inuse",
+"label": "Enable translucent",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance",
+"label": "Radiance",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance_filter",
+"label": "Radiance Filter",
+"type": "boolean",
+"value": true,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "scaletrans",
+"label": "Scale",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "inverttrans",
+"label": "Invert",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "usealphatrans",
+"label": "Use Alpha",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "scalerefl",
+"label": "Scale",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "invertrefl",
+"label": "Invert",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "usealpharefl",
+"label": "Use Alpha",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Blinn",
+"output": "color",
+"layout": [
+{
+"tab": "Illumination",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Diffuse",
+"items": [
+{
+"param": "diffuse_inuse"
+},
+{
+"param": "diffuse"
+},
+{
+"param": "ambient"
+}
+]
+},
+{
+"group": "Specular",
+"items": [
+{
+"param": "specular_inuse"
+},
+{
+"param": "specular"
+},
+{
+"param": "roughness"
+},
+{
+"param": "ior"
+}
+]
+}
+]
+},
+{
+"tab": "Transparency / Reflection",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Transparency",
+"items": [
+{
+"param": "refract_inuse"
+},
+{
+"group": "Mix color",
+"items": [
+{
+"param": "transparency"
+},
+{
+"param": "usealphatrans",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "inverttrans",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scaletrans"
+}
+]
+},
+{
+"param": "trans_glossy"
+},
+{
+"param": "transparent_samples"
+},
+{
+"param": "index_of_refraction"
+}
+]
+},
+{
+"group": "Reflection",
+"items": [
+{
+"param": "reflect_inuse"
+},
+{
+"group": "Mix color",
+"items": [
+{
+"param": "reflectivity"
+},
+{
+"param": "usealpharefl",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "invertrefl",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scalerefl"
+}
+]
+},
+{
+"param": "reflect_glossy"
+},
+{
+"param": "reflect_samples"
+},
+{
+"param": "notrace"
+}
+]
+}
+]
+},
+{
+"tab": "Indirect Illumination",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Global Illumination / Caustics / Final Gathering",
+"items": [
+{
+"param": "radiance"
+},
+{
+"param": "radiance_filter"
+}
+]
+},
+{
+"group": "Translucency",
+"items": [
+{
+"param": "translucent_inuse"
+},
+{
+"param": "translucency"
+}
+]
+},
+{
+"group": "Incandescence",
+"items": [
+{
+"param": "incand_inuse"
+},
+{
+"param": "incandescence"
+},
+{
+"param": "inc_inten"
+}
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"group": "Illumination",
+"items": [
+{
+"param": "ambient"
+},
+{
+"param": "diffuse"
+},
+{
+"param": "specular"
+},
+{
+"param": "roughness"
+},
+{
+"param": "ior"
+},
+{
+"param": "diffuse_inuse"
+},
+{
+"param": "specular_inuse"
+}
+]
+},
+{
+"group": "Transparency",
+"items": [
+{
+"param": "refract_inuse"
+},
+{
+"param": "transparency"
+},
+{
+"param": "usealphatrans",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "inverttrans",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scaletrans"
+},
+{
+"param": "trans_glossy"
+},
+{
+"param": "transparent_samples"
+},
+{
+"param": "index_of_refraction"
+}
+]
+},
+{
+"group": "Reflection",
+"items": [
+{
+"param": "reflect_inuse"
+},
+{
+"param": "reflectivity"
+},
+{
+"param": "usealpharefl",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "invertrefl",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scalerefl"
+},
+{
+"param": "reflect_glossy"
+},
+{
+"param": "reflect_samples"
+},
+{
+"param": "notrace"
+}
+]
+},
+{
+"group": "Indirect Illumination",
+"items": [
+{
+"param": "radiance"
+},
+{
+"param": "radiance_filter"
+},
+{
+"param": "translucent_inuse"
+},
+{
+"param": "translucency"
+},
+{
+"param": "incand_inuse"
+},
+{
+"param": "incandescence"
+},
+{
+"param": "inc_inten"
+}
+]
+}
+]
+},
+"material-constant": {
+"file": "material-constant.spdl",
+"propset": "material-constant_params",
+"params": [
+{
+"sn": "out",
+"label": "Constant",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "mode",
+"label": "mode",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "lights",
+"label": "Light List",
+"texturable": false,
+"inspectable": false,
+"type": "light",
+"dir": "input"
+},
+{
+"sn": "color",
+"label": "Color",
+"type": "color",
+"value": [
+0.7,
+0.7,
+0.7,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "transparency",
+"label": "Transparency",
+"type": "color",
+"texturable": true,
+"value": [
+0.0,
+0.0,
+0.0
+],
+"dir": "input"
+},
+{
+"sn": "trans_glossy",
+"label": "Transparency Glossy",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "transparent_samples",
+"label": "Transparent Samples",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "reflectivity",
+"label": "Reflectivity",
+"type": "color",
+"texturable": true,
+"value": [
+0.0,
+0.0,
+0.0
+],
+"dir": "input"
+},
+{
+"sn": "reflect_glossy",
+"label": "Reflectivity Glossy",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "reflect_samples",
+"label": "Reflect Samples",
+"type": "integer",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "index_of_refraction",
+"label": "Index Of Refraction",
+"type": "scalar",
+"texturable": true,
+"value": 1.0,
+"dir": "input"
+},
+{
+"sn": "incandescence",
+"label": "Incandescence",
+"type": "color",
+"texturable": true,
+"value": [
+1.0,
+1.0,
+1.0
+],
+"dir": "input"
+},
+{
+"sn": "inc_inten",
+"label": "Incandescence Intensity",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "notrace",
+"label": "Reflection Mode",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "reflect_inuse",
+"label": "Enable Reflectivity",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "refract_inuse",
+"label": "Enable Transparency",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "incand_inuse",
+"label": "Enable incandesence",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance",
+"label": "Radiance",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "scaletrans",
+"label": "Scale",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "inverttrans",
+"label": "Invert",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "usealphatrans",
+"label": "Use Alpha",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "scalerefl",
+"label": "Scale",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "invertrefl",
+"label": "Invert",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "usealpharefl",
+"label": "Use Alpha",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Constant",
+"output": "color",
+"layout": [
+{
+"tab": "Illumination",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "color"
+}
+]
+},
+{
+"tab": "Transparency / Reflection",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Transparency",
+"items": [
+{
+"param": "refract_inuse"
+},
+{
+"group": "Mix color",
+"items": [
+{
+"param": "transparency"
+},
+{
+"param": "usealphatrans",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "inverttrans",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scaletrans"
+}
+]
+},
+{
+"param": "trans_glossy"
+},
+{
+"param": "transparent_samples"
+},
+{
+"param": "index_of_refraction"
+}
+]
+},
+{
+"group": "Reflection",
+"items": [
+{
+"param": "reflect_inuse"
+},
+{
+"group": "Mix color",
+"items": [
+{
+"param": "reflectivity"
+},
+{
+"param": "usealpharefl",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "invertrefl",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scalerefl"
+}
+]
+},
+{
+"param": "reflect_glossy"
+},
+{
+"param": "reflect_samples"
+},
+{
+"param": "notrace"
+}
+]
+}
+]
+},
+{
+"tab": "Indirect Illumination",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Global Illumination / Caustics / Final Gathering",
+"items": [
+{
+"param": "radiance"
+}
+]
+},
+{
+"group": "Incandescence",
+"items": [
+{
+"param": "incand_inuse"
+},
+{
+"param": "incandescence"
+},
+{
+"param": "inc_inten"
+}
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"param": "color"
+},
+{
+"group": "Transparency",
+"items": [
+{
+"param": "refract_inuse"
+},
+{
+"param": "transparency"
+},
+{
+"param": "usealphatrans"
+},
+{
+"param": "inverttrans"
+},
+{
+"param": "scaletrans"
+},
+{
+"param": "trans_glossy"
+},
+{
+"param": "transparent_samples"
+},
+{
+"param": "index_of_refraction"
+}
+]
+},
+{
+"group": "Reflection",
+"items": [
+{
+"param": "reflect_inuse"
+},
+{
+"param": "reflectivity"
+},
+{
+"param": "usealpharefl"
+},
+{
+"param": "invertrefl"
+},
+{
+"param": "scalerefl"
+},
+{
+"param": "reflect_glossy"
+},
+{
+"param": "reflect_samples"
+},
+{
+"param": "notrace"
+}
+]
+},
+{
+"group": "Indirect Illumination",
+"items": [
+{
+"param": "radiance"
+},
+{
+"param": "incand_inuse"
+},
+{
+"param": "incandescence"
+},
+{
+"param": "inc_inten"
+}
+]
+}
+]
+},
+"material-cooktorr": {
+"file": "material-cooktorr.spdl",
+"propset": "material-cooktorr_params",
+"params": [
+{
+"sn": "out",
+"label": "Cooktorrance",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "mode",
+"label": "mode",
+"type": "integer",
+"texturable": false,
+"inspectable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "lights",
+"label": "Light List",
+"texturable": false,
+"inspectable": false,
+"type": "light",
+"dir": "input"
+},
+{
+"sn": "ambience",
+"label": "Scene Ambience",
+"type": "color",
+"value": [
+0.1,
+0.1,
+0.1
+],
+"inspectable": false,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "ambient",
+"label": "Ambient",
+"type": "color",
+"texturable": true,
+"value": [
+0.3,
+0.3,
+0.3
+],
+"dir": "input"
+},
+{
+"sn": "diffuse",
+"label": "Diffuse",
+"type": "color",
+"value": [
+0.7,
+0.7,
+0.7
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "specular",
+"label": "Specular",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "roughness",
+"label": "Roughness",
+"type": "scalar",
+"value": 0.01,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "ior",
+"label": "Ior",
+"type": "color",
+"value": [
+9.0,
+8.0,
+5.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "transparency",
+"label": "Transparency",
+"type": "color",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "trans_glossy",
+"label": "Transparent Glossy",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "transparent_samples",
+"label": "Transparent Samples",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "reflectivity",
+"label": "Reflectivity",
+"type": "color",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "reflect_glossy",
+"label": "Reflect Glossy",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "reflect_samples",
+"label": "Reflect Samples",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "index_of_refraction",
+"label": "Index Of Refraction",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "translucency",
+"label": "Translucency",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "incandescence",
+"label": "Incandescence",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "inc_inten",
+"label": "Incandescence Intensity",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "notrace",
+"label": "Reflection Mode",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "diffuse_inuse",
+"label": "Enable Diffuse",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "specular_inuse",
+"label": "Enable Specular",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "reflect_inuse",
+"label": "Enable Reflectivity",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "refract_inuse",
+"label": "Enable Transparency",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "incand_inuse",
+"label": "Enable incandesence",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "translucent_inuse",
+"label": "Enable translucent",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance",
+"label": "Radiance",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance_filter",
+"label": "Radiance Filter",
+"type": "boolean",
+"value": true,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "scaletrans",
+"label": "Scale",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "inverttrans",
+"label": "Invert",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "usealphatrans",
+"label": "Use Alpha",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "scalerefl",
+"label": "Scale",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "invertrefl",
+"label": "Invert",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "usealpharefl",
+"label": "Use Alpha",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Cooktorrance",
+"output": "color",
+"layout": [
+{
+"tab": "Illumination",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Diffuse",
+"items": [
+{
+"param": "diffuse_inuse"
+},
+{
+"param": "diffuse"
+},
+{
+"param": "ambient"
+}
+]
+},
+{
+"group": "Specular",
+"items": [
+{
+"param": "specular_inuse"
+},
+{
+"param": "specular"
+},
+{
+"param": "roughness"
+},
+{
+"param": "ior"
+}
+]
+}
+]
+},
+{
+"tab": "Transparency / Reflection",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Transparency",
+"items": [
+{
+"param": "refract_inuse"
+},
+{
+"group": "Mix color",
+"items": [
+{
+"param": "transparency"
+},
+{
+"param": "usealphatrans",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "inverttrans",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scaletrans"
+}
+]
+},
+{
+"param": "trans_glossy"
+},
+{
+"param": "transparent_samples"
+},
+{
+"param": "index_of_refraction"
+}
+]
+},
+{
+"group": "Reflection",
+"items": [
+{
+"param": "reflect_inuse"
+},
+{
+"group": "Mix color",
+"items": [
+{
+"param": "reflectivity"
+},
+{
+"param": "usealpharefl",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "invertrefl",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scalerefl"
+}
+]
+},
+{
+"param": "reflect_glossy"
+},
+{
+"param": "reflect_samples"
+},
+{
+"param": "notrace"
+}
+]
+}
+]
+},
+{
+"tab": "Indirect Illumination",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Global Illumination / Caustics / Final Gathering",
+"items": [
+{
+"param": "radiance"
+},
+{
+"param": "radiance_filter"
+}
+]
+},
+{
+"group": "Translucency",
+"items": [
+{
+"param": "translucent_inuse"
+},
+{
+"param": "translucency"
+}
+]
+},
+{
+"group": "Incandescence",
+"items": [
+{
+"param": "incand_inuse"
+},
+{
+"param": "incandescence"
+},
+{
+"param": "inc_inten"
+}
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"group": "Illumination",
+"items": [
+{
+"param": "ambient"
+},
+{
+"param": "diffuse"
+},
+{
+"param": "specular"
+},
+{
+"param": "roughness"
+},
+{
+"param": "ior"
+},
+{
+"param": "diffuse_inuse"
+},
+{
+"param": "specular_inuse"
+}
+]
+},
+{
+"group": "Transparency",
+"items": [
+{
+"param": "refract_inuse"
+},
+{
+"param": "transparency"
+},
+{
+"param": "usealphatrans"
+},
+{
+"param": "inverttrans"
+},
+{
+"param": "scaletrans"
+},
+{
+"param": "trans_glossy"
+},
+{
+"param": "transparent_samples"
+},
+{
+"param": "index_of_refraction"
+}
+]
+},
+{
+"group": "Reflection",
+"items": [
+{
+"param": "reflect_inuse"
+},
+{
+"param": "reflectivity"
+},
+{
+"param": "usealpharefl"
+},
+{
+"param": "invertrefl"
+},
+{
+"param": "scalerefl"
+},
+{
+"param": "reflect_glossy"
+},
+{
+"param": "reflect_samples"
+},
+{
+"param": "notrace"
+}
+]
+},
+{
+"group": "Indirect Illumination",
+"items": [
+{
+"param": "radiance"
+},
+{
+"param": "radiance_filter"
+},
+{
+"param": "translucent_inuse"
+},
+{
+"param": "translucency"
+},
+{
+"param": "incand_inuse"
+},
+{
+"param": "incandescence"
+},
+{
+"param": "inc_inten"
+}
+]
+}
+]
+},
+"material-lambert": {
+"file": "material-lambert.spdl",
+"propset": "material-lambert_params",
+"params": [
+{
+"sn": "out",
+"label": "Lambert",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "mode",
+"label": "mode",
+"type": "integer",
+"texturable": false,
+"inspectable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "lights",
+"label": "Light List",
+"texturable": false,
+"inspectable": false,
+"type": "light",
+"dir": "input"
+},
+{
+"sn": "ambience",
+"label": "Scene Ambience",
+"type": "color",
+"value": [
+0.1,
+0.1,
+0.1
+],
+"inspectable": false,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "ambient",
+"label": "Ambient",
+"type": "color",
+"texturable": true,
+"value": [
+0.3,
+0.3,
+0.3
+],
+"dir": "input"
+},
+{
+"sn": "diffuse",
+"label": "Diffuse",
+"type": "color",
+"texturable": true,
+"value": [
+0.7,
+0.7,
+0.7
+],
+"dir": "input"
+},
+{
+"sn": "transparency",
+"label": "Transparency",
+"type": "color",
+"texturable": true,
+"value": [
+0.0,
+0.0,
+0.0
+],
+"dir": "input"
+},
+{
+"sn": "trans_glossy",
+"label": "Transparent Glossy",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "transparent_samples",
+"label": "Transparent Samples",
+"type": "integer",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "reflectivity",
+"label": "Reflectivity",
+"type": "color",
+"texturable": true,
+"value": [
+0.0,
+0.0,
+0.0
+],
+"dir": "input"
+},
+{
+"sn": "reflect_glossy",
+"label": "Reflect Glossy",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "reflect_samples",
+"label": "Reflect Samples",
+"type": "integer",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "index_of_refraction",
+"label": "Index Of Refraction",
+"type": "scalar",
+"texturable": true,
+"value": 1.0,
+"dir": "input"
+},
+{
+"sn": "translucency",
+"label": "Translucency",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "incandescence",
+"label": "Incandescence",
+"type": "color",
+"texturable": true,
+"value": [
+1.0,
+1.0,
+1.0
+],
+"dir": "input"
+},
+{
+"sn": "inc_inten",
+"label": "Incandescence Intensity",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "bump",
+"label": "Bump",
+"type": "vector",
+"texturable": true,
+"value": [
+0.0,
+0.0,
+0.0
+],
+"dir": "input"
+},
+{
+"sn": "notrace",
+"label": "Reflection Mode",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "diffuse_inuse",
+"label": "Enable Diffuse",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "reflect_inuse",
+"label": "Enable Reflectivity",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "refract_inuse",
+"label": "Enable Transparency",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "incand_inuse",
+"label": "Enable incandesence",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "translucent_inuse",
+"label": "Enable translucent",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance",
+"label": "Radiance",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance_filter",
+"label": "Radiance Filter",
+"type": "boolean",
+"value": true,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "scaletrans",
+"label": "Scale",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "inverttrans",
+"label": "Invert",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "usealphatrans",
+"label": "Use Alpha",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "scalerefl",
+"label": "Scale",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "invertrefl",
+"label": "Invert",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "usealpharefl",
+"label": "Use Alpha",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Lambert",
+"output": "color",
+"layout": [
+{
+"tab": "Illumination",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "diffuse_inuse"
+},
+{
+"param": "diffuse"
+},
+{
+"param": "ambient"
+}
+]
+},
+{
+"tab": "Transparency / Reflection",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Transparency",
+"items": [
+{
+"param": "refract_inuse"
+},
+{
+"group": "Mix color",
+"items": [
+{
+"param": "transparency"
+},
+{
+"param": "usealphatrans",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "inverttrans",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scaletrans"
+}
+]
+},
+{
+"param": "trans_glossy"
+},
+{
+"param": "transparent_samples"
+},
+{
+"param": "index_of_refraction"
+}
+]
+},
+{
+"group": "Reflection",
+"items": [
+{
+"param": "reflect_inuse"
+},
+{
+"group": "Mix color",
+"items": [
+{
+"param": "reflectivity"
+},
+{
+"param": "usealpharefl",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "invertrefl",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scalerefl"
+}
+]
+},
+{
+"param": "reflect_glossy"
+},
+{
+"param": "reflect_samples"
+},
+{
+"param": "notrace"
+}
+]
+}
+]
+},
+{
+"tab": "Indirect Illumination",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Global Illumination / Caustics / Final Gathering",
+"items": [
+{
+"param": "radiance"
+},
+{
+"param": "radiance_filter"
+}
+]
+},
+{
+"group": "Translucency",
+"items": [
+{
+"param": "translucent_inuse"
+},
+{
+"param": "translucency"
+}
+]
+},
+{
+"group": "Incandescence",
+"items": [
+{
+"param": "incand_inuse"
+},
+{
+"param": "incandescence"
+},
+{
+"param": "inc_inten"
+}
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"group": "Illumination",
+"items": [
+{
+"param": "ambient"
+},
+{
+"param": "diffuse"
+},
+{
+"param": "bump"
+},
+{
+"param": "diffuse_inuse"
+}
+]
+},
+{
+"group": "Transparency",
+"items": [
+{
+"param": "refract_inuse"
+},
+{
+"param": "transparency"
+},
+{
+"param": "usealphatrans"
+},
+{
+"param": "inverttrans"
+},
+{
+"param": "scaletrans"
+},
+{
+"param": "trans_glossy"
+},
+{
+"param": "transparent_samples"
+},
+{
+"param": "index_of_refraction"
+}
+]
+},
+{
+"group": "Reflection",
+"items": [
+{
+"param": "reflect_inuse"
+},
+{
+"param": "reflectivity"
+},
+{
+"param": "usealpharefl"
+},
+{
+"param": "invertrefl"
+},
+{
+"param": "scalerefl"
+},
+{
+"param": "reflect_glossy"
+},
+{
+"param": "reflect_samples"
+},
+{
+"param": "notrace"
+}
+]
+},
+{
+"group": "Indirect Illumination",
+"items": [
+{
+"param": "radiance"
+},
+{
+"param": "radiance_filter"
+},
+{
+"param": "translucent_inuse"
+},
+{
+"param": "translucency"
+},
+{
+"param": "incand_inuse"
+},
+{
+"param": "incandescence"
+},
+{
+"param": "inc_inten"
+}
+]
+}
+]
+},
+"material-phong": {
+"file": "material-phong.spdl",
+"propset": "material-phong_params",
+"params": [
+{
+"sn": "out",
+"label": "Phong",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "mode",
+"label": "mode",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "lights",
+"label": "Light List",
+"texturable": false,
+"inspectable": false,
+"type": "light",
+"dir": "input"
+},
+{
+"sn": "ambient",
+"label": "Ambient",
+"type": "color",
+"value": [
+0.3,
+0.3,
+0.3,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "diffuse",
+"label": "Color",
+"type": "color",
+"value": [
+0.7,
+0.7,
+0.7,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "specular",
+"label": "Color",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "ambience",
+"label": "Scene Ambience",
+"type": "color",
+"value": [
+0.1,
+0.1,
+0.1,
+1.0
+],
+"inspectable": false,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "shiny",
+"label": "Specular Decay",
+"type": "scalar",
+"value": 50.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "transparency",
+"label": "Transparency",
+"type": "color",
+"texturable": true,
+"value": [
+0.0,
+0.0,
+0.0
+],
+"dir": "input"
+},
+{
+"sn": "trans_glossy",
+"label": "Transparency Glossy",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "transparent_samples",
+"label": "Transparent Samples",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "reflectivity",
+"label": "Reflectivity",
+"type": "color",
+"texturable": true,
+"value": [
+0.0,
+0.0,
+0.0
+],
+"dir": "input"
+},
+{
+"sn": "reflect_glossy",
+"label": "Reflectivity Glossy",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "reflect_samples",
+"label": "Reflect Samples",
+"type": "integer",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "index_of_refraction",
+"label": "Index Of Refraction",
+"type": "scalar",
+"texturable": true,
+"value": 1.0,
+"dir": "input"
+},
+{
+"sn": "translucency",
+"label": "Translucency",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "incandescence",
+"label": "Incandescence",
+"type": "color",
+"texturable": true,
+"value": [
+1.0,
+1.0,
+1.0
+],
+"dir": "input"
+},
+{
+"sn": "inc_inten",
+"label": "Incandescence Intensity",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "bump",
+"label": "Bump",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "notrace",
+"label": "Reflection Mode",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "diffuse_inuse",
+"label": "Enable Diffuse",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "specular_inuse",
+"label": "Enable Specular",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "reflect_inuse",
+"label": "Enable Reflectivity",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "refract_inuse",
+"label": "Enable Transparency",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "incand_inuse",
+"label": "Enable incandesence",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "translucent_inuse",
+"label": "Enable translucent",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance",
+"label": "Radiance",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance_filter",
+"label": "Radiance Filter",
+"type": "boolean",
+"value": true,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "scaletrans",
+"label": "Scale",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "inverttrans",
+"label": "Invert",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "usealphatrans",
+"label": "Use Alpha",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "scalerefl",
+"label": "Scale",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "invertrefl",
+"label": "Invert",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "usealpharefl",
+"label": "Use Alpha",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Phong",
+"output": "color",
+"layout": [
+{
+"tab": "Illumination",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Diffuse",
+"items": [
+{
+"param": "diffuse_inuse"
+},
+{
+"param": "diffuse"
+},
+{
+"param": "ambient"
+}
+]
+},
+{
+"group": "Specular",
+"items": [
+{
+"param": "specular_inuse"
+},
+{
+"param": "specular"
+},
+{
+"param": "shiny"
+}
+]
+}
+]
+},
+{
+"tab": "Transparency / Reflection",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Transparency",
+"items": [
+{
+"param": "refract_inuse"
+},
+{
+"group": "Mix color",
+"items": [
+{
+"param": "transparency"
+},
+{
+"param": "usealphatrans",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "inverttrans",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scaletrans"
+}
+]
+},
+{
+"param": "trans_glossy"
+},
+{
+"param": "transparent_samples"
+},
+{
+"param": "index_of_refraction"
+}
+]
+},
+{
+"group": "Reflection",
+"items": [
+{
+"param": "reflect_inuse"
+},
+{
+"group": "Mix color",
+"items": [
+{
+"param": "reflectivity"
+},
+{
+"param": "usealpharefl",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "invertrefl",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scalerefl"
+}
+]
+},
+{
+"param": "reflect_glossy"
+},
+{
+"param": "reflect_samples"
+},
+{
+"param": "notrace"
+}
+]
+}
+]
+},
+{
+"tab": "Indirect Illumination",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Global Illumination / Caustics / Final Gathering",
+"items": [
+{
+"param": "radiance"
+},
+{
+"param": "radiance_filter"
+}
+]
+},
+{
+"group": "Translucency",
+"items": [
+{
+"param": "translucent_inuse"
+},
+{
+"param": "translucency"
+}
+]
+},
+{
+"group": "Incandescence",
+"items": [
+{
+"param": "incand_inuse"
+},
+{
+"param": "incandescence"
+},
+{
+"param": "inc_inten"
+}
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"group": "Illumination",
+"items": [
+{
+"param": "ambient"
+},
+{
+"param": "diffuse"
+},
+{
+"param": "specular"
+},
+{
+"param": "shiny"
+},
+{
+"param": "bump"
+},
+{
+"param": "diffuse_inuse"
+},
+{
+"param": "specular_inuse"
+}
+]
+},
+{
+"group": "Transparency",
+"items": [
+{
+"param": "transparency"
+},
+{
+"param": "refract_inuse"
+},
+{
+"param": "usealphatrans"
+},
+{
+"param": "inverttrans"
+},
+{
+"param": "scaletrans"
+},
+{
+"param": "trans_glossy"
+},
+{
+"param": "transparent_samples"
+},
+{
+"param": "index_of_refraction"
+}
+]
+},
+{
+"group": "Reflection",
+"items": [
+{
+"param": "reflectivity"
+},
+{
+"param": "reflect_inuse"
+},
+{
+"param": "usealpharefl"
+},
+{
+"param": "invertrefl"
+},
+{
+"param": "scalerefl"
+},
+{
+"param": "reflect_glossy"
+},
+{
+"param": "reflect_samples"
+},
+{
+"param": "notrace"
+}
+]
+},
+{
+"group": "Indirect Illumination",
+"items": [
+{
+"param": "radiance"
+},
+{
+"param": "radiance_filter"
+},
+{
+"param": "translucency"
+},
+{
+"param": "translucent_inuse"
+},
+{
+"param": "incandescence"
+},
+{
+"param": "incand_inuse"
+},
+{
+"param": "inc_inten"
+}
+]
+}
+]
+},
+"material-strauss": {
+"file": "material-strauss.spdl",
+"propset": "material-strauss_params",
+"params": [
+{
+"sn": "out",
+"label": "Strauss",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "mode",
+"label": "mode",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "lights",
+"label": "Light List",
+"texturable": false,
+"inspectable": false,
+"type": "light",
+"dir": "input"
+},
+{
+"sn": "diffuse",
+"label": "Diffuse",
+"texturable": true,
+"type": "color",
+"value": [
+0.7,
+0.7,
+0.7
+],
+"dir": "input"
+},
+{
+"sn": "smoothness",
+"label": "Smoothness",
+"type": "scalar",
+"texturable": true,
+"value": 0.5,
+"dir": "input"
+},
+{
+"sn": "metalness",
+"label": "Metalness",
+"type": "scalar",
+"texturable": true,
+"value": 0.5,
+"dir": "input"
+},
+{
+"sn": "ambience",
+"label": "Scene Ambience",
+"type": "color",
+"value": [
+0.1,
+0.1,
+0.1
+],
+"inspectable": false,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "transparency",
+"label": "Transparency",
+"type": "color",
+"texturable": true,
+"value": [
+0.0,
+0.0,
+0.0
+],
+"dir": "input"
+},
+{
+"sn": "trans_glossy",
+"label": "Transparency Glossy",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "transparent_samples",
+"label": "Transparent Samples",
+"type": "integer",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "reflectivity",
+"label": "Reflectivity",
+"type": "color",
+"texturable": true,
+"value": [
+0.0,
+0.0,
+0.0
+],
+"dir": "input"
+},
+{
+"sn": "reflect_glossy",
+"label": "Reflect Glossy",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "reflect_samples",
+"label": "Reflect Samples",
+"type": "integer",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "index_of_refraction",
+"label": "Index Of Refraction",
+"type": "scalar",
+"texturable": true,
+"value": 1.0,
+"dir": "input"
+},
+{
+"sn": "translucency",
+"label": "Translucency",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "incandescence",
+"label": "Incandescence",
+"type": "color",
+"texturable": true,
+"value": [
+1.0,
+1.0,
+1.0
+],
+"dir": "input"
+},
+{
+"sn": "inc_inten",
+"label": "Incandescence Intensity",
+"type": "scalar",
+"texturable": true,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "bump",
+"label": "Bump",
+"type": "vector",
+"texturable": true,
+"value": [
+0.0,
+0.0,
+0.0
+],
+"dir": "input"
+},
+{
+"sn": "notrace",
+"label": "Reflection Mode",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "diffuse_inuse",
+"label": "Enable Diffuse",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "specular_inuse",
+"label": "Enable Specular",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "reflect_inuse",
+"label": "Enable Reflectivity",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "refract_inuse",
+"label": "Enable Transparency",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "incand_inuse",
+"label": "Enable incandesence",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "translucent_inuse",
+"label": "Enable translucent",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance",
+"label": "Radiance",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance_filter",
+"label": "Radiance Filter",
+"type": "boolean",
+"value": true,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "scaletrans",
+"label": "Scale",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "inverttrans",
+"label": "Invert",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "usealphatrans",
+"label": "Use Alpha",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "scalerefl",
+"label": "Scale",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "invertrefl",
+"label": "Invert",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "usealpharefl",
+"label": "Use Alpha",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Strauss",
+"output": "color",
+"layout": [
+{
+"tab": "Illumination",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Diffuse",
+"items": [
+{
+"param": "diffuse_inuse"
+},
+{
+"param": "diffuse"
+}
+]
+},
+{
+"group": "Specular",
+"items": [
+{
+"param": "specular_inuse"
+}
+]
+},
+{
+"group": "Surface Properties",
+"items": [
+{
+"param": "smoothness"
+},
+{
+"param": "metalness"
+}
+]
+}
+]
+},
+{
+"tab": "Transparency / Reflection",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Transparency",
+"items": [
+{
+"param": "refract_inuse"
+},
+{
+"group": "Mix color",
+"items": [
+{
+"param": "transparency"
+},
+{
+"param": "usealphatrans",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "inverttrans",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scaletrans"
+}
+]
+},
+{
+"param": "trans_glossy"
+},
+{
+"param": "transparent_samples"
+},
+{
+"param": "index_of_refraction"
+}
+]
+},
+{
+"group": "Reflection",
+"items": [
+{
+"param": "reflect_inuse"
+},
+{
+"group": "Mix color",
+"items": [
+{
+"param": "reflectivity"
+},
+{
+"param": "usealpharefl",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "invertrefl",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scalerefl"
+}
+]
+},
+{
+"param": "reflect_glossy"
+},
+{
+"param": "reflect_samples"
+},
+{
+"param": "notrace"
+}
+]
+}
+]
+},
+{
+"tab": "Indirect Illumination",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Global Illumination / Caustics / Final Gathering",
+"items": [
+{
+"param": "radiance"
+},
+{
+"param": "radiance_filter"
+}
+]
+},
+{
+"group": "Translucency",
+"items": [
+{
+"param": "translucent_inuse"
+},
+{
+"param": "translucency"
+}
+]
+},
+{
+"group": "Incandescence",
+"items": [
+{
+"param": "incand_inuse"
+},
+{
+"param": "incandescence"
+},
+{
+"param": "inc_inten"
+}
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"group": "Illumination",
+"items": [
+{
+"param": "diffuse"
+},
+{
+"param": "smoothness"
+},
+{
+"param": "metalness"
+},
+{
+"param": "bump"
+},
+{
+"param": "diffuse_inuse"
+},
+{
+"param": "specular_inuse"
+}
+]
+},
+{
+"group": "Transparency",
+"items": [
+{
+"param": "refract_inuse"
+},
+{
+"param": "transparency"
+},
+{
+"param": "usealphatrans"
+},
+{
+"param": "inverttrans"
+},
+{
+"param": "scaletrans"
+},
+{
+"param": "trans_glossy"
+},
+{
+"param": "transparent_samples"
+},
+{
+"param": "index_of_refraction"
+}
+]
+},
+{
+"group": "Reflection",
+"items": [
+{
+"param": "reflect_inuse"
+},
+{
+"param": "reflectivity"
+},
+{
+"param": "usealpharefl"
+},
+{
+"param": "invertrefl"
+},
+{
+"param": "scalerefl"
+},
+{
+"param": "reflect_glossy"
+},
+{
+"param": "reflect_samples"
+},
+{
+"param": "notrace"
+}
+]
+},
+{
+"group": "Indirect Illumination",
+"items": [
+{
+"param": "radiance"
+},
+{
+"param": "radiance_filter"
+},
+{
+"param": "translucent_inuse"
+},
+{
+"param": "translucency"
+},
+{
+"param": "incand_inuse"
+},
+{
+"param": "incandescence"
+},
+{
+"param": "inc_inten"
+}
+]
+}
+]
+},
+"material-ward": {
+"file": "material-ward.spdl",
+"propset": "material-ward_params",
+"params": [
+{
+"sn": "out",
+"label": "Anisotropic",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "image",
+"label": "image",
+"type": "color",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "surfderiv_mode",
+"label": "Surface Derivative Mode",
+"type": "integer",
+"value": -5,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "mode",
+"label": "mode",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "lights",
+"label": "Light List",
+"inspectable": false,
+"texturable": false,
+"type": "light",
+"dir": "input"
+},
+{
+"sn": "ambience",
+"label": "Scene Ambience",
+"type": "color",
+"value": [
+0.1,
+0.1,
+0.1
+],
+"inspectable": false,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "ambient",
+"label": "Ambient",
+"type": "color",
+"value": [
+0.3,
+0.3,
+0.3
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "diffuse",
+"label": "Diffuse",
+"type": "color",
+"value": [
+0.7,
+0.7,
+0.7
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "glossy",
+"label": "glossy",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "shiny_u",
+"label": "shiny_u",
+"type": "scalar",
+"value": 4.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "shiny_v",
+"label": "shiny_v",
+"type": "scalar",
+"value": 4.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "transparency",
+"label": "Transparency",
+"type": "color",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "trans_glossy",
+"label": "Transparent Glossy",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "transparent_samples",
+"label": "Transparent Samples",
+"type": "integer",
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "reflectivity",
+"label": "Reflectivity",
+"type": "color",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "reflect_glossy",
+"label": "Reflect Glossy",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "reflect_samples",
+"label": "Reflect Samples",
+"type": "integer",
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "index_of_refraction",
+"label": "Index Of Refraction",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "translucency",
+"label": "Translucency",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "incandescence",
+"label": "Incandescence",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "inc_inten",
+"label": "Incandescence Intensity",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "notrace",
+"label": "Reflection Mode",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "diffuse_inuse",
+"label": "Enable Diffuse",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "specular_inuse",
+"label": "Enable Specular",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "reflect_inuse",
+"label": "Enable Reflectivity",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "refract_inuse",
+"label": "Enable Transparency",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "incand_inuse",
+"label": "Enable incandesence",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "translucent_inuse",
+"label": "Enable translucent",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance",
+"label": "Radiance",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance_filter",
+"label": "Radiance Filter",
+"type": "boolean",
+"value": true,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "scaletrans",
+"label": "Scale",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "inverttrans",
+"label": "Invert",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "usealphatrans",
+"label": "Use Alpha",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "scalerefl",
+"label": "Scale",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "invertrefl",
+"label": "Invert",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "usealpharefl",
+"label": "Use Alpha",
+"type": "boolean",
+"value": false,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Anisotropic",
+"output": "color",
+"layout": [
+{
+"tab": "Illumination",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Diffuse",
+"items": [
+{
+"param": "diffuse_inuse"
+},
+{
+"param": "diffuse"
+},
+{
+"param": "ambient"
+}
+]
+},
+{
+"group": "Anisotropic Specular",
+"items": [
+{
+"param": "specular_inuse"
+},
+{
+"param": "glossy"
+},
+{
+"param": "surfderiv_mode"
+},
+{
+"param": "image"
+},
+{
+"param": "shiny_u"
+},
+{
+"param": "shiny_v"
+}
+]
+}
+]
+},
+{
+"tab": "Transparency / Reflection",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Transparency",
+"items": [
+{
+"param": "refract_inuse"
+},
+{
+"group": "Mix color",
+"items": [
+{
+"param": "transparency"
+},
+{
+"param": "usealphatrans",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "inverttrans",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scaletrans"
+}
+]
+},
+{
+"param": "trans_glossy"
+},
+{
+"param": "transparent_samples"
+},
+{
+"param": "index_of_refraction"
+}
+]
+},
+{
+"group": "Reflection",
+"items": [
+{
+"param": "reflect_inuse"
+},
+{
+"group": "Mix color",
+"items": [
+{
+"param": "reflectivity"
+},
+{
+"param": "usealpharefl",
+"opts": [
+"continue",
+"AlignRight"
+]
+},
+{
+"param": "invertrefl",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "scalerefl"
+}
+]
+},
+{
+"param": "reflect_glossy"
+},
+{
+"param": "reflect_samples"
+},
+{
+"param": "notrace"
+}
+]
+}
+]
+},
+{
+"tab": "Indirect Illumination",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Global Illumination / Caustics / Final Gathering",
+"items": [
+{
+"param": "radiance"
+},
+{
+"param": "radiance_filter"
+}
+]
+},
+{
+"group": "Translucency",
+"items": [
+{
+"param": "translucent_inuse"
+},
+{
+"param": "translucency"
+}
+]
+},
+{
+"group": "Incandescence",
+"items": [
+{
+"param": "incand_inuse"
+},
+{
+"param": "incandescence"
+},
+{
+"param": "inc_inten"
+}
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"group": "Illumination",
+"items": [
+{
+"param": "ambient"
+},
+{
+"param": "diffuse"
+},
+{
+"param": "glossy"
+},
+{
+"param": "surfderiv_mode"
+},
+{
+"param": "image"
+},
+{
+"param": "shiny_u"
+},
+{
+"param": "shiny_v"
+},
+{
+"param": "diffuse_inuse"
+},
+{
+"param": "specular_inuse"
+}
+]
+},
+{
+"group": "Transparency",
+"items": [
+{
+"param": "refract_inuse"
+},
+{
+"param": "transparency"
+},
+{
+"param": "usealphatrans"
+},
+{
+"param": "inverttrans"
+},
+{
+"param": "scaletrans"
+},
+{
+"param": "trans_glossy"
+},
+{
+"param": "transparent_samples"
+},
+{
+"param": "index_of_refraction"
+}
+]
+},
+{
+"group": "Reflection",
+"items": [
+{
+"param": "reflect_inuse"
+},
+{
+"param": "reflectivity"
+},
+{
+"param": "usealpharefl"
+},
+{
+"param": "invertrefl"
+},
+{
+"param": "scalerefl"
+},
+{
+"param": "reflect_glossy"
+},
+{
+"param": "reflect_samples"
+},
+{
+"param": "notrace"
+}
+]
+},
+{
+"group": "Indirect Illumination",
+"items": [
+{
+"param": "radiance"
+},
+{
+"param": "radiance_filter"
+},
+{
+"param": "translucent_inuse"
+},
+{
+"param": "translucency"
+},
+{
+"param": "incand_inuse"
+},
+{
+"param": "incandescence"
+},
+{
+"param": "inc_inten"
+}
+]
+}
+]
+},
+"sib_atten_linear": {
+"file": "sib_atten_linear.spdl",
+"propset": "sib_atten_linear_params",
+"params": [
+{
+"sn": "out",
+"label": "Linear Interpolation",
+"type": "scalar",
+"dir": "output"
+},
+{
+"sn": "start",
+"label": "Start Range",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "end",
+"label": "End Range",
+"type": "scalar",
+"value": 10000.0,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Linear Interpolation",
+"output": "scalar",
+"layout": [
+{
+"param": "Name"
+},
+{
+"param": "start"
+},
+{
+"param": "end"
+}
+]
+},
+"sib_bumpmap_gen": {
+"file": "sib_bumpmap_gen.spdl",
+"propset": "sib_bumpmap_gen_params",
+"params": [
+{
+"sn": "out",
+"label": "Bumpmap generator",
+"type": "vector",
+"dir": "output"
+},
+{
+"sn": "input",
+"label": "Input",
+"type": "texture",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "tspace_id",
+"label": "Texture Space",
+"type": "texturespace",
+"value": -1,
+"texturable": false,
+"animatable": false,
+"dir": "input"
+},
+{
+"sn": "tspace_id_basis",
+"label": "Texture Space for bump basis",
+"type": "texturespace",
+"value": -1,
+"texturable": false,
+"animatable": false,
+"dir": "input"
+},
+{
+"sn": "project_basis",
+"label": "Projection Method",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"dir": "input"
+},
+{
+"sn": "tsupp_invxform",
+"label": "Texture Support Inverse Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project",
+"label": "Projection Method",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace",
+"label": "Space Transformation",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex",
+"label": "Triangle Intersection",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tproj_xform",
+"label": "Texture Space Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_u",
+"label": "wrap_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_v",
+"label": "wrap_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_w",
+"label": "wrap_w",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_u",
+"label": "seam_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_v",
+"label": "seam_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project_old",
+"label": "Projection Method",
+"type": "integer",
+"value": 2,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace_old",
+"label": "Space Transformation",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tspace_xform_old",
+"label": "Texture Space Transform",
+"type": "matrix",
+"value": [
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0
+],
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "repeats",
+"label": "Texture repeat factor (X,Y,Z)",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_x",
+"label": "alt_x",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_y",
+"label": "alt_y",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_z",
+"label": "alt_z",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_x",
+"label": "torus_x",
+"type": "boolean",
+"value": "on",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_y",
+"label": "torus_y",
+"type": "boolean",
+"value": "on",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_z",
+"label": "torus_z",
+"type": "boolean",
+"value": "on",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "min",
+"label": "min",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "max",
+"label": "max",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "step",
+"label": "step",
+"type": "vector",
+"value": [
+0.001,
+0.001,
+0.001
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "factor",
+"label": "factor",
+"type": "scalar",
+"value": 5.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_u",
+"label": "torus_u",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_v",
+"label": "torus_v",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha",
+"label": "alpha",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "inuse",
+"label": "inuse",
+"type": "boolean",
+"texturable": true,
+"value": "on",
+"dir": "input"
+},
+{
+"sn": "relnormal",
+"label": "relnormal",
+"type": "boolean",
+"texturable": true,
+"value": "off",
+"dir": "input"
+},
+{
+"sn": "normal",
+"label": "normal",
+"type": "vector",
+"texturable": true,
+"value": "0.0\t0.0\t1.0",
+"dir": "input"
+},
+{
+"sn": "clamp",
+"label": "Clamp",
+"type": "boolean",
+"texturable": true,
+"value": "on",
+"dir": "input"
+},
+{
+"sn": "eccmax",
+"label": "eccmax",
+"type": "scalar",
+"texturable": true,
+"value": 20.0,
+"dir": "input"
+},
+{
+"sn": "maxminor",
+"label": "maxminor",
+"type": "scalar",
+"texturable": true,
+"value": 16.0,
+"dir": "input"
+},
+{
+"sn": "disc_r",
+"label": "disc_r",
+"type": "scalar",
+"texturable": true,
+"value": 0.3,
+"dir": "input"
+},
+{
+"sn": "bilinear",
+"label": "bilinear",
+"type": "boolean",
+"texturable": true,
+"value": "on",
+"dir": "input"
+},
+{
+"sn": "bump_filtered",
+"label": "bump_filtered",
+"type": "boolean",
+"texturable": true,
+"value": "off",
+"dir": "input"
+},
+{
+"sn": "bumpbasis",
+"label": "bumpbasis",
+"type": "boolean",
+"texturable": false,
+"value": "off",
+"dir": "input"
+}
+],
+"title": "Bumpmap generator",
+"output": "vector",
+"layout": [
+{
+"tab": "Texture",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "input",
+"opts": [
+"nolabel"
+]
+},
+{
+"group": "Texture Projection",
+"items": [
+{
+"param": "tspace_id"
+}
+]
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "inuse",
+"opts": [
+"continue",
+"aligncenter"
+]
+},
+{
+"group": "",
+"items": [
+{
+"param": "alpha",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "clamp",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"param": "factor"
+},
+{
+"param": "step"
+},
+{
+"group": "Projection Method for Bump Basis Computation",
+"items": [
+{
+"param": "bumpbasis",
+"opts": [
+"alignleft"
+]
+},
+{
+"param": "project_basis",
+"opts": [
+"nolabel"
+]
+},
+{
+"param": "tspace_id_basis",
+"opts": [
+"nolabel"
+]
+}
+]
+},
+{
+"group": "Normal",
+"items": [
+{
+"param": "relnormal",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "normal",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+}
+]
+},
+{
+"tab": "Bump Filtering",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "bump_filtered",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "eccmax"
+},
+{
+"param": "maxminor"
+},
+{
+"param": "disc_r"
+},
+{
+"param": "bilinear",
+"opts": [
+"AlignRight"
+]
+}
+]
+},
+{
+"tab": "Advanced",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Alternate",
+"items": [
+{
+"param": "alt_x",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_y",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_z",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"group": "Repeats",
+"items": [
+{
+"param": "repeats",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"group": "UV Remap",
+"items": [
+{
+"param": "min",
+"opts": [
+"continue",
+"aligncenter"
+]
+},
+{
+"param": "max",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+}
+]
+},
+"sib_color_2mix": {
+"file": "sib_color_2mix.spdl",
+"propset": "sib_color_2mix_params",
+"params": [
+{
+"sn": "out",
+"label": "Blend 2 Colors",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "mixersize",
+"label": "Number of inputs",
+"type": "integer",
+"value": 2,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "base_color",
+"label": "Base Color",
+"type": "color",
+"value": [
+0.0,
+1.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "color1",
+"label": "Color 1",
+"type": "color",
+"value": [
+0.0,
+0.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "mode1",
+"label": "Mode",
+"type": "integer",
+"value": 1,
+"dir": "input"
+},
+{
+"sn": "weight1",
+"label": "Weight",
+"type": "color",
+"value": [
+0.5,
+0.5,
+0.5
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha1",
+"label": "Multiply weight by Alpha",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "inuse1",
+"label": "In use",
+"type": "boolean",
+"value": "on",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "color2",
+"label": "Color 2",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "mode2",
+"label": "Mode",
+"type": "integer",
+"value": 1,
+"dir": "input"
+},
+{
+"sn": "weight2",
+"label": "Weight",
+"type": "color",
+"value": [
+0.5,
+0.5,
+0.5
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "alpha2",
+"label": "Multiply weight by Alpha",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "inuse2",
+"label": "In use",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "color3",
+"label": "Color 3",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "mode3",
+"label": "Mode",
+"type": "integer",
+"value": 1,
+"dir": "input"
+},
+{
+"sn": "weight3",
+"label": "Weight",
+"type": "color",
+"value": [
+0.5,
+0.5,
+0.5
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "alpha3",
+"label": "Multiply weight by Alpha",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "inuse3",
+"label": "In use",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "color4",
+"label": "Color 4",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "mode4",
+"label": "Mode",
+"type": "integer",
+"value": 1,
+"dir": "input"
+},
+{
+"sn": "weight4",
+"label": "Weight",
+"type": "color",
+"value": [
+0.5,
+0.5,
+0.5
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "alpha4",
+"label": "Multiply weight by Alpha",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "inuse4",
+"label": "In use",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "color5",
+"label": "Color 5",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "mode5",
+"label": "Mode",
+"type": "integer",
+"value": 1,
+"dir": "input"
+},
+{
+"sn": "weight5",
+"label": "Weight",
+"type": "color",
+"value": [
+0.5,
+0.5,
+0.5
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "alpha5",
+"label": "Multiply weight by Alpha",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "inuse5",
+"label": "In use",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "color6",
+"label": "Color 6",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "mode6",
+"label": "Mode",
+"type": "integer",
+"value": 1,
+"dir": "input"
+},
+{
+"sn": "weight6",
+"label": "Weight",
+"type": "color",
+"value": [
+0.5,
+0.5,
+0.5
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "alpha6",
+"label": "Multiply weight by Alpha",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "inuse6",
+"label": "In use",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "color7",
+"label": "Color 7",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "mode7",
+"label": "Mode",
+"type": "integer",
+"value": 1,
+"dir": "input"
+},
+{
+"sn": "weight7",
+"label": "Weight",
+"type": "color",
+"value": [
+0.5,
+0.5,
+0.5
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "alpha7",
+"label": "Multiply weight by Alpha",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "inuse7",
+"label": "In use",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+}
+],
+"title": "Blend 2 Colors",
+"output": "color",
+"layout": [
+{
+"param": "Name"
+},
+{
+"group": "Base Color",
+"items": [
+{
+"param": "base_color"
+}
+]
+},
+{
+"group": "Mix Layer",
+"items": [
+{
+"param": "color1"
+},
+{
+"param": "weight1"
+},
+{
+"param": "mode1"
+},
+{
+"param": "alpha1"
+}
+]
+}
+]
+},
+"sib_color_gradient": {
+"file": "sib_color_gradient.spdl",
+"propset": "sib_color_gradient_params",
+"params": [
+{
+"sn": "out",
+"label": "Gradient output parameter",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "input",
+"label": "input",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "coord",
+"label": "coord",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "input_type",
+"label": "input_type",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "gradient_type",
+"label": "2dtype",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "invert",
+"label": "invert",
+"type": "boolean",
+"texturable": false,
+"value": "off",
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "clip",
+"label": "clip",
+"type": "boolean",
+"texturable": false,
+"value": "off",
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "enable_alpha_gradient",
+"label": "enable_alpha_gradient",
+"type": "boolean",
+"texturable": false,
+"value": "off",
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "min",
+"label": "Minimum gradient Range",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "max",
+"label": "Maximum gradient Range",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "rgba_interpolation",
+"label": "type of RGBA interpolation",
+"type": "integer",
+"value": 1,
+"texturable": false,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color1",
+"label": "color1",
+"type": "color",
+"value": [
+1.0,
+0.0,
+0.0,
+1.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color1",
+"label": "position of color1",
+"type": "scalar",
+"value": 0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color1",
+"label": "interpolation handle of color1",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color2",
+"label": "color2",
+"type": "color",
+"value": [
+1.0,
+0.0,
+1.0,
+1.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color2",
+"label": "position of color2",
+"type": "scalar",
+"value": 0.2,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color2",
+"label": "interpolation handle of color2",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color3",
+"label": "color3",
+"type": "color",
+"value": [
+0.0,
+0.0,
+1.0,
+1.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color3",
+"label": "position of color3",
+"type": "scalar",
+"value": 0.35,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color3",
+"label": "interpolation handle of color3",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color4",
+"label": "color4",
+"type": "color",
+"value": [
+0.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color4",
+"label": "position of color4",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color4",
+"label": "interpolation handle of color4",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color5",
+"label": "color5",
+"type": "color",
+"value": [
+0.0,
+1.0,
+0.0,
+1.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color5",
+"label": "position of color5",
+"type": "scalar",
+"value": 0.65,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color5",
+"label": "interpolation handle of color5",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color6",
+"label": "color6",
+"type": "color",
+"value": [
+1.0,
+1.0,
+0.0,
+1.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color6",
+"label": "position of color6",
+"type": "scalar",
+"value": 0.8,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color6",
+"label": "interpolation handle of color6",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color7",
+"label": "color7",
+"type": "color",
+"value": [
+0.0,
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color7",
+"label": "position of color7",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color7",
+"label": "interpolation handle of color7",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color8",
+"label": "color8",
+"type": "color",
+"value": [
+0.0,
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color8",
+"label": "position of color8",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color8",
+"label": "interpolation handle of color8",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_interpolation",
+"label": "type of Alpha interpolation",
+"type": "integer",
+"value": 1,
+"texturable": false,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha1",
+"label": "alpha1",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha1",
+"label": "Position of alpha1",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha1",
+"label": "Interpolation of alpha1",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha2",
+"label": "alpha2",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha2",
+"label": "Position of alpha2",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha2",
+"label": "Interpolation of alpha2",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha3",
+"label": "alpha3",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha3",
+"label": "Position of alpha3",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha3",
+"label": "Interpolation of alpha3",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha4",
+"label": "alpha4",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha4",
+"label": "Position of alpha4",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha4",
+"label": "Interpolation of alpha4",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha5",
+"label": "alpha5",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha5",
+"label": "Position of alpha5",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha5",
+"label": "Interpolation of alpha5",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha6",
+"label": "alpha6",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha6",
+"label": "Position of alpha6",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha6",
+"label": "Interpolation of alpha6",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha7",
+"label": "alpha7",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha7",
+"label": "Position of alpha7",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha7",
+"label": "Interpolation of alpha7",
+"type": "scalar",
+"value": 0.7,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha8",
+"label": "alpha8",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha8",
+"label": "Position of alpha8",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha8",
+"label": "Interpolation of alpha8",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+}
+],
+"title": "Gradient output parameter",
+"output": "color",
+"layout": [
+{
+"tab": "RGBA Gradient",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "rgba_interpolation",
+"opts": [
+"nolabel"
+]
+},
+{
+"group": "Animation",
+"items": [
+{
+"param": "Button SaveKeyAllVisibleRGBAMarkers",
+"opts": [
+"continue",
+"aligncenter = \"Key All\"",
+"140"
+]
+},
+{
+"param": "Button RemoveKeyRGBAMarkers",
+"opts": [
+"aligncenter = \"Remove keys\"",
+"140"
+]
+},
+{
+"param": "Button ResetRGBAMarkers",
+"opts": [
+"continue",
+"aligncenter = \"Reset\"",
+"140"
+]
+},
+{
+"param": "Button RemoveAllShadersOnRGBA",
+"opts": [
+"aligncenter = \"Remove Shaders\"",
+"140"
+]
+}
+]
+},
+{
+"param": "gradient_type",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "invert",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "clip",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "Button RGBA_BW_preset",
+"opts": [
+"aligncenter = \"Black/White\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_WB_preset",
+"opts": [
+"aligncenter = \"White/Black\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_BTR_preset",
+"opts": [
+"aligncenter = \"Black to transparent\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_WTR_preset",
+"opts": [
+"aligncenter = \"White to transparent\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_chrome_preset",
+"opts": [
+"aligncenter = \"Chrome\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_copper_preset",
+"opts": [
+"aligncenter = \"Copper\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_spectrum_preset",
+"opts": [
+"aligncenter = \"Spectrum\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_rainbow_preset",
+"opts": [
+"aligncenter = \"Rainbow\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_fire_preset",
+"opts": [
+"aligncenter = \"Fire\"",
+"140"
+]
+}
+]
+},
+{
+"tab": "Alpha Gradient",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "enable_alpha_gradient",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alpha_interpolation",
+"opts": [
+"nolabel"
+]
+},
+{
+"group": "Animation",
+"items": [
+{
+"param": "Button SaveKeyAllVisibleAlphaMarkers",
+"opts": [
+"continue",
+"aligncenter = \"Key All\"",
+"140"
+]
+},
+{
+"param": "Button RemoveKeyAlphaMarkers",
+"opts": [
+"aligncenter = \"Remove keys\"",
+"140"
+]
+},
+{
+"param": "Button ResetAlphaMarkers",
+"opts": [
+"continue",
+"aligncenter = \"Reset\"",
+"140"
+]
+},
+{
+"param": "Button RemoveAllShadersOnAlpha",
+"opts": [
+"aligncenter = \"Disconnect all\"",
+"140"
+]
+}
+]
+},
+{
+"param": "gradient_type",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "invert",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "clip",
+"opts": [
+"aligncenter"
+]
+},
+{
+"group": "Preset",
+"items": [
+{
+"param": "Button Alpha_BW_preset",
+"opts": [
+"continue",
+"aligncenter = \"Black and White\"",
+"140"
+]
+},
+{
+"param": "Button Alpha_WB_preset",
+"opts": [
+"continue",
+"aligncenter = \"White and Black\"",
+"140"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Input",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "input_type"
+},
+{
+"param": "input"
+},
+{
+"param": "coord"
+},
+{
+"group": "Active Range",
+"items": [
+{
+"param": "min"
+},
+{
+"param": "max"
+}
+]
+}
+]
+}
+]
+},
+"sib_color_hls_adjust": {
+"file": "sib_color_hls_adjust.spdl",
+"propset": "sib_color_hls_adjust_params",
+"params": [
+{
+"sn": "out",
+"label": "sib_color_hls_adjust output parameter",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "color",
+"label": "input color",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "master_h",
+"label": "master hue",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "master_l",
+"label": "master lightness",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "master_s",
+"label": "master saturation",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "red_h",
+"label": "red hue",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "red_l",
+"label": "red lightness",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "red_s",
+"label": "red saturation",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "green_h",
+"label": "green hue",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "green_l",
+"label": "green lightness",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "green_s",
+"label": "green saturation",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "blue_h",
+"label": "blue hue",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "blue_l",
+"label": "blue lightness",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "blue_s",
+"label": "blue saturation",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "cyan_h",
+"label": "cyan hue",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "cyan_l",
+"label": "cyan lightness",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "cyan_s",
+"label": "cyan saturation",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "yellow_h",
+"label": "yellow hue",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "yellow_l",
+"label": "yellow lightness",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "yellow_s",
+"label": "yellow saturation",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "magenta_h",
+"label": "magenta hue",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "magenta_l",
+"label": "magenta lightness",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "magenta_s",
+"label": "magenta saturation",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+}
+],
+"title": "sib_color_hls_adjust output parameter",
+"output": "color",
+"layout": [
+{
+"param": "color"
+},
+{
+"tab": "Master",
+"items": [
+{
+"param": "master_h"
+},
+{
+"param": "master_l"
+},
+{
+"param": "master_s"
+}
+]
+},
+{
+"tab": "RGB",
+"items": [
+{
+"group": "Red",
+"items": [
+{
+"param": "red_h"
+},
+{
+"param": "red_l"
+},
+{
+"param": "red_s"
+}
+]
+},
+{
+"group": "Green",
+"items": [
+{
+"param": "green_h"
+},
+{
+"param": "green_l"
+},
+{
+"param": "green_s"
+}
+]
+},
+{
+"group": "Blue",
+"items": [
+{
+"param": "blue_h"
+},
+{
+"param": "blue_l"
+},
+{
+"param": "blue_s"
+}
+]
+}
+]
+},
+{
+"tab": "CYM",
+"items": [
+{
+"group": "Cyan",
+"items": [
+{
+"param": "cyan_h"
+},
+{
+"param": "cyan_l"
+},
+{
+"param": "cyan_s"
+}
+]
+},
+{
+"group": "Yellow",
+"items": [
+{
+"param": "yellow_h"
+},
+{
+"param": "yellow_l"
+},
+{
+"param": "yellow_s"
+}
+]
+},
+{
+"group": "Magenta",
+"items": [
+{
+"param": "magenta_h"
+},
+{
+"param": "magenta_l"
+},
+{
+"param": "magenta_s"
+}
+]
+}
+]
+}
+]
+},
+"sib_color_invert": {
+"file": "sib_color_invert.spdl",
+"propset": "sib_color_invert_params",
+"params": [
+{
+"sn": "out",
+"label": "Color Invert",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "input",
+"label": "Input",
+"type": "color",
+"value": [
+0.0,
+0.0,
+0.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha",
+"label": "Alpha",
+"type": "boolean",
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Color Invert",
+"output": "color",
+"layout": [
+{
+"param": "Name"
+},
+{
+"param": "input"
+},
+{
+"param": "alpha"
+}
+]
+},
+"sib_color_math_basic": {
+"file": "sib_color_math_basic.spdl",
+"propset": "sib_color_math_basic_params",
+"params": [
+{
+"sn": "out",
+"label": "Color Math Basic",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "input1",
+"label": "Input 1",
+"type": "color",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "input2",
+"label": "Input 2",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "op",
+"label": "Operation",
+"type": "integer",
+"value": 0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha",
+"label": "Alpha",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Color Math Basic",
+"output": "color",
+"layout": [
+{
+"param": "Name"
+},
+{
+"param": "input1"
+},
+{
+"param": "input2"
+},
+{
+"param": "op"
+},
+{
+"param": "alpha"
+}
+]
+},
+"sib_environment": {
+"file": "sib_environment.spdl",
+"propset": "sib_environment_params",
+"params": [
+{
+"sn": "out",
+"label": "sib_environment output parameter",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "tex",
+"label": "image color input",
+"type": "texture",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "mode",
+"label": "env mapping mode",
+"type": "integer",
+"texturable": true,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "reflection_intensity",
+"label": "env mapping reflection intensity",
+"type": "scalar",
+"texturable": true,
+"value": 1,
+"dir": "input"
+},
+{
+"sn": "background_intensity",
+"label": "env mapping background  intensity",
+"type": "scalar",
+"texturable": true,
+"value": 1,
+"dir": "input"
+},
+{
+"sn": "fg_intensity",
+"label": "env mapping  final gathering  intensity",
+"type": "scalar",
+"texturable": true,
+"value": 1,
+"dir": "input"
+},
+{
+"sn": "open",
+"label": "env mapping cylindrical opening angle",
+"type": "scalar",
+"texturable": false,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "close",
+"label": "env mapping cylindrical closing angle",
+"type": "scalar",
+"texturable": false,
+"value": 360,
+"dir": "input"
+},
+{
+"sn": "transform",
+"label": "env mapping transformation",
+"type": "matrix",
+"value": [
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "exposure",
+"type": "scalar",
+"inspectable": false,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "gamma_enable",
+"type": "boolean",
+"inspectable": false,
+"value": "off",
+"dir": "input"
+},
+{
+"sn": "gamma",
+"type": "scalar",
+"inspectable": false,
+"value": 1.0,
+"dir": "input"
+},
+{
+"sn": "srgb_enable",
+"label": "srgb_enable",
+"type": "boolean",
+"inspectable": false,
+"value": "off",
+"dir": "input"
+}
+],
+"title": "sib_environment output parameter",
+"output": "color",
+"layout": [
+{
+"param": "Name"
+},
+{
+"param": "tex",
+"opts": [
+"nolabel"
+]
+},
+{
+"param": "mode"
+},
+{
+"group": "Intensity",
+"items": [
+{
+"param": "background_intensity"
+},
+{
+"param": "reflection_intensity"
+},
+{
+"param": "fg_intensity"
+}
+]
+},
+{
+"param": "transform"
+}
+]
+},
+"sib_illum_phong": {
+"file": "sib_illum_phong.spdl",
+"propset": "sib_illum_phong_params",
+"params": [
+{
+"sn": "out",
+"label": "Combined",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "ambient",
+"label": "Ambient",
+"type": "color",
+"value": [
+0.3,
+0.3,
+0.3
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "diffuse",
+"label": "Diffuse",
+"type": "color",
+"value": [
+0.7,
+0.7,
+0.7
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "specular",
+"label": "Specular",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "ambience",
+"label": "Scene Ambience",
+"type": "color",
+"value": [
+0.1,
+0.1,
+0.1
+],
+"inspectable": false,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "shiny",
+"label": "Specular Decay",
+"type": "scalar",
+"value": 50.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "bump",
+"label": "Bump",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance",
+"label": "Radiance",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance_filter",
+"label": "Radiance Filter",
+"type": "boolean",
+"value": true,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Combined",
+"output": "color",
+"layout": [
+{
+"param": "Name"
+},
+{
+"param": "diffuse"
+},
+{
+"param": "ambient"
+},
+{
+"param": "specular"
+},
+{
+"param": "shiny"
+},
+{
+"param": "bump"
+},
+{
+"group": "Global Illumination / Caustics / Final Gathering",
+"items": [
+{
+"param": "radiance"
+},
+{
+"param": "radiance_filter"
+}
+]
+}
+]
+},
+"sib_incidence_v3": {
+"file": "sib_incidence_v3.spdl",
+"propset": "sib_incidence_v3_params",
+"params": [
+{
+"sn": "out",
+"label": "sib_incidence_v3 output parameter",
+"type": "scalar",
+"dir": "output"
+},
+{
+"sn": "mode",
+"label": "mode",
+"type": "integer",
+"value": 6,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "bias",
+"label": "incidence bias",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "gain",
+"label": "incidence gain",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "bump",
+"label": "bump",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "custom_vector",
+"label": "custom vector",
+"type": "vector",
+"value": [
+0.0,
+1.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "invert",
+"label": "invert incidence",
+"type": "boolean",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "light_intensity",
+"label": "incorporate light intensity",
+"type": "boolean",
+"value": true,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "normal_shading",
+"label": "shading range",
+"type": "boolean",
+"value": true,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "lights",
+"label": "global light list",
+"texturable": false,
+"inspectable": false,
+"type": "light",
+"dir": "input"
+},
+{
+"sn": "customlights",
+"label": "custom light list",
+"texturable": false,
+"type": "light",
+"dir": "input"
+}
+],
+"title": "sib_incidence_v3 output parameter",
+"output": "scalar",
+"layout": [
+{
+"param": "Name"
+},
+{
+"param": "mode"
+},
+{
+"param": "custom_vector"
+},
+{
+"param": "customlights"
+},
+{
+"param": "normal_shading",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "light_intensity",
+"opts": [
+"aligncenter"
+]
+},
+{
+"group": "Modify",
+"items": [
+{
+"param": "invert",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "bias"
+},
+{
+"param": "gain"
+}
+]
+}
+]
+},
+"sib_light": {
+"file": "sib_light.spdl",
+"propset": "sib_light_params",
+"params": [
+{
+"sn": "out",
+"label": "out",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "color",
+"label": "Light Color",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "intensity",
+"label": "Intensity",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "shadow",
+"label": "Shadow On/Off",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "attenuation",
+"label": "Attenuation",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "shadow_attenuation",
+"label": "Shadow Attenutation",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "spread",
+"label": "Spread",
+"type": "scalar",
+"value": 0.8,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "min_distance",
+"label": "Minimum Distance",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "out",
+"output": "color",
+"layout": [
+{
+"param": "Name"
+},
+{
+"param": "color"
+},
+{
+"param": "intensity"
+},
+{
+"param": "shadow"
+},
+{
+"param": "attenuation"
+},
+{
+"param": "shadow_attenuation"
+},
+{
+"param": "spread"
+},
+{
+"param": "min_distance"
+}
+]
+},
+"sib_scalar_math_basic": {
+"file": "sib_scalar_math_basic.spdl",
+"propset": "sib_scalar_math_basic_params",
+"params": [
+{
+"sn": "out",
+"label": "Scalar Math Basic",
+"type": "scalar",
+"dir": "output"
+},
+{
+"sn": "input1",
+"label": "Input 1",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "input2",
+"label": "Input 2",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "op",
+"label": "Operation",
+"type": "integer",
+"value": 0,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Scalar Math Basic",
+"output": "scalar",
+"layout": [
+{
+"param": "Name"
+},
+{
+"param": "input1"
+},
+{
+"param": "input2"
+},
+{
+"param": "op"
+}
+]
+},
+"sib_scalar_to_color": {
+"file": "sib_scalar_to_color.spdl",
+"propset": "sib_scalar_to_color_params",
+"params": [
+{
+"sn": "out",
+"label": "Scalar to Color",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "input",
+"label": "Input",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha",
+"label": "Alpha",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Scalar to Color",
+"output": "color",
+"layout": [
+{
+"param": "Name"
+},
+{
+"param": "input"
+},
+{
+"param": "alpha"
+}
+]
+},
+"sib_texproj_lookup": {
+"file": "sib_texproj_lookup.spdl",
+"propset": "sib_texproj_lookup_params",
+"params": [
+{
+"sn": "out",
+"label": "Texture Generator",
+"type": "vector",
+"dir": "output"
+},
+{
+"sn": "tspace_id",
+"label": "Texture Space",
+"type": "texturespace",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"dir": "input"
+},
+{
+"sn": "tsupp_invxform",
+"label": "Texture Support Inverse Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project",
+"label": "Projection Method",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace",
+"label": "Space Transformation",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex",
+"label": "Triangle Intersection",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tproj_xform",
+"label": "Texture Space Transform",
+"type": "matrix",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_u",
+"label": "wrap_u",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_v",
+"label": "wrap_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_w",
+"label": "wrap_w",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_u",
+"label": "seam_u",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_v",
+"label": "seam_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "repeats",
+"label": "Texture repeat factor (X,Y,Z)",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_x",
+"label": "alt_x",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_y",
+"label": "alt_y",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_z",
+"label": "alt_z",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "min",
+"label": "min",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "max",
+"label": "max",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_u",
+"label": "torus_u",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_v",
+"label": "torus_v",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Texture Generator",
+"output": "vector",
+"layout": [
+{
+"tab": "Texture Generator",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "tspace_id"
+},
+{
+"group": "Repeats",
+"items": [
+{
+"param": "repeats",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"group": "Alternate",
+"items": [
+{
+"param": "alt_x",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_y",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_z",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"group": "UV Remap",
+"items": [
+{
+"param": "min",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "max",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+}
+]
+},
+"sib_texture_lookup": {
+"file": "sib_texture_lookup.spdl",
+"propset": "sib_texture_lookup_params",
+"params": [
+{
+"sn": "out",
+"label": "out",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "tex",
+"label": "tex",
+"type": "texture",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "coord",
+"label": "coord",
+"type": "vector",
+"texturable": true,
+"value": [
+1.0,
+1.0,
+1.0
+],
+"dir": "input"
+},
+{
+"sn": "remap",
+"label": "remap",
+"type": "texture",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "clamp",
+"label": "clamp",
+"type": "boolean",
+"texturable": true,
+"value": "on",
+"dir": "input"
+},
+{
+"sn": "filtered",
+"label": "filtered",
+"type": "boolean",
+"texturable": true,
+"value": "on",
+"dir": "input"
+},
+{
+"sn": "eccmax",
+"label": "eccmax",
+"type": "scalar",
+"texturable": true,
+"value": 0.01,
+"dir": "input"
+},
+{
+"sn": "maxminor",
+"label": "maxminor",
+"type": "scalar",
+"texturable": true,
+"value": 8.0,
+"dir": "input"
+},
+{
+"sn": "disc_r",
+"label": "disc_r",
+"type": "scalar",
+"texturable": true,
+"value": 0.3,
+"dir": "input"
+},
+{
+"sn": "bilinear",
+"label": "bilinear",
+"type": "boolean",
+"texturable": true,
+"value": "on",
+"dir": "input"
+},
+{
+"sn": "space",
+"label": "space",
+"type": "texturespace",
+"texturable": true,
+"value": 0,
+"dir": "input"
+}
+],
+"title": "out",
+"output": "color",
+"layout": [
+{
+"param": "Name"
+},
+{
+"param": "tex"
+},
+{
+"param": "coord"
+},
+{
+"param": "clamp"
+},
+{
+"group": "Elliptical Filtering",
+"items": [
+{
+"param": "filtered"
+},
+{
+"param": "eccmax"
+},
+{
+"param": "maxminor"
+},
+{
+"param": "disc_r"
+},
+{
+"param": "bilinear"
+}
+]
+}
+]
+},
+"sib_uvwgen": {
+"file": "sib_uvwgen.spdl",
+"propset": "sib_uvwgen_params",
+"params": [
+{
+"sn": "out",
+"label": "Texture Space Generator",
+"type": "vector",
+"dir": "output"
+},
+{
+"sn": "select",
+"label": "Texture Space",
+"type": "texturespace",
+"texturable": true,
+"value": -1,
+"dir": "input"
+},
+{
+"sn": "selspace",
+"label": "Space Transformation",
+"type": "integer",
+"texturable": true,
+"value": 1,
+"dir": "input"
+},
+{
+"sn": "vertex",
+"label": "Triangle Intersection",
+"type": "integer",
+"texturable": true,
+"value": 0,
+"dir": "input"
+},
+{
+"sn": "project",
+"label": "Implicit Projection Method",
+"type": "integer",
+"texturable": true,
+"value": 2,
+"dir": "input"
+},
+{
+"sn": "supp_invxform",
+"label": "Inverse transformation of support",
+"type": "matrix",
+"texturable": true,
+"animatable": true,
+"value": [
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0
+],
+"dir": "input"
+},
+{
+"sn": "seam_u",
+"label": "Support Geometry has a seam in the U direction",
+"type": "boolean",
+"texturable": false,
+"value": false,
+"dir": "input"
+},
+{
+"sn": "seam_v",
+"label": "Support Geometry has a seam in the V direction",
+"type": "boolean",
+"texturable": false,
+"value": false,
+"dir": "input"
+},
+{
+"sn": "texhomog",
+"label": "Texture coordinates are homogeneous (q stored in q)",
+"type": "boolean",
+"texturable": false,
+"value": false,
+"dir": "input"
+}
+],
+"title": "Texture Space Generator",
+"output": "vector",
+"layout": [
+{
+"param": "Name"
+},
+{
+"param": "select"
+},
+{
+"param": "project"
+},
+{
+"param": "selspace"
+},
+{
+"param": "vertex"
+},
+{
+"param": "seam_u"
+},
+{
+"param": "seam_v"
+},
+{
+"param": "texhomog"
+}
+]
+},
+"sib_vertex_color_alpha": {
+"file": "sib_vertex_color_alpha.spdl",
+"propset": "sib_vertex_color_alpha_params",
+"params": [
+{
+"sn": "out",
+"label": "Colored Vertices",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "vprop",
+"label": "Vertex Property",
+"type": "texturespace",
+"dir": "input"
+},
+{
+"sn": "alpha",
+"label": "alpha",
+"inspectable": false,
+"type": "texturespace",
+"dir": "input"
+},
+{
+"sn": "alpha_only",
+"label": "alpha_only",
+"type": "boolean",
+"dir": "input"
+}
+],
+"title": "Colored Vertices",
+"output": "color",
+"layout": [
+{
+"param": "Name"
+},
+{
+"param": "vprop"
+},
+{
+"param": "alpha_only"
+}
+]
+},
+"simple_phong": {
+"file": "simple_phong.spdl",
+"propset": "simple_phong_params",
+"params": [
+{
+"sn": "out",
+"label": "Phong Shading",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "mode",
+"label": "mode",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "lights",
+"label": "Light List",
+"texturable": false,
+"type": "light",
+"dir": "input"
+},
+{
+"sn": "ambient",
+"label": "Ambient",
+"type": "color",
+"value": [
+0.3,
+0.3,
+0.3
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "diffuse",
+"label": "Diffuse",
+"type": "color",
+"value": [
+0.7,
+0.7,
+0.7
+],
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "specular",
+"label": "Specular",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "ambience",
+"label": "Scene Ambience",
+"type": "color",
+"value": [
+0.1,
+0.1,
+0.1
+],
+"inspectable": false,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "shiny",
+"label": "Specular Decay",
+"type": "scalar",
+"value": 50.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "bump",
+"label": "Bump",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "radiance",
+"label": "Radiance",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Phong Shading",
+"output": "color",
+"layout": [
+{
+"param": "Name"
+},
+{
+"group": "Diffuse",
+"items": [
+{
+"param": "diffuse"
+},
+{
+"param": "ambient"
+}
+]
+},
+{
+"group": "Specular",
+"items": [
+{
+"param": "specular"
+},
+{
+"param": "shiny"
+}
+]
+},
+{
+"group": "Global Illumination / Caustics / Final Gathering",
+"items": [
+{
+"param": "radiance"
+}
+]
+}
+]
+},
+"txt2d-gradient_v2": {
+"file": "txt2d-gradient_v2.spdl",
+"propset": "txt2d-gradient_v2_params",
+"params": [
+{
+"sn": "out",
+"label": "Gradient output parameter",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "gradient_type",
+"label": "2dtype",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "invert",
+"label": "invert",
+"type": "boolean",
+"texturable": false,
+"value": "off",
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "clip",
+"label": "clip",
+"type": "boolean",
+"texturable": false,
+"value": "off",
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "enable_alpha_gradient",
+"label": "enable_alpha_gradient",
+"type": "boolean",
+"texturable": false,
+"value": "off",
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "range_min",
+"label": "Minimum gradient Range",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "range_max",
+"label": "Maximum gradient Range",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "rgba_interpolation",
+"label": "type of RGBA interpolation",
+"type": "integer",
+"value": 1,
+"texturable": false,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color1",
+"label": "color1",
+"type": "color",
+"value": [
+1.0,
+0.0,
+0.0,
+1.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color1",
+"label": "position of color1",
+"type": "scalar",
+"value": 0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color1",
+"label": "interpolation handle of color1",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color2",
+"label": "color2",
+"type": "color",
+"value": [
+1.0,
+0.0,
+1.0,
+1.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color2",
+"label": "position of color2",
+"type": "scalar",
+"value": 0.2,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color2",
+"label": "interpolation handle of color2",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color3",
+"label": "color3",
+"type": "color",
+"value": [
+0.0,
+0.0,
+1.0,
+1.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color3",
+"label": "position of color3",
+"type": "scalar",
+"value": 0.35,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color3",
+"label": "interpolation handle of color3",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color4",
+"label": "color4",
+"type": "color",
+"value": [
+0.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color4",
+"label": "position of color4",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color4",
+"label": "interpolation handle of color4",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color5",
+"label": "color5",
+"type": "color",
+"value": [
+0.0,
+1.0,
+0.0,
+1.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color5",
+"label": "position of color5",
+"type": "scalar",
+"value": 0.65,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color5",
+"label": "interpolation handle of color5",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color6",
+"label": "color6",
+"type": "color",
+"value": [
+1.0,
+1.0,
+0.0,
+1.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color6",
+"label": "position of color6",
+"type": "scalar",
+"value": 0.8,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color6",
+"label": "interpolation handle of color6",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color7",
+"label": "color7",
+"type": "color",
+"value": [
+0.0,
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color7",
+"label": "position of color7",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color7",
+"label": "interpolation handle of color7",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "color8",
+"label": "color8",
+"type": "color",
+"value": [
+0.0,
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_color8",
+"label": "position of color8",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_color8",
+"label": "interpolation handle of color8",
+"type": "scalar",
+"value": 0.5,
+"texturable": false,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_interpolation",
+"label": "type of Alpha interpolation",
+"type": "integer",
+"value": 1,
+"texturable": false,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha1",
+"label": "alpha1",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha1",
+"label": "Position of alpha1",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha1",
+"label": "Interpolation of alpha1",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha2",
+"label": "alpha2",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha2",
+"label": "Position of alpha2",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha2",
+"label": "Interpolation of alpha2",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha3",
+"label": "alpha3",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha3",
+"label": "Position of alpha3",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha3",
+"label": "Interpolation of alpha3",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha4",
+"label": "alpha4",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha4",
+"label": "Position of alpha4",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha4",
+"label": "Interpolation of alpha4",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha5",
+"label": "alpha5",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha5",
+"label": "Position of alpha5",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha5",
+"label": "Interpolation of alpha5",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha6",
+"label": "alpha6",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha6",
+"label": "Position of alpha6",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha6",
+"label": "Interpolation of alpha6",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha7",
+"label": "alpha7",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha7",
+"label": "Position of alpha7",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha7",
+"label": "Interpolation of alpha7",
+"type": "scalar",
+"value": 0.7,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "alpha8",
+"label": "alpha8",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "pos_alpha8",
+"label": "Position of alpha8",
+"type": "scalar",
+"value": -1.0,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "mid_alpha8",
+"label": "Interpolation of alpha8",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"animatable": true,
+"inspectable": true,
+"dir": "input"
+},
+{
+"sn": "tspace_id",
+"label": "Texture Space",
+"type": "texturespace",
+"value": -1,
+"texturable": false,
+"animatable": false,
+"dir": "input"
+},
+{
+"sn": "tsupp_invxform",
+"label": "Texture Support Inverse Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project",
+"label": "Projection Method",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace",
+"label": "Space Transformation",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex",
+"label": "Triangle Intersection",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tproj_xform",
+"label": "Texture Space Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_u",
+"label": "wrap_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_v",
+"label": "wrap_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_w",
+"label": "wrap_w",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_u",
+"label": "seam_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_v",
+"label": "seam_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "repeats",
+"label": "Texture repeat factor (X,Y,Z)",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_x",
+"label": "alt_x",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_y",
+"label": "alt_y",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_z",
+"label": "alt_z",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "min",
+"label": "min",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "max",
+"label": "max",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "step",
+"label": "step",
+"type": "vector",
+"value": [
+0.002,
+0.002,
+0.002
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "factor",
+"label": "factor",
+"type": "scalar",
+"value": 5.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_u",
+"label": "torus_u",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_v",
+"label": "torus_v",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "bump_inuse",
+"label": "bump_inuse",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha",
+"label": "alpha",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_output",
+"label": "alpha_output",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_factor",
+"label": "alpha_factor",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Gradient output parameter",
+"output": "color",
+"layout": [
+{
+"tab": "RGBA Gradient",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "rgba_interpolation",
+"opts": [
+"nolabel"
+]
+},
+{
+"param": "gradient_type",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "invert",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "clip",
+"opts": [
+"aligncenter"
+]
+},
+{
+"group": "Copy Alpha to RGB",
+"items": [
+{
+"param": "alpha_output",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alpha_factor",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"group": "Animation",
+"items": [
+{
+"param": "Button SaveKeyAllVisibleRGBAMarkers",
+"opts": [
+"continue",
+"aligncenter = \"Key All\"",
+"140"
+]
+},
+{
+"param": "Button RemoveKeyRGBAMarkers",
+"opts": [
+"aligncenter = \"Remove keys\"",
+"140"
+]
+},
+{
+"param": "Button ResetRGBAMarkers",
+"opts": [
+"continue",
+"aligncenter = \"Reset\"",
+"140"
+]
+},
+{
+"param": "Button RemoveAllShadersOnRGBA",
+"opts": [
+"aligncenter = \"Remove Shaders\"",
+"140"
+]
+}
+]
+},
+{
+"param": "Button RGBA_BW_preset",
+"opts": [
+"aligncenter = \"Black/White\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_WB_preset",
+"opts": [
+"aligncenter = \"White/Black\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_BTR_preset",
+"opts": [
+"aligncenter = \"Black to transparent\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_WTR_preset",
+"opts": [
+"aligncenter = \"White to transparent\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_chrome_preset",
+"opts": [
+"aligncenter = \"Chrome\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_copper_preset",
+"opts": [
+"aligncenter = \"Copper\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_spectrum_preset",
+"opts": [
+"aligncenter = \"Spectrum\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_rainbow_preset",
+"opts": [
+"aligncenter = \"Rainbow\"",
+"140"
+]
+},
+{
+"param": "Button RGBA_fire_preset",
+"opts": [
+"aligncenter = \"Fire\"",
+"140"
+]
+}
+]
+},
+{
+"tab": "Alpha Gradient",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "enable_alpha_gradient",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alpha_interpolation",
+"opts": [
+"nolabel"
+]
+},
+{
+"param": "gradient_type",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "invert",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "clip",
+"opts": [
+"aligncenter"
+]
+},
+{
+"group": "Copy Alpha to RGB",
+"items": [
+{
+"param": "alpha_output",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alpha_factor",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"group": "Animation",
+"items": [
+{
+"param": "Button SaveKeyAllVisibleAlphaMarkers",
+"opts": [
+"continue",
+"aligncenter = \"Key All\"",
+"140"
+]
+},
+{
+"param": "Button RemoveKeyAlphaMarkers",
+"opts": [
+"aligncenter = \"Remove keys\"",
+"140"
+]
+},
+{
+"param": "Button ResetAlphaMarkers",
+"opts": [
+"continue",
+"aligncenter = \"Reset\"",
+"140"
+]
+},
+{
+"param": "Button RemoveAllShadersOnAlpha",
+"opts": [
+"aligncenter = \"Disconnect all\"",
+"140"
+]
+}
+]
+},
+{
+"group": "Preset",
+"items": [
+{
+"param": "Button Alpha_BW_preset",
+"opts": [
+"continue",
+"aligncenter = \"Black and White\"",
+"140"
+]
+},
+{
+"param": "Button Alpha_WB_preset",
+"opts": [
+"continue",
+"aligncenter = \"White and Black\"",
+"140"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Texture",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "tspace_id"
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alpha",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "factor",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "step",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Advanced",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "alt_x",
+"opts": [
+"aligncenter",
+"continue"
+]
+},
+{
+"param": "alt_y",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "repeats",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "min",
+"opts": [
+"aligncenter",
+"continue"
+]
+},
+{
+"param": "max",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"param": "alpha_output"
+},
+{
+"param": "alpha_factor"
+},
+{
+"param": "range_min"
+},
+{
+"param": "range_max"
+},
+{
+"group": "Color 1",
+"items": [
+{
+"param": "color1"
+},
+{
+"param": "pos_color1"
+},
+{
+"param": "alpha1"
+},
+{
+"param": "pos_alpha1"
+},
+{
+"param": "mid_alpha1"
+}
+]
+},
+{
+"group": "Color 2",
+"items": [
+{
+"param": "color2"
+},
+{
+"param": "pos_color2"
+},
+{
+"param": "alpha2"
+},
+{
+"param": "pos_alpha2"
+},
+{
+"param": "mid_alpha2"
+}
+]
+},
+{
+"group": "Color 3",
+"items": [
+{
+"param": "color3"
+},
+{
+"param": "pos_color3"
+},
+{
+"param": "alpha3"
+},
+{
+"param": "pos_alpha3"
+},
+{
+"param": "mid_alpha3"
+}
+]
+},
+{
+"group": "Color 4",
+"items": [
+{
+"param": "color4"
+},
+{
+"param": "pos_color4"
+},
+{
+"param": "alpha4"
+},
+{
+"param": "pos_alpha4"
+},
+{
+"param": "mid_alpha4"
+}
+]
+},
+{
+"group": "Color 5",
+"items": [
+{
+"param": "color5"
+},
+{
+"param": "pos_color5"
+},
+{
+"param": "alpha5"
+},
+{
+"param": "pos_alpha5"
+},
+{
+"param": "mid_alpha5"
+}
+]
+},
+{
+"group": "Color 6",
+"items": [
+{
+"param": "color6"
+},
+{
+"param": "pos_color6"
+},
+{
+"param": "alpha6"
+},
+{
+"param": "pos_alpha6"
+},
+{
+"param": "mid_alpha6"
+}
+]
+},
+{
+"group": "Color 7",
+"items": [
+{
+"param": "color7"
+},
+{
+"param": "pos_color7"
+},
+{
+"param": "alpha7"
+},
+{
+"param": "pos_alpha7"
+},
+{
+"param": "mid_alpha7"
+}
+]
+},
+{
+"group": "Color 8",
+"items": [
+{
+"param": "color8"
+},
+{
+"param": "pos_color8"
+},
+{
+"param": "alpha8"
+},
+{
+"param": "pos_alpha8"
+},
+{
+"param": "mid_alpha8"
+}
+]
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alpha",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "factor",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "step",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"group": "Remapping",
+"items": [
+{
+"param": "alt_x"
+},
+{
+"param": "alt_y"
+},
+{
+"param": "alt_z"
+},
+{
+"param": "repeats"
+},
+{
+"param": "torus_u"
+},
+{
+"param": "torus_v"
+},
+{
+"param": "min"
+},
+{
+"param": "max"
+}
+]
+}
+]
+},
+"txt2d-grid": {
+"file": "txt2d-grid.spdl",
+"propset": "txt2d-grid_params",
+"params": [
+{
+"sn": "out",
+"label": "Grid",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "line_color",
+"label": "line_color",
+"type": "color",
+"value": [
+1.0,
+0.8,
+0.6,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "fill_color",
+"label": "fill_color",
+"type": "color",
+"value": [
+0.1,
+0.3,
+0.6,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "u_width",
+"label": "u_width",
+"type": "scalar",
+"value": 0.2,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "v_width",
+"label": "v_width",
+"type": "scalar",
+"value": 0.2,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "contrast",
+"label": "contrast",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "diffusion",
+"label": "diffusion",
+"type": "scalar",
+"value": 0.1,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "tspace_id",
+"label": "Texture Space",
+"type": "texturespace",
+"value": -1,
+"texturable": false,
+"animatable": false,
+"dir": "input"
+},
+{
+"sn": "tsupp_invxform",
+"label": "Texture Support Inverse Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project",
+"label": "Projection Method",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace",
+"label": "Space Transformation",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex",
+"label": "Triangle Intersection",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tproj_xform",
+"label": "Texture Space Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_u",
+"label": "wrap_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_v",
+"label": "wrap_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_w",
+"label": "wrap_w",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_u",
+"label": "seam_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_v",
+"label": "seam_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project_old",
+"label": "Projection Method",
+"type": "integer",
+"value": 2,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace_old",
+"label": "Space Transformation",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex_old",
+"label": "Triangle Intersection",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tspace_xform_old",
+"label": "Texture Space Transform",
+"type": "matrix",
+"value": [
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0
+],
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "repeats",
+"label": "Texture repeat factor (X,Y,Z)",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_x",
+"label": "alt_x",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_y",
+"label": "alt_y",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_z",
+"label": "alt_z",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_x_old",
+"label": "torus_x",
+"type": "boolean",
+"value": "on",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_y_old",
+"label": "torus_y",
+"type": "boolean",
+"value": "on",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_z_old",
+"label": "torus_z",
+"type": "boolean",
+"value": "on",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "min",
+"label": "min",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "max",
+"label": "max",
+"type": "vector",
+"value": [
+10.0,
+10.0,
+10.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "step",
+"label": "step",
+"type": "vector",
+"value": [
+0.002,
+0.002,
+0.002
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "factor",
+"label": "factor",
+"type": "scalar",
+"value": 5.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_u",
+"label": "torus_u",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "torus_v",
+"label": "torus_v",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "alpha",
+"label": "alpha",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "bump_inuse",
+"label": "bump_inuse",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_output",
+"label": "alpha_output",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_factor",
+"label": "alpha_factor",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Grid",
+"output": "color",
+"layout": [
+{
+"tab": "Texture",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "tspace_id"
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alpha",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "factor",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "step",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Grid",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Color",
+"items": [
+{
+"param": "fill_color"
+},
+{
+"param": "line_color"
+},
+{
+"group": "Copy Alpha to RGB",
+"items": [
+{
+"param": "alpha_output",
+"opts": [
+"continue",
+"nolabel",
+"35%"
+]
+},
+{
+"param": "alpha_factor",
+"opts": [
+"65%"
+]
+}
+]
+},
+{
+"param": "contrast",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "diffusion",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"group": "Width",
+"items": [
+{
+"param": "u_width",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "v_width",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Advanced",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "alt_x",
+"opts": [
+"aligncenter",
+"continue"
+]
+},
+{
+"param": "alt_y",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "repeats",
+"opts": [
+"aligncenter",
+"nolabel"
+]
+},
+{
+"param": "min",
+"opts": [
+"aligncenter",
+"continue"
+]
+},
+{
+"param": "max",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+},
+"txt2d-image-explicit": {
+"file": "txt2d-image-explicit.spdl",
+"propset": "txt2d-image-explicit_params",
+"params": [
+{
+"sn": "out",
+"label": "Image 2D",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "tex",
+"label": "tex",
+"type": "texture",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "tspace_id",
+"label": "Texture Space",
+"type": "texturespace",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"dir": "input"
+},
+{
+"sn": "tsupp_invxform",
+"label": "Texture Support Inverse Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project",
+"label": "Projection Method",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace",
+"label": "Space Transformation",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex",
+"label": "Triangle Intersection",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tproj_xform",
+"label": "Texture Space Transform",
+"type": "matrix",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_u",
+"label": "wrap_u",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_v",
+"label": "wrap_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_w",
+"label": "wrap_w",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_u",
+"label": "seam_u",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_v",
+"label": "seam_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project_old",
+"label": "Projection Method",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace_old",
+"label": "Space Transformation",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex_old",
+"label": "Triangle Intersection",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tspace_xform_old",
+"label": "Texture Space Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "repeats",
+"label": "Texture repeat factor (X,Y,Z)",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_x",
+"label": "alt_x",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_y",
+"label": "alt_y",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_z",
+"label": "alt_z",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_x_old",
+"label": "torus_x",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_y_old",
+"label": "torus_y",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_z_old",
+"label": "torus_z",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "min",
+"label": "min",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "max",
+"label": "max",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "step",
+"label": "step",
+"type": "vector",
+"value": [
+0.001,
+0.001,
+0.001
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "factor",
+"label": "factor",
+"type": "scalar",
+"value": 5.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_u",
+"label": "torus_u",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_v",
+"label": "torus_v",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha",
+"label": "alpha",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "bump_inuse",
+"label": "bump_inuse",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_output",
+"label": "alpha_output",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_factor",
+"label": "alpha_factor",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "eccmax",
+"label": "eccmax",
+"type": "scalar",
+"texturable": true,
+"value": 20.0,
+"dir": "input"
+},
+{
+"sn": "maxminor",
+"label": "maxminor",
+"type": "scalar",
+"texturable": true,
+"value": 16.0,
+"dir": "input"
+},
+{
+"sn": "disc_r",
+"label": "disc_r",
+"type": "scalar",
+"texturable": true,
+"value": 0.3,
+"dir": "input"
+},
+{
+"sn": "bilinear",
+"label": "bilinear",
+"type": "boolean",
+"texturable": true,
+"value": "on",
+"dir": "input"
+},
+{
+"sn": "filtered",
+"label": "filtered",
+"type": "boolean",
+"texturable": true,
+"value": "off",
+"dir": "input"
+},
+{
+"sn": "bump_filtered",
+"label": "bump_filtered",
+"type": "boolean",
+"texturable": true,
+"value": "off",
+"dir": "input"
+},
+{
+"sn": "exposure",
+"label": "exposure",
+"type": "scalar",
+"inspectable": false,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "gamma_enable",
+"label": "gamma enable",
+"type": "boolean",
+"inspectable": false,
+"value": "off",
+"dir": "input"
+},
+{
+"sn": "gamma",
+"label": "gamma",
+"type": "scalar",
+"inspectable": false,
+"value": 1.0,
+"dir": "input"
+},
+{
+"sn": "srgb_enable",
+"label": "srgb_enable",
+"type": "boolean",
+"inspectable": false,
+"value": "off",
+"dir": "input"
+}
+],
+"title": "Image 2D",
+"output": "color",
+"layout": [
+{
+"tab": "Texture",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Image",
+"items": [
+{
+"param": "tex",
+"opts": [
+"NoLabel"
+]
+},
+{
+"group": "Copy Alpha to RGB",
+"items": [
+{
+"param": "alpha_output",
+"opts": [
+"AlignRight",
+"30%",
+"continue"
+]
+},
+{
+"param": "alpha_factor"
+}
+]
+}
+]
+},
+{
+"group": "Texture Projection",
+"items": [
+{
+"param": "tspace_id",
+"opts": [
+"NoLabel"
+]
+}
+]
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alpha",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "factor",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "step",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Image Filtering",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Elliptical Filtering",
+"items": [
+{
+"group": "Apply to",
+"items": [
+{
+"param": "filtered",
+"opts": [
+"continue",
+"aligncenter"
+]
+},
+{
+"param": "bump_filtered",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"param": "eccmax"
+},
+{
+"param": "maxminor"
+},
+{
+"param": "disc_r"
+},
+{
+"param": "bilinear",
+"opts": [
+"AlignRight"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Advanced",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Alternate",
+"items": [
+{
+"param": "alt_x",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_y",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"group": "Repeats",
+"items": [
+{
+"param": "repeats",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"param": "min",
+"opts": [
+"aligncenter",
+"continue"
+]
+},
+{
+"param": "max",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"param": "tex"
+},
+{
+"param": "alpha_output"
+},
+{
+"param": "alpha_factor"
+},
+{
+"group": "Image Filtering",
+"items": [
+{
+"param": "filtered"
+},
+{
+"param": "bump_filtered"
+},
+{
+"param": "eccmax"
+},
+{
+"param": "maxminor"
+},
+{
+"param": "disc_r"
+},
+{
+"param": "bilinear"
+}
+]
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse"
+},
+{
+"param": "alpha"
+},
+{
+"param": "factor"
+},
+{
+"param": "step"
+}
+]
+},
+{
+"group": "Remapping",
+"items": [
+{
+"param": "alt_x"
+},
+{
+"param": "alt_y"
+},
+{
+"param": "alt_z"
+},
+{
+"param": "torus_u"
+},
+{
+"param": "torus_v"
+},
+{
+"param": "torus_w"
+},
+{
+"param": "repeats"
+},
+{
+"param": "min"
+},
+{
+"param": "max"
+}
+]
+}
+]
+},
+"txt2d-image": {
+"file": "txt2d-image.spdl",
+"propset": "txt2d-image_params",
+"params": [
+{
+"sn": "out",
+"label": "Image 2D",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "tex",
+"label": "tex",
+"type": "texture",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "tspace_id",
+"label": "Texture Space",
+"type": "texturespace",
+"value": -1,
+"texturable": false,
+"animatable": false,
+"dir": "input"
+},
+{
+"sn": "tsupp_invxform",
+"label": "Texture Support Inverse Transform",
+"type": "matrix",
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project",
+"label": "Projection Method",
+"type": "integer",
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace",
+"label": "Space Transformation",
+"type": "integer",
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex",
+"label": "Triangle Intersection",
+"type": "integer",
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tproj_xform",
+"label": "Texture Space Transform",
+"type": "matrix",
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_u",
+"label": "wrap_u",
+"type": "boolean",
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_v",
+"label": "wrap_v",
+"type": "boolean",
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_w",
+"label": "wrap_w",
+"type": "boolean",
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_u",
+"label": "seam_u",
+"type": "boolean",
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_v",
+"label": "seam_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project_old",
+"label": "Projection Method",
+"type": "integer",
+"value": 2,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace_old",
+"label": "Space Transformation",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex_old",
+"label": "Triangle Intersection",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tspace_xform_old",
+"label": "Texture Space Transform",
+"type": "matrix",
+"value": [
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0
+],
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "repeats",
+"label": "Texture repeat factor (X,Y,Z)",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_x",
+"label": "alt_x",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_y",
+"label": "alt_y",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_z",
+"label": "alt_z",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_x_old",
+"label": "torus_x",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_y_old",
+"label": "torus_y",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_z_old",
+"label": "torus_z",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "min",
+"label": "min",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "max",
+"label": "max",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_output",
+"label": "alpha_output",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_factor",
+"label": "alpha_factor",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "exposure",
+"label": "exposure",
+"type": "scalar",
+"inspectable": false,
+"value": 0.0,
+"dir": "input"
+},
+{
+"sn": "gamma_enable",
+"label": "gamma enable",
+"type": "boolean",
+"inspectable": false,
+"value": "off",
+"dir": "input"
+},
+{
+"sn": "gamma",
+"label": "gamma",
+"type": "scalar",
+"inspectable": false,
+"value": 1.0,
+"dir": "input"
+}
+],
+"title": "Image 2D",
+"output": "color",
+"layout": [
+{
+"tab": "Texture",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Image",
+"items": [
+{
+"param": "tex"
+},
+{
+"group": "Copy Alpha to RGB",
+"items": [
+{
+"param": "alpha_output",
+"opts": [
+"continue",
+"nolabel",
+"35%"
+]
+},
+{
+"param": "alpha_factor",
+"opts": [
+"65%"
+]
+}
+]
+}
+]
+},
+{
+"param": "tspace_id"
+}
+]
+},
+{
+"tab": "Advanced",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "alt_x",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_y",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "repeats",
+"opts": [
+"aligncenter",
+"nolabel"
+]
+},
+{
+"param": "torus_x",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "torus_y",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "torus_z",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "min",
+"opts": [
+"aligncenter",
+"continue"
+]
+},
+{
+"param": "max",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"param": "tex"
+},
+{
+"param": "alpha_output"
+},
+{
+"param": "alpha_factor"
+},
+{
+"group": "Remapping",
+"items": [
+{
+"param": "alt_x"
+},
+{
+"param": "alt_y"
+},
+{
+"param": "repeats"
+},
+{
+"param": "torus_x"
+},
+{
+"param": "torus_y"
+},
+{
+"param": "torus_z"
+},
+{
+"param": "min"
+},
+{
+"param": "max"
+}
+]
+}
+]
+},
+"txt3d-checkerboard": {
+"file": "txt3d-checkerboard.spdl",
+"propset": "txt3d-checkerboard_params",
+"params": [
+{
+"sn": "out",
+"label": "Checkerboard",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "color1",
+"label": "Color 1",
+"type": "color",
+"value": [
+0.0,
+0.0,
+0.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "color2",
+"label": "Color 2",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "xsize",
+"label": "Xsize",
+"type": "scalar",
+"texturable": true,
+"value": 0.5,
+"dir": "input"
+},
+{
+"sn": "ysize",
+"label": "Ysize",
+"type": "scalar",
+"texturable": true,
+"value": 0.5,
+"dir": "input"
+},
+{
+"sn": "zsize",
+"label": "Zsize",
+"type": "scalar",
+"texturable": true,
+"value": 0.5,
+"dir": "input"
+},
+{
+"sn": "tspace_id",
+"label": "Texture Space",
+"type": "texturespace",
+"value": -1,
+"texturable": false,
+"animatable": false,
+"dir": "input"
+},
+{
+"sn": "tsupp_invxform",
+"label": "Texture Support Inverse Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project",
+"label": "Projection Method",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace",
+"label": "Space Transformation",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex",
+"label": "Triangle Intersection",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tproj_xform",
+"label": "Texture Space Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_u",
+"label": "wrap_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_v",
+"label": "wrap_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_w",
+"label": "wrap_w",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_u",
+"label": "seam_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_v",
+"label": "seam_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project_old",
+"label": "Projection Method",
+"type": "integer",
+"value": 2,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace_old",
+"label": "Space Transformation",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex_old",
+"label": "Triangle Intersection",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tspace_xform_old",
+"label": "Texture Space Transform",
+"type": "matrix",
+"value": [
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0
+],
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "repeats",
+"label": "Texture repeat factor (X,Y,Z)",
+"type": "vector",
+"value": [
+4.0,
+4.0,
+4.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_x",
+"label": "alt_x",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_y",
+"label": "alt_y",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_z",
+"label": "alt_z",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_x_old",
+"label": "torus_x",
+"type": "boolean",
+"value": "on",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_y_old",
+"label": "torus_y",
+"type": "boolean",
+"value": "on",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_z_old",
+"label": "torus_z",
+"type": "boolean",
+"value": "on",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "min",
+"label": "min",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "max",
+"label": "max",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "step",
+"label": "step",
+"type": "vector",
+"value": [
+0.005,
+0.005,
+0.005
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "factor",
+"label": "factor",
+"type": "scalar",
+"value": 20.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_u",
+"label": "torus_u",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "torus_v",
+"label": "torus_v",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "alpha",
+"label": "alpha",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "bump_inuse",
+"label": "bump_inuse",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_output",
+"label": "alpha_output",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_factor",
+"label": "alpha_factor",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+}
+],
+"title": "Checkerboard",
+"output": "color",
+"layout": [
+{
+"tab": "Texture",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "tspace_id"
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alpha",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "factor",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "step",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Checkerboard",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Colors",
+"items": [
+{
+"param": "color1"
+},
+{
+"param": "color2"
+},
+{
+"group": "Copy Alpha to RGB",
+"items": [
+{
+"param": "alpha_output",
+"opts": [
+"continue",
+"nolabel",
+"35%"
+]
+},
+{
+"param": "alpha_factor",
+"opts": [
+"65%"
+]
+}
+]
+}
+]
+},
+{
+"group": "Position",
+"items": [
+{
+"param": "xsize"
+},
+{
+"param": "ysize"
+},
+{
+"param": "zsize"
+}
+]
+}
+]
+},
+{
+"tab": "Advanced",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "alt_x",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_y",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_z",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "repeats",
+"opts": [
+"aligncenter",
+"nolabel"
+]
+},
+{
+"param": "min",
+"opts": [
+"aligncenter",
+"continue"
+]
+},
+{
+"param": "max",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"param": "color1"
+},
+{
+"param": "color2"
+},
+{
+"param": "xsize"
+},
+{
+"param": "ysize"
+},
+{
+"param": "zsize"
+},
+{
+"param": "alpha_output"
+},
+{
+"param": "alpha_factor"
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse"
+},
+{
+"param": "alpha"
+},
+{
+"param": "factor"
+},
+{
+"param": "step"
+}
+]
+},
+{
+"group": "Remapping",
+"items": [
+{
+"param": "alt_x"
+},
+{
+"param": "alt_y"
+},
+{
+"param": "alt_z"
+},
+{
+"param": "repeats"
+},
+{
+"param": "min"
+},
+{
+"param": "max"
+}
+]
+}
+]
+},
+"txt3d-cloud": {
+"file": "txt3d-cloud.spdl",
+"propset": "txt3d-cloud_params",
+"params": [
+{
+"sn": "out",
+"label": "Cloud",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "color1",
+"label": "Color 1",
+"type": "color",
+"value": [
+0.65,
+0.65,
+0.65,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "color2",
+"label": "Color 2",
+"type": "color",
+"value": [
+0.531,
+0.529,
+0.55,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "contrast",
+"label": "Contrast",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "trans_range",
+"label": "Transparency Range",
+"type": "scalar",
+"value": 0.87,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "trans_amp",
+"label": "Amplitude",
+"type": "scalar",
+"value": 0.884,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "center_thresh",
+"label": "Center Threshold",
+"type": "scalar",
+"value": 2.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "edge_thresh",
+"label": "Edge Threshold",
+"type": "scalar",
+"value": -2.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "noise_type",
+"label": "Noise Type",
+"type": "integer",
+"value": 1,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "absolute",
+"label": "Absolute",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "iter_max",
+"label": "Complexity",
+"type": "integer",
+"value": 4,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "level_min",
+"label": "Level Minimum",
+"type": "scalar",
+"value": 0.1,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "level_decay",
+"label": "Level Decay",
+"type": "scalar",
+"value": 0.9,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "freq_mul",
+"label": "Frequency Multiplier",
+"type": "scalar",
+"value": 2.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "time",
+"label": "Time",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "tspace_id",
+"label": "Texture Space",
+"type": "texturespace",
+"value": -1,
+"texturable": false,
+"animatable": false,
+"dir": "input"
+},
+{
+"sn": "tsupp_invxform",
+"label": "Texture Support Inverse Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project",
+"label": "Projection Method",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace",
+"label": "Space Transformation",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex",
+"label": "Triangle Intersection",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tproj_xform",
+"label": "Texture Space Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_u",
+"label": "wrap_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_v",
+"label": "wrap_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_w",
+"label": "wrap_w",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_u",
+"label": "seam_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_v",
+"label": "seam_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project_old",
+"label": "Projection Method",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace_old",
+"label": "Space Transformation",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex_old",
+"label": "Triangle Intersection",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tspace_xform_old",
+"label": "Texture Space Transform",
+"type": "matrix",
+"value": [
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0
+],
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "repeats",
+"label": "Texture repeat factor (X,Y,Z)",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_x",
+"label": "alt_x",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_y",
+"label": "alt_y",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_z",
+"label": "alt_z",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_x_old",
+"label": "torus_x",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_y_old",
+"label": "torus_y",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_z_old",
+"label": "torus_z",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "min",
+"label": "min",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "max",
+"label": "max",
+"type": "vector",
+"value": [
+5.0,
+5.0,
+5.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "step",
+"label": "step",
+"type": "vector",
+"value": [
+0.002,
+0.002,
+0.002
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "factor",
+"label": "factor",
+"type": "scalar",
+"value": 5.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_u",
+"label": "torus_u",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "torus_v",
+"label": "torus_v",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "alpha",
+"label": "alpha",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "bump_inuse",
+"label": "bump_inuse",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "incalpha",
+"label": "Include Alpha",
+"type": "boolean",
+"value": true,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "edgetrans",
+"label": "Edge Transparency",
+"type": "boolean",
+"value": true,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_output",
+"label": "alpha_output",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_factor",
+"label": "alpha_factor",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "permfiledat",
+"label": "permfiledat",
+"type": "texture",
+"dir": "input"
+},
+{
+"sn": "valfiledat",
+"label": "valfiledat",
+"type": "texture",
+"dir": "input"
+}
+],
+"title": "Cloud",
+"output": "color",
+"layout": [
+{
+"tab": "Texture",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "tspace_id"
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alpha",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "factor",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "step",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Cloud",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Color",
+"items": [
+{
+"param": "color1",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "color2",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "incalpha",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "contrast",
+"opts": [
+"aligncenter"
+]
+},
+{
+"group": "Copy Alpha to RGB",
+"items": [
+{
+"param": "alpha_output",
+"opts": [
+"continue",
+"nolabel",
+"35%"
+]
+},
+{
+"param": "alpha_factor",
+"opts": [
+"65%"
+]
+}
+]
+}
+]
+}
+]
+},
+{
+"tab": "Fractal",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Fractal",
+"items": [
+{
+"param": "noise_type",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "level_decay",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "freq_mul",
+"opts": [
+"aligncenter"
+]
+},
+{
+"group": "",
+"items": [
+{
+"param": "level_min",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "time",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"group": "",
+"items": [
+{
+"param": "iter_max",
+"opts": [
+"continue",
+"aligncenter"
+]
+},
+{
+"param": "absolute",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+},
+{
+"group": "Edge Transparency",
+"items": [
+{
+"param": "edgetrans"
+},
+{
+"param": "trans_range",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "trans_amp",
+"opts": [
+"aligncenter"
+]
+},
+{
+"group": "",
+"items": [
+{
+"param": "center_thresh",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "edge_thresh",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+}
+]
+},
+{
+"tab": "Advanced",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "alt_x",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_y",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_z",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "repeats",
+"opts": [
+"aligncenter",
+"nolabel"
+]
+},
+{
+"param": "min",
+"opts": [
+"aligncenter",
+"continue"
+]
+},
+{
+"param": "max",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"param": "color1"
+},
+{
+"param": "color2"
+},
+{
+"param": "incalpha"
+},
+{
+"param": "contrast"
+},
+{
+"param": "alpha_output"
+},
+{
+"param": "alpha_factor"
+},
+{
+"group": "Fractal",
+"items": [
+{
+"param": "noise_type"
+},
+{
+"param": "level_decay"
+},
+{
+"param": "freq_mul"
+},
+{
+"param": "level_min"
+},
+{
+"param": "time"
+},
+{
+"param": "iter_max"
+},
+{
+"param": "absolute"
+}
+]
+},
+{
+"group": "Edge Transparency",
+"items": [
+{
+"param": "edgetrans"
+},
+{
+"param": "trans_range"
+},
+{
+"param": "trans_amp"
+},
+{
+"param": "center_thresh"
+},
+{
+"param": "edge_thresh"
+}
+]
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse"
+},
+{
+"param": "alpha"
+},
+{
+"param": "factor"
+},
+{
+"param": "step"
+}
+]
+},
+{
+"group": "Remapping",
+"items": [
+{
+"param": "alt_x"
+},
+{
+"param": "alt_y"
+},
+{
+"param": "alt_z"
+},
+{
+"param": "repeats"
+},
+{
+"param": "min"
+},
+{
+"param": "max"
+}
+]
+}
+]
+},
+"txt3d-fractal_v3": {
+"file": "txt3d-fractal_v3.spdl",
+"propset": "txt3d-fractal_v3_params",
+"params": [
+{
+"sn": "out",
+"label": "Fractal",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "color1",
+"label": "Color1",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "color2",
+"label": "Color2",
+"type": "color",
+"value": [
+0.0,
+0.0,
+0.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "time",
+"label": "Time",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "noise_type",
+"label": "Noise Type",
+"type": "integer",
+"value": 0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "absolute",
+"label": "Absolute",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "iterations",
+"label": "Complexity",
+"type": "integer",
+"value": 2,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "level_min",
+"label": "Level Minimum",
+"type": "scalar",
+"value": 0.5,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "level_decay",
+"label": "Level Decay",
+"type": "scalar",
+"value": 0.707,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "freq_mul",
+"label": "Frequency Multiplier",
+"type": "scalar",
+"value": 2.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "threshold",
+"label": "Threshold",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "upper_bound",
+"label": "Upper Bound",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "diffusion",
+"label": "Diffusion",
+"type": "scalar",
+"value": 0.1,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "tspace_id",
+"label": "Texture Space",
+"type": "texturespace",
+"value": -1,
+"texturable": false,
+"animatable": false,
+"dir": "input"
+},
+{
+"sn": "tsupp_invxform",
+"label": "Texture Support Inverse Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project",
+"label": "Projection Method",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace",
+"label": "Space Transformation",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex",
+"label": "Triangle Intersection",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tproj_xform",
+"label": "Texture Space Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_u",
+"label": "wrap_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_v",
+"label": "wrap_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_w",
+"label": "wrap_w",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_u",
+"label": "seam_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_v",
+"label": "seam_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "repeats",
+"label": "Texture repeat factor (X,Y,Z)",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_x",
+"label": "alt_x",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_y",
+"label": "alt_y",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_z",
+"label": "alt_z",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "min",
+"label": "min",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "max",
+"label": "max",
+"type": "vector",
+"value": [
+20.0,
+20.0,
+20.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "step",
+"label": "step",
+"type": "vector",
+"value": [
+0.003,
+0.003,
+0.003
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "factor",
+"label": "factor",
+"type": "scalar",
+"value": 5.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_u",
+"label": "torus_u",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "torus_v",
+"label": "torus_v",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "alpha",
+"label": "alpha",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "bump_inuse",
+"label": "bump_inuse",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_output",
+"label": "alpha_output",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_factor",
+"label": "alpha_factor",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "permfiledat",
+"label": "permfiledat",
+"type": "texture",
+"dir": "input"
+},
+{
+"sn": "valfiledat",
+"label": "valfiledat",
+"type": "texture",
+"dir": "input"
+}
+],
+"title": "Fractal",
+"output": "color",
+"layout": [
+{
+"tab": "Texture",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "tspace_id"
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alpha",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "factor",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "step",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Fractal",
+"items": [
+{
+"param": "Name"
+},
+{
+"group": "Colors",
+"items": [
+{
+"param": "color1"
+},
+{
+"param": "color2"
+},
+{
+"group": "Copy Alpha to RGB",
+"items": [
+{
+"param": "alpha_output",
+"opts": [
+"continue",
+"nolabel",
+"35%"
+]
+},
+{
+"param": "alpha_factor",
+"opts": [
+"65%"
+]
+}
+]
+}
+]
+},
+{
+"param": "noise_type"
+},
+{
+"param": "iterations"
+},
+{
+"param": "diffusion"
+},
+{
+"param": "upper_bound"
+},
+{
+"param": "freq_mul"
+},
+{
+"param": "level_min"
+},
+{
+"param": "level_decay"
+},
+{
+"param": "threshold"
+},
+{
+"param": "time"
+},
+{
+"param": "absolute"
+}
+]
+},
+{
+"tab": "Advanced",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "alt_x",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_y",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_z",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "repeats",
+"opts": [
+"aligncenter",
+"nolabel"
+]
+},
+{
+"param": "min",
+"opts": [
+"aligncenter",
+"continue"
+]
+},
+{
+"param": "max",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"param": "color1"
+},
+{
+"param": "color2"
+},
+{
+"param": "alpha_output",
+"opts": [
+"continue",
+"nolabel",
+"35%"
+]
+},
+{
+"param": "alpha_factor",
+"opts": [
+"65%"
+]
+},
+{
+"group": "Fractal",
+"items": [
+{
+"param": "noise_type"
+},
+{
+"param": "iterations"
+},
+{
+"param": "diffusion"
+},
+{
+"param": "upper_bound"
+},
+{
+"param": "freq_mul"
+},
+{
+"param": "level_min"
+},
+{
+"param": "level_decay"
+},
+{
+"param": "threshold"
+},
+{
+"param": "time"
+},
+{
+"param": "absolute"
+}
+]
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse"
+},
+{
+"param": "alpha"
+},
+{
+"param": "factor"
+},
+{
+"param": "step"
+}
+]
+},
+{
+"group": "Remapping",
+"items": [
+{
+"param": "alt_x"
+},
+{
+"param": "alt_y"
+},
+{
+"param": "alt_z"
+},
+{
+"param": "repeats"
+},
+{
+"param": "min"
+},
+{
+"param": "max"
+}
+]
+}
+]
+},
+"txt3d-marble": {
+"file": "txt3d-marble.spdl",
+"propset": "txt3d-marble_params",
+"params": [
+{
+"sn": "out",
+"label": "Marble",
+"type": "color",
+"animatable": false,
+"dir": "output"
+},
+{
+"sn": "filler_col",
+"label": "Filler Color",
+"type": "color",
+"value": [
+0.8,
+0.8,
+0.8,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "vein_col1",
+"label": "Vein Color 1",
+"type": "color",
+"value": [
+0.03,
+0.4,
+0.04,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "vein_col2",
+"label": "Vein Color 2",
+"type": "color",
+"value": [
+0.7,
+0.7,
+0.7,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "vein_width",
+"label": "Vein Width",
+"type": "scalar",
+"value": 0.165,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "diffusion",
+"label": "Diffusion",
+"type": "scalar",
+"value": 0.3,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "spot_color",
+"label": "Spot Color",
+"type": "color",
+"value": [
+1.0,
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "spot_bias",
+"label": "Spot Bias",
+"type": "scalar",
+"value": 0.013,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "spot_scale",
+"label": "Spot Scale",
+"type": "scalar",
+"value": 0.75,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "spot_density",
+"label": "Spot Density",
+"type": "scalar",
+"value": 5.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "amplitude",
+"label": "Amplitude",
+"type": "scalar",
+"value": 2.8,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "ratio",
+"label": "Ratio",
+"type": "scalar",
+"value": 0.78,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "complexity",
+"label": "Complexity",
+"type": "scalar",
+"value": 7.34,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "frequencies",
+"label": "Frequencies",
+"type": "vector",
+"value": [
+0.33,
+0.28,
+0.41
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "absolute",
+"label": "Absolute",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "tspace_id",
+"label": "Texture Space",
+"type": "texturespace",
+"value": -1,
+"texturable": false,
+"animatable": false,
+"dir": "input"
+},
+{
+"sn": "tsupp_invxform",
+"label": "Texture Support Inverse Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project",
+"label": "Projection Method",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace",
+"label": "Space Transformation",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex",
+"label": "Triangle Intersection",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tproj_xform",
+"label": "Texture Space Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_u",
+"label": "wrap_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_v",
+"label": "wrap_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_w",
+"label": "wrap_w",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_u",
+"label": "seam_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_v",
+"label": "seam_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project_old",
+"label": "Projection Method",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace_old",
+"label": "Space Transformation",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex_old",
+"label": "Triangle Intersection",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tspace_xform_old",
+"label": "Texture Space Transform",
+"type": "matrix",
+"value": [
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0
+],
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "repeats",
+"label": "Texture repeat factor (X,Y,Z)",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_x",
+"label": "alt_x",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_y",
+"label": "alt_y",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_z",
+"label": "alt_z",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_x_old",
+"label": "torus_x",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_y_old",
+"label": "torus_y",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_z_old",
+"label": "torus_z",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "min",
+"label": "min",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "max",
+"label": "max",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "step",
+"label": "step",
+"type": "vector",
+"value": [
+0.002,
+0.002,
+0.002
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "factor",
+"label": "factor",
+"type": "scalar",
+"value": 20.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_u",
+"label": "torus_u",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "torus_v",
+"label": "torus_v",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "alpha",
+"label": "alpha",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "bump_inuse",
+"label": "bump_inuse",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_output",
+"label": "alpha_output",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_factor",
+"label": "alpha_factor",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "noise_type",
+"label": "noise_type",
+"type": "integer",
+"value": 1,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "permfiledat",
+"label": "cellpermdat",
+"type": "texture",
+"dir": "input"
+},
+{
+"sn": "valfiledat",
+"label": "valfiledat",
+"type": "texture",
+"dir": "input"
+}
+],
+"title": "Marble",
+"output": "color",
+"layout": [
+{
+"tab": "Texture",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "tspace_id"
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alpha",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "factor",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "step",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Veins",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "vein_col1",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "vein_col2",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "filler_col",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "vein_width",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "diffusion",
+"opts": [
+"aligncenter"
+]
+},
+{
+"group": "Copy Alpha to RGB",
+"items": [
+{
+"param": "alpha_output",
+"opts": [
+"continue",
+"nolabel",
+"35%"
+]
+},
+{
+"param": "alpha_factor",
+"opts": [
+"65%"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Spots",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "spot_color"
+},
+{
+"param": "spot_density",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "spot_bias",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "spot_scale",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"tab": "Fractal",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "noise_type"
+},
+{
+"param": "frequencies",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "amplitude",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "ratio",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "complexity",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "absolute"
+}
+]
+},
+{
+"tab": "Advanced",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "alt_x",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_y",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_z",
+"opts": [
+"aligncenter"
+]
+},
+{
+"group": "Repeats",
+"items": [
+{
+"param": "repeats",
+"opts": [
+"aligncenter",
+"nolabel"
+]
+}
+]
+},
+{
+"param": "min",
+"opts": [
+"aligncenter",
+"continue"
+]
+},
+{
+"param": "max",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"group": "Veins",
+"items": [
+{
+"param": "vein_col1"
+},
+{
+"param": "vein_col2"
+},
+{
+"param": "filler_col"
+},
+{
+"param": "vein_width"
+},
+{
+"param": "diffusion"
+},
+{
+"param": "alpha_output"
+},
+{
+"param": "alpha_factor"
+}
+]
+},
+{
+"group": "Spots",
+"items": [
+{
+"param": "spot_color"
+},
+{
+"param": "spot_density"
+},
+{
+"param": "spot_bias"
+},
+{
+"param": "spot_scale"
+}
+]
+},
+{
+"group": "Fractal",
+"items": [
+{
+"param": "frequencies"
+},
+{
+"param": "amplitude"
+},
+{
+"param": "ratio"
+},
+{
+"param": "complexity"
+},
+{
+"param": "absolute"
+}
+]
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse"
+},
+{
+"param": "alpha"
+},
+{
+"param": "factor"
+},
+{
+"param": "step"
+}
+]
+},
+{
+"group": "Remapping",
+"items": [
+{
+"param": "alt_x"
+},
+{
+"param": "alt_y"
+},
+{
+"param": "alt_z"
+},
+{
+"param": "repeats"
+},
+{
+"param": "min"
+},
+{
+"param": "max"
+}
+]
+}
+]
+},
+"txt3d-wood": {
+"file": "txt3d-wood.spdl",
+"propset": "txt3d-wood_params",
+"params": [
+{
+"sn": "out",
+"label": "Wood",
+"type": "color",
+"dir": "output"
+},
+{
+"sn": "filler_col",
+"label": "Filler Color",
+"type": "color",
+"value": [
+0.616,
+0.443,
+0.165,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "vein_col",
+"label": "Vein Color",
+"type": "color",
+"value": [
+0.259,
+0.141,
+0.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "vein_spread",
+"label": "Vein Spread",
+"type": "scalar",
+"value": 0.382,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "layer_size",
+"label": "Layer Size",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "randomness",
+"label": "Randomness",
+"type": "scalar",
+"value": 0.8,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "age",
+"label": "Age",
+"type": "scalar",
+"value": 50.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "grain_col",
+"label": "Grain Color",
+"type": "color",
+"value": [
+0.288,
+0.208,
+0.08
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "grain_bias",
+"label": "Grain Bias",
+"type": "scalar",
+"value": 0.307,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "grain_scale",
+"label": "Grain Size",
+"type": "scalar",
+"value": 0.1,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "grain_density",
+"label": "Grain Density",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "center_u",
+"label": "Center U",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "center_v",
+"label": "Center V",
+"type": "scalar",
+"value": 0.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "wobbly_struct",
+"label": "Wobbly Struct",
+"type": "boolean",
+"value": "on",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "uamplitude",
+"label": "U Amplitude",
+"type": "scalar",
+"value": 0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "vamplitude",
+"label": "V Amplitude",
+"type": "scalar",
+"value": 1.2,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "ratio",
+"label": "Ratio",
+"type": "scalar",
+"value": 10.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "complexity",
+"label": "Complexity",
+"type": "scalar",
+"value": 2.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "frequencies",
+"label": "Frequencies",
+"type": "vector",
+"value": [
+1.0,
+19.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "absolute",
+"label": "Absolute",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "tspace_id",
+"label": "Texture Space",
+"type": "texturespace",
+"value": -1,
+"texturable": false,
+"animatable": false,
+"dir": "input"
+},
+{
+"sn": "tsupp_invxform",
+"label": "Texture Support Inverse Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project",
+"label": "Projection Method",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace",
+"label": "Space Transformation",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex",
+"label": "Triangle Intersection",
+"type": "integer",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tproj_xform",
+"label": "Texture Space Transform",
+"type": "matrix",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_u",
+"label": "wrap_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_v",
+"label": "wrap_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "wrap_w",
+"label": "wrap_w",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_u",
+"label": "seam_u",
+"type": "boolean",
+"animatable": false,
+"texturable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "seam_v",
+"label": "seam_v",
+"type": "boolean",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "project_old",
+"label": "Projection Method",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "selspace_old",
+"label": "Space Transformation",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "vertex_old",
+"label": "Triangle Intersection",
+"type": "integer",
+"value": 0,
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "tspace_xform_old",
+"label": "Texture Space Transform",
+"type": "matrix",
+"value": [
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0,
+0.0,
+0.0,
+0.0,
+0.0,
+1.0
+],
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "repeats",
+"label": "Texture repeat factor (X,Y,Z)",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_x",
+"label": "alt_x",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_y",
+"label": "alt_y",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alt_z",
+"label": "alt_z",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_x_old",
+"label": "torus_x",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_y_old",
+"label": "torus_y",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "torus_z_old",
+"label": "torus_z",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"animatable": false,
+"inspectable": false,
+"dir": "input"
+},
+{
+"sn": "min",
+"label": "min",
+"type": "vector",
+"value": [
+0.0,
+0.0,
+0.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "max",
+"label": "max",
+"type": "vector",
+"value": [
+1.0,
+1.0,
+1.0
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "step",
+"label": "step",
+"type": "vector",
+"value": [
+0.002,
+0.002,
+0.002
+],
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "factor",
+"label": "factor",
+"type": "scalar",
+"value": 5.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "torus_u",
+"label": "torus_u",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "torus_v",
+"label": "torus_v",
+"type": "boolean",
+"value": "off",
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "alpha",
+"label": "alpha",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "bump_inuse",
+"label": "bump_inuse",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_output",
+"label": "alpha_output",
+"type": "boolean",
+"value": "off",
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "alpha_factor",
+"label": "alpha_factor",
+"type": "scalar",
+"value": 1.0,
+"texturable": true,
+"dir": "input"
+},
+{
+"sn": "noise_type",
+"label": "noise_type",
+"type": "integer",
+"value": 1,
+"texturable": false,
+"dir": "input"
+},
+{
+"sn": "permfiledat",
+"label": "permfiledat",
+"type": "texture",
+"dir": "input"
+},
+{
+"sn": "valfiledat",
+"label": "valfiledat",
+"type": "texture",
+"dir": "input"
+}
+],
+"title": "Wood",
+"output": "color",
+"layout": [
+{
+"tab": "Texture",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "tspace_id"
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alpha",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "factor",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "step",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Wood",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "filler_col"
+},
+{
+"param": "vein_col"
+},
+{
+"param": "vein_spread"
+},
+{
+"group": "Copy Alpha to RGB",
+"items": [
+{
+"param": "alpha_output",
+"opts": [
+"continue",
+"nolabel",
+"35%"
+]
+},
+{
+"param": "alpha_factor",
+"opts": [
+"65%"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Grain",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "grain_col"
+},
+{
+"param": "grain_bias"
+},
+{
+"param": "grain_scale"
+},
+{
+"param": "grain_density"
+}
+]
+},
+{
+"tab": "Aging",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "wobbly_struct",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "age",
+"opts": [
+"aligncenter"
+]
+},
+{
+"group": "Layer",
+"items": [
+{
+"param": "layer_size",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "randomness",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"group": "Center",
+"items": [
+{
+"param": "center_u",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "center_v",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+]
+},
+{
+"tab": "Fractal",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "noise_type"
+},
+{
+"param": "ratio",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "complexity",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "uamplitude",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "vamplitude",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "frequencies",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "absolute",
+"opts": [
+"aligncenter"
+]
+}
+]
+},
+{
+"tab": "Advanced",
+"items": [
+{
+"param": "Name"
+},
+{
+"param": "alt_x",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_y",
+"opts": [
+"aligncenter"
+]
+},
+{
+"param": "alt_z",
+"opts": [
+"aligncenter"
+]
+},
+{
+"group": "Repeats",
+"items": [
+{
+"param": "repeats",
+"opts": [
+"aligncenter",
+"nolabel"
+]
+}
+]
+},
+{
+"param": "min",
+"opts": [
+"aligncenter",
+"continue"
+]
+},
+{
+"param": "max",
+"opts": [
+"aligncenter"
+]
+}
+]
+}
+],
+"rtlayout": [
+{
+"param": "filler_col"
+},
+{
+"param": "vein_col"
+},
+{
+"param": "vein_spread"
+},
+{
+"param": "alpha_output"
+},
+{
+"param": "alpha_factor"
+},
+{
+"group": "Grain",
+"items": [
+{
+"param": "grain_col"
+},
+{
+"param": "grain_bias"
+},
+{
+"param": "grain_scale"
+},
+{
+"param": "grain_density"
+}
+]
+},
+{
+"group": "Aging",
+"items": [
+{
+"param": "wobbly_struct"
+},
+{
+"param": "age"
+},
+{
+"param": "layer_size"
+},
+{
+"param": "randomness"
+},
+{
+"param": "center_u"
+},
+{
+"param": "center_v"
+}
+]
+},
+{
+"group": "Fractal",
+"items": [
+{
+"param": "ratio"
+},
+{
+"param": "complexity"
+},
+{
+"param": "uamplitude"
+},
+{
+"param": "vamplitude"
+},
+{
+"param": "frequencies"
+},
+{
+"param": "absolute"
+}
+]
+},
+{
+"group": "Bump Mapping",
+"items": [
+{
+"param": "bump_inuse"
+},
+{
+"param": "alpha"
+},
+{
+"param": "factor"
+},
+{
+"param": "step"
+}
+]
+},
+{
+"group": "Remapping",
+"items": [
+{
+"param": "alt_x"
+},
+{
+"param": "alt_y"
+},
+{
+"param": "alt_z"
+},
+{
+"param": "repeats"
+},
+{
+"param": "min"
+},
+{
+"param": "max"
+}
+]
+}
+]
+}
+}

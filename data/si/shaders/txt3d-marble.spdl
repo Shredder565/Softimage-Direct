@@ -1,0 +1,995 @@
+SPDL
+version = "2.0.0.0";
+Reference = "{A85CBE5A-DDD7-11D1-804A-00A0C906835D}";
+	PropertySet "txt3d-marble_params"
+	{
+		Parameter "out" output
+		{
+			title = "Marble";
+			guid = "{4C6879FF-7EC8-11D0-8E3B-00A0C90640EC}";
+			type = color;
+			animatable = off ;
+		}
+		Parameter "filler_col" input
+		{
+			title = "Filler Color";
+			guid = "{844AADE0-CC1B-11D2-8BF3-00A0243E3672}";
+			type = color;
+			value = 0.8 0.8 0.8 1.0;
+			texturable = on;
+		}
+		Parameter "vein_col1" input
+		{
+			title = "Vein Color 1";
+			guid = "{8450CAA0-CC1B-11D2-8BF3-00A0243E3672}";
+			type = color;
+			value = 0.03 0.4 0.04 1.0;
+			texturable = on;
+		}
+		Parameter "vein_col2" input
+		{
+			title = "Vein Color 2";
+			guid = "{8456E760-CC1B-11D2-8BF3-00A0243E3672}";
+			type = color;
+			value = 0.7 0.7 0.7 1.0;
+			texturable = on;
+		}
+		Parameter "vein_width" input
+		{
+			title = "Vein Width";
+			guid = "{845D0420-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			value = 0.165;
+			texturable = on;
+		}
+		Parameter "diffusion" input
+		{
+			title = "Diffusion";
+			guid = "{846320E0-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			value = 0.3;
+			texturable = on;
+		}
+		Parameter "spot_color" input
+		{
+			title = "Spot Color";
+			guid = "{8467B670-CC1B-11D2-8BF3-00A0243E3672}";
+			type = color;
+			value = 1.0 1.0 1.0 1.0;
+			texturable = on;
+		}
+		Parameter "spot_bias" input
+		{
+			title = "Spot Bias";
+			guid = "{846DD330-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			value = 0.013;
+			texturable = on;
+		}
+		Parameter "spot_scale" input
+		{
+			title = "Spot Scale";
+			guid = "{8473EFF0-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			value = 0.75;
+			texturable = on;
+		}
+		Parameter "spot_density" input
+		{
+			title = "Spot Density";
+			guid = "{84788580-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			value = 5.0;
+			texturable = on;
+		}
+		Parameter "amplitude" input
+		{
+			title = "Amplitude";
+			guid = "{84802970-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			value = 2.8;
+			texturable = on;
+		}
+		Parameter "ratio" input
+		{
+			title = "Ratio";
+			guid = "{84864630-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			value = 0.78;
+			texturable = on;
+		}
+		Parameter "complexity" input
+		{
+			title = "Complexity";
+			guid = "{848ADBC0-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			value = 7.34;
+			texturable = on;
+		}
+		Parameter "frequencies" input
+		{
+			title = "Frequencies";
+			guid = "{8490F880-CC1B-11D2-8BF3-00A0243E3672}";
+			type = vector;
+			value = 0.33 0.28 0.41;
+			texturable = on;
+		}
+		Parameter "absolute" input
+		{
+			title = "Absolute";
+			guid = "{84989C70-CC1B-11D2-8BF3-00A0243E3672}";
+			type = boolean;
+			value = on;
+			texturable = on;
+		}
+		Parameter "tspace_id" input
+		{
+			title = "Texture Space";
+			guid = "{849D3200-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{B6531F00-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_SELECT
+			type = texturespace;
+			value = -1;
+			flags  = 1;
+			texturable = off;
+			animatable = off;
+		}
+
+		#--------- The following set of parameters cannot be set manually by users.
+		#--------- Softimage will fill these values automatically based on the tspace_id
+		#--------- To access this data in a custom shader, copy the ui mapping.
+		#--- Parameters for implicit texture calculation
+		Parameter "tsupp_invxform" input
+		{
+			title = "Texture Support Inverse Transform";
+			guid = "{617C8A80-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F01-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_TEXSUPPORT_XFORM
+			type = matrix;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "project" input
+		{
+			title = "Projection Method";
+			guid = "{617C8A81-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F02-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_PROJECTION_METHOD
+			type = integer;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "selspace" input
+		{
+			title = "Space Transformation";
+			guid = "{617C8A82-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F03-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_SELSPACE
+			type = integer;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "vertex" input
+		{
+			title = "Triangle Intersection";
+			guid = "{617C8A83-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F04-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_VERTEX
+			type = integer;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+
+		#--- Parameters for post-transformation of a uv datum
+		Parameter "tproj_xform" input
+		{
+			title = "Texture Space Transform";
+			guid = "{617C8A84-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F05-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_TEXPROJ_XFORM
+			type = matrix;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "wrap_u" input
+		{
+			title = "wrap_u";
+			guid = "{617C8A85-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping"  = "{B6531F0C-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_U
+			type = boolean;
+			animatable = false;
+			texturable = off;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "wrap_v" input
+		{
+			title = "wrap_v";
+			guid = "{617C8A86-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping"  = "{B6531F0D-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_V
+			type = boolean;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "wrap_w" input
+		{
+			title = "wrap_w";
+			guid = "{617C8A87-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping"  = "{B6531F0E-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_W
+			type = boolean;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "seam_u" input
+		{
+			title = "seam_u";
+			guid = "{617C8A88-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping"  = "{B6531F0F-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_SEAM_U
+			type = boolean;
+			animatable = false;
+			texturable = off;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "seam_v" input
+		{
+			title = "seam_v";
+			guid = "{43656B8D-5795-11D4-AE68-00A0C96E63E1}";
+			ui "mapping"  = "{FAD00380-5794-11D4-AE68-00A0C96E63E1}"; # GUID_3D_UVDEF_SEAM_V
+			type = boolean;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: generated by the Projection Definition
+			inspectable = false;
+		}
+		Parameter "texhomog" input # Are the uv coordinates homogeneous? (homogeneous coordinate stored in w, since we currently don't have 4d homogeneous)
+		{
+			title = "texthomog";
+			guid = "{282DB57B-CCCA-4F07-A9FF-84D186B6447E}";
+			ui "mapping"  = "{3458F753-D5D2-4B8C-80A9-802853ABEF57}"; # GUID_3D_MAPTO_HOMOGENEOUS_COORDS
+			type = boolean;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: generated by the projection
+			inspectable = false;
+		}
+
+		#--------- The previous set of parameters cannot be set manually by users.
+		#--------- Softimage will fill these values automatically based on the tspace_id
+		#--------- To use this data in another shader, copy the ui "mapping"s for each parameter.
+
+		Parameter "project_old" input
+		{
+			title = "Projection Method";
+			guid = "{84A34EC0-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{C8E660C0-43E9-11D4-AE64-00A0C96E63E1}"; # GUID_3D_UVDEF_PROJECTION_METHOD_OLD
+			type = integer;
+			value = 0;
+			flags  = 1;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "selspace_old" input
+		{
+			title = "Space Transformation";
+			guid = "{84A96B80-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{C8E660C3-43E9-11D4-AE64-00A0C96E63E1}"; # GUID_3D_UVDEF_SELSPACE_OLD
+			type = integer;
+			flags  = 1;
+			value = 0;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "vertex_old" input
+		{
+			title = "Triangle Intersection";
+			guid = "{84AE0110-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{C8E660C1-43E9-11D4-AE64-00A0C96E63E1}"; # GUID_3D_UVDEF_VERTEX_OLD
+			type = integer;
+			flags  = 1;
+			value = 0;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "tspace_xform_old" input
+		{
+			title = "Texture Space Transform";
+			guid = "{84B41DD0-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{C8E660C2-43E9-11D4-AE64-00A0C96E63E1}";  # GUID_3D_UVDEF_TEXPROJ_XFORM_OLD
+			type = matrix;
+			value = 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "repeats" input
+		{
+			title = "Texture repeat factor (X,Y,Z)";
+			guid = "{84BBC1C0-CC1B-11D2-8BF3-00A0243E3672}";
+			type = vector;
+			value = 1.0 1.0 1.0;
+			texturable = on;
+		}
+		Parameter "alt_x" input
+		{
+			title = "alt_x";
+			guid = "{84C05750-CC1B-11D2-8BF3-00A0243E3672}";
+			type = boolean;
+			value = off;
+			texturable = on;
+		}
+		Parameter "alt_y" input
+		{
+			title = "alt_y";
+			guid = "{84C67410-CC1B-11D2-8BF3-00A0243E3672}";
+			type = boolean;
+			value = off;
+			texturable = on;
+		}
+		Parameter "alt_z" input
+		{
+			title = "alt_z";
+			guid = "{84CC90D0-CC1B-11D2-8BF3-00A0243E3672}";
+			type = boolean;
+			value = off;
+			texturable = on;
+		}
+		Parameter "torus_x_old" input
+		{
+			title = "torus_x";
+			guid = "{84D12660-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{D1D3B320-4C4E-11D4-AE65-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_U_OLD
+			type = boolean;
+			value = off;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "torus_y_old" input
+		{
+			title = "torus_y";
+			guid = "{84D8CA50-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{D1D3B321-4C4E-11D4-AE65-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_V_OLD
+			type = boolean;
+			value = off;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "torus_z_old" input
+		{
+			title = "torus_z";
+			guid = "{84DEE710-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{D1D3B322-4C4E-11D4-AE65-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_W_OLD
+			type = boolean;
+			value = off;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "min" input
+		{
+			title = "min";
+			guid = "{84E37CA0-CC1B-11D2-8BF3-00A0243E3672}";
+			type = vector;
+			value = 0.0 0.0 0.0;
+			texturable = on;
+		}
+		Parameter "max" input
+		{
+			title = "max";
+			guid = "{84E99960-CC1B-11D2-8BF3-00A0243E3672}";
+			type = vector;
+			value = 1.0 1.0 1.0;
+			texturable = on;
+		}
+		Parameter "step" input
+		{
+			title = "step";
+			guid = "{083D3564-CDCE-11D3-B8F8-00E08100004B}";
+			type = vector;
+			flags  = 1;
+			value = 0.002 0.002 0.002;
+			texturable = on;
+		}
+		Parameter "factor" input
+		{
+			title = "factor";
+			guid = "{08445C72-CDCE-11D3-B8F8-00E08100004B}";
+			type = scalar;
+			flags  = 1;
+			value = 20.0;
+			texturable = on;
+		}
+		Parameter "torus_u" input
+		{
+			title = "torus_u";
+			guid = "{08492126-CDCE-11D3-B8F8-00E08100004B}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+		Parameter "torus_v" input
+		{
+			title = "torus_v";
+			guid = "{084DE5DA-CDCE-11D3-B8F8-00E08100004B}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+		Parameter "alpha" input
+		{
+			title = "alpha";
+			guid = "{08550CE8-CDCE-11D3-B8F8-00E08100004B}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = on;
+		}
+		Parameter "bump_inuse" input
+		{
+			title = "bump_inuse";
+			guid = "{0859D19C-CDCE-11D3-B8F8-00E08100004B}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = on;
+		}
+		Parameter "alpha_output" input
+		{
+			title = "alpha_output";
+			guid = "{A5B2C0FA-9288-11D4-933F-00E0293D48C6}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = on;
+		}
+		Parameter "alpha_factor" input
+		{
+			title = "alpha_factor";
+			guid = "{A5B2C0FB-9288-11D4-933F-00E0293D48C6}";
+			type = scalar;
+			flags  = 1;
+			value = 1.0;
+			texturable = on;
+		}
+		Parameter "noise_type" input
+		{
+			title = "noise_type";
+			guid = "{BB53B28C-BCB4-4f0b-91DC-F5F839E83C15}";
+			type = integer;
+			value = 1;
+			texturable = off;
+		}
+		
+		// Hidden parameters for MetaSL precomputed data
+		/////////////////////////////////////////////////////////
+		Parameter "permfiledat" input
+		{
+			title = "cellpermdat";
+			guid = "{4F78ED9A-C4A9-4d9c-8268-4C4B7D7688CB}";
+			type = texture;
+		}
+		Parameter "valfiledat" input
+		{
+			title = "valfiledat";
+			guid = "{0971BB4E-E703-4a61-80CF-AAAE1901E8BA}";
+			type = texture;
+		}
+	}	
+	MetaShader "txt3d-marble_declare"
+	{
+		Name = "Marble";
+		Type = texture;
+		Renderer "mental ray"
+		{
+			Name = "txt3d-marble";
+			Options
+			{
+				"version" = 1;
+			}
+			BeginText
+			
+			Node "marble"				= guid "{8C3F2750-BCFA-11D1-90E9-0000F804EB21}";
+			Node "marble_bump"			= guid "{8C3F2750-BCFA-11D1-90E9-0000F804EB21}";
+			Node "uvwgen"				= guid "{C7A2CD40-4478-11D4-AE64-00A0C96E63E1}"; # sib_uvwgen
+			Node "remap"				= guid "{4E57ACE4-B473-11D1-90E1-0000F804EB21}"; # mib_texture_remap
+			Node "remap_bump"			= guid "{4E57ACE4-B473-11D1-90E1-0000F804EB21}"; # mib_texture_remap
+			Node "basis"				= guid "{811FFAA5-2A42-47DF-B767-8DAEB5993E9C}"; # sib_bump_basis
+			Node "bump"					= guid "{DA89443E-C521-4DD9-806D-90FA2806EDF8}"; # sib_bump_map
+			Node "setnormal"			= guid "{2D8736C0-F37B-11D3-AE5B-00A0C96E63E1}"; # sib_setnormal
+			Node "state_tex"			= guid "{BDE291C7-077A-11D2-8A1A-00A0C9892542}";
+			Node "switch"				= guid "{85C16046-BCFA-11D1-90E9-0000F804EB21}"; # sib_color_switch
+			Node "color2alpha"			= guid "{523C43D8-B473-11D1-90E1-0000F804EB21}"; # mib_color_alpha
+			
+			#---- Texture space generator node.
+			Connection "uvwgen::select"			= interface "tspace_id";
+			Connection "uvwgen::selspace"		= interface "selspace";
+			Connection "uvwgen::vertex"			= interface "vertex";
+			Connection "uvwgen::project"		= interface "project";
+			Connection "uvwgen::supp_invxform"	= interface "tsupp_invxform";
+			Connection "uvwgen::seam_u"			= interface "seam_u";
+			Connection "uvwgen::seam_v"			= interface "seam_v";
+			Connection "uvwgen::texhomog"		= interface "texhomog";
+			
+			#---- Image remapping node.
+			Connection "remap::input"		= "uvwgen";
+			Connection "remap::alt_x"		= interface "alt_x";
+			Connection "remap::alt_y"		= interface "alt_y";
+			Connection "remap::alt_z"		= interface "alt_z";
+			Connection "remap::torus_x"		= interface "wrap_u";
+			Connection "remap::torus_y"		= interface "wrap_v";
+			Connection "remap::torus_z"		= interface "wrap_w";
+			Connection "remap::repeat"		= interface "repeats";
+			Connection "remap::transform"	= interface "tproj_xform";
+			Connection "remap::min"			= interface "min";
+			Connection "remap::max"			= interface "max";
+			
+			Connection "marble::coord"			= "remap";
+			Connection "marble::filler_col"		= interface "filler_col";
+			Connection "marble::vein_col1"		= interface "vein_col1";
+			Connection "marble::vein_col2"		= interface "vein_col2";
+			Connection "marble::vein_width"		= interface "vein_width";
+			Connection "marble::diffusion"		= interface "diffusion";
+			Connection "marble::spot_color"		= interface "spot_color";
+			Connection "marble::spot_bias"  	= interface "spot_bias";
+			Connection "marble::spot_scale"		= interface "spot_scale";
+			Connection "marble::spot_density" 	= interface "spot_density";
+			Connection "marble::amplitude"		= interface "amplitude";
+			Connection "marble::ratio"			= interface "ratio";
+			Connection "marble::complexity"		= interface "complexity";
+			Connection "marble::frequencies" 	= interface "frequencies";
+			Connection "marble::absolute"		= interface "absolute";
+			Connection "marble::noise_type"		= interface "noise_type";
+			
+			#---- Bumpmapping
+			Connection "state_tex::mode"			= value 6; # return state->tex
+			
+			Connection "remap_bump::input"			= "state_tex";
+			Connection "remap_bump::alt_x"			= interface "alt_x";
+			Connection "remap_bump::alt_y"			= interface "alt_y";
+			Connection "remap_bump::alt_z"			= interface "alt_z";
+			Connection "remap_bump::torus_x"		= interface "wrap_u";
+			Connection "remap_bump::torus_y"		= interface "wrap_v";
+			Connection "remap_bump::torus_z"		= interface "wrap_w";
+			Connection "remap_bump::repeat"			= interface "repeats";
+			Connection "remap_bump::transform"		= interface "tproj_xform";
+			Connection "remap_bump::min"			= interface "min";
+			Connection "remap_bump::max"			= interface "max";
+			
+			Connection "marble_bump::coord"			= "remap_bump";
+			Connection "marble_bump::filler_col"	= interface "filler_col";
+			Connection "marble_bump::vein_col1"		= interface "vein_col1";
+			Connection "marble_bump::vein_col2"		= interface "vein_col2";
+			Connection "marble_bump::vein_width"	= interface "vein_width";
+			Connection "marble_bump::diffusion"		= interface "diffusion";
+			Connection "marble_bump::spot_color"	= interface "spot_color";
+			Connection "marble_bump::spot_bias"  	= interface "spot_bias";
+			Connection "marble_bump::spot_scale"	= interface "spot_scale";
+			Connection "marble_bump::spot_density" 	= interface "spot_density";
+			Connection "marble_bump::amplitude"		= interface "amplitude";
+			Connection "marble_bump::ratio"			= interface "ratio";
+			Connection "marble_bump::complexity"	= interface "complexity";
+			Connection "marble_bump::frequencies"	= interface "frequencies";
+			Connection "marble_bump::absolute"		= interface "absolute";
+			Connection "marble_bump::noise_type"	= interface "noise_type";
+			
+			Connection "basis::ntex"				= interface "tspace_id";
+			Connection "basis::project"				= interface "project";
+			
+			Connection "bump::coord"				= "uvwgen";
+			Connection "bump::u"					= "basis::u";
+			Connection "bump::v"					= "basis::v";
+			Connection "bump::step"					= interface "step";
+			Connection "bump::factor" 				= interface "factor";
+			Connection "bump::torus_u"				= interface "torus_u";
+			Connection "bump::torus_v"				= interface "torus_v";
+			Connection "bump::alpha" 				= interface "alpha";
+			Connection "bump::tex"					= value "marble_bump";
+			Connection "bump::clamp"				= value off;
+			
+			Connection "color2alpha::input" 		= "marble";
+			Connection "color2alpha::factor" 		= interface "alpha_factor";
+			
+			Connection "switch::input1"				= "marble";
+			Connection "switch::input2"				= "color2alpha";
+			Connection "switch::switch"				= interface "alpha_output";
+			
+			Connection "setnormal::input"			= "switch";
+			Connection "setnormal::normal"			= "bump";
+			Connection "setnormal::inuse"			= interface "bump_inuse";
+			
+			Connection root							= "setnormal";
+			EndText
+		}
+		
+		Renderer "MetaSL"
+		{
+			Name = "msl_soft_txt3d_marblev2";
+			FileName = "softimage.msl";
+		}
+	}
+
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets110.htm";
+	Defaults
+	{
+		filler_col
+		{
+			Name = "Filler";
+			Description = "The colour of the filler material. This is the basic colour of the marble itself. RenderCost:1";
+			UIType = "rgba",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		vein_col1
+		{
+			Name = "Vein 1";
+			Description = "This defines the colour of the first vein material.  RenderCost:1";
+			UIType = "rgba",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		vein_col2
+		{
+			Name = "Vein 2";
+			Description = "This is the colour of the second of the alternating veins. Having this colour subtly different from the second can give convincing results. RenderCost:1";
+			UIType = "rgba",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		vein_width
+		{
+			Name = "Width";
+			Description = "The width of the veins in the marble. The lower the values the thinner the veins and the thicker the filler material and vice versa. RenderCost:1";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		diffusion
+		{
+			Name = "Diffusion";
+			Description = "Controls how much the strongly pigmented vein material diffuses into the filler material. A very old marble typically has high diffusion. RenderCost:1";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		spot_color
+		{
+			Name = "Color";
+			Description = "The colour of the impurities in the marble texture. RenderCost:1";
+			UIType = "rgba",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		spot_bias
+		{
+			Name = "Bias";
+			Description = "How much the spot contrasts to the marble itself is controlled using this parameter. RenderCost:1";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		spot_scale
+		{
+			Name = "Scale";
+			Description = "The basic size of the impurities. Realistic effects are achieved when this value is small, say around 0.1. RenderCost:1";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		spot_density
+		{
+			Name = "Density";
+			Description = "This parameter controls the spot density. RenderCost:1";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		amplitude
+		{
+			Name = "Amplitude";
+			Description = "The base amplitude of the fractal. Note that this is only the amplitude of the first iteration and successive iterations may raise the local amplitude further. The fractal is used to distort the veins. RenderCost:1";
+			UIRange = 0.0 to 5.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		ratio
+		{
+			Name = "Ratio";
+			Description = "The amplitude of successive iterations relative to the current one. If it is less than one, successive iterations will have lower amplitude. If it is greater than one, they will have higher amplitude and the fractal will become unbounded. RenderCost:1";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		complexity
+		{
+			Name = "Complexity";
+			Description = "The number of iterations used to generate the fractal. RenderCost:1";
+			UIRange = 1.0 to 20.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		frequencies
+		{
+			Name = "Frequencies";
+			Description = "The frequency of the fractal, in the X, Y and Z directions. RenderCost:1";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 1.0 by 0.001;
+		}
+		absolute
+		{
+			Name = "Absolute";
+			Description = "Absolute. RenderCost:1";
+		}
+		tspace_id
+		{
+			Name = "Texture Space";
+			Description = "Allows choosing the source space for projections. RenderCost:1";
+			UIType = "TextureSpaceItem.TextureSpaceItem.1";
+			Items
+			{
+			//	"Intersection" = -1,
+			//	"Surface Orientation" = -2,
+			//	"Motion" = -3,
+			//	"Camera Orientation" = -4,
+			//	"state->dPdu" = -5,
+			//	"state->dPdv" = -6,
+			//	"state->dPdudu" = -7,
+			//	"state->dPdvdv" = -8,
+			//	"state->dPdudv" = -9,
+			//	"2D Background" = -10,
+			}
+		}
+		repeats
+		{
+			Name = "Texture repeats";
+			Description = "Texture repeats set how many time the texture is repeated within the texture space defined. RenderCost:1";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 10.0 by 0.001;
+		}
+		alt_x
+		{
+			Name = "U";
+			Description = "Allow to Alternate texture on U, Visible only when repeat X is higher than 1. RenderCost:1";
+		}
+		alt_y
+		{
+			Name = "V";
+			Description = "Allow to Alternate texture on V, Visible only when repeat Y is higher than 1. RenderCost:1";
+		}
+		alt_z
+		{
+			Name = "Z";
+			Description = "Not used in this node. Allow to Alternate texture on Z, Visible only when repeat Z is higher than 1. RenderCost:1";
+		}
+		min
+		{
+			Name = "Minimum";
+			Description = "Allow to remap texture from lower/left corner, Z is ignored. RenderCost:1";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 1.0 by 0.001;
+		}
+		max
+		{
+			Name = "Maximum";
+			Description = "Allow to remap texture from top/right corner, Z is ignored. RenderCost:1";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 1.0 by 0.001;
+		}
+		step
+		{
+			Name = "Step";
+			Description = "Step.";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 0.01 by 0.0001;
+		}
+		factor
+		{
+			Name = "Factor";
+			Description = "Bump Map Factor determine the height of the bump map.";
+			UIRange = -20.0 to 20.0 by 0.0001;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIType = "Number"
+			{
+				SyncSlider = True;
+				Decimals = 4;
+			}
+		}
+		torus_u
+		{
+			Name = "Bumpmap Torus U";
+			Description = "Torus U.";
+		}
+		torus_v
+		{
+			Name = "Bumpmap Torus V";
+			Description = "Torus V.";
+		}
+		alpha
+		{
+			Name = "Use Alpha";
+			Description = "Use Alpha for bump map.";
+		}
+		bump_inuse
+		{
+			Name = "Enable";
+			Description = "Enable Bump Mapping";
+		}
+		alpha_output
+		{
+			Name = "Copy Alpha to RGB";
+			Description = "Output Alpha as color output";
+		}
+		alpha_factor
+		{
+			Name = "Alpha Strength";
+			Description = "Set the alpha output strength";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11D3-AA95-00AA0068D2C0}";
+		}
+		noise_type
+		{
+			Name = "Type";
+			UIType = "combo";
+			Items
+			{
+				"Legacy" = 0,
+				"Default" = 1,
+			}
+		}
+	}
+
+	Logic
+	{
+		Sub bump_inuse_Onchanged()
+			pset.alpha.Enable(pset.bump_inuse)	
+			pset.factor.Enable(pset.bump_inuse)
+			pset.step.Enable(pset.bump_inuse)
+		End Sub
+
+		Sub alpha_output_Onchanged()
+			pset.alpha_factor.Enable(pset.alpha_output)
+		End Sub
+
+		Sub Oninit
+			' I really mean it.  Don't show this thing.
+			tspace_xform_old.Show(false)
+			tspace_xform_old.Enable(false)
+			bump_inuse_Onchanged
+			alpha_output_Onchanged
+		End Sub
+	}
+
+	Layout "Default"
+	{
+		Tab "Texture"
+		{
+			Name;
+			tspace_id;
+			Group "Bump Mapping"
+			{
+				bump_inuse,aligncenter;
+				alpha,aligncenter;
+				factor,aligncenter;
+				step,aligncenter;
+			}
+		}
+		Tab "Veins"
+		{
+				Name;
+				vein_col1,aligncenter;
+				vein_col2,aligncenter;
+				filler_col,aligncenter;
+				vein_width,aligncenter;
+				diffusion,aligncenter;
+				Group "Copy Alpha to RGB"
+				{
+					alpha_output,continue,nolabel,35%;
+					alpha_factor,65%;
+				}
+		}
+		Tab "Spots"
+		{
+				Name;
+				spot_color;
+				spot_density,aligncenter;
+				spot_bias,aligncenter;
+				spot_scale,aligncenter;
+		}
+		Tab "Fractal"
+		{
+			Name;
+			noise_type;
+			frequencies,aligncenter;
+			amplitude,aligncenter;
+			ratio,aligncenter;
+			complexity,aligncenter;
+			absolute;
+		}
+		Tab "Advanced"
+		{
+			Name;
+			Group "Alternate", 100%
+			{
+				alt_x,aligncenter;
+				alt_y,aligncenter;
+				alt_z,aligncenter;
+			}
+			Group "Repeats"
+			{
+				repeats,aligncenter,nolabel;
+			}
+			Group "UV Remap", 100%
+			{
+				min,aligncenter,continue;
+				max,aligncenter;
+			}
+		}
+	}
+
+	Layout "RenderTree"
+	{
+		Group "Veins"
+		{
+			vein_col1;
+			vein_col2;
+			filler_col;
+			vein_width;
+			diffusion;
+			alpha_output;
+			alpha_factor;
+		}
+		Group "Spots"
+		{
+			spot_color;
+			spot_density;
+			spot_bias;
+			spot_scale;
+		}
+		Group "Fractal"
+		{
+			frequencies;
+			amplitude;
+			ratio;
+			complexity;
+			absolute;
+		}
+		Group "Bump Mapping"
+		{
+			bump_inuse;
+			alpha;
+			factor;
+			step;
+		}
+		Group "Remapping"
+		{
+			alt_x;
+			alt_y;
+			alt_z;
+			repeats;
+			min;
+			max;
+		}
+	}
+
+	Shaderball
+	{
+		Dimension = Spatial;
+		Show	  = true;
+	}
+	
+END

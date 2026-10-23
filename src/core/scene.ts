@@ -3,6 +3,7 @@
 // construction history (operator stack), Properties, a Material, Clusters.
 import * as THREE from 'three';
 import { ParamSet, num, int, bool, str, enumP, color } from './params';
+import { siShaderDefs, type SiShaderDef } from './shaders';
 import { siParamDefs, siLayout, siName, menuDefaults, siPropDefs, siPropLayout } from './opdefs';
 import type { ParamDef } from './params';
 /** Merge our parameter definitions with the full SPDL property set so the Property Editor shows Softimage's complete page. */
@@ -62,20 +63,22 @@ export function makeGeomApprox(shared = true) {
 
 // ---------------------------------------------------------------- material
 export class Shader extends Node {
-  constructor(name: string, type: string, defs: any[]) { super(name, type, 'shader', defs); }
+  /** Render Tree connections: texturable input parameter → the shader node plugged into it. */
+  readonly inputs = new Map<string, Shader>();
+  spdl?: SiShaderDef;
+  constructor(name: string, type: string, defs: any[], spdl?: SiShaderDef) { super(name, type, 'shader', defs); this.spdl = spdl; }
+  /** Texturable parameters (the ports a Render Tree can connect). */
+  ports(): string[] { return (this.spdl?.params ?? []).filter(p => p.dir === 'input' && p.texturable && p.inspectable !== false).map(p => p.sn); }
+  connect(port: string, sh: Shader | null) { const old = this.inputs.get(port); if (old) old.parent = null; if (sh) { this.inputs.set(port, sh); sh.parent = this; } else this.inputs.delete(port); }
+  explorerChildren(): Node[] { return [...this.inputs.values()]; }
 }
-export function makePhong(name = 'Phong') {
-  return new Shader(name, 'Phong', [
-    color('ambient', [0.3, 0.3, 0.3], 'Ambient', { group: 'Illumination' }), color('diffuse', [0.7, 0.7, 0.7], 'Diffuse', { group: 'Illumination' }),
-    color('specular', [1, 1, 1], 'Specular', { group: 'Illumination' }), num('shiny', 50, 'Specular Decay', { min: 0, max: 200, group: 'Illumination' }),
-    num('transparency', 0, 'Transparency', { min: 0, max: 1, group: 'Transparency/Reflection' }), num('reflectivity', 0, 'Reflectivity', { min: 0, max: 1, group: 'Transparency/Reflection' }),
-  ]);
+/** A shader node from Softimage's own phenolib SPDL (material-phong, txt2d-image-explicit…) or a Get > Material preset name. */
+export function makeSiShader(key: string, name?: string): Shader | null {
+  const r = siShaderDefs(key); if (!r) return null;
+  const s = new Shader(name ?? r.title, r.type, r.defs, r.spdl); if (r.layout) s.layout = r.layout; return s;
 }
-export function makeLambert(name = 'Lambert') {
-  return new Shader(name, 'Lambert', [
-    color('ambient', [0.3, 0.3, 0.3], 'Ambient'), color('diffuse', [0.7, 0.7, 0.7], 'Diffuse'), num('transparency', 0, 'Transparency', { min: 0, max: 1 }),
-  ]);
-}
+export function makePhong(name = 'Phong') { return makeSiShader('Phong', name)!; }
+export function makeLambert(name = 'Lambert') { return makeSiShader('Lambert', name)!; }
 export class Material extends Node {
   surface: Shader | null = null;
   constructor(name: string) {
@@ -357,16 +360,30 @@ export class Null extends X3DObject {
 export class Camera extends X3DObject {
   constructor(name: string) {
     super(name, 'camera');
-    this.setPrimitive(new Primitive('Camera', 'camera'));
-    this.primitive!.add(num('fov', 53.6, 'Field of View', { min: 1, max: 179 })); this.primitive!.add(num('near', 0.1, 'Near Plane', { min: 0.001 })); this.primitive!.add(num('far', 32768, 'Far Plane'));
+    const prim = new Primitive('Camera', 'camera');
+    // The real C3DCamera property page (Primitive / Projection Plane / Lens Shaders / Display tabs); fov in degrees, near/far planes.
+    for (const d of withSi('C3DCamera', [num('fov', 53.6, 'Angle', { min: 1, max: 179, uimin: 1, uimax: 179 }), num('near', 0.1, 'Near Plane', { min: 0.001 }), num('far', 32768, 'Far Plane'), num('aspect', 1.333, 'Pict. Ratio'), num('orthoheight', 10, 'Ortho Height')])) prim.add(d);
+    prim.layout = siPropLayout('C3DCamera') as any; this.setPrimitive(prim);
   }
+  get ortho() { return Number(this.primitive?.val('proj') ?? 0) === 1 || !!this.primitive?.val('ortho'); }
 }
 export class Light extends X3DObject {
+  /** The light shader (Softimage's soft_light: colour, intensity, shadows, spread…), a real shader node like a material's surface shader. */
+  readonly shader: Shader;
   constructor(name: string, kind: 'point' | 'infinite' | 'spot') {
     super(name, 'light');
     const p = new Primitive(kind === 'point' ? 'Point' : kind === 'spot' ? 'Spot' : 'Infinite', 'light');
-    p.add(color('soft_light.color', [1, 1, 1], 'Color')); p.add(num('soft_light.intensity', 0.75, 'Intensity', { min: 0, max: 10 })); p.add(enumP('type', kind, [{ label: 'Point', value: 'point' }, { label: 'Infinite', value: 'infinite' }, { label: 'Spot', value: 'spot' }], 'Type'));
+    // C3DLightPoint "General" page: Type, cone, falloff exponent, contributions, clipping, selective lighting.
+    const TYPE = enumP('Type', kind === 'point' ? 0 : kind === 'infinite' ? 1 : 2, [{ label: 'Point', value: 0 }, { label: 'Infinite', value: 1 }, { label: 'Spot', value: 2 }], 'Type');
+    for (const d of withSi('C3DLightPoint', [TYPE, num('LightCone', 30, 'Cone Angle', { min: 0, max: 180 }), num('LightExponent', 0, 'Spread Exponent', { min: 0 }), bool('DiffuseContribution', true, 'Diffuse'), bool('SpecularContribution', true, 'Specular')])) p.add(d);
+    p.add(enumP('type', kind, [{ label: 'Point', value: 'point' }, { label: 'Infinite', value: 'infinite' }, { label: 'Spot', value: 'spot' }], 'Kind', { readOnly: true }));
+    const lay = siPropLayout('C3DLightPoint') as any[] | undefined; if (lay) p.layout = lay.filter(t => t.tab === 'General') as any;
+    p.add(color('soft_light.color', [1, 1, 1], 'Color')); p.add(num('soft_light.intensity', 0.75, 'Intensity', { min: 0, max: 10 }));
     this.setPrimitive(p);
+    this.shader = makeSiShader('sib_light', 'soft_light') ?? new Shader('soft_light', 'soft_light', [color('color', [1, 1, 1], 'Light Color'), num('intensity', 0.75, 'Intensity')]);
+    this.shader.set('intensity', 0.75); this.shader.parent = this;
+    // keep the primitive's legacy colour/intensity in sync with the shader (viewport + light rig code read those)
+    this.shader.onChange((q) => { if (q.name === 'color') p.set('soft_light.color', q.value); if (q.name === 'intensity') p.set('soft_light.intensity', q.value); });
   }
 }
 

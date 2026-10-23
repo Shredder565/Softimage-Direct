@@ -1,0 +1,113 @@
+SPDL
+Version = "2.0.0.0";
+Reference = "{4E74DA6B-54DC-11D4-A26D-00E0293D48C6}";
+	PropertySet "sib_vertex_color_alpha_params"
+	{
+		Parameter "out" output
+		{
+			title = "Colored Vertices";
+			guid = "{20614714-8662-11D3-9332-00A024C79287}";
+			type = color;
+			flags  = 1;
+		}
+		Parameter "vprop" input
+		{
+			title = "Vertex Property";
+			guid = "{4E74DA6C-54DC-11D4-A26D-00E0293D48C6}";
+			ui "filter" = "{9AF45FC0-8DC4-11D4-B915-0800690C8BD0}"; # Filter CAVs
+			type = texturespace;
+		}
+		Parameter "alpha" input
+		{
+			title = "alpha";
+			guid = "{4E74DA6D-54DC-11D4-A26D-00E0293D48C6}";
+			ui "filter" = "{9AF45FC0-8DC4-11D4-B915-0800690C8BD0}"; # Filter CAVs
+			persistable = false;  # Obsolete parameter
+			inspectable = off;     # Obsolete parameter ( so it doesn't show up in scripting )
+			type = texturespace;
+		}
+		Parameter "alpha_only" input
+		{
+			title = "alpha_only";
+			guid = "{55A069DD-5C1E-11D4-869F-00E08100004B}";
+			type = boolean;
+			flags = 1;
+		}
+	}
+	MetaShader "sib_vertex_color_alpha_declare"
+	{
+		Name = "Vertex Color";
+		Type = texture ;
+		Renderer "mental ray"
+		{
+			Name = "sib_vertex_color_alpha";
+			FileName = "sibase.{EXT}";
+			Options
+			{
+				"version" = 1;
+			}
+		}
+		Renderer "MetaSL"
+		{
+			Name = "msl_soft_vertex_color_alpha";
+			FileName = "softimage.msl";
+		}
+Renderer "Cg"
+{
+Name = "sib_vertex_color_alpha_cg";
+Options
+{
+	"param0" = "vprop";
+}
+BeginText
+{
+	float4	retcolor;
+
+	if ( vprop.x == 0 )
+	{
+		retcolor = Vd.col0;
+	}
+
+	if ( vprop.x == 1 )
+	{
+		retcolor = Vd.col1;
+	}
+
+	return retcolor;
+}
+EndText
+}
+	}
+
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets726.htm";
+	Defaults
+	{
+		vprop
+		{
+			Name = "Vertex Property";
+			Description = "This parameter allows to select the vertex property to use.";
+			UIType = "TextureSpaceItem.TextureSpaceItem.1";
+		}
+		alpha
+		{
+			Name = "Alpha";
+			UIType = "TextureSpaceItem.TextureSpaceItem.1";
+		}
+		alpha_only
+		{
+			Name = "Alpha Only";
+			Description = "Return Alpha Channel only";
+		}
+	}
+	Layout "Default"
+	{
+		Name;
+		vprop;
+		alpha_only;
+	}
+	Shaderball
+	{
+		Dimension = Spatial;
+	}
+END

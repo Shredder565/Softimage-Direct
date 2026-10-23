@@ -1,0 +1,209 @@
+SPDL
+Version = "2.0.0.0";
+Reference = "{C7A2CD40-4478-11D4-AE64-00A0C96E63E1}";
+	PropertySet "sib_uvwgen_params"
+	{
+		Parameter "out" output
+		{
+			title = "Texture Space Generator";
+			guid = "{1D58FA86-A96A-11D1-90DA-0000F804EB21}";
+			type = vector;
+			flags  = 1;
+		}
+		Parameter "select" input
+		{
+			title = "Texture Space";
+			guid = "{C7A2CD41-4478-11D4-AE64-00A0C96E63E1}";
+			type = texturespace;
+			texturable = on;
+			value = -1; # Implicit, using intersection point
+			flags  = 1;
+		}
+		Parameter "selspace" input
+		{
+			title = "Space Transformation";
+			guid = "{C7A2CD42-4478-11D4-AE64-00A0C96E63E1}";
+			type = integer;
+			texturable = on;
+			flags  = 1;
+			value = 1;
+		}
+		Parameter "vertex" input
+		{
+			title = "Triangle Intersection";
+			guid = "{C7A2CD43-4478-11D4-AE64-00A0C96E63E1}";
+			type = integer;
+			texturable = on;
+			flags  = 1;
+			value = 0; # Intersection point
+		}
+		Parameter "project" input
+		{
+			title = "Implicit Projection Method";
+			guid = "{C7A2CD44-4478-11D4-AE64-00A0C96E63E1}";
+			type = integer;
+			texturable = on;
+			flags  = 1;
+			value = 2;	# Planar
+		}
+		Parameter "supp_invxform" input
+		{
+			title = "Inverse transformation of support";
+			guid = "{C7A2CD46-4478-11D4-AE64-00A0C96E63E1}";
+			type = matrix;
+			texturable = on;
+			animatable = on;
+			flags = 1;
+			value = 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0; # Identity Matrix
+		}
+		Parameter "seam_u" input
+		{
+			title = "Support Geometry has a seam in the U direction";
+			guid = "{C7A2CD47-4478-11D4-AE64-00A0C96E63E1}";
+			type = boolean;
+			texturable = off;
+			flags  = 1;
+			value = false;	# Planar doesn't have a seam
+		}
+		Parameter "seam_v" input
+		{
+			title = "Support Geometry has a seam in the V direction";
+			guid = "{C7A2CD48-4478-11D4-AE64-00A0C96E63E1}";
+			type = boolean;
+			texturable = off;
+			flags  = 1;
+			value = false;	# Planar doesn't have a seam
+		}
+		Parameter "texhomog" input
+		{
+			title = "Texture coordinates are homogeneous (q stored in q)";
+			guid = "{15A0905D-AE0F-430B-A1A8-77981D0371D5}";
+			type = boolean;
+			texturable = off;
+			flags  = 1;
+			value = false;
+		}
+	}
+
+	MetaShader "sib_uvwgen_declare"
+	{
+		Name = "UVW Generator";
+		Type = texture;
+		Renderer "mental ray"
+		{
+			Name = "sib_uvwgen";
+			FileName = "sibase.{EXT}";
+			Options
+			{
+				"derivative1" = on;
+				"derivative2" = on;
+				"version" = 1;
+			}
+		}
+	}
+
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+	HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets.htm";
+	Defaults
+	{
+		select
+		{
+			Name = "Texture Space";
+			Description = "This parameter allow to select the source texture coordinates";
+			UIType = "TextureSpaceItem.TextureSpaceItem.1";
+			Items
+			{
+				"Intersection" = -1,
+				"Surface Orientation" = -2,
+				"Motion" = -3,
+				"Camera Orientation" = -4,
+				"state->dPdu" = -5,
+				"state->dPdv" = -6,
+				"state->dPdudu" = -7,
+				"state->dPdvdv" = -8,
+				"state->dPdudv" = -9,
+				"2D Background" = -10,
+				"Inherited (state->tex)" = -11,
+			}
+		}
+		selspace
+		{
+			Name = "Space Transformation";
+			Description = "This parameter allow to transform the source texture coordinate to different space references";
+			UIType = "combo";
+			Items
+			{
+				"Unchanged" = 0,
+				"Object" = 1,
+				"World" = 2,
+				"Camera" = 3,
+				"Screen" = 4,
+				"Light" = 5,
+			}
+		}
+		vertex
+		{
+			Name = "Triangle Intersection";
+			Description = "This parameter allow to determine where the source texture coordinate should be extracted from.";
+			UIType = "combo";
+			Items
+			{
+				"At Intersection Point" = 0,
+				"Vertex 1" = 1,
+				"Vertex 2" = 2,
+				"Vertex 3" = 3,
+			}
+		}
+		project
+		{
+			Name = "Projection Method";
+			Description = "This parameter sets the projection type, which is uses the source texture coordinates as basis.";
+			UIType = "combo";
+			Items
+			{
+				"Spatial" = 0,
+				"UV" = 1,
+				"Planar XY" = 2,
+				"Planar XZ" = 3,
+				"Planar YZ" = 4,
+				"Spherical" = 5,
+				"Cylindrical" = 6,
+				"Lollipop" = 7,
+			}
+		}
+		seam_u
+		{
+			Name = "Seam U";
+			Description = "U=0 edge of UV domain is the same as U=1 edge.";
+		}
+		seam_v
+		{
+			Name = "Seam V";
+			Description = "V=0 edge of UV domain is the same as V=1 edge.";
+		}
+	}
+	Logic
+	{
+		Sub select_Onchanged()
+			pset.selspace.Show( (pset.select <= -1) and (pset.select >= -4) ) 
+			pset.vertex.Show( (pset.select <= -1) and (pset.select >= -4) ) 
+			pset.project.Show( (pset.select <= -1) and (pset.select >= -4) ) 
+		End sub
+		Sub OnInit()
+			select_Onchanged()
+		End Sub
+	}
+	Layout "Default"
+	{
+		Name;
+		select;
+		project;
+		selspace;
+		vertex;
+
+		seam_u;
+		seam_v;
+
+		texhomog;
+	}
+END

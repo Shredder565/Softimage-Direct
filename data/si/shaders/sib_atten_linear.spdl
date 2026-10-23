@@ -1,0 +1,76 @@
+SPDL 
+Version = "2.0.0.0";
+Reference = "{858E1DB7-BCFA-11D1-90E9-0000F804EB21}"; #PHENO GUID
+	PropertySet "sib_atten_linear_params"
+	{
+		Parameter "out" output
+		{
+			title = "Linear Interpolation";
+			guid = "{1D58FA87-A96A-11D1-90DA-0000F804EB21}";
+			type = scalar;
+			flags  = 1;
+		}
+		Parameter "start" input
+		{
+			title = "Start Range";
+			guid = "{6D7D6DA0-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			flags  = 1;
+			value = 0.0;
+			texturable = on;
+		}
+		Parameter "end" input
+		{
+			title = "End Range";
+			guid = "{6D838A60-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			flags  = 1;
+			value = 10000.0;
+			texturable = on;
+		}
+	}
+	MetaShader "sib_atten_linear_declare"
+	{
+		Name = "Attenuation Linear";
+		Type = texture;
+		Renderer "mental ray"
+		{
+			Name = "sib_atten_linear";
+			FileName = "sibase.{EXT}";
+			Options
+			{
+				"version" = 1;
+			}
+		}
+		Renderer "MetaSL"
+		{
+			Name = "msl_soft_atten_linear";
+			FileName = "softimage.msl";									
+		}
+	}
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets135.htm";
+	Defaults
+	{
+		start
+		{
+			Name = "Start Range";
+			Description = "This parameter determines the start range where the interpolation will occur.";
+			UIRange = 0.0 to 10000.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		end
+		{
+			Name = "End";
+			Description = "This parameter determines the end range where the interpolation will occur.";
+			UIRange = 0.0 to 100000.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+	}
+	Layout "Default"
+	{
+		Name;
+		start;
+		end;
+	}
+END

@@ -1,0 +1,794 @@
+SPDL
+version = "2.0.0.0";
+Reference = "{2D66A8D7-ED68-11D2-843E-00E08100004E}";
+	PropertySet "txt3d-checkerboard_params"
+	{
+		Parameter "out" output
+		{
+			title = "Checkerboard";
+			guid = "{4C6879FF-7EC8-11D0-8E3B-00A0C90640EC}";
+			type = color;
+		}
+		Parameter "color1" input
+		{
+			title = "Color 1";
+			guid = "{2D66A8D8-ED68-11D2-843E-00E08100004E}";
+			type = color;
+			value = 0.0 0.0 0.0 1.0;
+			texturable = on;
+		}
+		Parameter "color2" input
+		{
+			title = "Color 2";
+			guid = "{2D66A8D9-ED68-11D2-843E-00E08100004E}";
+			type = color;
+			value = 1.0 1.0 1.0 1.0;
+			texturable = on;
+		}
+		Parameter "xsize" input
+		{
+			title = "Xsize";
+			guid = "{2D66A8DA-ED68-11D2-843E-00E08100004E}";
+			type = scalar;
+			texturable = on;
+			value = 0.5;
+			flags  = 1;
+		}
+		Parameter "ysize" input
+		{
+			title = "Ysize";
+			guid = "{2D66A8DB-ED68-11D2-843E-00E08100004E}";
+			type = scalar;
+			texturable = on;
+			value = 0.5;
+			flags  = 1;
+		}
+		Parameter "zsize" input
+		{
+			title = "Zsize";
+			guid = "{2D66A8DC-ED68-11D2-843E-00E08100004E}";
+			type = scalar;
+			texturable = on;
+			value = 0.5;
+			flags  = 1;
+		}
+		Parameter "tspace_id" input
+		{
+			title = "Texture Space";
+			guid = "{2D66A8DD-ED68-11D2-843E-00E08100004E}";
+			ui "mapping" = "{B6531F00-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_SELECT
+			type = texturespace;
+			value = -1;
+			flags  = 1;
+			texturable = off;
+			animatable = off;
+		}
+
+		#--------- The following set of parameters cannot be set manually by users.
+		#--------- Softimage will fill these values automatically based on the tspace_id
+		#--------- To access this data in a custom shader, copy the ui mapping.
+		#--- Parameters for implicit texture calculation
+		Parameter "tsupp_invxform" input
+		{
+			title = "Texture Support Inverse Transform";
+			guid = "{617C8A20-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F01-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_TEXSUPPORT_XFORM
+			type = matrix;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "project" input
+		{
+			title = "Projection Method";
+			guid = "{617C8A21-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F02-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_PROJECTION_METHOD
+			type = integer;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "selspace" input
+		{
+			title = "Space Transformation";
+			guid = "{617C8A22-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F03-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_SELSPACE
+			type = integer;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "vertex" input
+		{
+			title = "Triangle Intersection";
+			guid = "{617C8A23-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F04-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_VERTEX
+			type = integer;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+
+		#--- Parameters for post-transformation of a uv datum
+		Parameter "tproj_xform" input
+		{
+			title = "Texture Space Transform";
+			guid = "{617C8A24-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F05-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_TEXPROJ_XFORM
+			type = matrix;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "wrap_u" input
+		{
+			title = "wrap_u";
+			guid = "{617C8A25-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping"  = "{B6531F0C-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_U
+			type = boolean;
+			animatable = false;
+			texturable = off;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "wrap_v" input
+		{
+			title = "wrap_v";
+			guid = "{617C8A26-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping"  = "{B6531F0D-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_V
+			type = boolean;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "wrap_w" input
+		{
+			title = "wrap_w";
+			guid = "{617C8A27-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping"  = "{B6531F0E-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_W
+			type = boolean;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "seam_u" input
+		{
+			title = "seam_u";
+			guid = "{617C8A28-4C6E-11D4-B4DB-00D0B7142C4C}";
+			ui "mapping"  = "{B6531F0F-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_SEAM_U
+			type = boolean;
+			animatable = false;
+			texturable = off;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "seam_v" input
+		{
+			title = "seam_v";
+			guid = "{43656B88-5795-11D4-AE68-00A0C96E63E1}";
+			ui "mapping"  = "{FAD00380-5794-11D4-AE68-00A0C96E63E1}"; # GUID_3D_UVDEF_SEAM_V
+			type = boolean;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: generated by the Projection Definition
+			inspectable = false;
+		}
+		Parameter "texhomog" input # Are the uv coordinates homogeneous? (homogeneous coordinate stored in w, since we currently don't have 4d homogeneous)
+		{
+			title = "texthomog";
+			guid = "{CCA34ECC-357E-479E-B3AF-A98EEE230A0D}";
+			ui "mapping"  = "{3458F753-D5D2-4B8C-80A9-802853ABEF57}"; # GUID_3D_MAPTO_HOMOGENEOUS_COORDS
+			type = boolean;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: generated by the projection
+			inspectable = false;
+		}
+
+		#--------- The previous set of parameters cannot be set manually by users.
+		#--------- Softimage will fill these values automatically based on the tspace_id
+		#--------- To use this data in another shader, copy the ui "mapping"s for each parameter.
+
+		Parameter "project_old" input
+		{
+			title = "Projection Method";
+			guid = "{2D66A8DE-ED68-11D2-843E-00E08100004E}";
+			ui "mapping" = "{C8E660C0-43E9-11D4-AE64-00A0C96E63E1}"; # GUID_3D_UVDEF_PROJECTION_METHOD_OLD
+			type = integer;
+			value = 2;
+			flags  = 1;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "selspace_old" input
+		{
+			title = "Space Transformation";
+			guid = "{2D66A8DF-ED68-11D2-843E-00E08100004E}";
+			ui "mapping" = "{C8E660C3-43E9-11D4-AE64-00A0C96E63E1}"; # GUID_3D_UVDEF_SELSPACE_OLD
+			type = integer;
+			flags  = 1;
+			value = 0;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "vertex_old" input
+		{
+			title = "Triangle Intersection";
+			guid = "{2D66A8E0-ED68-11D2-843E-00E08100004E}";
+			ui "mapping" = "{C8E660C1-43E9-11D4-AE64-00A0C96E63E1}"; # GUID_3D_UVDEF_VERTEX_OLD
+			type = integer;
+			flags  = 1;
+			value = 0;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "tspace_xform_old" input
+		{
+			title = "Texture Space Transform";
+			guid = "{2D66A8E1-ED68-11D2-843E-00E08100004E}";
+			ui "mapping" = "{C8E660C2-43E9-11D4-AE64-00A0C96E63E1}";  # GUID_3D_UVDEF_TEXPROJ_XFORM_OLD
+			type = matrix;
+			value = 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "repeats" input
+		{
+			title = "Texture repeat factor (X,Y,Z)";
+			guid = "{2D66A8E2-ED68-11D2-843E-00E08100004E}";
+			type = vector;
+			value = 4.0 4.0 4.0;
+			texturable = on;
+		}
+		Parameter "alt_x" input
+		{
+			title = "alt_x";
+			guid = "{2D66A8E3-ED68-11D2-843E-00E08100004E}";
+			type = boolean;
+			value = off;
+			texturable = on;
+		}
+		Parameter "alt_y" input
+		{
+			title = "alt_y";
+			guid = "{2D66A8E4-ED68-11D2-843E-00E08100004E}";
+			type = boolean;
+			value = off;
+			texturable = on;
+		}
+		Parameter "alt_z" input
+		{
+			title = "alt_z";
+			guid = "{2D66A8E5-ED68-11D2-843E-00E08100004E}";
+			type = boolean;
+			value = off;
+			texturable = on;
+		}
+		Parameter "torus_x_old" input
+		{
+			title = "torus_x";
+			guid = "{2D66A8E6-ED68-11D2-843E-00E08100004E}";
+			ui "mapping" = "{D1D3B320-4C4E-11D4-AE65-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_U_OLD
+			type = boolean;
+			value = on;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "torus_y_old" input
+		{
+			title = "torus_y";
+			guid = "{2D66A8E7-ED68-11D2-843E-00E08100004E}";
+			ui "mapping" = "{D1D3B321-4C4E-11D4-AE65-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_V_OLD
+			type = boolean;
+			value = on;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "torus_z_old" input
+		{
+			title = "torus_z";
+			guid = "{2D66A8E8-ED68-11D2-843E-00E08100004E}";
+			ui "mapping" = "{D1D3B322-4C4E-11D4-AE65-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_W_OLD
+			type = boolean;
+			value = on;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "min" input
+		{
+			title = "min";
+			guid = "{2D66A8E9-ED68-11D2-843E-00E08100004E}";
+			type = vector;
+			value = 0.0 0.0 0.0;
+			texturable = on;
+		}
+		Parameter "max" input
+		{
+			title = "max";
+			guid = "{2D66A8EA-ED68-11D2-843E-00E08100004E}";
+			type = vector;
+			value = 1.0 1.0 1.0;
+			texturable = on;
+		}
+		Parameter "step" input
+		{
+			title = "step";
+			guid = "{170ED614-CDCA-11D3-B8F8-00E08100004B}";
+			type = vector;
+			flags  = 1;
+			value = 0.005 0.005 0.005;
+			texturable = on;
+		}
+		Parameter "factor" input
+		{
+			title = "factor";
+			guid = "{1715FD22-CDCA-11D3-B8F8-00E08100004B}";
+			type = scalar;
+			flags  = 1;
+			value = 20.0;
+			texturable = on;
+		}
+		Parameter "torus_u" input
+		{
+			title = "torus_u";
+			guid = "{171AC1D6-CDCA-11D3-B8F8-00E08100004B}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+		Parameter "torus_v" input
+		{
+			title = "torus_v";
+			guid = "{171F868A-CDCA-11D3-B8F8-00E08100004B}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = off;
+		}
+		Parameter "alpha" input
+		{
+			title = "alpha";
+			guid = "{1726AD98-CDCA-11D3-B8F8-00E08100004B}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = on;
+		}
+		Parameter "bump_inuse" input
+		{
+			title = "bump_inuse";
+			guid = "{172B724C-CDCA-11D3-B8F8-00E08100004B}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = on;
+		}
+		Parameter "alpha_output" input
+		{
+			title = "alpha_output";
+			guid = "{A5B2C0F4-9288-11D4-933F-00E0293D48C6}";
+			type = boolean;
+			flags  = 1;
+			value = off;
+			texturable = on;
+		}
+		Parameter "alpha_factor" input
+		{
+			title = "alpha_factor";
+			guid = "{A5B2C0F5-9288-11D4-933F-00E0293D48C6}";
+			type = scalar;
+			flags  = 1;
+			value = 1.0;
+			texturable = on;
+		}
+	}
+
+	MetaShader "txt3d-checkerboard_declare"
+	{
+		Name = "Checkerboard";
+		Type = texture;
+		Renderer "mental ray"
+		{
+			Name = "txt3d-checkerboard";
+			Options
+			{
+				"version" = 1;
+			}
+			BeginText
+			
+			Node "checkerboard"			= guid "{4FE4A46D-B473-11D1-90E1-0000F804EB21}";
+			Node "checkerboard_bump"	= guid "{4FE4A46D-B473-11D1-90E1-0000F804EB21}";
+			Node "uvwgen"				= guid "{C7A2CD40-4478-11D4-AE64-00A0C96E63E1}"; # sib_uvwgen
+			Node "remap"				= guid "{4E57ACE4-B473-11D1-90E1-0000F804EB21}"; # mib_texture_remap
+			Node "remap_bump"			= guid "{4E57ACE4-B473-11D1-90E1-0000F804EB21}"; # mib_texture_remap
+			Node "basis"				= guid "{811FFAA5-2A42-47DF-B767-8DAEB5993E9C}"; # sib_bump_basis
+			Node "bump"					= guid "{DA89443E-C521-4DD9-806D-90FA2806EDF8}"; # sib_bump_map
+			Node "setnormal"			= guid "{2D8736C0-F37B-11D3-AE5B-00A0C96E63E1}"; # sib_setnormal
+			Node "state_tex"			= guid "{BDE291C7-077A-11D2-8A1A-00A0C9892542}";
+			Node "switch"				= guid "{85C16046-BCFA-11D1-90E9-0000F804EB21}"; # sib_color_switch
+			Node "color2alpha"			= guid "{523C43D8-B473-11D1-90E1-0000F804EB21}"; # mib_color_alpha
+			
+			#---- Texture space generator node.
+			Connection "uvwgen::select"			= interface "tspace_id";
+			Connection "uvwgen::selspace"		= interface "selspace";
+			Connection "uvwgen::vertex"			= interface "vertex";
+			Connection "uvwgen::project"		= interface "project";
+			Connection "uvwgen::supp_invxform"	= interface "tsupp_invxform";
+			Connection "uvwgen::seam_u"			= interface "seam_u";
+			Connection "uvwgen::seam_v"			= interface "seam_v";
+			Connection "uvwgen::texhomog"		= interface "texhomog";
+			
+			#---- Image remapping node.
+			Connection "remap::input"			= "uvwgen";
+			Connection "remap::alt_x"			= interface "alt_x";
+			Connection "remap::alt_y"			= interface "alt_y";
+			Connection "remap::alt_z"			= interface "alt_z";
+			Connection "remap::torus_x"			= interface "wrap_u";
+			Connection "remap::torus_y"			= interface "wrap_v";
+			Connection "remap::torus_z"			= interface "wrap_w";
+			Connection "remap::repeat"			= interface "repeats";
+			Connection "remap::transform"		= interface "tproj_xform";
+			Connection "remap::min"				= interface "min";
+			Connection "remap::max"				= interface "max";
+			
+			Connection "checkerboard::coord"	= "remap";
+			Connection "checkerboard::color000"	= interface "color1";
+			Connection "checkerboard::color011"	= interface "color1";
+			Connection "checkerboard::color101"	= interface "color1";
+			Connection "checkerboard::color110"	= interface "color1";
+			Connection "checkerboard::color001"	= interface "color2";
+			Connection "checkerboard::color010"	= interface "color2";
+			Connection "checkerboard::color100"	= interface "color2";
+			Connection "checkerboard::color111"	= interface "color2";
+			Connection "checkerboard::xsize"	= interface "xsize";
+			Connection "checkerboard::ysize"	= interface "ysize";
+			Connection "checkerboard::zsize"	= interface "zsize";
+			
+			#---- Bumpmapping
+			Connection "state_tex::mode"			= value 6; # return state->tex
+			
+			Connection "remap_bump::input"			= "state_tex";
+			Connection "remap_bump::alt_x"			= interface "alt_x";
+			Connection "remap_bump::alt_y"			= interface "alt_y";
+			Connection "remap_bump::alt_z"			= interface "alt_z";
+			Connection "remap_bump::torus_x"		= interface "wrap_u";
+			Connection "remap_bump::torus_y"		= interface "wrap_v";
+			Connection "remap_bump::torus_z"		= interface "wrap_w";
+			Connection "remap_bump::repeat"			= interface "repeats";
+			Connection "remap_bump::transform"		= interface "tproj_xform";
+			Connection "remap_bump::min"			= interface "min";
+			Connection "remap_bump::max"			= interface "max";
+			
+			Connection "checkerboard_bump::coord"		= "remap_bump";
+			Connection "checkerboard_bump::color000"	= interface "color1";
+			Connection "checkerboard_bump::color011"	= interface "color1";
+			Connection "checkerboard_bump::color101"	= interface "color1";
+			Connection "checkerboard_bump::color110"	= interface "color1";
+			Connection "checkerboard_bump::color001"	= interface "color2";
+			Connection "checkerboard_bump::color010"	= interface "color2";
+			Connection "checkerboard_bump::color100"	= interface "color2";
+			Connection "checkerboard_bump::color111"	= interface "color2";
+			Connection "checkerboard_bump::xsize"		= interface "xsize";
+			Connection "checkerboard_bump::ysize"		= interface "ysize";
+			Connection "checkerboard_bump::zsize"		= interface "zsize";
+			
+			Connection "basis::ntex"				= interface "tspace_id";
+			Connection "basis::project"				= interface "project";
+			
+			Connection "bump::coord"			= "uvwgen";
+			Connection "bump::u"				= "basis::u";
+			Connection "bump::v"				= "basis::v";
+			Connection "bump::step"				= interface "step";
+			Connection "bump::factor" 			= interface "factor";
+			Connection "bump::torus_u"			= interface "torus_u";
+			Connection "bump::torus_v"			= interface "torus_v";
+			Connection "bump::alpha" 		 	= interface "alpha";
+			Connection "bump::tex"				= value "checkerboard_bump";
+			Connection "bump::clamp"			= value off;
+			
+			Connection "color2alpha::input"		= "checkerboard";
+			Connection "color2alpha::factor"	= interface "alpha_factor";
+			
+			Connection "switch::input1"			= "checkerboard";
+			Connection "switch::input2"			= "color2alpha";
+			Connection "switch::switch"			= interface "alpha_output";
+			
+			Connection "setnormal::input"		= "switch";
+			Connection "setnormal::normal"		= "bump";
+			Connection "setnormal::inuse"		= interface "bump_inuse";
+			
+			Connection root						= "setnormal";
+			EndText
+		}
+		
+		Renderer "MetaSL"
+		{
+			Name = "msl_soft_txt3d_checkerboardv2";
+			FileName = "softimage.msl";
+		}
+	}
+
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets33.htm";
+	Defaults
+	{
+		tspace_id
+		{
+			Name = "Texture Space";
+			Description = "Allows choosing the source space for projections. RenderCost:1";
+			UIType = "TextureSpaceItem.TextureSpaceItem.1";
+			Items
+			{
+			//	"Intersection" = -1,
+			//	"Surface Orientation" = -2,
+			//	"Motion" = -3,
+			//	"Camera Orientation" = -4,
+			//	"state->dPdu" = -5,
+			//	"state->dPdv" = -6,
+			//	"state->dPdudu" = -7,
+			//	"state->dPdvdv" = -8,
+			//	"state->dPdudv" = -9,
+			//	"2D Background" = -10,
+			}
+		}
+		repeats
+		{
+			Name = "Texture repeats";
+			Description = "Texture repeats set how many time the texture is repeated within the texture space defined. RenderCost:1";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 10.0 by 0.001;
+		}
+		alt_x
+		{
+			Name = "U";
+			Description = "Allow to Alternate texture on U, Visible only when repeat X is higher than 1. RenderCost:1";
+		}
+		alt_y
+		{
+			Name = "V";
+			Description = "Allow to Alternate texture on V, Visible only when repeat Y is higher than 1. RenderCost:1";
+		}
+		alt_z
+		{
+			Name = "Z";
+			Description = "Not used in this node. Allow to Alternate texture on Z, Visible only when repeat Z is higher than 1. RenderCost:1";
+		}
+		min
+		{
+			Name = "Minimum";
+			Description = "Allow to remap texture from lower/left corner, Z is ignored. RenderCost:1";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 1.0 by 0.001;
+		}
+		max
+		{
+			Name = "Maximum";
+			Description = "Allow to remap texture from top/right corner, Z is ignored. RenderCost:1";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 1.0 by 0.001;
+		}
+		color1
+		{
+			Name = "Tile1";
+			Description = "Checkerboard's Color1. RenderCost:1";
+			UItype = "RGBA",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		color2
+		{
+			Name = "Tile2";
+			Description = "Checkerboard's Color2. RenderCost:1";
+			UItype = "RGBA",4;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		xsize
+		{
+			Name = "X";
+			Description = "Position in X axis. RenderCost:1";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		ysize
+		{
+			Name = "Y";
+			Description = "Position in Y axis. RenderCost:1";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		zsize
+		{
+			Name = "Z";
+			Description = "Position in Z axis. RenderCost:1";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		step
+		{
+			Name = "Step";
+			Description = "Step.";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 0.02 by 0.0001;
+		}
+		factor
+		{
+			Name = "Factor";
+			Description = "Bump Map Factor determine the height of the bump map.";
+			UIRange = -20.0 to 20.0 by 0.0001;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIType = "Number"
+			{
+				SyncSlider = True;
+				Decimals = 4;
+			}
+		}
+		torus_u
+		{
+			Name = "Bumpmap Torus U";
+			Description = "Torus U.";
+		}
+		torus_v
+		{
+			Name = "Bumpmap Torus V";
+			Description = "Torus V.";
+		}
+		alpha
+		{
+			Name = "Use Alpha";
+			Description = "Use Alpha for bump map.";
+		}
+		bump_inuse
+		{
+			Name = "Enable";
+			Description = "Enable Bump Mapping";
+		}
+		alpha_output
+		{
+			Name = "Copy Alpha to RGB";
+			Description = "Output Alpha as color output";
+		}
+		alpha_factor
+		{
+			Name = "Alpha Strength";
+			Description = "Set the alpha output strength";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11D3-AA95-00AA0068D2C0}";
+		}
+	}
+
+	Logic
+	{
+		Sub bump_inuse_Onchanged()
+			pset.alpha.Enable(pset.bump_inuse)	
+			pset.factor.Enable(pset.bump_inuse)
+			pset.step.Enable(pset.bump_inuse)
+		End Sub
+
+		Sub alpha_output_Onchanged()
+			pset.alpha_factor.Enable(pset.alpha_output)
+		End Sub
+
+		Sub Oninit
+			' I really mean it.  Don't show this thing.
+			tspace_xform_old.Show(false)
+			tspace_xform_old.Enable(false)
+			bump_inuse_Onchanged
+			alpha_output_Onchanged
+		End Sub
+	}
+
+	Layout "Default"
+	{
+		Tab "Texture"
+		{
+			Name;
+			tspace_id;
+			Group "Bump Mapping"
+			{
+				bump_inuse,aligncenter;
+				alpha,aligncenter;
+				factor,aligncenter;
+				step,aligncenter;
+			}
+		}
+		Tab "Checkerboard"
+		{
+			Name;
+			Group "Colors"
+			{	
+				color1;
+				color2;
+				Group "Copy Alpha to RGB"
+				{
+					alpha_output,continue,nolabel,35%;
+					alpha_factor,65%;
+				}
+			}
+			Group "Position"
+			{
+				xsize;
+				ysize;
+				zsize;
+			}
+		}
+		Tab "Advanced"
+		{
+			Name;
+			Group "Alternate", 100%
+			{
+				alt_x,aligncenter;
+				alt_y,aligncenter;
+				alt_z,aligncenter;
+			}
+			Group "Repeats", 100%
+			{
+				repeats,aligncenter,nolabel;
+			}
+			Group "UV Remap", 100%
+			{
+				min,aligncenter,continue;
+				max,aligncenter;
+			}
+		}
+	}
+
+	Layout "RenderTree"
+	{
+		color1;
+		color2;
+		xsize;
+		ysize;
+		zsize;
+		alpha_output;
+		alpha_factor;
+		Group "Bump Mapping"
+		{
+			bump_inuse;
+			alpha;
+			factor;
+			step;
+		}
+		Group "Remapping"
+		{
+			alt_x;
+			alt_y;
+			alt_z;
+			repeats;
+			min;
+			max;
+		}
+	}
+
+	Shaderball
+	{
+		Dimension = Spatial;
+		Show      = True;
+		Background = "None";
+	}
+	
+END

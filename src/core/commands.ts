@@ -56,6 +56,8 @@ export class App {
   module: 'Model' | 'Animate' | 'Render' | 'Simulate' | 'ICE' | 'Hair' = 'Model';
   autoInspect = true;
   autoKey = false;
+  /** PPG recycle flag (property editor toolbar): reuse the floating editor for the next inspected node. */
+  recyclePPG = true;
   private pendingUndo: UndoEntry[] | null = null;
 
   constructor() {

@@ -1,0 +1,100 @@
+SPDL 
+Version = "2.0.0.0";
+Reference = "{8677C42B-BCFA-11D1-90E9-0000F804EB21}";
+	PropertySet "sib_scalar_to_color_params"
+	{
+		Parameter "out" output
+		{
+			title = "Scalar to Color";
+			guid = "{4C6879FF-7EC8-11D0-8E3B-00A0C90640EC}";
+			type = color;
+			flags  = 1;
+		}
+		Parameter "input" input
+		{
+			title = "Input";
+			guid = "{767F4B90-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			flags  = 1;
+			value = 0.5;
+			texturable = on;
+			ui "main input" = true;
+			ui "conversion" = true;
+		}
+		Parameter "alpha" input
+		{
+			title = "Alpha";
+			guid = "{76856850-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			flags  = 1;
+			value = 1.0;
+			texturable = on;
+		}
+	}
+
+	MetaShader "sib_scalar_to_color_declare"
+	{
+		Name = "Scalar To Color";
+		Type = texture;
+		Renderer "mental ray"
+		{
+			Name = "sib_scalar_to_color";
+			FileName = "sibase.{EXT}";
+			Options
+			{
+				"version" = 1;
+			}
+		}
+		Renderer "MetaSL"
+		{
+			Name = "msl_soft_scalar_to_color";
+			FileName = "softimage.msl";						
+		}
+		Renderer "Cg"
+		{
+			Name = "sib_scalar_to_color_cg";
+			Options
+			{
+				"param0" = "input";
+				"param2" = "alpha";
+			}
+			BeginText
+			{
+				float4	retval;
+
+				retval.x = input.x;
+				retval.y = input.x;
+				retval.z = input.x;
+				retval.w = alpha.x;
+
+				return retval;
+			}
+			EndText
+		}
+	}
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets95.htm";
+	Defaults
+	{
+		input
+		{
+			Name = "Input";
+			Description = "Input";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		alpha
+		{
+			Name = "Alpha";
+			Description = "Alpha";
+			UIRange = 0.0 to 1.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+	}
+	Layout "Default"
+	{
+		Name;
+		input;
+		alpha;
+	}
+END

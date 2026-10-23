@@ -2,7 +2,7 @@
 // lattices, implicits, cameras/lights presets, skeletons, text, materials, properties, interactive tools.
 import * as THREE from 'three';
 import { App, InteractiveTool } from '../core/commands';
-import { X3DObject, Primitive, Property, makeDisplay, makeGeomApprox, makePhong, makeLambert, Shader, Null, Camera, Light, Operator, makeTopologyOperator, TopologyOperator, MoveComponentOperator } from '../core/scene';
+import { X3DObject, Primitive, Property, makeDisplay, makeGeomApprox, makePhong, makeLambert, makeSiShader, Shader, Null, Camera, Light, Operator, makeTopologyOperator, TopologyOperator, MoveComponentOperator } from '../core/scene';
 import { topoDefs } from '../core/scene';
 import { siName } from '../core/opdefs';
 import * as S2 from '../core/scene2';
@@ -225,7 +225,7 @@ export function registerModelCommands(app: App) {
   app.register({ name: 'ConnectToSupport', label: 'Connect to Support', category: 'Texturing', args: [], execute(app) { app.logMsg('info', 'Projection supports are implicit in this build'); } });
   app.register({ name: 'AddImageClip', label: 'Add Image Clip', category: 'Texturing', description: 'Loads an image file and connects it to the selected objects\' surface shader colour.', args: [{ name: 'InputObjs', default: '' }], undoable: false, execute(app, a) {
     const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
-    inp.onchange = () => { const f = inp.files?.[0]; if (!f) return; const r = new FileReader(); r.onload = () => { for (const o of app.targets(a.InputObjs)) { if (!o.material) app.run('MakeLocalMaterialsForHierarchy', { InputObj: [o] }); const s = o.material!.surface!; if (!s.get('image')) s.add(str('image', '', 'Image Clip', { group: 'Textures' })); s.get('image')!.value = String(r.result); if (!s.get('imagename')) s.add(str('imagename', '', 'Image File', { group: 'Textures', readOnly: true })); s.get('imagename')!.value = f.name; if (!o.property('uvprojection')) projection(app, 'Cubic', [o]); } app.logMsg('cmd', `AddImageSource("${f.name}")`); app.events.emit('scene'); }; r.readAsDataURL(f); };
+    inp.onchange = () => { const f = inp.files?.[0]; if (!f) return; const r = new FileReader(); r.onload = () => { for (const o of app.targets(a.InputObjs)) { if (!o.material) app.run('MakeLocalMaterialsForHierarchy', { InputObj: [o] }); const s = o.material!.surface!; const img = makeSiShader('Image', f.name.replace(/\.[^.]+$/, ''))!; img.set('tex', String(r.result)); (img as any).file = f.name; s.connect('diffuse', img); if (!o.property('uvprojection')) projection(app, 'Cubic', [o]); } app.logMsg('cmd', `AddImageSource("${f.name}")`); app.events.emit('scene'); }; r.readAsDataURL(f); };
     inp.click();
   } });
   for (const [name, label] of [['PaintTool', 'Paint Tool'], ['PaintPushTool', 'Paint Push Tool'], ['PaintVertexColorTool', 'Paint Vertex Color Tool'], ['CreateVertexColorSupport', 'Color At Vertices Map']]) app.register({ name, label, category: 'Texturing', args: [{ name: 'InputObjs', default: '' }], canRun: () => name === 'CreateVertexColorSupport', execute(app) { if (name === 'CreateVertexColorSupport') return app.run('AddProp', { PresetObj: 'Color At Vertices Map' }); throw new Error(`${label}: brush painting is not implemented yet`); } });
@@ -279,6 +279,7 @@ export function registerModelCommands(app: App) {
 
 function addObjectNoRecord(app: App, o: X3DObject) { app.scene.root.addChild(o); }
 function shader(name: string, type: string): Shader {
+  const si = makeSiShader(type, name); if (si) return si;
   const s = new Shader(name, type, [color('ambient', [0.3, 0.3, 0.3], 'Ambient', { group: 'Illumination' }), color('diffuse', [0.7, 0.7, 0.7], 'Diffuse', { group: 'Illumination' })]);
   if (type !== 'Constant' && type !== 'Toon') { s.add(color('specular', [1, 1, 1], 'Specular', { group: 'Illumination' })); s.add(num('shiny', 50, 'Specular Decay', { min: 0, max: 200, group: 'Illumination' })); }
   if (type === 'Cook-Torrance' || type === 'Strauss' || type === 'Architectural' || type === 'Car Paint') { s.add(num('roughness', 0.4, 'Roughness', { min: 0, max: 1, group: 'Illumination' })); s.add(num('metalness', type === 'Car Paint' ? 0.8 : 0.1, 'Metalness', { min: 0, max: 1, group: 'Illumination' })); }
@@ -287,7 +288,7 @@ function shader(name: string, type: string): Shader {
   s.add(num('transparency', 0, 'Transparency', { min: 0, max: 1, group: 'Transparency/Reflection' })); s.add(num('reflectivity', 0, 'Reflectivity', { min: 0, max: 1, group: 'Transparency/Reflection' }));
   return s;
 }
-function cloneShader(s: Shader) { const n = new Shader(s.name, s.type, s.params.map(p => ({ ...p.def, value: Array.isArray(p.value) ? [...p.value] : p.value }))); return n; }
+function cloneShader(s: Shader): Shader { const n = new Shader(s.name, s.type, s.params.map(p => ({ ...p.def, value: Array.isArray(p.value) ? [...p.value] : p.value })), s.spdl); n.layout = s.layout; for (const [k, v] of s.inputs) n.connect(k, cloneShader(v)); return n; }
 function fitThrough(pts: V3[], degree: number): V3[] {
   // simple interpolation: use the points as a Catmull-Rom sampled set then treat samples as CVs
   if (pts.length < 3 || degree < 2) return pts; const out: V3[] = [];

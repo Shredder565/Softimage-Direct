@@ -1,0 +1,176 @@
+SPDL
+Version = "2.0.0.0";
+Reference = "{3843DA00-A1F4-11D3-AE51-00A0C96E63E1}";
+	PropertySet "sib_scalar_math_basic_params"
+	{
+		Parameter "out" output
+		{
+			title = "Scalar Math Basic";
+			guid = "{1D58FA87-A96A-11D1-90DA-0000F804EB21}";
+			type = scalar;
+			flags  = 1;
+		}
+
+		Parameter "input1" input
+		{
+			title = "Input 1";
+			guid = "{3843DA01-A1F4-11D3-AE51-00A0C96E63E1}";
+			type = scalar;
+			flags = 1;
+			value = 0.0;
+			texturable = on;
+			ui "main input" = true;
+		}
+
+		Parameter "input2" input
+		{
+			title = "Input 2";
+			guid = "{3843DA02-A1F4-11D3-AE51-00A0C96E63E1}";
+			type = scalar;
+			flags = 1;
+			value = 1.0;
+			texturable = on;
+		}
+
+		Parameter "op" input
+		{
+			title = "Operation";
+			guid = "{3843DA03-A1F4-11D3-AE51-00A0C96E63E1}";
+			type = integer;
+			flags  = 1;
+			value = 0;
+			texturable = on;
+		}
+	}
+
+	MetaShader "sib_scalar_math_basic_declare"
+	{
+		Name = "Scalar Basic Math";
+		Type = texture;
+		Renderer "mental ray"
+		{
+			Name = "sib_scalar_math_basic";
+			FileName = "sibase.{EXT}";
+			Options
+			{
+				"version" = 1;
+			}
+		}
+		Renderer "MetaSL"
+		{
+			Name = "msl_soft_scalar_math_basic";
+			FileName = "softimage.msl";									
+		}
+		
+		Renderer "Cg"
+		{
+			Name = "sib_scalar_math_basic_cg";
+			Options
+			{
+				"param0" = "input1";
+				"param1" = "input2";
+				"const0" = "op";
+			}
+			BeginText
+			{
+				float4 retval;
+
+				retval.y = 0.0;
+				retval.z = 0.0;
+				retval.w = 0.0;
+
+			// Add
+			#if (op == 0)
+				retval.x = input1.x + input2.x;
+			#endif
+
+			// Subtract
+			#if (op == 1)
+				retval.x = input1.x - input2.x;
+			#endif
+
+			// Multiply
+			#if (op == 2)
+				retval.x = input1.x * input2.x;
+			#endif
+
+			// Divide
+			#if (op == 3)
+				if (input2.x != 0)
+					retval.x = input1.x / input2.x;
+				else
+					retval.x = 0.0;
+			#endif
+
+			// Minimum
+			#if (op == 4)
+				retval.x = -max(-input1.x,-input2.x);
+			#endif
+
+			// Maximum
+			#if (op == 5)
+				retval.x = max(input1.x, input2.x);
+			#endif
+
+				return retval;
+			}
+			EndText
+		}
+	}
+
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets634.htm";
+Defaults
+{
+		input1
+		{
+			Name = "Input 1";
+			Description = "Input 1";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		input2
+		{
+			Name = "Input 2";
+			Description = "Input 2";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		op
+		{
+			Name = "Operation";
+			Description = "Math Operation";
+			UIType = "combo";
+			Items {
+				"Add"				= 0,
+				"Subtract"			= 1,
+				"Multiply"			= 2,
+				"Divide"			= 3,
+				"Minimum"			= 4,
+				"Maximum"			= 5,
+				"Remainder"			= 6,
+				"ArcTan"			= 7
+			}
+		}
+}
+
+Layout "Default"
+{	
+			Name;
+			input1;
+			input2;
+			op;
+}
+
+Logic
+{
+	Sub op_OnChanged
+		Dim val, aItems
+		
+		aItems = PPGLayout.Item( "op" ).UIItems
+		
+		For i = 0 to ( UBound( aItems ) / 2 )
+			If PPG.op.Value = aItems( i * 2 + 1 ) Then
+				PPG.Name.Value = aItems( i * 2 + 0 )
+				Exit Sub
+			End If
+		Next
+	End Sub
+}

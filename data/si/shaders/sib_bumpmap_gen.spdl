@@ -1,0 +1,858 @@
+SPDL
+version = "2.0.0.0";
+Reference = "{B6B3EE80-FAAE-11D3-AE5D-00A0C96E63E1}";
+	PropertySet "sib_bumpmap_gen_params"
+	{
+		Parameter "out" output
+		{
+			title = "Bumpmap generator";
+			guid = "{1D58FA86-A96A-11D1-90DA-0000F804EB21}";
+			type = vector;
+		}	
+		Parameter "input" input
+		{
+			title = "Input";
+			guid = "{B6B3EE81-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = texture;
+			texturable = on;
+		}
+		Parameter "tspace_id" input
+		{
+			title = "Texture Space";
+			guid = "{B6B3EE82-FAAE-11D3-AE5D-00A0C96E63E1}";
+			ui "mapping" = "{B6531F00-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_SELECT
+			type = texturespace;
+			value = -1;
+			texturable = off;
+			animatable = off;
+		}
+		Parameter "tspace_id_basis" input
+		{
+			title = "Texture Space for bump basis";
+			guid = "{D61C1080-8527-4713-A317-21B4E42FABA7}";
+			type = texturespace;
+			value = -1;
+			texturable = off;
+			animatable = off;
+		}
+		Parameter "project_basis" input
+		{
+			title = "Projection Method";
+			guid = "{40190863-3509-480E-8F5D-97656B39B102}";
+			type = integer;
+			texturable = off;
+			animatable = false;
+		}
+		#--------- The following set of parameters cannot be set manually by users.
+		#--------- Softimage will fill these values automatically based on the tspace_id
+		#--------- To use this structure in your own shader, copy the following parameter chunk
+		#--------- and replace the guid of _only_ the main parameter
+		#--- Parameters for implicit texture calculation
+		Parameter "tsupp_invxform" input
+		{
+			title = "Texture Support Inverse Transform";
+			guid = "{4CE81AA0-4D20-11d4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F01-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_TEXSUPPORT_XFORM
+			type = matrix;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "project" input
+		{
+			title = "Projection Method";
+			guid = "{4CE81AA1-4D20-11d4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F02-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_PROJECTION_METHOD
+			type = integer;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "selspace" input
+		{
+			title = "Space Transformation";
+			guid = "{4CE81AA2-4D20-11d4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F03-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_SELSPACE
+			type = integer;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "vertex" input
+		{
+			title = "Triangle Intersection";
+			guid = "{4CE81AA3-4D20-11d4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F04-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_VERTEX
+			type = integer;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+
+		#--- Parameters for post-transformation of a uv datum
+		Parameter "tproj_xform" input
+		{
+			title = "Texture Space Transform";
+			guid = "{4CE81AA4-4D20-11d4-B4DB-00D0B7142C4C}";
+			ui "mapping" = "{B6531F05-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_TEXPROJ_XFORM
+			type = matrix;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "wrap_u" input
+		{
+			title = "wrap_u";
+			guid = "{4CE81AA5-4D20-11d4-B4DB-00D0B7142C4C}";
+			ui "mapping"  = "{B6531F0C-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_U
+			type = boolean;
+			animatable = false;
+			texturable = off;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "wrap_v" input
+		{
+			title = "wrap_v";
+			guid = "{4CE81AA6-4D20-11d4-B4DB-00D0B7142C4C}";
+			ui "mapping"  = "{B6531F0D-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_V
+			type = boolean;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "wrap_w" input
+		{
+			title = "wrap_w";
+			guid = "{4CE81AA7-4D20-11d4-B4DB-00D0B7142C4C}";
+			ui "mapping"  = "{B6531F0E-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_W
+			type = boolean;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "seam_u" input
+		{
+			title = "seam_u";
+			guid = "{4CE81AA8-4D20-11d4-B4DB-00D0B7142C4C}";
+			ui "mapping"  = "{B6531F0F-412A-11D4-AE63-00A0C96E63E1}"; # GUID_3D_UVDEF_SEAM_U
+			type = boolean;
+			animatable = false;
+			texturable = off;
+			persistable = false;	# Data never saved: stored in Projection Definition
+			inspectable = false;
+		}
+		Parameter "seam_v" input
+		{
+			title = "seam_v";
+			guid = "{9008DBD0-57F6-11D4-AE68-00A0C96E63E1}";
+			ui "mapping"  = "{FAD00380-5794-11D4-AE68-00A0C96E63E1}"; # GUID_3D_UVDEF_SEAM_V
+			type = boolean;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: generated by the Projection Definition
+			inspectable = false;
+		}
+		Parameter "texhomog" input # Are the uv coordinates homogeneous? (homogeneous coordinate stored in w)
+		{
+			title = "texthomog";
+			guid = "{73B1FFA3-7D1F-40C8-903B-301A7935F490}";
+			ui "mapping"  = "{3458F753-D5D2-4B8C-80A9-802853ABEF57}"; # GUID_3D_MAPTO_HOMOGENEOUS_COORDS
+			type = boolean;
+			texturable = off;
+			animatable = false;
+			persistable = false;	# Data never saved: generated by the projection
+			inspectable = false;
+		}
+		#--------- The previous set of parameters cannot be set manually by users.
+		#--------- Softimage will fill these values automatically based on the tspace_id
+		#--------- To use this data in another shader, copy the ui "mapping"s for each shader.
+		Parameter "project_old" input
+		{
+			title = "Projection Method";
+			guid = "{B6B3EE83-FAAE-11D3-AE5D-00A0C96E63E1}";
+			ui "mapping" = "{C8E660C0-43E9-11D4-AE64-00A0C96E63E1}"; # GUID_3D_UVDEF_PROJECTION_METHOD_OLD
+			type = integer;
+			value = 2;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "selspace_old" input
+		{
+			title = "Space Transformation";
+			guid = "{B6B3EE84-FAAE-11D3-AE5D-00A0C96E63E1}";
+			ui "mapping" = "{C8E660C3-43E9-11D4-AE64-00A0C96E63E1}"; # GUID_3D_UVDEF_SELSPACE_OLD
+			type = integer;
+			value = 0;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "tspace_xform_old" input
+		{
+            title = "Texture Space Transform";
+			guid = "{B6B3EE85-FAAE-11D3-AE5D-00A0C96E63E1}";
+			ui "mapping" = "{C8E660C2-43E9-11D4-AE64-00A0C96E63E1}";  # GUID_3D_UVDEF_TEXPROJ_XFORM_OLD
+            type = matrix;
+			value = 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "repeats" input
+		{
+			title = "Texture repeat factor (X,Y,Z)";
+			guid = "{B6B3EE86-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = vector;
+			value = 1.0 1.0 1.0;
+			texturable = on;
+		}
+		Parameter "alt_x" input
+		{
+			title = "alt_x";
+			guid = "{B6B3EE87-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = boolean;
+			value = off;
+			texturable = on;
+		}
+		Parameter "alt_y" input
+		{
+			title = "alt_y";
+			guid = "{B6B3EE88-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = boolean;
+			value = off;
+			texturable = on;
+		}
+		Parameter "alt_z" input
+		{
+			title = "alt_z";
+			guid = "{B6B3EE89-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = boolean;
+			value = off;
+			texturable = on;
+		}
+		Parameter "torus_x" input
+		{
+			title = "torus_x";
+			guid = "{B6B3EE8A-FAAE-11D3-AE5D-00A0C96E63E1}";
+			ui "mapping" = "{D1D3B320-4C4E-11D4-AE65-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_U_OLD
+			type = boolean;
+			value = on;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "torus_y" input
+		{
+			title = "torus_y";
+			guid = "{B6B3EE8B-FAAE-11D3-AE5D-00A0C96E63E1}";
+			ui "mapping" = "{D1D3B321-4C4E-11D4-AE65-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_V_OLD
+			type = boolean;
+			value = on;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "torus_z" input
+		{
+			title = "torus_z";
+			guid = "{B6B3EE8C-FAAE-11D3-AE5D-00A0C96E63E1}";
+			ui "mapping" = "{D1D3B322-4C4E-11D4-AE65-00A0C96E63E1}"; # GUID_3D_UVDEF_WRAP_W_OLD
+			type = boolean;
+			value = on;
+			texturable = off;
+			animatable = off;
+			persistable = false; # This parameter is being obsoleted
+			inspectable = off;
+		}
+		Parameter "min" input
+		{
+			title = "min";
+			guid = "{B6B3EE8D-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = vector;
+			value = 0.0 0.0 0.0;
+			texturable = on;
+		}
+		Parameter "max" input
+		{
+			title = "max";
+			guid = "{B6B3EE8E-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = vector;
+			value = 1.0 1.0 1.0;
+			texturable = on;
+		}
+		Parameter "step" input
+		{
+			title = "step";
+			guid = "{B6B3EE8F-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = vector;
+			value = 0.001 0.001 0.001;
+			texturable = on;
+		}
+		Parameter "factor" input
+		{
+			title = "factor";
+			guid = "{B6B3EE90-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = scalar;
+			value = 5.0;
+			texturable = on;
+		}
+		Parameter "torus_u" input
+		{
+			title = "torus_u";
+			guid = "{B6B3EE91-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = boolean;
+			value = off;
+			texturable = on;
+		}
+		Parameter "torus_v" input
+		{
+			title = "torus_v";
+			guid = "{B6B3EE92-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = boolean;
+			value = off;
+			texturable = on;
+		}
+		Parameter "alpha" input
+		{
+			title = "alpha";
+			guid = "{B6B3EE93-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = boolean;
+			value = off;
+			texturable = on;
+		}
+		Parameter "inuse" input
+		{
+			title = "inuse";
+			guid = "{B6B3EE94-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = boolean;
+			texturable = on;
+			persistable = on;
+			value = on;
+		}
+		Parameter "relnormal" input
+		{
+			title = "relnormal";
+			guid = "{B6B3EE95-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = boolean;
+			texturable = on;
+			persistable = on;
+			value = off;
+		}
+		Parameter "normal" input
+		{
+			title = "normal";
+			guid = "{B6B3EE96-FAAE-11D3-AE5D-00A0C96E63E1}";
+			type = vector;
+			texturable = on;
+			persistable = on;
+			value = 0.0	0.0	1.0;
+		}
+		Parameter "clamp" input
+		{
+			title = "Clamp";
+			guid = "{3E8CE13D-4BA4-11D5-86CA-00E08100004B}";
+			type = boolean;
+			texturable = on;
+			persistable = on;
+			value = on;
+		}
+		Parameter "eccmax" input
+		{
+			title = "eccmax";
+			guid = "{36872524-190D-4E0C-863D-818C4980D1D2}";
+			type = scalar;
+			texturable = on;
+			flags  = 1;
+			value = 20.0;
+		}
+		Parameter "maxminor" input
+		{
+			title = "maxminor";
+			guid = "{C4B30858-75C2-4F7E-A353-94EEB3B808A2}";
+			type = scalar;
+			texturable = on;
+			flags  = 1;
+			value = 16.0;
+		}
+		Parameter "disc_r" input
+		{
+			title = "disc_r";
+			guid = "{DC620CE4-3FC1-4880-AF5E-0B3332380973}";
+			type = scalar;
+			texturable = on;
+			flags  = 1;
+			value = 0.3;
+		}
+		Parameter "bilinear" input
+		{
+			title = "bilinear";
+			guid = "{1309ED22-861C-49E8-9A54-229B570B93DD}";
+			type = boolean;
+			texturable = on;
+			flags  = 1;
+			value = on;
+		}
+		Parameter "bump_filtered" input
+		{
+			title = "bump_filtered";
+			guid = "{AA2F24F7-BD51-4D07-878F-F8219EF7A8AF}";
+			type = boolean;
+			texturable = on;
+			flags  = 1;
+			value = off;
+		}
+		Parameter "bumpbasis" input
+		{
+			title = "bumpbasis";
+			guid = "{A8053A46-C361-4B93-BCE2-EA1AC38E2277}";
+			type = boolean;
+			texturable = off;
+			flags  = 1;
+			value = off;
+		}
+	}
+	MetaShader "sib_bumpmap_gen_declare"
+	{
+		Name = "Bump Generator";
+		Type = texture;
+		Renderer "mental ray"
+		{
+			Name = "sib_bumpmap_gen";
+			Options
+			{
+				"version" = 1;
+			}
+			BeginText
+			
+			Node "uvwgen"				= guid "{C7A2CD40-4478-11D4-AE64-00A0C96E63E1}"; # sib_uvwgen
+			Node "remap"				= guid "{4E57ACE4-B473-11D1-90E1-0000F804EB21}";
+			Node "sibtexlook_bump"		= guid "{580CCE23-E834-402A-A793-4B9C1CBDB963}"; # sib_texture_lookup
+			
+			Node "basis"				= guid "{811FFAA5-2A42-47DF-B767-8DAEB5993E9C}"; # sib_bump_basis
+			Node "basis_external"			= guid "{811FFAA5-2A42-47DF-B767-8DAEB5993E9C}"; # sib_bump_basis
+			Node "bump"					= guid "{DA89443E-C521-4DD9-806D-90FA2806EDF8}"; # sib_bump_map
+			Node "bump_to_color"		= guid "{DB89DEEE-39C5-4D3D-9418-C9415818702F}"; # sib_vector_to_color
+			Node "getnormal"			= guid "{001B9E30-F5D8-11D3-AE5B-00A0C96E63E1}"; # sib_getnormal
+			Node "vectorswitch"			= guid "{63EEDBF0-623C-11D3-8C0A-00A0243E3672}"; # sib_vector_switch
+			Node "state_normal"			= guid "{BDE291C7-077A-11D2-8A1A-00A0C9892542}"; # sib_state_vector
+			Node "state_tex"			= guid "{BDE291C7-077A-11D2-8A1A-00A0C9892542}"; # sib_state_vector
+			Node "bumpbasis_switch_U"	= guid "{63EEDBF0-623C-11D3-8C0A-00A0243E3672}"; #sib_vector_switch
+			Node "bumpbasis_switch_V"	= guid "{63EEDBF0-623C-11D3-8C0A-00A0243E3672}"; #sib_vector_switch
+			
+			#---- Texture space generator node.
+			Connection "uvwgen::select"					= interface "tspace_id";
+			Connection "uvwgen::selspace"				= interface "selspace";
+			Connection "uvwgen::vertex"					= interface "vertex";
+			Connection "uvwgen::project"				= interface "project";
+			Connection "uvwgen::supp_invxform"			= interface "tsupp_invxform";
+			Connection "uvwgen::seam_u"					= interface "seam_u";
+			Connection "uvwgen::seam_v"					= interface "seam_v";
+			Connection "uvwgen::texhomog"				= interface "texhomog";
+			
+			#---- Bumpmapping
+			Connection "state_tex::mode"				= value 6; # texture vector, so called state->tex
+			
+			Connection "remap::input"					= value 0.0 0.0 0.0; # Won't be called (mi_call_shader_x)
+			Connection "remap::alt_x"					= interface "alt_x";
+			Connection "remap::alt_y"					= interface "alt_y";
+			Connection "remap::alt_z"					= interface "alt_z";
+			Connection "remap::torus_x"					= interface "wrap_u";
+			Connection "remap::torus_y"					= interface "wrap_v";
+			Connection "remap::torus_z"					= interface "wrap_w";
+			Connection "remap::repeat"					= interface "repeats";
+			Connection "remap::transform"				= interface "tproj_xform";
+			Connection "remap::min"						= interface "min";
+			Connection "remap::max"						= interface "max";
+			
+			Connection "sibtexlook_bump::tex"			= interface "input";
+			Connection "sibtexlook_bump::coord"			= "state_tex";
+			Connection "sibtexlook_bump::remap"			= value "remap";
+			Connection "sibtexlook_bump::clamp"			= interface "clamp";
+			Connection "sibtexlook_bump::filtered"		= interface "bump_filtered";
+			Connection "sibtexlook_bump::eccmax"		= interface "eccmax";
+			Connection "sibtexlook_bump::maxminor"		= interface "maxminor";
+			Connection "sibtexlook_bump::disc_r"		= interface "disc_r";
+			Connection "sibtexlook_bump::bilinear"		= interface "bilinear";
+			Connection "sibtexlook_bump::space"			= interface "tspace_id";
+			
+			Connection "basis_external::ntex"			= interface "tspace_id_basis";
+			Connection "basis_external::project"		= interface "project_basis";
+			
+			Connection "basis::ntex"				= interface "tspace_id";
+			Connection "basis::project"				= interface "project";
+			
+			Connection "bumpbasis_switch_U::input"		= interface "bumpbasis";
+			Connection "bumpbasis_switch_U::vector1"		= "basis::u";
+			Connection "bumpbasis_switch_U::vector2"		= "basis_external::u";
+			
+			Connection "bumpbasis_switch_V::input"		= interface "bumpbasis";
+			Connection "bumpbasis_switch_V::vector1"		= "basis::v";
+			Connection "bumpbasis_switch_V::vector2"		= "basis_external::v";
+			
+			Connection "bump::coord"					= "uvwgen";
+			Connection "bump::u"						= "bumpbasis_switch_U";
+			Connection "bump::v"						= "bumpbasis_switch_V";
+			Connection "bump::step"						= interface "step";
+			Connection "bump::factor"					= interface "factor";
+			Connection "bump::torus_u"					= interface "torus_u";
+			Connection "bump::torus_v"					= interface "torus_v";
+			Connection "bump::alpha"					= interface "alpha";
+			Connection "bump::tex"						= value "sibtexlook_bump";
+			Connection "bump::clamp"					= interface "clamp";
+			
+			Connection "bump_to_color::input"			= "bump";
+
+			Connection "getnormal::normal"				= interface "normal";
+			Connection "getnormal::relnormal"			= interface "relnormal";
+			Connection "getnormal::input"				= "bump_to_color";
+			
+			Connection "state_normal::mode"				= value 3;		# extract state->normal
+			
+			Connection "vectorswitch::input"			= interface "inuse";
+			Connection "vectorswitch::vector1"			= "state_normal";
+			Connection "vectorswitch::vector2"			= "getnormal";
+			
+			Connection root								= "vectorswitch";
+			EndText
+		}
+		Renderer "MetaSL"
+		{
+			Name = "msl_soft_bumpmap_compound";
+			FileName = "softimage.msl";				
+		}
+	}
+
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets668.htm";
+	Defaults
+	{
+		input
+		{
+			Name = "Input";
+			Description = "Texture input to sample to create a bumpmap.";
+			UIType = "ImageBrowserItem.ImageBrowserItem.1";
+		}
+		tspace_id
+		{
+			Name = "Texture Space";
+			Description = "Allows choosing the source space for projections. RenderCost:1";
+			UIType = "TextureSpaceItem.TextureSpaceItem.1";
+			Items
+			{
+				//"Intersection" = -1,
+				//"Surface Orientation" = -2,
+				//"Motion" = -3,
+				//"Camera Orientation" = -4,
+				//"state->dPdu" = -5,
+				//"state->dPdv" = -6,
+				//"state->dPdudu" = -7,
+				//"state->dPdvdv" = -8,
+				//"state->dPdudv" = -9,
+				//"2D Background" = -10,
+			}
+		}
+		tspace_id_basis
+		{
+			Name = "Compute bump basis using";
+			Description = "Allows choosing the source space for projections. RenderCost:1";
+			UIType = "TextureSpaceItem.TextureSpaceItem.1";
+			Items
+			{
+				//"Intersection" = -1,
+				//"Surface Orientation" = -2,
+				//"Motion" = -3,
+				//"Camera Orientation" = -4,
+				//"state->dPdu" = -5,
+				//"state->dPdv" = -6,
+				//"state->dPdudu" = -7,
+				//"state->dPdvdv" = -8,
+				//"state->dPdudv" = -9,
+				//"2D Background" = -10,
+			}
+		}
+		project_basis
+		{
+			Name = "Projection Method for Bump Basis Computation";
+			Description = "This parameter set the projection type, which is uses the source texture coordinates as basis.";
+			UIType = "combo";
+			Items
+			{
+				"Explicit UV: for deformed surfaces(shape/envelop)" = 0,
+				"Implicit UV: Nurbs only" = 1,
+				"Implicit Planar XY" = 2,
+				"Implicit Planar XZ" = 3,
+				"Implicit Planar YZ" = 4,
+				"Implicit Spherical" = 5,
+				"Implicit Cylindrical" = 6,
+				"Implicit Lollipop" = 7,
+			}
+		}
+		repeats
+		{
+			Name = "Texture repeats";
+			Description = "Texture repeats set how many time the texture is repeated within the texture space defined. RenderCost:1";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 10.0 by 0.001;
+		}
+		alt_x
+		{
+			Name = "U";
+			Description = "Allow to Alternate texture on U, Visible only when repeat X is higher than 1. RenderCost:1";
+		}
+		alt_y
+		{
+			Name = "V";
+			Description = "Allow to Alternate texture on V, Visible only when repeat Y is higher than 1. RenderCost:1";
+		}
+		alt_z
+		{
+			Name = "Z";
+			Description = "Not used in this node. Allow to Alternate texture on Z, Visible only when repeat Z is higher than 1. RenderCost:1";
+		}
+		min
+		{
+			Name = "Minimum";
+			Description = "Allow to remap texture from lower/left corner, Z is ignored. RenderCost:1";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 1.0 by 0.001;
+		}
+		max
+		{
+			Name = "Maximum";
+			Description = "Allow to remap texture from top/right corner, Z is ignored. RenderCost:1";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 1.0 by 0.001;
+		}
+		step
+		{
+			Name = "Step";
+			Description = "Step. RenderCost:1";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 0.01 by 0.0001;
+		}
+		factor
+		{
+			Name = "Factor";
+			Description = "Bump Map Factor determine the height of the bump map. RenderCost:1";
+			UIRange = -20.0 to 20.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		torus_u
+		{
+			Name = "Bumpmap Torus U";
+			Description = "Torus U. RenderCost:1";
+		}
+		torus_v
+		{
+			Name = "Bumpmap Torus V";
+			Description = "Torus V. RenderCost:1";
+		}
+		alpha
+		{
+			Name = "Use Alpha";
+			Description = "Use Alpha for bump map. RenderCost:1";
+		}
+		clamp
+		{
+			Name = "Clamp";
+			Description = "Enable Clampping 0..1";
+			UIType = "Check";
+		}
+		inuse
+		{
+			Name = "Enable Bump";
+			Description = "Enable Bump";
+			UIType = "Check";
+		}
+		relnormal
+		{
+			Name = "Base normal";
+			Description = "Specify which normal bump should be relative to.";
+			UIType = "combo";
+			Items
+			{
+				"Relative to current surface normal" = 0,
+				"Relative to input normal" = 1,
+			}
+		}
+		normal
+		{
+			Name = "Input normal";
+			Description = "Input normal bump should be relative to.";
+			UIType = "vector";
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+			UIRange = 0.0 to 1 by 0.0001;
+		}
+		eccmax
+		{
+			Name = "Maximum eccentricity";
+			Description = "Maximum eccentricity";
+			UIRange = 0.0 to 20.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		maxminor
+		{
+			Name = "Maximum pixels for Min Radius";
+			Description = "Maximum pixel for minimum radius";
+			UIRange = 0.0 to 64.0 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		disc_r
+		{
+			Name = "Disc Radius";
+			Description = "Disc Radius";
+			UIRange = 0.0 to 0.3 by 0.01;
+			Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		}
+		bilinear
+		{
+			Name = "Bilinear Interpolation";
+			Description = "Bilinear Interpolation";
+		}
+		bump_filtered
+		{
+			Name = "Enable";
+			Description = "Enable elliptical filtering for Bump Mapping";
+		}
+		bumpbasis
+		{
+			Name = "Enable";
+			Description = "Enable different UV set to evaluate for bump basis computation";
+		}
+	}
+
+	Logic
+	{
+		Sub bump_filtered_OnChanged()
+				pset.eccmax.Enable(pset.bump_filtered.value)
+				pset.maxminor.Enable(pset.bump_filtered.value)
+				pset.disc_r.Enable(pset.bump_filtered.value)
+				pset.bilinear.Enable(pset.bump_filtered.value)
+		End Sub
+
+		Sub inuse_Onchanged()
+			pset.factor.Enable(inuse)
+			pset.step.Enable(inuse)
+			pset.alpha.Enable(inuse)
+			pset.input.Enable(inuse)
+			pset.repeats.Enable(inuse)
+			pset.tspace_id.Enable(inuse)
+			pset.alt_x.Enable(inuse)
+			pset.alt_y.Enable(inuse)
+			pset.alt_z.Enable(inuse)
+			pset.torus_x.Enable(inuse)
+			pset.torus_y.Enable(inuse)
+			pset.torus_z.Enable(inuse)
+			pset.min.Enable(inuse)
+			pset.max.Enable(inuse)
+			pset.relnormal.Enable(inuse)
+			pset.normal.Enable(inuse)
+			pset.tspace_id_basis.Enable(pset.inuse and pset.project_basis = 0)
+			pset.project_basis.Enable(inuse)
+			pset.bumpbasis.enable(inuse)
+			pset.clamp.enable(inuse)
+		End Sub
+
+		Sub bumpbasis_OnChanged()
+			pset.project_basis.enable(pset.bumpbasis)
+			pset.tspace_id_basis.Enable(pset.inuse and pset.project_basis = 0 and pset.bumpbasis)
+		End Sub
+
+		Sub project_basis_OnChanged()
+			pset.tspace_id_basis.Enable(pset.inuse and pset.project_basis = 0 and pset.bumpbasis)
+		End Sub
+
+		Sub relnormal_Onchanged()
+			pset.normal.Enable(relnormal)
+		End Sub
+
+		Sub OnInit()
+			inuse_Onchanged
+			relnormal_Onchanged
+			bump_filtered_OnChanged
+			bumpbasis_OnChanged
+			project_basis_OnChanged
+		End Sub
+	}
+	
+	Layout "Default"
+	{
+		Tab "Texture"
+		{
+			Name;
+			input,nolabel;
+			Group "Texture Projection"
+			{
+				tspace_id;
+			}
+			Group "Bump Mapping"
+			{
+				inuse,continue,aligncenter;
+				Group
+				{
+					alpha,aligncenter;
+					clamp,aligncenter;
+				}
+				factor;
+				step;
+				Group "Projection Method for Bump Basis Computation"
+				{
+					bumpbasis,alignleft;
+					project_basis,nolabel;
+					tspace_id_basis,nolabel;
+				}
+				Group "Normal"
+				{
+					relnormal,aligncenter;
+					normal,aligncenter;
+				}
+			}
+		}
+		Tab "Bump Filtering"
+		{
+			Name;
+			bump_filtered,aligncenter;
+			eccmax;
+			maxminor;
+			disc_r;
+			bilinear,AlignRight;
+		}
+		Tab "Advanced"
+		{
+			Name;
+			Group "Alternate"
+			{
+				alt_x,aligncenter;
+				alt_y,aligncenter;
+				alt_z,aligncenter;
+			}
+			Group "Repeats"
+			{
+				repeats,aligncenter;
+			}
+			Group "UV Remap"
+			{
+				min,continue,aligncenter;
+				max,aligncenter;
+			}
+		}
+	}
+END

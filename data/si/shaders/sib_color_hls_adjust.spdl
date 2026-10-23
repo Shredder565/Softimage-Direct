@@ -1,0 +1,480 @@
+SPDL
+Version = "2.0.0.0";
+
+###############################################################################
+# Softimage Utility Shaders: HLS
+###############################################################################
+# © Copyright 2008 Autodesk, Inc.  All rights reserved.
+###############################################################################
+# Author:	Michael Arias
+# Created:	April 15, 2003
+# Purpose:	Source and headers for mental ray shader library
+###############################################################################
+
+Reference = "{FC81738B-0EF2-4002-96DC-92CF633C633D}";
+PropertySet "sib_color_hls_adjust_params"
+{
+	Parameter "out" output
+	{
+		title = "sib_color_hls_adjust output parameter";
+		guid = "{4C6879FF-7EC8-11D0-8E3B-00A0C90640EC}";
+		type = color;
+		flags = 1;
+	}	
+	Parameter "color" input
+	{
+		title = "input color";
+		guid = "{57B964AC-5436-45E6-BA5D-660CD8111283}";
+		type = color;
+		value = 1.0 1.0 1.0 1.0;
+		flags = 1;
+		texturable = on;
+		ui "main input" = true;
+		ui "conversion" = true;
+	}
+	Parameter "master_h" input
+	{
+		title = "master hue";
+		guid = "{2BDC2557-B6AC-49FA-A593-BD4A83819298}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -360;
+		value maximum = 360;
+	}
+	Parameter "master_l" input
+	{
+		title = "master lightness";
+		guid = "{06489887-C218-4D28-8317-757D3F2D6858}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -200;
+		value maximum = 200;
+	}
+	Parameter "master_s" input
+	{
+		title = "master saturation";
+		guid = "{F638E83C-52C1-4F87-9C8C-D57D6BA69ACA}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -100;
+		value maximum = 100;
+	}
+	Parameter "red_h" input
+	{
+		title = "red hue";
+		guid = "{13958679-AEF9-4C9A-B516-6F0F1B74FB2C}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -360;
+		value maximum = 360;
+	}
+	Parameter "red_l" input
+	{
+		title = "red lightness";
+		guid = "{9000DDF4-626F-44E0-9B9E-6D0E641D566D}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -200;
+		value maximum = 200;
+	}
+	Parameter "red_s" input
+	{
+		title = "red saturation";
+		guid = "{ECE34317-A001-48D9-9845-3F744865C1AB}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -100;
+		value maximum = 100;
+	}
+	Parameter "green_h" input
+	{
+		title = "green hue";
+		guid = "{8AAD1177-3258-4B98-8ACD-BF5C90BB5D0F}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -360;
+		value maximum = 360;
+	}
+	Parameter "green_l" input
+	{
+		title = "green lightness";
+		guid = "{1BA9EA28-44CB-49D4-9DA8-A4B3D228A294}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -200;
+		value maximum = 200;
+	}
+	Parameter "green_s" input
+	{
+		title = "green saturation";
+		guid = "{D5818E52-9301-42C4-A0E7-C0B96ED2FA63}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -100;
+		value maximum = 100;
+	}
+	Parameter "blue_h" input
+	{
+		title = "blue hue";
+		guid = "{CCBCEA47-F0A5-4382-9765-2B1B58717949}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -360;
+		value maximum = 360;
+	}
+	Parameter "blue_l" input
+	{
+		title = "blue lightness";
+		guid = "{9B3F40D1-89D7-47B9-BFF2-6229CE684337}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -200;
+		value maximum = 200;
+	}
+	Parameter "blue_s" input
+	{
+		title = "blue saturation";
+		guid = "{d95a341e-276f-4380-ae30-dd12cf9356b8}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -100;
+		value maximum = 100;
+	}
+	Parameter "cyan_h" input
+	{
+		title = "cyan hue";
+		guid = "{0278785f-a8e1-427c-921a-4d4546ea795b}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -360;
+		value maximum = 360;
+	}
+	Parameter "cyan_l" input
+	{
+		title = "cyan lightness";
+		guid = "{e7749388-bb9d-4145-8b14-0cff0751f2bc}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -200;
+		value maximum = 200;
+	}
+	Parameter "cyan_s" input
+	{
+		title = "cyan saturation";
+		guid = "{cbf9b6fe-d244-4f9c-a73b-5d5f144d3dc7}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -100;
+		value maximum = 100;
+	}
+	Parameter "yellow_h" input
+	{
+		title = "yellow hue";
+		guid = "{73e82fcf-c632-4062-ae6c-fb049adc548e}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -360;
+		value maximum = 360;
+	}
+	Parameter "yellow_l" input
+	{
+		title = "yellow lightness";
+		guid = "{6637db19-a5d1-402c-baa5-88166e1f204a}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -200;
+		value maximum = 200;
+	}
+	Parameter "yellow_s" input
+	{
+		title = "yellow saturation";
+		guid = "{cb8faefa-9a13-44d4-8ff1-0a7c0b6195b6}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -100;
+		value maximum = 100;
+	}
+	Parameter "magenta_h" input
+	{
+		title = "magenta hue";
+		guid = "{6c77422b-d904-471b-a19d-597f315a1abe}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -360;
+		value maximum = 360;
+	}
+	Parameter "magenta_l" input
+	{
+		title = "magenta lightness";
+		guid = "{10f56a8a-7bac-4465-81e6-d1a33dd71075}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -200;
+		value maximum = 200;
+	}
+	Parameter "magenta_s" input
+	{
+		title = "magenta saturation";
+		guid = "{334c893e-c0de-4db9-9938-704f8922107d}";
+		type = scalar;
+		flags = 1;
+		texturable = off;
+		value = 0;
+		value minimum = -100;
+		value maximum = 100;
+	}
+}
+MetaShader "sib_color_hls_adjust_declare"
+{
+	Name = "Color HLS Adjust";
+	Type = texture;
+	Renderer "mental ray"
+	{
+		Name = "sib_color_hls_adjust";
+		FileName = "sibase.{EXT}";
+		Options
+		{
+			"version" = 1;
+		}
+	}
+	
+	Renderer "MetaSL"
+	{
+		Name = "msl_soft_hls_adjust";
+		FileName = "softimage.msl";
+	}	
+	
+}
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets760.htm";
+Defaults
+{
+	color
+	{
+		Description = "Input";
+		UIType = "rgba",4;
+		Commands = "{F5C75F11-2F05-11D3-AA95-00AA0068D2C0}";
+	}
+	master_h
+	{
+		Description = "master hue";
+		Name = "Hue";
+		UIRange = -180 to 180;
+	}
+	master_l
+	{
+		Description = "master lightness";
+		Name = "Lightness";
+		UIRange = -100 to 100;
+	}
+	master_s
+	{
+		Description = "master saturation";
+		Name = "Saturation";
+		UIRange = -100 to 100;
+	}
+	red_h
+	{
+		Description = "red hue";
+		Name = "Hue";
+		UIRange = -180 to 180;
+	}
+	red_l
+	{
+		Description = "red lightness";
+		Name = "Lightness";
+		UIRange = -100 to 100;
+	}
+	red_s
+	{
+		Description = "red saturation";
+		Name = "Saturation";
+		UIRange = -100 to 100;
+	}
+	yellow_h
+	{
+		Description = "yellow hue";
+		Name = "Hue";
+		UIRange = -180 to 180;
+	}
+	yellow_l
+	{
+		Description = "yellow lightness";
+		Name = "Lightness";
+		UIRange = -100 to 100;
+	}
+	yellow_s
+	{
+		Description = "yellow saturation";
+		Name = "Saturation";
+		UIRange = -100 to 100;
+	}
+	green_h
+	{
+		Description = "green hue";
+		Name = "Hue";
+		UIRange = -180 to 180;
+	}
+	green_l
+	{
+		Description = "green lightness";
+		Name = "Lightness";
+		UIRange = -100 to 100;
+	}
+	green_s
+	{
+		Description = "green saturation";
+		Name = "Saturation";
+		UIRange = -100 to 100;
+	}
+	cyan_h
+	{
+		Description = "cyan hue";
+		Name = "Hue";
+		UIRange = -180 to 180;
+	}
+	cyan_l
+	{
+		Description = "cyan lightness";
+		Name = "Lightness";
+		UIRange = -100 to 100;
+	}
+	cyan_s
+	{
+		Description = "cyan saturation";
+		Name = "Saturation";
+		UIRange = -100 to 100;
+	}
+	blue_h
+	{
+		Description = "blue hue";
+		Name = "Hue";
+		UIRange = -180 to 180;
+	}
+	blue_l
+	{
+		Description = "blue lightness";
+		Name = "Lightness";
+		UIRange = -100 to 100;
+	}
+	blue_s
+	{
+		Description = "blue saturation";
+		Name = "Saturation";
+		UIRange = -100 to 100;
+	}
+	magenta_h
+	{
+		Description = "magenta hue";
+		Name = "Hue";
+		UIRange = -180 to 180;
+	}
+	magenta_l
+	{
+		Description = "magenta lightness";
+		Name = "Lightness";
+		UIRange = -100 to 100;
+	}
+	magenta_s
+	{
+		Description = "magenta saturation";
+		Name = "Saturation";
+		UIRange = -100 to 100;
+	}
+}
+Layout "Default"
+{
+	color;
+	Tab "Master"
+	{
+		master_h;
+		master_l;
+		master_s;
+	}
+	Tab "RGB"
+	{
+		Group "Red"
+		{
+			red_h;
+			red_l;
+			red_s;
+		}
+		Group "Green"
+		{
+			green_h;
+			green_l;
+			green_s;
+		}
+		Group "Blue"
+		{
+			blue_h;
+			blue_l;
+			blue_s;
+		}
+	}
+	Tab "CYM"
+	{
+		Group "Cyan"
+		{
+			cyan_h;
+			cyan_l;
+			cyan_s;
+		}
+		Group "Yellow"
+		{
+			yellow_h;
+			yellow_l;
+			yellow_s;
+		}
+		Group "Magenta"
+		{
+			magenta_h;
+			magenta_l;
+			magenta_s;
+		}
+	}
+}
+Logic
+{
+}
+END

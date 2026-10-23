@@ -113,8 +113,8 @@ export function viewManager(app: App, host: HTMLElement) {
   const texCache = new Map<string, THREE.Texture>();
   const materialFor = (o: X3DObject, textured: boolean): THREE.Material => {
     const mat = o.material ?? app.scene.root.material; const sh = mat?.surface; const type = sh?.type ?? 'Phong';
-    const col = (sh?.val('diffuse') as number[] | undefined) ?? [0.7, 0.7, 0.7]; const img = textured ? (sh?.val('image') as string | undefined) : undefined;
-    const keyc = `${type}|${col.map(x => x.toFixed(3)).join(',')}|${sh?.val('shiny') ?? ''}|${sh?.val('roughness') ?? ''}|${sh?.val('metalness') ?? ''}|${sh?.val('transparency') ?? 0}|${img ? img.length : 0}`;
+    const col = (sh?.val('diffuse') as number[] | undefined) ?? [0.7, 0.7, 0.7]; const img = textured ? ((sh?.inputs.get('diffuse')?.val('tex') as string | undefined) || (sh?.val('image') as string | undefined) || undefined) : undefined;
+    const keyc = `${type}|${col.map(x => x.toFixed(3)).join(',')}|${sh?.val('shiny') ?? ''}|${sh?.val('roughness') ?? ''}|${sh?.val('metalness') ?? ''}|${JSON.stringify(sh?.val('transparency') ?? 0)}|${img ? img.length : 0}`;
     let m = matCache.get(keyc);
     if (!m) {
       const color = new THREE.Color(col[0], col[1], col[2]); const opts: any = { color, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1.5, polygonOffsetUnits: 2 };
@@ -126,7 +126,7 @@ export function viewManager(app: App, host: HTMLElement) {
         case 'Toon': m = new THREE.MeshToonMaterial(opts); break;
         default: m = new THREE.MeshPhongMaterial({ ...opts, shininess: Number(sh?.val('shiny') ?? 50) * 0.6, specular: new THREE.Color(0x444444) });
       }
-      const tr = Number(sh?.val('transparency') ?? 0); if (tr > 0) { m.transparent = true; m.opacity = 1 - tr; }
+      const trv = sh?.val('transparency'); const tr = Array.isArray(trv) ? (trv[0] + trv[1] + trv[2]) / 3 : Number(trv ?? 0); if (tr > 0) { m.transparent = true; m.opacity = 1 - tr; }
       if (img && 'map' in m) { let t = texCache.get(img); if (!t) { t = new THREE.TextureLoader().load(img, () => { needs = true; }); t.colorSpace = THREE.SRGBColorSpace; texCache.set(img, t); } (m as any).map = t; (m as any).color = new THREE.Color(1, 1, 1); }
       matCache.set(keyc, m);
     }

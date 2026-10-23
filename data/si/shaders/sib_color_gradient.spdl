@@ -1,0 +1,1868 @@
+SPDL
+Version = "2.0.0.0";
+Reference = "{B3745FE2-3947-455A-B6BE-18CD5FF94639}";
+PropertySet "sib_color_gradient_params"
+{
+	Parameter "out" output
+	{
+		title = "Gradient output parameter";
+		guid = "{4C6879FF-7EC8-11D0-8E3B-00A0C90640EC}";
+		type = color;
+		flags = 1;
+	}
+	Parameter "input" input
+	{
+		title = "input";
+		guid = "{372228F2-06B9-4AF0-81EF-B549FF0811AB}";
+		type = scalar;
+		flags = 1;
+		value = 1.0;
+		value minimum = -10000000000000.0;
+		value maximum = 10000000000000.0;
+		texturable = on;
+		writable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "coord" input
+	{
+		title = "coord";
+		guid = "{A3EAB500-EA7A-4744-A6D5-98EF7B0BE078}";
+		type = vector;
+		flags = 1;
+		value = 0.0 0.0 0.0;
+		texturable = on;
+		writable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "input_type" input
+	{
+		title = "input_type";
+		guid = "{AC7AE36B-B5B5-4EAD-9776-551BB1C526FB}";
+		type = integer;
+		flags = 1;
+		value = 0;
+		value minimum = 0;
+		value maximum = 4;
+		texturable = off;
+		writable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "gradient_type" input
+	{
+		title = "2dtype";
+		guid = "{2C714395-C596-491D-9D68-5FAE1FB56376}";
+		type = integer;
+		flags = 1;
+		value = 0;
+		value minimum = 0;
+		value maximum = 11;
+		texturable = off;
+		writable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "invert" input
+	{
+		title = "invert";
+		guid = "{FFE67C9E-A379-4DB7-9A24-BA881CADB55A}";
+		type = boolean;
+		flags = 1;
+		texturable = off;
+		value = off;
+		writable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "clip" input
+	{
+		title = "clip";
+		guid = "{31A8D716-6D9B-4075-9022-AB3D2EC294CF}";
+		type = boolean;
+		flags = 1;
+		texturable = off;
+		value = off;
+		writable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "enable_alpha_gradient" input
+	{
+		title = "enable_alpha_gradient";
+		guid = "{3D20DEAE-E592-49E6-9650-A6482E2CCDE0}";
+		type = boolean;
+		flags = 1;
+		texturable = off;
+		value = off;
+		writable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "min" input
+	{
+		title = "Minimum gradient Range";
+		guid = "{87E81DFD-8DD5-4FD1-A5CC-145A8E3B1B30}";
+		type = scalar;
+		flags = 1;
+		value = 0.0;
+		value minimum = -10000000000000.0;
+		value maximum = 10000000000000.0;
+		texturable = on;
+		writable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "max" input
+	{
+		title = "Maximum gradient Range";
+		guid = "{D28D7E8C-EBFB-48B6-9343-D22A8161D010}";
+		type = scalar;
+		flags = 1;
+		value = 1.0;
+		value minimum = -10000000000000.0;
+		value maximum = 10000000000000.0;
+		texturable = on;
+		writable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "rgba_interpolation" input
+	{
+		title = "type of RGBA interpolation";
+		guid = "{94A9A304-E1A4-4E0E-8E75-945C7FBD1DC3}";
+		type = integer;
+		flags = 0;
+		value = 1;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = off;
+		writable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "color1" input
+	{
+		title = "color1";
+		guid = "{210EA5F3-1742-4204-999F-E0750F2289E4}";
+		type = color;
+		flags = 1;
+		value = 1.0 0.0 0.0 1.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_color1" input
+	{
+		title = "position of color1";
+		guid = "{9500FFB5-7918-44F1-9D2A-0480217D6297}";
+		type = scalar;
+		flags = 1;
+		value = 0;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_color1" input
+	{
+		title = "interpolation handle of color1";
+		guid = "{11888B2B-3A2B-4E9F-BBBA-17C222C38CDF}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = off;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "color2" input
+	{
+		title = "color2";
+		guid = "{DDBD621D-A777-4845-BA44-E1B9808AC551}";
+		type = color;
+		flags = 1;
+		value = 1.0 0.0 1.0 1.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_color2" input
+	{
+		title = "position of color2";
+		guid = "{18E61460-8F5A-4D9C-8BC1-D5D7218336BC}";
+		type = scalar;
+		flags = 1;
+		value = 0.2;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_color2" input
+	{
+		title = "interpolation handle of color2";
+		guid = "{5B23415C-EE13-41B6-974E-D1525A65FAA7}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = off;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "color3" input
+	{
+		title = "color3";
+		guid = "{FA2AD354-2C30-426B-83A0-C36D888BF2A4}";
+		type = color;
+		flags = 1;
+		value = 0.0 0.0 1.0 1.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_color3" input
+	{
+		title = "position of color3";
+		guid = "{6EE7D52E-14EC-48CE-BD1A-551BB832C343}";
+		type = scalar;
+		flags = 1;
+		value = 0.35;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_color3" input
+	{
+		title = "interpolation handle of color3";
+		guid = "{928A126D-9792-4EB3-BB17-54982B4BA758}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = off;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "color4" input
+	{
+		title = "color4";
+		guid = "{82032522-75D2-490E-B3DF-6CC103434B43}";
+		type = color;
+		flags = 1;
+		value = 0.0 1.0 1.0 1.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_color4" input
+	{
+		title = "position of color4";
+		guid = "{2404BCBC-D414-4E8E-80AF-7865E83E7F18}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_color4" input
+	{
+		title = "interpolation handle of color4";
+		guid = "{D8510115-B320-4980-B7DD-49966BA150C2}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = off;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "color5" input
+	{
+		title = "color5";
+		guid = "{0CCA6DBC-71E2-4A2A-AA6F-6AA9BBF7E2F4}";
+		type = color;
+		flags = 1;
+		value = 0.0 1.0 0.0 1.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_color5" input
+	{
+		title = "position of color5";
+		guid = "{46E0CF1C-FFEF-458E-BB29-D2C2316EC113}";
+		type = scalar;
+		flags = 1;
+		value = 0.65;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_color5" input
+	{
+		title = "interpolation handle of color5";
+		guid = "{254313E2-3780-4562-B7BC-66C22D8D7313}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = off;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "color6" input
+	{
+		title = "color6";
+		guid = "{3A22804B-31A1-4467-A707-6F91A8D29FC1}";
+		type = color;
+		flags = 1;
+		value = 1.0 1.0 0.0 1.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_color6" input
+	{
+		title = "position of color6";
+		guid = "{3737BADF-E469-4783-A7FE-B1D260EBE655}";
+		type = scalar;
+		flags = 1;
+		value = 0.8;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_color6" input
+	{
+		title = "interpolation handle of color6";
+		guid = "{BF7FFA9A-8A34-454A-B306-83024AF04C94}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = off;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "color7" input
+	{
+		title = "color7";
+		guid = "{0CAFFF69-BDAD-47B7-8D5D-98A5C7B7E5D7}";
+		type = color;
+		flags = 1;
+		value = 0.0 0.0 0.0 0.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_color7" input
+	{
+		title = "position of color7";
+		guid = "{13B497FA-408E-4432-9469-2579FB4AD44E}";
+		type = scalar;
+		flags = 1;
+		value = -1.0;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_color7" input
+	{
+		title = "interpolation handle of color7";
+		guid = "{6D6947FB-87CA-4B64-8942-B65A83E3BBCC}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = off;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "color8" input
+	{
+		title = "color8";
+		guid = "{F7FA9E29-436F-498C-BF09-6671FB83EC34}";
+		type = color;
+		flags = 1;
+		value = 0.0 0.0 0.0 0.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_color8" input
+	{
+		title = "position of color8";
+		guid = "{9CA9C233-2523-4E2C-863F-C17819AB2139}";
+		type = scalar;
+		flags = 1;
+		value = -1.0;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_color8" input
+	{
+		title = "interpolation handle of color8";
+		guid = "{2EA65070-D98D-420A-8786-380D2DCA8E48}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = off;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "alpha_interpolation" input
+	{
+		title = "type of Alpha interpolation";
+		guid = "{82C0A7AA-CCA9-4769-BC42-74CFE3C62E5B}";
+		type = integer;
+		flags = 1;
+		value = 1;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = off;
+		writable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "alpha1" input
+	{
+		title = "alpha1";
+		guid = "{37A5B9EF-E8E1-4A68-BA57-8402A16879A8}";
+		type = scalar;
+		flags = 1;
+		value = 0.0;
+		value minimum = -10000000000000.0;
+		value maximum = 10000000000000.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_alpha1" input
+	{
+		title = "Position of alpha1";
+		guid = "{D946505D-6C8E-4AF9-9855-347284DAC49E}";
+		type = scalar;
+		flags = 1;
+		value = 0.0;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_alpha1" input
+	{
+		title = "Interpolation of alpha1";
+		guid = "{B300BFBE-5805-4A13-B8AE-D09EE95B7D3C}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "alpha2" input
+	{
+		title = "alpha2";
+		guid = "{63F76E5E-86F1-4AE0-908F-2674F9A13ED6}";
+		type = scalar;
+		flags = 1;
+		value = 1.0;
+		value minimum = -10000000000000.0;
+		value maximum = 10000000000000.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_alpha2" input
+	{
+		title = "Position of alpha2";
+		guid = "{0929C120-E975-4C90-A194-D085E1C87807}";
+		type = scalar;
+		flags = 1;
+		value = 1.0;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_alpha2" input
+	{
+		title = "Interpolation of alpha2";
+		guid = "{BFBEA34B-9A52-4746-9C79-7CACB0C783FF}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "alpha3" input
+	{
+		title = "alpha3";
+		guid = "{A578586F-A287-42AF-879A-B86AE526670A}";
+		type = scalar;
+		flags = 1;
+		value = 0.0;
+		value minimum = -10000000000000.0;
+		value maximum = 10000000000000.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_alpha3" input
+	{
+		title = "Position of alpha3";
+		guid = "{1A216EE4-C55D-4F0A-9F52-46522661225A}";
+		type = scalar;
+		flags = 1;
+		value = -1.0;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_alpha3" input
+	{
+		title = "Interpolation of alpha3";
+		guid = "{BE6E42F9-7B90-416A-BCDA-7DDA6F7F035A}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "alpha4" input
+	{
+		title = "alpha4";
+		guid = "{BCDF68CC-9287-4F40-BB32-A0297DFF20F1}";
+		type = scalar;
+		flags = 1;
+		value = 0.0;
+		value minimum = -10000000000000.0;
+		value maximum = 10000000000000.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_alpha4" input
+	{
+		title = "Position of alpha4";
+		guid = "{364164F6-54E4-4187-B968-511D01BCBE6A}";
+		type = scalar;
+		flags = 1;
+		value = -1.0;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_alpha4" input
+	{
+		title = "Interpolation of alpha4";
+		guid = "{BD02B3C0-CB4E-4DBE-9F5B-9707C41D89D1}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "alpha5" input
+	{
+		title = "alpha5";
+		guid = "{55604412-7D3E-4334-81BB-E013A32D54F4}";
+		type = scalar;
+		flags = 1;
+		value = 0.0;
+		value minimum = -10000000000000.0;
+		value maximum = 10000000000000.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_alpha5" input
+	{
+		title = "Position of alpha5";
+		guid = "{6C0701AB-1C78-46D6-8DF5-5505167FF496}";
+		type = scalar;
+		flags = 1;
+		value = -1.0;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_alpha5" input
+	{
+		title = "Interpolation of alpha5";
+		guid = "{BB12A46B-1EDB-4C53-88F5-324E6103E579}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "alpha6" input
+	{
+		title = "alpha6";
+		guid = "{09AD608E-0E5F-406E-8B47-AE809C814EEA}";
+		type = scalar;
+		flags = 1;
+		value = 0.0;
+		value minimum = -10000000000000.0;
+		value maximum = 10000000000000.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_alpha6" input
+	{
+		title = "Position of alpha6";
+		guid = "{3219F461-1324-49CD-9DCC-54BB5023F1B2}";
+		type = scalar;
+		flags = 1;
+		value = -1.0;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_alpha6" input
+	{
+		title = "Interpolation of alpha6";
+		guid = "{3CBC4A6E-7400-4C30-AC3B-44B1022AD924}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "alpha7" input
+	{
+		title = "alpha7";
+		guid = "{CF681EDD-ACD7-4F0A-B541-F8F8A61BB60F}";
+		type = scalar;
+		flags = 1;
+		value = 0.0;
+		value minimum = -10000000000000.0;
+		value maximum = 10000000000000.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_alpha7" input
+	{
+		title = "Position of alpha7";
+		guid = "{BF146F95-4618-4F25-A986-51F951039F5E}";
+		type = scalar;
+		flags = 1;
+		value = -1.0;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_alpha7" input
+	{
+		title = "Interpolation of alpha7";
+		guid = "{6E3359F9-2963-4EB3-A10A-AA9E9A2CEEF5}";
+		type = scalar;
+		flags = 1;
+		value = 0.7;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "alpha8" input
+	{
+		title = "alpha8";
+		guid = "{42AD1298-C39E-4CE2-8FA7-3054E255A4D1}";
+		type = scalar;
+		flags = 1;
+		value = 0.0;
+		value minimum = -10000000000000.0;
+		value maximum = 10000000000000.0;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "pos_alpha8" input
+	{
+		title = "Position of alpha8";
+		guid = "{52BF92C7-2DAD-4907-8CD9-2B6B8A0898DE}";
+		type = scalar;
+		flags = 1;
+		value = -1.0;
+		value minimum = -1;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+	Parameter "mid_alpha8" input
+	{
+		title = "Interpolation of alpha8";
+		guid = "{A91EBBA0-AF76-4F58-997B-72A7897F598A}";
+		type = scalar;
+		flags = 1;
+		value = 0.5;
+		value minimum = 0;
+		value maximum = 1;
+		texturable = on;
+		writable = on;
+		animatable = on;
+		persistable = on;
+		readable = on;
+		inspectable = on;
+	}
+}
+MetaShader "Gradient_declare"
+{
+	Name = "Color Gradient";
+	Type = texture;
+	Renderer "mental ray"
+	{
+		Name = "sib_color_gradient";
+		FileName = "sibase.{EXT}";
+		Options
+		{
+			"version" = 1;
+		}
+	}
+	Renderer "MetaSL"
+	{
+		Name = "msl_soft_texture_gradient";
+		FileName = "softimage.msl";
+	}
+}
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets765.htm";
+Defaults
+{
+	enable_alpha_gradient
+	{
+		Name = "Enable alpha gradient";
+		Description = "Enable alpha gradient";
+	}
+	min
+	{
+		Name = "Minimum";
+		Description = "Minimum";
+		UIrange = -20 to 20 by 0.001;
+	}
+	max
+	{
+		Name = "Maximum";
+		Description = "Maximum";
+		UIrange = -20 to 20 by 0.001;
+	}
+	input
+	{
+		Name = "Input";
+		Description = "Gradient Input";
+		UIRange = 0 to 1 by 0.001;
+	}
+	coord
+	{
+		Name = "Coordinate Input";
+		Description = "Coordinate Input";
+		UIType = "vector";
+	}
+	input_type
+	{
+		Name = "Input Type";
+		Description = "Gradient Input";
+		UIType = "Combo";
+		Items
+		{
+			"Scalar input" = 0,
+			"Vector input" = 1,
+			"Vector X" = 2,
+			"Vector Y" = 3,
+			"Vector Z" = 4,
+		}
+	}
+	gradient_type
+	{
+		Name = "Gradient type";
+		Description = "Gradient Input";
+		UIType = "Combo";
+		Items
+		{
+			"Vertical" = 0,
+			"Horizontal" = 1,
+			"Radial Wave" = 2,
+			"Radial Rainbow" = 3,
+			"Diagonal Down" = 4,
+			"Diagonal Up" = 5,
+		}
+	}
+	invert
+	{
+		Name = "Invert Direction";
+		Description = "Invert Gradient Direction";
+	}
+	clip
+	{
+		Name = "Clip";
+		Description = "Clip when outside of gradient space";
+	}
+	rgba_interpolation
+	{
+		Name = "RGBA interpolation";
+		Description = "type of RGBA interpolation";
+		UIType = "gradient"
+		{
+		    MidPoint = Yes;     // Mid point control : No/Yes
+		    Type = "RGBA"; // RGB+A or Alpha
+		    MaxMarker = 8;  // maximum number of marker
+		}
+	}
+	alpha_interpolation
+	{
+		Name = "Alpha interpolation";
+		Description = "type of Alpha interpolation";
+		UIType = "gradient"
+		{
+		    MidPoint = Yes;     // Mid point control : No/Yes
+		    Type = "Alpha"; // RGB+A or Alpha
+		    MaxMarker = 8;  // maximum number of marker
+		}
+	}
+	color1
+	{
+		Name = "color1";
+		Description = "color1";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		UIType = "rgba",4;
+	}
+	pos_color1
+	{
+		Name = "pos_color1";
+		Description = "position of color1";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_color1
+	{
+		Name = "mid_color1";
+		Description = "interpolation handle of color1";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	color2
+	{
+		Name = "color2";
+		Description = "color2";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		UIType = "rgba",4;
+	}
+	pos_color2
+	{
+		Name = "pos_color2";
+		Description = "position of color2";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_color2
+	{
+		Name = "mid_color2";
+		Description = "interpolation handle of color2";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	color3
+	{
+		Name = "color3";
+		Description = "color3";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		UIType = "rgba",4;
+	}
+	pos_color3
+	{
+		Name = "pos_color3";
+		Description = "position of color3";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_color3
+	{
+		Name = "mid_color3";
+		Description = "interpolation handle of color3";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	color4
+	{
+		Name = "color4";
+		Description = "color4";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		UIType = "rgba",4;
+	}
+	pos_color4
+	{
+		Name = "pos_color4";
+		Description = "position of color4";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_color4
+	{
+		Name = "mid_color4";
+		Description = "interpolation handle of color4";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	color5
+	{
+		Name = "color5";
+		Description = "color5";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		UIType = "rgba",4;
+	}
+	pos_color5
+	{
+		Name = "pos_color5";
+		Description = "position of color5";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_color5
+	{
+		Name = "mid_color5";
+		Description = "interpolation handle of color5";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	color6
+	{
+		Name = "color6";
+		Description = "color6";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		UIType = "rgba",4;
+	}
+	pos_color6
+	{
+		Name = "pos_color6";
+		Description = "position of color6";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_color6
+	{
+		Name = "mid_color6";
+		Description = "interpolation handle of color6";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	color7
+	{
+		Name = "color7";
+		Description = "color7";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		UIType = "rgba",4;
+	}
+	pos_color7
+	{
+		Name = "pos_color7";
+		Description = "position of color7";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_color7
+	{
+		Name = "mid_color7";
+		Description = "interpolation handle of color7";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	color8
+	{
+		Name = "color8";
+		Description = "color8";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		UIType = "rgba",4;
+	}
+	pos_color8
+	{
+		Name = "pos_color8";
+		Description = "position of color8";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_color8
+	{
+		Name = "mid_color8";
+		Description = "interpolation handle of color8";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	alpha1
+	{
+		Name = "alpha1";
+		Description = "alpha";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	pos_alpha1
+	{
+		Name = "pos_alpha1";
+		Description = "Position of alpha1";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_alpha1
+	{
+		Name = "interpol_alpha1";
+		Description = "Interpolation of alpha1";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	alpha2
+	{
+		Name = "alpha2";
+		Description = "alpha2";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	pos_alpha2
+	{
+		Name = "pos_alpha2";
+		Description = "Position of alpha2";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_alpha2
+	{
+		Name = "interpol_alpha2";
+		Description = "Interpolation of alpha2";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	alpha3
+	{
+		Name = "alpha3";
+		Description = "alpha3";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	pos_alpha3
+	{
+		Name = "pos_alpha3";
+		Description = "Position of alpha3";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_alpha3
+	{
+		Name = "interpol_alpha3";
+		Description = "Interpolation of alpha3";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	alpha4
+	{
+		Name = "alpha4";
+		Description = "alpha4";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	pos_alpha4
+	{
+		Name = "pos_alpha4";
+		Description = "Position of alpha4";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_alpha4
+	{
+		Name = "interpol_alpha4";
+		Description = "Interpolation of alpha4";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	alpha5
+	{
+		Name = "alpha5";
+		Description = "alpha5";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	pos_alpha5
+	{
+		Name = "pos_alpha5";
+		Description = "Position of alpha5";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_alpha5
+	{
+		Name = "interpol_alpha5";
+		Description = "Interpolation of alpha6";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	alpha6
+	{
+		Name = "alpha6";
+		Description = "alpha6";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	pos_alpha6
+	{
+		Name = "pos_alpha6";
+		Description = "Position of alpha6";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_alpha6
+	{
+		Name = "interpol_alpha6";
+		Description = "Interpolation of alpha6";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	alpha7
+	{
+		Name = "alpha7";
+		Description = "alpha7";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	pos_alpha7
+	{
+		Name = "pos_alpha7";
+		Description = "Position of alpha7";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_alpha7
+	{
+		Name = "interpol_alpha7";
+		Description = "Interpolation of alpha7";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	alpha8
+	{
+		Name = "alpha8";
+		Description = "alpha8";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	pos_alpha8
+	{
+		Name = "pos_alpha8";
+		Description = "Position of alpha8";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+	mid_alpha8
+	{
+		Name = "interpol_alpha8";
+		Description = "Interpolation of alpha8";
+		Commands = "{F5C75F11-2F05-11d3-AA95-00AA0068D2C0}";
+		uirange = 0 to 1 by 0.001;
+	}
+}
+Logic
+{
+	'***************************************
+	' RGBA Gradient presets
+	'***************************************
+	Sub RGBA_chrome_preset_OnClicked()
+		on error resume next
+		dim shaderArray, item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			SetRGBAMarker item,1, 0.2,	0.65,	0.9,	1,	0.0	,0.5
+			SetRGBAMarker item,2, 1, 	1,	1,	1,	0.47	,0.5
+			SetRGBAMarker item,3, 0.82,	0.575,	0.275,	1,	0.52	,0.5
+			SetRGBAMarker item,4, 1,	1,	1,	1,	1.0	,0.5
+			SetRGBAMarker item,5, 0, 	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,6, 0, 	0,	0, 	0,	-1	,0.5
+			SetRGBAMarker item,7, 0, 	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,8, 0,	0,	0,	0,	-1	,0.5
+		next
+	end sub
+
+	Sub RGBA_copper_preset_OnClicked()
+		on error resume next
+		dim shaderArray,item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			SetRGBAMarker item,1, 0.98,	0.85,	0.77,	1,	0.0	,0.5
+			SetRGBAMarker item,2, 0.4, 	0.18,	0.09,	1,	0.33	,0.5
+			SetRGBAMarker item,3, 0.98,	0.85,	0.77,	1,	0.66	,0.5
+			SetRGBAMarker item,4, 0.4, 	0.18,	0.09,	1,	1.0	,0.5
+			SetRGBAMarker item,5, 0, 	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,6, 0, 	0,	0, 	0,	-1	,0.5
+			SetRGBAMarker item,7, 0, 	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,8, 0,	0,	0,	0,	-1	,0.5
+		next
+	end sub
+
+	Sub RGBA_spectrum_preset_OnClicked()
+		on error resume next
+		dim shaderArray, item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			SetRGBAMarker item,1, 1,	0,	0,	1,	0.0	,0.5
+			SetRGBAMarker item,2, 1, 	0,	1,	1,	0.20	,0.5
+			SetRGBAMarker item,3, 0,	0,	1,	1,	0.35	,0.5
+			SetRGBAMarker item,4, 0, 	1,	1,	1,	0.50	,0.5
+			SetRGBAMarker item,5, 0, 	1,	0,	1,	0.65	,0.5
+			SetRGBAMarker item,6, 1, 	1,	0, 	1,	0.80	,0.5
+			SetRGBAMarker item,7, 1, 	0,	0,	1,	1	,0.5
+			SetRGBAMarker item,8, 0,	0,	0,	0,	-1	,0.5
+		next
+	end sub
+
+	Sub RGBA_rainbow_preset_OnClicked()
+		on error resume next
+		dim shaderArray, item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			SetRGBAMarker item,1, 1, 	0,	0,	0,	0.04	,0.5
+			SetRGBAMarker item,2, 1,	0,	0,	1,	0.12	,0.5
+			SetRGBAMarker item,3, 1, 	1,	0,	1,	0.28	,0.5
+			SetRGBAMarker item,4, 0,	1,	0,	1,	0.45	,0.5
+			SetRGBAMarker item,5, 0, 	1,	1,	1,	0.60	,0.5
+			SetRGBAMarker item,6, 0, 	0,	1,	1,	0.75	,0.5
+			SetRGBAMarker item,7, 1, 	0,	1, 	1,	0.88	,0.5
+			SetRGBAMarker item,8, 1,	0,	1,	0,	0.97	,0.5
+		next
+	end sub
+
+	Sub RGBA_fire_preset_OnClicked()
+		on error resume next
+		dim shaderArray
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			item = CheckInspectedObjects ( item )
+			SetRGBAMarker item,1, 1, 	1,	0,	1,	0	,0.5
+			SetRGBAMarker item,2, 1, 	0,	0,	0.85,	0.13	,0.5
+			SetRGBAMarker item,3, 1,	0.5,	0,	0.75,	0.32	,0.5
+			SetRGBAMarker item,4, 1, 	1,	0,	0.6,	0.5	,0.5
+			SetRGBAMarker item,5, 0,	0,	1,	0.3,	0.7	,0.5
+			SetRGBAMarker item,6, 0, 	0,	1,	0,	0.82	,0.5
+			SetRGBAMarker item,7, 0, 	0,	0, 	0,	-1	,0.5
+			SetRGBAMarker item,8, 0,	0,	0,	0,	-1	,0.5
+		next
+	end sub
+
+	Sub RGBA_BW_preset_OnClicked()
+		on error resume next
+		dim shaderArray,item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			SetRGBAMarker item,1, 0, 	0,	0,	1,	0.0	,0.5
+			SetRGBAMarker item,2, 1,	1,	1,	1,	1.0	,0.5
+			SetRGBAMarker item,3, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,4, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,5, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,6, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,7, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,8, 0,	0,	0,	0,	-1	,0.5
+		next
+	end sub
+
+	Sub RGBA_BTR_preset_OnClicked()
+		on error resume next
+		dim shaderArray,item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			SetRGBAMarker item,1, 0, 	0,	0,	1,	0.0	,0.5
+			SetRGBAMarker item,2, 0,	0,	0,	0,	1.0	,0.5
+			SetRGBAMarker item,3, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,4, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,5, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,6, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,7, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,8, 0,	0,	0,	0,	-1	,0.5
+		next
+	end sub
+
+	Sub RGBA_WTR_preset_OnClicked()
+		on error resume next
+		dim shaderArray, item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			SetRGBAMarker item,1, 1, 	1,	1,	1,	0.0	,0.5
+			SetRGBAMarker item,2, 1,	1,	1,	0,	1.0	,0.5
+			SetRGBAMarker item,3, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,4, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,5, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,6, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,7, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,8, 0,	0,	0,	0,	-1	,0.5
+		next
+	end sub
+
+	Sub RGBA_WB_preset_OnClicked()
+		on error resume next
+		dim shaderArray, item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			SetRGBAMarker item,1, 1,	1,	1,	1,	0.0	,0.5
+			SetRGBAMarker item,2, 0, 	0,	0,	1,	1.0	,0.5
+			SetRGBAMarker item,3, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,4, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,5, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,6, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,7, 0,	0,	0,	0,	-1	,0.5
+			SetRGBAMarker item,8, 0,	0,	0,	0,	-1	,0.5
+		next
+	end sub
+
+	Function SetRGBAMarker(shader,index,r,g,b,a,pos,mid)
+		on error resume next
+		SetValue shader & ".color"&index&".red", r
+		on error resume next
+		SetValue shader & ".color"&index&".green", g
+		on error resume next
+		SetValue shader & ".color"&index&".blue", b
+		on error resume next
+		SetValue shader & ".color"&index&".alpha", a
+		on error resume next
+		SetValue shader & ".pos_color"&index, pos
+		on error resume next
+		SetValue shader & ".mid_color"&index, mid
+	end function
+
+	Function SetAlphaMarker(shader,index,a,pos,mid)
+		on error resume next
+		SetValue shader & ".alpha"&index, a
+		on error resume next
+		SetValue shader & ".pos_alpha"&index, pos
+		on error resume next
+		SetValue shader & ".mid_alpha"&index, mid
+	end function
+
+	'***************************************
+	' Alpha Gradient presets
+	'***************************************
+	Sub Alpha_BW_preset_OnClicked()
+		on error resume next
+		dim shaderArray,item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			SetValue item & ".enable_alpha_gradient", true
+			SetAlphaMarker item,	1,	0,	0,	0.5
+			SetAlphaMarker item,	2,	1,	1,	0.5
+			SetAlphaMarker item,	3,	1,	-1,	0.5
+			SetAlphaMarker item,	4,	1,	-1,	0.5
+			SetAlphaMarker item,	5,	1,	-1,	0.5
+			SetAlphaMarker item,	6,	1,	-1,	0.5
+			SetAlphaMarker item,	7,	1,	-1,	0.5
+			SetAlphaMarker item,	8,	1,	-1,	0.5
+		next
+	end sub
+
+	Sub Alpha_WB_preset_OnClicked()
+		on error resume next
+		dim shaderArray,item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			SetValue item & ".enable_alpha_gradient", true
+			SetAlphaMarker item,	1,	1,	0,	0.5
+			SetAlphaMarker item,	2,	0,	1,	0.5
+			SetAlphaMarker item,	3,	1,	-1,	0.5
+			SetAlphaMarker item,	4,	1,	-1,	0.5
+			SetAlphaMarker item,	5,	1,	-1,	0.5
+			SetAlphaMarker item,	6,	1,	-1,	0.5
+			SetAlphaMarker item,	7,	1,	-1,	0.5
+			SetAlphaMarker item,	8,	1,	-1,	0.5
+		next
+	end sub
+
+	'***************************************
+	' Remove Anim functions
+	'***************************************
+
+	Sub RemoveKeyRGBAMarkers_OnClicked()
+		on error resume next
+		dim shaderArray,item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			RemoveKeyRGBAMarker item,	1
+			RemoveKeyRGBAMarker item,	2
+			RemoveKeyRGBAMarker item,	3
+			RemoveKeyRGBAMarker item,	4
+			RemoveKeyRGBAMarker item,	5
+			RemoveKeyRGBAMarker item,	6
+			RemoveKeyRGBAMarker item,	7
+			RemoveKeyRGBAMarker item,	8
+		next
+	End Sub
+
+	Function RemoveKeyRGBAMarker(shader,index)
+		on error resume next
+		RemoveAllAnimation shader & ".color"&index&".red"
+		RemoveAllAnimation shader & ".color"&index&".green"
+		RemoveAllAnimation shader & ".color"&index&".blue"
+		RemoveAllAnimation shader & ".color"&index&".alpha"
+		RemoveAllAnimation shader & ".pos_color"&index
+		RemoveAllAnimation shader & ".mid_color"&index
+	end function
+
+	Sub RemoveKeyAlphaMarkers_OnClicked()
+		on error resume next
+		dim shaderArray,item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			RemoveKeyAlphaMarker item,	1
+			RemoveKeyAlphaMarker item,	2
+			RemoveKeyAlphaMarker item,	3
+			RemoveKeyAlphaMarker item,	4
+			RemoveKeyAlphaMarker item,	5
+			RemoveKeyAlphaMarker item,	6
+			RemoveKeyAlphaMarker item,	7
+			RemoveKeyAlphaMarker item,	8
+		next
+	End Sub
+
+	Function RemoveKeyAlphaMarker(shader,index)
+		on error resume next
+		RemoveAllAnimation shader & ".alpha"&index
+		RemoveAllAnimation shader & ".pos_alpha"&index
+		RemoveAllAnimation shader & ".mid_alpha"&index
+	end function
+
+	'***************************************
+	' Remove Shader functions
+	'***************************************
+	Sub RemoveAllShadersOnRGBA_Onclicked()
+		on error resume next
+		dim shaderArray,item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			RemoveAllshadersRGBAMarkers item,	1
+			RemoveAllshadersRGBAMarkers item,	2
+			RemoveAllshadersRGBAMarkers item,	3
+			RemoveAllshadersRGBAMarkers item,	4
+			RemoveAllshadersRGBAMarkers item,	5
+			RemoveAllshadersRGBAMarkers item,	6
+			RemoveAllshadersRGBAMarkers item,	7
+			RemoveAllshadersRGBAMarkers item,	8
+		next
+	End Sub
+
+	Sub RemoveAllShadersOnAlpha_Onclicked()
+		on error resume next
+		dim shaderArray,item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			on error resume next
+			RemoveAllshadersAlphaMarkers item,	1
+			RemoveAllshadersAlphaMarkers item,	2
+			RemoveAllshadersAlphaMarkers item,	3
+			RemoveAllshadersAlphaMarkers item,	4
+			RemoveAllshadersAlphaMarkers item,	5
+			RemoveAllshadersAlphaMarkers item,	6
+			RemoveAllshadersAlphaMarkers item,	7
+			RemoveAllshadersAlphaMarkers item,	8
+		next
+	End Sub
+
+	Function RemoveAllshadersRGBAMarkers(shader,index)
+		on error resume next
+		RemoveAllShadersFromCnxPoint shader & ".color" & index
+		on error resume next
+		RemoveAllShadersFromCnxPoint shader & ".pos_color" & index
+		on error resume next
+		RemoveAllShadersFromCnxPoint shader & ".mid_color" & index
+	End Function
+
+	Function RemoveAllshadersAlphaMarkers(shader,index)
+		on error resume next
+		RemoveAllShadersFromCnxPoint shader & ".alpha" & index
+		on error resume next
+		RemoveAllShadersFromCnxPoint shader & ".pos_alpha" & index
+		on error resume next
+		RemoveAllShadersFromCnxPoint shader & ".mid_alpha" & index
+	End Function
+
+
+	'***************************************
+	' Reset Gradient
+	'***************************************
+	Sub ResetRGBAMarkers_Onclicked()
+		on error resume next
+		RemoveKeyRGBAMarkers_OnClicked()
+		RGBA_spectrum_preset_OnClicked()
+	End Sub
+
+	Sub ResetAlphaMarkers_Onclicked()
+		on error resume next
+		RemoveKeyAlphaMarkers_OnClicked()
+		Alpha_BW_preset_OnClicked()
+	End Sub
+
+	'***************************************
+	' Set key functions
+	'***************************************
+	Sub SaveKeyAllVisibleRGBAMarkers_OnClicked()
+		on error resume next
+		dim shaderArray,item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			SetKeyVisibleRGBAMarker item,	1
+			SetKeyVisibleRGBAMarker item,	2
+			SetKeyVisibleRGBAMarker item,	3
+			SetKeyVisibleRGBAMarker item,	4
+			SetKeyVisibleRGBAMarker item,	5
+			SetKeyVisibleRGBAMarker item,	6
+			SetKeyVisibleRGBAMarker item,	7
+			SetKeyVisibleRGBAMarker item,	8
+		next
+	end sub
+
+	Function SetKeyVisibleRGBAMarker (shader,index)
+		on error resume next
+		if ( GetValue(shader&".pos_color"&index) >= 0 and GetValue(shader&".pos_color"&index) <= 1 ) then
+			SetKey shader & ".color"&index&".red",,GetValue(shader&".color"&index&".red")
+			SetKey shader & ".color"&index&".green",,GetValue(shader&".color"&index&".green")
+			SetKey shader & ".color"&index&".blue",,GetValue(shader&".color"&index&".blue")
+			SetKey shader & ".color"&index&".alpha",,GetValue(shader&".color"&index&".alpha")
+			SetKey shader & ".pos_color"&index,,GetValue(shader&".pos_color"&index)
+			SetKey shader & ".mid_color"&index,,GetValue(shader&".mid_color"&index)
+		end if
+	end function
+
+	Sub SaveKeyAllVisibleAlphaMarkers_OnClicked()
+		on error resume next
+		dim shaderArray,item
+		shaderArray = split(PSet.InspectedObjects,",")
+		for each item in shaderArray
+			SetKeyVisibleAlphaMarker item,	1
+			SetKeyVisibleAlphaMarker item,	2
+			SetKeyVisibleAlphaMarker item,	3
+			SetKeyVisibleAlphaMarker item,	4
+			SetKeyVisibleAlphaMarker item,	5
+			SetKeyVisibleAlphaMarker item,	6
+			SetKeyVisibleAlphaMarker item,	7
+			SetKeyVisibleAlphaMarker item,	8
+		next
+	end sub
+
+	Function SetKeyVisibleAlphaMarker(shader,index)
+		on error resume next
+		if ( GetValue(shader&".pos_alpha"&index) >= 0 and GetValue(shader&".pos_alpha"&index) <= 1 ) then
+			SetKey shader & ".alpha"&index,,GetValue(shader&".alpha"&index)
+			SetKey shader & ".pos_alpha"&index,,GetValue(shader&".pos_alpha"&index)
+			SetKey shader & ".mid_alpha"&index,,GetValue(shader&".mid_alpha"&index)
+		end if
+	end function
+
+
+	'***************************************
+	' UI logic
+	'***************************************	
+	sub input_type_OnChanged
+		on error resume next
+		pset.input.enable(pset.input_type.value = 0)
+		pset.coord.enable(pset.input_type.value >= 1)
+		pset.gradient_type.enable(pset.input_type.value >= 1)
+	end sub
+
+	sub enable_alpha_gradient_OnChanged
+		on error resume next
+		pset.alpha_interpolation.Enable(enable_alpha_gradient)
+	end sub
+	
+	sub OnInit
+		on error resume next
+		input_type_OnChanged
+		enable_alpha_gradient_OnChanged
+	end Sub
+}
+Layout "Default"
+{
+	Tab "RGBA Gradient"
+	{
+		Name;
+		rgba_interpolation, nolabel;
+		Group "Animation"
+		{
+			Button SaveKeyAllVisibleRGBAMarkers,continue,aligncenter = "Key All", 140;
+			Button RemoveKeyRGBAMarkers,aligncenter = "Remove keys", 140;
+			Button ResetRGBAMarkers,continue,aligncenter = "Reset", 140;
+			Button RemoveAllShadersOnRGBA,aligncenter = "Remove Shaders", 140;
+		}
+		gradient_type, aligncenter;
+		invert, aligncenter;
+		clip, aligncenter;
+		group "Preset"
+		{
+			Group "", 50%,continue
+			{
+				Button RGBA_BW_preset,aligncenter = "Black/White",140;
+				Button RGBA_WB_preset,aligncenter = "White/Black",140;
+				Button RGBA_BTR_preset,aligncenter = "Black to transparent",140;
+				Button RGBA_WTR_preset,aligncenter = "White to transparent",140;
+			}
+			Group "",50%
+			{
+				Button RGBA_chrome_preset,aligncenter = "Chrome",140;
+				Button RGBA_copper_preset,aligncenter = "Copper",140;
+				Button RGBA_spectrum_preset,aligncenter = "Spectrum",140;
+				Button RGBA_rainbow_preset,aligncenter = "Rainbow",140;
+				Button RGBA_fire_preset,aligncenter = "Fire",140;
+			}
+		}
+	}
+	Tab "Alpha Gradient"
+	{
+		Name;
+		enable_alpha_gradient, aligncenter;
+		alpha_interpolation, nolabel;
+		Group "Animation"
+		{
+			Button SaveKeyAllVisibleAlphaMarkers,continue,aligncenter = "Key All",140;
+			Button RemoveKeyAlphaMarkers,aligncenter = "Remove keys",140;
+			Button ResetAlphaMarkers,continue,aligncenter = "Reset",140;
+			Button RemoveAllShadersOnAlpha,aligncenter = "Disconnect all",140;
+		}
+		gradient_type, aligncenter;
+		invert, aligncenter;
+		clip, aligncenter;
+		Group "Preset"
+		{
+			Button Alpha_BW_preset,continue,aligncenter = "Black and White",140;
+			Button Alpha_WB_preset,continue,aligncenter = "White and Black",140;
+		}
+	}
+	Tab "Input"
+	{
+		Name;
+		input_type;
+		input;
+		coord;
+		Group "Active Range"
+		{
+			min;
+			max;
+		}
+	}
+}
+END

@@ -1,0 +1,224 @@
+SPDL
+version = "2.0.0.0";
+Reference = "{153B8310-05E9-11D2-8063-00A0C906835D}";
+	PropertySet "light-exponent_params"
+	{
+		Parameter "out" output
+		{
+			title = "out";
+			guid = "{4C6879FF-7EC8-11D0-8E3B-00A0C90640EC}";
+			type = color;
+			flags  = 1;
+		}
+
+
+		Parameter "color" input
+		{
+			title = "Light Color";
+			guid = "{6230C7B0-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{07C5EDE4-52A4-11D0-8298-00A0243E366B}";
+			type = color;
+			value = 1.0 1.0 1.0;
+			texturable = on;
+		}
+		Parameter "intensity" input
+		{
+			title = "Intensity";
+			guid = "{6236E470-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			flags  = 1;
+			value = 1.0;
+			value minimum = -100.0;
+			value maximum = 100.0;
+			texturable = on;
+		}
+		Parameter "shadow" input
+		{
+			title = "Shadow On/Off";
+			guid = "{623D0130-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{07C5EDE5-52A4-11D0-8298-00A0243E366B}";
+			type = boolean;
+			value = off;
+			texturable = on;
+		}
+
+		Parameter	"shadow_attenuation" input
+		{
+			title = "Shadow Attenutation";
+			guid = "{624196C0-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			flags  = 1;
+			value = 1.0;
+			value minimum = -100.0;
+			value maximum = 100.0;
+			texturable = on;
+		}
+		Parameter "spread" input
+		{
+			title = "Spread";
+			guid = "{6247B380-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{07C5EDEC-52A4-11D0-8298-00A0243E366B}";
+			type = scalar;
+			value = 0.8;
+			flags  = 1;
+			texturable = on;
+		}
+		Parameter "min_distance" input
+		{
+			title = "Minimum Distance";
+			guid = "{624DD040-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			flags  = 1;
+			value = 0.0;
+			value minimum = -100.0;
+			value maximum = 100000;
+			texturable = on;
+		}
+		Parameter "start" input
+		{
+			title = "Attenuation Start Distance";
+			guid = "{625265D0-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{07C5EDE8-52A4-11D0-8298-00A0243E366B}";
+			type = scalar;
+			flags  = 1;
+			value = 0.01;
+			value minimum = 0.0;
+			value maximum = 100000.0;
+			texturable = off;
+		}
+		Parameter "stop" input
+		{
+			title = "Attenuation Stop Distance";
+			guid = "{62588290-CC1B-11D2-8BF3-00A0243E3672}";
+			ui "mapping" = "{07C5EDE9-52A4-11D0-8298-00A0243E366B}";
+			type = scalar;
+			flags  = 1;
+			value = 100000.0;
+			value minimum = 0.0;
+			value maximum = 100000.0;
+			texturable = off;
+		}
+		Parameter "exponent" input
+		{
+			title = "Attenuation Exponent";
+			guid = "{62602680-CC1B-11D2-8BF3-00A0243E3672}";
+			type = scalar;
+			flags  = 1;
+			value = 2.0;
+			texturable = on;
+		}
+	}
+
+	
+	MetaShader "light-exponent_declare"
+	{
+		Name = "light-exponent";
+		Type = light;
+		Renderer "mental ray"
+		{
+			Name = "light-exponent";
+			Options
+			{
+				"version" = 1;
+			}
+			BeginText
+			
+			Node "light" = guid "{8853694E-BCFA-11D1-90E9-0000F804EB21}";		#sib_light
+			Node "exp_falloff" = guid "{85A85795-BCFA-11D1-90E9-0000F804EB21}";	#sib_atten_exp
+			
+			Connection "exp_falloff::start"	= interface "start";
+			Connection "exp_falloff::end"	= interface "stop";
+			Connection "exp_falloff::exponent" = interface "exponent";
+			
+			Connection "light::color"		= interface "color";
+			Connection "light::intensity"	= interface "intensity";
+			Connection "light::shadow"		= interface "shadow";
+			Connection "light::attenuation"	= "exp_falloff";
+			Connection "light::shadow_attenuation" = interface "shadow_attenuation";
+			Connection "light::spread"		= interface "spread";
+			Connection "light::min_distance" = interface "min_distance";
+			
+			Connection root				= "light";
+			
+			EndText
+		}
+	}
+BEGIN "{24810490-56FF-11d2-BF23-00A0C982CE5D}"
+HelpFile = "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/shaderpresets39.htm";
+	Defaults
+	{
+		color
+		{
+			Name = "Light Color";
+			Description = "Light Color. RenderCost:0";
+			UIType = "rgb",4;
+		}
+		intensity
+		{
+			Name = "Intensity";
+			Description = "Intensity. RenderCost:0";
+			UIRange = 0.0 to 3.0 by 0.01;
+		}
+		shadow
+		{
+			Name = "Shadow On/Off";
+			Description = "Shadow On/Off. RenderCost:0";
+		}
+		shadow_attenuation
+		{
+			Name = "Shadow Attenutation";
+			Description = "Shadow Attenutation. RenderCost:0";
+			UIRange = 0.0 to 1.0 by 0.01;
+		}
+		spread
+		{
+			Name = "Spread";
+			Description = "Spread. RenderCost:0";
+			UIRange = 0.0 to 1.0 by 0.01;
+		}
+		min_distance
+		{
+			Name = "Minimum Distance";
+			Description = "Minimum Distance. RenderCost:0";
+			UIRange = 0.0 to 10.0 by 0.01;
+		}
+		start
+		{
+			Name = "Attenuation Start Distance";
+			Description = "Attenuation Start Distance. RenderCost:0";
+			UIRange = 0.0 to 100000.0 by 0.01;
+		}
+		stop
+		{
+			Name = "Attenuation Stop Distance";
+			Description = "Attenuation Stop Distance. RenderCost:0";
+			UIRange = 0.0 to 100000.0 by 0.01;
+		}
+		exponent
+		{
+			Name = "Attenuation Exponent";
+			Description = "Attenuation Exponent. RenderCost:0";
+			UIRange = 0.0 to 3.0 by 0.01;
+		}
+	}
+
+	Layout "Default"
+	{
+		Tab "Default"
+		{
+			Name;
+			Group "Default_Group"
+			{
+				exponent;
+				color;
+				intensity;
+				shadow;
+				shadow_attenuation;
+				spread;
+				min_distance;
+				start;
+				stop;
+			}
+		}
+	}
+END
