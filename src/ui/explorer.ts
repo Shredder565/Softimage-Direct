@@ -14,7 +14,8 @@ const FLATTEN = ['Flatten None', 'Flatten Parameters', 'Flatten Properties', 'Fl
 export function explorerView(app: App, host: HTMLElement) {
   const root = document.createElement('div'); root.className = 'explorer';
   const head = document.createElement('div'); head.className = 'explorer-head';
-  const state = { scope: 'Scene' as Scope, filter: 'All except parameters' as (typeof FILTERS)[number], show: 'No Parameters' as (typeof SHOW_PARAMS)[number], sort: 'None (creation)' as (typeof SORT)[number], flatten: 'Flatten None' as (typeof FLATTEN)[number], track: true, lock: false, values: true, scriptNames: false };
+  const state = { scope: 'Scene' as Scope, filter: 'All except parameters' as (typeof FILTERS)[number], show: 'No Parameters' as (typeof SHOW_PARAMS)[number], sort: 'None (creation)' as (typeof SORT)[number], flatten: 'Flatten None' as (typeof FLATTEN)[number], track: (window as any).Application?.explorerPrefs?.trackSel ?? true, lock: false, values: true, scriptNames: false };
+  { const ep = (app as any).explorerPrefs; if (ep) { if (ep.paramValues) { state.show = 'All Parameters' as any; state.values = true; } if (ep.sort === 1) state.sort = 'Alphabetical' as any; } }
   const menuBtn = (label: () => string, build: () => { label: string; checked?: boolean; sep?: boolean; fn?: () => void }[]) => {
     const b = document.createElement('button'); b.className = 'xp-btn'; const refreshLabel = () => { b.innerHTML = label() + '<span class="xp-arrow">▾</span>'; }; refreshLabel();
     b.onclick = (e) => { e.stopPropagation(); const r = b.getBoundingClientRect(); popup(build(), r.left, r.bottom); }; (b as any)._refresh = refreshLabel; return b;
@@ -95,7 +96,7 @@ export function explorerView(app: App, host: HTMLElement) {
     if (n.params.some(p => app.anim.isAnimated(p))) { const a = document.createElement('span'); a.className = 'tree-anim'; a.textContent = '◆'; a.title = 'animated'; row.appendChild(a); }
     if (n instanceof Layer) { const c = n.val('color') as number[]; const sw = document.createElement('span'); sw.className = 'sw'; sw.style.background = `rgb(${c.map(x => x * 255).join(',')})`; row.appendChild(sw); }
     row.onclick = (e) => { if (renaming) return; app.select([n], e.ctrlKey ? 'toggle' : e.shiftKey ? 'add' : 'replace'); body.focus(); };
-    row.ondblclick = (e) => { if ((e.target as HTMLElement) === nm) startRename(n, nm); else { if (expanded.has(n.id)) expanded.delete(n.id); else expanded.add(n.id); render(); } };
+    row.ondblclick = (e) => { if (n.kind === 'cluster') { app.run('SelectClusterComponents', { Cluster: (n as any).obj?.name + '.' + n.name }); return; } if ((e.target as HTMLElement) === nm) startRename(n, nm); else { if (expanded.has(n.id)) expanded.delete(n.id); else expanded.add(n.id); render(); } };
     row.oncontextmenu = (e) => { e.preventDefault(); if (!app.selection.includes(n)) app.select([n]); contextMenu(app, n, e.clientX, e.clientY, () => startRename(n, nm)); };
     row.ondragstart = (e) => { e.dataTransfer?.setData('text/plain', String(n.id)); e.dataTransfer!.effectAllowed = 'move'; };
     if (n instanceof X3DObject) { row.ondragover = (e) => { e.preventDefault(); row.classList.add('drop'); }; row.ondragleave = () => row.classList.remove('drop'); row.ondrop = (e) => { e.preventDefault(); row.classList.remove('drop'); const id = Number(e.dataTransfer?.getData('text/plain')); const src = [...app.scene.allObjects()].find(o => o.id === id); if (src && src !== n && ![...src.descendants()].includes(n)) app.run('ParentObj', { Parent: n.fullName, Children: [src] }); }; }

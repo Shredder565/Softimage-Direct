@@ -3,6 +3,7 @@
 // Weight Paint Panel, Preset Manager. Each is compact but functional and uses the data the clone already keeps.
 import * as THREE from 'three';
 import { App } from '../core/commands';
+import { pref } from './prefs';
 import { Node, X3DObject, Shader, Material, Model, Property } from '../core/scene';
 import { Parameter } from '../core/params';
 import { FCurve } from '../core/animation';
@@ -38,7 +39,7 @@ export function renderTree(app: App, host: HTMLElement) {
     const boxes = new Map<Shader, ReturnType<typeof mkNode>>();
     for (const n of nodes) { const y = 30 + (perCol[n.depth] = (perCol[n.depth] ?? 0) + 1) * 0 + (perCol[n.depth] - 1) * 150; const p = pos.get(n.sh) ?? { x: colX(n.depth), y }; pos.set(n.sh, p); const b = mkNode(n.sh.name, n.sh.type, n.sh.ports().map(q => [q, n.sh.get(q)?.label ?? q] as [string, string]), n.sh, p.x, p.y); boxes.set(n.sh, b); canvas.appendChild(b.el); }
     void maxD;
-    const link = (from: HTMLElement, to: HTMLElement) => { const a = from.getBoundingClientRect(), b = to.getBoundingClientRect(), c = canvas.getBoundingClientRect(); const x1 = a.right - c.left + canvas.scrollLeft, y1 = a.top + a.height / 2 - c.top + canvas.scrollTop, x2 = b.left - c.left + canvas.scrollLeft, y2 = b.top + b.height / 2 - c.top + canvas.scrollTop; const path = document.createElementNS('http://www.w3.org/2000/svg', 'path'); path.setAttribute('d', `M${x1},${y1} C${x1 + 40},${y1} ${x2 - 40},${y2} ${x2},${y2}`); path.setAttribute('class', 'rt-link'); svg.appendChild(path); };
+    const link = (from: HTMLElement, to: HTMLElement) => { const a = from.getBoundingClientRect(), b = to.getBoundingClientRect(), c = canvas.getBoundingClientRect(); const x1 = a.right - c.left + canvas.scrollLeft, y1 = a.top + a.height / 2 - c.top + canvas.scrollTop, x2 = b.left - c.left + canvas.scrollLeft, y2 = b.top + b.height / 2 - c.top + canvas.scrollTop; const path = document.createElementNS('http://www.w3.org/2000/svg', 'path'); path.setAttribute('d', pref('C3DPrefsRenderTree', 'diagonal_connectors') ? `M${x1},${y1} L${x2},${y2}` : `M${x1},${y1} C${x1 + 40},${y1} ${x2 - 40},${y2} ${x2},${y2}`); path.setAttribute('class', 'rt-link'); svg.appendChild(path); };
     requestAnimationFrame(() => { if (m.surface) { const b = boxes.get(m.surface)!; link(b.out, matNode.ports.get('surface')!); } for (const [sh, b] of boxes) for (const [port, inp] of sh.inputs) { const ib = boxes.get(inp); if (ib) link(ib.out, b.ports.get(port)!); } });
   };
   const mkNode = (name: string, type: string, ports: [string, string][], sh: Shader | null, x: number, y: number) => {
@@ -59,6 +60,7 @@ export function renderTree(app: App, host: HTMLElement) {
 }
 
 // ================================================================ Texture Editor (UV view)
+const pcol = (page: string, name: string, fallback: string) => { const v = pref(page, name); if (v === undefined || v === null) return fallback; if (Array.isArray(v)) return `rgb(${v.slice(0, 3).map(x => Math.round(Number(x) * 255)).join(',')})`; const n = Number(v); return Number.isFinite(n) ? '#' + ((n >>> 8) & 0xffffff).toString(16).padStart(6, '0') : fallback; };
 export function textureEditor(app: App, host: HTMLElement) {
   const root = el('div', 'texed'); host.appendChild(root);
   const obj = () => app.selectedObjects.find(o => o.primitive?.mesh());
@@ -74,10 +76,11 @@ export function textureEditor(app: App, host: HTMLElement) {
   const wrap = el('div', 'texed-canvas'); root.appendChild(wrap); const cv = canvasFill(wrap);
   const toPx = (u: number, v: number) => [view.x + u * view.s, view.y + (1 - v) * view.s];
   const draw = () => {
-    const g = ctx2(cv); const W = cv.clientWidth, H = cv.clientHeight; g.fillStyle = '#5a5a5a'; g.fillRect(0, 0, W, H);
+    const g = ctx2(cv); const W = cv.clientWidth, H = cv.clientHeight; g.fillStyle = pcol('C3DPrefsTextureEditor', 'BackgroundColor', '#5a5a5a'); g.fillRect(0, 0, W, H);
     const o = obj(); const uv = o ? uvsOf(o) : null; const src = image(o);
     if (src && src !== imgSrc) { imgSrc = src; img = new Image(); img.onload = draw; img.src = src; }
     const [x0, y0] = toPx(0, 1); if (img && src) { try { g.drawImage(img, x0, y0, view.s, view.s); } catch { /* ignore */ } } else { g.fillStyle = '#3c3c3c'; g.fillRect(x0, y0, view.s, view.s); }
+    if (pref('C3DPrefsTextureEditor', 'ShowGrid') !== false) { const su = Math.max(0.01, Number(pref('C3DPrefsTextureEditor', 'GridStepU') ?? 0.1)), sv = Math.max(0.01, Number(pref('C3DPrefsTextureEditor', 'GridStepV') ?? 0.1)); g.strokeStyle = pcol('C3DPrefsTextureEditor', 'GridColor', 'rgba(255,255,255,.18)'); g.globalAlpha = 0.35; g.beginPath(); for (let u = 0; u <= 1.0001; u += su) { const [x, ya] = toPx(u, 1), [, yb] = toPx(u, 0); g.moveTo(x, ya); g.lineTo(x, yb); } for (let v = 0; v <= 1.0001; v += sv) { const [xa, y] = toPx(0, v), [xb] = toPx(1, v); g.moveTo(xa, y); g.lineTo(xb, y); } g.stroke(); g.globalAlpha = 1; }
     g.strokeStyle = '#999'; g.strokeRect(x0 + 0.5, y0 + 0.5, view.s, view.s); for (let i = 1; i < 10; i++) { g.strokeStyle = 'rgba(255,255,255,.08)'; g.beginPath(); g.moveTo(x0 + view.s * i / 10, y0); g.lineTo(x0 + view.s * i / 10, y0 + view.s); g.moveTo(x0, y0 + view.s * i / 10); g.lineTo(x0 + view.s, y0 + view.s * i / 10); g.stroke(); }
     info.textContent = o ? (uv ? `${o.name}: ${uv.length / 2} UV samples${src ? ' · ' + (o.material?.surface?.inputs.get('diffuse')?.name ?? 'image') : ''}` : `${o.name}: no texture projection (Projection menu)`) : 'Select a polygon mesh';
     if (!o || !uv) return; const m = o.primitive!.mesh()!;
@@ -109,6 +112,7 @@ export function schematic(app: App, host: HTMLElement) {
     const place = (o: X3DObject, depth: number, parent?: Box): number => { const kids = collapsed.has(o.id) ? [] : o.children; const b: Box = { n: o, x: 0, y: depth * GY, w: W, h: H, parent }; boxes.push(b); const extras: Node[] = []; if (opts.materials && o.material && o.material !== app.scene.root.material) extras.push(o.material); if (opts.props) extras.push(...o.properties.filter(p => !p.shared)); let left = x; let span = 0; for (const k of kids) span += place(k, depth + 1, b); for (const e of extras) { boxes.push({ n: e, x: x, y: (depth + 1) * GY, w: W, h: H, parent: b }); x += W + GX; span += W + GX; } if (!span) { span = W + GX; x += span; } b.x = left + (span - GX) / 2 - W / 2; return span; };
     for (const c of app.scene.root.children) place(c, 0); };
   const draw = () => { const g = ctx2(cv); const Wd = cv.clientWidth, Hd = cv.clientHeight; g.fillStyle = '#5a5a5a'; g.fillRect(0, 0, Wd, Hd); g.save(); g.translate(view.x, view.y); g.scale(view.s, view.s);
+    if (pref('C3DPrefsSchematicView', 'show_grid')) { g.strokeStyle = 'rgba(255,255,255,.08)'; g.beginPath(); for (let x = 0; x < 4000; x += 50) { g.moveTo(x, -2000); g.lineTo(x, 4000); } for (let y = -2000; y < 4000; y += 50) { g.moveTo(0, y); g.lineTo(4000, y); } g.stroke(); }
     g.strokeStyle = '#222'; for (const b of boxes) if (b.parent) { g.beginPath(); g.moveTo(b.parent.x + b.parent.w / 2, b.parent.y + b.parent.h); g.lineTo(b.x + b.w / 2, b.y); g.stroke(); }
     for (const b of boxes) { const selected = app.selection.includes(b.n); g.fillStyle = colorOf(b.n); g.fillRect(b.x, b.y, b.w, b.h); g.strokeStyle = selected ? '#fff' : '#222'; g.lineWidth = selected ? 2 : 1; g.strokeRect(b.x + 0.5, b.y + 0.5, b.w, b.h); g.fillStyle = '#111'; g.fillText(b.n.name.slice(0, 16), b.x + 4, b.y + 16); if (b.n instanceof X3DObject && b.n.children.length) { g.fillText(collapsed.has(b.n.id) ? '+' : '−', b.x + b.w - 10, b.y + 16); } }
     g.restore(); };
@@ -142,8 +146,9 @@ export function animationEditor(app: App, host: HTMLElement, mode: 'fcurve' | 'd
   const rows = () => [...shown];
   const draw = () => { const g = ctx2(cv); const W = cv.clientWidth, H = cv.clientHeight; g.fillStyle = '#4a4a4a'; g.fillRect(0, 0, W, H);
     const tstep = (view.t1 - view.t0) > 200 ? 50 : (view.t1 - view.t0) > 60 ? 10 : 5; g.strokeStyle = '#5c5c5c'; g.fillStyle = '#ccc';
-    for (let t = Math.ceil(view.t0 / tstep) * tstep; t <= view.t1; t += tstep) { const x = X(t); g.beginPath(); g.moveTo(x, TB); g.lineTo(x, H); g.stroke(); g.fillText(String(t), x + 2, 10); }
-    if (mode === 'fcurve') { const vstep = niceStep(view.v1 - view.v0); for (let v = Math.ceil(view.v0 / vstep) * vstep; v <= view.v1; v += vstep) { const y = Y(v); g.beginPath(); g.moveTo(LM, y); g.lineTo(W, y); g.stroke(); g.fillText(String(Math.round(v * 100) / 100), 2, y + 3); } g.strokeStyle = '#888'; g.beginPath(); g.moveTo(LM, Y(0)); g.lineTo(W, Y(0)); g.stroke(); }
+    const vg = pref('C3DPrefsFCurveEditor', 'vert_grid_vis') !== false, hg = pref('C3DPrefsFCurveEditor', 'horz_grid_vis') !== false, hr = pref('C3DPrefsFCurveEditor', 'horz_ruler_vis') !== false, vr = pref('C3DPrefsFCurveEditor', 'vert_ruler_vis') !== false;
+    for (let t = Math.ceil(view.t0 / tstep) * tstep; t <= view.t1; t += tstep) { const x = X(t); if (vg || mode !== 'fcurve') { g.beginPath(); g.moveTo(x, TB); g.lineTo(x, H); g.stroke(); } if (hr) g.fillText(String(t), x + 2, 10); }
+    if (mode === 'fcurve') { const vstep = niceStep(view.v1 - view.v0); for (let v = Math.ceil(view.v0 / vstep) * vstep; v <= view.v1; v += vstep) { const y = Y(v); if (hg) { g.beginPath(); g.moveTo(LM, y); g.lineTo(W, y); g.stroke(); } if (vr) g.fillText(String(Math.round(v * 100) / 100), 2, y + 3); } g.strokeStyle = '#888'; g.beginPath(); g.moveTo(LM, Y(0)); g.lineTo(W, Y(0)); g.stroke(); }
     const rs = rows();
     rs.forEach((p, ri) => { const fc = A.fcurve(p); if (!fc) return; const col = CURVE_COLORS[p.name] ?? '#ffd34d';
       if (mode === 'fcurve') { g.strokeStyle = col; g.lineWidth = 1.2; g.beginPath(); for (let x = LM; x < W; x += 2) { const v = fc.eval(invX(x)); const y = Y(v); if (x === LM) g.moveTo(x, y); else g.lineTo(x, y); } g.stroke(); for (const k of fc.keys) { const x = X(k.time), y = Y(k.value); g.fillStyle = selKeys.has(key(p, k.time)) ? '#fff' : col; g.fillRect(x - 3, y - 3, 6, 6); if (showVals && selKeys.has(key(p, k.time))) { g.fillStyle = '#fff'; g.fillText(`${k.time}: ${Math.round(k.value * 1000) / 1000}`, x + 6, y - 6); } } }
@@ -204,7 +209,7 @@ export function pluginManager(app: App, host: HTMLElement) {
 // ================================================================ Netview
 export function netview(app: App, host: HTMLElement) {
   const root = el('div', 'netview'); host.appendChild(root);
-  const url = el('input') as HTMLInputElement; url.value = 'https://help.autodesk.com/view/SI/2015/ENU/'; url.className = 'nv-url'; url.onkeydown = (e) => { e.stopPropagation(); if (e.key === 'Enter') go(); };
+  const url = el('input') as HTMLInputElement; url.value = (app as any).netviewHome || 'https://help.autodesk.com/view/SI/2015/ENU/'; url.className = 'nv-url'; url.onkeydown = (e) => { e.stopPropagation(); if (e.key === 'Enter') go(); };
   const frame = el('iframe', 'nv-frame') as HTMLIFrameElement; frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
   const go = () => { frame.src = url.value; app.logMsg('info', `Netview: ${url.value}`); };
   const BOOK: [string, string][] = [['Softimage 2015 Help', 'https://help.autodesk.com/view/SI/2015/ENU/'], ['SDK Guide', 'https://help.autodesk.com/view/SI/2015/ENU/?guid=__sdk_guide_html'], ['Softimage-Direct (GitHub)', 'https://github.com/Shredder565/Softimage-Direct']];

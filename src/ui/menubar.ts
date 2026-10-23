@@ -5,7 +5,7 @@ import { userToolbars } from './toolbars';
 const userToolbarNames = () => userToolbars().map(t => t.name);
 import { App } from '../core/commands';
 import { SI_MENUS, SI_VIEWS, SiMenuItem, openSiMenu } from './si';
-import { minimizeAll, restoreAll, closeAll } from './floating';
+import { minimizeAll, restoreAll, closeAll, floatingWindows } from './floating';
 import { keymapNames, setKeymap, currentKeymap, bindingFor } from './keymap';
 
 const ev = (name: string, detail?: any) => window.dispatchEvent(new CustomEvent(name, { detail }));
@@ -31,6 +31,7 @@ export function menubar(app: App, host: HTMLElement) {
     if (it.label === 'Edit Insertion Point' || it.label === 'Crosswalk Insertion Point' || it.label === 'Import Insertion Point' || it.label === 'Export Insertion Point') return [];
     if (it.label === 'Recent Scenes') return [{ label: 'Recent Scenes', items: recent().map(n => ({ label: n, id: -7 })) }];
     if (it.label === 'Recent Models') return [];
+    if (it.label === 'Window' && it.items) { const wins = floatingWindows(); return [{ ...it, items: [...expand(it.items), ...(wins.length ? [{ separator: true } as SiMenuItem, ...wins.map((w, i) => ({ label: `${i + 1} ${w.title}`, id: -12 }))] : [])] }]; }
     if (it.items) return [{ ...it, items: expand(it.items) }];
     return [it];
   });
@@ -63,6 +64,7 @@ export function menubar(app: App, host: HTMLElement) {
       case 'Paste': if (clipboard.objs.length) { if (clipboard.cut) { app.logMsg('info', 'Paste after Cut: restoring via undo is not available; duplicating last copy'); } app.run('Duplicate', { InputObjs: clipboard.objs.filter(o => [...app.scene.allObjects()].includes(o)) }); } return;
       case 'Delete Selected': app.run('DeleteObj'); return; case 'Select All': app.run('SelectAll'); return;
       case 'Minimize All': minimizeAll(); return; case 'Restore All': restoreAll(); return; case 'Close All': closeAll(); return;
+      default: if (it.id === -12) { const w = floatingWindows()[Number(l.split(' ')[0]) - 1]; w?.focus(); return; }
       case 'Restore Default': ev('togglepanel', { name: '*restore' }); return; case 'Show All': ev('togglepanel', { name: '*all', show: true }); return; case 'Hide All': ev('togglepanel', { name: '*all', show: false }); return;
       case 'About Softimage': alert('Softimage-Direct — a web reimplementation of Autodesk Softimage 2015 SP2\'s modeling toolset.\nUI data (menus, key maps, bitmaps, strings) are read from the original installation files.'); return;
       case 'Softimage Help': case 'Softimage SDK Help': case "What's New": window.open('https://help.autodesk.com/view/SI/2015/ENU/', '_blank'); return;

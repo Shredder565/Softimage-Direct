@@ -7,6 +7,7 @@ import { App } from '../core/commands';
 import { X3DObject, Property } from '../core/scene';
 import { siPropDefs, siPropLayout } from '../core/opdefs';
 import { SI_MENUS, SiMenuItem, openSiMenu } from './si';
+import { SI } from './viewManager';
 
 export type Rect = { x: number; y: number; w: number; h: number };
 export interface VPX { name: string; kind: 'ortho' | 'persp'; camera: THREE.Camera; el: HTMLElement; display: string; flags: Record<string, boolean>; x?: Extra }
@@ -120,10 +121,10 @@ export function installViewExtras(C: Ctx) {
   const drawSafe = (vp: VPX, r: Rect, title: boolean, action: boolean, guide: boolean) => { const asp = Number((app.scene.find(vp.name) as any)?.primitive?.val('aspect') ?? 1.333); let w = r.w - 40, h = w / asp; if (h > r.h - 40) { h = r.h - 40; w = h * asp; } const x0 = r.x + (r.w - w) / 2, y0 = r.y + 18 + (r.h - 18 - h) / 2; g2.lineWidth = 1; if (guide) { g2.strokeStyle = 'rgba(255,255,255,.6)'; g2.strokeRect(x0 + 0.5, y0 + 0.5, w, h); } if (action) { g2.strokeStyle = 'rgba(80,220,80,.8)'; g2.strokeRect(x0 + w * 0.05 + 0.5, y0 + h * 0.05 + 0.5, w * 0.9, h * 0.9); } if (title) { g2.strokeStyle = 'rgba(220,80,80,.8)'; g2.strokeRect(x0 + w * 0.1 + 0.5, y0 + h * 0.1 + 0.5, w * 0.8, h * 0.8); } };
 
   // ---------------------------------------------------------------- ViewCube (top-right of each viewport; drag orbits, click a face snaps)
-  const CUBE = 44; const faces: [string, THREE.Vector3][] = [['FRONT', new THREE.Vector3(0, 0, 1)], ['BACK', new THREE.Vector3(0, 0, -1)], ['RIGHT', new THREE.Vector3(1, 0, 0)], ['LEFT', new THREE.Vector3(-1, 0, 0)], ['TOP', new THREE.Vector3(0, 1, 0)], ['BOTTOM', new THREE.Vector3(0, -1, 0)]];
+  const faces: [string, THREE.Vector3][] = [['FRONT', new THREE.Vector3(0, 0, 1)], ['BACK', new THREE.Vector3(0, 0, -1)], ['RIGHT', new THREE.Vector3(1, 0, 0)], ['LEFT', new THREE.Vector3(-1, 0, 0)], ['TOP', new THREE.Vector3(0, 1, 0)], ['BOTTOM', new THREE.Vector3(0, -1, 0)]];
   const drawCube = (vp: VPX, r: Rect) => {
-    if (vp.flags['ViewCube'] === false) { X(vp).cubeRect = null; return; }
-    const cx = r.x + r.w - CUBE - 8, cy = r.y + 24; X(vp).cubeRect = { x: cx, y: cy, w: CUBE, h: CUBE };
+    const VC = SI.viewCube; if (vp.flags['ViewCube'] === false || !VC.show) { X(vp).cubeRect = null; return; }
+    const CUBE = VC.size; const cx = VC.position % 2 === 0 ? r.x + r.w - CUBE - 8 : r.x + 8, cy = VC.position < 2 ? r.y + 24 : r.y + r.h - CUBE - 8; X(vp).cubeRect = { x: cx, y: cy, w: CUBE, h: CUBE }; g2.globalAlpha = Math.max(0.15, VC.opacity);
     const cam = vp.camera; const q = cam.quaternion.clone().invert(); const half = CUBE / 2; const proj = (p: THREE.Vector3) => { const v = p.clone().applyQuaternion(q); return { x: cx + half + v.x * half * 0.62, y: cy + half - v.y * half * 0.62, z: v.z }; };
     const corners = [-1, 1].flatMap(x => [-1, 1].flatMap(y => [-1, 1].map(z => new THREE.Vector3(x, y, z))));
     const quads: [string, THREE.Vector3, THREE.Vector3[]][] = faces.map(([n, nrm]) => [n, nrm, corners.filter(c => c.dot(nrm) > 0.5)]);
@@ -194,7 +195,7 @@ export function installViewExtras(C: Ctx) {
     C.grid.visible = !!vp.flags['Grid']; C.axes.visible = !!vp.flags['Grid'] && x.vis.val('gridaxisvis') !== false;
     // depth cue → fog around the orbit target
     if (vp.flags['Depth Cue']) { const d = vp.kind === 'persp' ? vp.camera.position.distanceTo(C.orbit.target) : 100; const dens = Number(x.disp.val('wrfrmdpthcueval') ?? 50) / 100; scene.fog = new THREE.Fog((scene.background as THREE.Color).getHex(), d * (1 - dens * 0.8), d * (1 + dens * 2)); } else scene.fog = null;
-    headlight.visible = !!vp.flags['Headlight']; if (headlight.visible) { headlight.position.copy(vp.camera.position); headlight.intensity = Number(x.disp.val('headlight_intensity') ?? 1); headlight.target.position.copy(C.orbit.target); headlight.target.updateMatrixWorld(); C.defaultLights.visible = false; } else C.defaultLights.visible = true;
+    headlight.visible = !!(vp.flags['Headlight'] ?? SI.headlightDefault); if (headlight.visible) { headlight.position.copy(vp.camera.position); headlight.intensity = Number(x.disp.val('headlight_intensity') ?? 1); headlight.target.position.copy(C.orbit.target); headlight.target.updateMatrixWorld(); C.defaultLights.visible = false; } else C.defaultLights.visible = true;
     scene.background = vp.flags['Rotoscope'] && x.roto ? x.roto : (scene as any)._bg ?? scene.background;
     if (!(scene as any)._bg && scene.background instanceof THREE.Color) (scene as any)._bg = scene.background;
     if (vp.flags['High Quality']) { renderer.shadowMap.enabled = true; } else renderer.shadowMap.enabled = false;

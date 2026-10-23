@@ -149,3 +149,16 @@ export function captureLayout(root: HTMLElement): LayoutNode | null {
   };
   const top = root.firstElementChild as HTMLElement | null; return top ? walk(top) : null;
 }
+
+/** Dock a floating window's body into a layout frame: the frame's own view is hidden until the docked view is floated
+ *  again (↗ in the small header) or closed (×). Returns false when the frame is already hosting a docked view. */
+export function dockInto(frame: HTMLElement, title: string, body: HTMLElement, refloat: (body: HTMLElement) => void): boolean {
+  if (frame.querySelector(':scope > .docked')) return false;
+  const prev = Array.from(frame.children) as HTMLElement[]; prev.forEach(c => c.classList.add('dock-hidden'));
+  const wrap = document.createElement('div'); wrap.className = 'docked'; const head = document.createElement('div'); head.className = 'docked-head';
+  const ttl = document.createElement('span'); ttl.textContent = title; const fl = document.createElement('span'); fl.className = 'ppg-float-close'; fl.textContent = '↗'; fl.title = 'Float this view again';
+  const cl = document.createElement('span'); cl.className = 'ppg-float-close'; cl.textContent = '×'; cl.title = 'Close the docked view'; head.append(ttl, fl, cl);
+  const restore = () => { wrap.remove(); prev.forEach(c => c.classList.remove('dock-hidden')); window.dispatchEvent(new Event('resize')); };
+  fl.onclick = () => { body.remove(); restore(); refloat(body); }; cl.onclick = () => restore();
+  wrap.append(head, body); body.classList.add('docked-body'); frame.appendChild(wrap); window.dispatchEvent(new Event('resize')); return true;
+}

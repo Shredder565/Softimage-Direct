@@ -69,7 +69,7 @@ export class App {
   /** Execute a command by scripting name with named args; logs it like Softimage's script log. */
   run(name: string, args: Record<string, any> = {}): any {
     const def = this.commands.get(name);
-    if (!def) { this.logMsg('error', `Command not implemented: ${name}`); return undefined; }
+    if (!def) { this.logMsg('error', `${name}: ${(window as any).__siMessage?.(1007) ?? 'Not implemented'}`); return undefined; }
     const full: Record<string, any> = {};
     const alias = (n: string) => n === 'InputObj' ? 'InputObjs' : n === 'InputObjs' ? 'InputObj' : n; // Softimage scripts use both spellings
     for (const a of def.args) full[a.name] = args[a.name] !== undefined ? args[a.name] : args[alias(a.name)] !== undefined ? args[alias(a.name)] : a.default;
@@ -79,7 +79,7 @@ export class App {
     let result: any;
     try {
       result = def.execute(this, full);
-      if (!nested) this.logMsg('cmd', `${name}(${argText})`);
+      if (!nested && (this as any).cmdLog !== false) this.logMsg('cmd', fmtCall(name, def.args.map(a => full[a.name]), (this as any).scriptLang));
     } catch (e: any) {
       this.logMsg('error', `${name}: ${e?.message ?? e}`);
       if (!nested) { for (const u of this.pendingUndo!.reverse()) u.undo(); this.pendingUndo = null; }
@@ -89,7 +89,7 @@ export class App {
       const entries = this.pendingUndo!; this.pendingUndo = null;
       if (entries.length && def.undoable !== false) {
         this.undoStack.push({ label: name, undo: () => { for (const u of [...entries].reverse()) u.undo(); }, redo: () => { for (const u of entries) u.redo(); } });
-        if (this.undoStack.length > 200) this.undoStack.shift();
+        if (this.undoStack.length > ((this as any).maxUndo ?? 50)) this.undoStack.shift();
         this.redoStack = [];
         this.events.emit('undo');
       }
@@ -117,7 +117,7 @@ export class App {
   undo() { const e = this.undoStack.pop(); if (!e) return; e.undo(); this.redoStack.push(e); this.logMsg('info', `Undo ${e.label}`); this.events.emit('undo'); this.events.emit('scene'); this.events.emit('params'); }
   redo() { const e = this.redoStack.pop(); if (!e) return; e.redo(); this.undoStack.push(e); this.logMsg('info', `Redo ${e.label}`); this.events.emit('undo'); this.events.emit('scene'); this.events.emit('params'); }
 
-  logMsg(kind: 'cmd' | 'info' | 'error', text: string) { this.log.push({ kind, text }); if (this.log.length > 500) this.log.shift(); this.events.emit('log'); }
+  logMsg(kind: 'cmd' | 'info' | 'error', text: string) { if (kind === 'info' && (this as any).msgLog === false) return; this.log.push({ kind, text }); if (this.log.length > ((this as any).cmdLogSize ?? 500)) this.log.shift(); this.events.emit('log'); }
 
   // ---- selection
   select(nodes: Node[], mode: 'replace' | 'add' | 'toggle' = 'replace') {
@@ -151,6 +151,14 @@ export class App {
   }
 }
 
+/** Log a command the way the chosen scripting language would (Preferences > Scripting > Language). */
+function fmtCall(name: string, vals: any[], lang = 'VBScript'): string {
+  const args = vals.map(fmtArg);
+  if (lang === 'Python') return `Application.${name}(${args.map(a => a === '' ? 'None' : a === 'True' || a === 'true' ? 'True' : a === 'False' || a === 'false' ? 'False' : a).join(', ')})`;
+  if (lang === 'JScript') return `${name}(${args.map(a => a === '' ? 'null' : a).join(', ')});`;
+  if (lang === 'PerlScript') return `$Application->${name}(${args.map(a => a === '' ? 'undef' : a).join(', ')});`;
+  return `${name} ${args.join(', ')}`;
+}
 function fmtArg(v: any): string {
   if (v === undefined || v === null) return '';
   if (Array.isArray(v)) return `"${v.map(x => x?.fullName ?? x).join(',')}"`;

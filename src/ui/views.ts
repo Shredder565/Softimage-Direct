@@ -120,19 +120,21 @@ export function layerManager(app: App, host: HTMLElement) {
   const tbl = document.createElement('table'); tbl.className = 'layer-table'; root.appendChild(tbl);
   const toggle = (l: Layer, k: string) => { const v = !l.val(k); app.setParam(l.get(k)!, v); if (k === 'viewvis') for (const o of l.members) app.setParam(o.property('visibility')!.get('viewvis')!, v); if (k === 'selectability') for (const o of l.members) { const p = o.property('visibility')?.get('selectability'); if (p) app.setParam(p, v); } app.events.emit('scene'); };
   const render = () => {
-    tbl.innerHTML = '<tr><th title="Current layer"></th><th>Name</th><th title="Wire colour">Color</th><th title="Viewport visibility">V</th><th title="Render visibility">R</th><th title="Selectable">S</th><th title="Ghosting">G</th><th>#</th></tr>';
-    for (const l of app.scene.layers) {
+    const LP = A.layerPrefs ?? { color: true, viewVis: true, renderVis: true, select: true, ghost: false, sort: 0 };
+    tbl.innerHTML = `<tr><th title="Current layer"></th><th>Name</th>${LP.color ? '<th title="Wire colour">Color</th>' : ''}${LP.viewVis ? '<th title="Viewport visibility">V</th>' : ''}${LP.renderVis ? '<th title="Render visibility">R</th>' : ''}${LP.select ? '<th title="Selectable">S</th>' : ''}${LP.ghost ? '<th title="Ghosting">G</th>' : ''}<th>#</th></tr>`;
+    const layers = LP.sort === 1 ? [...app.scene.layers].sort((a, b) => a.name.localeCompare(b.name)) : app.scene.layers;
+    for (const l of layers) {
       const tr = document.createElement('tr'); tr.classList.toggle('current', l === A.currentLayer);
       const cur = document.createElement('td'); const rb = document.createElement('input'); rb.type = 'radio'; rb.name = 'curlayer'; rb.checked = l === A.currentLayer; rb.onchange = () => { A.currentLayer = l; render(); }; cur.appendChild(rb);
       const nm = document.createElement('td'); const ni = document.createElement('input'); ni.className = 'name'; ni.value = l.name; ni.onchange = () => { const old = l.name; const nn = ni.value.trim() || old; app.record('Rename Layer', () => { l.name = nn; }, () => { l.name = old; }); app.events.emit('scene'); }; ni.onkeydown = e => e.stopPropagation(); nm.appendChild(ni);
       const col = document.createElement('td'); const ci = document.createElement('input'); ci.type = 'color'; const c = l.val('color') as number[]; ci.value = '#' + c.map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join(''); ci.onchange = () => { const v = ci.value; app.setParam(l.get('color')!, [1, 3, 5].map(i => parseInt(v.slice(i, i + 2), 16) / 255)); app.events.emit('scene'); }; col.appendChild(ci);
-      tr.append(cur, nm, col);
-      for (const k of ['viewvis', 'rendvis', 'selectability', 'ghosting']) { const td = document.createElement('td'); const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!l.val(k); cb.onchange = () => toggle(l, k); td.appendChild(cb); tr.appendChild(td); }
+      tr.append(cur, nm); if (LP.color) tr.append(col);
+      for (const k of (['viewvis', 'rendvis', 'selectability', 'ghosting'] as const).filter(k => ({ viewvis: LP.viewVis, rendvis: LP.renderVis, selectability: LP.select, ghosting: LP.ghost })[k])) { const td = document.createElement('td'); const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!l.val(k); cb.onchange = () => toggle(l, k); td.appendChild(cb); tr.appendChild(td); }
       const n = document.createElement('td'); n.textContent = String(l.members.size); n.title = [...l.members].map(o => o.name).join(', '); tr.appendChild(n);
       tr.ondblclick = () => app.select([...l.members]); tbl.appendChild(tr);
     }
   };
-  render(); app.events.on('scene', render); app.events.on('params', render);
+  render(); app.events.on('scene', render); app.events.on('params', render); window.addEventListener('prefschanged', (e: any) => { if (e.detail?.key === 'C3DPrefsLayerControl') render(); });
 }
 
 // ------------------------------------------------------------------ XSI Explorer (scope pane + explorer)

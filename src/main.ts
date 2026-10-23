@@ -5,12 +5,13 @@ import { registerModelCommands, registerModelAliases } from './commands/model';
 import { registerUICommands } from './commands/ui';
 import { registerPresetModels } from './commands/presets';
 import { registerModelCommands2 } from './commands/model2';
+import { registerClusterCommands } from './commands/clusters';
 import { registerAnimCommands } from './commands/anim';
 import { registerRenderCommands } from './commands/render';
 import { renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
 import { registerToolbarCommands, palettesView, toolbarView, newToolbar, customizeToolbars, openToolbarWindow, userToolbars } from './ui/toolbars';
 import { playbackPanel, animationPanel, timerange, layerManager, xsiExplorer, scriptHistory } from './ui/views';
-import { LayoutEngine, layoutByName, currentLayoutName } from './ui/layout';
+import { LayoutEngine, layoutByName, currentLayoutName, dockInto } from './ui/layout';
 import { installLayoutEditing } from './ui/layoutEdit';
 import { toolbarPanel, menuStatus, runMenuPath } from './ui/toolbarPanel';
 import { explorerView } from './ui/explorer';
@@ -22,9 +23,9 @@ import { keyingPanel, layerControl, timeline, commandLine, scriptLog } from './u
 import { mainShelf, panelSwitcher } from './ui/shelf';
 import { menubar } from './ui/menubar';
 import { statusBar } from './ui/statusbar';
-import { openFloating, floatingWindows } from './ui/floating';
-import { siIcon, hasIcon, runScriptLine, SI_VIEWS } from './ui/si';
-import { preferencesWindow } from './ui/prefs';
+import { openFloating, floatingWindows, setDockHook } from './ui/floating';
+import { siIcon, hasIcon, runScriptLine, siMessage, SI_VIEWS } from './ui/si';
+import { preferencesWindow, preferenceSets } from './ui/prefs';
 
 const app = new App();
 registerBuiltins(app);
@@ -33,10 +34,11 @@ registerModelAliases(app);
 registerUICommands(app);
 registerPresetModels(app);
 registerModelCommands2(app);
+registerClusterCommands(app);
 registerAnimCommands(app);
 registerRenderCommands(app);
 registerToolbarCommands(app);
-(window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
+(window as any).__siMessage = siMessage; (window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
 
 const appEl = document.getElementById('app')!;
 menubar(app, appEl);
@@ -53,7 +55,7 @@ layout.registerView('View Manager', h => { vm = viewManager(app, h); });
 layout.registerView('Timeline', h => timeline(app, h));
 layout.registerView('Timerange', h => timerange(app, h));
 layout.registerView('MCP', h => mcpPanel(app, h));
-installKeymap(app);
+installKeymap(app); preferenceSets(app); // apply the saved preferences (key map, colours, units, …) before anything draws
 layout.registerView('Keying Panel', h => keyingPanel(app, h));
 layout.registerView('Layer Control', h => layerControl(app, h));
 layout.registerView('Property Editor', h => { propertyEditor(app, h); });
@@ -70,6 +72,7 @@ for (const [k, f] of Object.entries(SHELL)) layout.registerView(k, f);
 layout.registerView('Scene Layer Manager', h => layerManager(app, h)); layout.registerView('Script History', h => scriptHistory(app, h)); layout.registerView('XSI Explorer', h => xsiExplorer(app, h));
 layout.build(layoutByName(currentLayoutName()) ?? layoutByName('Default')!, root);
 installLayoutEditing(app, layout, root);
+setDockHook((win, frame) => { const body = win.body; const title = win.title; return dockInto(frame, title, body, (b) => { openFloating(title, (nb, w) => { nb.replaceWith(b); b.classList.remove('docked-body'); b.className = 'ppg-float-body'; (w as any).body = b; }, { w: 480, h: 400 }); }); });
 window.addEventListener('frameall', () => vm?.frameAll());
 
 // ---- Optional panels (Softimage: View > Optional Panels, panel switcher buttons, ToggleOptionalPanel command)

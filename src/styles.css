@@ -367,3 +367,20 @@ button, select, input { font-family: inherit; }
 .clip-card img { width: 80px; height: 80px; object-fit: cover; background: #333; border: 1px solid #222; } .shaderball { width: 64px; height: 64px; border-radius: 50%; margin: 4px auto; border: 1px solid #222; }
 .clip-card .nm, .mat-card .nm { font-weight: bold; } .clip-card .src, .mat-card .src { color: #444; font-size: 9px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .hint { color: #444; font-size: 10px; padding: 4px 6px; }
+
+/* preferences: Explorer colour coding off, parameter colours off, script editor font */
+.xp-nocolor .tree-row .tree-icon, .xp-nocolor .tree-row .tree-name { color: inherit !important; }
+.no-param-colors .ppg input.anim, .no-param-colors .ppg .anim, .no-param-colors .sheet-table input.anim { color: inherit !important; }
+.log { font: var(--script-font, 11px Consolas, monospace); counter-reset: ln; } .script-linenum .log > div::before { counter-increment: ln; content: counter(ln); display: inline-block; width: 28px; color: #888; text-align: right; margin-right: 6px; }
+
+/* floating windows: tray, docking, maximize */
+#float-tray { position: absolute; left: 0; bottom: 0; display: flex; gap: 2px; z-index: 400; pointer-events: none; }
+#float-tray .ppg-float { position: static !important; pointer-events: auto; }
+.ppg-float.maximized { left: 0 !important; top: 0 !important; width: 100% !important; height: 100% !important; }
+.frame.dock-target { outline: 2px dashed #ffd200; outline-offset: -2px; }
+body.dock-picking, body.dock-picking * { cursor: crosshair !important; }
+.frame > .dock-hidden { display: none !important; }
+.frame > .docked { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--bg); }
+.frame { position: relative; }
+.docked-head { display: flex; gap: 4px; align-items: center; background: #3a5a8c; color: #fff; font-size: 11px; padding: 1px 4px; } .docked-head span:first-child { flex: 1; }
+.docked-body { flex: 1; min-height: 0; overflow: auto; position: relative; }

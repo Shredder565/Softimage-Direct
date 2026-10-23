@@ -47,7 +47,7 @@ export function runScriptLine(app: App, text: string): any {
   const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith("'") && !l.startsWith('//'));
   let last: any;
   for (const line of lines) {
-    const m = /^(?:set\s+\w+\s*=\s*)?(?:Application\.)?([A-Za-z_]\w*)\s*\(?\s*(.*?)\)?\s*;?$/.exec(line); if (!m) { app.logMsg('info', `Script: ${line}`); continue; }
+    const m = /^(?:set\s+\w+\s*=\s*)?(?:\$?Application(?:\.|->))?([A-Za-z_]\w*)\s*\(?\s*(.*?)\)?\s*;?$/.exec(line); if (!m) { app.logMsg('info', `Script: ${line}`); continue; }
     const name = m[1]; const args = splitArgs(m[2]);
     const def = app.commands.get(name);
     if (!def) { app.logMsg('error', `${name}: command not implemented`); continue; }
@@ -59,7 +59,7 @@ export function runScriptLine(app: App, text: string): any {
 }
 function splitArgs(s: string): any[] {
   const out: any[] = []; let cur = '', q = false;
-  const push = () => { const t = cur.trim(); cur = ''; if (!t) { out.push(null); return; } if (/^".*"$/.test(t)) out.push(t.slice(1, -1)); else if (/^-?\d+(\.\d+)?$/.test(t)) out.push(Number(t)); else if (/^(true|false)$/i.test(t)) out.push(t.toLowerCase() === 'true'); else if (/^(null|nothing)$/i.test(t)) out.push(null); else out.push(t); };
+  const push = () => { const t = cur.trim(); cur = ''; if (!t) { out.push(null); return; } if (/^".*"$/.test(t)) out.push(t.slice(1, -1)); else if (/^-?\d+(\.\d+)?$/.test(t)) out.push(Number(t)); else if (/^(true|false)$/i.test(t)) out.push(t.toLowerCase() === 'true'); else if (/^(null|nothing|none|undef)$/i.test(t)) out.push(null); else out.push(t); };
   for (const ch of s) { if (ch === '"') q = !q; if (ch === ',' && !q) { push(); continue; } cur += ch; }
   if (cur.trim() || out.length) push();
   return out;
@@ -87,3 +87,23 @@ let siMenus: HTMLElement[] = [];
 export function closeSiMenus(from = 0) { siMenus.splice(from).forEach(m => m.remove()); }
 document.addEventListener('pointerdown', (e) => { if (!(e.target as HTMLElement).closest('.si-menu')) closeSiMenus(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSiMenus(); }, true);
+
+/** Any dictionary string by module/id (Application/Dictionary/en/*.dict). */
+export function siString(module: string, id: number | string): string | undefined { return SI_STRINGS[module]?.[String(id)]; }
+/** Message catalogue (XSIMSGCAT) entries are "<n>$text" with printf-style %s / %d holes. */
+export function siMessage(id: number | string, ...args: (string | number)[]): string {
+  let s = siString('XSIMSGCAT', id) ?? ''; s = s.replace(/^\d+\$/, ''); let i = 0; return s.replace(/%[sd]/g, () => String(args[i++] ?? ''));
+}
+/** Find a message in the catalogue by (part of) its English text — handy when the id is unknown. */
+export function siMessageLike(text: string, ...args: (string | number)[]): string | undefined {
+  const t = text.toLowerCase(); for (const [id, s] of Object.entries(SI_STRINGS.XSIMSGCAT ?? {})) if (s.toLowerCase().includes(t)) return siMessage(id, ...args); return undefined;
+}
+/** Preferences page title from XSIPREFS (e.g. "C3DPrefsUnitsSetting" → "Units Setting", "C3DPrefsPluginMgr" → "Plug-in Manager"). */
+export function siPrefTitle(key: string): string | undefined {
+  const bare = key.replace(/^C3DPrefs/, '').replace(/Mgr$/, 'Manager').toLowerCase(); const alias: Record<string, string> = { scenesearch: 'scene search', fcurveeditor: 'fcurve editor', netview: 'netview', layercontrol: 'layer control', unitssetting: 'units setting', outputformat: 'output format', pluginmanager: 'plug-in manager', sceneexplorer: 'explorer', xsiexplorer: 'explorer', schematicview: 'schematic', texturelayereditor: 'texture layer editor', weighteditor: 'weight editor', performancemonitor: 'performance', materialmanager: 'material manager', keyingpanel: 'keying panel', datamanagement: 'data management', animationeditor: 'animation editor', textureeditor: 'texture editor', rendertree: 'render tree' };
+  const want = alias[bare] ?? bare; for (const s of Object.values(SI_STRINGS.XSIPREFS ?? {})) if (s.toLowerCase().replace(/[\s-]/g, '') === want.replace(/[\s-]/g, '')) return s; return undefined;
+}
+/** Selection filter names as the filter manager (XSIFILTERMGR) spells them. */
+export function siFilterNames(): string[] {
+  const ids = [1191, 1192, 1194, 1195, 9, 1077, 1078, 1, 5, 22, 108, 38, 50, 97, 1200, 1152, 1165, 103]; return ids.map(i => siString('XSIFILTERMGR', i)).filter((s): s is string => !!s);
+}

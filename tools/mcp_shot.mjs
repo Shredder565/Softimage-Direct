@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--headless=new'] });
-const p = await b.newPage({ viewport: { width: 1600, height: 760 } });
+const p = await b.newPage({ viewport: { width: 1600, height: 900 } });
 const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
 await p.goto('http://localhost:4173/?demo'); await p.waitForTimeout(800);
 // create a cube via command and exercise MCP

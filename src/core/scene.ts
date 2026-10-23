@@ -25,6 +25,24 @@ export class Node extends ParamSet {
   explorerChildren(): Node[] { return []; }
 }
 
+// ------------------------------------------------------------- clusters
+/** A named set of components of one object (pnt / edge / poly / sample clusters). Properties such as weight maps,
+ *  vertex colours and texture projections live on clusters, exactly as in Softimage. */
+export class Cluster extends Node {
+  readonly properties: Property[] = [];
+  constructor(name: string, public compKind: 'pnt' | 'edge' | 'poly' | 'sample', public elements: Set<number | string>) { super(name, compKind, 'cluster', [{ name: 'alwayscomplete', type: 'bool', default: false, label: 'Always Complete', readOnly: true }]); }
+  get obj(): X3DObject | null { let n: Node | null = this.parent as any; while (n && !(n instanceof X3DObject)) n = (n as any).parent ?? null; return n as X3DObject | null; }
+  get isComplete(): boolean { const o = this.obj; const m = o?.primitive?.mesh(); if (!m) return false; const n = this.compKind === 'pnt' ? m.positions.length / 3 : this.compKind === 'poly' ? m.polygons.length : 0; return n > 0 && this.elements.size >= n; }
+  addProperty(p: Property) { p.parent = this as any; this.properties.push(p); return p; }
+  removeProperty(p: Property) { const i = this.properties.indexOf(p); if (i >= 0) { this.properties.splice(i, 1); p.parent = null; } }
+  property(type: string) { return this.properties.find(p => p.type === type); }
+  explorerChildren(): Node[] { return this.properties; }
+}
+export class ClusterFolder extends Node {
+  constructor() { super('Clusters', 'clusters', 'folder'); }
+  explorerChildren(): Node[] { const prim = this.parent as any; const o = prim?.parent as X3DObject | undefined; return o?.clusters ?? []; }
+}
+
 // ------------------------------------------------------------- properties
 export class Property extends Node {
   /** Shared (inherited scene default) until a value is changed or the property was added explicitly — the Explorer shows shared ones in italics. */
@@ -260,7 +278,7 @@ export class Primitive extends Node {
   /** Like Softimage: the four construction-mode markers, then the operators (newest first), then the Clusters folder. */
   explorerChildren(): Node[] {
     if (!this.markers) { this.markers = [new MarkerNode('Secondary Shape Modeling', 'secondaryshapemarker', 'secondaryshape'), new MarkerNode('Animation', 'animationmarker', 'animation'), new MarkerNode('Shape Modeling', 'shapemarker', 'shape'), new MarkerNode('Modeling', 'modelingmarker', 'modeling')]; for (const m of this.markers) m.parent = this; }
-    if (!this.clustersFolder) { this.clustersFolder = new Node('Clusters', 'clusters', 'folder'); this.clustersFolder.parent = this; }
+    if (!this.clustersFolder) { this.clustersFolder = new ClusterFolder(); this.clustersFolder.parent = this; }
     return [...this.markers, ...[...this.operators].reverse(), this.clustersFolder];
   }
   notify(p: any, old: any) { this.dirty = true; super.notify(p, old); }
@@ -305,7 +323,10 @@ export class X3DObject extends Node {
   readonly properties: Property[] = [];
   primitive: Primitive | null = null;
   material: Material | null = null;   // null = inherits Scene_Material
-  readonly clusters: Node[] = [];
+  readonly clusters: Cluster[] = [];
+  cluster(name: string) { return this.clusters.find(c => c.name === name); }
+  addCluster(c: Cluster) { c.parent = this.primitive?.explorerChildren().slice(-1)[0] ?? (this as any); this.clusters.push(c); return c; }
+  removeCluster(c: Cluster) { const i = this.clusters.indexOf(c); if (i >= 0) this.clusters.splice(i, 1); }
   layer: Layer | null = null;
 
   constructor(name: string, type: string, kind: NodeKind = 'object') {
@@ -345,7 +366,7 @@ export class X3DObject extends Node {
     out.push(...vis);
     if (this.material) out.push(this.material);
     if (!this.ambientNode) { this.ambientNode = new Property('Ambient Lighting', 'AmbientLighting', [color('ambience', [0.2, 0.2, 0.2], 'Ambience')]); this.ambientNode.shared = true; this.ambientNode.parent = this; }
-    out.push(this.ambientNode, ...rest, ...this.clusters, ...this.children);
+    out.push(this.ambientNode, ...rest, ...this.children);
     return out;
   }
   private ambientNode: Property | null = null;

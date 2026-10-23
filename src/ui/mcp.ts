@@ -2,7 +2,7 @@
 // default layout, reproduced section by section from the real panel.
 import { App } from '../core/commands';
 import { tool } from './viewManager';
-import { SI_MENUS, SiMenuItem, openSiMenu } from './si';
+import { siFilterNames, SI_MENUS, SiMenuItem, openSiMenu } from './si';
 import { X3DObject, Model } from '../core/scene';
 
 type Section = { el: HTMLElement; body: HTMLElement };
@@ -49,7 +49,7 @@ export function mcpPanel(app: App, host: HTMLElement, opts: { only?: string[]; c
   const sampleB = button('Sample', () => app.logMsg('info', 'Sample selection applies to ICE point clouds (not available on polygon meshes).'), 'Sample selection mode (ICE) ▸', 'wide has-menu');
   sel.body.appendChild(grid(1, sampleB));
   // filter combo (dark) — Softimage's selection filter list
-  const FILTERS = ['Object', 'Point', 'Edge', 'Polygon', 'Knot', 'Isopoint', 'Sample', 'Subcurve', 'Boundary', 'Hull', 'Null', 'Light', 'Camera', 'Model', 'Chain Element', 'Bone', 'Effector', 'Root', 'Group', 'Cluster', 'Property', 'Operator'];
+  const FILTERS = ['Object', 'Point', 'Edge', 'Polygon', 'Knot', 'Isopoint', 'Sample', 'Subcurve', 'Boundary', 'Hull', 'Polynode', 'Domainpoint', 'Surfacecurve', 'Trimboundary', ...siFilterNames().filter(f => !['Objects'].includes(f)), 'Model', 'Chain Element', 'Effector', 'Root', 'Cluster', 'Property', 'Operator'].filter((f, i, a) => a.indexOf(f) === i);
   const filterSel = document.createElement('select'); filterSel.className = 'mcp-combo'; for (const f of FILTERS) { const o = document.createElement('option'); o.textContent = f; filterSel.appendChild(o); }
   filterSel.onchange = () => { const f = filterSel.value; if (['Object', 'Point', 'Edge', 'Polygon'].includes(f)) app.setSelMode(f.toLowerCase() as any); else { app.setSelMode('object'); A.selFilter = f; app.logMsg('info', `Selection filter: ${f}`); } };
   sel.body.appendChild(grid(1, filterSel));
@@ -94,7 +94,7 @@ export function mcpPanel(app: App, host: HTMLElement, opts: { only?: string[]; c
   const propB = button('Prop', () => { app.proportional.on = !app.proportional.on; upd(); }, 'Proportional modeling (falloff)');
   const symB = button('Sym', () => { A.symmetry = !A.symmetry; upd(); }, 'Symmetry Mode. Right-click to popup menu.');
   symB.oncontextmenu = (e) => { e.preventDefault(); openSiMenu(SI_MENUS.mcpSymmetry ?? [], e.clientX, e.clientY, (it) => { if (['YZ', 'XZ', 'XY'].includes(it.label!)) { A.symPlane = it.label; A.symmetry = true; upd(); } else app.logMsg('info', 'Symmetry Properties: not implemented'); }, { checked: it => ['YZ', 'XZ', 'XY'].includes(it.label!) ? (A.symPlane ?? 'YZ') === it.label : undefined }); };
-  (window as any).__mcp = (k: string, v: any) => { if (k === 'ref') refB.find(b => b.textContent === v)?.click(); else if (k === 'axis') { (tool.axes as any)[v] = !(tool.axes as any)[v]; app.events.emit('selection'); } else if (k === 'prop') propB.click(); else if (k === 'cog') cogB.click(); else if (k === 'sym') symB.click(); };
+  (window as any).__mcp = (k: string, v: any) => { if (k === 'ref') refB.find(b => b.textContent === v)?.click(); else if (k === 'axis') { (tool.axes as any)[v] = !(tool.axes as any)[v]; app.events.emit('selection'); } else if (k === 'prop') propB.click(); else if (k === 'cog') cogB.click(); else if (k === 'sym') symB.click(); else if (k === 'snap') { const b = snapB.find(x => (x as any)._k === v); if (b) b.click(); else if (v === 'on') snapOn.click(); } else if (k === 'pivot') app.logMsg('info', 'Pivot editing: use the Pivot Tool (camera menu) or the transform PPG'); else if (k === 'manip') app.logMsg('info', `Manipulators ${v ? 'on' : 'off (transform anywhere in the view)'}`); else if (k === 'selmode') { (window as any).__selShape = v; app.logMsg('info', `${v} select mode`); } else if (k === 'vol') app.logMsg('info', 'Volume scaling modifier toggled'); };
   tr.body.appendChild(grid(3, cogB, propB, symB));
   add('Transform', tr.el);
 

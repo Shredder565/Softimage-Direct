@@ -17,7 +17,12 @@ import { SI_MENUS, SiMenuItem, openSiMenu, siIcon, hasIcon } from './si';
 export const SI = {
   selected: 0xffffff, geometry: 0x000000, active: 0xffd200, component: 0xff0000, vertex: 0x0000ff, highlight: 0xe1ffff, subselection: 0xa0bcbc,
   background: 0x7f7f7f, grid: 0x191919, viewport: 0x666666, light: 0xcd4b00, camera: 0x1428a0, nullcol: 0x006200, ctrl: 0x006200,
-  pointSize: 5, pickTol: 15, clickToDeselect: false, surroundPolygons: false, surroundEdges: false,
+  inherited: 0xc6c6c6, knot: 0x000000, normal: 0x00ffff, curveIso: 0x000000, curveBoundary: 0x000000, cluster: 0x000000, clusterSelected: 0xff0000, unselectable: 0x606060, tagged: 0xff0000, filmGate: 0x000000, inspected: 0xffd200, sample: 0xff00ff,
+  pointSize: 5, pickTol: 15, boundaryPickTol: 15, normalPickTol: 15, normalDisplaySize: 1, normalScale: 1, clickToDeselect: false, surroundPolygons: false, surroundEdges: false, singleObject: false, raycastBackfacing: true, rectRaycast: false, extendedComponentSel: false,
+  headlightDefault: false, font: '10px Tahoma, Verdana, sans-serif', planarity: true, connectRule: 0,
+  units: { length: 2, angle: 2, time: 0, mass: 2 },
+  nav: { zoomCursor: false, wheelCursor: false, wheelZoom: true, navZoom: 1, panZoom: 1, animate: false, animateDuration: 0.5, orbit: 0, pan: 0 },
+  viewCube: { show: true, position: 0, size: 44, opacity: 0.5, snap: true, fit: true, animate: true, compass: false, north: 0 },
 };
 export type ToolMode = 'select' | 'translate' | 'rotate' | 'scale';
 export const tool = { mode: 'select' as ToolMode, axes: { x: true, y: true, z: true }, setMode: (_m: ToolMode) => { } };
@@ -85,12 +90,30 @@ export function viewManager(app: App, host: HTMLElement) {
   vps.push(mk('Front', 'ortho', new THREE.Vector3(0, 0, 100), new THREE.Vector3(0, 1, 0)));
   vps.push(mk('Right', 'ortho', new THREE.Vector3(100, 0, 0), new THREE.Vector3(0, 1, 0)));
   const setDisplay = (vp: Viewport, mode: string) => { vp.display = mode.toLowerCase().replace('textured decal', 'texture decal').replace('hidden line removal', 'hidden line'); vp.head.disp.textContent = DISPLAY_MODES.find(m => m.toLowerCase() === vp.display) ?? mode; needs = true; };
+  // ---- camera history (camera-menu Undo/Redo, Undo Camera / Redo Camera keys) and the key-map view actions
+  type CamState = { pos: THREE.Vector3; up: THREE.Vector3; tgt: THREE.Vector3; zoom: number; name: string };
+  const camHist = new Map<Viewport, { undo: CamState[]; redo: CamState[] }>();
+  const camState = (vp: Viewport): CamState => ({ pos: vp.camera.position.clone(), up: vp.camera.up.clone(), tgt: orbit.target.clone(), zoom: (vp.camera as any)._zoom ?? 20, name: vp.name });
+  const camApply = (vp: Viewport, st: CamState) => { vp.camera.position.copy(st.pos); vp.camera.up.copy(st.up); orbit.target.copy(st.tgt); (vp.camera as any)._zoom = st.zoom; vp.name = st.name; vp.head.view.textContent = st.name; vp.camera.lookAt(orbit.target); needs = true; };
+  const camSnap = (vp: Viewport) => { const h = camHist.get(vp) ?? { undo: [], redo: [] }; camHist.set(vp, h); h.undo.push(camState(vp)); if (h.undo.length > 50) h.undo.shift(); h.redo = []; };
+  const camUndo = (vp: Viewport) => { const h = camHist.get(vp); const st = h?.undo.pop(); if (!st || !h) return; h.redo.push(camState(vp)); camApply(vp, st); };
+  const camRedo = (vp: Viewport) => { const h = camHist.get(vp); const st = h?.redo.pop(); if (!st || !h) return; h.undo.push(camState(vp)); camApply(vp, st); };
+  const zoomBy = (vp: Viewport, f: number) => { camSnap(vp); const cam = vp.camera as any; if (vp.kind === 'ortho') cam._zoom = Math.max(0.5, (cam._zoom ?? 20) * f); else { const d = cam.position.clone().sub(orbit.target); cam.position.copy(orbit.target).add(d.multiplyScalar(1 / f)); } needs = true; };
+  const nudge = (vp: Viewport, dx: number, dy: number) => { camSnap(vp); const cam = vp.camera; const dist = vp.kind === 'ortho' ? 100 / ((cam as any)._zoom ?? 20) : cam.position.distanceTo(orbit.target); const right = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 0), up = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 1); const mv = right.multiplyScalar(dx * dist * 0.1).add(up.multiplyScalar(dy * dist * 0.1)); cam.position.add(mv); orbit.target.add(mv); needs = true; };
+  const black = () => scene.background instanceof THREE.Color && (scene.background as THREE.Color).getHex() === 0;
+  (window as any).__vm = {
+    active: () => vps[active], view: (name: string) => { const vp = vps[active]; camSnap(vp); switchView(vp, name); needs = true; }, zoom: (f: number) => zoomBy(vps[active], f), nudge: (dx: number, dy: number) => nudge(vps[active], dx, dy),
+    undoCamera: () => camUndo(vps[active]), redoCamera: () => camRedo(vps[active]), toggleBackground: () => { scene.background = new THREE.Color(black() ? SI.background : 0x000000); needs = true; },
+    manipSize: (f: number) => { gizmoPx = Math.max(20, Math.min(300, gizmoPx * f)); needs = true; }, display: (mode: string) => { setDisplay(vps[active], mode); needs = true; }, displayOf: () => vps[active].display,
+    cameraMenu: (label: string) => cameraMenu(vps[active], label), visibility: (label: string) => visibilityMenu(vps[active], label), flags: () => vps[active].flags, wireOnShaded: () => { const vp = vps[active]; vp.flags['Wire on Shaded'] = !vp.flags['Wire on Shaded']; needs = true; },
+    center: (all = false) => { const c = selectionCenter(); if (!c) return; for (const vp of all ? vps : [vps[active]]) { camSnap(vp); const d = vp.camera.position.clone().sub(orbit.target); orbit.target.copy(c); vp.camera.position.copy(c).add(d); vp.camera.lookAt(orbit.target); } needs = true; },
+  };
   const cameraMenu = (vp: Viewport, label: string) => {
     switch (label) {
       case 'Frame Selection': frameBox(app.selectedObjects); return; case 'Center Selection': frameBox(app.selectedObjects, true); return; case 'Frame All': frameBox([...app.scene.allObjects()].filter(o => o.visible)); return;
       case 'Reset': switchView(vp, vp.name); needs = true; return; case 'Set Background to Black': scene.background = new THREE.Color(0x000000); needs = true; return; case 'Set Background to Grey': scene.background = new THREE.Color(SI.background); needs = true; return;
       case 'Select Camera': { const c = [...app.scene.allObjects()].find(o => o.type === 'camera'); if (c) app.select([c]); return; } case 'Properties...': { const c = [...app.scene.allObjects()].find(o => o.type === 'camera'); if (c) app.events.emit('inspect', c); return; }
-      case 'Undo': app.undo(); return; case 'Redo': app.redo(); return; case 'Scene Colors...': window.dispatchEvent(new CustomEvent('openprefs', { detail: { page: 'Scene Colors' } })); return;
+      case 'Undo': camUndo(vp); return; case 'Redo': camRedo(vp); return; case 'Scene Colors...': window.dispatchEvent(new CustomEvent('openprefs', { detail: { page: 'Scene Colors' } })); return;
     }
     if (!XT.cameraMenu(vp, label)) app.logMsg('info', `Camera menu: ${label} not implemented`);
   };
@@ -273,7 +296,7 @@ export function viewManager(app: App, host: HTMLElement) {
     }
     const centre = new THREE.Points(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3()]), new THREE.PointsMaterial({ color: 0xffd200, size: 9, sizeAttenuation: false, depthTest: false })); centre.renderOrder = 22; gizmo.add(centre);
   };
-  const gizmoPx = 70; // handle length in pixels
+  let gizmoPx = 70; // handle length in pixels (Increase/Decrease Manipulator Size)
   const pxScaleOf = (vp: Viewport, r: { w: number; h: number }) => { const cam = vp.camera as any; return vp.kind === 'ortho' ? (cam._zoom ?? 20) * 2 / r.h : gizmoCenter.distanceTo(cam.position) * Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * 2 / r.h; };
   const scaleGizmo = (vp: Viewport, r: { w: number; h: number }) => { gizmo.visible = gizmoOn; if (!gizmoOn) return; const s = pxScaleOf(vp, r) * gizmoPx; gizmo.scale.set(s, s, s); };
   /** Which manipulator handle is under the cursor: an axis, the centre square, or none. */
@@ -347,7 +370,7 @@ export function viewManager(app: App, host: HTMLElement) {
           if (k === 'mesh') { ch.visible = shaded; const m = ch as THREE.Mesh; const base = d === 'textured' || d === 'texture decal' || d === 'realtime shaders' || d === 'rotoscope' ? (d === 'texture decal' ? decalFor((ch as any)._matTextured) : (ch as any)._matTextured) : (ch as any)._matShaded;
             if (d === 'hidden line') m.material = hiddenLineMat; else if (d === 'constant') { let c = constantMats.get(base); if (!c) { c = new THREE.MeshBasicMaterial({ color: (base as any).color ?? 0xb3b3b3, polygonOffset: true, polygonOffsetFactor: 1.5, polygonOffsetUnits: 2 }); constantMats.set(base, c); } m.material = c; } else m.material = base;
             if (vp.flags['XRay Surfaces']) { (m.material as THREE.Material).transparent = true; (m.material as THREE.Material).opacity = 0.35; } else if ((m.material as any)._xrayed) { (m.material as THREE.Material).transparent = false; (m.material as THREE.Material).opacity = 1; } (m.material as any)._xrayed = vp.flags['XRay Surfaces']; }
-          else if (k === 'wire') ch.visible = d === 'wireframe' || d === 'hidden line' || (shaded && !!(ch as any)._selected);
+          else if (k === 'wire') ch.visible = d === 'wireframe' || d === 'hidden line' || (shaded && (!!(ch as any)._selected || !!vp.flags['Wire on Shaded']));
           else if (k === 'bbox') ch.visible = d === 'bounding box';
         }
         if (d === 'bounding box') { const b = bboxFor(g); if (b) b.visible = true; }
@@ -368,7 +391,7 @@ export function viewManager(app: App, host: HTMLElement) {
   const pickObject = (vp: Viewport, nx: number, ny: number): { obj: X3DObject; hit: THREE.Intersection } | null => {
     ray.setFromCamera(new THREE.Vector2(nx, ny), vp.camera);
     const hits = ray.intersectObjects([...nodes.values()], true).filter(h => { const k = (h.object as any)._kind; return k === 'mesh' || k === 'marker' || (h.object.parent as any)?._kind === 'marker'; });
-    for (const h of hits) { let o: THREE.Object3D | null = h.object; while (o && !(o as any)._obj) o = o.parent; if (o) { const x = (o as any)._obj as X3DObject; if (x.visible && !(x instanceof Model && !x.primitive)) return { obj: x, hit: h }; } }
+    for (const h of hits) { if (!SI.raycastBackfacing && h.face && (h.object as any)._kind === 'mesh') { const n = h.face.normal.clone().transformDirection(h.object.matrixWorld); if (n.dot(ray.ray.direction) > 0) continue; } let o: THREE.Object3D | null = h.object; while (o && !(o as any)._obj) o = o.parent; if (o) { const x = (o as any)._obj as X3DObject; if (x.visible && !(x instanceof Model && !x.primitive)) return { obj: x, hit: h }; } }
     return null;
   };
   const project = (vp: Viewport, r: { x: number; y: number; w: number; h: number }, M: THREE.Matrix4, pts: Float32Array, i: number) => {
@@ -410,6 +433,7 @@ export function viewManager(app: App, host: HTMLElement) {
     const start = new Map<string, number>();
     const objs = app.selectedObjects;
     for (const o of objs) for (const p of o.kinematics.local.params) start.set(o.id + '.' + p.name, p.value);
+    if (e.altKey || e.button === 1 || e.button === 2) camSnap(vp);
     drag = { vp, at, sx: e.clientX, sy: e.clientY, button: e.button, start, objs, camPos: vp.camera.position.clone(), tgt: orbit.target.clone(), moved: false, handle: e.button === 0 && !e.altKey ? pickHandle(vp, at) : null };
     renderer.domElement.setPointerCapture(e.pointerId);
     const cs = app.compSel;
@@ -577,8 +601,8 @@ export function viewManager(app: App, host: HTMLElement) {
   });
   renderer.domElement.addEventListener('wheel', (e) => {
     const at = vpAt(e); if (!at) return; e.preventDefault();
-    const vp = vps[at.i], cam = vp.camera as any, f = 1 + Math.sign(e.deltaY) * Math.min(0.5, ((window as any).__wheelRate ?? 0.2) * 0.5);
-    if (vp.kind === 'ortho') cam._zoom = Math.max(0.5, (cam._zoom ?? 20) * f); else { const d = cam.position.clone().sub(orbit.target); cam.position.copy(orbit.target).add(d.multiplyScalar(f)); }
+    if (!SI.nav.wheelZoom) return; const vp = vps[at.i], cam = vp.camera as any, f = 1 + Math.sign(e.deltaY) * Math.min(0.5, ((window as any).__wheelRate ?? 0.2) * 0.5);
+    camSnap(vp); if (vp.kind === 'ortho') cam._zoom = Math.max(0.5, (cam._zoom ?? 20) * f); else { const d = cam.position.clone().sub(orbit.target); cam.position.copy(orbit.target).add(d.multiplyScalar(f)); }
     needs = true;
   }, { passive: false });
   window.addEventListener('keydown', (e) => {

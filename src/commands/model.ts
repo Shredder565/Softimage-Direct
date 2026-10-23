@@ -93,8 +93,11 @@ export function registerModelCommands(app: App) {
       const gen = S2.makeGeneratorOperator(g.preset, inputs, () => obj)!;
       if (g.preset === 'Boolean') { gen.set('booleanmode', /Difference/.test(a.PresetObj) ? 2 : /Intersect/.test(a.PresetObj) ? 0 : 1); S2.loadCSG().then(() => { if (obj?.primitive) { obj.primitive.dirty = true; app.events.emit('scene'); } }); }
       obj = newGeomObject(app, g.preset.toLowerCase().replace(/[^a-z]+/g, '_'), a.Target === 'NurbsSurface' && g.out === 'polymsh' ? 'surfmsh' : g.out, gen);
-      addObject(app, obj); if (g.preset === 'Boolean' || g.preset === 'Merge Meshes') for (const i of inputs) app.setParam(i.property('visibility')!.get('viewvis')!, false, 'Hide input');
-      app.select([gen]); return obj;
+      addObject(app, obj);
+      // Preferences > Modeling > Generator input management: 0 keep, 1 hide, 2 delete (Boolean / Merge always hide like Softimage's default for them)
+      const mgt = Number((app as any).genInputMgt ?? 0); const hide = mgt === 1 || (mgt === 0 && (g.preset === 'Boolean' || g.preset === 'Merge Meshes'));
+      if (hide) for (const i of inputs) app.setParam(i.property('visibility')!.get('viewvis')!, false, 'Hide input'); else if (mgt === 2) { app.run('FreezeModeling', { InputObjs: [obj] }); app.run('DeleteObj', { InputObjs: inputs }); }
+      if ((app as any).selectGenerated === false) app.select(inputs); else app.select([gen]); return obj;
     },
   });
   app.register({ name: 'UIAssembleNurbsMesh', label: 'Assemble', category: 'Modeling', args: [], execute: (app) => app.run('ApplyGenOp', { PresetObj: 'MeshMerge', Target: 'NurbsSurface' }) });

@@ -102,8 +102,8 @@ def menus():
 def strings():
     d = json.load(open(os.path.join(SI, 'dict.json')))
     out = {}
-    for mod in ['XSIVIEWINTERACTION', 'XSIMCP', 'XSIVIEWCONTROL', 'XSIVM', 'XSISELECTIONMGR', 'XSIMANIPULATORS', 'XSIPICKMGR', 'XSITOOLMANAGER', 'XSIVIEWCORE', 'XSISCENEEXPLORER', 'XSIGENPPG', 'XSIPREFS', 'XSIUIUT', 'XSIXSI']:
-        out[mod] = d.get(mod, {})
+    for mod, tbl in d.items():  # every dictionary; id 0 carries a stray header code unit in front of its text
+        out[mod] = {k: (v.lstrip('\ufffd') if k != '0' else v[1:] if v and ord(v[0]) > 0x7f else v) for k, v in tbl.items()}
     json.dump(out, open(os.path.join(OUT, 'strings.json'), 'w'), indent=0, ensure_ascii=False)
     print('strings', {k: len(v) for k, v in out.items()})
 
