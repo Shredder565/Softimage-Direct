@@ -1,0 +1,795 @@
+[
+{
+"label": "Main",
+"items": [
+{
+"type": "scriptbutton",
+"label": "Sphere",
+"bitmap": "sphere",
+"tooltip": "Get>Primitive>Polygon Mesh>Sphere",
+"w": "36",
+"h": "36",
+"script": "set oSphere = CreatePrim (\"Sphere\", \"MeshSurface\")\n'oSphere.radius.Value = 4\n'oSphere.subdivu.Value = 8\n'oSphere.subdivv.Value = 8\n"
+},
+{
+"type": "scriptbutton",
+"label": "Cube",
+"bitmap": "cube",
+"tooltip": "Get>Primitive>Polygon Mesh>Cube",
+"w": "36",
+"h": "36",
+"script": "set oCube = CreatePrim (\"Cube\", \"MeshSurface\")\n'oCube.length.Value = 4\n'oCube.subdivu.Value = 1\n'oCube.subdivv.Value = 1\n'oCube.subdivbase.Value = 1\n\n\n"
+},
+{
+"type": "scriptbutton",
+"label": "Grid",
+"bitmap": "grid",
+"tooltip": "Get>Primitive>Polygon Mesh>Grid",
+"w": "36",
+"h": "36",
+"script": "Set oGrid = CreatePrim (\"Grid\", \"MeshSurface\")\n"
+},
+{
+"type": "scriptbutton",
+"label": "Null",
+"bitmap": "null",
+"tooltip": "Get>Primitive>Null",
+"w": "36",
+"h": "36",
+"script": "GetPrim \"Null\"\n"
+},
+{
+"type": "scriptbutton",
+"label": "Omni",
+"bitmap": "lightpoint",
+"tooltip": "Get>Primitive>Light>Point",
+"w": "36",
+"h": "36",
+"script": "GetPrimLight \"Point.Preset\", \"Point\"\n"
+},
+{
+"type": "scriptbutton",
+"label": "Cam",
+"bitmap": "camera",
+"tooltip": "Get>Primitive>Camera>Perspective",
+"w": "36",
+"h": "36",
+"script": "GetPrimCamera"
+},
+{
+"type": "scriptbutton",
+"label": "Frame",
+"bitmap": "framesel",
+"tooltip": "Frame Selection (F) - Active Viewport",
+"w": "36",
+"h": "36",
+"script": "\n                  vw = GetFocusedViewport\n                  if vw = \"A\" then\n                     FrameSelection false, false, 0\n                  elseif vw = \"B\" then\n                     FrameSelection false, false, 1\n                  elseif vw = \"C\" then\n                     FrameSelection false, false, 2\n                  elseif vw = \"D\" then\n                     FrameSelection false, false, 3\n                  end if"
+},
+{
+"type": "scriptbutton",
+"label": "All",
+"bitmap": "frameall",
+"tooltip": "Frame All (A) - Active Viewport",
+"w": "36",
+"h": "36",
+"script": "\n                  vw = GetFocusedViewport\n                  if vw = \"A\" then\n                     FrameSelection true, false, 0\n                  elseif vw = \"B\" then\n                     FrameSelection true, false, 1\n                  elseif vw = \"C\" then\n                     FrameSelection true, false, 2\n                  elseif vw = \"D\" then\n                     FrameSelection true, false, 3\n                  end if"
+},
+{
+"type": "scriptbutton",
+"label": "Reset",
+"bitmap": "resetcamera",
+"tooltip": "Reset Camera (R)  - Active Viewport",
+"w": "36",
+"h": "36",
+"script": "\n                  vw = GetFocusedViewport\n                  if vw = \"A\" then\n                     CameraReset 0\n                  elseif vw = \"B\" then\n                     CameraReset 1\n                  elseif vw = \"C\" then\n                     CameraReset 2\n                  elseif vw = \"D\" then\n                     CameraReset 3\n                  end if"
+},
+{
+"type": "scriptbutton",
+"label": "Nav",
+"bitmap": "navtool",
+"tooltip": "Navigation Tool (S)",
+"w": "36",
+"h": "36",
+"script": "set cmd = application.commands (\"Navigation Tool\")\ncmd.execute"
+},
+{
+"type": "scriptbutton",
+"label": "Scl",
+"bitmap": "scale",
+"tooltip": "Scaling Tool (X)",
+"w": "36",
+"h": "36",
+"script": "ScalingTool"
+},
+{
+"type": "scriptbutton",
+"label": "Rot",
+"bitmap": "rotate",
+"tooltip": "Rotation Tool (C)",
+"w": "36",
+"h": "36",
+"script": "RotationTool"
+},
+{
+"type": "scriptbutton",
+"label": "Trans",
+"bitmap": "translate",
+"tooltip": "Translate Tool (V)",
+"w": "36",
+"h": "36",
+"script": "TranslateTool"
+},
+{
+"type": "command",
+"label": "SRT",
+"bitmap": "mini_srt",
+"tooltip": null,
+"w": "36",
+"h": "36"
+},
+{
+"type": "scriptbutton",
+"label": "Object",
+"bitmap": "selectobj",
+"tooltip": "Object Selection Mode (Spacebar)",
+"w": "36",
+"h": "36",
+"script": "\n                  ActivateObjectSelTool\n                  if GetValue(\"preferences.TransformProperties.transformmanipulators\") = True And GetValue(\"preferences.TransformProperties.transformmanipdefaultxfo\") <> 3 then\n                     ActivateSelectTool\n                  end if"
+},
+{
+"type": "scriptbutton",
+"label": "Point",
+"bitmap": "selectpoint",
+"tooltip": "Point Selection Mode (T)",
+"w": "36",
+"h": "36",
+"script": "\n                  ActivateVertexSelTool\n                  if GetValue(\"preferences.TransformProperties.transformmanipulators\") = True And GetValue(\"preferences.TransformProperties.transformmanipdefaultxfo\") <> 3 then\n                     ActivateSelectTool\n                  end if"
+},
+{
+"type": "scriptbutton",
+"label": "Edge",
+"bitmap": "selectedge",
+"tooltip": "Edge Selection Mode (E)",
+"w": "36",
+"h": "36",
+"script": "\n                  ActivateEdgeSelTool\n                  if GetValue(\"preferences.TransformProperties.transformmanipulators\") = True And GetValue(\"preferences.TransformProperties.transformmanipdefaultxfo\") <> 3 then\n                     ActivateSelectTool\n                  end if"
+},
+{
+"type": "scriptbutton",
+"label": "Poly",
+"bitmap": "selectpoly",
+"tooltip": "Polygon Selection Mode (Y)",
+"w": "36",
+"h": "36",
+"script": "\n                  ActivatePolygonSelTool\n                  if GetValue(\"preferences.TransformProperties.transformmanipulators\") = True And GetValue(\"preferences.TransformProperties.transformmanipdefaultxfo\") <> 3 then\n                     ActivateSelectTool\n                  end if"
+},
+{
+"type": "scriptbutton",
+"label": "Wire",
+"bitmap": "wireframe",
+"tooltip": "Set Display Mode to Wireframe (Active Viewport)",
+"w": "36",
+"h": "36",
+"script": "SetDisplayMode getviewcamera (-1) , \"wireframe\""
+},
+{
+"type": "scriptbutton",
+"label": "Hid",
+"bitmap": "hiddenline",
+"tooltip": "Set Display Mode to Hidden Line (Active Viewport)",
+"w": "36",
+"h": "36",
+"script": "SetDisplayMode getviewcamera (-1) , \"hiddenline\""
+},
+{
+"type": "scriptbutton",
+"label": "Shade",
+"bitmap": "shaded",
+"tooltip": "Set Display Mode to Shaded (Active Viewport)",
+"w": "36",
+"h": "36",
+"script": "SetDisplayMode getviewcamera (-1) , \"shaded\""
+},
+{
+"type": "scriptbutton",
+"label": "Txtrd",
+"bitmap": "textured",
+"tooltip": "Set Display Mode to Textured (Active Viewport)",
+"w": "36",
+"h": "36",
+"script": "SetDisplayMode getviewcamera (-1) , \"textured\""
+},
+{
+"type": "scriptbutton",
+"label": "Decal",
+"bitmap": "texturedecal",
+"tooltip": "Set Display Mode to Texture Decal (Active Viewport)",
+"w": "36",
+"h": "36",
+"script": "SetDisplayMode getviewcamera (-1) , \"texturedecal\""
+},
+{
+"type": "scriptbutton",
+"label": "Stats",
+"bitmap": "stats",
+"tooltip": "Show Scene Stats (Active Viewport)",
+"w": "36",
+"h": "36",
+"script": "oCam = GetViewCamera(-1) & \".camvis.\"\nif GetValue (oCam & \"selectioninfo\") = True then\n\tSetValue oCam & \"refreshrate,\" & oCam & \"currenttime,\" & oCam & \"selectioninfo,\" & oCam & \"sceneinfo\", False\nElse\n\tSetValue oCam & \"refreshrate,\" & oCam & \"currenttime,\" & oCam & \"selectioninfo,\" & oCam & \"sceneinfo\", True\nEnd if"
+},
+{
+"type": "command",
+"label": "Grid",
+"bitmap": "displaygrid",
+"tooltip": null,
+"w": "36",
+"h": "36"
+},
+{
+"type": "line_break",
+"label": null,
+"bitmap": null,
+"tooltip": null,
+"w": null,
+"h": null
+},
+{
+"type": "scriptbutton",
+"label": "Polygons",
+"bitmap": null,
+"tooltip": "",
+"w": "108",
+"h": "18",
+"script": "Set oView = Desktop.ActiveLayout.CreateView( \"Menu Window\", \"title is not used\" )\noView.Move 200, 160 \noView.SetAttributeValue \"TargetContent\", \"ModelGetPrimitive&Polygon Mesh\" "
+},
+{
+"type": "scriptbutton",
+"label": "Primitives",
+"bitmap": null,
+"tooltip": "",
+"w": "108",
+"h": "18",
+"script": "Set oView = Desktop.ActiveLayout.CreateView( \"Menu Window\", \"title is not used\" )\noView.Move 300, 160 \noView.SetAttributeValue \"TargetContent\", \"ModelGetPrimitive\" \n"
+},
+{
+"type": "scriptbutton",
+"label": "Navigation",
+"bitmap": null,
+"tooltip": "",
+"w": "144",
+"h": "18",
+"script": "InspectObj \"preferences.camera\""
+},
+{
+"type": "scriptbutton",
+"label": "Transform",
+"bitmap": null,
+"tooltip": "",
+"w": "144",
+"h": "18",
+"script": "InspectObj \"preferences.TransformProperties\""
+},
+{
+"type": "scriptbutton",
+"label": "Select",
+"bitmap": null,
+"tooltip": "",
+"w": "144",
+"h": "18",
+"script": "InspectObj \"preferences.Select\""
+},
+{
+"type": "scriptbutton",
+"label": "Display",
+"bitmap": null,
+"tooltip": "",
+"w": "180",
+"h": "18",
+"script": "inspectobj getviewcamera (-1) & \".camdisp\""
+},
+{
+"type": "scriptbutton",
+"label": "Visibility",
+"bitmap": null,
+"tooltip": "",
+"w": "72",
+"h": "18",
+"script": "inspectobj getviewcamera (-1) & \".camvis\""
+}
+]
+},
+{
+"label": "General",
+"items": [
+{
+"type": "scriptbutton",
+"label": "Dup",
+"bitmap": "duplicate",
+"tooltip": "Duplicate Selection (Ctrl+D)",
+"w": "36",
+"h": "36",
+"script": "set cmd = application.commands (\"Duplicate\")\ncmd.execute"
+},
+{
+"type": "command",
+"label": "DupSym",
+"bitmap": "duplicatesymmetry",
+"tooltip": null,
+"w": "36",
+"h": "36"
+},
+{
+"type": "scriptbutton",
+"label": "Exp",
+"bitmap": "explorer",
+"tooltip": "Explorer (8)",
+"w": "36",
+"h": "36",
+"script": "set layout = Application.Desktop.ActiveLayout\nset v = layout.CreateView ( \"Explorer\", \"Explorer\" )\nv.Move 600, 140\nv.resize 240, 380"
+},
+{
+"type": "scriptbutton",
+"label": "Schem",
+"bitmap": "schematic",
+"tooltip": "Schematic (9)",
+"w": "36",
+"h": "36",
+"script": "set layout = Application.Desktop.ActiveLayout\nset v = layout.CreateView ( \"Schematic\", \"Schematic\" )\nv.Move 200, 140\nv.resize 440, 380"
+},
+{
+"type": "command",
+"label": "Scene",
+"bitmap": "sceneinfo",
+"tooltip": null,
+"w": "36",
+"h": "36"
+},
+{
+"type": "command",
+"label": "Info",
+"bitmap": "selectinfo",
+"tooltip": null,
+"w": "36",
+"h": "36"
+},
+{
+"type": "scriptbutton",
+"label": "Hide",
+"bitmap": "hide",
+"tooltip": "Hide/UnHide Selection (H)",
+"w": "36",
+"h": "36",
+"script": "ToggleVisibility"
+},
+{
+"type": "command",
+"label": "UnHide",
+"bitmap": "unhide",
+"tooltip": null,
+"w": "36",
+"h": "36"
+},
+{
+"type": "line_break",
+"label": null,
+"bitmap": null,
+"tooltip": null,
+"w": null,
+"h": null
+},
+{
+"type": "scriptbutton",
+"label": "Duplicate",
+"bitmap": null,
+"tooltip": "",
+"w": "72",
+"h": "18",
+"script": "InspectObj \"preferences.duplicate\"\n"
+},
+{
+"type": "scriptbutton",
+"label": "Views",
+"bitmap": null,
+"tooltip": "",
+"w": "72",
+"h": "18",
+"script": "inspectobj \"preferences.explorer, preferences.schematic\""
+},
+{
+"type": "scriptbutton",
+"label": "Info",
+"bitmap": null,
+"tooltip": "",
+"w": "72",
+"h": "18",
+"script": "inspectobj \"preferences.general, preferences.interaction\""
+},
+{
+"type": "scriptbutton",
+"label": "Hide",
+"bitmap": null,
+"tooltip": "",
+"w": "72",
+"h": "18",
+"script": "inspectobj \"preferences.Display\""
+}
+]
+},
+{
+"label": "Primitives",
+"items": [
+{
+"type": "scriptbutton",
+"label": "Sphere",
+"bitmap": "sphere",
+"tooltip": "Get>Primitive>Polygon Mesh>Sphere",
+"w": "36",
+"h": "36",
+"script": "CreatePrim \"Sphere\", \"MeshSurface\""
+},
+{
+"type": "scriptbutton",
+"label": "Cube",
+"bitmap": "cube",
+"tooltip": "Get>Primitive>Polygon Mesh>Cube",
+"w": "36",
+"h": "36",
+"script": "CreatePrim \"Cube\", \"MeshSurface\""
+},
+{
+"type": "scriptbutton",
+"label": "Grid",
+"bitmap": "grid",
+"tooltip": "Get>Primitive>Polygon Mesh>Grid",
+"w": "36",
+"h": "36",
+"script": "CreatePrim \"Grid\", \"MeshSurface\""
+},
+{
+"type": "scriptbutton",
+"label": "Cone",
+"bitmap": "cone",
+"tooltip": "Get>Primitive>Polygon Mesh>Cone",
+"w": "36",
+"h": "36",
+"script": "CreatePrim \"Cone\", \"MeshSurface\""
+},
+{
+"type": "scriptbutton",
+"label": "Cylinder",
+"bitmap": "cylinder",
+"tooltip": "Get>Primitive>Polygon Mesh>Cylinder",
+"w": "36",
+"h": "36",
+"script": "CreatePrim \"Cylinder\", \"MeshSurface\""
+},
+{
+"type": "scriptbutton",
+"label": "Torus",
+"bitmap": "torus",
+"tooltip": "Get>Primitive>Polygon Mesh>Torus",
+"w": "36",
+"h": "36",
+"script": "CreatePrim \"Torus\", \"MeshSurface\""
+},
+{
+"type": "scriptbutton",
+"label": "Disc",
+"bitmap": "disc",
+"tooltip": "Get>Primitive>Polygon Mesh>Disc",
+"w": "36",
+"h": "36",
+"script": "CreatePrim \"Disc\", \"MeshSurface\""
+},
+{
+"type": "scriptbutton",
+"label": "Null",
+"bitmap": "null",
+"tooltip": "Get>Primitive>Null",
+"w": "36",
+"h": "36",
+"script": "GetPrim \"Null\""
+},
+{
+"type": "scriptbutton",
+"label": "Cam",
+"bitmap": "camera",
+"tooltip": "Get>Primitive>Camera>Perspective",
+"w": "36",
+"h": "36",
+"script": "GetPrimCamera"
+},
+{
+"type": "scriptbutton",
+"label": "Cam",
+"bitmap": "camera_stereo",
+"tooltip": "Get>Primitive>Camera>Stereo",
+"w": "36",
+"h": "36",
+"script": "GetPrimStereoCamera"
+},
+{
+"type": "scriptbutton",
+"label": "Omni",
+"bitmap": "lightpoint",
+"tooltip": "Get>Primitive>Light>Point",
+"w": "36",
+"h": "36",
+"script": "GetPrimLight \"Point.Preset\", \"Point\"\n"
+},
+{
+"type": "scriptbutton",
+"label": "Spot",
+"bitmap": "lightspot",
+"tooltip": "Get>Primitive>Light>Spot",
+"w": "36",
+"h": "36",
+"script": "GetPrimLight \"Spot.Preset\", \"Spot\"\n"
+},
+{
+"type": "scriptbutton",
+"label": "Infinite",
+"bitmap": "lightinfinite",
+"tooltip": "Get>Primitive>Light>Infinite",
+"w": "36",
+"h": "36",
+"script": "GetPrimLight \"Infinite.Preset\", \"Infinite\"\n"
+},
+{
+"type": "scriptbutton",
+"label": "Square",
+"bitmap": "square",
+"tooltip": "Get>Primitive>Curve>Square",
+"w": "36",
+"h": "36",
+"script": "CreatePrim \"Square\", \"NurbsCurve\"\n"
+},
+{
+"type": "scriptbutton",
+"label": "Circle",
+"bitmap": "circle",
+"tooltip": "Get>Primitive>Curve>Circle",
+"w": "36",
+"h": "36",
+"script": "CreatePrim \"Circle\", \"NurbsCurve\"\n"
+},
+{
+"type": "scriptbutton",
+"label": "Linear",
+"bitmap": "drawlinear",
+"tooltip": "Draw Linear Curve Tool",
+"w": "36",
+"h": "36",
+"script": "set oCmd = Application.Commands (\"Linear Curve Tool\")\noCmd.execute"
+},
+{
+"type": "scriptbutton",
+"label": "NURBs",
+"bitmap": "drawnurbs",
+"tooltip": "Draw NURBs Curve Tool",
+"w": "36",
+"h": "36",
+"script": "set oCmd = Application.Commands (\"CV Nurbs Curve Tool\")\noCmd.execute"
+},
+{
+"type": "line_break",
+"label": null,
+"bitmap": null,
+"tooltip": null,
+"w": null,
+"h": null
+},
+{
+"type": "scriptbutton",
+"label": "Polygon Meshes",
+"bitmap": null,
+"tooltip": "",
+"w": "252",
+"h": "18",
+"script": "Set oView = Desktop.ActiveLayout.CreateView( \"Menu Window\", \"title is not used\" )\noView.Move 200, 160 \noView.SetAttributeValue \"TargetContent\", \"ModelGetPrimitive&Polygon Mesh\" "
+},
+{
+"type": "scriptbutton",
+"label": "Null",
+"bitmap": null,
+"tooltip": "",
+"w": "36",
+"h": "18",
+"script": "Set oView = Desktop.ActiveLayout.CreateView( \"Menu Window\", \"title is not used\" )\noView.Move 400, 160\noView.SetAttributeValue \"TargetContent\", \"ModelGetPrimitive\" \n"
+},
+{
+"type": "scriptbutton",
+"label": "Cameras",
+"bitmap": null,
+"tooltip": "",
+"w": "72",
+"h": "18",
+"script": "Set oView = Desktop.ActiveLayout.CreateView( \"Menu Window\", \"title is not used\" )\noView.Move 500, 160 \noView.SetAttributeValue \"TargetContent\", \"ModelGetPrimitiveCamera\" \n"
+},
+{
+"type": "scriptbutton",
+"label": "Lights",
+"bitmap": null,
+"tooltip": "",
+"w": "108",
+"h": "18",
+"script": "Set oView = Desktop.ActiveLayout.CreateView( \"Menu Window\", \"title is not used\" )\noView.Move 500, 160 \noView.SetAttributeValue \"TargetContent\", \"ModelGetPrimitiveLight\" \n"
+},
+{
+"type": "scriptbutton",
+"label": "Curves",
+"bitmap": null,
+"tooltip": "",
+"w": "72",
+"h": "18",
+"script": "Set oView = Desktop.ActiveLayout.CreateView( \"Menu Window\", \"title is not used\" )\noView.Move 660, 160 \noView.SetAttributeValue \"TargetContent\", \"ModelGetPrimitive&curve\" \noView.Resize 120,70"
+},
+{
+"type": "scriptbutton",
+"label": "Draw",
+"bitmap": null,
+"tooltip": "",
+"w": "72",
+"h": "18",
+"script": "Set oView = Desktop.ActiveLayout.CreateView( \"Menu Window\", \"title is not used\" )\noView.Move 660, 160 \noView.SetAttributeValue \"TargetContent\", \"ModelCreateCurve\" "
+}
+]
+},
+{
+"label": "Selection",
+"items": [
+{
+"type": "scriptbutton",
+"label": "Object",
+"bitmap": "selectobj",
+"tooltip": "Object Selection Mode (Spacebar)",
+"w": "36",
+"h": "36",
+"script": "\n                  ActivateObjectSelTool\n                  if GetValue(\"preferences.TransformProperties.transformmanipulators\") = True And GetValue(\"preferences.TransformProperties.transformmanipdefaultxfo\") <> 3 then\n                     ActivateSelectTool\n                  end if"
+},
+{
+"type": "scriptbutton",
+"label": "Point",
+"bitmap": "selectpoint",
+"tooltip": "Point Selection Mode (T)",
+"w": "36",
+"h": "36",
+"script": "\n                  ActivateVertexSelTool\n                  if GetValue(\"preferences.TransformProperties.transformmanipulators\") = True And GetValue(\"preferences.TransformProperties.transformmanipdefaultxfo\") <> 3 then\n                     ActivateSelectTool\n                  end if"
+},
+{
+"type": "scriptbutton",
+"label": "Edge",
+"bitmap": "selectedge",
+"tooltip": "Edge Selection Mode (E)",
+"w": "36",
+"h": "36",
+"script": "\n                  ActivateEdgeSelTool\n                  if GetValue(\"preferences.TransformProperties.transformmanipulators\") = True And GetValue(\"preferences.TransformProperties.transformmanipdefaultxfo\") <> 3 then\n                     ActivateSelectTool\n                  end if"
+},
+{
+"type": "scriptbutton",
+"label": "Poly",
+"bitmap": "selectpoly",
+"tooltip": "Polygon Selection Mode (Y)",
+"w": "36",
+"h": "36",
+"script": "\n                  ActivatePolygonSelTool\n                  if GetValue(\"preferences.TransformProperties.transformmanipulators\") = True And GetValue(\"preferences.TransformProperties.transformmanipdefaultxfo\") <> 3 then\n                     ActivateSelectTool\n                  end if"
+},
+{
+"type": "scriptbutton",
+"label": "Ray Edge",
+"bitmap": "raycastedge",
+"tooltip": "Raycast Edge Selection Mode ( I )",
+"w": "36",
+"h": "36",
+"script": "\n                  ActivateRaycastEdgeSelTool\n                  if GetValue(\"preferences.TransformProperties.transformmanipulators\") = True And GetValue(\"preferences.TransformProperties.transformmanipdefaultxfo\") <> 3 then\n                     ActivateSelectTool\n                  end if"
+},
+{
+"type": "scriptbutton",
+"label": "Ray Poly",
+"bitmap": "raycastpoly",
+"tooltip": "Raycast Polygon Selection Mode (U)",
+"w": "36",
+"h": "36",
+"script": "\n                  ActivateRaycastPolySelTool\n                  if GetValue(\"preferences.TransformProperties.transformmanipulators\") = True And GetValue(\"preferences.TransformProperties.transformmanipdefaultxfo\") <> 3 then\n                     ActivateSelectTool\n                  end if"
+},
+{
+"type": "command",
+"label": "Raycast",
+"bitmap": "raycast",
+"tooltip": null,
+"w": "36",
+"h": "36"
+},
+{
+"type": "command",
+"label": "Rect",
+"bitmap": "rectselect",
+"tooltip": null,
+"w": "36",
+"h": "36"
+},
+{
+"type": "command",
+"label": "Free",
+"bitmap": "freeselect",
+"tooltip": null,
+"w": "36",
+"h": "36"
+},
+{
+"type": "command",
+"label": "Lasso",
+"bitmap": "lassoselect",
+"tooltip": null,
+"w": "36",
+"h": "36"
+},
+{
+"type": "scriptbutton",
+"label": "Iso Sel",
+"bitmap": "isolate",
+"tooltip": "Isolate Selection (Active Viewport)",
+"w": "36",
+"h": "36",
+"script": "IsolateSelected False, -1"
+},
+{
+"type": "scriptbutton",
+"label": "Iso All",
+"bitmap": "isolateallviews",
+"tooltip": "Isolate Selection in all Viewports",
+"w": "36",
+"h": "36",
+"script": "IsolateSelected False, 0\nIsolateSelected False, 1\nIsolateSelected False, 2\nIsolateSelected False, 3"
+},
+{
+"type": "line_break",
+"label": null,
+"bitmap": null,
+"tooltip": null,
+"w": null,
+"h": null
+},
+{
+"type": "scriptbutton",
+"label": "Rectangle",
+"bitmap": null,
+"tooltip": "",
+"w": "144",
+"h": "18",
+"script": "InspectObj \"preferences.Select\""
+},
+{
+"type": "scriptbutton",
+"label": "Raycast",
+"bitmap": null,
+"tooltip": "",
+"w": "72",
+"h": "18",
+"script": "InspectObj \"preferences.Select\""
+},
+{
+"type": "scriptbutton",
+"label": "Tools",
+"bitmap": null,
+"tooltip": "",
+"w": "144",
+"h": "18",
+"script": "InspectObj \"preferences.Select\""
+},
+{
+"type": "scriptbutton",
+"label": "Isolate",
+"bitmap": null,
+"tooltip": "",
+"w": "72",
+"h": "18",
+"script": "InspectObj \"preferences.Select\""
+}
+]
+},
+{
+"label": "Custom",
+"items": []
+}
+]

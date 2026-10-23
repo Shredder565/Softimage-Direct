@@ -1,0 +1,484 @@
+{
+"name": "Default",
+"width": 1282,
+"height": 959,
+"tree": {
+"kind": "frameset",
+"name": null,
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"*",
+"48"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "main",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"*",
+"135"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "VM_Frameset",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"299",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "switcher",
+"name": "module_menu",
+"displayname": "Module Menu",
+"type": "tray",
+"buttonside": "bottom",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "26,26",
+"sizes": [
+"105",
+"216",
+"105",
+"*"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "toolbar_panel",
+"displayname": null,
+"type": "Toolbar Panel",
+"bitmap": "toolbar",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "weight_paint_panel",
+"displayname": null,
+"type": "Weight Paint Panel",
+"bitmap": "weightpanel",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "palette_and_script_toolbar_frameset",
+"displayname": null,
+"bitmap": "palettetab",
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"269",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "palettes",
+"displayname": null,
+"type": "Palettes",
+"bitmap": "palettetab",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "scripts",
+"displayname": null,
+"type": "Scripts",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frameset",
+"name": "PresetManagerFS",
+"displayname": null,
+"bitmap": "presetmanager",
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"327",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "explorer",
+"displayname": "Explorer",
+"type": "Explorer",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "preset_manager",
+"displayname": "Preset Manager",
+"type": "Preset Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": null,
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"79",
+"*",
+"26",
+"22"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "main_shelf",
+"displayname": "Main Shelf",
+"type": "Main Shelf",
+"bitmap": null,
+"optional": "hidden",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "vm",
+"displayname": null,
+"type": "View Manager",
+"bitmap": null,
+"optional": null,
+"props": {
+"layout": "standard"
+}
+},
+{
+"kind": "frame",
+"name": "timeline",
+"displayname": "Timeline",
+"type": "Timeline",
+"bitmap": null,
+"optional": "visible",
+"props": {
+"type": "global",
+"dopesheet": "true"
+}
+},
+{
+"kind": "frame",
+"name": "timerange",
+"displayname": "Timerange",
+"type": "Timerange",
+"bitmap": null,
+"optional": "visible",
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "switcher",
+"name": "mcp",
+"displayname": "MCP",
+"type": "tray",
+"buttonside": "bottom_inv",
+"orientation": "vertical",
+"active": 0,
+"buttonsize": "44,23",
+"sizes": [
+"135",
+"196",
+"300"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "switcher",
+"name": null,
+"displayname": "MCP",
+"type": "panel",
+"buttonside": "user",
+"orientation": "vertical",
+"active": 0,
+"buttonsize": null,
+"sizes": [
+"283",
+"334",
+"52",
+"90",
+"91"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "selection_panel",
+"displayname": null,
+"type": "Selection Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "transformation_panel",
+"displayname": null,
+"type": "Transformation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "snap_panel",
+"displayname": null,
+"type": "Snap Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "constraint_panel",
+"displayname": null,
+"type": "Constraint Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "edit_panel",
+"displayname": null,
+"type": "Edit Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frameset",
+"name": null,
+"displayname": "KP/L",
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"125",
+"386",
+"39%"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "mini_transform_panel",
+"displayname": null,
+"type": "Mini Transform Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "keying_panel",
+"displayname": null,
+"type": "Keying Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "switcher",
+"name": "layers_panel",
+"displayname": "LayersPanel",
+"type": "tray",
+"buttonside": "top",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "96,20",
+"sizes": [
+"*",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "animation_layer_manager",
+"displayname": "Animation",
+"type": "Animation Layer Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "scene_layer_manager",
+"displayname": "Scene",
+"type": "Layer Control",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frame",
+"name": "property_editor",
+"displayname": "PPG",
+"type": "Property Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": "playback",
+"displayname": "Playback",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"260",
+"*",
+"437",
+"384",
+"234"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "panel_switcher",
+"displayname": "Panel Switcher",
+"type": "Panel Switcher",
+"bitmap": null,
+"optional": "visible",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "command_line",
+"displayname": null,
+"type": "Command Line",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "playback_panel",
+"displayname": null,
+"type": "Playback Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "animation_panel",
+"displayname": null,
+"type": "Animation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "sendtostatus",
+"displayname": "Send To",
+"type": "Netview",
+"bitmap": null,
+"optional": "hidden",
+"props": {
+"url": "$XSI_HOME\\Addons\\NetView_Database\\OneClickStatus.html"
+}
+}
+]
+}
+]
+},
+"viewdefaultpos": {
+"Animation Editor": "113,532,1169,859",
+"Animation Mixer": "120,532,1130,859",
+"Audio Output Monitor": "120,113,607,450",
+"Browser": "660,350,1120,859",
+"Camera Sequencer Editor": "120,532,1130,859",
+"Custom Display Host": "120,113,607,450",
+"DopeSheet": "120,532,1130,859",
+"Explorer": "740,350,1250,860",
+"Expression Editor": "120,113,607,450",
+"External Files Manager": "120,150,1120,535",
+"Fx Color Selector": "100,120,310,410",
+"Fx Operator Selector": "545,532,1120,859",
+"Fx Paint Brush List": "-4,50,103,859",
+"Fx Tree": "120,150,540,859",
+"Fx Viewer": "545,150,1120,535",
+"Image Clip Viewer": "120,113,607,450",
+"Keyable Parameters Editor": "120,113,607,450",
+"Keying Panel": "120,113,350,500",
+"Layer Control": "800,150,1120,535",
+"Main Shelf": "120,150,600,300",
+"Material Editor": "120,150,935,859",
+"ICE Tree": "120,532,1130,859",
+"Netview": "400,150,814,738",
+"Object View": "120,113,607,450",
+"Palettes": "150,150,600,650",
+"Parameter Connection Editor": "120,113,607,450",
+"Plugin Manager": "120,150,610,680",
+"Preset Manager": "120,113,607,450",
+"Relational View Editor": "120,113,607,450",
+"Render Tree": "120,532,1130,859",
+"Schematic": "120,532,607,859",
+"Script Editor": "200,150,960,800",
+"Scripted Operator Editor": "120,113,607,680",
+"Scripts": "120,150,350,300",
+"SDK Explorer": "120,150,900,859",
+"Shader Code Editor": "1000,200,1760,850",
+"Shape Manager": "120,150,900,700",
+"SpreadSheet": "120,532,1130,859",
+"Scene Search": "175,120,900,555",
+"Synoptic Editor": "120,113,607,450",
+"Text Editor": "200,150,960,800",
+"Texture Editor": "120,150,900,700",
+"Texture Layer Editor": "120,113,607,450",
+"VM Views": "120,150,350,300",
+"Weight Editor": "120,113,607,450"
+}
+}

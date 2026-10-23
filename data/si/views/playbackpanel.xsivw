@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="viewdefinition" xsi_version="3.0" syntax_version="1.0">
+	<viewdef clsid="{B17DF866-6768-11D1-8029-00A0243E2717}" name="Playback Panel">
+		<definition maxinstances="1" acceptfocus="false" private="false" defaultsize="50,50,485,550" cmdmap="{00000000-0000-0000-0000-000000000000}" supportedtypes="2"> </definition>
+	</viewdef>
+</xsi_file>

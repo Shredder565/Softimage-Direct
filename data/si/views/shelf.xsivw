@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="viewdefinition" xsi_version="3.0" syntax_version="1.0">
+	<viewdef clsid="{D8169747-DAC8-453C-A0B2-1F6C4EE902FD}" name="Shelf">
+		<definition maxinstances="10000" acceptfocus="true" private="true" defaultsize="130,150,400,300" cmdmap="{D8169747-DAC8-453c-A0B2-1F6C4EE902FD}" supportedtypes="6"> </definition>
+	</viewdef>
+</xsi_file>

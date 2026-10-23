@@ -1,0 +1,74 @@
+[
+{
+"type": "scriptbutton",
+"label": "Menu",
+"bitmap": "module",
+"tooltip": "Toggle Module Menu",
+"w": "31",
+"h": "31",
+"script": "ToggleOptionalPanel \"Module Menu\"\n"
+},
+{
+"type": "scriptbutton",
+"label": "Shelf",
+"bitmap": "shelf",
+"tooltip": "Toggle Main Shelf",
+"w": "31",
+"h": "31",
+"script": "ToggleOptionalPanel \"Main Shelf\"\n"
+},
+{
+"type": "scriptbutton",
+"label": "Range",
+"bitmap": "lower",
+"tooltip": "Toggle TimeRange",
+"w": "31",
+"h": "31",
+"script": "on error resume next\nSet oView = Desktop.ActiveLayout.Views (\"lower_panel\")\nif oView = \"\" then\n\tToggleOptionalPanel \"Timerange\"\nElse\n\tShowOptionalPanel \"View Manager\"\n\tToggleOptionalPanel \"Lower Panel\"\nEnd if\n\n\n"
+},
+{
+"type": "scriptbutton",
+"label": "MCP",
+"bitmap": "mcp",
+"tooltip": "Toggle Main Control Panel",
+"w": "31",
+"h": "31",
+"script": "ToggleOptionalPanel \"MCP\"\n"
+},
+{
+"type": "scriptbutton",
+"label": "Reset",
+"bitmap": "4_vm",
+"tooltip": "Reset View Manager",
+"w": "31",
+"h": "31",
+"script": "set vw = Desktop.ActiveLayout.Views.Find( \"View Manager\" )\nvw.setattributevalue \"suspenddrawing\",\"true\"\nvw.setattributevalue \"layout\",\"standard\"\nvw.setattributevalue \"layout\",\"reset\"\nvw.setattributevalue \"suspenddrawing\",\"false\""
+},
+{
+"type": "scriptbutton",
+"label": "Alternate",
+"bitmap": "3down_vm",
+"tooltip": "1UP3DOWN View Manager",
+"w": null,
+"h": null,
+"script": "set vw = Desktop.ActiveLayout.Views.Find( \"View Manager\" )\nvw.setattributevalue \"suspenddrawing\",\"true\"\nvw.setattributevalue \"layout\",\"alternate\"\nvw.setattributevalue \"layout\",\"reset\"\nvw.setattributevalue \"suspenddrawing\",\"false\"\nvw.setattributevalue \"focusedviewport\", \"d\""
+},
+{
+"type": "scriptbutton",
+"label": "Exp",
+"bitmap": "cam_vm",
+"tooltip": "Explorer, ViewB and User",
+"w": "31",
+"h": "31",
+"script": "set vw = Desktop.ActiveLayout.Views.Find( \"View Manager\" )\nvw.setattributevalue \"suspenddrawing\",\"true\"\nvw.setattributevalue \"layout\",\"standard\"\nvw.setattributevalue \"viewport:a\",\"explorer\"\nvw.setattributevalue \"activecamera:d\",\"user\"\nvw.setattributevalue \"layout\",\"vertical:a\"\nvw.setattributevalue \"suspenddrawing\",\"false\"\nset myexplorer = vw.views(\"a\")\nmyexplorer.setattributevalue \"scope\",\"Scene\""
+},
+{
+"type": "scriptbutton",
+"label": "Tree",
+"bitmap": "rendertree_vm",
+"tooltip": "ICE Tree, Render Tree, Animation Editor",
+"w": "31",
+"h": "31",
+"script": "on error resume next\n'find the view manager\nset vw = Desktop.ActiveLayout.Views.Find( \"View Manager\" )\nvw.setattributevalue \"suspenddrawing\",\"true\"\nvw.setattributevalue \"layout\",\"standard\"\nvw.setattributevalue \"viewport:a\",\"explorer\"\n\n'we want to populate the horizontal C view depending on the module\n'check the hidden user prefs \nset oPreferences = Application.Preferences\noVal = oPreferences.GetPreferenceValue( \"xsiprivate_unclassified.SI3D_CURRENT_MODULE\" )\n\nif oVal = \"ICE_MODULE\" then\n\tvw.setattributevalue \"viewport:c\",\"ICE Tree\"\nElseif (oVal = \"ANIMATION_MODULE\") then\n\tvw.setattributevalue \"viewport:c\",\"Animation Editor\"\nElseif (oVal = \"RENDERING_MODULE\") then\n\tvw.setattributevalue \"viewport:c\",\"Render Tree\"\nElseif (oVal = \"SIMULATE_MODULE\") then\n\tvw.setattributevalue \"viewport:c\",\"ICE Tree\"\nElse \n\tvw.setattributevalue \"viewport:c\",\"Render Tree\"\nEnd if\n\n'finsih the layout changes\nvw.setattributevalue \"layout\",\"horizontal:c\"\nvw.setattributevalue \"suspenddrawing\",\"false\"\n"
+}
+]

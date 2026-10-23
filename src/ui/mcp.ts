@@ -2,6 +2,7 @@
 // default layout, reproduced section by section from the real panel.
 import { App } from '../core/commands';
 import { tool } from './viewManager';
+import { SI_MENUS, SiMenuItem, openSiMenu } from './si';
 import { X3DObject, Model } from '../core/scene';
 
 type Section = { el: HTMLElement; body: HTMLElement };
@@ -60,7 +61,8 @@ export function mcpPanel(app: App, host: HTMLElement) {
   const ud = document.createElement('div'); ud.className = 'mcp-updown'; const up = button('▲', () => cycle(-1), 'Previous match', 'tiny'), dn = button('▼', () => cycle(1), 'Next match', 'tiny'); ud.append(up, dn);
   nameW.append(nameI, ud); sel.body.appendChild(nameW);
   const showExplorer = (scope: string) => { const bar = document.querySelector<HTMLElement>('.switcher-bar'); const b = bar && Array.from(bar.children).find(c => c.textContent === 'Explorer') as HTMLElement | undefined; b?.click(); (window as any).__explorerScope?.(scope); };
-  sel.body.appendChild(grid(2, button('Explore', () => showExplorer('Scene'), 'Open an Explorer (8)', 'has-menu'), button('Scene', () => showExplorer('Scene'), 'Explorer scoped to the scene')));
+  const exploreB = button('Explore', (e) => { e.stopPropagation(); const r = (e.target as HTMLElement).getBoundingClientRect(); const items = (SI_MENUS.mcpExplore ?? []).map(it => it.label?.startsWith('TITLE:') ? { label: it.label.slice(6), items: [] as SiMenuItem[], title: true } as any : it); openSiMenu(items, r.left, r.bottom, (it) => { const l = it.label ?? ''; const scope = ['Layers', 'Passes', 'Materials', 'Groups', 'Application'].includes(l) ? l : /Current|Scene|Environment|Lights|Cameras|Operators|Shaders|Images|Animation|Audio|Sources|Mixers|Constraints|Property|Custom|Texture/.test(l) ? 'Scene' : 'Scene'; showExplorer(scope); }, { enabled: it => !(it as any).title }); }, 'Open an Explorer (8)', 'has-menu');
+  sel.body.appendChild(grid(2, exploreB, button('Scene', () => showExplorer('Scene'), 'Explorer scoped to the scene')));
   sel.body.appendChild(grid(2, button('Selection', () => showExplorer('Selection'), 'Explorer scoped to the current selection', 'has-menu'), button('Clusters', () => showExplorer('Selection'), 'Clusters of the selected object')));
   root.appendChild(sel.el);
 
@@ -71,11 +73,13 @@ export function mcpPanel(app: App, host: HTMLElement) {
   const setMode = (m: typeof tool.mode) => { tool.mode = m; modeB.forEach(b => b.classList.toggle('on', (b as any)._m === m)); app.events.emit('selection'); };
   tool.setMode = setMode;
   const setAxis = (ax: 'x' | 'y' | 'z', on: boolean) => { (tool.axes as any)[ax] = on; for (const k in axisB) axisB[k].forEach(b => { if ((b as any)._ax === ax) b.classList.toggle('on', on); }); };
-  const OPTIONS: Record<string, string[]> = { scale: ['Uniform Scaling', 'Add', 'Volume', 'Scale Relative to Center'], rotate: ['Add', 'Increment 15°', 'Increment 45°', 'Interactive'], translate: ['Add', 'Planar XY', 'Planar YZ', 'Planar XZ', 'Snap to Pivot'] };
+  // The ≡ option menus are Softimage's own TRANSLATE / ROTATE / SCALE tool menus (viewinteraction.dll resources).
+  const OPTIONS: Record<string, SiMenuItem[]> = { scale: SI_MENUS.toolScale ?? [], rotate: SI_MENUS.toolRotate ?? [], translate: SI_MENUS.toolTranslate ?? [] };
+  const pickOption = (m: string, label: string) => { const refs: Record<string, string> = { Global: 'Global', Local: 'Local', View: 'View', Parent: 'Par', Ref: 'Ref', Plane: 'Plane' }; if (refs[label]) { refB.find(b => b.textContent === refs[label])?.click(); return; } if (label === 'COG') cogB.click(); else if (label === 'Prop') propB.click(); else if (label === 'Sym') symB.click(); else if (label === 'Uniform') { (tool as any).uniform = !(tool as any).uniform; } else if (label === 'Reset Pivot') { for (const o of app.selectedObjects) for (const ax of ['x', 'y', 'z']) app.setParam(o.kinematics.local.get('ppos' + ax)!, 0); } else app.logMsg('info', `${m}: ${label} not implemented`); };
   for (const md of tmodes) {
     const mb = button(md.l, () => setMode(tool.mode === md.m ? 'select' : md.m), `${md.m[0].toUpperCase() + md.m.slice(1)} tool (${md.k})`, 'mode'); (mb as any)._m = md.m; modeB.push(mb);
     axisB[md.m] = (['x', 'y', 'z'] as const).map(ax => { const b = button(ax, () => setAxis(ax, !(tool.axes as any)[ax]), `Manipulate the ${ax.toUpperCase()} axis only — click several to combine`, 'axis on'); (b as any)._ax = ax; return b; });
-    const opt = button('≡', (e) => { const r = (e.target as HTMLElement).getBoundingClientRect(); const m = document.createElement('div'); m.className = 'menu'; m.style.left = r.left + 'px'; m.style.top = r.bottom + 'px'; for (const o of OPTIONS[md.m]) { const it = document.createElement('div'); it.className = 'menu-item'; it.textContent = o; it.onclick = () => { app.logMsg('info', `${md.m}: ${o}`); m.remove(); }; m.appendChild(it); } document.body.appendChild(m); const close = (ev: PointerEvent) => { if (!m.contains(ev.target as any)) { m.remove(); document.removeEventListener('pointerdown', close); } }; setTimeout(() => document.addEventListener('pointerdown', close)); }, 'Options', 'tiny');
+    const opt = button('≡', (e) => { e.stopPropagation(); const r = (e.target as HTMLElement).getBoundingClientRect(); openSiMenu(OPTIONS[md.m], r.left, r.bottom, (it) => pickOption(md.m, it.label!), { checked: it => ['Global', 'Local', 'View', 'Parent', 'Ref', 'Plane'].includes(it.label!) ? ((tool as any).ref ?? 'Global') === (it.label === 'Parent' ? 'Par' : it.label) : it.label === 'COG' ? !!A.cog : it.label === 'Prop' ? !!app.proportional.on : it.label === 'Sym' ? !!A.symmetry : it.label === 'Uniform' ? !!(tool as any).uniform : undefined }); }, 'Options', 'tiny');
     tr.body.appendChild(grid(5, mb, ...axisB[md.m], opt));
     fields[md.m] = (['x', 'y', 'z'] as const).map(ax => { const f = field(ax, v => { for (const o of app.selectedObjects) app.setParam(o.kinematics.local.get(md.prefix + ax)!, v, md.m); }); return f; }).map(f => { tr.body.appendChild(f.w); return f.i; });
   }
@@ -85,7 +89,9 @@ export function mcpPanel(app: App, host: HTMLElement) {
   tr.body.appendChild(grid(3, ...refB.slice(0, 3))); tr.body.appendChild(grid(3, ...refB.slice(3)));
   const cogB = button('COG', () => { A.cog = !A.cog; upd(); }, 'Transform multiple objects about their common centre of gravity');
   const propB = button('Prop', () => { app.proportional.on = !app.proportional.on; upd(); }, 'Proportional modeling (falloff)');
-  const symB = button('Sym', () => { A.symmetry = !A.symmetry; upd(); }, 'Symmetry: mirror component edits across the X plane');
+  const symB = button('Sym', () => { A.symmetry = !A.symmetry; upd(); }, 'Symmetry Mode. Right-click to popup menu.');
+  symB.oncontextmenu = (e) => { e.preventDefault(); openSiMenu(SI_MENUS.mcpSymmetry ?? [], e.clientX, e.clientY, (it) => { if (['YZ', 'XZ', 'XY'].includes(it.label!)) { A.symPlane = it.label; A.symmetry = true; upd(); } else app.logMsg('info', 'Symmetry Properties: not implemented'); }, { checked: it => ['YZ', 'XZ', 'XY'].includes(it.label!) ? (A.symPlane ?? 'YZ') === it.label : undefined }); };
+  (window as any).__mcp = (k: string, v: any) => { if (k === 'ref') refB.find(b => b.textContent === v)?.click(); else if (k === 'axis') { (tool.axes as any)[v] = !(tool.axes as any)[v]; app.events.emit('selection'); } else if (k === 'prop') propB.click(); else if (k === 'cog') cogB.click(); else if (k === 'sym') symB.click(); };
   tr.body.appendChild(grid(3, cogB, propB, symB));
   root.appendChild(tr.el);
 
@@ -124,22 +130,5 @@ export function mcpPanel(app: App, host: HTMLElement) {
   };
   upd(); app.events.on('selection', upd); app.events.on('params', upd); app.events.on('scene', upd); app.events.on('frame', upd);
 
-  // ---------------------------------------------------------------- hotkeys
-  window.addEventListener('keydown', (e) => {
-    const t = e.target as HTMLElement; if (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA') return;
-    if (app.activeTool && (e.key === 'Enter' || e.key === 'Escape')) return;
-    const k = e.key.toLowerCase();
-    if (k === 'x') setMode('scale'); else if (k === 'c') setMode('rotate'); else if (k === 'v') setMode('translate'); else if (k === 'escape') { setMode('select'); app.setSelMode('object'); }
-    else if (k === 't') app.setSelMode('point'); else if (k === 'e') app.setSelMode('edge'); else if (k === 'y') app.setSelMode('polygon'); else if (k === ' ') { e.preventDefault(); app.setSelMode('object'); }
-    else if (k === 'delete') app.run('DeleteObj'); else if (k === 'h') app.run('ToggleVisibility'); else if (k === 'k') app.run('SaveKey');
-    else if (k === 'z' && e.ctrlKey) { e.preventDefault(); app.undo(); } else if (k === 'y' && e.ctrlKey) { e.preventDefault(); app.redo(); }
-    else if (k === 'd' && e.ctrlKey) { e.preventDefault(); app.run('Duplicate'); }
-    else if (k === '1') { app.module = 'Model' as any; app.events.emit('module'); } else if (k === '2') { app.module = 'Animate' as any; app.events.emit('module'); } else if (k === '3') { app.module = 'Render' as any; app.events.emit('module'); } else if (k === '4') { app.module = 'Simulate' as any; app.events.emit('module'); }
-    else if (k === 'arrowright') app.run('NextFrame'); else if (k === 'arrowleft') app.run('PrevFrame');
-    else if (k === '8') showExplorer('Scene');
-    else if (k === 'f' && !e.ctrlKey) window.dispatchEvent(new CustomEvent('framesel'));
-    else if (k === 'a' && e.ctrlKey && e.shiftKey) { e.preventDefault(); app.compSel = null; app.select([]); }
-    else if (k === 'a' && !e.ctrlKey) window.dispatchEvent(new CustomEvent('frameall'));
-  });
   void Model;
 }

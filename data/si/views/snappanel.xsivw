@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="viewdefinition" xsi_version="3.0" syntax_version="1.0">
+	<viewdef clsid="{823FCC4D-FBF4-11D3-A2B0-08003658D403}" name="Snap Panel">
+		<definition maxinstances="1" acceptfocus="false" private="false" defaultsize="50,50,485,550" cmdmap="{00000000-0000-0000-0000-000000000000}" supportedtypes="2"> </definition>
+	</viewdef>
+</xsi_file>

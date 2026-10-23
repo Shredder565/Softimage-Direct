@@ -3,7 +3,10 @@
 // construction history (operator stack), Properties, a Material, Clusters.
 import * as THREE from 'three';
 import { ParamSet, num, int, bool, str, enumP, color } from './params';
-import { siParamDefs, siLayout, siName, menuDefaults } from './opdefs';
+import { siParamDefs, siLayout, siName, menuDefaults, siPropDefs, siPropLayout } from './opdefs';
+import type { ParamDef } from './params';
+/** Merge our parameter definitions with the full SPDL property set so the Property Editor shows Softimage's complete page. */
+function withSi(key: string, ours: ParamDef[]): ParamDef[] { const si = siPropDefs(key); const mine = new Map(ours.map(d => [d.name, d])); const out = si.map(d => mine.get(d.name) ? { ...d, ...mine.get(d.name)! } : { ...d, group: d.group }); for (const d of ours) if (!si.some(x => x.name === d.name)) out.push(d); return out; }
 import { siDeformers } from './sideform';
 import { siCube, siSphere, siCylinder, siCone, siTorus, siGrid, siDisc } from './siprims';
 import { MeshData, platonic, rhombicosidodecahedron, soccerBall, emptyMesh } from './geometry';
@@ -32,14 +35,14 @@ export class Property extends Node {
 export class MarkerNode extends Node { constructor(name: string, type: string, readonly mode: string) { super(name, type, 'folder'); } }
 
 export function makeVisibility() {
-  return new Property('Visibility', 'visibility', [
+  const p = new Property('Visibility', 'visibility', withSi('C3DVisibilityAndDisplay', [
     bool('viewvis', true, 'View Visibility'), bool('rendvis', true, 'Render Visibility'), bool('selectability', true, 'Selectable'),
     bool('ghosting', false, 'Ghosting'), bool('hidemaster', false, 'Hide Master'),
     bool('primray', true, 'Primary Rays', { group: 'Rendering' }), bool('scndray', true, 'Secondary Rays', { group: 'Rendering' }),
     bool('shdwcast', true, 'Cast Shadows', { group: 'Rendering' }), bool('shdwrecv', true, 'Receive Shadows', { group: 'Rendering' }),
     bool('reflcast', true, 'Caster in Reflections', { group: 'Rendering' }), bool('reflvis', true, 'Visible in Reflections', { group: 'Rendering' }),
     bool('refrcast', true, 'Caster in Refractions', { group: 'Rendering' }), bool('trnscast', true, 'Caster in Transparency', { group: 'Rendering' }),
-  ]);
+  ])); p.layout = siPropLayout('C3DVisibilityAndDisplay') as any; return p;
 }
 export function makeDisplay(shared = true) {
   const p = new Property('Display', 'display', [
@@ -47,7 +50,7 @@ export function makeDisplay(shared = true) {
     enumP('intsel', 8, [{ label: 'Bounding Box', value: 0 }, { label: 'Wireframe', value: 1 }, { label: 'Shaded', value: 7 }, { label: 'Default', value: 8 }], 'Interactive (selected)'),
     bool('wirecol', false, 'Use Wireframe Color'), color('wirecolorrgb', [0.7, 0.7, 0.7], 'Wireframe Color'),
     num('xray', 1.0, 'X-Ray Opacity', { min: 0, max: 1 }), num('neardist', 100, 'Near Distance'),
-  ]); p.shared = shared; return p;
+  ]); p.shared = shared; p.layout = siPropLayout('C3DDisplayProp') as any; return p;
 }
 export function makeGeomApprox(shared = true) {
   const p = new Property('Geometry Approximation', 'geomapprox', [
@@ -281,6 +284,7 @@ export class Kinematics extends Node {
       num('sclx', 1, 'Scaling X', { readOnly: true }), num('scly', 1, 'Scaling Y', { readOnly: true }), num('sclz', 1, 'Scaling Z', { readOnly: true }),
     ]);
     this.local.parent = this; this.global.parent = this;
+    this.local.layout = siPropLayout('C3DKineState') as any;
   }
   localMatrix(): THREE.Matrix4 {
     const l = this.local, d = Math.PI / 180;

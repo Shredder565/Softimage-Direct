@@ -1,0 +1,9356 @@
+{
+"XSI.exe": {
+"menus": {
+"128": [
+{
+"label": "&File",
+"id": null,
+"items": [
+{
+"label": "&New Sequence",
+"id": 32884
+},
+{
+"label": "Ne&w",
+"id": null,
+"items": [
+{
+"separator": true
+},
+{
+"label": "&Project...",
+"id": 32883
+}
+]
+},
+{
+"label": "&Open...",
+"id": 32887
+},
+{
+"label": "&Save",
+"id": 32885
+},
+{
+"label": "Save &As...",
+"id": 32886
+},
+{
+"separator": true
+},
+{
+"label": "Open Pro&ject...",
+"id": 32900
+},
+{
+"label": "Import Insertion Point",
+"id": 32948
+},
+{
+"label": "Export Insertion Point",
+"id": 32949
+},
+{
+"separator": true
+},
+{
+"label": "&Command Mapping...",
+"id": 32957
+},
+{
+"separator": true
+},
+{
+"label": "E&xit",
+"id": 57665
+}
+]
+},
+{
+"label": "&Edit",
+"id": null,
+"items": [
+{
+"label": "Undo",
+"id": 20013
+},
+{
+"label": "Redo",
+"id": 20014
+},
+{
+"label": "Repeat",
+"id": 20015
+},
+{
+"separator": true
+},
+{
+"label": "Cu&t",
+"id": 20016
+},
+{
+"label": "&Copy",
+"id": 20017
+},
+{
+"label": "&Paste",
+"id": 20018
+},
+{
+"label": "&Delete Selected",
+"id": 20019
+},
+{
+"separator": true
+},
+{
+"label": "Select &All",
+"id": 20020
+},
+{
+"label": "Edit Insertion Point",
+"id": 32960
+}
+]
+},
+{
+"label": "&View",
+"id": null,
+"items": [
+{
+"label": "View insertion point",
+"id": 32920
+},
+{
+"separator": true
+},
+{
+"label": "New Custom Relational View",
+"id": 33070
+},
+{
+"separator": true
+},
+{
+"label": "New Custom Shelf...",
+"id": 33058
+},
+{
+"label": "New Custom Toolbar...",
+"id": 33059
+},
+{
+"label": "&Customize Toolbars...",
+"id": 33069
+},
+{
+"separator": true
+},
+{
+"label": "Optional Panels",
+"id": null,
+"items": [
+{
+"label": "Restore Default",
+"id": 33078
+},
+{
+"label": "Show All",
+"id": 33083
+},
+{
+"label": "Hide All",
+"id": 33084
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "&Layouts",
+"id": null,
+"items": [
+{
+"label": "Layout Insertion Point",
+"id": 32956
+},
+{
+"separator": true
+},
+{
+"label": "New Blank Layout",
+"id": null,
+"items": [
+{
+"label": "Single Screen",
+"id": 32889
+},
+{
+"label": "Dual Screen",
+"id": 33067
+}
+]
+},
+{
+"label": "New Layout From",
+"id": null,
+"items": [
+{
+"label": "None",
+"id": 32892
+}
+]
+},
+{
+"label": "&Edit Current Layout",
+"id": 32841
+},
+{
+"label": "Exit Layout Editing",
+"id": 33061
+},
+{
+"separator": true
+},
+{
+"label": "&Save Layouts",
+"id": 32898
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "&Manage...",
+"id": 33082
+}
+]
+},
+{
+"label": "&Display",
+"id": null,
+"items": [
+{
+"label": "Display Insertion Point",
+"id": 33074
+}
+]
+},
+{
+"label": "&Window",
+"id": null,
+"items": [
+{
+"label": "Minimize All",
+"id": 1300
+},
+{
+"label": "Restore All",
+"id": 1301
+},
+{
+"label": "Close All",
+"id": 1302
+},
+{
+"separator": true
+}
+]
+},
+{
+"label": "&Help",
+"id": null,
+"items": [
+{
+"label": "&Softimage Help",
+"id": 33081
+},
+{
+"label": "What's &New",
+"id": 33104
+},
+{
+"separator": true
+},
+{
+"label": "Softimage &Learning Channel",
+"id": 36972
+},
+{
+"label": "1-Minute &Startup Movies",
+"id": 32971
+},
+{
+"separator": true
+},
+{
+"label": "Learning &Path",
+"id": 36973
+},
+{
+"label": "Softimage &Wiki",
+"id": 32874
+},
+{
+"separator": true
+},
+{
+"label": "Services and Sup&port",
+"id": 32969
+},
+{
+"separator": true
+},
+{
+"label": "Communities",
+"id": null,
+"items": [
+{
+"label": "AREA &Product Community",
+"id": 36974
+},
+{
+"label": "AREA &Discussion Forums",
+"id": 36975
+},
+{
+"label": "&Facebook",
+"id": 36976
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "&Customer Involvement Program...",
+"id": 33105
+},
+{
+"label": "&Desktop Analytics...",
+"id": 33161
+},
+{
+"separator": true
+},
+{
+"label": "Resources and &Tools",
+"id": null,
+"items": [
+{
+"label": "Mental &Ray Help",
+"id": 36977
+},
+{
+"label": "&Syflex Help",
+"id": 36978
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Softimage &SDK Help",
+"id": 33080
+},
+{
+"separator": true
+},
+{
+"label": "Softimage &Home Page",
+"id": 32855
+},
+{
+"label": "Try Other &Autodesk Products",
+"id": 36979
+},
+{
+"separator": true
+},
+{
+"label": "&About Softimage",
+"id": 20042
+}
+]
+}
+],
+"146": [
+{
+"label": "Room Menu",
+"id": null,
+"items": [
+{
+"label": "New Layout",
+"id": 32869
+}
+]
+},
+{
+"separator": true
+}
+],
+"226": [
+{
+"label": "DebugMenu",
+"id": null,
+"items": [
+{
+"label": "SDK Automation Page...",
+"id": 32899
+},
+{
+"label": "Script Framework Page...",
+"id": 32895
+},
+{
+"separator": true
+},
+{
+"label": "It's Time to Crash!",
+"id": 32846
+},
+{
+"separator": true
+},
+{
+"label": "Crash Recovery",
+"id": 32859
+},
+{
+"separator": true
+},
+{
+"label": "Memory Snapshot Start",
+"id": 32842
+},
+{
+"label": "Memory Tracking Tool",
+"id": null,
+"items": [
+{
+"label": "Register",
+"id": 32927
+},
+{
+"label": "Unregister",
+"id": 32928
+},
+{
+"label": "Start",
+"id": 32929
+},
+{
+"label": "Stop",
+"id": 32930
+},
+{
+"label": "Reset Tables",
+"id": 32931
+},
+{
+"label": "Write Log",
+"id": 32932
+}
+]
+},
+{
+"label": "Layout Explorer",
+"id": 32951
+}
+]
+}
+],
+"244": [
+{
+"label": "ToolMenu",
+"id": null,
+"items": [
+{
+"label": "Remove Button",
+"id": 32877
+},
+{
+"label": "Remove Command",
+"id": 32967
+},
+{
+"separator": true
+},
+{
+"label": "Customize Button...",
+"id": 32948
+},
+{
+"separator": true
+},
+{
+"label": "Edit Script...",
+"id": 32952
+},
+{
+"label": "Edit &Command...",
+"id": 33060
+}
+]
+}
+],
+"245": [
+{
+"label": "ToolbarMenu",
+"id": null,
+"items": [
+{
+"label": "&Save",
+"id": 33064
+},
+{
+"label": "Save &As",
+"id": 33065
+},
+{
+"separator": true
+},
+{
+"label": "&Rename",
+"id": 33066
+},
+{
+"separator": true
+},
+{
+"label": "Thumbnail Only",
+"id": 32901
+},
+{
+"label": "Text Only",
+"id": 32902
+},
+{
+"label": "Thumbnail Size",
+"id": null,
+"items": [
+{
+"label": "Small",
+"id": 32880
+},
+{
+"label": "Normal",
+"id": 32905
+}
+]
+},
+{
+"label": "Display Titlebar",
+"id": 32958
+},
+{
+"separator": true
+},
+{
+"label": "Customize Toolbar...",
+"id": 32879
+}
+]
+}
+],
+"308": [
+{
+"label": "Layout Item",
+"id": null,
+"items": [
+{
+"label": "New Layout",
+"id": 32869
+},
+{
+"separator": true
+},
+{
+"label": "Copy Layout",
+"id": 32870
+},
+{
+"label": "Rename Layout",
+"id": 32937
+},
+{
+"label": "Remove Layout",
+"id": 32862
+}
+]
+},
+{
+"separator": true
+}
+],
+"344": [
+{
+"label": "&File",
+"id": null,
+"items": [
+{
+"label": "&New Scene",
+"id": 32884
+},
+{
+"label": "&Open...",
+"id": 32887
+},
+{
+"label": "M&erge...",
+"id": 32001
+},
+{
+"label": "&Save",
+"id": 32885
+},
+{
+"label": "Save &As...",
+"id": 32886
+},
+{
+"label": "Save &Backup",
+"id": 32888
+},
+{
+"separator": true
+},
+{
+"label": "Ne&w Project...",
+"id": 32883
+},
+{
+"label": "Project &Manager...",
+"id": 32900
+},
+{
+"separator": true
+},
+{
+"label": "External &Files...",
+"id": 32968
+},
+{
+"separator": true
+},
+{
+"label": "&Import",
+"id": null,
+"items": [
+{
+"label": "&Model...",
+"id": 32005
+},
+{
+"label": "&Referenced Model...",
+"id": 33087
+},
+{
+"separator": true
+},
+{
+"label": "dot&XSI...",
+"id": 32964
+},
+{
+"separator": true
+},
+{
+"label": "&IGES File...",
+"id": 32961
+},
+{
+"label": "&EPS File...",
+"id": 32979
+},
+{
+"separator": true
+},
+{
+"label": "&Obj File...",
+"id": 36968
+},
+{
+"separator": true
+},
+{
+"label": "&Biovision File...",
+"id": 36970
+},
+{
+"label": "&Acclaim File...",
+"id": 36971
+}
+]
+},
+{
+"label": "E&xport",
+"id": null,
+"items": [
+{
+"label": "&Model...",
+"id": 32004
+},
+{
+"separator": true
+},
+{
+"label": "dot&XSI...",
+"id": 32965
+},
+{
+"separator": true
+},
+{
+"label": "&IGES File...",
+"id": 32962
+},
+{
+"separator": true
+},
+{
+"label": "&Obj File...",
+"id": 36969
+}
+]
+},
+{
+"label": "&Alembic",
+"id": null,
+"items": [
+{
+"label": "&Import Alembic...",
+"id": 33160
+},
+{
+"label": "&Export Alembic...",
+"id": 33159
+}
+]
+},
+{
+"label": "Crosswalk",
+"id": null,
+"items": [
+{
+"label": "Crosswalk Insertion Point",
+"id": 33077
+}
+]
+},
+{
+"label": "Send to 3ds Max",
+"id": null,
+"items": [
+{
+"label": "Update current 3ds Max scene",
+"id": 33124
+}
+]
+},
+{
+"label": "Send to Maya",
+"id": null,
+"items": [
+{
+"label": "Send as new Maya scene",
+"id": 33142
+},
+{
+"label": "Update current Maya scene",
+"id": 33143
+},
+{
+"label": "Add to current Maya scene",
+"id": 33144
+},
+{
+"label": "Select previously sent objects",
+"id": 33145
+},
+{
+"separator": true
+},
+{
+"label": "Preferences...",
+"id": 33146
+}
+]
+},
+{
+"label": "Send to Mudbox",
+"id": null,
+"items": [
+{
+"label": "Send as new Mudbox scene",
+"id": 33133
+},
+{
+"label": "Update current Mudbox scene",
+"id": 33128
+},
+{
+"label": "Add to current Mudbox scene",
+"id": 33129
+},
+{
+"label": "Select previously sent objects",
+"id": 33140
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "A&dd-On",
+"id": null,
+"items": [
+{
+"label": "&Install ...",
+"id": 32975
+},
+{
+"label": "&UnInstall ...",
+"id": 32978
+},
+{
+"separator": true
+},
+{
+"label": "Package &Location...",
+"id": 32974
+},
+{
+"label": "&Package...",
+"id": 32976
+},
+{
+"label": "&Edit...",
+"id": 32980
+}
+]
+},
+{
+"label": "Plu&g-in Manager...",
+"id": 32983
+},
+{
+"separator": true
+},
+{
+"label": "&Preferences...",
+"id": 32839
+},
+{
+"label": "&Keyboard Mapping...",
+"id": 32957
+},
+{
+"label": "&Interaction Mode...",
+"id": 33106
+},
+{
+"label": "&Migrate Preferences...",
+"id": 33102
+},
+{
+"separator": true
+},
+{
+"label": "Recent Scenes",
+"id": 33037
+},
+{
+"label": "Recent Mode&ls",
+"id": 33039
+},
+{
+"separator": true
+},
+{
+"label": "Exi&t",
+"id": 57665
+}
+]
+}
+],
+"345": [
+{
+"label": "ToolbarMenu",
+"id": null,
+"items": [
+{
+"label": "Read-Only Toolbar",
+"id": 32977
+},
+{
+"separator": true
+},
+{
+"label": "Make Local Copy",
+"id": 32981
+}
+]
+}
+]
+},
+"strings": {}
+},
+"mcp.dll": {
+"menus": {
+"201": [
+{
+"label": "Select",
+"id": null,
+"items": [
+{
+"label": "&Tools",
+"id": null,
+"items": [
+{
+"label": "&Rectangle",
+"id": 33055
+},
+{
+"label": "&Lasso",
+"id": 33056
+},
+{
+"label": "&Freeform",
+"id": 33058
+},
+{
+"label": "Ra&ycast",
+"id": 33059
+},
+{
+"label": "R&ectangle Raycast",
+"id": 33060
+},
+{
+"label": "&Paint (Points, Edges,& Polygons)",
+"id": 33057
+}
+]
+},
+{
+"label": "&Modes",
+"id": null,
+"items": [
+{
+"label": "&Object",
+"id": 33179
+},
+{
+"label": "O&bject (Extended)",
+"id": 33180
+},
+{
+"separator": true
+},
+{
+"label": "Poin&t",
+"id": 33181
+},
+{
+"label": "&Point (Extended)",
+"id": 33182
+},
+{
+"separator": true
+},
+{
+"label": "&Edge",
+"id": 33183
+},
+{
+"label": "E&dge (Extended)",
+"id": 33184
+},
+{
+"label": "&Raycast Edge",
+"id": 33185
+},
+{
+"label": "R&aycast Edge (Extended)",
+"id": 33186
+},
+{
+"separator": true
+},
+{
+"label": "Pol&ygon",
+"id": 33187
+},
+{
+"label": "Polygo&n (Extended)",
+"id": 33188
+},
+{
+"label": "Raycast Poly&gon",
+"id": 33189
+},
+{
+"label": "Ray&cast Polygon (Extended)",
+"id": 33190
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "&Grow Selection",
+"id": 33145
+},
+{
+"label": "&Shrink Selection",
+"id": 33100
+},
+{
+"label": "Select Polygon &Outlines",
+"id": 33079
+},
+{
+"label": "&Island From Selection",
+"id": 33080
+},
+{
+"label": "Select Adja&cent",
+"id": null,
+"items": [
+{
+"label": "&Points",
+"id": 33146
+},
+{
+"label": "&Edges",
+"id": 33147
+},
+{
+"label": "P&olygons",
+"id": 33148
+}
+]
+},
+{
+"label": "Select &Loops",
+"id": null,
+"items": [
+{
+"label": "&Loops From Selection",
+"id": 33075
+},
+{
+"label": "&Loops From Selection (around corners)",
+"id": 33076
+},
+{
+"label": "&Grow Loops",
+"id": 33077
+},
+{
+"label": "&Shrink Loops",
+"id": 33078
+},
+{
+"separator": true
+},
+{
+"label": "Select Edge Loop (no corners)",
+"id": 33279
+},
+{
+"label": "Select Edge Loop (around corners)",
+"id": 33311
+},
+{
+"label": "Select Parallel Edge Loop",
+"id": 33312
+}
+]
+},
+{
+"label": "Select n-Sided Polygons",
+"id": null,
+"items": [
+{
+"label": "&Triangles",
+"id": 33282
+},
+{
+"label": "&Quads",
+"id": 33284
+},
+{
+"label": "&Five Sides or more",
+"id": 33285
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Select &All Objects",
+"id": 32804
+},
+{
+"label": "Select Branc&h",
+"id": 32820
+},
+{
+"label": "Select T&ree",
+"id": 32821
+},
+{
+"label": "Select M&odel",
+"id": 33106
+},
+{
+"label": "Select Chain",
+"id": 33293
+},
+{
+"label": "Select Child &Nodes",
+"id": 32925
+},
+{
+"label": "Select Mem&bers/Components",
+"id": 32926
+},
+{
+"separator": true
+},
+{
+"label": "Select All Using &Filter",
+"id": 32932
+},
+{
+"label": "&Invert Using Filter",
+"id": 32929
+},
+{
+"separator": true
+},
+{
+"label": "&Deselect All",
+"id": 32866
+},
+{
+"label": "D&eselect All Using Filter",
+"id": 32933
+},
+{
+"separator": true
+},
+{
+"label": "Se&lectability",
+"id": null,
+"items": [
+{
+"label": "&Toggle Selected Objects",
+"id": 33174
+},
+{
+"label": "Make All &Selectable",
+"id": 33175
+},
+{
+"label": "Make All &Unselectable",
+"id": 33176
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Surround Edges",
+"id": 33081
+},
+{
+"label": "Surround Polygons",
+"id": 33082
+},
+{
+"label": "Raycast in Shaded Mode",
+"id": 33083
+},
+{
+"label": "Select &Single Object in Region",
+"id": 32934
+},
+{
+"label": "SI|&3D Selection Model",
+"id": 32935
+},
+{
+"label": "E&xtended Component Selection",
+"id": 33105
+},
+{
+"separator": true
+},
+{
+"label": "Selection &Preferences...",
+"id": 33084
+}
+]
+},
+{
+"label": "CONTEXT",
+"id": null,
+"items": [
+{
+"label": "&Kinematics...",
+"id": 33132
+},
+{
+"label": "Inspect &Material...",
+"id": 33133
+},
+{
+"label": "&Last Operator in Stack...",
+"id": 33158
+},
+{
+"separator": true
+},
+{
+"label": "&General Properties...",
+"id": 33134
+},
+{
+"label": "&Modeling Properties...",
+"id": 33135
+},
+{
+"label": "&Animation Properties...",
+"id": 33136
+},
+{
+"label": "&Rendering Properties...",
+"id": 33137
+},
+{
+"label": "S&imulation Properties...",
+"id": 33345
+},
+{
+"label": "&Viewing Properties...",
+"id": 33138
+},
+{
+"label": "&Custom Properties...",
+"id": 33139
+},
+{
+"separator": true
+},
+{
+"label": "All &Properties...",
+"id": 33140
+}
+]
+}
+],
+"202": [
+{
+"label": "Animation",
+"id": null,
+"items": [
+{
+"label": "Parame&ters",
+"id": null,
+"items": [
+{
+"label": "Create Marking Set",
+"id": 33254
+},
+{
+"label": "Activate Marking Set",
+"id": 33255
+},
+{
+"label": "Delete Marking Set",
+"id": 33256
+},
+{
+"label": "Add to Marking Set",
+"id": 33257
+},
+{
+"label": "Remove from Marking Set",
+"id": 33267
+},
+{
+"separator": true
+},
+{
+"label": "Unmark All Parame&ters",
+"id": 33109
+},
+{
+"separator": true
+},
+{
+"label": "&New Custom Parameter Set",
+"id": 33258
+},
+{
+"label": "&Edit Custom Parameter Sets..",
+"id": 33259
+},
+{
+"separator": true
+},
+{
+"label": "New Custom Parameter",
+"id": 33260
+},
+{
+"label": "Remove Custom Parameter",
+"id": 33261
+},
+{
+"label": "Edit Parameter Definition",
+"id": 33262
+},
+{
+"separator": true
+},
+{
+"label": "New Proxy Parameter",
+"id": 33263
+},
+{
+"label": "Remove Proxy Parameter",
+"id": 33264
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Set &Key",
+"id": 32915
+},
+{
+"label": "Set &Zero Key",
+"id": 33404
+},
+{
+"label": "Remove Ke&y",
+"id": 32904
+},
+{
+"label": "Set Key at Multiple Frames...",
+"id": 33252
+},
+{
+"label": "Set Key Using Marking Set",
+"id": 33265
+},
+{
+"label": "Set Branch Key",
+"id": 33266
+},
+{
+"label": "Character Key Sets",
+"id": null,
+"items": [
+{
+"label": "Create Character Key Set",
+"id": 33387
+},
+{
+"label": "Create Sub-Character Key Sets",
+"id": 33388
+},
+{
+"label": "Delete Character Key Set",
+"id": 33391
+},
+{
+"separator": true
+},
+{
+"label": "Add Marked Parameters",
+"id": 33389
+},
+{
+"label": "Remove Marked Parameters",
+"id": 33390
+},
+{
+"separator": true
+},
+{
+"label": "Inspect...",
+"id": 33396
+},
+{
+"label": "&Animation Editor...",
+"id": 33397
+},
+{
+"label": "Select Character Key Set",
+"id": 33399
+},
+{
+"label": "Select Objects From Key Set",
+"id": 33406
+},
+{
+"separator": true
+},
+{
+"label": "Set &Keys",
+"id": 33393
+},
+{
+"label": "Set &Zero Keys",
+"id": 33405
+},
+{
+"label": "Remove Ke&ys",
+"id": 33394
+},
+{
+"separator": true
+},
+{
+"label": "Set Current",
+"id": null,
+"items": [
+{
+"separator": true
+}
+]
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Save Key Command Mapping",
+"id": null,
+"items": [
+{
+"label": "Key Marked Parameters",
+"id": 33363
+},
+{
+"label": "Key All Keyable",
+"id": 33364
+},
+{
+"label": "Key Marked Keyable",
+"id": 33365
+},
+{
+"label": "Key Character Key Set",
+"id": 33366
+}
+]
+},
+{
+"label": "Key Modified Parameters Only",
+"id": 33368
+},
+{
+"separator": true
+},
+{
+"label": "Set &Expression...",
+"id": 32957
+},
+{
+"label": "Set Scripted &Operator...",
+"id": 33152
+},
+{
+"separator": true
+},
+{
+"label": "&Copy Animation",
+"id": null,
+"items": [
+{
+"label": "from Marked &Parameters",
+"id": 32779
+},
+{
+"separator": true
+},
+{
+"label": "from Tra&nsforms",
+"id": 33246
+},
+{
+"label": "from &Scaling",
+"id": 33247
+},
+{
+"label": "from &Rotation",
+"id": 33248
+},
+{
+"label": "from &Translation",
+"id": 33249
+},
+{
+"separator": true
+},
+{
+"label": "from &All Parameters, Any Animation Type",
+"id": 33201
+},
+{
+"separator": true
+},
+{
+"label": "from All Parameters, &Expressions",
+"id": 33250
+},
+{
+"label": "from All Parameters, &Fcurves",
+"id": 33251
+},
+{
+"label": "from All Parameters, &Layer Animation",
+"id": 33283
+}
+]
+},
+{
+"label": "&Paste Animation",
+"id": null,
+"items": [
+{
+"label": "to Marked &Parameters",
+"id": 32780
+},
+{
+"label": "to &All Parameters",
+"id": 33202
+}
+]
+},
+{
+"label": "&Remove Animation",
+"id": null,
+"items": [
+{
+"label": "from Marked &Parameters",
+"id": 32778
+},
+{
+"separator": true
+},
+{
+"label": "from Tra&nsforms",
+"id": 33245
+},
+{
+"label": "from &Scaling",
+"id": 33242
+},
+{
+"label": "from &Rotation",
+"id": 33244
+},
+{
+"label": "from &Translation",
+"id": 33243
+},
+{
+"separator": true
+},
+{
+"label": "from &All Parameters, Any Animation Type",
+"id": 33143
+},
+{
+"separator": true
+},
+{
+"label": "from Objects, &Constraints",
+"id": 33240
+},
+{
+"label": "from All Parameters, &Expressions",
+"id": 33239
+},
+{
+"label": "from All Parameters, &Fcurves",
+"id": 33238
+},
+{
+"label": "from All Parameters, &Static Fcurves",
+"id": 33270
+},
+{
+"label": "from All Parameters, Scripted &Operators",
+"id": 33241
+},
+{
+"label": "from All Parameters, &Layer Animation",
+"id": 33271
+}
+]
+},
+{
+"label": "&Sequence Animation",
+"id": null,
+"items": [
+{
+"label": "Marked &Parameters",
+"id": 33151
+},
+{
+"label": "&All Parameters on Selection",
+"id": 33149
+},
+{
+"label": "All &Scene",
+"id": 33150
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Link With",
+"id": null,
+"items": [
+{
+"label": "Link &With...",
+"id": 32958
+},
+{
+"label": "Link With &Multi...",
+"id": 33226
+},
+{
+"label": "L&ink With Orientation...",
+"id": 33227
+},
+{
+"label": "Set Relative &Values",
+"id": 32959
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Go To Key",
+"id": null,
+"items": [
+{
+"label": "&First Key",
+"id": 32955
+},
+{
+"label": "&Last Key",
+"id": 32956
+},
+{
+"label": "Previo&us Key",
+"id": 32781
+},
+{
+"label": "&Next Key",
+"id": 32782
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Convert Euler Rotation to Quaternion",
+"id": 33040
+},
+{
+"label": "Convert Quaternion Rotation to Euler",
+"id": 33039
+},
+{
+"label": "Make Rotation Keys Continuous",
+"id": 33038
+},
+{
+"separator": true
+},
+{
+"label": "&Animation Editor...",
+"id": 32785
+},
+{
+"label": "E&xpression Editor...",
+"id": 32783
+},
+{
+"label": "&Parameter Connection  Editor...",
+"id": 33383
+}
+]
+}
+],
+"203": [
+{
+"label": "Edit",
+"id": null,
+"items": [
+{
+"label": "&Duplicate/Instantiate",
+"id": null,
+"items": [
+{
+"label": "Duplicate &Tool",
+"id": 33212
+},
+{
+"separator": true
+},
+{
+"label": "&Duplicate Single",
+"id": 32909
+},
+{
+"label": "Duplicate Single &without Options",
+"id": 33213
+},
+{
+"label": "D&uplicate Multiple",
+"id": 32844
+},
+{
+"separator": true
+},
+{
+"label": "&Clone Single",
+"id": 32910
+},
+{
+"label": "Clone Single wit&hout Options",
+"id": 33214
+},
+{
+"label": "C&lone Multiple",
+"id": 32870
+},
+{
+"separator": true
+},
+{
+"label": "&Instantiate Single (Models only)",
+"id": 33276
+},
+{
+"label": "Instantiate Single wit&hout Options (Models only)",
+"id": 33277
+},
+{
+"label": "I&nstantiate Multiple (Models only)",
+"id": 33278
+},
+{
+"separator": true
+},
+{
+"label": "Duplicate/Instantiate from &Animation",
+"id": 33121
+},
+{
+"label": "Duplicate/Instantiate &Options... ",
+"id": 32790
+},
+{
+"separator": true
+},
+{
+"label": "Duplicate &Symmetry",
+"id": 1787
+},
+{
+"label": "Duplicate Using &Geometry Approx. (Poly. Mesh only)",
+"id": 33274
+}
+]
+},
+{
+"label": "Duplicate/Instantiate &Options... ",
+"id": 32790
+},
+{
+"separator": true
+},
+{
+"label": "Create Transform &Group",
+"id": 33359
+},
+{
+"label": "Remove Transform Group",
+"id": 33360
+},
+{
+"separator": true
+},
+{
+"label": "&Create Group",
+"id": 32770
+},
+{
+"label": "&Add to Group",
+"id": 32901
+},
+{
+"label": "Remove from Group",
+"id": 32902
+},
+{
+"label": "&Remove Group",
+"id": 32771
+},
+{
+"separator": true
+},
+{
+"label": "&Create Cluster",
+"id": 33215
+},
+{
+"label": "Create Cluster &with Center",
+"id": 33122
+},
+{
+"label": "Create Non-O&verlapping Cluster",
+"id": 33253
+},
+{
+"label": "&Add to Cluster",
+"id": 33216
+},
+{
+"label": "&Remove Cluster",
+"id": 33217
+},
+{
+"label": "Remove from Cluster",
+"id": 33218
+},
+{
+"separator": true
+},
+{
+"label": "&Model",
+"id": null,
+"items": [
+{
+"label": "&New Model",
+"id": 33195
+},
+{
+"label": "New &Referenced Model",
+"id": 33380
+},
+{
+"label": "New &Empty Referenced Model",
+"id": 33381
+},
+{
+"separator": true
+},
+{
+"label": "Convert to Reference",
+"id": 33375
+},
+{
+"separator": true
+},
+{
+"label": "&Update Referenced Model",
+"id": 33376
+},
+{
+"label": "Set &Resolution",
+"id": null,
+"items": [
+{
+"label": "&OffLoaded",
+"id": 33287
+},
+{
+"label": "&First Resolution",
+"id": 33288
+},
+{
+"label": "&Second Resolution",
+"id": 33289
+},
+{
+"label": "&Third Resolution",
+"id": 33290
+}
+]
+},
+{
+"label": "Make Referenced Model &Local",
+"id": 33373
+},
+{
+"label": "&Advanced",
+"id": null,
+"items": [
+{
+"label": "Commit to Reference",
+"id": 33372
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Add Empty Delta",
+"id": 33377
+},
+{
+"label": "Import Delta",
+"id": 33374
+},
+{
+"label": "Export Delta",
+"id": 33378
+}
+]
+},
+{
+"label": "Opera&tor",
+"id": null,
+"items": [
+{
+"label": "&Add Input (Loft and Curves-to-Mesh only)",
+"id": 33223
+},
+{
+"label": "&Remove Input (Loft and Curves-to-Mesh only)",
+"id": 33224
+},
+{
+"label": "Select Generator Inputs",
+"id": 33336
+},
+{
+"label": "Hide/Unhide Generator Inputs",
+"id": 33337
+},
+{
+"label": "Freeze Generator && Delete Inputs",
+"id": 33338
+},
+{
+"separator": true
+},
+{
+"label": "&Substitute Input",
+"id": 33225
+},
+{
+"separator": true
+},
+{
+"label": "Freeze &Modeling",
+"id": 33343
+},
+{
+"label": "Free&ze Selected",
+"id": 33108
+},
+{
+"label": "&Collapse Operators",
+"id": 33292
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "D&elete All",
+"id": 32917
+},
+{
+"label": "Delete &Selected",
+"id": 32918
+},
+{
+"label": "Delete Selected Permanent",
+"id": 33407
+},
+{
+"separator": true
+},
+{
+"label": "&Info Scene...",
+"id": 33142
+},
+{
+"label": "I&nfo Selection...",
+"id": 33141
+},
+{
+"label": "Info Geometry...",
+"id": 33355
+},
+{
+"separator": true
+},
+{
+"label": "&Properties",
+"id": null,
+"items": [
+{
+"label": "&Kinematics...",
+"id": 33123
+},
+{
+"label": "Inspect &Material...",
+"id": 33124
+},
+{
+"label": "&Last Operator in Stack...",
+"id": 33113
+},
+{
+"separator": true
+},
+{
+"label": "&General Properties...",
+"id": 33125
+},
+{
+"label": "&Modeling Properties...",
+"id": 33126
+},
+{
+"label": "&Animation Properties...",
+"id": 33127
+},
+{
+"label": "&Rendering Properties...",
+"id": 33128
+},
+{
+"label": "S&imulation Properties...",
+"id": 33344
+},
+{
+"label": "&Viewing Properties...",
+"id": 33129
+},
+{
+"label": "&Custom Properties...",
+"id": 33130
+},
+{
+"separator": true
+},
+{
+"label": "All &Properties...",
+"id": 33131
+}
+]
+}
+]
+}
+],
+"204": [
+{
+"label": "Transformation",
+"id": null,
+"items": [
+{
+"label": "&Reset All Transforms",
+"id": 32851
+},
+{
+"label": "Reset Scaling",
+"id": 33231
+},
+{
+"label": "Reset Rotation",
+"id": 33232
+},
+{
+"label": "Reset Translation",
+"id": 33233
+},
+{
+"label": "R&eset Active Transform",
+"id": 32850
+},
+{
+"separator": true
+},
+{
+"label": "&Freeze All Transforms",
+"id": 32861
+},
+{
+"label": "Freeze Scaling",
+"id": 33228
+},
+{
+"label": "Freeze Rotation",
+"id": 33229
+},
+{
+"label": "Freeze Translation",
+"id": 33230
+},
+{
+"separator": true
+},
+{
+"label": "&Set Neutral Pose",
+"id": 33350
+},
+{
+"label": "Set Neutral Scaling",
+"id": 33352
+},
+{
+"label": "Set Neutral Rotation",
+"id": 33353
+},
+{
+"label": "Set Neutral Translation",
+"id": 33354
+},
+{
+"label": "Remove Ne&utral Pose",
+"id": 33351
+},
+{
+"separator": true
+},
+{
+"label": "Match All Transforms",
+"id": 33234
+},
+{
+"label": "Match Scaling",
+"id": 33235
+},
+{
+"label": "Match Rotation",
+"id": 33236
+},
+{
+"label": "Match Translation",
+"id": 33237
+},
+{
+"separator": true
+},
+{
+"label": "&Move Center to Vertices",
+"id": 33120
+},
+{
+"label": "Move Center to Bounding Box",
+"id": 33291
+},
+{
+"label": "&Align Objects",
+"id": 33116
+},
+{
+"separator": true
+},
+{
+"label": "&Reference Planes",
+"id": null,
+"items": [
+{
+"label": "Create Reference &Plane",
+"id": 33173
+},
+{
+"label": "Create &Transient Plane",
+"id": 33200
+},
+{
+"separator": true
+},
+{
+"label": "Pick &Object Reference",
+"id": 33204
+},
+{
+"label": "Pick Poin&t Reference",
+"id": 33205
+},
+{
+"label": "Pick &Edge Reference",
+"id": 33206
+},
+{
+"label": "Pick Pol&ygon Reference",
+"id": 33207
+},
+{
+"separator": true
+},
+{
+"separator": true
+},
+{
+"label": "Current Reference &Properties...",
+"id": 33210
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Enable &Transform Manipulators",
+"id": 33054
+},
+{
+"label": "&Show Axes of Active Transform",
+"id": 33159
+},
+{
+"label": "Enable Transform Set&ups",
+"id": 33160
+},
+{
+"label": "Modify Object &Pivot",
+"id": 33102
+},
+{
+"label": "Transform &Hidden Objects",
+"id": 33101
+},
+{
+"label": "Transform Components Independently in &Local Mode",
+"id": 33198
+},
+{
+"label": "&Collapse Points For Snapping/Absolute Translation",
+"id": 33199
+},
+{
+"separator": true
+},
+{
+"label": "&Kinematics...",
+"id": 33177
+},
+{
+"label": "Transform &Preferences...",
+"id": 33203
+},
+{
+"separator": true
+},
+{
+"label": "Automark Active Transform Axes",
+"id": 33280
+},
+{
+"label": "Automark Global Transforms",
+"id": 33281
+},
+{
+"label": "Display Global Coordinates in View Mode",
+"id": 33161
+}
+]
+}
+],
+"219": [
+{
+"label": "Playback",
+"id": null,
+"items": [
+{
+"label": "Play &All Frames",
+"id": 32853
+},
+{
+"label": "&Real-Time Playback",
+"id": 32782
+},
+{
+"label": "Real-Time Playback (75%)",
+"id": 33347
+},
+{
+"label": "Real-Time Playback (50%)",
+"id": 33348
+},
+{
+"label": "Real-Time Playback (25%)",
+"id": 33349
+},
+{
+"label": "Playback &Options...",
+"id": 32962
+},
+{
+"label": "Playback/Audio Preferences...",
+"id": 33356
+},
+{
+"label": "Playback View",
+"id": null,
+"items": [
+{
+"label": "All Views",
+"id": 33000
+},
+{
+"label": "Active View",
+"id": 33001
+},
+{
+"label": "View A",
+"id": 33002
+},
+{
+"label": "View B",
+"id": 33003
+},
+{
+"label": "View C",
+"id": 33004
+},
+{
+"label": "View D",
+"id": 33005
+}
+]
+},
+{
+"label": "Playback Update Mode",
+"id": null,
+"items": [
+{
+"label": "Update &All",
+"id": 32939
+},
+{
+"label": "&Selected",
+"id": 32938
+},
+{
+"label": "Selected + &Unselected SRT",
+"id": 32940
+},
+{
+"separator": true
+},
+{
+"label": "S&RT",
+"id": 32941
+},
+{
+"label": "&Geometry",
+"id": 32942
+},
+{
+"separator": true
+},
+{
+"label": "Selected SR&T",
+"id": 32943
+},
+{
+"label": "Selected G&eometry",
+"id": 32944
+},
+{
+"separator": true
+},
+{
+"label": "&Custom...",
+"id": 32945
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "&First Frame",
+"id": 32857
+},
+{
+"label": "&Last Frame",
+"id": 32773
+},
+{
+"label": "&Previous Frame",
+"id": 32818
+},
+{
+"label": "&Next Frame",
+"id": 32819
+},
+{
+"separator": true
+},
+{
+"label": "Flipboo&k...",
+"id": 33346
+}
+]
+}
+],
+"293": [
+{
+"label": "Constraints",
+"id": null,
+"items": [
+{
+"label": "&Position",
+"id": 33041
+},
+{
+"label": "&Orientation",
+"id": 32810
+},
+{
+"label": "&Direction",
+"id": 33044
+},
+{
+"separator": true
+},
+{
+"label": "Pos&e",
+"id": 33043
+},
+{
+"label": "Dis&tance",
+"id": 32812
+},
+{
+"label": "Scalin&g",
+"id": 32807
+},
+{
+"label": "S&ymmetry",
+"id": 33042
+},
+{
+"separator": true
+},
+{
+"label": "&Curve (Path)",
+"id": 33047
+},
+{
+"label": "C&urve (Param)",
+"id": 33367
+},
+{
+"label": "&Surface (Param)",
+"id": 32806
+},
+{
+"separator": true
+},
+{
+"label": "&2 Points",
+"id": 32826
+},
+{
+"label": "&3 Points",
+"id": 32827
+},
+{
+"label": "&N Points",
+"id": 33119
+},
+{
+"separator": true
+},
+{
+"label": "O&bject to Cluster",
+"id": 33114
+},
+{
+"separator": true
+},
+{
+"label": "Pin Object into Position (Toggle)",
+"id": 33294
+},
+{
+"separator": true
+},
+{
+"label": "&Up-Vector",
+"id": 32828
+},
+{
+"label": "Chain Up Vector",
+"id": 32912
+},
+{
+"label": "Chain Preferred Axis",
+"id": 32913
+},
+{
+"separator": true
+},
+{
+"label": "Bounding &Volume",
+"id": 32837
+},
+{
+"label": "Bounding P&lane",
+"id": 32835
+},
+{
+"separator": true
+},
+{
+"label": "&Remove Constraint",
+"id": 32817
+},
+{
+"label": "Remove &All Constraints",
+"id": 32818
+},
+{
+"separator": true
+},
+{
+"label": "Constraint Co&mpensation",
+"id": 32893
+},
+{
+"label": "C&hild Transform Compensation",
+"id": 33272
+},
+{
+"separator": true
+},
+{
+"label": "Select Constra&ining Objects",
+"id": 33273
+},
+{
+"label": "Select Objects Constrained ",
+"id": 33275
+}
+]
+}
+],
+"294": [
+{
+"label": "Get",
+"id": null,
+"items": [
+{
+"label": "Scene...",
+"id": 32785
+},
+{
+"label": "Spot Light",
+"id": 32816
+},
+{
+"label": "Point Light",
+"id": 32815
+},
+{
+"label": "Infinite Light",
+"id": 32814
+},
+{
+"label": "Camera",
+"id": 32813
+}
+]
+}
+],
+"325": [
+{
+"label": "",
+"id": null,
+"items": [
+{
+"label": "Current Layer.  Click to see list of layers",
+"id": 32779
+},
+{
+"label": "Group",
+"id": 32778
+},
+{
+"label": "Object",
+"id": 32780
+},
+{
+"label": "Center",
+"id": 32781
+},
+{
+"label": "Explore",
+"id": 32782
+},
+{
+"label": "Scene",
+"id": 32783
+},
+{
+"label": "Selection",
+"id": 33310
+},
+{
+"label": "Clusters",
+"id": 32784
+},
+{
+"label": "Select Tool",
+"id": 32785
+},
+{
+"label": "Group or Cluster Selection Filter",
+"id": 32786
+},
+{
+"label": "Component Selection Filter",
+"id": 32789
+},
+{
+"label": "Additional Component or Object Filter",
+"id": 32790
+},
+{
+"label": "Click to select additional filter",
+"id": 32791
+},
+{
+"label": "Center Selection Filter",
+"id": 32792
+},
+{
+"label": "Pre-filtered Transient Explorer Views",
+"id": 32793
+},
+{
+"label": "Scene Explorer",
+"id": 32794
+},
+{
+"label": "Cluster Explorer of Current Selection",
+"id": 32795
+},
+{
+"label": "Current Selection Explorer.  Right-click to popup menu.",
+"id": 32799
+},
+{
+"label": "Component Selection Filter",
+"id": 32789
+},
+{
+"label": "Global",
+"id": 32801
+},
+{
+"label": "Local",
+"id": 32802
+},
+{
+"label": "Par",
+"id": 32803
+},
+{
+"label": "View",
+"id": 32804
+},
+{
+"label": "Ref",
+"id": 32805
+},
+{
+"label": "Plane",
+"id": 32806
+},
+{
+"label": "COG",
+"id": 32807
+},
+{
+"label": "Prop",
+"id": 32808
+},
+{
+"label": "Sym",
+"id": 32809
+},
+{
+"label": "Scale Tool with the 3 Axes",
+"id": 32816
+},
+{
+"label": "Rotate Tool with the 3 Axes",
+"id": 32830
+},
+{
+"label": "Translate Tool with the 3 Axes",
+"id": 32831
+},
+{
+"label": "This is the reset xfo button - it will be enabled one day.",
+"id": 32832
+},
+{
+"label": "This is the reset xfo button - it will be enabled one day.",
+"id": 32832
+},
+{
+"label": "Enable Snapping (Ctrl modifier)",
+"id": 32836
+},
+{
+"label": "Snap to Points",
+"id": 32837
+},
+{
+"label": "Snap to Segments",
+"id": 32838
+},
+{
+"label": "Snap to Facets",
+"id": 32839
+},
+{
+"label": "Snap to Reference Plane",
+"id": 32840
+},
+{
+"label": "Parent",
+"id": 32841
+},
+{
+"label": "Cut",
+"id": 32842
+},
+{
+"label": "CnsComp",
+"id": 32843
+},
+{
+"label": "ChldComp",
+"id": 32844
+},
+{
+"label": "Constraint Compensation",
+"id": 32847
+},
+{
+"label": "Child Transform Compensation",
+"id": 32848
+},
+{
+"label": "Show",
+"id": 32849
+},
+{
+"label": "Freeze",
+"id": 32850
+},
+{
+"label": "Immed",
+"id": 32851
+},
+{
+"label": "Create Group or Cluster",
+"id": 32852
+},
+{
+"label": "Remove Group or Cluster",
+"id": 32853
+},
+{
+"label": "Freeze Construction History",
+"id": 32854
+},
+{
+"label": "Immediate Mode",
+"id": 32855
+},
+{
+"label": "Play All Frames VS. Real-Time Playback",
+"id": 32856
+},
+{
+"label": "Audio Mute",
+"id": 32859
+},
+{
+"label": "Set Keys When Changing Values (Autokey)",
+"id": 32861
+},
+{
+"label": "Popup Animatable Parameters Tree",
+"id": 32865
+},
+{
+"label": "Lock/Unlock Marking",
+"id": 32866
+},
+{
+"label": "Loop",
+"id": 32872
+}
+]
+}
+],
+"350": [
+{
+"label": "LAYER",
+"id": null,
+"items": [
+{
+"label": "&Layer Control...",
+"id": 32886
+},
+{
+"separator": true
+},
+{
+"label": "&New Layer",
+"id": 32887
+},
+{
+"label": "&Delete Current Layer",
+"id": 32888
+},
+{
+"label": "&Move Selection to Current Layer",
+"id": 32889
+},
+{
+"separator": true
+},
+{
+"label": "&Viewport Visibility",
+"id": 32890
+},
+{
+"label": "&Rendering Visibility",
+"id": 32891
+},
+{
+"label": "&Selectability",
+"id": 32892
+},
+{
+"label": "&Ghosting",
+"id": 32900
+}
+]
+}
+],
+"353": [
+{
+"label": "EXPLORE",
+"id": null,
+"items": [
+{
+"label": "TITLE:Application",
+"id": 33313
+},
+{
+"label": "A&pplication",
+"id": 32948
+},
+{
+"label": "Preferences",
+"id": 33314
+},
+{
+"label": "TITLE:Scene",
+"id": 33315
+},
+{
+"label": "La&yers",
+"id": 32950
+},
+{
+"label": "P&asses",
+"id": 32947
+},
+{
+"label": "Environments",
+"id": 33316
+},
+{
+"separator": true
+},
+{
+"label": "&Lights",
+"id": 33103
+},
+{
+"label": "&Cameras",
+"id": 33104
+},
+{
+"label": "&Groups",
+"id": 33110
+},
+{
+"separator": true
+},
+{
+"label": "&Operators",
+"id": 32951
+},
+{
+"label": "Property &Maps",
+"id": 32952
+},
+{
+"label": "Co&nstraints",
+"id": 32953
+},
+{
+"label": "S&haders",
+"id": 32954
+},
+{
+"label": "Mi&xers",
+"id": 33117
+},
+{
+"label": "&Texture Projections",
+"id": 33118
+},
+{
+"label": "&Custom/Proxy Parameter Sets",
+"id": 33269
+},
+{
+"label": "TITLE:Current",
+"id": 33318
+},
+{
+"label": "&Current Layer",
+"id": 32949
+},
+{
+"label": "C&urrent Pass",
+"id": 32894
+},
+{
+"label": "Current Environment",
+"id": 33319
+},
+{
+"label": "TITLE:Sources/Clips",
+"id": 33330
+},
+{
+"label": "&Sources/Clips",
+"id": 33112
+},
+{
+"label": "Animation",
+"id": 33331
+},
+{
+"label": "Audio",
+"id": 33332
+},
+{
+"label": "Images",
+"id": 33333
+},
+{
+"label": "Materials",
+"id": 33334
+}
+]
+}
+],
+"354": [
+{
+"label": "REMOVED MENU ITEMS",
+"id": null,
+"items": [
+{
+"label": "SELECT",
+"id": null,
+"items": [
+{
+"label": "Support Nil Mode",
+"id": 32863
+},
+{
+"label": "Support Sticky Mode",
+"id": 32864
+},
+{
+"label": "Allow Toggling of Sticky Mode",
+"id": 32865
+},
+{
+"label": "&Front Face Only",
+"id": 32920
+},
+{
+"label": "Bac&k Face Only",
+"id": 32921
+},
+{
+"label": "Bo&th",
+"id": 32922
+},
+{
+"separator": true
+},
+{
+"label": "Select &Ungrouped Components",
+"id": 32927
+}
+]
+},
+{
+"label": "Constraints",
+"id": null,
+"items": [
+{
+"label": "IK UpVector",
+"id": 32912
+},
+{
+"label": "IK PrefAxis",
+"id": 32913
+},
+{
+"label": "n-Points",
+"id": 33111
+},
+{
+"label": "S&ymmetry",
+"id": 32821
+},
+{
+"label": "Direction-&Interest",
+"id": 32829
+},
+{
+"label": "Bounding Pla&ne",
+"id": 32835
+},
+{
+"label": "Bounding &Box",
+"id": 32836
+},
+{
+"label": "D&ynamic",
+"id": null,
+"items": [
+{
+"label": "Inertia",
+"id": 32838
+},
+{
+"label": "Nail",
+"id": 32841
+},
+{
+"label": "Pendulum",
+"id": 32839
+},
+{
+"label": "Spring",
+"id": 32840
+},
+{
+"separator": true
+},
+{
+"label": "Avoid",
+"id": 32842
+},
+{
+"label": "Follow",
+"id": 32843
+}
+]
+},
+{
+"label": "&Collision",
+"id": null,
+"items": [
+{
+"label": "Any in Project",
+"id": 32844
+},
+{
+"label": "Any in Scene",
+"id": 32845
+},
+{
+"label": "Any in Volume",
+"id": 32846
+},
+{
+"separator": true
+},
+{
+"label": "One to One",
+"id": 32847
+},
+{
+"label": "One to Many",
+"id": 32848
+},
+{
+"label": "Multi-lateral in Group",
+"id": 32849
+},
+{
+"separator": true
+},
+{
+"label": "Collision (temp)",
+"id": 32811
+}
+]
+},
+{
+"label": "&Substitute Input",
+"id": 32834
+},
+{
+"label": "Attac&h Control Object",
+"id": 32814
+},
+{
+"label": "Con&tinuous Compensation",
+"id": 32914
+}
+]
+},
+{
+"label": "Transform",
+"id": null,
+"items": [
+{
+"label": "TBD",
+"id": null,
+"items": [
+{
+"label": "Joint IK Manip.",
+"id": 32852
+},
+{
+"label": "Hierarchy IK Manip.",
+"id": 32853
+},
+{
+"label": "Curve IK Manip.",
+"id": 32854
+},
+{
+"separator": true
+},
+{
+"label": "Uniform Scaling",
+"id": 32827
+},
+{
+"label": "Interactive Update",
+"id": 32858
+},
+{
+"label": "Snap Setup...",
+"id": 32859
+}
+]
+},
+{
+"label": "A&lign",
+"id": 32819
+},
+{
+"label": "&Distribute",
+"id": 32820
+},
+{
+"separator": true
+},
+{
+"label": "&Store Static Pose",
+"id": 32830
+},
+{
+"label": "&Apply Static Pose",
+"id": 32831
+},
+{
+"separator": true
+},
+{
+"label": "&Hierarchy Compensation",
+"id": 32855
+},
+{
+"label": "Hierarchy &Manipulation",
+"id": 32856
+},
+{
+"label": "Classic &Scaling",
+"id": 32862
+},
+{
+"label": "Contin&uous Rotation",
+"id": 32857
+}
+]
+},
+{
+"label": "Edit",
+"id": null,
+"items": [
+{
+"label": "Operators...",
+"id": 33107
+},
+{
+"label": "Add &Input",
+"id": 32850
+},
+{
+"label": "Remo&ve Input",
+"id": 32851
+},
+{
+"label": "Su&bstitute Input",
+"id": 32861
+},
+{
+"label": "Remove &Last Operator",
+"id": 32866
+},
+{
+"separator": true
+},
+{
+"label": "Make Property &Local",
+"id": 32837
+},
+{
+"label": "Make Object Uni&que",
+"id": 32793
+}
+]
+},
+{
+"label": "Playback",
+"id": null,
+"items": [
+{
+"label": "Update Lin&ked Scene",
+"id": 32903
+},
+{
+"label": "Fas&t Playback",
+"id": 32860
+},
+{
+"label": "Fast Forward",
+"id": 32774
+},
+{
+"label": "Fast Backward",
+"id": 32775
+},
+{
+"separator": true
+},
+{
+"label": "Flip Flop Play",
+"id": 32779
+},
+{
+"label": "Rotoscop&e",
+"id": null,
+"items": [
+{
+"label": "&Options...",
+"id": 32879
+},
+{
+"label": "&Clear",
+"id": 32880
+}
+]
+},
+{
+"label": "Capture Setting ...",
+"id": 32882
+},
+{
+"label": "&Image Cache",
+"id": null,
+"items": [
+{
+"label": "&Save ...",
+"id": 32875
+},
+{
+"label": "&Clear",
+"id": 32870
+}
+]
+}
+]
+},
+{
+"label": "Animation",
+"id": null,
+"items": [
+{
+"label": "Rem&ove Animation",
+"id": null,
+"items": [
+{
+"label": "&Reset to Default",
+"id": 32961
+}
+]
+}
+]
+}
+]
+}
+],
+"356": [
+{
+"label": "SELECTION FILTER",
+"id": null,
+"items": [
+{
+"label": "Edge",
+"id": 32895
+},
+{
+"label": "Polynode",
+"id": 32896
+},
+{
+"label": "Domainpoint",
+"id": 32897
+},
+{
+"label": "Surfacecurve",
+"id": 32898
+},
+{
+"label": "Trimboundary",
+"id": 32899
+}
+]
+}
+],
+"470": [
+{
+"label": "NAVIGATE",
+"id": null,
+"items": [
+{
+"label": "Select &First Sibling",
+"id": 33153
+},
+{
+"label": "Select L&ast Sibling",
+"id": 33154
+},
+{
+"separator": true
+},
+{
+"label": "Same Type of &Objects",
+"id": 33157
+},
+{
+"label": "Same Type of &Clusters",
+"id": 33155
+},
+{
+"separator": true
+},
+{
+"label": "&Loop",
+"id": 33156
+}
+]
+}
+],
+"482": [
+{
+"label": "REFERENCE",
+"id": null,
+"items": [
+{
+"label": "Use &Current Reference",
+"id": 33209
+},
+{
+"label": "Pick &New Reference",
+"id": 33208
+},
+{
+"separator": true
+},
+{
+"label": "Pick &Object Reference",
+"id": 33204
+},
+{
+"label": "Pick Poin&t Reference",
+"id": 33205
+},
+{
+"label": "Pick &Edge Reference",
+"id": 33206
+},
+{
+"label": "Pick Pol&ygon Reference",
+"id": 33207
+},
+{
+"separator": true
+},
+{
+"separator": true
+},
+{
+"label": "Current Reference &Properties...",
+"id": 33210
+}
+]
+}
+],
+"483": [
+{
+"label": "SYMMETRY",
+"id": null,
+"items": [
+{
+"label": "YZ",
+"id": 33219
+},
+{
+"label": "XZ",
+"id": 33220
+},
+{
+"label": "XY",
+"id": 33221
+},
+{
+"separator": true
+},
+{
+"label": "Symmetry &Properties...",
+"id": 33222
+}
+]
+}
+],
+"487": [
+{
+"label": "",
+"id": null,
+"items": [
+{
+"label": "Add",
+"id": 65535
+},
+{
+"label": "Par",
+"id": 33299
+},
+{
+"label": "Object",
+"id": 33300
+},
+{
+"label": "View",
+"id": 33301
+},
+{
+"label": "Plane",
+"id": 33302
+},
+{
+"label": "Uni",
+"id": 33303
+},
+{
+"label": "Vol",
+"id": 33304
+},
+{
+"label": "object",
+"id": 33300
+},
+{
+"label": "point",
+"id": 33306
+},
+{
+"label": "edge",
+"id": 33307
+},
+{
+"label": "polygon",
+"id": 33308
+},
+{
+"label": "selected",
+"id": 33309
+}
+]
+}
+],
+"10002": [
+{
+"label": "Snap",
+"id": null,
+"items": [
+{
+"label": "&Enable Snapping",
+"id": 10099
+},
+{
+"separator": true
+},
+{
+"label": "Target &Points",
+"id": null,
+"items": [
+{
+"label": "&Points",
+"id": 10100
+},
+{
+"label": "&Knots",
+"id": 10101
+},
+{
+"label": "&Centers",
+"id": 10102
+},
+{
+"label": "&Midpoints",
+"id": 10103
+}
+]
+},
+{
+"label": "Target &Segments",
+"id": null,
+"items": [
+{
+"label": "&Edges",
+"id": 10105
+},
+{
+"label": "&Curves",
+"id": 10106
+},
+{
+"label": "&U Knot Curves",
+"id": 10107
+},
+{
+"label": "&V Knot Curves",
+"id": 10108
+},
+{
+"label": "&Boundaries",
+"id": 10109
+}
+]
+},
+{
+"label": "Target &Facets",
+"id": null,
+"items": [
+{
+"label": "&Faces",
+"id": 10110
+},
+{
+"label": "&Surfaces",
+"id": 10111
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "&All Objects",
+"id": 10120
+},
+{
+"label": "&Nulls/Chains",
+"id": 10121
+},
+{
+"label": "Polygon &Meshes",
+"id": 10122
+},
+{
+"label": "NURBS &Curves",
+"id": 10123
+},
+{
+"label": "NURBS S&urfaces",
+"id": 10124
+},
+{
+"label": "&Lattices",
+"id": 10125
+},
+{
+"label": "Pa&rticles",
+"id": 10126
+},
+{
+"label": "&Hair",
+"id": 10127
+},
+{
+"separator": true
+},
+{
+"label": "Use &2D Snapping in Orthographic Views",
+"id": 10098
+},
+{
+"label": "Snap to Closest &Segments/Midpoints Only",
+"id": 10141
+},
+{
+"label": "Snap to &Visible Grid in Camera Views",
+"id": 10097
+},
+{
+"label": "Snap Region Si&ze",
+"id": null,
+"items": [
+{
+"label": "None",
+"id": 10200
+},
+{
+"separator": true
+},
+{
+"label": "10",
+"id": 10210
+},
+{
+"label": "25",
+"id": 10225
+},
+{
+"label": "50",
+"id": 10250
+},
+{
+"label": "75",
+"id": 10275
+},
+{
+"label": "100",
+"id": 10300
+},
+{
+"label": "125",
+"id": 10325
+},
+{
+"label": "150",
+"id": 10350
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Snap &Options...",
+"id": 10142
+}
+]
+}
+],
+"10004": [
+{
+"label": "SNAP POINTS",
+"id": null,
+"items": [
+{
+"label": "&Points",
+"id": 10100
+},
+{
+"label": "&Knots",
+"id": 10101
+},
+{
+"label": "&Centers",
+"id": 10102
+},
+{
+"label": "&Midpoints",
+"id": 10103
+}
+]
+}
+],
+"10005": [
+{
+"label": "SNAP SEGMENTS",
+"id": null,
+"items": [
+{
+"label": "&Edges",
+"id": 10105
+},
+{
+"label": "&Curves",
+"id": 10106
+},
+{
+"label": "&U Knot Curves",
+"id": 10107
+},
+{
+"label": "&V Knot Curves",
+"id": 10108
+},
+{
+"label": "&Boundaries",
+"id": 10109
+}
+]
+}
+],
+"10006": [
+{
+"label": "SNAP FACETS",
+"id": null,
+"items": [
+{
+"label": "&Faces",
+"id": 10110
+},
+{
+"label": "&Surfaces",
+"id": 10111
+}
+]
+}
+]
+},
+"strings": {}
+},
+"vm.dll": {
+"menus": {
+"202": [
+{
+"label": "Menu",
+"id": null,
+"items": [
+{
+"label": "Top",
+"id": 32768
+},
+{
+"label": "Right",
+"id": 32769
+},
+{
+"label": "Perspective",
+"id": 32770
+},
+{
+"label": "Front",
+"id": 32771
+}
+]
+}
+],
+"272": [
+{
+"label": "RESIZE",
+"id": null,
+"items": [
+{
+"label": "Maximize",
+"id": 32772
+},
+{
+"label": "Restore",
+"id": 32776
+},
+{
+"separator": true
+},
+{
+"label": "Horizontal",
+"id": 32774
+},
+{
+"label": "Vertical",
+"id": 32775
+},
+{
+"separator": true
+},
+{
+"label": "Reset Size",
+"id": 32773
+},
+{
+"label": "Reset All",
+"id": 32832
+}
+]
+}
+],
+"273": [
+{
+"label": "Interface Test Menu",
+"id": null,
+"items": [
+{
+"label": "Disable Refresh",
+"id": 32800
+},
+{
+"label": "Enable Refresh",
+"id": 32801
+},
+{
+"label": "Tile",
+"id": null,
+"items": [
+{
+"label": "SI3DVIEWTILE_AAAA",
+"id": 32778
+},
+{
+"label": "SI3DVIEWTILE_BBBB",
+"id": 32779
+},
+{
+"label": "SI3DVIEWTILE_CCCC",
+"id": 32780
+},
+{
+"label": "SI3DVIEWTILE_DDDD",
+"id": 32781
+},
+{
+"label": "SI3DVIEWTILE_AACD",
+"id": 32782
+},
+{
+"label": "SI3DVIEWTILE_AACC",
+"id": 32783
+},
+{
+"label": "SI3DVIEWTILE_AADD",
+"id": 32784
+},
+{
+"label": "SI3DVIEWTILE_BBCD",
+"id": 32785
+},
+{
+"label": "SI3DVIEWTILE_BBDD",
+"id": 32786
+},
+{
+"label": "SI3DVIEWTILE_BBCC",
+"id": 32787
+},
+{
+"label": "SI3DVIEWTILE_ABCB",
+"id": 32788
+},
+{
+"label": "SI3DVIEWTILE_CBCB",
+"id": 32789
+},
+{
+"label": "SI3DVIEWTILE_ABAB",
+"id": 32790
+},
+{
+"label": "SI3DVIEWTILE_ADCD",
+"id": 32791
+},
+{
+"label": "SI3DVIEWTILE_CDCD",
+"id": 32792
+},
+{
+"label": "SI3DVIEWTILE_ADAD",
+"id": 32793
+},
+{
+"label": "SI3DVIEWTILE_ABDD",
+"id": 32794
+},
+{
+"label": "SI3DVIEWTILE_ABCC",
+"id": 32795
+},
+{
+"label": "SI3DVIEWTILE_CBCD",
+"id": 32796
+},
+{
+"label": "SI3DVIEWTILE_ABAD",
+"id": 32797
+},
+{
+"label": "SI3DVIEWTILE_ABCD",
+"id": 32798
+}
+]
+},
+{
+"label": "Create Flat View ....",
+"id": 32815
+},
+{
+"label": "Create Float View ...",
+"id": 32816
+},
+{
+"label": "Set Pane Camera ...",
+"id": 32814
+},
+{
+"label": "Update Toolbar",
+"id": 32817
+},
+{
+"label": "Maximize",
+"id": 32818
+},
+{
+"label": "Restore",
+"id": 32819
+},
+{
+"label": "Set View Client ...",
+"id": 32820
+},
+{
+"label": "Toolbar",
+"id": null,
+"items": [
+{
+"label": "Show",
+"id": 32822
+},
+{
+"label": "Hide",
+"id": 32823
+},
+{
+"label": "Control",
+"id": null,
+"items": [
+{
+"label": "Show",
+"id": 32826
+},
+{
+"label": "Hide",
+"id": 32827
+},
+{
+"label": "Enable",
+"id": 32828
+},
+{
+"label": "Disable",
+"id": 32829
+}
+]
+}
+]
+}
+]
+}
+],
+"290": [
+{
+"label": "Mute/Solo menu",
+"id": null,
+"items": [
+{
+"label": "&Mute",
+"id": 32830
+},
+{
+"label": "&Solo",
+"id": 32831
+}
+]
+}
+]
+},
+"strings": {}
+},
+"viewinteraction.dll": {
+"menus": {
+"345": [
+{
+"label": "KNIFE",
+"id": null,
+"items": [
+{
+"label": "Create Grid And Connect",
+"id": 40003
+},
+{
+"label": "Inspect Operator...",
+"id": 40002
+}
+]
+}
+],
+"349": [
+{
+"label": "CURVE_DIRECT_MANIP",
+"id": null,
+"items": [
+{
+"label": "Selection Menu >",
+"id": 40059
+},
+{
+"label": "&Align Bezier Handles",
+"id": 40033
+},
+{
+"label": "Align Bezier Handle Back to Forward",
+"id": 40052
+},
+{
+"label": "Align Bezier Handle Forward to Back",
+"id": 40053
+},
+{
+"label": "&Edit Curve Approximation...",
+"id": 40034
+},
+{
+"label": "Goto &Previous Knot",
+"id": 40029
+},
+{
+"label": "Goto &Next Knot",
+"id": 40030
+},
+{
+"label": "Insert &Bezier Knot",
+"id": 40019
+},
+{
+"label": "&Insert Knot",
+"id": 40023
+},
+{
+"label": "Make Adjacent Knot Segments Linear",
+"id": 40047
+},
+{
+"label": "Make Fwd Knot Segment Linear",
+"id": 40045
+},
+{
+"label": "Make Bwd Knot Segment Linear",
+"id": 40046
+},
+{
+"label": "Make Bezier-Knot Corner",
+"id": 40049
+},
+{
+"label": "Make Knot &Bezier",
+"id": 40020
+},
+{
+"label": "Make Knot Non-Bezier",
+"id": 40021
+},
+{
+"label": "Open/Close",
+"id": 40061
+},
+{
+"label": "Remove Knot",
+"id": 40022
+},
+{
+"separator": true
+},
+{
+"label": "LMB Binds Broken Tangents",
+"id": 40055
+},
+{
+"label": "&Snap To Curve Plane",
+"id": 40044
+},
+{
+"label": "&Translate Manipulator",
+"id": 40027
+}
+]
+}
+],
+"530": [
+{
+"label": "TRANSLATE",
+"id": null,
+"items": [
+{
+"label": "View",
+"id": 541
+},
+{
+"label": "Global",
+"id": 542
+},
+{
+"label": "Local",
+"id": 543
+},
+{
+"label": "Parent",
+"id": 544
+},
+{
+"label": "Ref",
+"id": 545
+},
+{
+"label": "Plane",
+"id": 546
+},
+{
+"separator": true
+},
+{
+"label": "COG",
+"id": 548
+},
+{
+"label": "Prop",
+"id": 547
+},
+{
+"label": "Sym",
+"id": 549
+},
+{
+"separator": true
+},
+{
+"label": "Edit Pivot",
+"id": 557
+},
+{
+"label": "Lock Pivot",
+"id": 558
+},
+{
+"label": "Reset Pivot",
+"id": 559
+}
+]
+}
+],
+"531": [
+{
+"label": "ROTATE",
+"id": null,
+"items": [
+{
+"label": "View",
+"id": 541
+},
+{
+"label": "Global",
+"id": 542
+},
+{
+"label": "Local",
+"id": 543
+},
+{
+"label": "Parent",
+"id": 544
+},
+{
+"label": "Add",
+"id": 552
+},
+{
+"label": "Ref",
+"id": 545
+},
+{
+"label": "Plane",
+"id": 546
+},
+{
+"separator": true
+},
+{
+"label": "COG",
+"id": 548
+},
+{
+"label": "Prop",
+"id": 547
+},
+{
+"label": "Sym",
+"id": 549
+},
+{
+"separator": true
+},
+{
+"label": "Edit Pivot",
+"id": 557
+},
+{
+"label": "Lock Pivot",
+"id": 558
+},
+{
+"label": "Reset Pivot",
+"id": 559
+}
+]
+}
+],
+"532": [
+{
+"label": "SCALE",
+"id": null,
+"items": [
+{
+"label": "Global",
+"id": 542
+},
+{
+"label": "Local",
+"id": 543
+},
+{
+"label": "Parent",
+"id": 544
+},
+{
+"label": "Ref",
+"id": 545
+},
+{
+"separator": true
+},
+{
+"label": "Uniform",
+"id": 550
+},
+{
+"label": "Volume",
+"id": 551
+},
+{
+"separator": true
+},
+{
+"label": "COG",
+"id": 548
+},
+{
+"label": "Prop",
+"id": 547
+},
+{
+"label": "Sym",
+"id": 549
+},
+{
+"separator": true
+},
+{
+"label": "Edit Pivot",
+"id": 557
+},
+{
+"label": "Lock Pivot",
+"id": 558
+},
+{
+"label": "Reset Pivot",
+"id": 559
+}
+]
+}
+],
+"533": [
+{
+"label": "PIVOT",
+"id": null,
+"items": [
+{
+"label": "Lock",
+"id": 553
+},
+{
+"label": "Reset",
+"id": 554
+}
+]
+}
+],
+"534": [
+{
+"label": "CURVE",
+"id": null,
+"items": [
+{
+"label": "Exit Tool",
+"id": 40010
+},
+{
+"label": "Open/Close",
+"id": 40005
+},
+{
+"label": "Invert",
+"id": 40006
+},
+{
+"label": "LMB = Add At Start",
+"id": 40007
+},
+{
+"label": "LMB = Add At End",
+"id": 40011
+},
+{
+"label": "Start New Curve",
+"id": 40008
+}
+]
+}
+],
+"535": [
+{
+"label": "TWEAK",
+"id": null,
+"items": [
+{
+"label": "Toggle Manipulator",
+"id": 639
+},
+{
+"label": "Slide Components",
+"id": 641
+},
+{
+"label": "Weld Points",
+"id": 642
+},
+{
+"separator": true
+},
+{
+"label": "Translate",
+"id": 634
+},
+{
+"label": "Rotate",
+"id": 635
+},
+{
+"label": "Scale",
+"id": 636
+},
+{
+"label": "Next Manipulator",
+"id": 637
+},
+{
+"label": "Prev Manipulator",
+"id": 638
+},
+{
+"separator": true
+},
+{
+"label": "Tweak All",
+"id": 630
+},
+{
+"label": "Points",
+"id": 631
+},
+{
+"label": "Edges",
+"id": 632
+},
+{
+"label": "Polygons",
+"id": 633
+},
+{
+"label": "Points + Edges",
+"id": 640
+},
+{
+"separator": true
+},
+{
+"label": "View",
+"id": 541
+},
+{
+"label": "Global",
+"id": 542
+},
+{
+"label": "Local",
+"id": 543
+},
+{
+"label": "Object",
+"id": 544
+},
+{
+"label": "Ref",
+"id": 545
+},
+{
+"label": "Plane",
+"id": 546
+},
+{
+"separator": true
+},
+{
+"label": "COG",
+"id": 548
+},
+{
+"label": "Prop",
+"id": 547
+},
+{
+"label": "Sym",
+"id": 549
+},
+{
+"separator": true
+},
+{
+"label": "Last Proportional Operator...",
+"id": 555
+},
+{
+"label": "Proportional Settings...",
+"id": 556
+}
+]
+}
+],
+"536": [
+{
+"label": "TWEAK NORMALS",
+"id": null,
+"items": [
+{
+"label": "Average",
+"id": 653
+},
+{
+"label": "Vertex",
+"id": 654
+},
+{
+"label": "Polygon",
+"id": 655
+},
+{
+"label": "Invert",
+"id": 656
+},
+{
+"label": "Normalize",
+"id": 657
+},
+{
+"label": "Set Value...",
+"id": 658
+},
+{
+"separator": true
+},
+{
+"label": "Copy",
+"id": 659
+},
+{
+"label": "Paste",
+"id": 660
+},
+{
+"separator": true
+},
+{
+"label": "Reset",
+"id": 650
+},
+{
+"label": "User",
+"id": 651
+},
+{
+"label": "Auto",
+"id": 652
+},
+{
+"separator": true
+},
+{
+"label": "Toggle Manipulator",
+"id": 639
+},
+{
+"separator": true
+},
+{
+"label": "Tweak All",
+"id": 630
+},
+{
+"label": "Samples",
+"id": 643
+},
+{
+"label": "Points",
+"id": 631
+},
+{
+"label": "Edges",
+"id": 632
+},
+{
+"label": "Polygons",
+"id": 633
+},
+{
+"label": "Points + Samples",
+"id": 644
+},
+{
+"separator": true
+},
+{
+"label": "Settings...",
+"id": 661
+}
+]
+}
+]
+},
+"strings": {}
+},
+"toolbar.dll": {
+"menus": {},
+"strings": {}
+},
+"prefs.dll": {
+"menus": {},
+"strings": {}
+},
+"sceneexplorer.dll": {
+"menus": {
+"300": [
+{
+"label": "__SE_View__",
+"id": null,
+"items": [
+{
+"label": "Expand Selected",
+"id": 32782
+},
+{
+"label": "Collapse Selected",
+"id": 32785
+},
+{
+"label": "&Reset",
+"id": 32768
+},
+{
+"separator": true
+},
+{
+"label": "&Track Selection",
+"id": 32771
+},
+{
+"label": "&Find Next Selected Node",
+"id": 32772
+},
+{
+"separator": true
+},
+{
+"label": "General Sort",
+"id": null,
+"items": [
+{
+"label": "None (creation)",
+"id": 32895
+},
+{
+"label": "Alphabetical",
+"id": 32896
+},
+{
+"label": "Type + Alphabetical",
+"id": 32897
+},
+{
+"label": "Used + Alphabetical",
+"id": 32898
+}
+]
+},
+{
+"label": "Parameter Sort",
+"id": null,
+"items": [
+{
+"label": "None (creation)",
+"id": 32899
+},
+{
+"label": "Alphabetical",
+"id": 32900
+},
+{
+"label": "Layout",
+"id": 32901
+}
+]
+},
+{
+"label": "Reorder Tool",
+"id": 32902
+},
+{
+"separator": true
+},
+{
+"label": "Use &Wire Colors",
+"id": 32773
+},
+{
+"label": "Use Script &Names",
+"id": 32775
+},
+{
+"label": "Parameter Values",
+"id": 32776
+},
+{
+"separator": true
+},
+{
+"label": "&Local Properties",
+"id": 32769
+},
+{
+"label": "Applie&d Properties",
+"id": 32770
+},
+{
+"separator": true
+},
+{
+"label": "Flatten None",
+"id": 32777
+},
+{
+"label": "Flatten Parameter Hierarchy",
+"id": 32774
+},
+{
+"label": "Flatten All",
+"id": 32780
+},
+{
+"label": "&Decompose Branch Selection",
+"id": 32784
+},
+{
+"separator": true
+},
+{
+"label": "&Preferences...",
+"id": 32916
+}
+]
+},
+{
+"label": "__AE_View__",
+"id": null,
+"items": [
+{
+"label": "&Expand All",
+"id": 32781
+},
+{
+"label": "&Collapse All",
+"id": 32786
+},
+{
+"label": "&Reset",
+"id": 32768
+},
+{
+"separator": true
+},
+{
+"label": "&Track Selection",
+"id": 32779
+},
+{
+"label": "&Find Next Selected Node",
+"id": 32772
+},
+{
+"label": "&Decompose Branch Selection",
+"id": 32784
+},
+{
+"label": "&Driving Action(s) at Curr Time",
+"id": 32783
+},
+{
+"separator": true
+},
+{
+"label": "&Local Properties",
+"id": 32769
+},
+{
+"label": "Applie&d Properties",
+"id": 32770
+},
+{
+"separator": true
+},
+{
+"label": "Animated Parameters Only",
+"id": 32845
+},
+{
+"label": "Keyable Parameters Only",
+"id": 32926
+},
+{
+"separator": true
+},
+{
+"label": "&All Nodes",
+"id": 32847
+},
+{
+"label": "C&ustom Properties",
+"id": 32857
+},
+{
+"label": "More...",
+"id": null,
+"items": [
+{
+"label": "&General Properties",
+"id": 32848
+},
+{
+"label": "&Modeling Properties",
+"id": 32849
+},
+{
+"label": "An&imation Properties",
+"id": 32850
+},
+{
+"label": "&Kinematics",
+"id": 32851
+},
+{
+"label": "&Local Transform",
+"id": 32894
+},
+{
+"label": "Posi&tion",
+"id": null,
+"items": [
+{
+"label": "&All",
+"id": 32852
+},
+{
+"label": "&X",
+"id": 32880
+},
+{
+"label": "&Y",
+"id": 32881
+},
+{
+"label": "&Z",
+"id": 32882
+}
+]
+},
+{
+"label": "R&otation",
+"id": null,
+"items": [
+{
+"label": "&All",
+"id": 32853
+},
+{
+"label": "&X",
+"id": 32883
+},
+{
+"label": "&Y",
+"id": 32884
+},
+{
+"label": "&Z",
+"id": 32885
+}
+]
+},
+{
+"label": "&Scaling",
+"id": null,
+"items": [
+{
+"label": "&All",
+"id": 32854
+},
+{
+"label": "&X",
+"id": 32886
+},
+{
+"label": "&Y",
+"id": 32887
+},
+{
+"label": "&Z",
+"id": 32888
+}
+]
+},
+{
+"label": "&Color Only",
+"id": 32858
+},
+{
+"label": "R&endering Properties",
+"id": 32855
+},
+{
+"label": "&Viewing Properties",
+"id": 32856
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Parameter Filters",
+"id": null,
+"items": [
+{
+"label": "Hide Locked Parameters",
+"id": 32903
+},
+{
+"label": "Tagged Parameters",
+"id": null,
+"items": [
+{
+"label": "All",
+"id": 32914
+},
+{
+"separator": true
+},
+{
+"label": "Tag 1",
+"id": 32904
+},
+{
+"label": "Tag 2",
+"id": 32905
+},
+{
+"label": "Tag 3",
+"id": 32906
+},
+{
+"label": "Tag 4",
+"id": 32907
+},
+{
+"label": "Tag 5",
+"id": 32908
+},
+{
+"label": "Tag 6",
+"id": 32909
+},
+{
+"label": "Tag 7",
+"id": 32910
+},
+{
+"label": "Tag 8",
+"id": 32911
+},
+{
+"label": "Tag 9",
+"id": 32912
+},
+{
+"label": "Tag 10",
+"id": 32913
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "A&ctivation Parameters Only",
+"id": 32846
+},
+{
+"label": "Marked Parameters Only",
+"id": 32892
+},
+{
+"label": "Selected Parameters Only",
+"id": 32889
+}
+]
+},
+{
+"label": "Flattening",
+"id": null,
+"items": [
+{
+"label": "Flatten None",
+"id": 32777
+},
+{
+"label": "Flatten Parameter Hierarchy",
+"id": 32774
+},
+{
+"label": "Flatten All",
+"id": 32780
+}
+]
+},
+{
+"label": "Display",
+"id": null,
+"items": [
+{
+"label": "Use &Wire Colors",
+"id": 32773
+},
+{
+"label": "Use Script &Names",
+"id": 32775
+},
+{
+"label": "Parameter Values",
+"id": 32776
+},
+{
+"separator": true
+},
+{
+"label": "TITLE:Parameter Sorting",
+"id": 37524
+},
+{
+"label": "None (creation)",
+"id": 32899
+},
+{
+"label": "Alphabetical",
+"id": 32900
+},
+{
+"label": "Layout",
+"id": 32901
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "&Preferences...",
+"id": 32916
+}
+]
+}
+],
+"302": [
+{
+"label": "__Scope__",
+"id": null,
+"items": [
+{
+"label": "TITLE:Application",
+"id": 37500
+},
+{
+"label": "&Application",
+"id": 37501
+},
+{
+"label": "Preferences",
+"id": 37502
+},
+{
+"label": "TITLE:Scene",
+"id": 37503
+},
+{
+"label": "&Scene Root",
+"id": 37504
+},
+{
+"label": "&Layers",
+"id": 37505
+},
+{
+"label": "&Passes",
+"id": 37506
+},
+{
+"label": "En&vironments",
+"id": 37507
+},
+{
+"label": "S&election",
+"id": 37510
+},
+{
+"label": "Custom",
+"id": 37511
+},
+{
+"label": "TITLE:Current",
+"id": 37513
+},
+{
+"label": "Current La&yer",
+"id": 37514
+},
+{
+"label": "C&urrent Pass",
+"id": 37515
+},
+{
+"label": "Curr. Envir.",
+"id": 37516
+},
+{
+"label": "TITLE:Sources/Clips",
+"id": 37518
+},
+{
+"label": "S&ources/Clips",
+"id": 37509
+},
+{
+"label": "Animation",
+"id": 37519
+},
+{
+"label": "Audio",
+"id": 37520
+},
+{
+"label": "Images",
+"id": 37521
+},
+{
+"label": "&Materials",
+"id": 37523
+}
+]
+}
+],
+"303": [
+{
+"label": "__Application__",
+"id": null,
+"items": [
+{
+"label": "Temporary Separator",
+"id": 32859
+},
+{
+"label": "All Parameters",
+"id": 32876
+},
+{
+"label": "Animatable Parameters",
+"id": 32877
+},
+{
+"label": "Animated Parameters",
+"id": 32878
+},
+{
+"label": "Keying Panel Parameters",
+"id": 32925
+},
+{
+"label": "Marked Parameters",
+"id": 32893
+},
+{
+"label": "No Parameters",
+"id": 32879
+},
+{
+"separator": true
+},
+{
+"label": "Locked Parameters",
+"id": 32915
+}
+]
+},
+{
+"label": "__Scene__",
+"id": null,
+"items": [
+{
+"label": "Temporary Separator",
+"id": 32859
+},
+{
+"label": "&Objects",
+"id": 32871
+},
+{
+"label": "&Models",
+"id": 32870
+},
+{
+"label": "&Groups",
+"id": 32868
+},
+{
+"label": "&Clusters",
+"id": 32867
+},
+{
+"label": "Primiti&ves",
+"id": 32873
+},
+{
+"label": "&Properties",
+"id": 32874
+},
+{
+"label": "M&aterials",
+"id": 32869
+},
+{
+"label": "&Shaders",
+"id": 32875
+},
+{
+"label": "Op&erators",
+"id": 32872
+},
+{
+"label": "Mi&xers",
+"id": 32865
+},
+{
+"separator": true
+},
+{
+"label": "All Parameters",
+"id": 32876
+},
+{
+"label": "Animatable Parameters",
+"id": 32877
+},
+{
+"label": "Animated Parameters",
+"id": 32878
+},
+{
+"label": "Keying Panel Parameters",
+"id": 32925
+},
+{
+"label": "Marked Parameters",
+"id": 32893
+},
+{
+"label": "No Parameters",
+"id": 32879
+},
+{
+"separator": true
+},
+{
+"label": "Locked Parameters",
+"id": 32915
+}
+]
+},
+{
+"label": "__Custom__",
+"id": null,
+"items": [
+{
+"label": "Temporary Separator",
+"id": 32859
+},
+{
+"label": "All Parameters",
+"id": 32876
+},
+{
+"label": "Animatable Parameters",
+"id": 32877
+},
+{
+"label": "Animated Parameters",
+"id": 32878
+},
+{
+"label": "Keying Panel Parameters",
+"id": 32925
+},
+{
+"label": "Marked Parameters",
+"id": 32893
+},
+{
+"label": "No Parameters",
+"id": 32879
+},
+{
+"separator": true
+},
+{
+"label": "Locked Parameters",
+"id": 32915
+}
+]
+},
+{
+"label": "__SourcesClips__",
+"id": null,
+"items": [
+{
+"label": "Temporary Separator",
+"id": 32859
+},
+{
+"label": "All Parameters",
+"id": 32876
+},
+{
+"label": "Animatable Parameters",
+"id": 32877
+},
+{
+"label": "Animated Parameters",
+"id": 32878
+},
+{
+"label": "Keying Panel Parameters",
+"id": 32925
+},
+{
+"label": "Marked Parameters",
+"id": 32893
+},
+{
+"label": "No Parameters",
+"id": 32879
+},
+{
+"separator": true
+},
+{
+"label": "Locked Parameters",
+"id": 32915
+}
+]
+},
+{
+"label": "__Logic__",
+"id": null,
+"items": [
+{
+"label": "Temporary Separator",
+"id": 32859
+},
+{
+"label": "All Nodes",
+"id": 32918
+},
+{
+"separator": true
+},
+{
+"label": "Factory",
+"id": 32919
+},
+{
+"label": "User",
+"id": 32921
+},
+{
+"label": "Workgroup",
+"id": 32920
+},
+{
+"label": "Add-on",
+"id": 32922
+},
+{
+"label": "User Add-on",
+"id": 32923
+},
+{
+"label": "Workgroup Add-on",
+"id": 32924
+}
+]
+},
+{
+"label": "__Desktop__",
+"id": null,
+"items": [
+{
+"label": "Temporary Separator",
+"id": 32859
+}
+]
+},
+{
+"label": "__Other__",
+"id": null,
+"items": [
+{
+"label": "Temporary Separator",
+"id": 32859
+},
+{
+"label": "All Parameters",
+"id": 32876
+},
+{
+"label": "Animatable Parameters",
+"id": 32877
+},
+{
+"label": "Animated Parameters",
+"id": 32878
+},
+{
+"label": "Keying Panel Parameters",
+"id": 32925
+},
+{
+"label": "Marked Parameters",
+"id": 32893
+},
+{
+"label": "No Parameters",
+"id": 32879
+},
+{
+"separator": true
+},
+{
+"label": "Locked Parameters",
+"id": 32915
+}
+]
+}
+],
+"304": [
+{
+"label": "__Action__",
+"id": null,
+"items": [
+{
+"label": "Export Action",
+"id": 12002
+},
+{
+"label": "Offload",
+"id": 12000
+},
+{
+"label": "Reload",
+"id": 12001
+}
+]
+},
+{
+"label": "__Animatable__",
+"id": null,
+"items": [
+{
+"label": "&Unmark All Parameters",
+"id": 12300
+},
+{
+"separator": true
+},
+{
+"label": "Set &Key",
+"id": 12301
+},
+{
+"label": "&Remove Key",
+"id": 12302
+},
+{
+"separator": true
+},
+{
+"label": "Set &Expression...",
+"id": 12303
+},
+{
+"label": "Set Scripted &Operator...",
+"id": 12304
+},
+{
+"separator": true
+},
+{
+"label": "&Copy Animation",
+"id": 12305
+},
+{
+"label": "&Paste Animation",
+"id": 12306
+},
+{
+"label": "Re&move Animation",
+"id": 12307
+},
+{
+"separator": true
+},
+{
+"label": "Link &with...",
+"id": 12308
+},
+{
+"label": "Link with Multi...",
+"id": 12309
+},
+{
+"label": "Link with Orientation...",
+"id": 12310
+},
+{
+"label": "&Set Relative Values",
+"id": 12311
+},
+{
+"separator": true
+},
+{
+"label": "&First Key",
+"id": 12312
+},
+{
+"label": "&Last Key",
+"id": 12313
+},
+{
+"label": "Pre&vious Key",
+"id": 12314
+},
+{
+"label": "&Next Key",
+"id": 12315
+},
+{
+"separator": true
+},
+{
+"label": "&Animation Editor...",
+"id": 12316
+},
+{
+"label": "E&xpression Editor...",
+"id": 12317
+},
+{
+"label": "&Parameter Connection Editor...",
+"id": 12318
+},
+{
+"separator": true
+},
+{
+"label": "&Inspect Override...",
+"id": 12319
+},
+{
+"label": "Edit Parameter &Definition...",
+"id": 12320
+}
+]
+},
+{
+"label": "__Animation__",
+"id": null,
+"items": [
+{
+"label": "Copy All Animation",
+"id": 10800
+},
+{
+"label": "Paste All Animation",
+"id": 10801
+}
+]
+},
+{
+"label": "__ClipsContainer__",
+"id": null,
+"items": [
+{
+"label": "Delete Unused Image Sources and Clips",
+"id": 12900
+}
+]
+},
+{
+"label": "__Constraint__",
+"id": null,
+"items": [
+{
+"label": "&Active",
+"id": 11400
+},
+{
+"label": "&Activate",
+"id": 11401
+},
+{
+"label": "Deac&tivate",
+"id": 11402
+}
+]
+},
+{
+"label": "__Duplication__",
+"id": null,
+"items": [
+{
+"label": "D&uplicate",
+"id": 11700
+},
+{
+"label": "Clone",
+"id": 11701
+},
+{
+"label": "&Instantiate (Models only)",
+"id": 11702
+}
+]
+},
+{
+"label": "__Folder__",
+"id": null,
+"items": [
+{
+"label": "Create Folder",
+"id": 10900
+},
+{
+"label": "Remove From Folder",
+"id": 10902
+},
+{
+"label": "&Add to Folder",
+"id": 10901
+}
+]
+},
+{
+"label": "__General__",
+"id": null,
+"items": [
+{
+"label": "Animation Editor...",
+"id": 12200
+},
+{
+"label": "Set as Current &Particle Type",
+"id": 12201
+},
+{
+"label": "Set as Current Environment",
+"id": 12202
+},
+{
+"label": "Merge Environments",
+"id": 12203
+}
+]
+},
+{
+"label": "__Group__",
+"id": null,
+"items": [
+{
+"label": "Create &Group",
+"id": 10100
+},
+{
+"label": "&Add to Group",
+"id": 10101
+},
+{
+"label": "Remove from Group",
+"id": 10102
+}
+]
+},
+{
+"label": "__Info__",
+"id": null,
+"items": [
+{
+"label": "In&fo Selection...",
+"id": 12100
+},
+{
+"label": "E&xplore...",
+"id": 12101
+},
+{
+"label": "Open Attachment... (Annotation | Synoptic)",
+"id": 12102
+},
+{
+"separator": true
+},
+{
+"label": "&Kinematics...",
+"id": 12103
+},
+{
+"label": "Inspect &Material...",
+"id": 12104
+},
+{
+"label": "&Last Operator in Stack...",
+"id": 12105
+},
+{
+"separator": true
+},
+{
+"label": "Pr&operties...",
+"id": 10200
+}
+]
+},
+{
+"label": "__Layers__",
+"id": null,
+"items": [
+{
+"label": "Set as Current &Layer",
+"id": 11100
+},
+{
+"label": "Create Layer",
+"id": 11101
+},
+{
+"label": "Create Layer &Group",
+"id": 11103
+},
+{
+"label": "&Move Selection to Current Layer",
+"id": 11102
+}
+]
+},
+{
+"label": "__Locks__",
+"id": null,
+"items": [
+{
+"label": "Locks",
+"id": null,
+"items": [
+{
+"label": "&Node Topology/Hierarchy Locked",
+"id": 10300
+},
+{
+"label": "&Animation Locked",
+"id": 10301
+},
+{
+"label": "&Value Locked",
+"id": 10302
+},
+{
+"separator": true
+},
+{
+"label": "&Lock All Levels",
+"id": 10303
+},
+{
+"label": "&Unlock All Levels",
+"id": 10304
+},
+{
+"label": "&Remove All Locks in Hierarchy",
+"id": 10305
+},
+{
+"separator": true
+},
+{
+"label": "Locks Info...",
+"id": 10306
+}
+]
+}
+]
+},
+{
+"label": "__Material__",
+"id": null,
+"items": [
+{
+"label": "Set as Current Library",
+"id": 11800
+},
+{
+"label": "Create New Material Library",
+"id": 11801
+},
+{
+"label": "Import Material Library",
+"id": 11802
+},
+{
+"label": "Import Referenced Material Library",
+"id": 11803
+},
+{
+"label": "Export Material Library",
+"id": 11804
+},
+{
+"label": "Delete Unused Materials",
+"id": 11805
+},
+{
+"label": "Delete All Unused Materials",
+"id": 11806
+},
+{
+"label": "Create Material",
+"id": 11807
+},
+{
+"label": "Duplicate Material",
+"id": 11808
+},
+{
+"label": "Assign to Selection",
+"id": 11809
+},
+{
+"label": "Select Objects with this Material",
+"id": 11810
+}
+]
+},
+{
+"label": "__Model__",
+"id": null,
+"items": [
+{
+"label": "Export &Model",
+"id": 11902
+},
+{
+"label": "Convert To Reference",
+"id": 11903
+},
+{
+"label": "&Update Referenced Model",
+"id": 11900
+},
+{
+"label": "Make Referenced Model &Local",
+"id": 11901
+},
+{
+"label": "Import Delta",
+"id": 11904
+}
+]
+},
+{
+"label": "__ObjectManagement__",
+"id": null,
+"items": [
+{
+"label": "Re&name",
+"id": 10000
+},
+{
+"label": "&Delete",
+"id": 10001
+},
+{
+"label": "Unhide All Polygons",
+"id": 10002
+}
+]
+},
+{
+"label": "__Operator__",
+"id": null,
+"items": [
+{
+"label": "&Mute",
+"id": 11600
+},
+{
+"label": "&Unmute",
+"id": 11601
+},
+{
+"separator": true
+},
+{
+"label": "Disable from Here",
+"id": 11602
+},
+{
+"label": "Enable from Here",
+"id": 11603
+},
+{
+"label": "&Freeze",
+"id": 11604
+},
+{
+"label": "Select Generator Inputs",
+"id": 11605
+},
+{
+"label": "Hide/Unhide Generator Inputs",
+"id": 11606
+},
+{
+"label": "Freeze Generator && Delete Inputs",
+"id": 11607
+}
+]
+},
+{
+"label": "__ParameterColor__",
+"id": null,
+"items": [
+{
+"label": "Set Parameter Color...",
+"id": 10600
+},
+{
+"label": "Clear Parameter Color",
+"id": 10601
+}
+]
+},
+{
+"label": "__Partitions__",
+"id": null,
+"items": [
+{
+"label": "&Add Selected Objects",
+"id": 11200
+}
+]
+},
+{
+"label": "__Passes__",
+"id": null,
+"items": [
+{
+"label": "Set as Current &Pass",
+"id": 11300
+},
+{
+"label": "Create Ne&w Partition",
+"id": 11301
+},
+{
+"label": "&Render",
+"id": 11302
+},
+{
+"separator": true
+},
+{
+"label": "New P&ass",
+"id": 11303
+},
+{
+"label": "&Delete Current Pass",
+"id": 11304
+}
+]
+},
+{
+"label": "__PointCloud__",
+"id": null,
+"items": [
+{
+"label": "SplitCloud",
+"id": 12601
+}
+]
+},
+{
+"label": "__Polygon__",
+"id": null,
+"items": [
+{
+"label": "Hide/Unhide Polygons",
+"id": 12500
+},
+{
+"label": "Hide Polygons and Deselect",
+"id": 12501
+},
+{
+"label": "Hide Unselected Polygons",
+"id": 12502
+},
+{
+"label": "Add Visibility Property",
+"id": 12503
+}
+]
+},
+{
+"label": "__Preference__",
+"id": null,
+"items": [
+{
+"label": "&Import",
+"id": 10700
+},
+{
+"label": "&Export",
+"id": 10701
+},
+{
+"label": "&Restore Default",
+"id": 10702
+}
+]
+},
+{
+"label": "__Properties__",
+"id": null,
+"items": [
+{
+"label": "&Properties",
+"id": null,
+"items": [
+{
+"label": "&General...",
+"id": 10201
+},
+{
+"label": "&Modeling...",
+"id": 10202
+},
+{
+"label": "&Animation...",
+"id": 10203
+},
+{
+"label": "&Rendering...",
+"id": 10204
+},
+{
+"label": "&Simulation...",
+"id": 10205
+},
+{
+"label": "&Viewing...",
+"id": 10206
+},
+{
+"label": "&Custom...",
+"id": 10207
+},
+{
+"separator": true
+},
+{
+"label": "All &Properties...",
+"id": 10200
+}
+]
+}
+]
+},
+{
+"label": "__ScriptedOp__",
+"id": null,
+"items": [
+{
+"label": "Set Scripted &Operator...",
+"id": 11500
+},
+{
+"label": "Edit Scripted Operator...",
+"id": 11501
+}
+]
+},
+{
+"label": "__Select__",
+"id": null,
+"items": [
+{
+"label": "Select &Tree",
+"id": 11001
+},
+{
+"label": "Select Model",
+"id": 11002
+},
+{
+"label": "Select Chain",
+"id": 11003
+},
+{
+"separator": true
+},
+{
+"label": "Select Constraining Objects",
+"id": 11004
+},
+{
+"label": "Select Objects Constrained",
+"id": 11005
+},
+{
+"separator": true
+},
+{
+"label": "&Select Members",
+"id": 11000
+},
+{
+"label": "Select Materials used by",
+"id": 11006
+}
+]
+},
+{
+"label": "__SourcesContainer__",
+"id": null,
+"items": [
+{
+"label": "Delete Unused Image Sources",
+"id": 12800
+},
+{
+"label": "Delete Unused Audio Sources",
+"id": 12801
+},
+{
+"label": "Delete Unused Animation Sources",
+"id": 12802
+},
+{
+"label": "Delete Unused Cache Sources",
+"id": 12803
+},
+{
+"label": "Delete All Unused Materials",
+"id": 12804
+}
+]
+},
+{
+"label": "__Tags__",
+"id": null,
+"items": [
+{
+"label": "Tags",
+"id": null,
+"items": [
+{
+"label": "Tag &1",
+"id": 12400
+},
+{
+"label": "Tag &2",
+"id": 12401
+},
+{
+"label": "Tag &3",
+"id": 12402
+},
+{
+"label": "Tag &4",
+"id": 12403
+},
+{
+"label": "Tag &5",
+"id": 12404
+},
+{
+"label": "Tag &6",
+"id": 12405
+},
+{
+"label": "Tag &7",
+"id": 12406
+},
+{
+"label": "Tag &8",
+"id": 12407
+},
+{
+"label": "Tag &9",
+"id": 12408
+},
+{
+"label": "Tag 10",
+"id": 12409
+},
+{
+"separator": true
+},
+{
+"label": "&UnTag All ",
+"id": 12410
+}
+]
+}
+]
+},
+{
+"label": "__TerminalNode__",
+"id": null,
+"items": [
+{
+"label": "Make &Branch",
+"id": 12702
+},
+{
+"label": "&Promote",
+"id": 12701
+}
+]
+},
+{
+"label": "__Thumbnail__",
+"id": null,
+"items": [
+{
+"label": "Set Thumbnail...",
+"id": 10400
+},
+{
+"label": "Set Thumbnail From Region",
+"id": 10401
+},
+{
+"label": "Clear Thumbnail",
+"id": 10402
+}
+]
+},
+{
+"label": "__UserKeyword__",
+"id": null,
+"items": [
+{
+"label": "Set User Keyword(s)...",
+"id": 10500
+}
+]
+}
+],
+"305": [
+{
+"label": "__TreeControl__",
+"id": null,
+"items": [
+{
+"label": "&Expand All from Here",
+"id": 7000
+},
+{
+"label": "&Collapse All from Here",
+"id": 7001
+},
+{
+"separator": true
+}
+]
+}
+]
+},
+"strings": {}
+},
+"viewcontrol.dll": {
+"menus": {
+"101": [
+{
+"label": "Menu",
+"id": null,
+"items": [
+{
+"label": "&Undo",
+"id": 40100
+},
+{
+"label": "&Redo",
+"id": 40101
+},
+{
+"separator": true
+},
+{
+"label": "Select &Camera",
+"id": 40005
+},
+{
+"label": "Select &Interest",
+"id": 40078
+},
+{
+"label": "Prop&erties...",
+"id": 40006
+},
+{
+"separator": true
+},
+{
+"label": "Ne&w Camera",
+"id": null,
+"items": [
+{
+"label": "&Perspective",
+"id": 40143
+},
+{
+"separator": true
+},
+{
+"label": "&Telephoto",
+"id": 40144
+},
+{
+"label": "&Wide Angle",
+"id": 40145
+},
+{
+"label": "&Orthographic",
+"id": 40146
+},
+{
+"separator": true
+},
+{
+"label": "More&...",
+"id": 40147
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Start Capt&ure",
+"id": 40075
+},
+{
+"separator": true
+},
+{
+"label": "&Isolate Selection",
+"id": 40047
+},
+{
+"label": "Update &Isolated",
+"id": 40048
+},
+{
+"label": "A&dd Selected",
+"id": 40050
+},
+{
+"label": "Re&move Selected",
+"id": 40051
+},
+{
+"separator": true
+},
+{
+"label": "&Frame Selection",
+"id": 40001
+},
+{
+"label": "&Center Selection",
+"id": 40000
+},
+{
+"label": "Frame &All",
+"id": 40002
+},
+{
+"label": "&Reset",
+"id": 40004
+},
+{
+"separator": true
+},
+{
+"label": "Set Background to Black",
+"id": 40157
+},
+{
+"label": "Set Background to Grey",
+"id": 40158
+},
+{
+"label": "Scene Colors...",
+"id": 40156
+},
+{
+"separator": true
+},
+{
+"label": "&Navigation Tool",
+"id": 40043
+},
+{
+"label": "&Pan && Zoom Tool",
+"id": 40019
+},
+{
+"label": "Rectangular &Zoom Tool",
+"id": 40020
+},
+{
+"label": "&Orbit Tool",
+"id": 40021
+},
+{
+"label": "&Dolly Tool",
+"id": 40023
+},
+{
+"label": "&Track Tool",
+"id": 40022
+},
+{
+"label": "Ro&ll Tool",
+"id": 40024
+},
+{
+"label": "&Zoom Tool",
+"id": 40049
+},
+{
+"label": "Pi&vot Tool",
+"id": 40046
+},
+{
+"label": "Fl&y Tool",
+"id": 40084
+},
+{
+"label": "&Walk Tool",
+"id": 40053
+},
+{
+"label": "Dri&ve Tool",
+"id": 40085
+},
+{
+"separator": true
+},
+{
+"label": "&Mute",
+"id": 40007
+},
+{
+"label": "&Solo",
+"id": 40008
+}
+]
+}
+],
+"102": [
+{
+"label": "Menu",
+"id": null,
+"items": [
+{
+"label": "&Manipulate Tool",
+"id": 40077
+},
+{
+"separator": true
+},
+{
+"label": "&Grid",
+"id": 40027
+},
+{
+"label": "&Frame Rate\tCtrl+R+LMB",
+"id": 40032
+},
+{
+"label": "&Selection Info",
+"id": 40217
+},
+{
+"separator": true
+},
+{
+"label": "&Lights",
+"id": 40028
+},
+{
+"label": "C&ameras",
+"id": 40029
+},
+{
+"label": "&3D Geometry",
+"id": 40031
+},
+{
+"label": "&Implicit Geometry",
+"id": 40159
+},
+{
+"label": "Cur&ves",
+"id": 40030
+},
+{
+"label": "Point &Clouds",
+"id": 40045
+},
+{
+"label": "&Hair",
+"id": 40044
+},
+{
+"label": "N&ulls",
+"id": 40033
+},
+{
+"label": "&Transform Groups",
+"id": 40215
+},
+{
+"label": "Cha&ins",
+"id": 40034
+},
+{
+"label": "Lattices",
+"id": 40118
+},
+{
+"label": "Te&xture Controls",
+"id": 40036
+},
+{
+"label": "Control Ob&jects",
+"id": 40035
+},
+{
+"label": "&Instances",
+"id": 40160
+},
+{
+"label": "&Annotation Objects",
+"id": 40245
+},
+{
+"label": "&Environment",
+"id": 40294
+},
+{
+"separator": true
+},
+{
+"label": "Check All Objects",
+"id": 40114
+},
+{
+"label": "Uncheck All Objects",
+"id": 40115
+},
+{
+"separator": true
+},
+{
+"label": "Invisible Components",
+"id": 40175
+},
+{
+"label": "Name",
+"id": 40083
+},
+{
+"label": "Attachments (Annotation and Synoptic)",
+"id": 40139
+},
+{
+"label": "User Keywords",
+"id": 40209
+},
+{
+"label": "Unselected &Clusters (except Sample)",
+"id": 40037
+},
+{
+"label": "PolyMesh &Boundaries and Hard Edges",
+"id": 40087
+},
+{
+"label": "PolyMesh Hulls",
+"id": 40121
+},
+{
+"label": "PolyMesh Internal Edges",
+"id": 40244
+},
+{
+"label": "&Subdivision Surfaces",
+"id": 40122
+},
+{
+"label": "NURBS Boundaries",
+"id": 40194
+},
+{
+"label": "NURBS Hulls",
+"id": 40079
+},
+{
+"label": "&Points",
+"id": 40038
+},
+{
+"label": "&Knots",
+"id": 40043
+},
+{
+"label": "Sampled Points",
+"id": 40088
+},
+{
+"label": "Cen&ters",
+"id": 40039
+},
+{
+"label": "&Normals",
+"id": 40040
+},
+{
+"label": "Polygon Normals",
+"id": 40190
+},
+{
+"label": "Con&es",
+"id": 40041
+},
+{
+"label": "&Relations",
+"id": 40067
+},
+{
+"label": "Animation Cues",
+"id": 40154
+},
+{
+"label": "&Weight Points",
+"id": 40162
+},
+{
+"label": "&Weight Maps",
+"id": 40042
+},
+{
+"label": "Unselected &Tag Points",
+"id": 40099
+},
+{
+"label": "&Distance to Output Camera",
+"id": 40086
+},
+{
+"label": "Display/ICE &Attributes",
+"id": 40098
+},
+{
+"label": "XRay Surfaces",
+"id": 40080
+},
+{
+"separator": true
+},
+{
+"label": "Check All",
+"id": 40116
+},
+{
+"label": "Uncheck All",
+"id": 40117
+},
+{
+"separator": true
+},
+{
+"label": "Visibilit&y Options...",
+"id": 40025
+}
+]
+}
+],
+"106": [
+{
+"label": "3DVIEW_SUBCOMPONENT",
+"id": null,
+"items": [
+{
+"label": "&Create Cluster",
+"id": 40089
+},
+{
+"label": "Create Cluster &with Center",
+"id": 40090
+},
+{
+"label": "&Add to Cluster",
+"id": 40091
+},
+{
+"label": "Re&move from Cluster",
+"id": 40092
+},
+{
+"label": "Hide/Unhide",
+"id": 40167
+},
+{
+"label": "Hide and Deselect",
+"id": 40169
+},
+{
+"label": "Hide Unselected",
+"id": 40170
+},
+{
+"separator": true
+},
+{
+"label": "&Grow Selection",
+"id": 40093
+},
+{
+"label": "&Shrink Selection",
+"id": 40094
+},
+{
+"label": "Select Polygon &Outlines",
+"id": 40288
+},
+{
+"label": "&Island From Selection",
+"id": 40289
+},
+{
+"label": "&Select Adjacent",
+"id": null,
+"items": [
+{
+"label": "&Points",
+"id": 40095
+},
+{
+"label": "&Edges",
+"id": 40096
+},
+{
+"label": "P&olygons",
+"id": 40097
+}
+]
+},
+{
+"label": "Select &Loops",
+"id": null,
+"items": [
+{
+"label": "&Loops From Selection",
+"id": 40290
+},
+{
+"label": "&Loops From Selection (around corners)",
+"id": 40291
+},
+{
+"label": "&Grow Loops",
+"id": 40292
+},
+{
+"label": "&Shrink Loops",
+"id": 40293
+},
+{
+"separator": true
+},
+{
+"label": "Select Edge Loop (no corners)",
+"id": 40173
+},
+{
+"label": "Select Edge Loop (around corners)",
+"id": 40184
+},
+{
+"label": "Select Parallel Edge Loop",
+"id": 40185
+}
+]
+},
+{
+"label": "Invert Selection",
+"id": 40172
+},
+{
+"separator": true
+},
+{
+"label": "Align Bezier Handles Back to Forward",
+"id": 40218
+},
+{
+"label": "Align Bezier Handles Forward to Back",
+"id": 40220
+},
+{
+"label": "Align Bezier Handles",
+"id": 40222
+},
+{
+"label": "Insert Bezier-Knot",
+"id": 40223
+},
+{
+"label": "Insert Knot",
+"id": 40224
+},
+{
+"label": "Make Knot Segments Linear",
+"id": 40225
+},
+{
+"label": "Make Bezier-Knots Corners",
+"id": 40227
+},
+{
+"label": "Make Knots Bezier",
+"id": 40228
+},
+{
+"label": "Make Knots Non-Bezier",
+"id": 40233
+},
+{
+"label": "Remove Knots",
+"id": 40230
+},
+{
+"label": "Set Knots Multiplicity",
+"id": 40232
+},
+{
+"label": "Edit Polygon &Tool",
+"id": 40130
+},
+{
+"label": "Slice Polygons Tool (Knife)",
+"id": 40198
+},
+{
+"label": "&Bevel Components",
+"id": 40105
+},
+{
+"label": "C&ollapse Components",
+"id": 40106
+},
+{
+"label": "&Delete Components",
+"id": 40107
+},
+{
+"label": "Disconnect Components",
+"id": 40186
+},
+{
+"label": "Dissol&ve Components",
+"id": 40123
+},
+{
+"label": "Dissolve and clean adj. vertices",
+"id": 40177
+},
+{
+"label": "Duplicate Polygons",
+"id": 40191
+},
+{
+"label": "Duplicate Polygons along Curve",
+"id": 40204
+},
+{
+"label": "Extrude Along Normal",
+"id": 40125
+},
+{
+"label": "E&xtrude Along Axis",
+"id": 40112
+},
+{
+"label": "&Extrude Along Curve",
+"id": 40111
+},
+{
+"label": "Inset Polygons",
+"id": 40192
+},
+{
+"label": "Offset Polygons Contour",
+"id": 40193
+},
+{
+"label": "S&ubdivide Polygons",
+"id": 40109
+},
+{
+"label": "&Local Subdivision Refinement",
+"id": 40138
+},
+{
+"label": "&Invert Polygons",
+"id": 40119
+},
+{
+"label": "B&ridge Polygons",
+"id": 40113
+},
+{
+"label": "Dice Polygons",
+"id": 40200
+},
+{
+"label": "Slice Polygons",
+"id": 40195
+},
+{
+"label": "Symmetrize Polygons",
+"id": 40182
+},
+{
+"label": "Subdivide Edges (eve&nly)",
+"id": 40108
+},
+{
+"label": "Split Edges (wit&h split control)",
+"id": 40110
+},
+{
+"label": "Spin Edges",
+"id": 40246
+},
+{
+"label": "Turn Polygon Internal Edges",
+"id": 40241
+},
+{
+"label": "Weld Boundary Points/Edges",
+"id": 40150
+},
+{
+"label": "Weld Points To Target",
+"id": 40149
+},
+{
+"label": "Bridge Boundary Edges",
+"id": 40153
+},
+{
+"separator": true
+},
+{
+"label": "Mark Hard Edge/Vertex",
+"id": 1268
+},
+{
+"label": "Set Edge/Vertex Crease Value",
+"id": 1269
+},
+{
+"label": "sep placeholder",
+"id": 40206
+},
+{
+"label": "Extract Edges as Curve",
+"id": 40208
+},
+{
+"label": "Extract Polygons (keep)",
+"id": 40187
+},
+{
+"label": "Extract Polygons (delete)",
+"id": 40188
+}
+]
+}
+],
+"124": [
+{
+"label": "__Object__",
+"id": null,
+"items": [
+{
+"separator": true
+},
+{
+"label": "Add Polygon Tool",
+"id": 40102
+},
+{
+"label": "Add Edge Tool",
+"id": 40103
+},
+{
+"label": "Add Smooth Edge Loop Tool",
+"id": 40124
+},
+{
+"label": "Add Vertex Tool",
+"id": 40131
+},
+{
+"label": "Knife Tool",
+"id": 40198
+},
+{
+"label": "Split Edge Tool",
+"id": 40104
+},
+{
+"label": "Split Polygon Tool",
+"id": 40120
+},
+{
+"label": "Weld Point Tool",
+"id": 40189
+},
+{
+"label": "Tweak User Normals Tool",
+"id": 40201
+},
+{
+"label": "Merge",
+"id": 40132
+},
+{
+"label": "Dice Polygons",
+"id": 40199
+},
+{
+"label": "Slice Polygons",
+"id": 40196
+},
+{
+"label": "Subdivision",
+"id": 40133
+},
+{
+"label": "Symmetrize Polygons",
+"id": 40183
+},
+{
+"label": "Nur&bs to Mesh",
+"id": 40137
+}
+]
+},
+{
+"label": "__SelectEdge__",
+"id": null,
+"items": [
+{
+"label": "Select &Loops",
+"id": null,
+"items": [
+{
+"label": "Select Edge Loop (no corners)",
+"id": 40173
+},
+{
+"label": "Select Edge Loop (around corners)",
+"id": 40184
+},
+{
+"label": "Select Parallel Edge Loop",
+"id": 40185
+}
+]
+}
+]
+},
+{
+"label": "__Cluster__",
+"id": null,
+"items": [
+{
+"label": "&Grow Selection",
+"id": 40093
+},
+{
+"label": "&Shrink Selection",
+"id": 40094
+},
+{
+"label": "&Select Adjacent",
+"id": null,
+"items": [
+{
+"label": "&Points",
+"id": 40095
+},
+{
+"label": "&Edges",
+"id": 40096
+},
+{
+"label": "P&olygons",
+"id": 40097
+}
+]
+}
+]
+}
+],
+"127": [
+{
+"label": "Menu",
+"id": null,
+"items": [
+{
+"label": "Center",
+"id": 40250
+},
+{
+"label": "Left Eye",
+"id": 40251
+},
+{
+"label": "Right Eye",
+"id": 40252
+},
+{
+"separator": true
+},
+{
+"label": "Anaglyph",
+"id": 40253
+},
+{
+"label": "Half-Color Anaglyph",
+"id": 40254
+},
+{
+"label": "Luminance Anaglyph",
+"id": 40255
+},
+{
+"label": "Optimized Anaglyph",
+"id": 40256
+},
+{
+"separator": true
+},
+{
+"label": "Horizontal Interlace",
+"id": 40257
+},
+{
+"label": "Checkerboard Interlace",
+"id": 40258
+},
+{
+"separator": true
+},
+{
+"label": "Freeview (Parallel)",
+"id": 40259
+},
+{
+"label": "Freeview (Crossed)",
+"id": 40260
+},
+{
+"separator": true
+},
+{
+"label": "Active",
+"id": 40261
+},
+{
+"separator": true
+},
+{
+"label": "Swap Interlaced Eyes",
+"id": 40270
+},
+{
+"label": "Properties...",
+"id": 40271
+}
+]
+}
+],
+"128": [
+{
+"label": "Menu",
+"id": null,
+"items": [
+{
+"label": "Home",
+"id": 40280
+},
+{
+"separator": true
+},
+{
+"label": "Lock to Selection",
+"id": 40281
+},
+{
+"separator": true
+},
+{
+"label": "Set Current View as Home",
+"id": 40282
+},
+{
+"label": "Reset Home",
+"id": 40283
+},
+{
+"label": "Set Current View as Front",
+"id": 40284
+},
+{
+"label": "Reset Front",
+"id": 40285
+},
+{
+"separator": true
+},
+{
+"label": "Preferences...",
+"id": 40286
+}
+]
+}
+]
+},
+"strings": {}
+},
+"genppg.dll": {
+"menus": {
+"205": [
+{
+"label": "AnimMenu",
+"id": null,
+"items": [
+{
+"label": "&Unmark All Parameters",
+"id": 32960
+},
+{
+"separator": true
+},
+{
+"label": "Set &Key",
+"id": 32769
+},
+{
+"label": "&Remove Key",
+"id": 32770
+},
+{
+"separator": true
+},
+{
+"label": "Set &Expression...",
+"id": 32785
+},
+{
+"label": "Set &Scripted Operator...",
+"id": 32792
+},
+{
+"separator": true
+},
+{
+"label": "&Copy Animation",
+"id": 32775
+},
+{
+"label": "&Paste Animation",
+"id": 32776
+},
+{
+"label": "Rem&ove Animation",
+"id": 32772
+},
+{
+"separator": true
+},
+{
+"label": "Copy Layer Animation",
+"id": 32795
+},
+{
+"label": "Remove Layer Animation",
+"id": 32796
+},
+{
+"separator": true
+},
+{
+"label": "&Link With...",
+"id": 32958
+},
+{
+"label": "Link with Multi...",
+"id": 32793
+},
+{
+"label": "Link with Orientation...",
+"id": 32794
+},
+{
+"label": "Set Relative &Values",
+"id": 32959
+},
+{
+"separator": true
+},
+{
+"label": "Go To Key",
+"id": null,
+"items": [
+{
+"label": "Fir&st Key",
+"id": 32779
+},
+{
+"label": "Las&t Key",
+"id": 32780
+},
+{
+"label": "Previous ke&y",
+"id": 32773
+},
+{
+"label": "&Next Key",
+"id": 32774
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "&Animation Editor...",
+"id": 32778
+},
+{
+"label": "E&xpression Editor...",
+"id": 32777
+},
+{
+"label": "&Parameter Connection Editor...",
+"id": 33038
+},
+{
+"separator": true
+},
+{
+"label": "&Inspect Override...",
+"id": 32786
+},
+{
+"label": "Edit Parameter &Definition...",
+"id": 32961
+},
+{
+"separator": true
+},
+{
+"label": "Locks",
+"id": null,
+"items": [
+{
+"label": "&Animation Locked",
+"id": 32962
+},
+{
+"label": "&Value Locked",
+"id": 32963
+},
+{
+"separator": true
+},
+{
+"label": "&Unlock All Levels",
+"id": 32964
+}
+]
+},
+{
+"label": "Tags",
+"id": null,
+"items": [
+{
+"label": "Tag &1",
+"id": 32965
+},
+{
+"label": "Tag &2",
+"id": 32966
+},
+{
+"label": "Tag &3",
+"id": 32967
+},
+{
+"label": "Tag &4",
+"id": 32968
+},
+{
+"label": "Tag &5",
+"id": 32969
+},
+{
+"label": "Tag &6",
+"id": 32970
+},
+{
+"label": "Tag &7",
+"id": 32971
+},
+{
+"label": "Tag &8",
+"id": 32972
+},
+{
+"label": "Tag &9",
+"id": 32973
+},
+{
+"label": "Tag 10",
+"id": 32974
+},
+{
+"separator": true
+},
+{
+"label": "&UnTag All ",
+"id": 32975
+}
+]
+}
+]
+}
+],
+"223": [
+{
+"label": "Main",
+"id": null,
+"items": [
+{
+"label": "&Edit...",
+"id": 32782
+},
+{
+"label": "&Save",
+"id": 32784
+},
+{
+"label": "&Install...",
+"id": 32783
+},
+{
+"label": "&Refresh",
+"id": 32781
+}
+]
+}
+],
+"235": [
+{
+"label": "Menu",
+"id": null,
+"items": [
+{
+"label": "Expand All",
+"id": 32787
+},
+{
+"label": "Collapse All",
+"id": 32788
+},
+{
+"separator": true
+},
+{
+"label": "Open SPDL for this property set",
+"id": 32790
+}
+]
+}
+],
+"247": [
+{
+"label": "Tab Button",
+"id": null,
+"items": [
+{
+"label": "&Make Local",
+"id": 32791
+}
+]
+}
+],
+"264": [
+{
+"label": "Keying Panel",
+"id": null,
+"items": [
+{
+"label": "&Unmark All Parameters",
+"id": 32997
+},
+{
+"separator": true
+},
+{
+"label": "&Key",
+"id": 33001
+},
+{
+"label": "Key &All",
+"id": 33002
+},
+{
+"label": "Remove Key",
+"id": 33035
+},
+{
+"label": "Remove Key All",
+"id": 33036
+},
+{
+"label": "Deactivate Animation",
+"id": 33000
+},
+{
+"label": "Deactivate All Animation",
+"id": 33003
+},
+{
+"label": "Activate Animation",
+"id": 33004
+},
+{
+"label": "Activate All Animation",
+"id": 33005
+},
+{
+"separator": true
+},
+{
+"label": "Set Expression...",
+"id": 33006
+},
+{
+"label": "Set Scripted Operator...",
+"id": 33007
+},
+{
+"separator": true
+},
+{
+"label": "Copy Animation",
+"id": 33008
+},
+{
+"label": "Paste Animation",
+"id": 33009
+},
+{
+"label": "Remove Animation",
+"id": 33010
+},
+{
+"separator": true
+},
+{
+"label": "Lock",
+"id": 33011
+},
+{
+"label": "Unlock",
+"id": 33012
+},
+{
+"label": "Make Keyable",
+"id": 33014
+},
+{
+"label": "Make Non-Keyable",
+"id": 33015
+},
+{
+"label": "Make Non-Keyable And Hide",
+"id": 33016
+},
+{
+"separator": true
+},
+{
+"label": "Link With...",
+"id": 33017
+},
+{
+"label": "Link With Multi...",
+"id": 33018
+},
+{
+"label": "Link With Orientation...",
+"id": 33019
+},
+{
+"label": "Set Relative Values",
+"id": 33020
+},
+{
+"separator": true
+},
+{
+"label": "New Custom Parameter",
+"id": 33023
+},
+{
+"label": "Edit Custom Parameter...",
+"id": 33022
+},
+{
+"label": "Remove Custom Parameter",
+"id": 33024
+},
+{
+"separator": true
+},
+{
+"label": "Animation Editor...",
+"id": 33025
+},
+{
+"label": "Expression Editor...",
+"id": 33026
+},
+{
+"label": "Parameter Connection Editor...",
+"id": 33027
+},
+{
+"label": "Keyable Parameters Editor...",
+"id": 33028
+},
+{
+"separator": true
+},
+{
+"label": "Go to Key",
+"id": null,
+"items": [
+{
+"label": "First Key",
+"id": 33029
+},
+{
+"label": "Last Key",
+"id": 33030
+},
+{
+"label": "Previous Key",
+"id": 33032
+},
+{
+"label": "Next Key",
+"id": 33031
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Preferences...",
+"id": 33039
+}
+]
+}
+]
+},
+"strings": {}
+},
+"manipulators.dll": {
+"menus": {},
+"strings": {}
+},
+"transformmanager.dll": {
+"menus": {},
+"strings": {}
+},
+"uiut.dll": {
+"menus": {
+"163": [
+{
+"label": "Splitter",
+"id": null,
+"items": [
+{
+"label": "Split &Horizontally",
+"id": 1923
+},
+{
+"label": "Split &Vertically",
+"id": 1924
+}
+]
+}
+],
+"181": [
+{
+"label": "View",
+"id": null,
+"items": [
+{
+"label": "Sort by Creation Order",
+"id": 621
+},
+{
+"label": "Sort Alphabetically",
+"id": 622
+},
+{
+"separator": true
+},
+{
+"label": "Show View Visibility",
+"id": 624
+},
+{
+"label": "Show Render Visibility",
+"id": 625
+},
+{
+"label": "Show Selectability",
+"id": 626
+},
+{
+"label": "Show Ghosting Visibility",
+"id": 627
+},
+{
+"label": "Show Display Color",
+"id": 623
+},
+{
+"separator": true
+},
+{
+"label": "Preferences...",
+"id": 628
+}
+]
+}
+],
+"211": [
+{
+"label": "Modeling",
+"id": null,
+"items": [
+{
+"label": "Get",
+"id": null,
+"items": [
+{
+"label": "&Scene",
+"id": null,
+"items": [
+{
+"label": "Import Scene",
+"id": 1101
+}
+]
+},
+{
+"label": "Primitive",
+"id": null,
+"items": [
+{
+"label": "Implicit",
+"id": null,
+"items": [
+{
+"label": "Dodecahedron",
+"id": 1065
+},
+{
+"label": "Icosahedron",
+"id": 1066
+},
+{
+"label": "Octahedron",
+"id": 1067
+},
+{
+"label": "Tetrahedron",
+"id": 1068
+}
+]
+},
+{
+"label": "Surface &Mesh",
+"id": null,
+"items": [
+{
+"label": "&Cone",
+"id": 1335
+},
+{
+"label": "C&ube",
+"id": 1336
+},
+{
+"label": "C&ylinder",
+"id": 1070
+}
+]
+},
+{
+"label": "Polygon Mesh",
+"id": null,
+"items": [
+{
+"separator": true
+},
+{
+"label": "Dodecahedron",
+"id": 1328
+},
+{
+"label": "Icosahedron",
+"id": 1330
+},
+{
+"label": "Octahedron",
+"id": 1331
+},
+{
+"label": "Tetrahedron",
+"id": 1334
+}
+]
+},
+{
+"label": "Surface",
+"id": null,
+"items": [
+{
+"label": "T&ube",
+"id": 1337
+}
+]
+}
+]
+},
+{
+"label": "Camera",
+"id": null,
+"items": [
+{
+"label": "Default Perspective (wrong preset loc)",
+"id": 1504
+}
+]
+},
+{
+"label": "Light",
+"id": null,
+"items": [
+{
+"label": "Slide Projector",
+"id": 1102
+}
+]
+},
+{
+"label": "Model",
+"id": null,
+"items": [
+{
+"label": "Biped Skeleton 19 DOF",
+"id": 1343
+},
+{
+"label": "Biped Skeleton 55 DOF",
+"id": 1100
+},
+{
+"separator": true
+},
+{
+"label": "Human Male",
+"id": 1344
+},
+{
+"label": "Human Female",
+"id": 1345
+}
+]
+}
+]
+},
+{
+"label": "Create",
+"id": null,
+"items": [
+{
+"label": "Curve",
+"id": null,
+"items": [
+{
+"label": "Project on Surface",
+"id": 1208
+},
+{
+"label": "Fillet",
+"id": 1537
+},
+{
+"label": "&Offset",
+"id": 1316
+}
+]
+},
+{
+"label": "Surface",
+"id": null,
+"items": [
+{
+"label": "Cap",
+"id": 1212
+},
+{
+"label": "Fill Hole",
+"id": 1342
+},
+{
+"label": "Birail (Two Generators)",
+"id": 1538
+},
+{
+"label": "Extract Surface Segment",
+"id": 1371
+},
+{
+"label": "&Offset",
+"id": 1531
+},
+{
+"label": "&PNET",
+"id": 1394
+}
+]
+},
+{
+"label": "Polygon",
+"id": null,
+"items": [
+{
+"label": "Vertex",
+"id": 1349
+},
+{
+"label": "Edge",
+"id": 1350
+},
+{
+"label": "Polygon",
+"id": 1351
+},
+{
+"separator": true
+},
+{
+"label": "from Curve",
+"id": 1464
+},
+{
+"label": "PolySkin",
+"id": 1205
+}
+]
+},
+{
+"label": "Poly Mesh",
+"id": null,
+"items": [
+{
+"label": "Extrusion",
+"id": 1359
+},
+{
+"label": "Revolution",
+"id": 1360
+},
+{
+"label": "Symmetry",
+"id": 1362
+},
+{
+"separator": true
+},
+{
+"label": "Merge",
+"id": 1361
+}
+]
+}
+]
+},
+{
+"label": "Modify",
+"id": null,
+"items": [
+{
+"label": "Component",
+"id": null,
+"items": [
+{
+"label": "Collapse (tbd)",
+"id": 1253
+},
+{
+"label": "Edit Knot Weight (tbd)",
+"id": 1229
+},
+{
+"label": "Edit Normal (tbd)",
+"id": 1230
+},
+{
+"label": "Move Component Tool",
+"id": 1549
+}
+]
+},
+{
+"label": "Curve",
+"id": null,
+"items": [
+{
+"label": "Snap CV Positions",
+"id": 1246
+},
+{
+"label": "Add Point",
+"id": 1313
+},
+{
+"label": "Inverse Curve on Surface",
+"id": 1123
+},
+{
+"label": "Resample",
+"id": 1232
+},
+{
+"label": "Subdivide",
+"id": 1233
+},
+{
+"label": "Extend... (tbd)",
+"id": 1252
+},
+{
+"label": "Direct Manipulation",
+"id": 1319
+},
+{
+"label": "Shift Curve on Surface ",
+"id": 1247
+},
+{
+"label": "Cut",
+"id": 1242
+}
+]
+},
+{
+"label": "Polygon Mesh",
+"id": null,
+"items": [
+{
+"label": "Inverse",
+"id": 1236
+},
+{
+"label": "Slice",
+"id": 1255
+},
+{
+"label": "Subdivide",
+"id": 1222
+},
+{
+"label": "Bevel",
+"id": 1219
+},
+{
+"label": "Round",
+"id": 1221
+},
+{
+"label": "Smooth",
+"id": 1256
+},
+{
+"label": "Breakup",
+"id": 1220
+},
+{
+"label": "Detach",
+"id": 1254
+},
+{
+"label": "Reduce",
+"id": null,
+"items": [
+{
+"label": "Filtering",
+"id": 1237
+},
+{
+"label": "Optimize",
+"id": 1223
+},
+{
+"label": "Rule-Based",
+"id": 1224
+},
+{
+"label": "Quad Filtering",
+"id": 1238
+}
+]
+},
+{
+"label": "Cleanup",
+"id": 1225
+},
+{
+"separator": true
+},
+{
+"label": "Add Point",
+"id": 1312
+},
+{
+"label": "Delete Point",
+"id": 1218
+},
+{
+"label": "Delete Edge",
+"id": 1122
+}
+]
+},
+{
+"label": "Surface",
+"id": null,
+"items": [
+{
+"label": "Subdivide",
+"id": 1235
+},
+{
+"label": "Heal",
+"id": 1532
+},
+{
+"label": "Zip",
+"id": 1217
+},
+{
+"label": "Snap Face",
+"id": 1261
+},
+{
+"label": "Add Knot",
+"id": 1314
+},
+{
+"label": "Delete Knot",
+"id": 1228
+},
+{
+"separator": true
+},
+{
+"label": "Direct Manipulation",
+"id": 1206
+},
+{
+"separator": true
+},
+{
+"label": "Smooth",
+"id": 1263
+},
+{
+"label": "Cut",
+"id": 1226
+}
+]
+},
+{
+"label": "Deform",
+"id": null,
+"items": [
+{
+"label": "by Magnet (tbd)",
+"id": 1258
+},
+{
+"label": "by Picture",
+"id": 1211
+},
+{
+"label": "Lockdown (tbd)",
+"id": 1260
+},
+{
+"label": "Symmetry (tbd)",
+"id": 1259
+},
+{
+"label": "Envelope",
+"id": 1354
+},
+{
+"label": "Local Assignment",
+"id": 1363
+},
+{
+"label": "Shape Blend",
+"id": 1245
+},
+{
+"label": "Shape Interpolate",
+"id": 1240
+},
+{
+"label": "Cluster to Object",
+"id": 1239
+}
+]
+},
+{
+"label": "Prop Maps",
+"id": 1
+}
+]
+},
+{
+"label": "Tools",
+"id": null,
+"items": [
+{
+"label": "Convert",
+"id": null,
+"items": [
+{
+"label": "Implicit to Polygon Mesh",
+"id": 1556
+},
+{
+"label": "Implicit to NURBS Surface",
+"id": 1557
+},
+{
+"label": "Implicit to NURBS Curve",
+"id": 1558
+},
+{
+"label": "NURBS to Polygon Mesh",
+"id": 1465
+}
+]
+},
+{
+"label": "Debug",
+"id": null,
+"items": [
+{
+"label": "Dump Curve",
+"id": 1541
+},
+{
+"label": "Dump Surface",
+"id": 1542
+}
+]
+}
+]
+}
+]
+},
+{
+"label": "Animation",
+"id": null,
+"items": [
+{
+"label": "Get (old)",
+"id": null,
+"items": [
+{
+"label": "Expression",
+"id": 1104
+},
+{
+"label": "Link with...",
+"id": 1553
+}
+]
+},
+{
+"label": "Path (old)",
+"id": null,
+"items": [
+{
+"label": "Generate Trajectory Curve",
+"id": 1357
+},
+{
+"label": "Convert Trajectory To Path",
+"id": 1481
+}
+]
+},
+{
+"label": "Timing",
+"id": null,
+"items": [
+{
+"label": "Modify Global Reference",
+"id": 1244
+}
+]
+},
+{
+"label": "Source",
+"id": null,
+"items": [
+{
+"label": "Action",
+"id": 1103
+}
+]
+},
+{
+"label": "Simulate",
+"id": null,
+"items": [
+{
+"label": "Shader",
+"id": null,
+"items": [
+{
+"label": "Blow Up",
+"id": 1579
+}
+]
+}
+]
+}
+]
+},
+{
+"label": "Rendering",
+"id": null,
+"items": [
+{
+"label": "Map",
+"id": null,
+"items": [
+{
+"label": "Texture Support",
+"id": null,
+"items": [
+{
+"label": "Dynamic",
+"id": 1249
+}
+]
+}
+]
+}
+]
+},
+{
+"label": "Property",
+"id": null,
+"items": [
+{
+"label": "&Visibility",
+"id": 1095
+}
+]
+},
+{
+"label": "Simulate",
+"id": null,
+"items": [
+{
+"label": "Particle",
+"id": null,
+"items": [
+{
+"label": "Cometa",
+"id": 1305
+},
+{
+"label": "Cristal",
+"id": 1306
+},
+{
+"label": "Flock",
+"id": 1308
+},
+{
+"separator": true
+},
+{
+"label": "Explode",
+"id": 1307
+},
+{
+"label": "Kaboom",
+"id": 1472
+}
+]
+},
+{
+"label": "Motion",
+"id": null,
+"items": [
+{
+"label": "Parabolic Path",
+"id": 1471
+},
+{
+"label": "Ballistic Path",
+"id": 1309
+},
+{
+"label": "Ballistic Effect (temp)",
+"id": 1110
+},
+{
+"label": "Slide",
+"id": 1474
+},
+{
+"label": "Float",
+"id": 1475
+},
+{
+"separator": true
+},
+{
+"label": "Follow",
+"id": 1470
+},
+{
+"label": "Avoid",
+"id": 1310
+},
+{
+"separator": true
+},
+{
+"label": "Dyn Cns (MCP)",
+"id": null,
+"items": [
+{
+"label": "Contact",
+"id": 1619
+},
+{
+"label": "Spring Damper Prop",
+"id": 1618
+},
+{
+"label": "Spring Damper Cns",
+"id": 1311
+}
+]
+}
+]
+},
+{
+"label": "Deform",
+"id": null,
+"items": [
+{
+"label": "QStretch",
+"id": 1473
+}
+]
+}
+]
+}
+],
+"213": [
+{
+"label": "EDIT",
+"id": null,
+"items": [
+{
+"label": "&Duplicate/Instantiate",
+"id": null,
+"items": [
+{
+"label": "Duplicate &Tool",
+"id": 1703
+},
+{
+"separator": true
+},
+{
+"label": "&Duplicate Single",
+"id": 1435
+},
+{
+"label": "Duplicate Single &without Options",
+"id": 1704
+},
+{
+"label": "D&uplicate Multiple",
+"id": 1445
+},
+{
+"separator": true
+},
+{
+"label": "&Clone Single",
+"id": 1432
+},
+{
+"label": "Clone Single wit&hout Options",
+"id": 1705
+},
+{
+"label": "C&lone Multiple",
+"id": 1437
+},
+{
+"separator": true
+},
+{
+"label": "&Instantiate Single",
+"id": 1805
+},
+{
+"label": "Instance Single wit&hout Options",
+"id": 1806
+},
+{
+"label": "I&nstance Multiple",
+"id": 1807
+},
+{
+"separator": true
+},
+{
+"label": "Duplicate/Instantiate &from Animation",
+"id": 1420
+},
+{
+"label": "Duplicate/Instantiate &Options... ",
+"id": 1691
+},
+{
+"separator": true
+},
+{
+"label": "Duplicate &Symmetry",
+"id": 1787
+},
+{
+"label": "Duplicate Using &Geometry Approx. (Poly. Mesh only)",
+"id": 1792
+}
+]
+},
+{
+"label": "Duplicate/Instantiate &Options... ",
+"id": 1691
+},
+{
+"separator": true
+},
+{
+"label": "Create Transform &Group",
+"id": 2018
+},
+{
+"label": "Remove Transform Group",
+"id": 2019
+},
+{
+"separator": true
+},
+{
+"label": "&Create Group",
+"id": 1651
+},
+{
+"label": "&Add to Group",
+"id": 1665
+},
+{
+"label": "&Remove Group",
+"id": 1652
+},
+{
+"label": "Remo&ve from Group",
+"id": 1666
+},
+{
+"separator": true
+},
+{
+"label": "&Create Cluster",
+"id": 1647
+},
+{
+"label": "Create Cluster &with Center",
+"id": 1693
+},
+{
+"label": "Create Non-O&verlapping Cluster",
+"id": 1786
+},
+{
+"label": "&Add to Cluster",
+"id": 1648
+},
+{
+"label": "&Remove Cluster",
+"id": 1650
+},
+{
+"label": "Remo&ve from Cluster",
+"id": 1649
+},
+{
+"separator": true
+},
+{
+"label": "&Model",
+"id": null,
+"items": [
+{
+"label": "&New Model",
+"id": 1441
+},
+{
+"separator": true
+},
+{
+"label": "&Update Referenced Model",
+"id": 1442
+},
+{
+"label": "Make Referenced Model &Local",
+"id": 1443
+}
+]
+},
+{
+"label": "Opera&tor",
+"id": null,
+"items": [
+{
+"label": "&Add Input (Loft and Curves-to-Mesh only)",
+"id": 1783
+},
+{
+"label": "&Remove Input (Loft and Curves-to-Mesh only)",
+"id": 1784
+},
+{
+"label": "Select Generator Inputs",
+"id": 33336
+},
+{
+"label": "Hide/Unhide Generator Inputs",
+"id": 33337
+},
+{
+"label": "Freeze Generator && Delete Inputs",
+"id": 33338
+},
+{
+"separator": true
+},
+{
+"label": "&Substitute Input",
+"id": 1785
+},
+{
+"separator": true
+},
+{
+"label": "Free&ze Operator Stack",
+"id": 1439
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "De&lete All",
+"id": 1433
+},
+{
+"label": "Dele&te Selected",
+"id": 1434
+},
+{
+"label": "Delete Selected Permanent",
+"id": 2022
+},
+{
+"separator": true
+},
+{
+"label": "Info &Scene...",
+"id": 1431
+},
+{
+"label": "Info S&election...",
+"id": 1430
+},
+{
+"label": "Info Geometry...",
+"id": 2020
+}
+]
+}
+],
+"215": [
+{
+"label": "REMOVED MENU ITEMS",
+"id": null,
+"items": [
+{
+"label": "SELECT",
+"id": null,
+"items": [
+{
+"label": "Support Nil Mode",
+"id": 1683
+},
+{
+"label": "Support Sticky Mode",
+"id": 1684
+},
+{
+"label": "Allow Toggling of Sticky Mode",
+"id": 1685
+},
+{
+"label": "&Front Face Only",
+"id": 1653
+},
+{
+"label": "Bac&k Face Only",
+"id": 1654
+},
+{
+"label": "Bo&th",
+"id": 1655
+},
+{
+"separator": true
+},
+{
+"label": "Select &Ungrouped Components",
+"id": 1658
+}
+]
+},
+{
+"label": "Constraints",
+"id": null,
+"items": [
+{
+"label": "IK UpVector",
+"id": 1157
+},
+{
+"label": "IK PrefAxis",
+"id": 1158
+},
+{
+"label": "n-Points",
+"id": 1160
+},
+{
+"label": "S&ymmetry",
+"id": 1135
+},
+{
+"label": "Direction-&Interest",
+"id": 1139
+},
+{
+"label": "Bounding Pla&ne",
+"id": 1141
+},
+{
+"label": "Bounding &Box",
+"id": 1142
+},
+{
+"label": "D&ynamic",
+"id": null,
+"items": [
+{
+"label": "Inertia",
+"id": 1144
+},
+{
+"label": "Nail",
+"id": 1147
+},
+{
+"label": "Pendulum",
+"id": 1145
+},
+{
+"label": "Spring",
+"id": 1146
+},
+{
+"separator": true
+},
+{
+"label": "Avoid",
+"id": 1148
+},
+{
+"label": "Follow",
+"id": 1149
+}
+]
+},
+{
+"label": "&Collision",
+"id": null,
+"items": [
+{
+"label": "Any in Project",
+"id": 1150
+},
+{
+"label": "Any in Scene",
+"id": 1151
+},
+{
+"label": "Any in Volume",
+"id": 1152
+},
+{
+"separator": true
+},
+{
+"label": "One to One",
+"id": 1153
+},
+{
+"label": "One to Many",
+"id": 1154
+},
+{
+"label": "Multi-lateral in Group",
+"id": 1155
+},
+{
+"separator": true
+},
+{
+"label": "Collision (temp)",
+"id": 1128
+}
+]
+},
+{
+"label": "&Substitute Input",
+"id": 1140
+},
+{
+"label": "Attac&h Control Object",
+"id": 1130
+},
+{
+"label": "Con&tinuous Compensation",
+"id": 1159
+}
+]
+},
+{
+"label": "Transform",
+"id": null,
+"items": [
+{
+"label": "TBD",
+"id": null,
+"items": [
+{
+"label": "Joint IK Manip.",
+"id": 1176
+},
+{
+"label": "Hierarchy IK Manip.",
+"id": 1177
+},
+{
+"label": "Curve IK Manip.",
+"id": 1178
+},
+{
+"separator": true
+},
+{
+"label": "Uniform Scaling",
+"id": 1173
+},
+{
+"label": "Interactive Update",
+"id": 1182
+},
+{
+"label": "Snap Setup...",
+"id": 1183
+}
+]
+},
+{
+"label": "A&lign",
+"id": 1133
+},
+{
+"label": "&Distribute",
+"id": 1134
+},
+{
+"separator": true
+},
+{
+"label": "&Store Static Pose",
+"id": 1171
+},
+{
+"label": "&Apply Static Pose",
+"id": 1172
+},
+{
+"separator": true
+},
+{
+"label": "&Hierarchy Compensation",
+"id": 1179
+},
+{
+"label": "Hierarchy &Manipulation",
+"id": 1180
+},
+{
+"label": "Classic &Scaling",
+"id": 1186
+},
+{
+"label": "Contin&uous Rotation",
+"id": 1181
+}
+]
+},
+{
+"label": "Edit",
+"id": null,
+"items": [
+{
+"label": "Operators...",
+"id": 1438
+},
+{
+"label": "Add &Input",
+"id": 1446
+},
+{
+"label": "Remo&ve Input",
+"id": 1448
+},
+{
+"label": "Su&bstitute Input",
+"id": 1447
+},
+{
+"label": "Remove &Last Operator",
+"id": 1436
+},
+{
+"separator": true
+},
+{
+"label": "Make Property &Local",
+"id": 1444
+},
+{
+"label": "Make Object Uni&que",
+"id": 1692
+}
+]
+},
+{
+"label": "Playback",
+"id": null,
+"items": [
+{
+"label": "Update Lin&ked Scene",
+"id": 1632
+},
+{
+"label": "Fas&t Playback",
+"id": 1631
+},
+{
+"label": "Fast Forward",
+"id": 1634
+},
+{
+"label": "Fast Backward",
+"id": 1635
+},
+{
+"separator": true
+},
+{
+"label": "Flip Flop Play",
+"id": 1636
+},
+{
+"label": "Rotoscop&e",
+"id": null,
+"items": [
+{
+"label": "&Options...",
+"id": 1688
+},
+{
+"label": "&Clear",
+"id": 1689
+}
+]
+},
+{
+"label": "Capture Setting ...",
+"id": 1690
+},
+{
+"label": "&Image Cache",
+"id": null,
+"items": [
+{
+"label": "&Save ...",
+"id": 1687
+},
+{
+"label": "&Clear",
+"id": 1686
+}
+]
+}
+]
+},
+{
+"label": "Animation",
+"id": null,
+"items": [
+{
+"label": "Rem&ove Animation",
+"id": null,
+"items": [
+{
+"label": "&Reset to Default",
+"id": 1633
+}
+]
+}
+]
+},
+{
+"label": "Constant Blac&k",
+"id": 1509
+},
+{
+"label": "Constant &White",
+"id": 1508
+}
+]
+}
+],
+"246": [
+{
+"label": "Context",
+"id": null,
+"items": [
+{
+"label": "File",
+"id": null,
+"items": [
+{
+"label": "&New...",
+"id": 1927
+},
+{
+"label": "&Open...",
+"id": 1928
+},
+{
+"separator": true
+},
+{
+"label": "&Save",
+"id": 1929
+},
+{
+"label": "Save &As...",
+"id": 1930
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "New &Tray Switcher",
+"id": 1959
+},
+{
+"separator": true
+},
+{
+"label": "Split &Horizontally",
+"id": 1923
+},
+{
+"label": "Split &Vertically",
+"id": 1924
+},
+{
+"separator": true
+},
+{
+"label": "Set Vie&w",
+"id": null,
+"items": [
+{
+"label": "None",
+"id": 1925
+}
+]
+},
+{
+"label": "Set Toolbar/Shelf",
+"id": null,
+"items": [
+{
+"label": "None",
+"id": 1925
+}
+]
+},
+{
+"label": "&Remove View",
+"id": 1926
+},
+{
+"label": "Delete Pane",
+"id": 1976
+},
+{
+"label": "Select Parent",
+"id": 1979
+},
+{
+"separator": true
+},
+{
+"label": "&Toolbar",
+"id": null,
+"items": [
+{
+"label": "&None",
+"id": 1931
+},
+{
+"label": "&Local",
+"id": 1932
+},
+{
+"label": "&Shared",
+"id": 1933
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Set View as &Primary",
+"id": 1949
+},
+{
+"label": "Set &Relationships...",
+"id": 1948
+},
+{
+"label": "Set View Properties",
+"id": 1978
+}
+]
+},
+{
+"label": "Relationship",
+"id": null,
+"items": [
+{
+"label": "&Remove Relationship",
+"id": 1947
+}
+]
+},
+{
+"label": "Stack Window",
+"id": null,
+"items": [
+{
+"label": "&Add Pane",
+"id": 1961
+},
+{
+"label": "Delete Pane",
+"id": 1980
+},
+{
+"separator": true
+},
+{
+"label": "Bitmap Editor",
+"id": 1963
+},
+{
+"label": "Set &Bitmap",
+"id": null,
+"items": [
+{
+"label": "None",
+"id": 1925
+}
+]
+},
+{
+"label": "&Remove Bitmap",
+"id": 266
+}
+]
+},
+{
+"label": "Splitter Contextual",
+"id": null,
+"items": [
+{
+"label": "&No Splitter",
+"id": 1920
+},
+{
+"label": "&Fixed Splitter",
+"id": 1921
+},
+{
+"label": "&Movable Splitter",
+"id": 1922
+}
+]
+}
+]
+},
+"strings": {}
+},
+"siuitasks.dll": {
+"menus": {},
+"strings": {}
+},
+"siviewtasks.dll": {
+"menus": {},
+"strings": {}
+}
+}

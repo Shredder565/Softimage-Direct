@@ -8,6 +8,19 @@ interface SiParam { sn: string; label: string; type: string; default: any; min?:
 interface SiDef { type: string; name: string; spdl?: string | null; params: SiParam[]; layout?: LayoutNode[]; source?: string }
 const data = raw as unknown as { ops: Record<string, SiDef>; prims: Record<string, SiDef>; byMenu: Record<string, { type: string; values: Record<string, any> }>; primStats: Record<string, any> };
 
+import propsets from '../data/si/propsets.json';
+type SiProp = { sn: string; label: string; type: string; default: any; items?: [string, any][]; min?: number; max?: number; uimin?: number; uimax?: number; desc?: string };
+export const SI_PROPSETS = propsets as unknown as Record<string, { label: string; params: SiProp[]; layout: any[] }>;
+const SETS = SI_PROPSETS;
+
+/** ParamDefs for a Softimage property set from its SPDL (C3DKineState, C3DVisibilityAndDisplay, C3DPrefsDisplay…). */
+export function siPropDefs(key: string, overrides: Record<string, any> = {}): ParamDef[] {
+  const s = SETS[key]; if (!s) return [];
+  return s.params.map(p => { const d: ParamDef = { name: p.sn, label: p.label, type: p.type as any, value: p.sn in overrides ? overrides[p.sn] : p.default, animatable: false }; if (p.items) d.items = p.items.map(([label, value]) => ({ label, value })); if (p.min !== undefined) d.min = p.min; if (p.max !== undefined) d.max = p.max; if (p.uimin !== undefined) d.uimin = p.uimin; if (p.uimax !== undefined) d.uimax = p.uimax; if (p.desc) d.desc = p.desc; return d; });
+}
+export function siPropLayout(key: string): any[] | undefined { return SETS[key]?.layout?.length ? SETS[key].layout : undefined; }
+export function siPropLabel(key: string) { return SETS[key]?.label ?? key; }
+
 export function siDef(key: string): SiDef | undefined { return data.ops[key] ?? data.prims[key]; }
 export function siName(key: string, fallback: string) { return siDef(key)?.name ?? fallback; }
 export function siLayout(key: string): LayoutNode[] | undefined { return siDef(key)?.layout; }

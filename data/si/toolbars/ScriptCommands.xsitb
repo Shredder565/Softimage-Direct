@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<xsi_file type="Shelf" xsi_version="4.0.2003.1105" syntax_version="1.0">
+   <shelf_view name="Scripts" clsid="{5A60EFCE-32E0-45F3-A01C-C2B1F5B72D62}">
+      <properties>
+         <showtabs>false</showtabs>
+      </properties>
+      <definition maxinstances="10000" acceptfocus="true" private="false" defaultsize="0,100,200,300" cmdmap="{00000000-0000-0000-0000-000000000000}" supportedtypes="6"></definition>
+      <tabs layout="top" active="DS Toolbar">
+         <tab label="DS Toolbar" type="toolbar">
+            <properties id="{D643BECB-274E-45DC-AB1D-3DC61E75B20C}" name="" display_preset_as_small="False" display_as_text_only="False"></properties>
+         </tab>
+      </tabs>
+   </shelf_view>
+</xsi_file>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<xsi_file type="Shelf" xsi_version="9.5.147.0" syntax_version="1.0">
+   <shelf_view name="Panel Switcher" clsid="{EC70B02F-C45A-4436-AB56-098CAD61A922}">
+      <properties>
+         <showtabs>false</showtabs>
+      </properties>
+      <definition maxinstances="10000" acceptfocus="true" private="false" defaultsize="0,100,200,300" cmdmap="{00000000-0000-0000-0000-000000000000}" supportedtypes="6" category=""></definition>
+      <tabs layout="top" active="DS Toolbar">
+         <tab label="DS Toolbar" type="toolbar">
+            <properties id="{0A125C4B-8C2E-4F74-8493-43ACACD0B3E5}" name="" display_preset_as_small="False" display_as_text_only="False"></properties>
+            <item type="scriptbutton" label="Menu" userwidth="31" userheight="31" bitmap="module" scriptengine="VBScript" tooltip="Toggle Module Menu">
+               <scripttext>&lt;![CDATA[ToggleOptionalPanel &quot;Module Menu&quot;
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Shelf" userwidth="31" userheight="31" bitmap="shelf" scriptengine="VBScript" tooltip="Toggle Main Shelf">
+               <scripttext>&lt;![CDATA[ToggleOptionalPanel &quot;Main Shelf&quot;
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Range" userwidth="31" userheight="31" bitmap="lower" scriptengine="VBScript" tooltip="Toggle TimeRange">
+               <scripttext>&lt;![CDATA[on error resume next
+Set oView = Desktop.ActiveLayout.Views (&quot;lower_panel&quot;)
+if oView = &quot;&quot; then
+	ToggleOptionalPanel &quot;Timerange&quot;
+Else
+	ShowOptionalPanel &quot;View Manager&quot;
+	ToggleOptionalPanel &quot;Lower Panel&quot;
+End if
+
+
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="MCP" userwidth="31" userheight="31" bitmap="mcp" scriptengine="VBScript" tooltip="Toggle Main Control Panel">
+               <scripttext>&lt;![CDATA[ToggleOptionalPanel &quot;MCP&quot;
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Reset" userwidth="31" userheight="31" bitmap="4_vm" scriptengine="VBScript" tooltip="Reset View Manager">
+               <scripttext>&lt;![CDATA[set vw = Desktop.ActiveLayout.Views.Find( &quot;View Manager&quot; )
+vw.setattributevalue &quot;suspenddrawing&quot;,&quot;true&quot;
+vw.setattributevalue &quot;layout&quot;,&quot;standard&quot;
+vw.setattributevalue &quot;layout&quot;,&quot;reset&quot;
+vw.setattributevalue &quot;suspenddrawing&quot;,&quot;false&quot;]]&gt;</scripttext>
+            </item>
+			 <item type="scriptbutton" label="Alternate" bitmap="3down_vm.bmp" scriptengine="VBScript" tooltip="1UP3DOWN View Manager">
+               <scripttext>&lt;![CDATA[set vw = Desktop.ActiveLayout.Views.Find( &quot;View Manager&quot; )
+vw.setattributevalue &quot;suspenddrawing&quot;,&quot;true&quot;
+vw.setattributevalue &quot;layout&quot;,&quot;alternate&quot;
+vw.setattributevalue &quot;layout&quot;,&quot;reset&quot;
+vw.setattributevalue &quot;suspenddrawing&quot;,&quot;false&quot;
+vw.setattributevalue &quot;focusedviewport&quot;, &quot;d&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Exp" userwidth="31" userheight="31" bitmap="cam_vm" scriptengine="VBScript" tooltip="Explorer, ViewB and User">
+               <scripttext>&lt;![CDATA[set vw = Desktop.ActiveLayout.Views.Find( &quot;View Manager&quot; )
+vw.setattributevalue &quot;suspenddrawing&quot;,&quot;true&quot;
+vw.setattributevalue &quot;layout&quot;,&quot;standard&quot;
+vw.setattributevalue &quot;viewport:a&quot;,&quot;explorer&quot;
+vw.setattributevalue &quot;activecamera:d&quot;,&quot;user&quot;
+vw.setattributevalue &quot;layout&quot;,&quot;vertical:a&quot;
+vw.setattributevalue &quot;suspenddrawing&quot;,&quot;false&quot;
+set myexplorer = vw.views(&quot;a&quot;)
+myexplorer.setattributevalue &quot;scope&quot;,&quot;Scene&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Tree" userwidth="31" userheight="31" bitmap="rendertree_vm" scriptengine="VBScript" tooltip="ICE Tree, Render Tree, Animation Editor">
+               <scripttext>&lt;![CDATA[on error resume next
+'find the view manager
+set vw = Desktop.ActiveLayout.Views.Find( &quot;View Manager&quot; )
+vw.setattributevalue &quot;suspenddrawing&quot;,&quot;true&quot;
+vw.setattributevalue &quot;layout&quot;,&quot;standard&quot;
+vw.setattributevalue &quot;viewport:a&quot;,&quot;explorer&quot;
+
+'we want to populate the horizontal C view depending on the module
+'check the hidden user prefs 
+set oPreferences = Application.Preferences
+oVal = oPreferences.GetPreferenceValue( &quot;xsiprivate_unclassified.SI3D_CURRENT_MODULE&quot; )
+
+if oVal = &quot;ICE_MODULE&quot; then
+	vw.setattributevalue &quot;viewport:c&quot;,&quot;ICE Tree&quot;
+Elseif (oVal = &quot;ANIMATION_MODULE&quot;) then
+	vw.setattributevalue &quot;viewport:c&quot;,&quot;Animation Editor&quot;
+Elseif (oVal = &quot;RENDERING_MODULE&quot;) then
+	vw.setattributevalue &quot;viewport:c&quot;,&quot;Render Tree&quot;
+Elseif (oVal = &quot;SIMULATE_MODULE&quot;) then
+	vw.setattributevalue &quot;viewport:c&quot;,&quot;ICE Tree&quot;
+Else 
+	vw.setattributevalue &quot;viewport:c&quot;,&quot;Render Tree&quot;
+End if
+
+'finsih the layout changes
+vw.setattributevalue &quot;layout&quot;,&quot;horizontal:c&quot;
+vw.setattributevalue &quot;suspenddrawing&quot;,&quot;false&quot;
+]]&gt;</scripttext>
+            </item>
+         </tab>
+      </tabs>
+   </shelf_view>
+</xsi_file>

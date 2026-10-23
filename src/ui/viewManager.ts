@@ -10,6 +10,7 @@ import { meshEdges, edgeKey } from '../core/topology';
 import { catmullClark, meshUVProjection } from '../core/topology2';
 import { tessellateCurve } from '../core/curves';
 import type { MeshData } from '../core/geometry';
+import { SI_MENUS, SiMenuItem, openSiMenu, siIcon, hasIcon } from './si';
 
 /** Scene colours and display preferences, decoded from Softimage 2015's C3DSceneColors / C3DPrefsDisplay / C3DPrefsTweak SPDL defaults. */
 export const SI = {
@@ -21,7 +22,10 @@ export type ToolMode = 'select' | 'translate' | 'rotate' | 'scale';
 export const tool = { mode: 'select' as ToolMode, axes: { x: true, y: true, z: true }, setMode: (_m: ToolMode) => { } };
 (window as any).__tool = tool;
 
-interface Viewport { name: string; kind: 'ortho' | 'persp'; camera: THREE.Camera; el: HTMLElement; display: string; }
+/** Per-viewport state: the camdisp display mode and the camvis "eye" menu toggles (C3DCameraVisibilityProp). */
+interface Viewport { name: string; kind: 'ortho' | 'persp'; camera: THREE.Camera; el: HTMLElement; display: string; flags: Record<string, boolean>; head: { view: HTMLElement; disp: HTMLElement; labels: HTMLElement } }
+export const DISPLAY_MODES = ['Bounding Box', 'Wireframe', 'Hidden Line', 'Constant', 'Shaded', 'Textured', 'Texture Decal', 'Realtime Shaders'];
+const VIS_DEFAULT: Record<string, boolean> = { 'Grid': true, 'Lights': true, 'Cameras': true, '3D Geometry': true, 'Implicit Geometry': true, 'Curves': true, 'Point Clouds': true, 'Nulls': true, 'Chains': true, 'Lattices': true, 'Control Objects': true, 'Name': false, 'Points': false, 'Centers': false, 'Normals': false, 'Polygon Normals': false, 'XRay Surfaces': false, 'Selection Info': false, 'PolyMesh Boundaries and Hard Edges': false, 'Subdivision Surfaces': true };
 type V3 = [number, number, number];
 
 export function viewManager(app: App, host: HTMLElement) {
@@ -56,27 +60,50 @@ export function viewManager(app: App, host: HTMLElement) {
     cam.position.copy(pos); cam.up.copy(up); cam.lookAt(0, 0, 0);
     const el = document.createElement('div'); el.className = 'vp-label';
     const head = document.createElement('div'); head.className = 'vp-head';
-    const b = document.createElement('b'); b.textContent = name[0];
-    const sel = document.createElement('select'); for (const v of ['Top', 'Front', 'Right', 'Camera', 'User']) { const o = document.createElement('option'); o.textContent = v; sel.appendChild(o); } sel.value = name;
-    const disp = document.createElement('select'); for (const v of ['Wireframe', 'Shaded', 'Textured', 'Bounding Box']) { const o = document.createElement('option'); o.textContent = v; disp.appendChild(o); } disp.value = kind === 'persp' ? 'Shaded' : 'Wireframe';
+    const b = document.createElement('b'); b.textContent = 'ABCD'[vps.length]; b.title = 'Viewport ' + 'ABCD'[vps.length];
+    const mbtn = (text: string, title: string, icon?: string) => { const x = document.createElement('button'); x.className = 'vp-menu-btn'; if (icon && hasIcon(icon)) x.appendChild(siIcon(icon, 0.5)); else x.textContent = text; x.title = title; return x; };
+    const viewBtn = mbtn(name, 'View menu: cameras and orthographic views'); const camBtn = mbtn('📷', 'Camera menu', 'camera'); const eyeBtn = mbtn('👁', 'Visibility menu (Shift+S)');
     const sp = document.createElement('div'); sp.className = 'spacer';
-    head.append(b, sel, sp, disp); el.appendChild(head); labels.appendChild(el);
-    const vp: Viewport = { name, kind, camera: cam, el, display: disp.value.toLowerCase() };
-    disp.onchange = () => { vp.display = disp.value.toLowerCase(); needs = true; };
-    sel.onchange = () => { switchView(vp, sel.value); needs = true; };
+    const dispBtn = mbtn(kind === 'persp' ? 'Shaded' : 'Wireframe', 'Display mode'); const cubeBtn = mbtn('⌂', 'ViewCube menu');
+    const vlabels = document.createElement('div'); vlabels.className = 'vp-names';
+    head.append(b, viewBtn, camBtn, eyeBtn, sp, dispBtn, cubeBtn); el.append(head, vlabels); labels.appendChild(el);
+    const vp: Viewport = { name, kind, camera: cam, el, display: dispBtn.textContent!.toLowerCase(), flags: { ...VIS_DEFAULT }, head: { view: viewBtn, disp: dispBtn, labels: vlabels } };
+    const at = (x: HTMLElement) => { const r = x.getBoundingClientRect(); return { x: r.left, y: r.bottom }; };
+    viewBtn.onclick = (e) => { e.stopPropagation(); const p = at(viewBtn); const cams = [...app.scene.allObjects()].filter(o => o.type === 'camera' || o.type === 'light').map(o => ({ label: o.name, id: -10 }));
+      openSiMenu([...(SI_MENUS.vmLayout ?? []).map(it => ({ ...it, label: it.label === 'Perspective' ? 'Camera' : it.label })), { separator: true }, ...cams, { separator: true }, { label: 'User', id: -11 }], p.x, p.y, (it) => { switchView(vp, it.label!); needs = true; }, { checked: it => it.label === vp.name }); };
+    camBtn.onclick = (e) => { e.stopPropagation(); const p = at(camBtn); openSiMenu(SI_MENUS.viewCamera ?? [], p.x, p.y, (it) => cameraMenu(vp, it.label!), {}); };
+    eyeBtn.onclick = (e) => { e.stopPropagation(); const p = at(eyeBtn); openSiMenu(SI_MENUS.viewVisibility ?? [], p.x, p.y, (it) => visibilityMenu(vp, it.label!), { checked: it => it.label! in vp.flags ? vp.flags[it.label!] : undefined }); };
+    dispBtn.onclick = (e) => { e.stopPropagation(); const p = at(dispBtn); openSiMenu(DISPLAY_MODES.map(l => ({ label: l, id: -12 })), p.x, p.y, (it) => setDisplay(vp, it.label!), { checked: it => it.label!.toLowerCase() === vp.display }); };
+    cubeBtn.onclick = (e) => { e.stopPropagation(); const p = at(cubeBtn); openSiMenu(SI_MENUS.viewCube ?? [], p.x, p.y, (it) => { if (it.label === 'Home' || it.label === 'Reset Home') switchView(vp, vp.name); else if (it.label === 'Lock to Selection') { (window as any).__orbitSelected = (window as any).__orbitSelected ? 0 : 2; } else app.logMsg('info', `ViewCube: ${it.label} not implemented`); needs = true; }, {}); };
     return vp;
   };
-  const vps: Viewport[] = [
-    mk('Top', 'ortho', new THREE.Vector3(0, 100, 0), new THREE.Vector3(0, 0, -1)),
-    mk('Camera', 'persp', new THREE.Vector3(9.5, 7.3, 12.3), new THREE.Vector3(0, 1, 0)),
-    mk('Front', 'ortho', new THREE.Vector3(0, 0, 100), new THREE.Vector3(0, 1, 0)),
-    mk('Right', 'ortho', new THREE.Vector3(100, 0, 0), new THREE.Vector3(0, 1, 0)),
-  ];
+  const vps: Viewport[] = [];
+  vps.push(mk('Top', 'ortho', new THREE.Vector3(0, 100, 0), new THREE.Vector3(0, 0, -1)));
+  vps.push(mk('Camera', 'persp', new THREE.Vector3(9.5, 7.3, 12.3), new THREE.Vector3(0, 1, 0)));
+  vps.push(mk('Front', 'ortho', new THREE.Vector3(0, 0, 100), new THREE.Vector3(0, 1, 0)));
+  vps.push(mk('Right', 'ortho', new THREE.Vector3(100, 0, 0), new THREE.Vector3(0, 1, 0)));
+  const setDisplay = (vp: Viewport, mode: string) => { vp.display = mode.toLowerCase(); vp.head.disp.textContent = DISPLAY_MODES.find(m => m.toLowerCase() === vp.display) ?? mode; needs = true; };
+  const cameraMenu = (vp: Viewport, label: string) => {
+    switch (label) {
+      case 'Frame Selection': frameBox(app.selectedObjects); return; case 'Center Selection': frameBox(app.selectedObjects, true); return; case 'Frame All': frameBox([...app.scene.allObjects()].filter(o => o.visible)); return;
+      case 'Reset': switchView(vp, vp.name); needs = true; return; case 'Set Background to Black': scene.background = new THREE.Color(0x000000); needs = true; return; case 'Set Background to Grey': scene.background = new THREE.Color(SI.background); needs = true; return;
+      case 'Select Camera': { const c = [...app.scene.allObjects()].find(o => o.type === 'camera'); if (c) app.select([c]); return; } case 'Properties...': { const c = [...app.scene.allObjects()].find(o => o.type === 'camera'); if (c) app.events.emit('inspect', c); return; }
+      case 'Undo': app.undo(); return; case 'Redo': app.redo(); return; case 'Scene Colors...': window.dispatchEvent(new CustomEvent('openprefs', { detail: { page: 'Scene Colors' } })); return;
+    }
+    app.logMsg('info', `Camera menu: ${label} not implemented`);
+  };
+  const visibilityMenu = (vp: Viewport, label: string) => {
+    if (label in vp.flags) { vp.flags[label] = !vp.flags[label]; needs = true; return; }
+    if (label === 'Check All Objects' || label === 'Uncheck All Objects') { for (const k of ['Lights', 'Cameras', '3D Geometry', 'Implicit Geometry', 'Curves', 'Point Clouds', 'Nulls', 'Chains', 'Lattices', 'Control Objects']) vp.flags[k] = label.startsWith('Check'); needs = true; return; }
+    if (label === 'Check All' || label === 'Uncheck All') { for (const k of ['Name', 'Points', 'Centers', 'Normals', 'Polygon Normals', 'XRay Surfaces', 'PolyMesh Boundaries and Hard Edges']) vp.flags[k] = label === 'Check All'; needs = true; return; }
+    if (label === 'Visibility Options...') { window.dispatchEvent(new CustomEvent('openvisibility', { detail: { vp: vp.name } })); return; }
+    app.logMsg('info', `Visibility menu: ${label} not implemented`);
+  };
   const orbit = { target: new THREE.Vector3(0, 0, 0) };
   const switchView = (vp: Viewport, name: string) => {
     const c = vp.camera;
     if (name === 'Top') { c.position.set(0, 100, 0); c.up.set(0, 0, -1); } else if (name === 'Front') { c.position.set(0, 0, 100); c.up.set(0, 1, 0); } else if (name === 'Right') { c.position.set(100, 0, 0); c.up.set(0, 1, 0); } else { c.position.set(9.5, 7.3, 12.3); c.up.set(0, 1, 0); }
-    vp.name = name; vp.el.querySelector('b')!.textContent = name[0]; c.lookAt(orbit.target); (c as any)._zoom = 20;
+    vp.name = name; vp.head.view.textContent = name; c.lookAt(orbit.target); (c as any)._zoom = 20;
   };
   let active = 1; vps[active].el.classList.add('active');
 
@@ -237,10 +264,43 @@ export function viewManager(app: App, host: HTMLElement) {
 
   // ---- render loop
   let needs = true;
-  const resize = () => { const w = root.clientWidth, h = root.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); needs = true; };
+  const resize = () => { const w = root.clientWidth, h = root.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); placeLabels(); needs = true; };
   new ResizeObserver(resize).observe(root); resize();
-  const rect = (i: number) => { const W = renderer.domElement.clientWidth, H = renderer.domElement.clientHeight; const w = (W - 2) / 2, h = (H - 2) / 2; return { x: i % 2 ? w + 2 : 0, y: i < 2 ? 0 : h + 2, w, h }; };
+  let vmLayout: 'standard' | 'alternate' | 'single' = 'standard'; let maximized = -1;
+  /** Viewport rectangles for the View Manager layout (standard 2x2, 1-up-3-down, single / maximized). */
+  const rect = (i: number) => {
+    const W = renderer.domElement.clientWidth, H = renderer.domElement.clientHeight;
+    if (maximized >= 0 || vmLayout === 'single') { const m = maximized >= 0 ? maximized : active; return i === m ? { x: 0, y: 0, w: W, h: H } : { x: 0, y: 0, w: 0, h: 0 }; }
+    if (vmLayout === 'alternate') { const h = (H - 2) * 0.66; if (i === 1) return { x: 0, y: 0, w: W, h }; const k = [0, 2, 3].indexOf(i); const w = (W - 4) / 3; return { x: k * (w + 2), y: h + 2, w, h: H - h - 2 }; }
+    const w = (W - 2) / 2, h = (H - 2) / 2; return { x: i % 2 ? w + 2 : 0, y: i < 2 ? 0 : h + 2, w, h };
+  };
+  const placeLabels = () => { vps.forEach((vp, i) => { const r = rect(i); vp.el.style.display = r.w > 0 ? '' : 'none'; vp.el.style.left = r.x + 'px'; vp.el.style.top = r.y + 'px'; vp.el.style.width = r.w + 'px'; vp.el.style.height = r.h + 'px'; }); };
+  window.addEventListener('vmlayout', (e: any) => { const l = e.detail?.layout; vmLayout = l === 'alternate' ? 'alternate' : l === 'single' ? 'single' : 'standard'; if (l !== 'standard' && l !== 'alternate' && l !== 'single') app.logMsg('info', `View Manager layout "${l}": shown as standard`); maximized = -1; placeLabels(); needs = true; });
+  window.addEventListener('maximizeview', () => { maximized = maximized >= 0 ? -1 : active; placeLabels(); needs = true; });
+  window.addEventListener('setdisplaymode', (e: any) => { const m = String(e.detail?.mode ?? ''); const hit = DISPLAY_MODES.find(d => d.toLowerCase().replace(/ /g, '') === m.replace(/ /g, '')); if (hit) setDisplay(vps[active], hit); });
+  window.addEventListener('togglegrid', () => { vps[active].flags['Grid'] = !vps[active].flags['Grid']; needs = true; });
+  const bboxFor = (g: THREE.Group) => { let b = child(g, 'bbox') as THREE.LineSegments | undefined; const m = child(g, 'mesh') as THREE.Mesh | undefined; if (!m) return undefined; if (!b || (b as any)._src !== m.geometry) { if (b) g.remove(b); m.geometry.computeBoundingBox(); const bb = m.geometry.boundingBox!; const e = new THREE.EdgesGeometry(new THREE.BoxGeometry(bb.max.x - bb.min.x, bb.max.y - bb.min.y, bb.max.z - bb.min.z)); b = new THREE.LineSegments(e, new THREE.LineBasicMaterial({ color: SI.geometry })); b.position.copy(bb.getCenter(new THREE.Vector3())); (b as any)._kind = 'bbox'; (b as any)._src = m.geometry; g.add(b); } return b; };
+  const hiddenLineMat = new THREE.MeshBasicMaterial({ color: SI.background, polygonOffset: true, polygonOffsetFactor: 1.5, polygonOffsetUnits: 2 });
+  const constantMats = new Map<THREE.Material, THREE.Material>();
+  const TYPE_FLAG: Record<string, string> = { light: 'Lights', camera: 'Cameras', null: 'Nulls', implicit: 'Implicit Geometry', lattice: 'Lattices', root: 'Chains', bone: 'Chains', eff: 'Chains' };
   const prepCam = (vp: Viewport, r: { w: number; h: number }) => { const c = vp.camera as any; if (vp.kind === 'persp') c.aspect = r.w / r.h; else { const z = c._zoom ?? 20, a = r.w / r.h; c.left = -z * a; c.right = z * a; c.top = z; c.bottom = -z; } c.updateProjectionMatrix(); c.updateMatrixWorld(); };
+  const normalsObj = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: SI.vertex })); scene.add(normalsObj);
+  const centersObj = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: SI.ctrl, size: 6, sizeAttenuation: false, depthTest: false })); scene.add(centersObj);
+  const syncNormals = (vp: Viewport) => {
+    normalsObj.visible = !!vp.flags['Normals'] || !!vp.flags['Polygon Normals']; if (!normalsObj.visible) return;
+    const pts: number[] = [];
+    for (const o of app.selectedObjects) { const m = o.primitive?.mesh(); if (!m) continue; const M = o.globalMatrix(); const n = vertexNormalsOf(m);
+      if (vp.flags['Normals']) for (let i = 0; i < m.positions.length; i += 3) { const p = new THREE.Vector3(m.positions[i], m.positions[i + 1], m.positions[i + 2]).applyMatrix4(M); const q = p.clone().add(new THREE.Vector3(n[i], n[i + 1], n[i + 2]).transformDirection(M).multiplyScalar(0.5)); pts.push(p.x, p.y, p.z, q.x, q.y, q.z); }
+      if (vp.flags['Polygon Normals']) for (let t = 0; t < m.indices.length; t += 3) { const a = m.indices[t] * 3, b = m.indices[t + 1] * 3, c = m.indices[t + 2] * 3; const A = new THREE.Vector3(m.positions[a], m.positions[a + 1], m.positions[a + 2]), B = new THREE.Vector3(m.positions[b], m.positions[b + 1], m.positions[b + 2]), C = new THREE.Vector3(m.positions[c], m.positions[c + 1], m.positions[c + 2]); const ctr = A.clone().add(B).add(C).divideScalar(3).applyMatrix4(M); const nn = B.clone().sub(A).cross(C.clone().sub(A)).normalize().transformDirection(M).multiplyScalar(0.5); pts.push(ctr.x, ctr.y, ctr.z, ctr.x + nn.x, ctr.y + nn.y, ctr.z + nn.z); } }
+    normalsObj.geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pts), 3)); normalsObj.geometry.computeBoundingSphere();
+  };
+  const vertexNormalsOf = (m: MeshData): Float32Array => { const n = new Float32Array(m.positions.length); for (let t = 0; t < m.indices.length; t += 3) { const a = m.indices[t], b = m.indices[t + 1], c = m.indices[t + 2]; const A = new THREE.Vector3().fromArray(m.positions, a * 3), B = new THREE.Vector3().fromArray(m.positions, b * 3), C = new THREE.Vector3().fromArray(m.positions, c * 3); const nn = B.sub(A).cross(C.sub(A)); for (const i of [a, b, c]) { n[i * 3] += nn.x; n[i * 3 + 1] += nn.y; n[i * 3 + 2] += nn.z; } } for (let i = 0; i < n.length; i += 3) { const l = Math.hypot(n[i], n[i + 1], n[i + 2]) || 1; n[i] /= l; n[i + 1] /= l; n[i + 2] /= l; } return n; };
+  const syncCenters = (vp: Viewport) => { centersObj.visible = !!vp.flags['Centers']; if (!centersObj.visible) return; const pts: number[] = []; for (const o of app.scene.allObjects()) if (o.visible) { const v = new THREE.Vector3().setFromMatrixPosition(o.globalMatrix()); pts.push(v.x, v.y, v.z); } centersObj.geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pts), 3)); centersObj.geometry.computeBoundingSphere(); };
+  const syncNames = (vp: Viewport, r: { x: number; y: number; w: number; h: number }) => {
+    const host = vp.head.labels; if (!vp.flags['Name']) { if (host.childElementCount) host.innerHTML = ''; return; }
+    host.innerHTML = '';
+    for (const o of app.scene.allObjects()) { if (!o.visible) continue; const v = new THREE.Vector3().setFromMatrixPosition(o.globalMatrix()).project(vp.camera); if (v.z > 1) continue; const s = document.createElement('span'); s.className = 'vp-name'; s.textContent = o.name; s.style.left = ((v.x + 1) / 2) * r.w + 4 + 'px'; s.style.top = ((1 - v.y) / 2) * r.h - 6 + 'px'; host.appendChild(s); }
+  };
   const frameLoop = () => {
     requestAnimationFrame(frameLoop);
     if (!needs) return; needs = false;
@@ -250,10 +310,24 @@ export function viewManager(app: App, host: HTMLElement) {
       const r = rect(i); if (r.w <= 0 || r.h <= 0) return;
       renderer.setViewport(r.x, H - r.y - r.h, r.w, r.h); renderer.setScissor(r.x, H - r.y - r.h, r.w, r.h);
       prepCam(vp, r);
-      const shaded = vp.display !== 'wireframe' && vp.display !== 'bounding box';
-      for (const g of nodes.values()) for (const ch of g.children) { const k = (ch as any)._kind; if (k === 'mesh') { ch.visible = shaded; (ch as THREE.Mesh).material = vp.display === 'textured' ? (ch as any)._matTextured : (ch as any)._matShaded; } else if (k === 'wire') ch.visible = !shaded || !!(ch as any)._selected; }
-      scaleGizmo(vp, r);
+      const d = vp.display; const shaded = d !== 'wireframe' && d !== 'bounding box';
+      grid.visible = vp.flags['Grid']; axesH.visible = vp.flags['Grid'];
+      for (const [o, g] of nodes) {
+        const f = TYPE_FLAG[o.type] ?? (o.primitive?.type === 'crvlist' ? 'Curves' : o.primitive?.type === 'polymsh' || o.primitive?.type === 'surfmsh' ? '3D Geometry' : '');
+        g.visible = o.visible && (f ? vp.flags[f] !== false : true);
+        for (const ch of g.children) { const k = (ch as any)._kind;
+          if (k === 'mesh') { ch.visible = shaded; const m = ch as THREE.Mesh; const base = d === 'textured' || d === 'texture decal' || d === 'realtime shaders' ? (ch as any)._matTextured : (ch as any)._matShaded;
+            if (d === 'hidden line') m.material = hiddenLineMat; else if (d === 'constant') { let c = constantMats.get(base); if (!c) { c = new THREE.MeshBasicMaterial({ color: (base as any).color ?? 0xb3b3b3, polygonOffset: true, polygonOffsetFactor: 1.5, polygonOffsetUnits: 2 }); constantMats.set(base, c); } m.material = c; } else m.material = base;
+            if (vp.flags['XRay Surfaces']) { (m.material as THREE.Material).transparent = true; (m.material as THREE.Material).opacity = 0.35; } else if ((m.material as any)._xrayed) { (m.material as THREE.Material).transparent = false; (m.material as THREE.Material).opacity = 1; } (m.material as any)._xrayed = vp.flags['XRay Surfaces']; }
+          else if (k === 'wire') ch.visible = d === 'wireframe' || d === 'hidden line' || (shaded && !!(ch as any)._selected);
+          else if (k === 'bbox') ch.visible = d === 'bounding box';
+        }
+        if (d === 'bounding box') { const b = bboxFor(g); if (b) b.visible = true; }
+      }
+      allPoints.visible = vp.flags['Points'] || app.selMode === 'point' || !!app.activeTool?.pickKind;
+      scaleGizmo(vp, r); syncNormals(vp); syncCenters(vp);
       renderer.render(scene, vp.camera);
+      syncNames(vp, r);
     });
   };
   frameLoop();
@@ -466,7 +540,7 @@ export function viewManager(app: App, host: HTMLElement) {
   });
   renderer.domElement.addEventListener('wheel', (e) => {
     const at = vpAt(e); if (!at) return; e.preventDefault();
-    const vp = vps[at.i], cam = vp.camera as any, f = 1 + Math.sign(e.deltaY) * 0.1;
+    const vp = vps[at.i], cam = vp.camera as any, f = 1 + Math.sign(e.deltaY) * Math.min(0.5, ((window as any).__wheelRate ?? 0.2) * 0.5);
     if (vp.kind === 'ortho') cam._zoom = Math.max(0.5, (cam._zoom ?? 20) * f); else { const d = cam.position.clone().sub(orbit.target); cam.position.copy(orbit.target).add(d.multiplyScalar(f)); }
     needs = true;
   }, { passive: false });
@@ -478,11 +552,11 @@ export function viewManager(app: App, host: HTMLElement) {
   app.events.on('scene', sync); app.events.on('selection', sync); app.events.on('params', sync); app.events.on('frame', sync);
   window.addEventListener('resize', resize);
   sync();
-  const frameBox = (objs: X3DObject[]) => {
+  const frameBox = (objs: X3DObject[], centerOnly = false) => {
     const box = new THREE.Box3();
     for (const o of objs) { const pts = o.primitive ? geomPoints(o.primitive.geom()) : null; const M = o.globalMatrix(); if (pts) for (let i = 0; i < pts.length; i += 3) box.expandByPoint(new THREE.Vector3(pts[i], pts[i + 1], pts[i + 2]).applyMatrix4(M)); else box.expandByPoint(new THREE.Vector3().setFromMatrixPosition(M)); }
     if (box.isEmpty()) return; const c = box.getCenter(new THREE.Vector3()); const size = Math.max(box.getSize(new THREE.Vector3()).length(), 2);
-    for (const vp of vps) { const cam = vp.camera as any; if (vp.kind === 'ortho') { const dir = cam.getWorldDirection(new THREE.Vector3()); cam.position.copy(c).sub(dir.multiplyScalar(100)); cam._zoom = size * 0.6; cam.lookAt(c); } else { const d = cam.position.clone().sub(orbit.target).normalize().multiplyScalar(size * 1.2); orbit.target.copy(c); cam.position.copy(c).add(d); cam.lookAt(c); } }
+    for (const vp of vps) { const cam = vp.camera as any; if (vp.kind === 'ortho') { const dir = cam.getWorldDirection(new THREE.Vector3()); cam.position.copy(c).sub(dir.multiplyScalar(100)); if (!centerOnly) cam._zoom = size * 0.6; cam.lookAt(c); } else { const d = cam.position.clone().sub(orbit.target); if (!centerOnly) d.normalize().multiplyScalar(size * 1.2); orbit.target.copy(c); cam.position.copy(c).add(d); cam.lookAt(c); } }
     needs = true;
   };
   window.addEventListener('framesel', () => frameBox(app.selectedObjects.length ? app.selectedObjects : [...app.scene.allObjects()].filter(o => o.visible)));

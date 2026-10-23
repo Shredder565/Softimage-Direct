@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="viewdefinition" xsi_version="3.0" syntax_version="1.0">
+	<viewdef clsid="{2BC1E470-3227-11D2-8722-00A0C906816C}" name="Script Editor">
+		<definition maxinstances="1" acceptfocus="true" private="false" defaultsize="50,50,485,550" cmdmap="{2BC1E470-3227-11D2-8722-00A0C906816C}" supportedtypes="4" category="Scripting"> </definition>
+	</viewdef>
+</xsi_file>

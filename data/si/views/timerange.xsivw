@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="viewdefinition" xsi_version="3.0" syntax_version="1.0">
+	<viewdef clsid="{21B3AE33-0616-44de-87B2-0CFFCEE065AD}" name="Timerange">
+		<definition maxinstances="10000" acceptfocus="true" private="false" defaultsize="50,50,685,100" cmdmap="{00000000-0000-0000-0000-000000000000}" supportedtypes="2" category="Animation"> </definition>
+	</viewdef>
+</xsi_file>

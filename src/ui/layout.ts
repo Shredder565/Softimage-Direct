@@ -3,14 +3,38 @@
 // frames host a registered view type by name.
 export type LayoutNode =
   | { kind: 'frameset'; orientation: 'horizontal' | 'vertical'; sizes: string[]; children: LayoutNode[]; name?: string; splitter?: boolean }
-  | { kind: 'switcher'; name: string; buttonSide: 'top' | 'bottom' | 'left'; children: LayoutNode[]; labels?: string[] }
-  | { kind: 'frame'; name: string; view: string; label?: string };
+  | { kind: 'switcher'; name: string; buttonSide: 'top' | 'bottom' | 'left'; children: LayoutNode[]; labels?: string[]; icons?: (string | undefined)[]; active?: number }
+  | { kind: 'frame'; name: string; view: string; label?: string; hidden?: boolean };
 
 export type ViewFactory = (host: HTMLElement) => void | { destroy?: () => void };
 
 export class LayoutEngine {
   readonly views = new Map<string, ViewFactory>();
+  iconFactory?: (name: string) => HTMLElement;
   registerView(type: string, f: ViewFactory) { this.views.set(type, f); }
+  /** Activate the tray/switcher pane whose button carries `label` (a frame's displayname or a frameset's name). */
+  activate(switcherName: string, label: string) {
+    const sw = document.querySelector<HTMLElement>(`.switcher[data-name="${switcherName}"]`); if (!sw) return false;
+    const bar = sw.querySelector<HTMLElement>(':scope > .switcher-bar'); const b = bar && Array.from(bar.children).find(c => (c as HTMLElement).dataset.label === label) as HTMLElement | undefined;
+    if (b) b.click(); return !!b;
+  }
+  /** Bring a frame (by layout name, e.g. "explorer") into view: activates every enclosing switcher pane and unhides it. */
+  showFrame(name: string) {
+    const el = document.querySelector<HTMLElement>(`.frame[data-name="${name}"]`); if (!el) return false;
+    el.classList.remove('hidden'); let p: HTMLElement | null = el.parentElement;
+    while (p) {
+      if (p.classList.contains('switcher-pane')) { const body = p.parentElement!; const sw = body.parentElement!; const i = Array.from(body.children).indexOf(p); (sw.querySelector<HTMLElement>(':scope > .switcher-bar')!.children[i] as HTMLElement)?.click(); }
+      if (p.classList.contains('frameset')) applyTracks(p, p.classList.contains('horizontal') ? 'horizontal' : 'vertical');
+      p = p.parentElement;
+    }
+    window.dispatchEvent(new Event('resize')); return true;
+  }
+  setFrameVisible(name: string, visible?: boolean) {
+    const el = document.querySelector<HTMLElement>(`.frame[data-name="${name}"], .switcher[data-name="${name}"], .frameset[data-name="${name}"]`); if (!el) return false;
+    const v = visible ?? el.classList.contains('hidden'); el.classList.toggle('hidden', !v);
+    const p = el.parentElement; if (p?.classList.contains('frameset')) applyTracks(p, p.classList.contains('horizontal') ? 'horizontal' : 'vertical');
+    window.dispatchEvent(new Event('resize')); return v;
+  }
 
   build(node: LayoutNode, host: HTMLElement) {
     host.appendChild(this.make(node));
@@ -19,23 +43,20 @@ export class LayoutEngine {
   private make(node: LayoutNode): HTMLElement {
     if (node.kind === 'frame') {
       const el = div('frame', node.name);
-      el.dataset.view = node.view;
+      el.dataset.view = node.view; el.dataset.label = node.label ?? node.view; if (node.hidden) el.classList.add('hidden');
       const f = this.views.get(node.view);
       if (f) f(el); else el.innerHTML = `<div class="view-placeholder">${node.label ?? node.view}</div>`;
       return el;
     }
     if (node.kind === 'frameset') {
       const el = div('frameset ' + node.orientation, node.name);
-      const sizes = node.sizes;
-      el.style.display = 'grid';
-      const tracks = sizes.map(s => s === '*' ? 'minmax(0,1fr)' : /^\d+%$/.test(s) ? s : `${s}px`).join(' ');
-      if (node.orientation === 'horizontal') { el.style.gridTemplateColumns = tracks; el.style.gridTemplateRows = 'minmax(0,1fr)'; }
-      else { el.style.gridTemplateRows = tracks; el.style.gridTemplateColumns = 'minmax(0,1fr)'; }
+      el.dataset.sizes = node.sizes.join(','); el.style.display = 'grid';
       node.children.forEach((c, i) => {
         const child = this.make(c);
         el.appendChild(child);
         if (node.splitter && i < node.children.length - 1) addSplitter(el, node.orientation, i);
       });
+      applyTracks(el, node.orientation);
       return el;
     }
     // switcher
@@ -45,16 +66,24 @@ export class LayoutEngine {
     const panes: HTMLElement[] = [];
     node.children.forEach((c, i) => {
       const pane = div('switcher-pane'); pane.appendChild(this.make(c)); panes.push(pane); body.appendChild(pane);
-      const b = document.createElement('button'); b.className = 'switcher-btn'; b.textContent = node.labels?.[i] ?? (c.kind === 'frame' ? (c.label ?? c.view) : (c.name ?? 'Tab'));
-      b.onclick = () => { panes.forEach((p, j) => p.classList.toggle('active', i === j)); Array.from(bar.children).forEach((x, j) => x.classList.toggle('active', i === j)); };
+      const b = document.createElement('button'); b.className = 'switcher-btn'; const label = node.labels?.[i] ?? (c.kind === 'frame' ? (c.label ?? c.view) : (c.name ?? 'Tab'));
+      b.dataset.label = label; b.title = label; const ic = node.icons?.[i]; if (ic && this.iconFactory) { b.appendChild(this.iconFactory(ic)); b.classList.add('icon'); } else b.textContent = label;
+      b.onclick = () => { panes.forEach((p, j) => p.classList.toggle('active', i === j)); Array.from(bar.children).forEach((x, j) => x.classList.toggle('active', i === j)); window.dispatchEvent(new Event('resize')); };
       bar.appendChild(b);
     });
-    panes[0]?.classList.add('active'); bar.children[0]?.classList.add('active');
+    const a0 = node.active ?? 0; panes[a0]?.classList.add('active'); bar.children[a0]?.classList.add('active');
     if (node.buttonSide === 'top' || node.buttonSide === 'left') { el.appendChild(bar); el.appendChild(body); } else { el.appendChild(body); el.appendChild(bar); }
     return el;
   }
 }
 
+/** Grid tracks from the frameset's declared sizes, skipping hidden children (Softimage "optional" panels). */
+function applyTracks(el: HTMLElement, orientation: 'horizontal' | 'vertical') {
+  const sizes = (el.dataset.sizes ?? '').split(','); const kids = Array.from(el.children).filter(c => !c.classList.contains('splitter')) as HTMLElement[];
+  const tracks = kids.map((k, i) => k.classList.contains('hidden') ? '0px' : sizes[i] === '*' || sizes[i] === undefined ? 'minmax(0,1fr)' : /^\d+%$/.test(sizes[i]) ? sizes[i] : `${sizes[i]}px`);
+  if (!tracks.some(t => t === 'minmax(0,1fr)')) { const i = tracks.findIndex(t => t !== '0px'); if (i >= 0) tracks[i] = 'minmax(0,1fr)'; }
+  if (orientation === 'horizontal') { el.style.gridTemplateColumns = tracks.join(' '); el.style.gridTemplateRows = 'minmax(0,1fr)'; } else { el.style.gridTemplateRows = tracks.join(' '); el.style.gridTemplateColumns = 'minmax(0,1fr)'; }
+}
 function div(cls: string, name?: string) { const d = document.createElement('div'); d.className = cls; if (name) d.dataset.name = name; return d; }
 
 function addSplitter(grid: HTMLElement, orientation: 'horizontal' | 'vertical', index: number) {
@@ -85,54 +114,18 @@ function addSplitter(grid: HTMLElement, orientation: 'horizontal' | 'vertical', 
   };
 }
 
-/** Softimage default layout (from Application/layouts/default.xsily), simplified to the panels implemented so far. */
-export const DEFAULT_LAYOUT: LayoutNode = {
-  kind: 'frameset', orientation: 'vertical', sizes: ['*', '48'], children: [
-    {
-      kind: 'frameset', orientation: 'horizontal', name: 'main', sizes: ['*', '300'], splitter: true, children: [
-        {
-          kind: 'frameset', orientation: 'horizontal', name: 'VM_Frameset', sizes: ['299', '*'], splitter: true, children: [
-            {
-              kind: 'switcher', name: 'module_menu', buttonSide: 'bottom', labels: ['Toolbar', 'Explorer', 'Script Log'], children: [
-                { kind: 'frame', name: 'toolbar_panel', view: 'Toolbar Panel' },
-                { kind: 'frame', name: 'explorer', view: 'Explorer' },
-                { kind: 'frame', name: 'scripts', view: 'Script Log' },
-              ],
-            },
-            {
-              kind: 'frameset', orientation: 'vertical', sizes: ['*', '26', '22'], children: [
-                { kind: 'frame', name: 'vm', view: 'View Manager' },
-                { kind: 'frame', name: 'timeline', view: 'Timeline' },
-                { kind: 'frame', name: 'timerange', view: 'Timerange' },
-              ],
-            },
-          ],
-        },
-        {
-          kind: 'switcher', name: 'mcp', buttonSide: 'bottom', labels: ['MCP', 'KP/L', 'PPG'], children: [
-            {
-              kind: 'frameset', orientation: 'vertical', sizes: ['*'], children: [
-                { kind: 'frame', name: 'mcp_panel', view: 'MCP' },
-              ],
-            },
-            {
-              kind: 'frameset', orientation: 'vertical', sizes: ['*', '40%'], splitter: true, children: [
-                { kind: 'frame', name: 'keying_panel', view: 'Keying Panel' },
-                { kind: 'frame', name: 'scene_layer_manager', view: 'Layer Control' },
-              ],
-            },
-            { kind: 'frame', name: 'property_editor', view: 'Property Editor' },
-          ],
-        },
-      ],
-    },
-    {
-      kind: 'frameset', orientation: 'horizontal', name: 'playback', sizes: ['170', '*', '290', '270'], children: [
-        { kind: 'frame', name: 'panel_switcher', view: 'Panel Switcher' },
-        { kind: 'frame', name: 'command_line', view: 'Command Line' },
-        { kind: 'frame', name: 'playback_panel', view: 'Playback Panel' },
-        { kind: 'frame', name: 'animation_panel', view: 'Animation Panel' },
-      ],
-    },
-  ],
-};
+import siLayout from '../data/si/layout_default.json';
+type SiNode = { kind: string; name?: string; displayname?: string; type?: string; bitmap?: string; optional?: string; orientation?: string; splitter?: string; sizes?: string[]; buttonside?: string; active?: number; children?: SiNode[] };
+/** Frame types in default.xsily -> registered view names; anything else shows a placeholder with its Softimage name. */
+const VIEW_OF: Record<string, string> = { 'Toolbar Panel': 'Toolbar Panel', 'Explorer': 'Explorer', 'Scripts': 'Script Log', 'View Manager': 'View Manager', 'Timeline': 'Timeline', 'Timerange': 'Timerange', 'Keying Panel': 'Keying Panel', 'Layer Control': 'Layer Control', 'Property Editor': 'Property Editor', 'Panel Switcher': 'Panel Switcher', 'Command Line': 'Command Line', 'Playback Panel': 'Playback Panel', 'Animation Panel': 'Animation Panel', 'Main Shelf': 'Main Shelf', 'Mini Transform Panel': 'Mini Transform Panel', 'Preset Manager': 'Preset Manager', 'Palettes': 'Palettes', 'Weight Paint Panel': 'Weight Paint Panel', 'Animation Layer Manager': 'Animation Layer Manager' };
+function convert(n: SiNode): LayoutNode {
+  if (n.kind === 'frame') return { kind: 'frame', name: n.name!, view: VIEW_OF[n.type!] ?? n.type!, label: n.displayname ?? n.type, hidden: n.optional === 'hidden' };
+  if (n.kind === 'switcher') {
+    if (n.type === 'panel') return { kind: 'frame', name: 'mcp_panel', view: 'MCP', label: 'MCP' }; // the five MCP panels stacked = our MCP view
+    const kids = n.children ?? [];
+    return { kind: 'switcher', name: n.name!, buttonSide: n.buttonside === 'top' ? 'top' : 'bottom', active: n.active ?? 0, children: kids.map(convert), labels: kids.map(k => k.displayname ?? (k.kind === 'frame' ? k.type! : k.name!)), icons: kids.map(k => k.bitmap) };
+  }
+  return { kind: 'frameset', name: n.name, orientation: n.orientation === 'horizontal' ? 'horizontal' : 'vertical', sizes: n.sizes ?? ['*'], splitter: n.splitter === 'movable', children: (n.children ?? []).map(convert) };
+}
+/** Softimage's default layout, converted 1:1 from Application/layouts/default.xsily (1282x959 reference sizes). */
+export const DEFAULT_LAYOUT: LayoutNode = convert((siLayout as any).tree);

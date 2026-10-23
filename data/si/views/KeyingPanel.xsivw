@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="viewdefinition" xsi_version="3.0" syntax_version="1.0">
+	<viewdef clsid="{1A32021D-D551-4b23-A5C1-4BD882B237F7}" name="Keying Panel">
+		<definition maxinstances="10000" acceptfocus="true" private="false" defaultsize="0,0,160,480" supportedtypes="4" category="Animation"> </definition>
+	</viewdef>
+</xsi_file>

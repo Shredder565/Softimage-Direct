@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="viewdefinition" xsi_version="3.0" syntax_version="1.0">
+	<viewdef clsid="{25C1D4E0-0196-11D3-AE8E-00A0243E3654}" name="Explorer">
+		<definition maxinstances="10000" acceptfocus="true" private="false" defaultsize="50,50,485,550" cmdmap="{25C1D4E0-0196-11D3-AE8E-00A0243E3654}" supportedtypes="6" category="General"> </definition>
+	</viewdef>
+</xsi_file>

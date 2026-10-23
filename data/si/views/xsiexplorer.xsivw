@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="viewdefinition" xsi_version="3.0" syntax_version="1.0">
+	<viewdef clsid="{BA75ACC4-5EF1-4052-B1C1-7B4698A3175B}" name="XSI Explorer">
+		<definition maxinstances="10000" acceptfocus="true" private="false" defaultsize="100,100,900,650" cmdmap="{BA75ACC4-5EF1-4052-B1C1-7B4698A3175B}" supportedtypes="6" category="General"> </definition>
+	</viewdef>
+</xsi_file>

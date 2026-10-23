@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<xsi_file type="Shelf" xsi_version="9.5.154.0" syntax_version="1.0">
+   <shelf_view name="Main Shelf" clsid="{854FECAE-7B60-4652-ACC0-19F6A0C609FC}">
+      <properties>
+         <showtabs>true</showtabs>
+      </properties>
+      <definition maxinstances="10000" acceptfocus="true" private="false" defaultsize="0,100,200,300" cmdmap="{00000000-0000-0000-0000-000000000000}" supportedtypes="6" category=""></definition>
+      <tabs layout="top" active="Main">
+         <tab label="Main" type="toolbar" userwidth="90">
+            <properties id="{2B4A0D09-2DF4-46F2-8CFF-1CD9223EA9DC}" name="" display_preset_as_small="False" display_as_text_only="False"></properties>
+            <item type="scriptbutton" label="Sphere" userwidth="36" userheight="36" bitmap="sphere" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Polygon Mesh&gt;Sphere">
+               <scripttext>&lt;![CDATA[set oSphere = CreatePrim (&quot;Sphere&quot;, &quot;MeshSurface&quot;)
+'oSphere.radius.Value = 4
+'oSphere.subdivu.Value = 8
+'oSphere.subdivv.Value = 8
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Cube" userwidth="36" userheight="36" bitmap="cube" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Polygon Mesh&gt;Cube">
+               <scripttext>&lt;![CDATA[set oCube = CreatePrim (&quot;Cube&quot;, &quot;MeshSurface&quot;)
+'oCube.length.Value = 4
+'oCube.subdivu.Value = 1
+'oCube.subdivv.Value = 1
+'oCube.subdivbase.Value = 1
+
+
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Grid" userwidth="36" userheight="36" bitmap="grid" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Polygon Mesh&gt;Grid">
+               <scripttext>&lt;![CDATA[Set oGrid = CreatePrim (&quot;Grid&quot;, &quot;MeshSurface&quot;)
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Null" userwidth="36" userheight="36" bitmap="null" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Null">
+               <scripttext>&lt;![CDATA[GetPrim &quot;Null&quot;
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Omni" userwidth="36" userheight="36" bitmap="lightpoint" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Light&gt;Point">
+               <scripttext>&lt;![CDATA[GetPrimLight &quot;Point.Preset&quot;, &quot;Point&quot;
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Cam" userwidth="36" userheight="36" bitmap="camera" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Camera&gt;Perspective">
+               <scripttext>&lt;![CDATA[GetPrimCamera]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Frame" userwidth="36" userheight="36" bitmap="framesel" scriptengine="VBScript" tooltip="Frame Selection (F) - Active Viewport">
+               <scripttext>&lt;![CDATA[
+                  vw = GetFocusedViewport
+                  if vw = &quot;A&quot; then
+                     FrameSelection false, false, 0
+                  elseif vw = &quot;B&quot; then
+                     FrameSelection false, false, 1
+                  elseif vw = &quot;C&quot; then
+                     FrameSelection false, false, 2
+                  elseif vw = &quot;D&quot; then
+                     FrameSelection false, false, 3
+                  end if]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="All" userwidth="36" userheight="36" bitmap="frameall" scriptengine="VBScript" tooltip="Frame All (A) - Active Viewport">
+               <scripttext>&lt;![CDATA[
+                  vw = GetFocusedViewport
+                  if vw = &quot;A&quot; then
+                     FrameSelection true, false, 0
+                  elseif vw = &quot;B&quot; then
+                     FrameSelection true, false, 1
+                  elseif vw = &quot;C&quot; then
+                     FrameSelection true, false, 2
+                  elseif vw = &quot;D&quot; then
+                     FrameSelection true, false, 3
+                  end if]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Reset" userwidth="36" userheight="36" bitmap="resetcamera" scriptengine="VBScript" tooltip="Reset Camera (R)  - Active Viewport">
+               <scripttext>&lt;![CDATA[
+                  vw = GetFocusedViewport
+                  if vw = &quot;A&quot; then
+                     CameraReset 0
+                  elseif vw = &quot;B&quot; then
+                     CameraReset 1
+                  elseif vw = &quot;C&quot; then
+                     CameraReset 2
+                  elseif vw = &quot;D&quot; then
+                     CameraReset 3
+                  end if]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Nav" userwidth="36" userheight="36" bitmap="navtool" scriptengine="VBScript" tooltip="Navigation Tool (S)">
+               <scripttext>&lt;![CDATA[set cmd = application.commands (&quot;Navigation Tool&quot;)
+cmd.execute]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Scl" userwidth="36" userheight="36" bitmap="scale" scriptengine="VBScript" tooltip="Scaling Tool (X)">
+               <scripttext>&lt;![CDATA[ScalingTool]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Rot" userwidth="36" userheight="36" bitmap="rotate" scriptengine="VBScript" tooltip="Rotation Tool (C)">
+               <scripttext>&lt;![CDATA[RotationTool]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Trans" userwidth="36" userheight="36" bitmap="translate" scriptengine="VBScript" tooltip="Translate Tool (V)">
+               <scripttext>&lt;![CDATA[TranslateTool]]&gt;</scripttext>
+            </item>
+            <item type="command" label="SRT" userwidth="36" userheight="36" bitmap="mini_srt" name="Mini Transform Panel"></item>
+            <item type="scriptbutton" label="Object" userwidth="36" userheight="36" bitmap="selectobj" scriptengine="VBScript" tooltip="Object Selection Mode (Spacebar)">
+               <scripttext>&lt;![CDATA[
+                  ActivateObjectSelTool
+                  if GetValue(&quot;preferences.TransformProperties.transformmanipulators&quot;) = True And GetValue(&quot;preferences.TransformProperties.transformmanipdefaultxfo&quot;) &lt;&gt; 3 then
+                     ActivateSelectTool
+                  end if]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Point" userwidth="36" userheight="36" bitmap="selectpoint" scriptengine="VBScript" tooltip="Point Selection Mode (T)">
+               <scripttext>&lt;![CDATA[
+                  ActivateVertexSelTool
+                  if GetValue(&quot;preferences.TransformProperties.transformmanipulators&quot;) = True And GetValue(&quot;preferences.TransformProperties.transformmanipdefaultxfo&quot;) &lt;&gt; 3 then
+                     ActivateSelectTool
+                  end if]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Edge" userwidth="36" userheight="36" bitmap="selectedge" scriptengine="VBScript" tooltip="Edge Selection Mode (E)">
+               <scripttext>&lt;![CDATA[
+                  ActivateEdgeSelTool
+                  if GetValue(&quot;preferences.TransformProperties.transformmanipulators&quot;) = True And GetValue(&quot;preferences.TransformProperties.transformmanipdefaultxfo&quot;) &lt;&gt; 3 then
+                     ActivateSelectTool
+                  end if]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Poly" userwidth="36" userheight="36" bitmap="selectpoly" scriptengine="VBScript" tooltip="Polygon Selection Mode (Y)">
+               <scripttext>&lt;![CDATA[
+                  ActivatePolygonSelTool
+                  if GetValue(&quot;preferences.TransformProperties.transformmanipulators&quot;) = True And GetValue(&quot;preferences.TransformProperties.transformmanipdefaultxfo&quot;) &lt;&gt; 3 then
+                     ActivateSelectTool
+                  end if]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Wire" userwidth="36" userheight="36" bitmap="wireframe" scriptengine="VBScript" tooltip="Set Display Mode to Wireframe (Active Viewport)">
+               <scripttext>&lt;![CDATA[SetDisplayMode getviewcamera (-1) , &quot;wireframe&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Hid" userwidth="36" userheight="36" bitmap="hiddenline" scriptengine="VBScript" tooltip="Set Display Mode to Hidden Line (Active Viewport)">
+               <scripttext>&lt;![CDATA[SetDisplayMode getviewcamera (-1) , &quot;hiddenline&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Shade" userwidth="36" userheight="36" bitmap="shaded" scriptengine="VBScript" tooltip="Set Display Mode to Shaded (Active Viewport)">
+               <scripttext>&lt;![CDATA[SetDisplayMode getviewcamera (-1) , &quot;shaded&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Txtrd" userwidth="36" userheight="36" bitmap="textured" scriptengine="VBScript" tooltip="Set Display Mode to Textured (Active Viewport)">
+               <scripttext>&lt;![CDATA[SetDisplayMode getviewcamera (-1) , &quot;textured&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Decal" userwidth="36" userheight="36" bitmap="texturedecal" scriptengine="VBScript" tooltip="Set Display Mode to Texture Decal (Active Viewport)">
+               <scripttext>&lt;![CDATA[SetDisplayMode getviewcamera (-1) , &quot;texturedecal&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Stats" userwidth="36" userheight="36" bitmap="stats" scriptengine="VBScript" tooltip="Show Scene Stats (Active Viewport)">
+               <scripttext>&lt;![CDATA[oCam = GetViewCamera(-1) &amp; &quot;.camvis.&quot;
+if GetValue (oCam &amp; &quot;selectioninfo&quot;) = True then
+	SetValue oCam &amp; &quot;refreshrate,&quot; &amp; oCam &amp; &quot;currenttime,&quot; &amp; oCam &amp; &quot;selectioninfo,&quot; &amp; oCam &amp; &quot;sceneinfo&quot;, False
+Else
+	SetValue oCam &amp; &quot;refreshrate,&quot; &amp; oCam &amp; &quot;currenttime,&quot; &amp; oCam &amp; &quot;selectioninfo,&quot; &amp; oCam &amp; &quot;sceneinfo&quot;, True
+End if]]&gt;</scripttext>
+            </item>
+            <item type="command" label="Grid" userwidth="36" userheight="36" bitmap="displaygrid" name="Show/Hide Grid"></item>
+            <item type="line_break"></item>
+            <item type="scriptbutton" label="Polygons" userwidth="108" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[Set oView = Desktop.ActiveLayout.CreateView( &quot;Menu Window&quot;, &quot;title is not used&quot; )
+oView.Move 200, 160 
+oView.SetAttributeValue &quot;TargetContent&quot;, &quot;ModelGetPrimitive&amp;Polygon Mesh&quot; ]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Primitives" userwidth="108" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[Set oView = Desktop.ActiveLayout.CreateView( &quot;Menu Window&quot;, &quot;title is not used&quot; )
+oView.Move 300, 160 
+oView.SetAttributeValue &quot;TargetContent&quot;, &quot;ModelGetPrimitive&quot; 
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Navigation" userwidth="144" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[InspectObj &quot;preferences.camera&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Transform" userwidth="144" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[InspectObj &quot;preferences.TransformProperties&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Select" userwidth="144" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[InspectObj &quot;preferences.Select&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Display" userwidth="180" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[inspectobj getviewcamera (-1) &amp; &quot;.camdisp&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Visibility" userwidth="72" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[inspectobj getviewcamera (-1) &amp; &quot;.camvis&quot;]]&gt;</scripttext>
+            </item>
+         </tab>
+         <tab label="General" type="toolbar" userwidth="90">
+            <properties id="{EBC76203-2382-4799-8D63-C60ACBB476E5}" name="" display_preset_as_small="False" display_as_text_only="False"></properties>
+            <item type="scriptbutton" label="Dup" userwidth="36" userheight="36" bitmap="duplicate" scriptengine="VBScript" tooltip="Duplicate Selection (Ctrl+D)">
+               <scripttext>&lt;![CDATA[set cmd = application.commands (&quot;Duplicate&quot;)
+cmd.execute]]&gt;</scripttext>
+            </item>
+            <item type="command" label="DupSym" userwidth="36" userheight="36" bitmap="DuplicateSymmetry" name="Duplicate symmetry"></item>
+            <item type="scriptbutton" label="Exp" userwidth="36" userheight="36" bitmap="Explorer" scriptengine="VBScript" tooltip="Explorer (8)">
+               <scripttext>&lt;![CDATA[set layout = Application.Desktop.ActiveLayout
+set v = layout.CreateView ( &quot;Explorer&quot;, &quot;Explorer&quot; )
+v.Move 600, 140
+v.resize 240, 380]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Schem" userwidth="36" userheight="36" bitmap="Schematic" scriptengine="VBScript" tooltip="Schematic (9)">
+               <scripttext>&lt;![CDATA[set layout = Application.Desktop.ActiveLayout
+set v = layout.CreateView ( &quot;Schematic&quot;, &quot;Schematic&quot; )
+v.Move 200, 140
+v.resize 440, 380]]&gt;</scripttext>
+            </item>
+            <item type="command" label="Scene" userwidth="36" userheight="36" bitmap="sceneinfo" name="Info Scene"></item>
+            <item type="command" label="Info" userwidth="36" userheight="36" bitmap="selectinfo" name="Info Selection"></item>
+            <item type="scriptbutton" label="Hide" userwidth="36" userheight="36" bitmap="hide" scriptengine="VBScript" tooltip="Hide/UnHide Selection (H)">
+               <scripttext>&lt;![CDATA[ToggleVisibility]]&gt;</scripttext>
+            </item>
+            <item type="command" label="UnHide" userwidth="36" userheight="36" bitmap="unhide" name="Unhide All Objects"></item>
+            <item type="line_break"></item>
+            <item type="scriptbutton" label="Duplicate" userwidth="72" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[InspectObj &quot;preferences.duplicate&quot;
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Views" userwidth="72" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[inspectobj &quot;preferences.explorer, preferences.schematic&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Info" userwidth="72" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[inspectobj &quot;preferences.general, preferences.interaction&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Hide" userwidth="72" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[inspectobj &quot;preferences.Display&quot;]]&gt;</scripttext>
+            </item>
+         </tab>
+         <tab label="Primitives" type="toolbar" userwidth="90">
+            <properties id="{6C865671-0C6A-4A7B-BE7C-74FCE9E6E9D0}" name="" display_preset_as_small="False" display_as_text_only="False"></properties>
+            <item type="scriptbutton" label="Sphere" userwidth="36" userheight="36" bitmap="sphere" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Polygon Mesh&gt;Sphere">
+               <scripttext>&lt;![CDATA[CreatePrim &quot;Sphere&quot;, &quot;MeshSurface&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Cube" userwidth="36" userheight="36" bitmap="cube" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Polygon Mesh&gt;Cube">
+               <scripttext>&lt;![CDATA[CreatePrim &quot;Cube&quot;, &quot;MeshSurface&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Grid" userwidth="36" userheight="36" bitmap="grid" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Polygon Mesh&gt;Grid">
+               <scripttext>&lt;![CDATA[CreatePrim &quot;Grid&quot;, &quot;MeshSurface&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Cone" userwidth="36" userheight="36" bitmap="cone" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Polygon Mesh&gt;Cone">
+               <scripttext>&lt;![CDATA[CreatePrim &quot;Cone&quot;, &quot;MeshSurface&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Cylinder" userwidth="36" userheight="36" bitmap="cylinder" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Polygon Mesh&gt;Cylinder">
+               <scripttext>&lt;![CDATA[CreatePrim &quot;Cylinder&quot;, &quot;MeshSurface&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Torus" userwidth="36" userheight="36" bitmap="torus" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Polygon Mesh&gt;Torus">
+               <scripttext>&lt;![CDATA[CreatePrim &quot;Torus&quot;, &quot;MeshSurface&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Disc" userwidth="36" userheight="36" bitmap="disc" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Polygon Mesh&gt;Disc">
+               <scripttext>&lt;![CDATA[CreatePrim &quot;Disc&quot;, &quot;MeshSurface&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Null" userwidth="36" userheight="36" bitmap="null" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Null">
+               <scripttext>&lt;![CDATA[GetPrim &quot;Null&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Cam" userwidth="36" userheight="36" bitmap="camera" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Camera&gt;Perspective">
+               <scripttext>&lt;![CDATA[GetPrimCamera]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Cam" userwidth="36" userheight="36" bitmap="camera_stereo" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Camera&gt;Stereo">
+               <scripttext>&lt;![CDATA[GetPrimStereoCamera]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Omni" userwidth="36" userheight="36" bitmap="lightpoint" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Light&gt;Point">
+               <scripttext>&lt;![CDATA[GetPrimLight &quot;Point.Preset&quot;, &quot;Point&quot;
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Spot" userwidth="36" userheight="36" bitmap="lightspot" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Light&gt;Spot">
+               <scripttext>&lt;![CDATA[GetPrimLight &quot;Spot.Preset&quot;, &quot;Spot&quot;
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Infinite" userwidth="36" userheight="36" bitmap="lightinfinite" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Light&gt;Infinite">
+               <scripttext>&lt;![CDATA[GetPrimLight &quot;Infinite.Preset&quot;, &quot;Infinite&quot;
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Square" userwidth="36" userheight="36" bitmap="Square" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Curve&gt;Square">
+               <scripttext>&lt;![CDATA[CreatePrim &quot;Square&quot;, &quot;NurbsCurve&quot;
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Circle" userwidth="36" userheight="36" bitmap="Circle" scriptengine="VBScript" tooltip="Get&gt;Primitive&gt;Curve&gt;Circle">
+               <scripttext>&lt;![CDATA[CreatePrim &quot;Circle&quot;, &quot;NurbsCurve&quot;
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Linear" userwidth="36" userheight="36" bitmap="drawlinear" scriptengine="VBScript" tooltip="Draw Linear Curve Tool">
+               <scripttext>&lt;![CDATA[set oCmd = Application.Commands (&quot;Linear Curve Tool&quot;)
+oCmd.execute]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="NURBs" userwidth="36" userheight="36" bitmap="drawnurbs" scriptengine="VBScript" tooltip="Draw NURBs Curve Tool">
+               <scripttext>&lt;![CDATA[set oCmd = Application.Commands (&quot;CV Nurbs Curve Tool&quot;)
+oCmd.execute]]&gt;</scripttext>
+            </item>
+            <item type="line_break"></item>
+            <item type="scriptbutton" label="Polygon Meshes" userwidth="252" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[Set oView = Desktop.ActiveLayout.CreateView( &quot;Menu Window&quot;, &quot;title is not used&quot; )
+oView.Move 200, 160 
+oView.SetAttributeValue &quot;TargetContent&quot;, &quot;ModelGetPrimitive&amp;Polygon Mesh&quot; ]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Null" userwidth="36" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[Set oView = Desktop.ActiveLayout.CreateView( &quot;Menu Window&quot;, &quot;title is not used&quot; )
+oView.Move 400, 160
+oView.SetAttributeValue &quot;TargetContent&quot;, &quot;ModelGetPrimitive&quot; 
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Cameras" userwidth="72" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[Set oView = Desktop.ActiveLayout.CreateView( &quot;Menu Window&quot;, &quot;title is not used&quot; )
+oView.Move 500, 160 
+oView.SetAttributeValue &quot;TargetContent&quot;, &quot;ModelGetPrimitiveCamera&quot; 
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Lights" userwidth="108" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[Set oView = Desktop.ActiveLayout.CreateView( &quot;Menu Window&quot;, &quot;title is not used&quot; )
+oView.Move 500, 160 
+oView.SetAttributeValue &quot;TargetContent&quot;, &quot;ModelGetPrimitiveLight&quot; 
+]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Curves" userwidth="72" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[Set oView = Desktop.ActiveLayout.CreateView( &quot;Menu Window&quot;, &quot;title is not used&quot; )
+oView.Move 660, 160 
+oView.SetAttributeValue &quot;TargetContent&quot;, &quot;ModelGetPrimitive&amp;curve&quot; 
+oView.Resize 120,70]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Draw" userwidth="72" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[Set oView = Desktop.ActiveLayout.CreateView( &quot;Menu Window&quot;, &quot;title is not used&quot; )
+oView.Move 660, 160 
+oView.SetAttributeValue &quot;TargetContent&quot;, &quot;ModelCreateCurve&quot; ]]&gt;</scripttext>
+            </item>
+         </tab>
+         <tab label="Selection" type="toolbar" userwidth="90">
+            <properties id="{16270025-DC97-4DDC-BC99-09F73E92985D}" name="" display_preset_as_small="False" display_as_text_only="False"></properties>
+            <item type="scriptbutton" label="Object" userwidth="36" userheight="36" bitmap="selectobj" scriptengine="VBScript" tooltip="Object Selection Mode (Spacebar)">
+               <scripttext>&lt;![CDATA[
+                  ActivateObjectSelTool
+                  if GetValue(&quot;preferences.TransformProperties.transformmanipulators&quot;) = True And GetValue(&quot;preferences.TransformProperties.transformmanipdefaultxfo&quot;) &lt;&gt; 3 then
+                     ActivateSelectTool
+                  end if]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Point" userwidth="36" userheight="36" bitmap="selectpoint" scriptengine="VBScript" tooltip="Point Selection Mode (T)">
+               <scripttext>&lt;![CDATA[
+                  ActivateVertexSelTool
+                  if GetValue(&quot;preferences.TransformProperties.transformmanipulators&quot;) = True And GetValue(&quot;preferences.TransformProperties.transformmanipdefaultxfo&quot;) &lt;&gt; 3 then
+                     ActivateSelectTool
+                  end if]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Edge" userwidth="36" userheight="36" bitmap="selectedge" scriptengine="VBScript" tooltip="Edge Selection Mode (E)">
+               <scripttext>&lt;![CDATA[
+                  ActivateEdgeSelTool
+                  if GetValue(&quot;preferences.TransformProperties.transformmanipulators&quot;) = True And GetValue(&quot;preferences.TransformProperties.transformmanipdefaultxfo&quot;) &lt;&gt; 3 then
+                     ActivateSelectTool
+                  end if]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Poly" userwidth="36" userheight="36" bitmap="selectpoly" scriptengine="VBScript" tooltip="Polygon Selection Mode (Y)">
+               <scripttext>&lt;![CDATA[
+                  ActivatePolygonSelTool
+                  if GetValue(&quot;preferences.TransformProperties.transformmanipulators&quot;) = True And GetValue(&quot;preferences.TransformProperties.transformmanipdefaultxfo&quot;) &lt;&gt; 3 then
+                     ActivateSelectTool
+                  end if]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Ray Edge" userwidth="36" userheight="36" bitmap="raycastedge" scriptengine="VBScript" tooltip="Raycast Edge Selection Mode ( I )">
+               <scripttext>&lt;![CDATA[
+                  ActivateRaycastEdgeSelTool
+                  if GetValue(&quot;preferences.TransformProperties.transformmanipulators&quot;) = True And GetValue(&quot;preferences.TransformProperties.transformmanipdefaultxfo&quot;) &lt;&gt; 3 then
+                     ActivateSelectTool
+                  end if]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Ray Poly" userwidth="36" userheight="36" bitmap="raycastpoly" scriptengine="VBScript" tooltip="Raycast Polygon Selection Mode (U)">
+               <scripttext>&lt;![CDATA[
+                  ActivateRaycastPolySelTool
+                  if GetValue(&quot;preferences.TransformProperties.transformmanipulators&quot;) = True And GetValue(&quot;preferences.TransformProperties.transformmanipdefaultxfo&quot;) &lt;&gt; 3 then
+                     ActivateSelectTool
+                  end if]]&gt;</scripttext>
+            </item>
+            <item type="command" label="Raycast" userwidth="36" userheight="36" bitmap="raycast" name="Raycast Select Tool"></item>
+            <item type="command" label="Rect" userwidth="36" userheight="36" bitmap="rectselect" name="Rectangle Select Tool"></item>
+            <item type="command" label="Free" userwidth="36" userheight="36" bitmap="freeselect" name="Freeform Select Tool"></item>
+            <item type="command" label="Lasso" userwidth="36" userheight="36" bitmap="lassoselect" name="Lasso Select Tool"></item>
+            <item type="scriptbutton" label="Iso Sel" userwidth="36" userheight="36" bitmap="isolate" scriptengine="VBScript" tooltip="Isolate Selection (Active Viewport)">
+               <scripttext>&lt;![CDATA[IsolateSelected False, -1]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Iso All" userwidth="36" userheight="36" bitmap="Isolateallviews" scriptengine="VBScript" tooltip="Isolate Selection in all Viewports">
+               <scripttext>&lt;![CDATA[IsolateSelected False, 0
+IsolateSelected False, 1
+IsolateSelected False, 2
+IsolateSelected False, 3]]&gt;</scripttext>
+            </item>
+            <item type="line_break"></item>
+            <item type="scriptbutton" label="Rectangle" userwidth="144" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[InspectObj &quot;preferences.Select&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Raycast" userwidth="72" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[InspectObj &quot;preferences.Select&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Tools" userwidth="144" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[InspectObj &quot;preferences.Select&quot;]]&gt;</scripttext>
+            </item>
+            <item type="scriptbutton" label="Isolate" userwidth="72" userheight="18" scriptengine="VBScript" tooltip="">
+               <scripttext>&lt;![CDATA[InspectObj &quot;preferences.Select&quot;]]&gt;</scripttext>
+            </item>
+         </tab>
+         <tab label="Custom" type="toolbar" userwidth="90">
+            <properties id="{A94642AF-7FEE-4E0F-9A98-6B866390C02C}" name="" display_preset_as_small="False" display_as_text_only="False"></properties>
+         </tab>
+      </tabs>
+   </shelf_view>
+</xsi_file>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="Layout" xsi_version="9.5.142.0" syntax_version="1.1">
+	<relationalview clsid="{B88B6321-283B-45D6-918B-4890E35A967B}" name="Dual" height="689" width="2512" nbscreen="2">
+		<bitmaps>
+			<bitmap name="palettetab" path="palettetab.bmp" highlightpath="palettetab_highlight.bmp"> </bitmap>
+			<bitmap name="toolbar" path="toolbar.bmp" highlightpath="toolbar_highlight.bmp"> </bitmap>
+			<bitmap name="weightpanel" path="weightpanel.bmp" highlightpath="weightpanel_highlight.bmp"> </bitmap>
+			<bitmap name="presetmanager" path="presetmanager.bmp" highlightpath="presetmanager_highlight.bmp"> </bitmap>
+		</bitmaps>
+		<relations>
+		</relations>
+		<viewdefaultpos>
+			<view type="Netview" position="120,113,643,600"> </view>
+			<view type="Keying Panel" position="120,113,350,500"> </view>
+			<view type="Animation Mixer" position="120,532,1130,859"> </view>
+			<view type="Camera Sequencer Editor" position="120,532,1130,859"> </view>
+			<view type="Fx Tree" position="120,150,540,859"> </view>
+			<view type="Explorer" position="740,350,1120,859"> </view>
+			<view type="Fx Color Selector" position="100,120,310,410"> </view>
+			<view type="Script Editor" position="108,497,618,859"> </view>
+			<view type="Keyable Parameters Editor" position="120,113,607,450"> </view>
+			<view type="Texture Editor" position="120,150,900,700"> </view>
+			<view type="Plugin Manager" position="120,150,610,680"> </view>
+			<view type="Image Clip Viewer" position="120,113,607,450"> </view>
+			<view type="Scripts" position="120,150,350,300"> </view>
+			<view type="Scripted Operator Editor" position="120,113,607,680"> </view>
+			<view type="Render Tree" position="120,532,1130,859"> </view>
+			<view type="Text Editor" position="108,497,618,859"> </view>
+			<view type="Custom Display Host" position="120,113,607,450"> </view>
+			<view type="Palettes" position="120,150,350,300"> </view>
+			<view type="Parameter Connection Editor" position="120,113,607,450"> </view>
+			<view type="Main Shelf" position="120,150,600,300"> </view>
+			<view type="Fx Viewer" position="545,150,1120,535"> </view>
+			<view type="Scene Layer Manager" position="800,150,1120,535"> </view>
+			<view type="Shape Manager" position="120,150,900,700"> </view>
+			<view type="Fx Operator Selector" position="545,532,1120,859"> </view>
+			<view type="Browser" position="660,350,1120,859"> </view>
+			<view type="SDK Explorer" position="120,150,900,859"> </view>
+			<view type="Expression Editor" position="120,113,607,450"> </view>
+			<view type="DopeSheet" position="120,532,1130,859"> </view>
+			<view type="XSI Explorer" position="120,113,607,450"> </view>
+			<view type="Animation Editor" position="113,532,1169,859"> </view>
+			<view type="SpreadSheet" position="120,532,1130,859"> </view>
+			<view type="Schematic" position="120,532,607,859"> </view>
+			<view type="Fx Paint Brush List" position="-4,50,103,859"> </view>
+			<view type="Weight Editor" position="120,113,607,450"> </view>
+			<view type="External Files Manager" position="120,150,1120,535"> </view>
+			<view type="Object View" position="120,113,607,450"> </view>
+			<view type="Texture Layer Editor" position="120,113,607,450"> </view>
+			<view type="VM Views" position="120,150,350,300"> </view>
+			<view type="Synoptic Editor" position="120,113,607,450"> </view>
+			<view type="Relational View Editor" position="120,113,607,450"> </view>
+			<view type="Audio Output Monitor" position="120,113,607,450"> </view>
+		</viewdefaultpos>
+		<frameset orientation="horizontal" name="layout" splitter="movable" sizechild="50%,50%">
+		<frameset orientation="vertical" splitter="none" sizechild="*,48">
+			<frameset orientation="horizontal" name="main" splitter="movable" sizechild="*,135">
+				<frameset orientation="horizontal" name="VM_Frameset" splitter="none" sizechild="299,*">
+					<switcher type="tray" buttonside="bottom" active="0" orientation="horizontal" name="module_menu" displayname="Module Menu" buttonsize="26,26" optional="visible" splitter="none" sizechild="105,216,105,*">
+						<frame name="toolbar_panel" type="Toolbar Panel" bitmap="toolbar" primary="false" toolbar="own"> </frame>
+						<frame name="weight_paint_panel" description="Weight Paint Panel" bitmap="weightpanel" type="Weight Paint Panel" primary="false" toolbar="own"> </frame>
+						<frameset orientation="vertical" name="palette_and_script_toolbar_frameset" description="Palette and Script Toolbar" bitmap="palettetab" splitter="none" sizechild="269,*">
+							<frame name="palettes" bitmap="palettetab" type="Palettes" primary="false" toolbar="own"> </frame>
+							<frame name="scripts" type="Scripts" primary="false" toolbar="own"> </frame>
+						</frameset>
+						<frameset orientation="vertical" name="PresetManagerFS"  bitmap="presetmanager" splitter="movable" sizechild="327,*">
+							<frame name="explorer" displayname="Explorer" type="Explorer" primary="false" toolbar="own"> </frame>
+							<frame name="preset_manager" displayname="Preset Manager" type="Preset Manager" primary="false" toolbar="own"> </frame>
+						</frameset>
+					</switcher>
+					<frameset orientation="vertical" splitter="none" sizechild="79,*,26,22">
+						<frame name="main_shelf" displayname="Main Shelf" type="Main Shelf" primary="false" optional="hidden" toolbar="none"> </frame>
+						<frame name="vm" type="View Manager" primary="false" toolbar="own">
+							<properties>
+								<layout>standard</layout>
+							</properties>	
+						</frame>
+						<frame name="timeline" displayname="Timeline" type="Timeline" primary="false" optional="visible" toolbar="own">
+							<properties>
+								<type>global</type>
+								<dopesheet>true</dopesheet>
+							</properties>
+						</frame>
+						<frame name="timerange" displayname="Timerange" type="Timerange" primary="false" optional="visible" toolbar="own"> </frame>
+					</frameset>
+				</frameset>
+				<switcher type="tray" buttonside="bottom_inv" active="0" orientation="vertical" name="mcp" displayname="MCP" buttonsize="44,23" optional="visible" splitter="none" sizechild="135,196,300">
+					<switcher type="panel" buttonside="user" orientation="vertical" displayname="MCP" splitter="none" sizechild="283,334,52,90,91">
+						<frame name="selection_panel" type="Selection Panel" primary="false" toolbar="own"> </frame>
+						<frame name="transformation_panel" type="Transformation Panel" primary="false" toolbar="own"> </frame>
+						<frame name="snap_panel" type="Snap Panel" primary="false" toolbar="own"> </frame>
+						<frame name="constraint_panel" type="Constraint Panel" primary="false" toolbar="own"> </frame>
+						<frame name="edit_panel" type="Edit Panel" primary="false" toolbar="own"> </frame>
+					</switcher>
+					<frameset orientation="vertical" displayname="KP/L" splitter="movable" sizechild="125,386,39%">
+						<frame name="mini_transform_panel" type="Mini Transform Panel" primary="false" toolbar="own"> </frame>
+						<frame name="keying_panel" type="Keying Panel" primary="false" toolbar="own"> </frame>
+						<switcher type="tray" buttonside="top" active="0" orientation="horizontal" name="layers_panel" displayname="LayersPanel" buttonsize="96,20" splitter="none" sizechild="*,*">
+							<frame name="animation_layer_manager" displayname="Animation" type="Animation Layer Manager" primary="false" toolbar="own"> </frame>
+							<frame name="scene_layer_manager" displayname="Scene" type="Layer Control" primary="false" toolbar="own"> </frame>
+						</switcher>
+					</frameset>
+					<frame name="property_editor" displayname="PPG" type="Property Editor" primary="false" toolbar="own"> </frame>
+				</switcher>
+			</frameset>
+			<frameset orientation="horizontal" name="playback" displayname="Playback" optional="visible" splitter="none" sizechild="260,*,437,384,234">
+				<frame name="panel_switcher" displayname="Panel Switcher" type="Panel Switcher" primary="false" optional="visible" toolbar="own"> </frame>
+				<frame name="command_line" type="Command Line" primary="false" toolbar="own"> </frame>
+				<frame name="playback_panel" type="Playback Panel" primary="false" toolbar="own"> </frame>
+				<frame name="animation_panel" type="Animation Panel" primary="false" toolbar="own"> </frame>
+				<frame name="sendtostatus" displayname="Send To" type="Netview" optional="hidden" primary="false" toolbar="none">
+					<properties>
+						<url>$XSI_HOME\Addons\NetView_Database\OneClickStatus.html</url>
+					</properties>
+				</frame>
+			</frameset>
+		</frameset>
+
+			<frameset orientation="horizontal" name="main_right" splitter="movable" sizechild="*">
+				<switcher type="tray" buttonside="top" active="0" orientation="horizontal" name="Screen1Tray" buttonsize="120,24" splitter="none" sizechild="*,*,*,*,*,*">
+					<switcher type="tray" buttonside="top" active="0" orientation="horizontal" name="Animation" buttonsize="120,24" splitter="none" sizechild="*,*,*,*">
+						<frame name="fcurveeditor" displayname="F Curves" type="Animation Editor" primary="false" toolbar="own"> </frame>
+						<frame name="dopesheet" displayname="Dopesheet" type="DopeSheet" primary="false" toolbar="own"> </frame>
+						<frame name="animation_mixer" displayname="Mixer" type="Animation Mixer" primary="false" toolbar="own"> </frame>
+						<frameset orientation="vertical" name="All" buttonsize="80,30" splitter="movable" sizechild="*,30%,20%,28">
+							<frame name="fcv" timeline="timeline1" type="Fcurve Editor" primary="false" toolbar="own"> </frame>
+							<frame name="ds" timeline="timeline1" type="Standalone Dopesheet" primary="false" toolbar="own"> </frame>
+							<frame name="am" timeline="timeline1" type="Animation Mixer" primary="false" toolbar="own"> </frame>
+							<frame name="timeline1" type="Timeline" primary="false" toolbar="none"> </frame>
+						</frameset>
+					</switcher>
+					<frame name="schematic" displayname="Schematic" type="Schematic" primary="false" toolbar="own"> </frame>
+					<switcher type="tray" buttonside="top" active="0" orientation="horizontal" name="Rendering" buttonsize="120,24" splitter="none" sizechild="*,*,*">
+						<frameset orientation="horizontal" name="materials" displayname="Materials" splitter="movable" sizechild="*,350">
+							<frame name="pane578" type="Material Manager" primary="false" toolbar="own"> </frame>
+							<frame name="pane581" type="Material Panel" primary="false" toolbar="own"> </frame>
+						</frameset>
+						<frame name="render tree" displayname="Render Tree" type="Render Tree" primary="false" toolbar="own"> </frame>
+						<frame name="texture_editor" displayname="Texture Editor" type="Texture Editor" primary="false" toolbar="own"> </frame>
+					</switcher>
+					<frame name="ice" displayname="ICE" type="ICE Tree" primary="false" toolbar="own"> </frame>
+					<frameset orientation="horizontal" name="Compositing" splitter="movable" sizechild="105,40%,*">
+						<frame name="paint_brush_list" bitmap="brushpanel" type="Fx Paint Brush List" primary="false" toolbar="own"> </frame>
+						<frame name="fxtree" type="FX Tree" primary="false" toolbar="own"> </frame>
+						<frameset orientation="vertical" name="fxviews" splitter="movable" sizechild="*,25%">
+							<frame name="fxviewer" type="Fx Viewer" primary="false" toolbar="none"> </frame>
+							<frame name="fxselector" type="Fx Operator Selector" primary="false" toolbar="none"> </frame>
+						</frameset>
+					</frameset>
+					<frameset orientation="horizontal" name="Plugins" displayname="Plugins" splitter="movable" sizechild="630,*">
+						<frameset orientation="vertical" name="PM_SDK_FS" splitter="movable" sizechild="426,537">
+							<frame name="plugin_manager" type="Plugin Manager" primary="false" toolbar="own"> </frame>
+							<frame name="sdk_explorer" type="SDK Explorer" primary="false" toolbar="own"> </frame>
+						</frameset>
+						<frame name="script_editor" type="Script Editor" primary="false" toolbar="own"> </frame>
+					</frameset>
+				</switcher>
+			</frameset>
+		</frameset>
+	</relationalview>
+</xsi_file>

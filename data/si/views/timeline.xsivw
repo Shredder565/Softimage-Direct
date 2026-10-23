@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="viewdefinition" xsi_version="3.0" syntax_version="1.0">
+	<viewdef clsid="{E768AC17-54E2-4e5e-A567-1B7A61358467}" name="Timeline">
+		<definition maxinstances="10000" acceptfocus="true" private="false" defaultsize="50,50,685,100" cmdmap="{00000000-0000-0000-0000-000000000000}" supportedtypes="2" category="Animation"> </definition>
+	</viewdef>
+</xsi_file>

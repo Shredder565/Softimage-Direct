@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="viewdefinition" xsi_version="3.0" syntax_version="1.0">
+	<viewdef clsid="{8BAFDF20-A130-11D3-B4AE-009027BC38D5}" name="Scene Layer Manager">
+		<definition maxinstances="10000" acceptfocus="true" private="false" defaultsize="50,50,125,265" cmdmap="{00000000-0000-0000-0000-000000000000}" supportedtypes="6" category="General"> </definition>
+	</viewdef>
+</xsi_file>

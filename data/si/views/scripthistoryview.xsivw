@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="viewdefinition" xsi_version="4.0" syntax_version="1.0">
+	<viewdef clsid="{29160E6A-36F9-4dc9-840D-69A900B4EABD}" name="Script History">
+		<definition maxinstances="10000" acceptfocus="false" private="true" defaultsize="50,50,300,250" cmdmap="{00000000-0000-0000-0000-000000000000}" supportedtypes="6" category="Scripting"> </definition>
+	</viewdef>
+</xsi_file>

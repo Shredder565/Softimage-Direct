@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<xsi_file type="Shelf" xsi_version="4.0.2003.1105" syntax_version="1.0">
+   <shelf_view name="Palettes" clsid="{7543E57A-27A9-4531-AEAA-857802B2C98B}">
+      <properties>
+         <showtabs>false</showtabs>
+      </properties>
+      <definition maxinstances="10000" acceptfocus="true" private="false" defaultsize="0,100,200,300" cmdmap="{00000000-0000-0000-0000-000000000000}" supportedtypes="6"></definition>
+      <tabs layout="top" active="DS Toolbar">
+         <tab label="DS Toolbar" type="toolbar">
+            <properties id="{35B0D914-645F-4D14-A513-916961329BFE}" name="" display_preset_as_small="False" display_as_text_only="False"></properties>
+            <item type="separator" mode="group_header" group_name="Wire Colors"></item>
+            <item type="command" name="Set Wire Color to Red"></item>
+            <item type="command" name="Set Wire Color to Light Green"></item>
+            <item type="command" name="Set Wire Color to Blue"></item>
+            <item type="command" name="Set Wire Color to Orange"></item>
+            <item type="command" name="Set Wire Color to Green"></item>
+            <item type="command" name="Set Wire Color to Purple"></item>
+            <item type="command" name="Set Wire Color to Fuschia"></item>
+            <item type="command" name="Set Wire Color to Gold"></item>
+            <item type="command" name="Set Wire Color to Teal"></item>
+            <item type="command" name="Set Wire Color to Pink"></item>
+            <item type="command" name="Set Wire Color to Yellow"></item>
+            <item type="command" name="Set Wire Color to Brown"></item>
+            <item type="command" name="Set Wire Color to Default"></item>
+            <item type="separator" mode="group_header" group_name="Display Types"></item>
+            <item type="command" name="Set Object Display to Bounding Box"></item>
+            <item type="command" name="Set Object Display to Wireframe"></item>
+            <item type="command" name="Set Object Display to Hidden Line"></item>
+            <item type="command" name="Set Object Display to Constant"></item>
+            <item type="command" name="Set Object Display to Shaded"></item>
+            <item type="command" name="Set Object Display to Textured"></item>
+            <item type="command" name="Set Object Display to Default"></item>
+         </tab>
+      </tabs>
+   </shelf_view>
+</xsi_file>

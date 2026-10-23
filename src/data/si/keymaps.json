@@ -1,0 +1,6660 @@
+{
+"3ds Max Compatible Key Map": {
+"Global": [
+{
+"name": "Close Floating Window",
+"key": "`",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Copy",
+"key": "c",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Cut",
+"key": "x",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Delete",
+"key": "Delete",
+"mods": []
+},
+{
+"name": "Next Floating Window",
+"key": "Tab",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Paste",
+"key": "v",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Previous Floating Window",
+"key": "Tab",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Quit",
+"key": "q",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Repeat",
+"key": ".",
+"mods": []
+},
+{
+"name": "Select All",
+"key": "a",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Users Guide",
+"key": "F1",
+"mods": []
+}
+],
+"Layout Shortcuts": [],
+"Select Tool": [],
+"Transform Tool": [
+{
+"name": "Edit Transform Tool Pivot",
+"key": "Insert",
+"mods": []
+}
+],
+"Transform Tool Proportional": [
+{
+"name": "Adjust proportional distance",
+"key": "b",
+"mods": []
+},
+{
+"name": "Adjust proportional falloff bias",
+"key": "b",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Decrease proportional distance",
+"key": "ArrowDown",
+"mods": []
+},
+{
+"name": "Decrease proportional falloff (bias)",
+"key": "ArrowDown",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Edit Transform Tool Pivot",
+"key": "Insert",
+"mods": []
+},
+{
+"name": "Increase proportional distance",
+"key": "ArrowUp",
+"mods": []
+},
+{
+"name": "Increase proportional falloff (bias)",
+"key": "ArrowUp",
+"mods": [
+"shift"
+]
+}
+],
+"Tweak Tool": [
+{
+"name": "Rotate Manipulator",
+"key": "e",
+"mods": []
+},
+{
+"name": "Scale Manipulator",
+"key": "r",
+"mods": []
+},
+{
+"name": "Show Next Manipulator",
+"key": "Tab",
+"mods": []
+},
+{
+"name": "Show Prev Manipulator",
+"key": "Tab",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Slide Components",
+"key": "j",
+"mods": []
+},
+{
+"name": "Translate Manipulator",
+"key": "w",
+"mods": []
+},
+{
+"name": "Weld Components",
+"key": "l",
+"mods": []
+}
+],
+"Tweak Tool Proportional": [
+{
+"name": "Adjust proportional distance",
+"key": "b",
+"mods": []
+},
+{
+"name": "Adjust proportional falloff bias",
+"key": "b",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Decrease proportional distance",
+"key": "ArrowDown",
+"mods": []
+},
+{
+"name": "Decrease proportional falloff (bias)",
+"key": "ArrowDown",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Increase proportional distance",
+"key": "ArrowUp",
+"mods": []
+},
+{
+"name": "Increase proportional falloff (bias)",
+"key": "ArrowUp",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Rotate Manipulator",
+"key": "e",
+"mods": []
+},
+{
+"name": "Scale Manipulator",
+"key": "r",
+"mods": []
+},
+{
+"name": "Show Next Manipulator",
+"key": "Tab",
+"mods": []
+},
+{
+"name": "Show Prev Manipulator",
+"key": "Tab",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Slide Components",
+"key": "j",
+"mods": []
+},
+{
+"name": "Translate Manipulator",
+"key": "w",
+"mods": []
+},
+{
+"name": "Weld Components",
+"key": "l",
+"mods": []
+}
+],
+"View Shortcuts": [
+{
+"name": "Animation Editor",
+"key": "0",
+"mods": []
+},
+{
+"name": "Animation Mixer",
+"key": "0",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Browser",
+"key": "5",
+"mods": []
+},
+{
+"name": "Explorer",
+"key": "8",
+"mods": []
+},
+{
+"name": "Expression Editor",
+"key": "9",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Fx Tree",
+"key": "1",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Fx Viewer",
+"key": "2",
+"mods": [
+"alt"
+]
+},
+{
+"name": "ICE Tree",
+"key": "9",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Image Clip Viewer",
+"key": "6",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Material Manager",
+"key": "7",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Netview",
+"key": "5",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Render Tree",
+"key": "7",
+"mods": []
+},
+{
+"name": "SDK Explorer",
+"key": "4",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Scene Layer Manager",
+"key": "6",
+"mods": []
+},
+{
+"name": "Scene Search",
+"key": "f",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Schematic",
+"key": "9",
+"mods": []
+},
+{
+"name": "Script Editor",
+"key": "F11",
+"mods": []
+},
+{
+"name": "SpreadSheet",
+"key": "3",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Texture Editor",
+"key": "7",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Texture Layer Editor",
+"key": "7",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Weight Editor",
+"key": "e",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "XSI Explorer",
+"key": "8",
+"mods": [
+"alt"
+]
+}
+],
+"XSI": [
+{
+"name": "3D Geometry",
+"key": "g",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Activate Current Select Tool using Filter",
+"key": " ",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Add Edge Tool",
+"key": "\\",
+"mods": []
+},
+{
+"name": "Add First Child to Selection",
+"key": "ArrowDown",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Add Next Sibling Branch to Selection",
+"key": "ArrowRight",
+"mods": [
+"ctrl",
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Next Sibling to Selection",
+"key": "ArrowRight",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Add Parent to Selection",
+"key": "ArrowUp",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Add Previous Sibling Branch to Selection",
+"key": "ArrowLeft",
+"mods": [
+"ctrl",
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Previous Sibling to Selection",
+"key": "ArrowLeft",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Bottom View",
+"key": "b",
+"mods": []
+},
+{
+"name": "Cameras",
+"key": "c",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Change Subdivision Down",
+"key": "-",
+"mods": []
+},
+{
+"name": "Change Subdivision Up",
+"key": "+",
+"mods": []
+},
+{
+"name": "Collapse",
+"key": "Delete",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Create Group from Objects",
+"key": "g",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Create Marking Set",
+"key": "m",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Create Reference Plane",
+"key": "-",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Create Transform Group",
+"key": "/",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Curves",
+"key": "s",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Cut Hierarchical Link",
+"key": "/",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Decrease Manipulator Size",
+"key": "-",
+"mods": []
+},
+{
+"name": "Delete Component",
+"key": "Delete",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Delete Objects Tool",
+"key": "Backspace",
+"mods": []
+},
+{
+"name": "Delete Selected Permanently",
+"key": "Delete",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Deselect All",
+"key": "d",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Dissolve & Clean Adjacent Vertices",
+"key": ";",
+"mods": []
+},
+{
+"name": "Dissolve Component",
+"key": ";",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Dolly Tool",
+"key": "z",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Duplicate/Extrude Single",
+"key": "v",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Escape Pick Session",
+"key": "Escape",
+"mods": []
+},
+{
+"name": "Extrude Comp. Axis",
+"key": "e",
+"mods": [
+"alt"
+]
+},
+{
+"name": "First Frame",
+"key": "Home",
+"mods": []
+},
+{
+"name": "First Key",
+"key": "ArrowUp",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Frame All",
+"key": "a",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Frame Contextual (All 3D Views)",
+"key": "z",
+"mods": []
+},
+{
+"name": "Frame Preview Active Camera",
+"key": "F9",
+"mods": []
+},
+{
+"name": "Frame Selection",
+"key": "f",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Grow Selection",
+"key": "=",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Hair Tip Select Tool",
+"key": "'",
+"mods": []
+},
+{
+"name": "Hide Unselected Objects/Polygons",
+"key": "h",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Hide/Unhide Selection",
+"key": "h",
+"mods": []
+},
+{
+"name": "Hide/Unhide Texture Supports",
+"key": "j",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Increase Manipulator Size",
+"key": "=",
+"mods": []
+},
+{
+"name": "Info Scene",
+"key": "Enter",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Info Selection",
+"key": "Enter",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Inspect All Node Properties",
+"key": "Enter",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Inspect Local Transform",
+"key": "k",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Inspect Object",
+"key": "Enter",
+"mods": []
+},
+{
+"name": "Instantiate Multiple",
+"key": "i",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Invert Selection Using Filter",
+"key": "i",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Isolate Selected",
+"key": "q",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Isometric View",
+"key": "u",
+"mods": []
+},
+{
+"name": "Last Frame",
+"key": "End",
+"mods": []
+},
+{
+"name": "Last Key",
+"key": "ArrowDown",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Last Operator in Stack",
+"key": "End",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Left View",
+"key": "l",
+"mods": []
+},
+{
+"name": "Lights",
+"key": "l",
+"mods": [
+"shift"
+]
+},
+{
+"name": "MCP Setting: Set Transform Modifier COG",
+"key": "Numpad1",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Modifier Scaling VOL",
+"key": "e",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "MCP Setting: Set Transform Modifier Sym",
+"key": "Numpad3",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Global",
+"key": "Numpad7",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Local",
+"key": "Numpad8",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Parent",
+"key": "Numpad4",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Plane",
+"key": "Numpad6",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Reference",
+"key": "Numpad5",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref View",
+"key": "Numpad9",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Tool Axis X",
+"key": "/",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Tool Axis Y",
+"key": "*",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Tool Axis Z",
+"key": "-",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Toggle Prop Modeling",
+"key": "Numpad2",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Match All Global Transforms",
+"key": "a",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Maximize/Restore Current Viewport",
+"key": "w",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Modify Projection",
+"key": "j",
+"mods": []
+},
+{
+"name": "Move Component Tool",
+"key": "m",
+"mods": []
+},
+{
+"name": "Move Joint Tool",
+"key": "j",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Navigation Tool",
+"key": "s",
+"mods": []
+},
+{
+"name": "New Scene",
+"key": "n",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Next Frame",
+"key": ".",
+"mods": []
+},
+{
+"name": "Next Inspected Node",
+"key": "PageDown",
+"mods": []
+},
+{
+"name": "Next Key",
+"key": "ArrowRight",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Object Select Tool",
+"key": " ",
+"mods": []
+},
+{
+"name": "Object Select Tool (Extended Selection)",
+"key": " ",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Open Scene",
+"key": "o",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Transient Explorer",
+"key": "F3",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Paint Texture Tool",
+"key": "w",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Pan and Zoom Tool",
+"key": "p",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Particles",
+"key": "p",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Perspective View",
+"key": "p",
+"mods": []
+},
+{
+"name": "Play Forwards",
+"key": "/",
+"mods": []
+},
+{
+"name": "Play in Real Time",
+"key": "/",
+"mods": [
+"alt"
+]
+},
+{
+"name": "PolyMesh Hulls",
+"key": "+",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Previous Frame",
+"key": ",",
+"mods": []
+},
+{
+"name": "Previous Inspected Node",
+"key": "PageUp",
+"mods": []
+},
+{
+"name": "Previous Key",
+"key": "ArrowLeft",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Rectangle Raycast Select Tool",
+"key": "F10",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Redo",
+"key": "y",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Redo Camera",
+"key": "y",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Refresh All Render Regions",
+"key": "F5",
+"mods": []
+},
+{
+"name": "Remove Animation",
+"key": "k",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Remove Cluster",
+"key": "l",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Remove Group",
+"key": "g",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Remove Key",
+"key": "k",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Remove Key Hot Key",
+"key": "k",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Remove Transform Group",
+"key": "/",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Render Region Tool",
+"key": "q",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Reset Active Transform",
+"key": "r",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Reset All Transforms",
+"key": "r",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Reset Camera",
+"key": "Home",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Rotation Tool",
+"key": "e",
+"mods": []
+},
+{
+"name": "Rotoscopy Options",
+"key": "b",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Save Key Hot Key",
+"key": "k",
+"mods": []
+},
+{
+"name": "Save Scene",
+"key": "s",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Scaling Tool",
+"key": "r",
+"mods": []
+},
+{
+"name": "Scene Camera View",
+"key": "c",
+"mods": []
+},
+{
+"name": "Select All Objects",
+"key": "a",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select All Using Filter",
+"key": "a",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Select First Child",
+"key": "ArrowDown",
+"mods": []
+},
+{
+"name": "Select First Child in Branch",
+"key": "ArrowDown",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select First in Branch",
+"key": "Home",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Last in Branch",
+"key": "End",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Model",
+"key": "t",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Select Next Sibling",
+"key": "ArrowRight",
+"mods": []
+},
+{
+"name": "Select Next Sibling in Branch",
+"key": "ArrowRight",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Parent",
+"key": "ArrowUp",
+"mods": []
+},
+{
+"name": "Select Parent in Branch",
+"key": "ArrowUp",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Previous Sibling",
+"key": "ArrowLeft",
+"mods": []
+},
+{
+"name": "Select Previous Sibling in Branch",
+"key": "ArrowLeft",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Tool",
+"key": "q",
+"mods": []
+},
+{
+"name": "Set Branch Key Using Marking Set",
+"key": "k",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Set Edge Selection Filter",
+"key": "2",
+"mods": []
+},
+{
+"name": "Set Filter to Edge",
+"key": "F9",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Set Filter to Object",
+"key": "F7",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Set Filter to Point",
+"key": "F8",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Set Filter to Polygon",
+"key": "F10",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Set Point Selection Filter",
+"key": "1",
+"mods": []
+},
+{
+"name": "Set Polygon Selection Filter",
+"key": "3",
+"mods": []
+},
+{
+"name": "Set Sample Selection Filter",
+"key": "4",
+"mods": []
+},
+{
+"name": "Show 3D Context Menu",
+"key": "ContextMenu",
+"mods": []
+},
+{
+"name": "Show Next Manipulator",
+"key": "Tab",
+"mods": []
+},
+{
+"name": "Show Next OGL Projection",
+"key": "]",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Show Previous Manipulator",
+"key": "Tab",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Show Previous OGL Projection",
+"key": "[",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Show Texture Supports",
+"key": "j",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Show/Hide Grid",
+"key": "g",
+"mods": []
+},
+{
+"name": "Shrink Selection",
+"key": "-",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Simplified Wireframe Display",
+"key": "+",
+"mods": [
+"alt"
+]
+},
+{
+"name": "StartChannelCapture",
+"key": "ArrowUp",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "StopChannelCapture",
+"key": "ArrowDown",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Subdivide",
+"key": "d",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Switch to Hair Toolbar",
+"key": "2",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Switch to Panel Palette",
+"key": "4",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Switch to Panel Toolbar",
+"key": "1",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Switch to Panel Weight",
+"key": "3",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Toggle AutoKey",
+"key": "n",
+"mods": []
+},
+{
+"name": "Toggle Field Guide",
+"key": "f",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Toggle Fullscreen Layout",
+"key": "x",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Toggle Headlight Display Mode",
+"key": "l",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Toggle Mute State",
+"key": "d",
+"mods": []
+},
+{
+"name": "Toggle Object/Component Selection Filter",
+"key": "b",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Toggle Pixel Zoom",
+"key": "/",
+"mods": []
+},
+{
+"name": "Toggle PropVolume",
+"key": "v",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Toggle Shaded Display Mode",
+"key": "F3",
+"mods": []
+},
+{
+"name": "Toggle Wire On Shaded Display",
+"key": "F4",
+"mods": []
+},
+{
+"name": "Top View",
+"key": "t",
+"mods": []
+},
+{
+"name": "Track Tool",
+"key": "i",
+"mods": []
+},
+{
+"name": "Translate Tool",
+"key": "w",
+"mods": []
+},
+{
+"name": "Undo",
+"key": "z",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Undo Camera",
+"key": "z",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Unhide All Objects",
+"key": "h",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Unhide All Polygons",
+"key": "h",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "View Nudge Down",
+"key": "PageDown",
+"mods": [
+"shift"
+]
+},
+{
+"name": "View Nudge Left",
+"key": "Home",
+"mods": [
+"shift"
+]
+},
+{
+"name": "View Nudge Right",
+"key": "End",
+"mods": [
+"shift"
+]
+},
+{
+"name": "View Nudge Up",
+"key": "PageUp",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Visibility Options (All Cameras)",
+"key": "s",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Zoom In",
+"key": "[",
+"mods": []
+},
+{
+"name": "Zoom Out",
+"key": "]",
+"mods": []
+},
+{
+"name": "Zoom Tool",
+"key": "w",
+"mods": [
+"ctrl"
+]
+}
+]
+},
+"Maya Compatible Key Map": {
+"Global": [
+{
+"name": "Close Floating Window",
+"key": "`",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Copy",
+"key": "c",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Cut",
+"key": "x",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Delete",
+"key": "Delete",
+"mods": []
+},
+{
+"name": "Next Floating Window",
+"key": "Tab",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Paste",
+"key": "v",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Previous Floating Window",
+"key": "Tab",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Quit",
+"key": "q",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Repeat",
+"key": "g",
+"mods": []
+},
+{
+"name": "Users Guide",
+"key": "F1",
+"mods": []
+}
+],
+"Layout Shortcuts": [],
+"Select Tool": [
+{
+"name": "Select Component Range/Loop",
+"key": "d",
+"mods": []
+}
+],
+"Transform Tool": [
+{
+"name": "Edit Transform Tool Pivot",
+"key": "Insert",
+"mods": []
+},
+{
+"name": "Edit Transform Tool Pivot (alternate)",
+"key": "d",
+"mods": []
+},
+{
+"name": "Transform Outside Manipulator",
+"key": "VK_OEM_8",
+"mods": []
+}
+],
+"Transform Tool Proportional": [
+{
+"name": "Adjust proportional distance",
+"key": "b",
+"mods": []
+},
+{
+"name": "Adjust proportional falloff bias",
+"key": "b",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Decrease proportional distance",
+"key": "ArrowDown",
+"mods": []
+},
+{
+"name": "Decrease proportional falloff (bias)",
+"key": "ArrowDown",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Edit Transform Tool Pivot",
+"key": "Insert",
+"mods": []
+},
+{
+"name": "Edit Transform Tool Pivot (alternate)",
+"key": "d",
+"mods": []
+},
+{
+"name": "Increase proportional distance",
+"key": "ArrowUp",
+"mods": []
+},
+{
+"name": "Increase proportional falloff (bias)",
+"key": "ArrowUp",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Transform Outside Manipulator",
+"key": "VK_OEM_8",
+"mods": []
+}
+],
+"Tweak Tool": [
+{
+"name": "Rotate Manipulator",
+"key": "e",
+"mods": []
+},
+{
+"name": "Scale Manipulator",
+"key": "r",
+"mods": []
+},
+{
+"name": "Select Component Range/Loop",
+"key": "d",
+"mods": []
+},
+{
+"name": "Show Next Manipulator",
+"key": "Tab",
+"mods": []
+},
+{
+"name": "Show Prev Manipulator",
+"key": "Tab",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Slide Components",
+"key": "j",
+"mods": []
+},
+{
+"name": "Translate Manipulator",
+"key": "w",
+"mods": []
+},
+{
+"name": "Weld Components",
+"key": "l",
+"mods": []
+}
+],
+"Tweak Tool Proportional": [
+{
+"name": "Adjust proportional distance",
+"key": "b",
+"mods": []
+},
+{
+"name": "Adjust proportional falloff bias",
+"key": "b",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Decrease proportional distance",
+"key": "ArrowDown",
+"mods": []
+},
+{
+"name": "Decrease proportional falloff (bias)",
+"key": "ArrowDown",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Increase proportional distance",
+"key": "ArrowUp",
+"mods": []
+},
+{
+"name": "Increase proportional falloff (bias)",
+"key": "ArrowUp",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Rotate Manipulator",
+"key": "e",
+"mods": []
+},
+{
+"name": "Scale Manipulator",
+"key": "r",
+"mods": []
+},
+{
+"name": "Select Component Range/Loop",
+"key": "d",
+"mods": []
+},
+{
+"name": "Show Next Manipulator",
+"key": "Tab",
+"mods": []
+},
+{
+"name": "Show Prev Manipulator",
+"key": "Tab",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Slide Components",
+"key": "j",
+"mods": []
+},
+{
+"name": "Translate Manipulator",
+"key": "w",
+"mods": []
+},
+{
+"name": "Weld Components",
+"key": "l",
+"mods": []
+}
+],
+"View Shortcuts": [
+{
+"name": "Animation Editor",
+"key": "0",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Animation Mixer",
+"key": "0",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Browser",
+"key": "5",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Explorer",
+"key": "8",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Fx Tree",
+"key": "1",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Fx Viewer",
+"key": "2",
+"mods": [
+"alt"
+]
+},
+{
+"name": "ICE Tree",
+"key": "9",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Image Clip Viewer",
+"key": "6",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Material Manager",
+"key": "7",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Netview",
+"key": "5",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Render Tree",
+"key": "7",
+"mods": [
+"shift"
+]
+},
+{
+"name": "SDK Explorer",
+"key": "4",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Scene Layer Manager",
+"key": "6",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Scene Search",
+"key": "f",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Schematic",
+"key": "9",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Script Editor",
+"key": "4",
+"mods": [
+"alt"
+]
+},
+{
+"name": "SpreadSheet",
+"key": "3",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Texture Editor",
+"key": "7",
+"mods": [
+"alt"
+]
+},
+{
+"name": "XSI Explorer",
+"key": "8",
+"mods": [
+"alt"
+]
+}
+],
+"XSI": [
+{
+"name": "Activate Current Select Tool using Filter",
+"key": " ",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Add Edge Tool",
+"key": "\\",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Add First Child to Selection",
+"key": "ArrowDown",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Next Sibling Branch to Selection",
+"key": "ArrowRight",
+"mods": [
+"ctrl",
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Next Sibling to Selection",
+"key": "ArrowRight",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Parent to Selection",
+"key": "ArrowUp",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Polygon Tool",
+"key": "n",
+"mods": []
+},
+{
+"name": "Add Previous Sibling Branch to Selection",
+"key": "ArrowLeft",
+"mods": [
+"ctrl",
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Previous Sibling to Selection",
+"key": "ArrowLeft",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Vertex Tool",
+"key": "Insert",
+"mods": []
+},
+{
+"name": "Center Selection",
+"key": "c",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Center Selection (All 3D Views)",
+"key": "c",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Change Subdivision Down",
+"key": "PageDown",
+"mods": []
+},
+{
+"name": "Change Subdivision Up",
+"key": "PageUp",
+"mods": []
+},
+{
+"name": "Collapse",
+"key": "Delete",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Convert Selection To Edges",
+"key": "F10",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Convert Selection To Points",
+"key": "F9",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Convert Selection To Polygons",
+"key": "F11",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Create Cluster",
+"key": "l",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Create Reference Plane",
+"key": "-",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Create Transform Group",
+"key": "g",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Cut Hierarchical Link",
+"key": "p",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Decrease Manipulator Size",
+"key": "-",
+"mods": []
+},
+{
+"name": "Decrease Manipulator Size (alternate)",
+"key": "-",
+"mods": []
+},
+{
+"name": "Delete Component",
+"key": "Delete",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Delete Selected",
+"key": "Backspace",
+"mods": []
+},
+{
+"name": "Delete Selected Permanently",
+"key": "Delete",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Deselect All",
+"key": "a",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Dissolve & Clean Adjacent Vertices",
+"key": ";",
+"mods": []
+},
+{
+"name": "Dissolve Component",
+"key": ";",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Duplicate Single w/o Options",
+"key": "d",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Duplicate Single w/o Transform",
+"key": "d",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Duplicate/Extrude Multiple",
+"key": "d",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Duplicate/Extrude Single",
+"key": "d",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Escape Pick Session",
+"key": "Escape",
+"mods": []
+},
+{
+"name": "Face Robot Act Floating Panel",
+"key": "F6",
+"mods": []
+},
+{
+"name": "First Frame",
+"key": "v",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Frame All",
+"key": "a",
+"mods": []
+},
+{
+"name": "Frame All (All 3D Views)",
+"key": "a",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Frame Selection",
+"key": "f",
+"mods": []
+},
+{
+"name": "Frame Selection (All 3D Views)",
+"key": "f",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Grow Selection",
+"key": ".",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Hair Tip Select Tool",
+"key": "'",
+"mods": []
+},
+{
+"name": "Hide Unselected Objects/Polygons",
+"key": "h",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Hide and Unselect",
+"key": "h",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Hide/Unhide Selection",
+"key": "h",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Increase Manipulator Size",
+"key": "=",
+"mods": []
+},
+{
+"name": "Increase Manipulator Size (alternate)",
+"key": "+",
+"mods": []
+},
+{
+"name": "Info Scene",
+"key": "Enter",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Info Selection",
+"key": "Enter",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Inspect All Node Properties",
+"key": "Enter",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Inspect Chain Properties",
+"key": "r",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Inspect Local Transform",
+"key": "k",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Inspect Object",
+"key": "Enter",
+"mods": []
+},
+{
+"name": "Isolate Selected",
+"key": "i",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Last Auxiliary Tool",
+"key": "y",
+"mods": []
+},
+{
+"name": "Last Operator in Stack",
+"key": "End",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "MCP Setting: Set Transform Modifier COG",
+"key": "Numpad1",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Modifier Sym",
+"key": "Numpad3",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Global",
+"key": "Numpad7",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Local",
+"key": "Numpad8",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Parent",
+"key": "Numpad4",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Plane",
+"key": "Numpad6",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Reference",
+"key": "Numpad5",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref View",
+"key": "Numpad9",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Tool Axis X",
+"key": "/",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Tool Axis Y",
+"key": "*",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Tool Axis Z",
+"key": "-",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Toggle Prop Modeling",
+"key": "Numpad2",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Manipulate Tool",
+"key": "t",
+"mods": []
+},
+{
+"name": "Maximize/Restore Current Viewport",
+"key": " ",
+"mods": []
+},
+{
+"name": "Maya Zoom Tool",
+"key": "\\",
+"mods": []
+},
+{
+"name": "Move Component Tool",
+"key": "m",
+"mods": []
+},
+{
+"name": "Move Joint Tool",
+"key": "j",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "New Scene",
+"key": "n",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Next Frame",
+"key": ".",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Next Key",
+"key": ".",
+"mods": []
+},
+{
+"name": "Object Select Tool (Extended Selection)",
+"key": " ",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Open Animation Editor on Kinematics",
+"key": "Numpad0",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on PosX",
+"key": "Numpad1",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on PosY",
+"key": "Numpad2",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on PosZ",
+"key": "Numpad3",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on RotX",
+"key": "Numpad4",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on RotY",
+"key": "Numpad5",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on RotZ",
+"key": "Numpad6",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on SclX",
+"key": "Numpad7",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on SclY",
+"key": "Numpad8",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on SclZ",
+"key": "Numpad9",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Scene",
+"key": "o",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Transient Explorer",
+"key": "F3",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Paint Texture Tool",
+"key": "w",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Parent Objects",
+"key": "p",
+"mods": []
+},
+{
+"name": "Play Forwards",
+"key": "v",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Play in Real Time",
+"key": "v",
+"mods": [
+"shift"
+]
+},
+{
+"name": "PolyMesh Hulls",
+"key": "+",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Previous Frame",
+"key": ",",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Previous Key",
+"key": ",",
+"mods": []
+},
+{
+"name": "Redo",
+"key": "y",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Redo (alternate)",
+"key": "z",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Redo Camera",
+"key": "y",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Redo Camera (alternate)",
+"key": "]",
+"mods": []
+},
+{
+"name": "Refresh All Render Regions",
+"key": "F5",
+"mods": []
+},
+{
+"name": "Remove Cluster",
+"key": "l",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Remove Key Hot Key",
+"key": "k",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Remove Transform Group",
+"key": "g",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Reset Camera",
+"key": "Home",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Rotation Tool",
+"key": "e",
+"mods": []
+},
+{
+"name": "Save Key Hot Key",
+"key": "s",
+"mods": []
+},
+{
+"name": "Save Key on Pos (X,Y,Z)",
+"key": "w",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Save Key on Rot (X,Y,Z)",
+"key": "e",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Save Key on Scl (X,Y,Z)",
+"key": "r",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Save Scene",
+"key": "s",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Scaling Tool",
+"key": "r",
+"mods": []
+},
+{
+"name": "Select All Objects",
+"key": "a",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select First Child",
+"key": "ArrowDown",
+"mods": []
+},
+{
+"name": "Select First Child in Branch",
+"key": "ArrowDown",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select First in Branch",
+"key": "Home",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Last in Branch",
+"key": "End",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Next Sibling",
+"key": "ArrowRight",
+"mods": []
+},
+{
+"name": "Select Parent",
+"key": "ArrowUp",
+"mods": []
+},
+{
+"name": "Select Parent in Branch",
+"key": "ArrowUp",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Previous Sibling",
+"key": "ArrowLeft",
+"mods": []
+},
+{
+"name": "Select Tool",
+"key": "q",
+"mods": []
+},
+{
+"name": "Set Branch Key Using Marking Set",
+"key": "k",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Set Edge Selection Filter",
+"key": "F10",
+"mods": []
+},
+{
+"name": "Set Lighting Display Mode",
+"key": "7",
+"mods": []
+},
+{
+"name": "Set NURBS Display Quality Default",
+"key": "0",
+"mods": []
+},
+{
+"name": "Set NURBS Display Quality High",
+"key": "3",
+"mods": []
+},
+{
+"name": "Set NURBS Display Quality Low",
+"key": "1",
+"mods": []
+},
+{
+"name": "Set NURBS Display Quality Medium",
+"key": "2",
+"mods": []
+},
+{
+"name": "Set Point Selection Filter",
+"key": "F9",
+"mods": []
+},
+{
+"name": "Set Polygon Selection Filter",
+"key": "F11",
+"mods": []
+},
+{
+"name": "Set Sample Selection Filter",
+"key": "F12",
+"mods": []
+},
+{
+"name": "Set Shaded Display Mode",
+"key": "5",
+"mods": []
+},
+{
+"name": "Set Textured Display Mode",
+"key": "6",
+"mods": []
+},
+{
+"name": "Set Wireframe Display Mode",
+"key": "4",
+"mods": []
+},
+{
+"name": "Show 3D Context Menu",
+"key": "ContextMenu",
+"mods": []
+},
+{
+"name": "Show Next Manipulator",
+"key": "Tab",
+"mods": []
+},
+{
+"name": "Show Next OGL Projection",
+"key": "]",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Show Previous Manipulator",
+"key": "Tab",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Show Previous OGL Projection",
+"key": "[",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Show Texture Supports",
+"key": "j",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Shrink Selection",
+"key": ",",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Simplified Wireframe Display",
+"key": "+",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Spin Edge Backward",
+"key": "ArrowLeft",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Spin Edge Forward",
+"key": "ArrowRight",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "StartChannelCapture",
+"key": "ArrowUp",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "StopChannelCapture",
+"key": "ArrowDown",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Switch to Animate Toolbar",
+"key": "F2",
+"mods": []
+},
+{
+"name": "Switch to Hair Toolbar",
+"key": "2",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Switch to ICE Toolbar",
+"key": "F4",
+"mods": []
+},
+{
+"name": "Switch to Model Toolbar",
+"key": "F3",
+"mods": []
+},
+{
+"name": "Switch to Panel Toolbar",
+"key": "1",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Switch to Panel Weight",
+"key": "3",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Switch to Render Toolbar",
+"key": "F5",
+"mods": []
+},
+{
+"name": "Switch to Simulate Toolbar",
+"key": "4",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Time Slider Tool",
+"key": "k",
+"mods": []
+},
+{
+"name": "Toggle Background Color",
+"key": "b",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Toggle Curve Snap",
+"key": "c",
+"mods": []
+},
+{
+"name": "Toggle Fullscreen Layout",
+"key": " ",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Toggle Grid Snap",
+"key": "x",
+"mods": []
+},
+{
+"name": "Toggle Object/Component Selection Filter",
+"key": "F8",
+"mods": []
+},
+{
+"name": "Toggle Point Snap",
+"key": "v",
+"mods": []
+},
+{
+"name": "Translate Tool",
+"key": "w",
+"mods": []
+},
+{
+"name": "Undo",
+"key": "z",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Undo (alternate)",
+"key": "z",
+"mods": []
+},
+{
+"name": "Undo Camera",
+"key": "z",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Undo Camera (alternate)",
+"key": "[",
+"mods": []
+},
+{
+"name": "View Nudge Down",
+"key": "ArrowDown",
+"mods": [
+"alt"
+]
+},
+{
+"name": "View Nudge Left",
+"key": "ArrowLeft",
+"mods": [
+"alt"
+]
+},
+{
+"name": "View Nudge Right",
+"key": "ArrowRight",
+"mods": [
+"alt"
+]
+},
+{
+"name": "View Nudge Up",
+"key": "ArrowUp",
+"mods": [
+"alt"
+]
+}
+]
+},
+"SI|3D Key Map": {
+"Global": [
+{
+"name": "Close Floating Window",
+"key": "`",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Copy",
+"key": "c",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Cut",
+"key": "x",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Delete",
+"key": "Delete",
+"mods": []
+},
+{
+"name": "Next Floating Window",
+"key": "Tab",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Paste",
+"key": "v",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Previous Floating Window",
+"key": "Tab",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Quit",
+"key": "q",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Repeat",
+"key": ".",
+"mods": []
+},
+{
+"name": "Select All",
+"key": "a",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Users Guide",
+"key": "F1",
+"mods": []
+}
+],
+"Layout Shortcuts": [],
+"Select Tool": [],
+"Transform Tool": [],
+"Transform Tool Proportional": [
+{
+"name": "Adjust proportional distance",
+"key": "r",
+"mods": []
+},
+{
+"name": "Adjust proportional falloff bias",
+"key": "r",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Decrease proportional distance",
+"key": "ArrowDown",
+"mods": []
+},
+{
+"name": "Decrease proportional falloff (bias)",
+"key": "ArrowDown",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Increase proportional distance",
+"key": "ArrowUp",
+"mods": []
+},
+{
+"name": "Increase proportional falloff (bias)",
+"key": "ArrowUp",
+"mods": [
+"shift"
+]
+}
+],
+"Tweak Tool": [
+{
+"name": "Rotate Manipulator",
+"key": "c",
+"mods": []
+},
+{
+"name": "Scale Manipulator",
+"key": "x",
+"mods": []
+},
+{
+"name": "Show Next Manipulator",
+"key": "Tab",
+"mods": []
+},
+{
+"name": "Show Prev Manipulator",
+"key": "Tab",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Slide Components",
+"key": "j",
+"mods": []
+},
+{
+"name": "Translate Manipulator",
+"key": "v",
+"mods": []
+},
+{
+"name": "Weld Components",
+"key": "l",
+"mods": []
+}
+],
+"Tweak Tool Proportional": [
+{
+"name": "Adjust proportional distance",
+"key": "r",
+"mods": []
+},
+{
+"name": "Adjust proportional falloff bias",
+"key": "r",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Decrease proportional distance",
+"key": "ArrowDown",
+"mods": []
+},
+{
+"name": "Decrease proportional falloff (bias)",
+"key": "ArrowDown",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Increase proportional distance",
+"key": "ArrowUp",
+"mods": []
+},
+{
+"name": "Increase proportional falloff (bias)",
+"key": "ArrowUp",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Rotate Manipulator",
+"key": "c",
+"mods": []
+},
+{
+"name": "Scale Manipulator",
+"key": "x",
+"mods": []
+},
+{
+"name": "Show Next Manipulator",
+"key": "Tab",
+"mods": []
+},
+{
+"name": "Show Prev Manipulator",
+"key": "Tab",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Slide Components",
+"key": "j",
+"mods": []
+},
+{
+"name": "Translate Manipulator",
+"key": "v",
+"mods": []
+},
+{
+"name": "Weld Components",
+"key": "l",
+"mods": []
+}
+],
+"View Shortcuts": [
+{
+"name": "Animation Editor",
+"key": "0",
+"mods": []
+},
+{
+"name": "Animation Mixer",
+"key": "0",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Browser",
+"key": "5",
+"mods": []
+},
+{
+"name": "Explorer",
+"key": "8",
+"mods": []
+},
+{
+"name": "Expression Editor",
+"key": "9",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Fx Tree",
+"key": "1",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Fx Viewer",
+"key": "2",
+"mods": [
+"alt"
+]
+},
+{
+"name": "ICE Tree",
+"key": "9",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Image Clip Viewer",
+"key": "6",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Material Manager",
+"key": "7",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Netview",
+"key": "5",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Render Tree",
+"key": "7",
+"mods": []
+},
+{
+"name": "SDK Explorer",
+"key": "4",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Scene Layer Manager",
+"key": "6",
+"mods": []
+},
+{
+"name": "Scene Search",
+"key": "f",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Schematic",
+"key": "9",
+"mods": []
+},
+{
+"name": "Script Editor",
+"key": "4",
+"mods": [
+"alt"
+]
+},
+{
+"name": "SpreadSheet",
+"key": "3",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Texture Editor",
+"key": "7",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Texture Layer Editor",
+"key": "7",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Weight Editor",
+"key": "e",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "XSI Explorer",
+"key": "8",
+"mods": [
+"alt"
+]
+}
+],
+"XSI": [
+{
+"name": "Activate Current Select Tool using Filter",
+"key": " ",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Activate Group/Cluster Select Tool using Filter",
+"key": "=",
+"mods": []
+},
+{
+"name": "Activate Marking Set",
+"key": "m",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Add Edge Tool",
+"key": "\\",
+"mods": []
+},
+{
+"name": "Add First Child to Selection",
+"key": "ArrowDown",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Next Sibling Branch to Selection",
+"key": "ArrowRight",
+"mods": [
+"ctrl",
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Next Sibling to Selection",
+"key": "ArrowRight",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Parent to Selection",
+"key": "ArrowUp",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Polygon Tool",
+"key": "n",
+"mods": []
+},
+{
+"name": "Add Previous Sibling Branch to Selection",
+"key": "ArrowLeft",
+"mods": [
+"ctrl",
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Previous Sibling to Selection",
+"key": "ArrowLeft",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Vertex Tool",
+"key": "Insert",
+"mods": []
+},
+{
+"name": "Camera Visibility Options",
+"key": "s",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Center Selection",
+"key": "c",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Center Selection (All 3D Views)",
+"key": "c",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Change Subdivision Down",
+"key": "-",
+"mods": []
+},
+{
+"name": "Change Subdivision Up",
+"key": "+",
+"mods": []
+},
+{
+"name": "Collapse",
+"key": "Delete",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Create Cluster",
+"key": "l",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Create Group from Objects",
+"key": "g",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Create Marking Set",
+"key": "m",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Create Reference Plane",
+"key": "-",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Create Transform Group",
+"key": "/",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Cut Hierarchical Link",
+"key": "/",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Delete Component",
+"key": "Delete",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Delete Objects Tool",
+"key": "Backspace",
+"mods": []
+},
+{
+"name": "Delete Selected Permanently",
+"key": "Delete",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Deselect All",
+"key": "a",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Deselect All Using Filter",
+"key": "f",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Dissolve & Clean Adjacent Vertices",
+"key": ";",
+"mods": []
+},
+{
+"name": "Dissolve Component",
+"key": ";",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Dolly Tool",
+"key": "p",
+"mods": []
+},
+{
+"name": "Duplicate Single w/o Options",
+"key": "d",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Duplicate Tool",
+"key": "d",
+"mods": []
+},
+{
+"name": "Duplicate/Extrude Multiple",
+"key": "d",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Duplicate/Extrude Single",
+"key": "d",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Edge Select Tool",
+"key": "e",
+"mods": []
+},
+{
+"name": "Edge Select Tool (Extended Selection)",
+"key": "e",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Escape Pick Session",
+"key": "Escape",
+"mods": []
+},
+{
+"name": "Face Robot Act Floating Panel",
+"key": "F6",
+"mods": []
+},
+{
+"name": "First Frame",
+"key": "ArrowUp",
+"mods": []
+},
+{
+"name": "First Key",
+"key": "ArrowUp",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Frame All",
+"key": "a",
+"mods": []
+},
+{
+"name": "Frame All (All 3D Views)",
+"key": "a",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Frame Selection",
+"key": "f",
+"mods": []
+},
+{
+"name": "Frame Selection (All 3D Views)",
+"key": "f",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Freeform Select Tool",
+"key": "F9",
+"mods": []
+},
+{
+"name": "Grid (All Cameras)",
+"key": "g",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Grow Selection",
+"key": "=",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Hair Tip Select Tool",
+"key": "'",
+"mods": []
+},
+{
+"name": "Hide Unselected Objects/Polygons",
+"key": "h",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Hide/Unhide Selection",
+"key": "h",
+"mods": []
+},
+{
+"name": "Hide/Unhide Texture Supports",
+"key": "j",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Info Scene",
+"key": "Enter",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Info Selection",
+"key": "Enter",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Inspect All Node Properties",
+"key": "Enter",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Inspect Chain Properties",
+"key": "r",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Inspect Local Transform",
+"key": "k",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Inspect Object",
+"key": "Enter",
+"mods": []
+},
+{
+"name": "Instantiate Multiple",
+"key": "i",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Instantiate Single",
+"key": "i",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Instantiate Single w/o Options",
+"key": "i",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Lasso Select Tool",
+"key": "F8",
+"mods": []
+},
+{
+"name": "Last Auxiliary Tool",
+"key": ",",
+"mods": []
+},
+{
+"name": "Last Frame",
+"key": "ArrowDown",
+"mods": []
+},
+{
+"name": "Last Operator in Stack",
+"key": "End",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "MCP Setting: Set Transform Modifier COG",
+"key": "Numpad1",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Modifier Sym",
+"key": "Numpad3",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Global",
+"key": "Numpad7",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Local",
+"key": "Numpad8",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Parent",
+"key": "Numpad4",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Plane",
+"key": "Numpad6",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Reference",
+"key": "Numpad5",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref View",
+"key": "Numpad9",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Tool Axis X",
+"key": "/",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Tool Axis Y",
+"key": "*",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Tool Axis Z",
+"key": "-",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Toggle Prop Modeling",
+"key": "Numpad2",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Manipulate Tool",
+"key": "b",
+"mods": []
+},
+{
+"name": "Maximize/Restore Current Viewport",
+"key": "F12",
+"mods": []
+},
+{
+"name": "Modify Projection",
+"key": "j",
+"mods": []
+},
+{
+"name": "Move Component Tool",
+"key": "m",
+"mods": []
+},
+{
+"name": "Move Joint Tool",
+"key": "j",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Navigation Tool",
+"key": "s",
+"mods": []
+},
+{
+"name": "New Custom Parameter",
+"key": "p",
+"mods": [
+"shift"
+]
+},
+{
+"name": "New Scene",
+"key": "n",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Next Frame",
+"key": "ArrowRight",
+"mods": []
+},
+{
+"name": "Next Inspected Node",
+"key": "PageDown",
+"mods": []
+},
+{
+"name": "Next Key",
+"key": "ArrowRight",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Object Select Tool",
+"key": " ",
+"mods": []
+},
+{
+"name": "Object Select Tool (Extended Selection)",
+"key": " ",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Open Animation Editor on Kinematics",
+"key": "Numpad0",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on PosX",
+"key": "Numpad1",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on PosY",
+"key": "Numpad2",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on PosZ",
+"key": "Numpad3",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on RotX",
+"key": "Numpad4",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on RotY",
+"key": "Numpad5",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on RotZ",
+"key": "Numpad6",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on SclX",
+"key": "Numpad7",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on SclY",
+"key": "Numpad8",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on SclZ",
+"key": "Numpad9",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Attachments",
+"key": "3",
+"mods": []
+},
+{
+"name": "Open Scene",
+"key": "o",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Transient Explorer",
+"key": "F3",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Orbit Tool",
+"key": "o",
+"mods": []
+},
+{
+"name": "Paint Properties",
+"key": "w",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Paint Select Tool",
+"key": "F11",
+"mods": []
+},
+{
+"name": "Paint Texture Tool",
+"key": "w",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Paint Tool",
+"key": "w",
+"mods": []
+},
+{
+"name": "Paint Vertex Color Tool",
+"key": "w",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Pan and Zoom Tool",
+"key": "z",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Parent Tool",
+"key": "/",
+"mods": []
+},
+{
+"name": "Play in Real Time",
+"key": "ArrowUp",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Point Select Tool",
+"key": "t",
+"mods": []
+},
+{
+"name": "Point Select Tool (Extended Selection)",
+"key": "t",
+"mods": [
+"shift"
+]
+},
+{
+"name": "PolyMesh Hulls",
+"key": "+",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Polygon Select Tool",
+"key": "y",
+"mods": []
+},
+{
+"name": "Polygon Select Tool (Extended Selection)",
+"key": "y",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Previous Frame",
+"key": "ArrowLeft",
+"mods": []
+},
+{
+"name": "Previous Inspected Node",
+"key": "PageUp",
+"mods": []
+},
+{
+"name": "Previous Key",
+"key": "ArrowLeft",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Raycast Edge Select Tool",
+"key": "i",
+"mods": []
+},
+{
+"name": "Raycast Edge Select Tool (Extended Selection)",
+"key": "i",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Raycast Polygon Select Tool",
+"key": "u",
+"mods": []
+},
+{
+"name": "Raycast Polygon Select Tool (Extended Selection)",
+"key": "u",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Raycast Select Tool",
+"key": "F10",
+"mods": []
+},
+{
+"name": "Rectangle Raycast Select Tool",
+"key": "F10",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Rectangle Select Tool",
+"key": "F7",
+"mods": []
+},
+{
+"name": "Redo",
+"key": "y",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Redo Camera",
+"key": "y",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Refresh All Render Regions",
+"key": "F5",
+"mods": []
+},
+{
+"name": "Refresh Render Region",
+"key": "F5",
+"mods": []
+},
+{
+"name": "Remove Animation",
+"key": "k",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Remove Cluster",
+"key": "l",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Remove Group",
+"key": "g",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Remove Key Hot Key",
+"key": "k",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Remove Transform Group",
+"key": "/",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Render Region Tool",
+"key": "q",
+"mods": []
+},
+{
+"name": "Reset Active Transform",
+"key": "r",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Reset All Transforms",
+"key": "r",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Roll Tool",
+"key": "l",
+"mods": []
+},
+{
+"name": "Rotation Tool",
+"key": "c",
+"mods": []
+},
+{
+"name": "Save Key",
+"key": "k",
+"mods": []
+},
+{
+"name": "Save Key on Pos (X,Y,Z)",
+"key": "Numpad1",
+"mods": []
+},
+{
+"name": "Save Key on Rot (X,Y,Z)",
+"key": "Numpad4",
+"mods": []
+},
+{
+"name": "Save Key on Scl (X,Y,Z)",
+"key": "Numpad7",
+"mods": []
+},
+{
+"name": "Save Pivot Key on Pos",
+"key": "Numpad2",
+"mods": []
+},
+{
+"name": "Save Pivot Key on Rot",
+"key": "Numpad5",
+"mods": []
+},
+{
+"name": "Save Pivot Key on Scl",
+"key": "Numpad8",
+"mods": []
+},
+{
+"name": "Save Scene",
+"key": "s",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Scaling Tool",
+"key": "x",
+"mods": []
+},
+{
+"name": "Select All Objects",
+"key": "a",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select All Using Filter",
+"key": "a",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Select First",
+"key": "Home",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Select First Child",
+"key": "ArrowDown",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Select First Child in Branch",
+"key": "ArrowDown",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select First in Branch",
+"key": "Home",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Last",
+"key": "End",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Select Last in Branch",
+"key": "End",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Model",
+"key": "t",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Select Next Sibling",
+"key": "ArrowRight",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Select Next Sibling in Branch",
+"key": "ArrowRight",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Parent",
+"key": "ArrowUp",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Select Parent in Branch",
+"key": "ArrowUp",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Previous Sibling",
+"key": "ArrowLeft",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Select Previous Sibling in Branch",
+"key": "ArrowLeft",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Tree",
+"key": "t",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Sequence First Frame",
+"key": "m",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Sequence Last Frame",
+"key": "/",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Sequence Next Frame",
+"key": "n",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Sequence Play Forwards",
+"key": ".",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Sequence Play in Real Time",
+"key": ".",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Sequence Previous Frame",
+"key": "b",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Sequence Stop",
+"key": ",",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Set Branch Key Using Marking Set",
+"key": "k",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Set Filter to Edge",
+"key": "F9",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Set Filter to Object",
+"key": "F7",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Set Filter to Point",
+"key": "F8",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Set Filter to Polygon",
+"key": "F10",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Set Transient Reference Plane",
+"key": "-",
+"mods": []
+},
+{
+"name": "Show 3D Context Menu",
+"key": "ContextMenu",
+"mods": []
+},
+{
+"name": "Show Next Manipulator",
+"key": "Tab",
+"mods": []
+},
+{
+"name": "Show Next OGL Projection",
+"key": "]",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Show Previous Manipulator",
+"key": "Tab",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Show Previous OGL Projection",
+"key": "[",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Show Texture Supports",
+"key": "j",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Show/Hide Grid",
+"key": "g",
+"mods": []
+},
+{
+"name": "Show/Hide Render Region",
+"key": "q",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Shrink Selection",
+"key": "-",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Simplified Wireframe Display",
+"key": "+",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Slice Polygons Tool",
+"key": "[",
+"mods": []
+},
+{
+"name": "Split Edge Tool",
+"key": "]",
+"mods": []
+},
+{
+"name": "StartChannelCapture",
+"key": "ArrowUp",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Stop",
+"key": "ArrowDown",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "StopChannelCapture",
+"key": "ArrowDown",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Subdivide",
+"key": "d",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Switch to Animate Toolbar",
+"key": "F2",
+"mods": []
+},
+{
+"name": "Switch to Hair Toolbar",
+"key": "2",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Switch to ICE Toolbar",
+"key": "F4",
+"mods": []
+},
+{
+"name": "Switch to Model Toolbar",
+"key": "F1",
+"mods": []
+},
+{
+"name": "Switch to Panel Toolbar",
+"key": "1",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Switch to Panel Weight",
+"key": "3",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Switch to Render Toolbar",
+"key": "F3",
+"mods": []
+},
+{
+"name": "Switch to Simulate Toolbar",
+"key": "4",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Toggle PropVolume",
+"key": "v",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Translate Tool",
+"key": "v",
+"mods": []
+},
+{
+"name": "Undo",
+"key": "z",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Undo Camera",
+"key": "z",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Unhide All Objects",
+"key": "h",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Unhide All Polygons",
+"key": "h",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "View Nudge Down",
+"key": "PageDown",
+"mods": [
+"shift"
+]
+},
+{
+"name": "View Nudge Left",
+"key": "Home",
+"mods": [
+"shift"
+]
+},
+{
+"name": "View Nudge Right",
+"key": "End",
+"mods": [
+"shift"
+]
+},
+{
+"name": "View Nudge Up",
+"key": "PageUp",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Virtual Slider Tool",
+"key": "4",
+"mods": []
+},
+{
+"name": "Visibility Options (All Cameras)",
+"key": "s",
+"mods": [
+"ctrl",
+"shift"
+]
+}
+]
+},
+"Softimage Key Map": {
+"Global": [
+{
+"name": "Close Floating Window",
+"key": "`",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Copy",
+"key": "c",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Cut",
+"key": "x",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Delete",
+"key": "Delete",
+"mods": []
+},
+{
+"name": "Next Floating Window",
+"key": "Tab",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Paste",
+"key": "v",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Previous Floating Window",
+"key": "Tab",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Quit",
+"key": "q",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Repeat",
+"key": ".",
+"mods": []
+},
+{
+"name": "Select All",
+"key": "a",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Users Guide",
+"key": "F1",
+"mods": []
+}
+],
+"Layout Shortcuts": [],
+"Select Tool": [],
+"Transform Tool": [],
+"Transform Tool Proportional": [
+{
+"name": "Adjust proportional distance",
+"key": "r",
+"mods": []
+},
+{
+"name": "Adjust proportional falloff bias",
+"key": "r",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Decrease proportional distance",
+"key": "ArrowDown",
+"mods": []
+},
+{
+"name": "Decrease proportional falloff (bias)",
+"key": "ArrowDown",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Increase proportional distance",
+"key": "ArrowUp",
+"mods": []
+},
+{
+"name": "Increase proportional falloff (bias)",
+"key": "ArrowUp",
+"mods": [
+"shift"
+]
+}
+],
+"Tweak Tool": [
+{
+"name": "Rotate Manipulator",
+"key": "c",
+"mods": []
+},
+{
+"name": "Scale Manipulator",
+"key": "x",
+"mods": []
+},
+{
+"name": "Show Next Manipulator",
+"key": "Tab",
+"mods": []
+},
+{
+"name": "Show Prev Manipulator",
+"key": "Tab",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Slide Components",
+"key": "j",
+"mods": []
+},
+{
+"name": "Translate Manipulator",
+"key": "v",
+"mods": []
+},
+{
+"name": "Weld Components",
+"key": "l",
+"mods": []
+}
+],
+"Tweak Tool Proportional": [
+{
+"name": "Adjust proportional distance",
+"key": "r",
+"mods": []
+},
+{
+"name": "Adjust proportional falloff bias",
+"key": "r",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Decrease proportional distance",
+"key": "ArrowDown",
+"mods": []
+},
+{
+"name": "Decrease proportional falloff (bias)",
+"key": "ArrowDown",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Increase proportional distance",
+"key": "ArrowUp",
+"mods": []
+},
+{
+"name": "Increase proportional falloff (bias)",
+"key": "ArrowUp",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Rotate Manipulator",
+"key": "c",
+"mods": []
+},
+{
+"name": "Scale Manipulator",
+"key": "x",
+"mods": []
+},
+{
+"name": "Show Next Manipulator",
+"key": "Tab",
+"mods": []
+},
+{
+"name": "Show Prev Manipulator",
+"key": "Tab",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Slide Components",
+"key": "j",
+"mods": []
+},
+{
+"name": "Translate Manipulator",
+"key": "v",
+"mods": []
+},
+{
+"name": "Weld Components",
+"key": "l",
+"mods": []
+}
+],
+"View Shortcuts": [
+{
+"name": "Animation Editor",
+"key": "0",
+"mods": []
+},
+{
+"name": "Animation Mixer",
+"key": "0",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Browser",
+"key": "5",
+"mods": []
+},
+{
+"name": "Explorer",
+"key": "8",
+"mods": []
+},
+{
+"name": "Expression Editor",
+"key": "9",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Fx Tree",
+"key": "1",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Fx Viewer",
+"key": "2",
+"mods": [
+"alt"
+]
+},
+{
+"name": "ICE Tree",
+"key": "9",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Image Clip Viewer",
+"key": "6",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Material Manager",
+"key": "7",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Netview",
+"key": "5",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Render Tree",
+"key": "7",
+"mods": []
+},
+{
+"name": "SDK Explorer",
+"key": "4",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Scene Layer Manager",
+"key": "6",
+"mods": []
+},
+{
+"name": "Scene Search",
+"key": "f",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Schematic",
+"key": "9",
+"mods": []
+},
+{
+"name": "Script Editor",
+"key": "4",
+"mods": [
+"alt"
+]
+},
+{
+"name": "SpreadSheet",
+"key": "3",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Texture Editor",
+"key": "7",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Texture Layer Editor",
+"key": "7",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Weight Editor",
+"key": "e",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "XSI Explorer",
+"key": "8",
+"mods": [
+"alt"
+]
+}
+],
+"XSI": [
+{
+"name": "Activate Current Select Tool using Filter",
+"key": " ",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Activate Group/Cluster Select Tool using Filter",
+"key": "=",
+"mods": []
+},
+{
+"name": "Activate Marking Set",
+"key": "m",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Add Edge Tool",
+"key": "\\",
+"mods": []
+},
+{
+"name": "Add First Child to Selection",
+"key": "ArrowDown",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Next Sibling Branch to Selection",
+"key": "ArrowRight",
+"mods": [
+"ctrl",
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Next Sibling to Selection",
+"key": "ArrowRight",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Parent to Selection",
+"key": "ArrowUp",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Polygon Tool",
+"key": "n",
+"mods": []
+},
+{
+"name": "Add Previous Sibling Branch to Selection",
+"key": "ArrowLeft",
+"mods": [
+"ctrl",
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Previous Sibling to Selection",
+"key": "ArrowLeft",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Add Vertex Tool",
+"key": "Insert",
+"mods": []
+},
+{
+"name": "Camera Visibility Options",
+"key": "s",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Center Selection",
+"key": "c",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Center Selection (All 3D Views)",
+"key": "c",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Change Subdivision Down",
+"key": "-",
+"mods": []
+},
+{
+"name": "Change Subdivision Up",
+"key": "+",
+"mods": []
+},
+{
+"name": "Collapse",
+"key": "Delete",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Create Cluster",
+"key": "l",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Create Group from Objects",
+"key": "g",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Create Marking Set",
+"key": "m",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Create Reference Plane",
+"key": "-",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Create Transform Group",
+"key": "/",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Cut Hierarchical Link",
+"key": "/",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Delete Component",
+"key": "Delete",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Delete Objects Tool",
+"key": "Backspace",
+"mods": []
+},
+{
+"name": "Delete Selected Permanently",
+"key": "Delete",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Deselect All",
+"key": "a",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Deselect All Using Filter",
+"key": "f",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Dissolve & Clean Adjacent Vertices",
+"key": ";",
+"mods": []
+},
+{
+"name": "Dissolve Component",
+"key": ";",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Dolly Tool",
+"key": "p",
+"mods": []
+},
+{
+"name": "Duplicate Single w/o Options",
+"key": "d",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Duplicate Tool",
+"key": "d",
+"mods": []
+},
+{
+"name": "Duplicate/Extrude Multiple",
+"key": "d",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Duplicate/Extrude Single",
+"key": "d",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Edge Select Tool",
+"key": "e",
+"mods": []
+},
+{
+"name": "Edge Select Tool (Extended Selection)",
+"key": "e",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Escape Pick Session",
+"key": "Escape",
+"mods": []
+},
+{
+"name": "Face Robot Act Floating Panel",
+"key": "F6",
+"mods": []
+},
+{
+"name": "First Frame",
+"key": "Home",
+"mods": []
+},
+{
+"name": "First Key",
+"key": "ArrowUp",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Frame All",
+"key": "a",
+"mods": []
+},
+{
+"name": "Frame All (All 3D Views)",
+"key": "a",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Frame Selection",
+"key": "f",
+"mods": []
+},
+{
+"name": "Frame Selection (All 3D Views)",
+"key": "f",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Freeform Select Tool",
+"key": "F9",
+"mods": []
+},
+{
+"name": "Grid (All Cameras)",
+"key": "g",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Grow Selection",
+"key": "=",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Hair Tip Select Tool",
+"key": "'",
+"mods": []
+},
+{
+"name": "Hide Unselected Objects/Polygons",
+"key": "h",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Hide/Unhide Selection",
+"key": "h",
+"mods": []
+},
+{
+"name": "Hide/Unhide Texture Supports",
+"key": "j",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Info Scene",
+"key": "Enter",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Info Selection",
+"key": "Enter",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Inspect All Node Properties",
+"key": "Enter",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Inspect Chain Properties",
+"key": "r",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Inspect Local Transform",
+"key": "k",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Inspect Object",
+"key": "Enter",
+"mods": []
+},
+{
+"name": "Instantiate Multiple",
+"key": "i",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Instantiate Single",
+"key": "i",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Instantiate Single w/o Options",
+"key": "i",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Lasso Select Tool",
+"key": "F8",
+"mods": []
+},
+{
+"name": "Last Auxiliary Tool",
+"key": ",",
+"mods": []
+},
+{
+"name": "Last Frame",
+"key": "End",
+"mods": []
+},
+{
+"name": "Last Key",
+"key": "ArrowDown",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Last Operator in Stack",
+"key": "End",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "MCP Setting: Set Transform Modifier COG",
+"key": "Numpad1",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Modifier Sym",
+"key": "Numpad3",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Global",
+"key": "Numpad7",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Local",
+"key": "Numpad8",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Parent",
+"key": "Numpad4",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Plane",
+"key": "Numpad6",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref Reference",
+"key": "Numpad5",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Ref View",
+"key": "Numpad9",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Tool Axis X",
+"key": "/",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Tool Axis Y",
+"key": "*",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Set Transform Tool Axis Z",
+"key": "-",
+"mods": [
+"alt"
+]
+},
+{
+"name": "MCP Setting: Toggle Prop Modeling",
+"key": "Numpad2",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Manipulate Tool",
+"key": "b",
+"mods": []
+},
+{
+"name": "Maximize/Restore Current Viewport",
+"key": "F12",
+"mods": []
+},
+{
+"name": "Modify Projection",
+"key": "j",
+"mods": []
+},
+{
+"name": "Move Component Tool",
+"key": "m",
+"mods": []
+},
+{
+"name": "Move Joint Tool",
+"key": "j",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Navigation Tool",
+"key": "s",
+"mods": []
+},
+{
+"name": "New Custom Parameter",
+"key": "p",
+"mods": [
+"shift"
+]
+},
+{
+"name": "New Scene",
+"key": "n",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Next Frame",
+"key": "ArrowRight",
+"mods": []
+},
+{
+"name": "Next Inspected Node",
+"key": "PageDown",
+"mods": []
+},
+{
+"name": "Next Key",
+"key": "ArrowRight",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Object Select Tool",
+"key": " ",
+"mods": []
+},
+{
+"name": "Object Select Tool (Extended Selection)",
+"key": " ",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Open Animation Editor on Kinematics",
+"key": "Numpad0",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on PosX",
+"key": "Numpad1",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on PosY",
+"key": "Numpad2",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on PosZ",
+"key": "Numpad3",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on RotX",
+"key": "Numpad4",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on RotY",
+"key": "Numpad5",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on RotZ",
+"key": "Numpad6",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on SclX",
+"key": "Numpad7",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on SclY",
+"key": "Numpad8",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Animation Editor on SclZ",
+"key": "Numpad9",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Attachments",
+"key": "F3",
+"mods": []
+},
+{
+"name": "Open Scene",
+"key": "o",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Open Transient Explorer",
+"key": "F3",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Orbit Tool",
+"key": "o",
+"mods": []
+},
+{
+"name": "Paint Properties",
+"key": "w",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Paint Select Tool",
+"key": "F11",
+"mods": []
+},
+{
+"name": "Paint Texture Tool",
+"key": "w",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Paint Tool",
+"key": "w",
+"mods": []
+},
+{
+"name": "Paint Vertex Color Tool",
+"key": "w",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Pan and Zoom Tool",
+"key": "z",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Parent Tool",
+"key": "/",
+"mods": []
+},
+{
+"name": "Play Forwards",
+"key": "ArrowUp",
+"mods": []
+},
+{
+"name": "Play in Real Time",
+"key": "ArrowUp",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Point Select Tool",
+"key": "t",
+"mods": []
+},
+{
+"name": "Point Select Tool (Extended Selection)",
+"key": "t",
+"mods": [
+"shift"
+]
+},
+{
+"name": "PolyMesh Hulls",
+"key": "+",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Polygon Select Tool",
+"key": "y",
+"mods": []
+},
+{
+"name": "Polygon Select Tool (Extended Selection)",
+"key": "y",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Previous Frame",
+"key": "ArrowLeft",
+"mods": []
+},
+{
+"name": "Previous Inspected Node",
+"key": "PageUp",
+"mods": []
+},
+{
+"name": "Previous Key",
+"key": "ArrowLeft",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Raycast Edge Select Tool",
+"key": "i",
+"mods": []
+},
+{
+"name": "Raycast Edge Select Tool (Extended Selection)",
+"key": "i",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Raycast Polygon Select Tool",
+"key": "u",
+"mods": []
+},
+{
+"name": "Raycast Polygon Select Tool (Extended Selection)",
+"key": "u",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Raycast Select Tool",
+"key": "F10",
+"mods": []
+},
+{
+"name": "Rectangle Raycast Select Tool",
+"key": "F10",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Rectangle Select Tool",
+"key": "F7",
+"mods": []
+},
+{
+"name": "Redo",
+"key": "y",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Redo Camera",
+"key": "y",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Refresh All Render Regions",
+"key": "F5",
+"mods": []
+},
+{
+"name": "Refresh Render Region",
+"key": "F5",
+"mods": []
+},
+{
+"name": "Remove Animation",
+"key": "k",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Remove Cluster",
+"key": "l",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Remove Group",
+"key": "g",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Remove Key Hot Key",
+"key": "k",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Remove Transform Group",
+"key": "/",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Render Region Tool",
+"key": "q",
+"mods": []
+},
+{
+"name": "Reset Active Transform",
+"key": "r",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Reset All Transforms",
+"key": "r",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Reset Camera",
+"key": "r",
+"mods": []
+},
+{
+"name": "Roll Tool",
+"key": "l",
+"mods": []
+},
+{
+"name": "Rotation Tool",
+"key": "c",
+"mods": []
+},
+{
+"name": "Save Key Hot Key",
+"key": "k",
+"mods": []
+},
+{
+"name": "Save Key on Pos (X,Y,Z)",
+"key": "Numpad1",
+"mods": []
+},
+{
+"name": "Save Key on Rot (X,Y,Z)",
+"key": "Numpad4",
+"mods": []
+},
+{
+"name": "Save Key on Scl (X,Y,Z)",
+"key": "Numpad7",
+"mods": []
+},
+{
+"name": "Save Pivot Key on Pos",
+"key": "Numpad2",
+"mods": []
+},
+{
+"name": "Save Pivot Key on Rot",
+"key": "Numpad5",
+"mods": []
+},
+{
+"name": "Save Pivot Key on Scl",
+"key": "Numpad8",
+"mods": []
+},
+{
+"name": "Save Scene",
+"key": "s",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Scaling Tool",
+"key": "x",
+"mods": []
+},
+{
+"name": "Select All Objects",
+"key": "a",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select All Using Filter",
+"key": "a",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Select First",
+"key": "Home",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Select First Child",
+"key": "ArrowDown",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Select First Child in Branch",
+"key": "ArrowDown",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select First in Branch",
+"key": "Home",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Last",
+"key": "End",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Select Last in Branch",
+"key": "End",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Model",
+"key": "t",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Select Next Sibling",
+"key": "ArrowRight",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Select Next Sibling in Branch",
+"key": "ArrowRight",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Parent",
+"key": "ArrowUp",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Select Parent in Branch",
+"key": "ArrowUp",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Previous Sibling",
+"key": "ArrowLeft",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Select Previous Sibling in Branch",
+"key": "ArrowLeft",
+"mods": [
+"ctrl",
+"alt"
+]
+},
+{
+"name": "Select Tree",
+"key": "t",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Sequence First Frame",
+"key": "m",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Sequence Last Frame",
+"key": "/",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Sequence Next Frame",
+"key": "n",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Sequence Play Forwards",
+"key": ".",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Sequence Play in Real Time",
+"key": ".",
+"mods": [
+"alt",
+"shift"
+]
+},
+{
+"name": "Sequence Previous Frame",
+"key": "b",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Sequence Stop",
+"key": ",",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Set Branch Key Using Marking Set",
+"key": "k",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Set Filter to Edge",
+"key": "F9",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Set Filter to Object",
+"key": "F7",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Set Filter to Point",
+"key": "F8",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Set Filter to Polygon",
+"key": "F10",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Set Transient Reference Plane",
+"key": "-",
+"mods": []
+},
+{
+"name": "Show 3D Context Menu",
+"key": "ContextMenu",
+"mods": []
+},
+{
+"name": "Show Next Manipulator",
+"key": "Tab",
+"mods": []
+},
+{
+"name": "Show Next OGL Projection",
+"key": "]",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Show Previous Manipulator",
+"key": "Tab",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Show Previous OGL Projection",
+"key": "[",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Show Texture Supports",
+"key": "j",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Show/Hide Grid",
+"key": "g",
+"mods": []
+},
+{
+"name": "Show/Hide Render Region",
+"key": "q",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Shrink Selection",
+"key": "-",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Simplified Wireframe Display",
+"key": "+",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Slice Polygons Tool",
+"key": "[",
+"mods": []
+},
+{
+"name": "Split Edge Tool",
+"key": "]",
+"mods": []
+},
+{
+"name": "StartChannelCapture",
+"key": "ArrowUp",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Stop",
+"key": "ArrowDown",
+"mods": []
+},
+{
+"name": "StopChannelCapture",
+"key": "ArrowDown",
+"mods": [
+"ctrl",
+"shift"
+]
+},
+{
+"name": "Subdivide",
+"key": "d",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Switch to Animate Toolbar",
+"key": "2",
+"mods": []
+},
+{
+"name": "Switch to Hair Toolbar",
+"key": "2",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Switch to ICE Toolbar",
+"key": "4",
+"mods": []
+},
+{
+"name": "Switch to Model Toolbar",
+"key": "1",
+"mods": []
+},
+{
+"name": "Switch to Panel Toolbar",
+"key": "1",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Switch to Panel Weight",
+"key": "3",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Switch to Render Toolbar",
+"key": "3",
+"mods": []
+},
+{
+"name": "Switch to Simulate Toolbar",
+"key": "4",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Toggle PropVolume",
+"key": "v",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Translate Tool",
+"key": "v",
+"mods": []
+},
+{
+"name": "Undo",
+"key": "z",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "Undo Camera",
+"key": "z",
+"mods": [
+"alt"
+]
+},
+{
+"name": "Unhide All Objects",
+"key": "h",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Unhide All Polygons",
+"key": "h",
+"mods": [
+"ctrl"
+]
+},
+{
+"name": "View Nudge Down",
+"key": "PageDown",
+"mods": [
+"shift"
+]
+},
+{
+"name": "View Nudge Left",
+"key": "Home",
+"mods": [
+"shift"
+]
+},
+{
+"name": "View Nudge Right",
+"key": "End",
+"mods": [
+"shift"
+]
+},
+{
+"name": "View Nudge Up",
+"key": "PageUp",
+"mods": [
+"shift"
+]
+},
+{
+"name": "Virtual Slider Tool",
+"key": "F4",
+"mods": []
+},
+{
+"name": "Visibility Options (All Cameras)",
+"key": "s",
+"mods": [
+"ctrl",
+"shift"
+]
+}
+]
+}
+}

@@ -1,0 +1,162 @@
+[
+{
+"file": "KeyingPanel.xsivw",
+"name": "Keying Panel",
+"clsid": "{1A32021D-D551-4b23-A5C1-4BD882B237F7}",
+"defaultsize": "0,0,160,480",
+"maxinstances": "10000",
+"supportedtypes": "4"
+},
+{
+"file": "MiniTransformMCP.xsivw",
+"name": "Mini Transform Panel",
+"clsid": "{E0F89586-824F-4a9c-9E00-12BCE216B86A}",
+"defaultsize": "50,50,250,200",
+"maxinstances": "9999",
+"supportedtypes": "6"
+},
+{
+"file": "animationpanel.xsivw",
+"name": "Animation Panel",
+"clsid": "{B17DF864-6768-11D1-8029-00A0243E2717}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "1",
+"supportedtypes": "2"
+},
+{
+"file": "commandline.xsivw",
+"name": "Command Line",
+"clsid": "{333670EB-4414-11D2-8726-00A0C906816C}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "1",
+"supportedtypes": "2"
+},
+{
+"file": "editpanel.xsivw",
+"name": "Edit Panel",
+"clsid": "{685AB352-69C4-11D1-8029-00A0243E2717}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "1",
+"supportedtypes": "2"
+},
+{
+"file": "explorer.xsivw",
+"name": "Explorer",
+"clsid": "{25C1D4E0-0196-11D3-AE8E-00A0243E3654}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "10000",
+"supportedtypes": "6"
+},
+{
+"file": "layercontrol.xsivw",
+"name": "Scene Layer Manager",
+"clsid": "{8BAFDF20-A130-11D3-B4AE-009027BC38D5}",
+"defaultsize": "50,50,125,265",
+"maxinstances": "10000",
+"supportedtypes": "6"
+},
+{
+"file": "playbackpanel.xsivw",
+"name": "Playback Panel",
+"clsid": "{B17DF866-6768-11D1-8029-00A0243E2717}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "1",
+"supportedtypes": "2"
+},
+{
+"file": "propertyeditor.xsivw",
+"name": "Property Editor",
+"clsid": "{5F3351D9-A33E-11D3-A93D-00C04F8EDEB9}",
+"defaultsize": "50,50,125,265",
+"maxinstances": "10000",
+"supportedtypes": "2"
+},
+{
+"file": "scripteditor.xsivw",
+"name": "Script Editor",
+"clsid": "{2BC1E470-3227-11D2-8722-00A0C906816C}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "1",
+"supportedtypes": "4"
+},
+{
+"file": "scripthistoryview.xsivw",
+"name": "Script History",
+"clsid": "{29160E6A-36F9-4dc9-840D-69A900B4EABD}",
+"defaultsize": "50,50,300,250",
+"maxinstances": "10000",
+"supportedtypes": "6"
+},
+{
+"file": "selectionpanel.xsivw",
+"name": "Selection Panel",
+"clsid": "{093B3121-6733-11D1-8028-00A0243E2717}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "1",
+"supportedtypes": "2"
+},
+{
+"file": "shelf.xsivw",
+"name": "Shelf",
+"clsid": "{D8169747-DAC8-453C-A0B2-1F6C4EE902FD}",
+"defaultsize": "130,150,400,300",
+"maxinstances": "10000",
+"supportedtypes": "6"
+},
+{
+"file": "snappanel.xsivw",
+"name": "Snap Panel",
+"clsid": "{823FCC4D-FBF4-11D3-A2B0-08003658D403}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "1",
+"supportedtypes": "2"
+},
+{
+"file": "timeline.xsivw",
+"name": "Timeline",
+"clsid": "{E768AC17-54E2-4e5e-A567-1B7A61358467}",
+"defaultsize": "50,50,685,100",
+"maxinstances": "10000",
+"supportedtypes": "2"
+},
+{
+"file": "timerange.xsivw",
+"name": "Timerange",
+"clsid": "{21B3AE33-0616-44de-87B2-0CFFCEE065AD}",
+"defaultsize": "50,50,685,100",
+"maxinstances": "10000",
+"supportedtypes": "2"
+},
+{
+"file": "toolbarpanel.xsivw",
+"name": "Toolbar Panel",
+"clsid": "{918039F1-D593-11CF-8287-00A0243E268D}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "1",
+"supportedtypes": "2"
+},
+{
+"file": "transformationpanel.xsivw",
+"name": "Transformation Panel",
+"clsid": "{4BDB6AD1-6768-11D1-8029-00A0243E2717}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "1",
+"supportedtypes": "2"
+},
+{
+"file": "vm.xsivw",
+"name": "View Manager",
+"clsid": "{1E9E95BB-B8CE-11CF-AE56-00A02411DF1A}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "1",
+"supportedtypes": "2"
+},
+{
+"file": "xsiexplorer.xsivw",
+"name": "XSI Explorer",
+"clsid": "{BA75ACC4-5EF1-4052-B1C1-7B4698A3175B}",
+"defaultsize": "100,100,900,650",
+"maxinstances": "10000",
+"supportedtypes": "6"
+}
+]
