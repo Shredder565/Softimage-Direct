@@ -41,12 +41,12 @@ export function viewManager(app: App, host: HTMLElement) {
   // Component display: selected polygons = translucent Component red, selected edges/points = Component red,
   // unselected points (point mode only) = Vertex blue at the Display pref point size, hover = Highlight colour.
   const hlPolys = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial({ color: SI.component, transparent: true, opacity: 0.5, side: THREE.DoubleSide, depthTest: true, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })); hlPolys.renderOrder = 10; scene.add(hlPolys);
-  const hlEdges = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: SI.component, depthTest: false })); hlEdges.renderOrder = 11; scene.add(hlEdges);
-  const hlPoints = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: SI.component, size: SI.pointSize, sizeAttenuation: false, depthTest: false })); hlPoints.renderOrder = 12; scene.add(hlPoints);
-  const allPoints = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: SI.vertex, size: SI.pointSize, sizeAttenuation: false, depthTest: false })); allPoints.renderOrder = 9; scene.add(allPoints);
-  const hoverPoly = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial({ color: SI.highlight, transparent: true, opacity: 0.35, side: THREE.DoubleSide, depthTest: false })); hoverPoly.renderOrder = 13; scene.add(hoverPoly);
-  const hoverLine = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: SI.highlight, depthTest: false })); hoverLine.renderOrder = 14; scene.add(hoverLine);
-  const hoverPoint = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: SI.highlight, size: SI.pointSize + 2, sizeAttenuation: false, depthTest: false })); hoverPoint.renderOrder = 15; scene.add(hoverPoint);
+  const hlEdges = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: SI.component, depthTest: true })); hlEdges.renderOrder = 11; scene.add(hlEdges);
+  const hlPoints = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: SI.component, size: SI.pointSize, sizeAttenuation: false, depthTest: true })); hlPoints.renderOrder = 12; scene.add(hlPoints);
+  const allPoints = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: SI.vertex, size: SI.pointSize, sizeAttenuation: false, depthTest: true })); allPoints.renderOrder = 9; scene.add(allPoints);
+  const hoverPoly = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial({ color: SI.highlight, transparent: true, opacity: 0.35, side: THREE.DoubleSide, depthTest: true, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })); hoverPoly.renderOrder = 13; scene.add(hoverPoly);
+  const hoverLine = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: SI.highlight, depthTest: true })); hoverLine.renderOrder = 14; scene.add(hoverLine);
+  const hoverPoint = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: SI.highlight, size: SI.pointSize + 2, sizeAttenuation: false, depthTest: true })); hoverPoint.renderOrder = 15; scene.add(hoverPoint);
   const gizmo = new THREE.Group(); scene.add(gizmo);
   const toolPreview = new THREE.Group(); scene.add(toolPreview);
   (window as any).__three = { scene, needs: () => { needs = true; } };
@@ -90,7 +90,7 @@ export function viewManager(app: App, host: HTMLElement) {
     const keyc = `${type}|${col.map(x => x.toFixed(3)).join(',')}|${sh?.val('shiny') ?? ''}|${sh?.val('roughness') ?? ''}|${sh?.val('metalness') ?? ''}|${sh?.val('transparency') ?? 0}|${img ? img.length : 0}`;
     let m = matCache.get(keyc);
     if (!m) {
-      const color = new THREE.Color(col[0], col[1], col[2]); const opts: any = { color, side: THREE.DoubleSide };
+      const color = new THREE.Color(col[0], col[1], col[2]); const opts: any = { color, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1.5, polygonOffsetUnits: 2 };
       switch (type) {
         case 'Lambert': case 'Ambient Occlusion': m = new THREE.MeshLambertMaterial(opts); break;
         case 'Constant': m = new THREE.MeshBasicMaterial(opts); break;
