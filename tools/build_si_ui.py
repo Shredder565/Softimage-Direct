@@ -140,6 +140,15 @@ def layout():
            'viewdefaultpos': {v.get('type'): v.get('position') for v in rv.find('viewdefaultpos')}}
     json.dump(out, open(os.path.join(OUT, 'layout_default.json'), 'w'), indent=0)
     print('layout', out['name'], out['width'], out['height'])
+    # every layout shipped in Application/layouts (Default, Dual, 1024 x 768, Autohide) → layouts.json
+    alls = {}
+    for f in sorted(os.listdir(os.path.join(SI, 'layouts'))):
+        if not f.endswith('.xsily'): continue
+        r2 = ET.parse(os.path.join(SI, 'layouts', f)).getroot(); rv2 = r2.find('relationalview')
+        tops = [c for c in rv2 if c.tag == 'frameset']
+        alls[rv2.get('name')] = {'name': rv2.get('name'), 'file': f, 'width': int(rv2.get('width') or 0), 'height': int(rv2.get('height') or 0), 'trees': [node(t) for t in tops], 'tree': node(tops[0]) if tops else None}
+    json.dump(alls, open(os.path.join(OUT, 'layouts.json'), 'w'), indent=0)
+    print('layouts', list(alls.keys()), [len(v['trees']) for v in alls.values()])
 
 # ---------------------------------------------------------------- views
 def views():

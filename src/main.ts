@@ -8,7 +8,8 @@ import { registerModelCommands2 } from './commands/model2';
 import { registerAnimCommands } from './commands/anim';
 import { registerRenderCommands } from './commands/render';
 import { playbackPanel, animationPanel, timerange, layerManager, xsiExplorer, scriptHistory } from './ui/views';
-import { LayoutEngine, DEFAULT_LAYOUT } from './ui/layout';
+import { LayoutEngine, layoutByName, currentLayoutName } from './ui/layout';
+import { installLayoutEditing } from './ui/layoutEdit';
 import { toolbarPanel, menuStatus, runMenuPath } from './ui/toolbarPanel';
 import { explorerView } from './ui/explorer';
 import { mcpPanel } from './ui/mcp';
@@ -58,7 +59,10 @@ layout.registerView('Command Line', h => commandLine(app, h));
 layout.registerView('Playback Panel', h => playbackPanel(app, h));
 layout.registerView('Animation Panel', h => animationPanel(app, h));
 layout.registerView('Main Shelf', h => mainShelf(app, h));
-layout.build(DEFAULT_LAYOUT, root);
+for (const n of ['Selection Panel', 'Transformation Panel', 'Snap Panel', 'Constraint Panel', 'Edit Panel', 'Mini Transform Panel'] as const) layout.registerView(n, h => { mcpPanel(app, h, n === 'Selection Panel' ? { only: ['Select'] } : n === 'Transformation Panel' ? { only: ['Transform'] } : n === 'Snap Panel' ? { only: ['Snap'] } : n === 'Constraint Panel' ? { only: ['Constrain'] } : n === 'Edit Panel' ? { only: ['Edit'] } : { only: ['Transform'], cls: 'mini' }); });
+layout.registerView('Scene Layer Manager', h => layerManager(app, h)); layout.registerView('Script History', h => scriptHistory(app, h)); layout.registerView('XSI Explorer', h => xsiExplorer(app, h));
+layout.build(layoutByName(currentLayoutName()) ?? layoutByName('Default')!, root);
+installLayoutEditing(app, layout, root);
 window.addEventListener('frameall', () => vm?.frameAll());
 
 // ---- Optional panels (Softimage: View > Optional Panels, panel switcher buttons, ToggleOptionalPanel command)

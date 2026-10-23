@@ -1,5 +1,6 @@
 // Main menubar built from XSI.exe's own menu resources (File = MENU 344, Edit/View/Display/Window/Help = MENU 128),
 // with the runtime-inserted entries Softimage adds at its "insertion points" (views, layouts, display modes).
+import { layoutNames, currentLayoutName } from './layout';
 import { App } from '../core/commands';
 import { SI_MENUS, SI_VIEWS, SiMenuItem, openSiMenu } from './si';
 import { minimizeAll, restoreAll, closeAll } from './floating';
@@ -16,12 +17,13 @@ export function menubar(app: App, host: HTMLElement) {
   const clipboard: { objs: any[]; cut: boolean } = { objs: [], cut: false };
 
   const viewsSubmenu = (): SiMenuItem[] => SI_VIEWS.map(v => ({ label: v.name, id: -1 }));
-  const layoutsSubmenu = (): SiMenuItem[] => [{ label: 'Default', id: -2 }, { label: 'Dual', id: -2 }, { label: '1024 x 768', id: -2 }, { label: 'Autohide', id: -2 }];
+  const layoutsSubmenu = (): SiMenuItem[] => layoutNames().map(n => ({ label: n, id: -2 }));
   const displaySubmenu = (): SiMenuItem[] => ['Bounding Box', 'Wireframe', 'Hidden Line', 'Constant', 'Shaded', 'Textured', 'Texture Decal', 'Realtime Shaders'].map(l => ({ label: l, id: -3 }));
   /** Expand Softimage's insertion points the way the running app does. */
   const expand = (items: SiMenuItem[]): SiMenuItem[] => items.flatMap(it => {
     if (it.label === 'View insertion point') return [{ label: 'Views', items: viewsSubmenu() }, { label: 'Optional Panels', items: [{ label: 'Main Shelf', id: -4 }, { label: 'Module Menu', id: -4 }, { label: 'MCP', id: -4 }, { label: 'Timeline', id: -4 }, { label: 'Timerange', id: -4 }, { label: 'Playback', id: -4 }] }];
     if (it.label === 'Layout Insertion Point') return layoutsSubmenu();
+    if (it.label === 'New Layout From') return [{ label: 'New Layout From', items: layoutNames().map(n => ({ label: n, id: -8 })) }];
     if (it.label === 'Display Insertion Point') return [...displaySubmenu(), { separator: true }, { label: 'Scene Colors...', id: -5 }, { label: 'Visibility Options...', id: -6 }];
     if (it.label === 'Edit Insertion Point' || it.label === 'Crosswalk Insertion Point' || it.label === 'Import Insertion Point' || it.label === 'Export Insertion Point') return [];
     if (it.label === 'Recent Scenes') return [{ label: 'Recent Scenes', items: recent().map(n => ({ label: n, id: -7 })) }];
@@ -35,13 +37,15 @@ export function menubar(app: App, host: HTMLElement) {
     const l = it.label ?? '';
     switch (it.id) {
       case -1: ev('openview', { name: l }); return;
-      case -2: if (l !== 'Default') app.logMsg('info', `Layout "${l}": only the Default layout is implemented`); return;
+      case -2: ev('layoutmenu', { label: l, path }); return;
       case -3: ev('setdisplaymode', { mode: l.toLowerCase() }); return;
       case -4: ev('togglepanel', { name: l }); return;
       case -5: ev('openprefs', { page: 'Scene Colors' }); return;
       case -6: ev('openvisibility'); return;
       case -7: ev('openscene', { name: l }); return;
+      case -8: ev('layoutmenu', { label: l, path: [...path, 'New Layout From'] }); return;
     }
+    if (path.includes('Layouts')) { ev('layoutmenu', { label: l, path }); return; }
     switch (l) {
       case 'New Scene': if (confirm('New scene? (unsaved work is lost)')) app.run('NewScene'); return;
       case 'Open...': ev('openscene'); return; case 'Save': ev('savescene'); return; case 'Save As...': ev('savescene', { as: true }); return; case 'Save Backup': ev('savescene', { backup: true }); return;
@@ -65,7 +69,7 @@ export function menubar(app: App, host: HTMLElement) {
   const accel = (it: SiMenuItem) => { const k = KEY_OF[it.label ?? '']; const b = k ? bindingFor(k) : null; return b ? { ...it, accel: b } : it; };
   for (const top of tops) {
     const m = document.createElement('span'); m.className = 'm'; m.textContent = top.label ?? ''; bar.appendChild(m);
-    m.onclick = (e) => { e.stopPropagation(); const r = m.getBoundingClientRect(); openSiMenu(expand(top.items ?? []).map(accel), r.left, r.bottom, pick, { enabled }, [top.label ?? '']); };
+    m.onclick = (e) => { e.stopPropagation(); const r = m.getBoundingClientRect(); openSiMenu(expand(top.items ?? []).map(accel), r.left, r.bottom, pick, { enabled, checked: it => it.id === -2 ? it.label === currentLayoutName() : undefined }, [top.label ?? '']); };
   }
   const right = document.createElement('span'); right.className = 'right'; right.textContent = 'Softimage-Direct · Autodesk Softimage 2015 SP2 clone'; bar.appendChild(right);
   host.appendChild(bar);

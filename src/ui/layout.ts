@@ -67,7 +67,7 @@ export class LayoutEngine {
     node.children.forEach((c, i) => {
       const pane = div('switcher-pane'); pane.appendChild(this.make(c)); panes.push(pane); body.appendChild(pane);
       const b = document.createElement('button'); b.className = 'switcher-btn'; const label = node.labels?.[i] ?? (c.kind === 'frame' ? (c.label ?? c.view) : (c.name ?? 'Tab'));
-      b.dataset.label = label; b.title = label; const ic = node.icons?.[i]; if (ic && this.iconFactory) { b.appendChild(this.iconFactory(ic)); b.classList.add('icon'); } else b.textContent = label;
+      b.dataset.label = label; b.title = label; const ic = node.icons?.[i]; if (ic) b.dataset.icon = ic; if (ic && this.iconFactory) { b.appendChild(this.iconFactory(ic)); b.classList.add('icon'); } else b.textContent = label;
       b.onclick = () => { panes.forEach((p, j) => p.classList.toggle('active', i === j)); Array.from(bar.children).forEach((x, j) => x.classList.toggle('active', i === j)); window.dispatchEvent(new Event('resize')); };
       bar.appendChild(b);
     });
@@ -115,9 +115,10 @@ function addSplitter(grid: HTMLElement, orientation: 'horizontal' | 'vertical', 
 }
 
 import siLayout from '../data/si/layout_default.json';
+import siLayouts from '../data/si/layouts.json';
 type SiNode = { kind: string; name?: string; displayname?: string; type?: string; bitmap?: string; optional?: string; orientation?: string; splitter?: string; sizes?: string[]; buttonside?: string; active?: number; children?: SiNode[] };
 /** Frame types in default.xsily -> registered view names; anything else shows a placeholder with its Softimage name. */
-const VIEW_OF: Record<string, string> = { 'Toolbar Panel': 'Toolbar Panel', 'Explorer': 'Explorer', 'Scripts': 'Script Log', 'View Manager': 'View Manager', 'Timeline': 'Timeline', 'Timerange': 'Timerange', 'Keying Panel': 'Keying Panel', 'Layer Control': 'Layer Control', 'Property Editor': 'Property Editor', 'Panel Switcher': 'Panel Switcher', 'Command Line': 'Command Line', 'Playback Panel': 'Playback Panel', 'Animation Panel': 'Animation Panel', 'Main Shelf': 'Main Shelf', 'Mini Transform Panel': 'Mini Transform Panel', 'Preset Manager': 'Preset Manager', 'Palettes': 'Palettes', 'Weight Paint Panel': 'Weight Paint Panel', 'Animation Layer Manager': 'Animation Layer Manager' };
+const VIEW_OF: Record<string, string> = { 'Toolbar Panel': 'Toolbar Panel', 'Explorer': 'Explorer', 'Scripts': 'Script Log', 'View Manager': 'View Manager', 'Timeline': 'Timeline', 'Timerange': 'Timerange', 'Keying Panel': 'Keying Panel', 'Layer Control': 'Layer Control', 'Property Editor': 'Property Editor', 'Panel Switcher': 'Panel Switcher', 'Command Line': 'Command Line', 'Playback Panel': 'Playback Panel', 'Animation Panel': 'Animation Panel', 'Main Shelf': 'Main Shelf', 'Mini Transform Panel': 'Mini Transform Panel', 'Preset Manager': 'Preset Manager', 'Palettes': 'Palettes', 'Weight Paint Panel': 'Weight Paint Panel', 'Animation Layer Manager': 'Animation Layer Manager', 'Selection Panel': 'Selection Panel', 'Transformation Panel': 'Transformation Panel', 'Snap Panel': 'Snap Panel', 'Constraint Panel': 'Constraint Panel', 'Edit Panel': 'Edit Panel', 'Netview': 'Netview', 'Animation Editor': 'Animation Editor', 'Fcurve Editor': 'Animation Editor', 'DopeSheet': 'DopeSheet', 'Standalone Dopesheet': 'DopeSheet', 'Animation Mixer': 'Animation Mixer', 'Schematic': 'Schematic', 'Material Manager': 'Material Manager', 'Material Panel': 'Material Panel', 'Render Tree': 'Render Tree', 'Texture Editor': 'Texture Editor', 'ICE Tree': 'ICE Tree', 'FX Tree': 'FX Tree', 'Fx Viewer': 'Fx Viewer', 'Fx Paint Brush List': 'Fx Paint Brush List', 'Fx Operator Selector': 'Fx Operator Selector', 'Plugin Manager': 'Plugin Manager', 'SDK Explorer': 'SDK Explorer', 'Script Editor': 'Script Editor' };
 function convert(n: SiNode): LayoutNode {
   if (n.kind === 'frame') return { kind: 'frame', name: n.name!, view: VIEW_OF[n.type!] ?? n.type!, label: n.displayname ?? n.type, hidden: n.optional === 'hidden' };
   if (n.kind === 'switcher') {
@@ -129,3 +130,22 @@ function convert(n: SiNode): LayoutNode {
 }
 /** Softimage's default layout, converted 1:1 from Application/layouts/default.xsily (1282x959 reference sizes). */
 export const DEFAULT_LAYOUT: LayoutNode = convert((siLayout as any).tree);
+/** Every layout shipped in Application/layouts (Default, Dual, 1024 x 768, Autohide) plus user layouts saved by Edit/Save Layouts. */
+export const SHIPPED_LAYOUTS: Record<string, LayoutNode> = Object.fromEntries(Object.entries(siLayouts as any).map(([k, v]: [string, any]) => [k, convert(v.tree)]));
+export function userLayouts(): Record<string, LayoutNode> { try { return JSON.parse(localStorage.getItem('si.layouts') ?? '{}'); } catch { return {}; } }
+export function saveUserLayout(name: string, node: LayoutNode | null) { const u = userLayouts(); if (node) u[name] = node; else delete u[name]; localStorage.setItem('si.layouts', JSON.stringify(u)); }
+export function layoutNames(): string[] { return [...new Set([...Object.keys(SHIPPED_LAYOUTS), ...Object.keys(userLayouts())])]; }
+export function layoutByName(name: string): LayoutNode | undefined { return userLayouts()[name] ?? SHIPPED_LAYOUTS[name]; }
+export function currentLayoutName(): string { const q = new URLSearchParams(location.search).get('layout'); if (q && layoutByName(q)) return q; try { const s = localStorage.getItem('si.layout'); if (s && layoutByName(s)) return s; } catch { /* ignore */ } return 'Default'; }
+/** Switch layouts the way Softimage does on startup: remember the choice and rebuild the whole shell. */
+export function switchLayout(name: string) { if (!layoutByName(name)) return false; localStorage.setItem('si.layout', name); const u = new URL(location.href); u.searchParams.delete('layout'); location.href = u.toString(); return true; }
+/** Read the live DOM back into a layout tree (frame order/visibility after layout editing, splitter sizes). */
+export function captureLayout(root: HTMLElement): LayoutNode | null {
+  const walk = (el: HTMLElement): LayoutNode | null => {
+    if (el.classList.contains('frame')) return { kind: 'frame', name: el.dataset.name!, view: el.dataset.view!, label: el.dataset.label, hidden: el.classList.contains('hidden') };
+    if (el.classList.contains('frameset')) { const kids = Array.from(el.children).filter(c => !c.classList.contains('splitter')) as HTMLElement[]; const horiz = el.classList.contains('horizontal'); const tracks = (horiz ? el.style.gridTemplateColumns : el.style.gridTemplateRows).split(' '); const sizes = kids.map((k, i) => k.classList.contains('hidden') ? ((el.dataset.sizes ?? '').split(',')[i] ?? '*') : tracks[i]?.endsWith('px') ? String(Math.round(parseFloat(tracks[i]))) : '*'); return { kind: 'frameset', name: el.dataset.name, orientation: horiz ? 'horizontal' : 'vertical', sizes, splitter: !!el.querySelector(':scope > .splitter'), children: kids.map(walk).filter(Boolean) as LayoutNode[] }; }
+    if (el.classList.contains('switcher')) { const body = el.querySelector(':scope > .switcher-body')!; const bar = el.querySelector(':scope > .switcher-bar')!; const panes = Array.from(body.children) as HTMLElement[]; const kids = panes.map(p => walk(p.firstElementChild as HTMLElement)).filter(Boolean) as LayoutNode[]; return { kind: 'switcher', name: el.dataset.name!, buttonSide: el.classList.contains('side-top') ? 'top' : 'bottom', active: Math.max(0, panes.findIndex(p => p.classList.contains('active'))), children: kids, labels: Array.from(bar.children).map(b => (b as HTMLElement).dataset.label ?? ''), icons: Array.from(bar.children).map(b => (b as HTMLElement).dataset.icon || undefined) }; }
+    return null;
+  };
+  const top = root.firstElementChild as HTMLElement | null; return top ? walk(top) : null;
+}

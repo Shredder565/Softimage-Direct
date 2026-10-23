@@ -1,5 +1,6 @@
 // Main Shelf (Application/toolbars/Main_Shelf.xsitb) and Panel Switcher (PanelSwitcher.xsitb), rendered from the
 // real toolbar definitions with Softimage's own bitmaps. Buttons run the shelf's VBScript lines through runScriptLine.
+import { layoutNames, currentLayoutName, switchLayout } from './layout';
 import { App } from '../core/commands';
 import { SI_SHELF, SI_PANELSWITCHER, siIcon, hasIcon, runScriptLine } from './si';
 import { openMenu } from './toolbarPanel';
@@ -70,8 +71,8 @@ export function mainShelf(app: App, host: HTMLElement) {
 export function panelSwitcher(app: App, host: HTMLElement) {
   const root = document.createElement('div'); root.className = 'panel-switcher'; host.appendChild(root);
   const layoutSel = document.createElement('select'); layoutSel.className = 'ps-layout'; layoutSel.title = 'Layouts';
-  for (const o of ['Default', 'Dual', '1024 x 768', 'Autohide']) { const e = document.createElement('option'); e.textContent = o; layoutSel.appendChild(e); }
-  layoutSel.onchange = () => { if (layoutSel.value !== 'Default') { app.logMsg('info', `Layout "${layoutSel.value}": only the Default layout is implemented`); layoutSel.value = 'Default'; } };
+  for (const o of layoutNames()) { const e = document.createElement('option'); e.textContent = o; layoutSel.appendChild(e); } layoutSel.value = currentLayoutName();
+  layoutSel.onchange = () => { if (layoutSel.value !== currentLayoutName()) switchLayout(layoutSel.value); };
   root.appendChild(layoutSel);
   for (const it of SI_PANELSWITCHER) {
     if (it.type === 'separator') { const s = document.createElement('div'); s.className = 'shelf-sep'; root.appendChild(s); continue; }

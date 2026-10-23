@@ -326,3 +326,10 @@ button, select, input { font-family: inherit; }
 .ppg-row.ppg-anim { grid-template-columns: 12px 110px 1fr 20px; }
 
 .vp-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
+
+/* ---- layout editing (View > Layouts > Edit Current Layout) */
+.layout-editing .frame { outline: 1px dashed #ffd34d; outline-offset: -1px; position: relative; }
+.layout-edit { position: absolute; left: 0; right: 0; top: 0; z-index: 20; display: flex; gap: 3px; align-items: center; padding: 2px 4px; background: rgba(255,211,77,.92); color: #111; font: 10px Tahoma, Verdana, sans-serif; }
+.layout-edit .le-name { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.layout-edit .le-view { font-size: 10px; max-width: 120px; }
+.frame.hidden .layout-edit { display: flex; }

@@ -1,0 +1,3554 @@
+{
+"1024 x 768": {
+"name": "1024 x 768",
+"file": "1024_x_768.xsily",
+"width": 1026,
+"height": 708,
+"trees": [
+{
+"kind": "frameset",
+"name": "main",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"*",
+"135"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "vm_frameset",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"243",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "switcher",
+"name": "module_menu",
+"displayname": "Module Menu",
+"type": "tray",
+"buttonside": "bottom",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "26,26",
+"sizes": [
+"104",
+"216",
+"104"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "toolbar_panel",
+"displayname": null,
+"type": "Toolbar Panel",
+"bitmap": "toolbar",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "weight_paint_panel",
+"displayname": null,
+"type": "Weight Paint Panel",
+"bitmap": "weightpanel",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "palette_and_script_toolbar_frameset",
+"displayname": null,
+"bitmap": "palettetab",
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"269",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "palettes",
+"displayname": null,
+"type": "Palettes",
+"bitmap": "palettetab",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "scripts",
+"displayname": null,
+"type": "Scripts",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": null,
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"79",
+"*",
+"24",
+"22",
+"48",
+"36"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "main_shelf",
+"displayname": "Main Shelf",
+"type": "Main Shelf",
+"bitmap": null,
+"optional": "hidden",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "vm",
+"displayname": "View Manager",
+"type": "View Manager",
+"bitmap": null,
+"optional": null,
+"props": {
+"layout": "standard"
+}
+},
+{
+"kind": "frame",
+"name": "timeline",
+"displayname": "Timeline",
+"type": "Timeline",
+"bitmap": null,
+"optional": "visible",
+"props": {
+"type": "global",
+"dopesheet": "true"
+}
+},
+{
+"kind": "frame",
+"name": "timerange",
+"displayname": "Timerange",
+"type": "Timerange",
+"bitmap": null,
+"optional": "hidden",
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "playback",
+"displayname": "Playback",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"*",
+"384"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "playback_panel",
+"displayname": null,
+"type": "Playback Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "animation_panel",
+"displayname": "Animation Panel",
+"type": "Animation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frameset",
+"name": "command_line",
+"displayname": "Command Line",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"260",
+"*",
+"234"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "panel_switcher",
+"displayname": "Panel Switcher",
+"type": "Panel Switcher",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "command_line_panel",
+"displayname": "Command Line",
+"type": "Command Line",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "sendtostatus",
+"displayname": "Send To",
+"type": "Netview",
+"bitmap": null,
+"optional": "hidden",
+"props": {
+"url": "$XSI_HOME\\Addons\\NetView_Database\\OneClickStatus.html"
+}
+}
+]
+}
+]
+}
+]
+},
+{
+"kind": "switcher",
+"name": "mcp",
+"displayname": "MCP",
+"type": "tray",
+"buttonside": "bottom_inv",
+"orientation": "vertical",
+"active": 0,
+"buttonsize": "44,20",
+"sizes": [
+"135",
+"196",
+"240"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "switcher",
+"name": "mcp",
+"displayname": "MCP",
+"type": "panel",
+"buttonside": "user",
+"orientation": "vertical",
+"active": 0,
+"buttonsize": null,
+"sizes": [
+"283",
+"334"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "selection_panel",
+"displayname": null,
+"type": "Selection Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "transformation_panel",
+"displayname": null,
+"type": "Transformation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frameset",
+"name": null,
+"displayname": "KP/L",
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"125",
+"378",
+"39%"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "mini_transform_panel",
+"displayname": null,
+"type": "Mini Transform Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "keying_panel",
+"displayname": null,
+"type": "Keying Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "switcher",
+"name": "layers_panel",
+"displayname": "LayersPanel",
+"type": "tray",
+"buttonside": "top",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "96,20",
+"sizes": [
+"*",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "animation_layer_manager",
+"displayname": "Animation",
+"type": "Animation Layer Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "scene_layer_manager",
+"displayname": "Scene",
+"type": "Layer Control",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": "ppg_FS",
+"displayname": "PPG",
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"*",
+"50",
+"84",
+"91"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "property_editor",
+"displayname": "PPG",
+"type": "Property Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "snap",
+"displayname": null,
+"type": "Snap Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "constraint_panel",
+"displayname": null,
+"type": "Constraint Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "edit_panel",
+"displayname": null,
+"type": "Edit Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+}
+]
+}
+],
+"tree": {
+"kind": "frameset",
+"name": "main",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"*",
+"135"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "vm_frameset",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"243",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "switcher",
+"name": "module_menu",
+"displayname": "Module Menu",
+"type": "tray",
+"buttonside": "bottom",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "26,26",
+"sizes": [
+"104",
+"216",
+"104"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "toolbar_panel",
+"displayname": null,
+"type": "Toolbar Panel",
+"bitmap": "toolbar",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "weight_paint_panel",
+"displayname": null,
+"type": "Weight Paint Panel",
+"bitmap": "weightpanel",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "palette_and_script_toolbar_frameset",
+"displayname": null,
+"bitmap": "palettetab",
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"269",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "palettes",
+"displayname": null,
+"type": "Palettes",
+"bitmap": "palettetab",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "scripts",
+"displayname": null,
+"type": "Scripts",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": null,
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"79",
+"*",
+"24",
+"22",
+"48",
+"36"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "main_shelf",
+"displayname": "Main Shelf",
+"type": "Main Shelf",
+"bitmap": null,
+"optional": "hidden",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "vm",
+"displayname": "View Manager",
+"type": "View Manager",
+"bitmap": null,
+"optional": null,
+"props": {
+"layout": "standard"
+}
+},
+{
+"kind": "frame",
+"name": "timeline",
+"displayname": "Timeline",
+"type": "Timeline",
+"bitmap": null,
+"optional": "visible",
+"props": {
+"type": "global",
+"dopesheet": "true"
+}
+},
+{
+"kind": "frame",
+"name": "timerange",
+"displayname": "Timerange",
+"type": "Timerange",
+"bitmap": null,
+"optional": "hidden",
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "playback",
+"displayname": "Playback",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"*",
+"384"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "playback_panel",
+"displayname": null,
+"type": "Playback Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "animation_panel",
+"displayname": "Animation Panel",
+"type": "Animation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frameset",
+"name": "command_line",
+"displayname": "Command Line",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"260",
+"*",
+"234"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "panel_switcher",
+"displayname": "Panel Switcher",
+"type": "Panel Switcher",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "command_line_panel",
+"displayname": "Command Line",
+"type": "Command Line",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "sendtostatus",
+"displayname": "Send To",
+"type": "Netview",
+"bitmap": null,
+"optional": "hidden",
+"props": {
+"url": "$XSI_HOME\\Addons\\NetView_Database\\OneClickStatus.html"
+}
+}
+]
+}
+]
+}
+]
+},
+{
+"kind": "switcher",
+"name": "mcp",
+"displayname": "MCP",
+"type": "tray",
+"buttonside": "bottom_inv",
+"orientation": "vertical",
+"active": 0,
+"buttonsize": "44,20",
+"sizes": [
+"135",
+"196",
+"240"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "switcher",
+"name": "mcp",
+"displayname": "MCP",
+"type": "panel",
+"buttonside": "user",
+"orientation": "vertical",
+"active": 0,
+"buttonsize": null,
+"sizes": [
+"283",
+"334"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "selection_panel",
+"displayname": null,
+"type": "Selection Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "transformation_panel",
+"displayname": null,
+"type": "Transformation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frameset",
+"name": null,
+"displayname": "KP/L",
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"125",
+"378",
+"39%"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "mini_transform_panel",
+"displayname": null,
+"type": "Mini Transform Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "keying_panel",
+"displayname": null,
+"type": "Keying Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "switcher",
+"name": "layers_panel",
+"displayname": "LayersPanel",
+"type": "tray",
+"buttonside": "top",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "96,20",
+"sizes": [
+"*",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "animation_layer_manager",
+"displayname": "Animation",
+"type": "Animation Layer Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "scene_layer_manager",
+"displayname": "Scene",
+"type": "Layer Control",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": "ppg_FS",
+"displayname": "PPG",
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"*",
+"50",
+"84",
+"91"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "property_editor",
+"displayname": "PPG",
+"type": "Property Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "snap",
+"displayname": null,
+"type": "Snap Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "constraint_panel",
+"displayname": null,
+"type": "Constraint Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "edit_panel",
+"displayname": null,
+"type": "Edit Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+}
+]
+}
+},
+"Autohide": {
+"name": "Autohide",
+"file": "Autohide.xsily",
+"width": 0,
+"height": 0,
+"trees": [
+{
+"kind": "frameset",
+"name": "main",
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"79",
+"*",
+"26",
+"22",
+"48"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "main_shelf",
+"displayname": "Main Shelf",
+"type": "Main Shelf",
+"bitmap": null,
+"optional": "hidden",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "vm",
+"displayname": null,
+"type": "View Manager",
+"bitmap": null,
+"optional": null,
+"props": {
+"layout": "standard"
+}
+},
+{
+"kind": "frame",
+"name": "timeline",
+"displayname": "Timeline",
+"type": "Timeline",
+"bitmap": null,
+"optional": "visible",
+"props": {
+"type": "global",
+"dopesheet": "true"
+}
+},
+{
+"kind": "frame",
+"name": "timerange",
+"displayname": "TimeRange",
+"type": "Timerange",
+"bitmap": null,
+"optional": "visible",
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "playback",
+"displayname": "Playback",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"260",
+"*",
+"437",
+"384",
+"234"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "panel_switcher",
+"displayname": "Panel Switcher",
+"type": "Panel Switcher",
+"bitmap": null,
+"optional": "visible",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "command_line",
+"displayname": null,
+"type": "Command Line",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "playback_panel",
+"displayname": null,
+"type": "Playback Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "animation_panel",
+"displayname": null,
+"type": "Animation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "sendtostatus",
+"displayname": "Send To",
+"type": "Netview",
+"bitmap": null,
+"optional": "hidden",
+"props": {
+"url": "$XSI_HOME\\Addons\\NetView_Database\\OneClickStatus.html"
+}
+}
+]
+}
+]
+}
+],
+"tree": {
+"kind": "frameset",
+"name": "main",
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"79",
+"*",
+"26",
+"22",
+"48"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "main_shelf",
+"displayname": "Main Shelf",
+"type": "Main Shelf",
+"bitmap": null,
+"optional": "hidden",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "vm",
+"displayname": null,
+"type": "View Manager",
+"bitmap": null,
+"optional": null,
+"props": {
+"layout": "standard"
+}
+},
+{
+"kind": "frame",
+"name": "timeline",
+"displayname": "Timeline",
+"type": "Timeline",
+"bitmap": null,
+"optional": "visible",
+"props": {
+"type": "global",
+"dopesheet": "true"
+}
+},
+{
+"kind": "frame",
+"name": "timerange",
+"displayname": "TimeRange",
+"type": "Timerange",
+"bitmap": null,
+"optional": "visible",
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "playback",
+"displayname": "Playback",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"260",
+"*",
+"437",
+"384",
+"234"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "panel_switcher",
+"displayname": "Panel Switcher",
+"type": "Panel Switcher",
+"bitmap": null,
+"optional": "visible",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "command_line",
+"displayname": null,
+"type": "Command Line",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "playback_panel",
+"displayname": null,
+"type": "Playback Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "animation_panel",
+"displayname": null,
+"type": "Animation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "sendtostatus",
+"displayname": "Send To",
+"type": "Netview",
+"bitmap": null,
+"optional": "hidden",
+"props": {
+"url": "$XSI_HOME\\Addons\\NetView_Database\\OneClickStatus.html"
+}
+}
+]
+}
+]
+}
+},
+"Dual": {
+"name": "Dual",
+"file": "Dual.xsily",
+"width": 2512,
+"height": 689,
+"trees": [
+{
+"kind": "frameset",
+"name": "layout",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"50%",
+"50%"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": null,
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"*",
+"48"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "main",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"*",
+"135"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "VM_Frameset",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"299",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "switcher",
+"name": "module_menu",
+"displayname": "Module Menu",
+"type": "tray",
+"buttonside": "bottom",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "26,26",
+"sizes": [
+"105",
+"216",
+"105",
+"*"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "toolbar_panel",
+"displayname": null,
+"type": "Toolbar Panel",
+"bitmap": "toolbar",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "weight_paint_panel",
+"displayname": null,
+"type": "Weight Paint Panel",
+"bitmap": "weightpanel",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "palette_and_script_toolbar_frameset",
+"displayname": null,
+"bitmap": "palettetab",
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"269",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "palettes",
+"displayname": null,
+"type": "Palettes",
+"bitmap": "palettetab",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "scripts",
+"displayname": null,
+"type": "Scripts",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frameset",
+"name": "PresetManagerFS",
+"displayname": null,
+"bitmap": "presetmanager",
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"327",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "explorer",
+"displayname": "Explorer",
+"type": "Explorer",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "preset_manager",
+"displayname": "Preset Manager",
+"type": "Preset Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": null,
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"79",
+"*",
+"26",
+"22"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "main_shelf",
+"displayname": "Main Shelf",
+"type": "Main Shelf",
+"bitmap": null,
+"optional": "hidden",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "vm",
+"displayname": null,
+"type": "View Manager",
+"bitmap": null,
+"optional": null,
+"props": {
+"layout": "standard"
+}
+},
+{
+"kind": "frame",
+"name": "timeline",
+"displayname": "Timeline",
+"type": "Timeline",
+"bitmap": null,
+"optional": "visible",
+"props": {
+"type": "global",
+"dopesheet": "true"
+}
+},
+{
+"kind": "frame",
+"name": "timerange",
+"displayname": "Timerange",
+"type": "Timerange",
+"bitmap": null,
+"optional": "visible",
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "switcher",
+"name": "mcp",
+"displayname": "MCP",
+"type": "tray",
+"buttonside": "bottom_inv",
+"orientation": "vertical",
+"active": 0,
+"buttonsize": "44,23",
+"sizes": [
+"135",
+"196",
+"300"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "switcher",
+"name": null,
+"displayname": "MCP",
+"type": "panel",
+"buttonside": "user",
+"orientation": "vertical",
+"active": 0,
+"buttonsize": null,
+"sizes": [
+"283",
+"334",
+"52",
+"90",
+"91"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "selection_panel",
+"displayname": null,
+"type": "Selection Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "transformation_panel",
+"displayname": null,
+"type": "Transformation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "snap_panel",
+"displayname": null,
+"type": "Snap Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "constraint_panel",
+"displayname": null,
+"type": "Constraint Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "edit_panel",
+"displayname": null,
+"type": "Edit Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frameset",
+"name": null,
+"displayname": "KP/L",
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"125",
+"386",
+"39%"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "mini_transform_panel",
+"displayname": null,
+"type": "Mini Transform Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "keying_panel",
+"displayname": null,
+"type": "Keying Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "switcher",
+"name": "layers_panel",
+"displayname": "LayersPanel",
+"type": "tray",
+"buttonside": "top",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "96,20",
+"sizes": [
+"*",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "animation_layer_manager",
+"displayname": "Animation",
+"type": "Animation Layer Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "scene_layer_manager",
+"displayname": "Scene",
+"type": "Layer Control",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frame",
+"name": "property_editor",
+"displayname": "PPG",
+"type": "Property Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": "playback",
+"displayname": "Playback",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"260",
+"*",
+"437",
+"384",
+"234"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "panel_switcher",
+"displayname": "Panel Switcher",
+"type": "Panel Switcher",
+"bitmap": null,
+"optional": "visible",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "command_line",
+"displayname": null,
+"type": "Command Line",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "playback_panel",
+"displayname": null,
+"type": "Playback Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "animation_panel",
+"displayname": null,
+"type": "Animation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "sendtostatus",
+"displayname": "Send To",
+"type": "Netview",
+"bitmap": null,
+"optional": "hidden",
+"props": {
+"url": "$XSI_HOME\\Addons\\NetView_Database\\OneClickStatus.html"
+}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": "main_right",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "switcher",
+"name": "Screen1Tray",
+"displayname": null,
+"type": "tray",
+"buttonside": "top",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "120,24",
+"sizes": [
+"*",
+"*",
+"*",
+"*",
+"*",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "switcher",
+"name": "Animation",
+"displayname": null,
+"type": "tray",
+"buttonside": "top",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "120,24",
+"sizes": [
+"*",
+"*",
+"*",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "fcurveeditor",
+"displayname": "F Curves",
+"type": "Animation Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "dopesheet",
+"displayname": "Dopesheet",
+"type": "DopeSheet",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "animation_mixer",
+"displayname": "Mixer",
+"type": "Animation Mixer",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "All",
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"*",
+"30%",
+"20%",
+"28"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "fcv",
+"displayname": null,
+"type": "Fcurve Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "ds",
+"displayname": null,
+"type": "Standalone Dopesheet",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "am",
+"displayname": null,
+"type": "Animation Mixer",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "timeline1",
+"displayname": null,
+"type": "Timeline",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frame",
+"name": "schematic",
+"displayname": "Schematic",
+"type": "Schematic",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "switcher",
+"name": "Rendering",
+"displayname": null,
+"type": "tray",
+"buttonside": "top",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "120,24",
+"sizes": [
+"*",
+"*",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "materials",
+"displayname": "Materials",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"*",
+"350"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "pane578",
+"displayname": null,
+"type": "Material Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "pane581",
+"displayname": null,
+"type": "Material Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frame",
+"name": "render tree",
+"displayname": "Render Tree",
+"type": "Render Tree",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "texture_editor",
+"displayname": "Texture Editor",
+"type": "Texture Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frame",
+"name": "ice",
+"displayname": "ICE",
+"type": "ICE Tree",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "Compositing",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"105",
+"40%",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "paint_brush_list",
+"displayname": null,
+"type": "Fx Paint Brush List",
+"bitmap": "brushpanel",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "fxtree",
+"displayname": null,
+"type": "FX Tree",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "fxviews",
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"*",
+"25%"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "fxviewer",
+"displayname": null,
+"type": "Fx Viewer",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "fxselector",
+"displayname": null,
+"type": "Fx Operator Selector",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": "Plugins",
+"displayname": "Plugins",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"630",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "PM_SDK_FS",
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"426",
+"537"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "plugin_manager",
+"displayname": null,
+"type": "Plugin Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "sdk_explorer",
+"displayname": null,
+"type": "SDK Explorer",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frame",
+"name": "script_editor",
+"displayname": null,
+"type": "Script Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+}
+]
+}
+]
+}
+],
+"tree": {
+"kind": "frameset",
+"name": "layout",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"50%",
+"50%"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": null,
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"*",
+"48"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "main",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"*",
+"135"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "VM_Frameset",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"299",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "switcher",
+"name": "module_menu",
+"displayname": "Module Menu",
+"type": "tray",
+"buttonside": "bottom",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "26,26",
+"sizes": [
+"105",
+"216",
+"105",
+"*"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "toolbar_panel",
+"displayname": null,
+"type": "Toolbar Panel",
+"bitmap": "toolbar",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "weight_paint_panel",
+"displayname": null,
+"type": "Weight Paint Panel",
+"bitmap": "weightpanel",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "palette_and_script_toolbar_frameset",
+"displayname": null,
+"bitmap": "palettetab",
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"269",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "palettes",
+"displayname": null,
+"type": "Palettes",
+"bitmap": "palettetab",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "scripts",
+"displayname": null,
+"type": "Scripts",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frameset",
+"name": "PresetManagerFS",
+"displayname": null,
+"bitmap": "presetmanager",
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"327",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "explorer",
+"displayname": "Explorer",
+"type": "Explorer",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "preset_manager",
+"displayname": "Preset Manager",
+"type": "Preset Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": null,
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"79",
+"*",
+"26",
+"22"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "main_shelf",
+"displayname": "Main Shelf",
+"type": "Main Shelf",
+"bitmap": null,
+"optional": "hidden",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "vm",
+"displayname": null,
+"type": "View Manager",
+"bitmap": null,
+"optional": null,
+"props": {
+"layout": "standard"
+}
+},
+{
+"kind": "frame",
+"name": "timeline",
+"displayname": "Timeline",
+"type": "Timeline",
+"bitmap": null,
+"optional": "visible",
+"props": {
+"type": "global",
+"dopesheet": "true"
+}
+},
+{
+"kind": "frame",
+"name": "timerange",
+"displayname": "Timerange",
+"type": "Timerange",
+"bitmap": null,
+"optional": "visible",
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "switcher",
+"name": "mcp",
+"displayname": "MCP",
+"type": "tray",
+"buttonside": "bottom_inv",
+"orientation": "vertical",
+"active": 0,
+"buttonsize": "44,23",
+"sizes": [
+"135",
+"196",
+"300"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "switcher",
+"name": null,
+"displayname": "MCP",
+"type": "panel",
+"buttonside": "user",
+"orientation": "vertical",
+"active": 0,
+"buttonsize": null,
+"sizes": [
+"283",
+"334",
+"52",
+"90",
+"91"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "selection_panel",
+"displayname": null,
+"type": "Selection Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "transformation_panel",
+"displayname": null,
+"type": "Transformation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "snap_panel",
+"displayname": null,
+"type": "Snap Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "constraint_panel",
+"displayname": null,
+"type": "Constraint Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "edit_panel",
+"displayname": null,
+"type": "Edit Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frameset",
+"name": null,
+"displayname": "KP/L",
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"125",
+"386",
+"39%"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "mini_transform_panel",
+"displayname": null,
+"type": "Mini Transform Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "keying_panel",
+"displayname": null,
+"type": "Keying Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "switcher",
+"name": "layers_panel",
+"displayname": "LayersPanel",
+"type": "tray",
+"buttonside": "top",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "96,20",
+"sizes": [
+"*",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "animation_layer_manager",
+"displayname": "Animation",
+"type": "Animation Layer Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "scene_layer_manager",
+"displayname": "Scene",
+"type": "Layer Control",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frame",
+"name": "property_editor",
+"displayname": "PPG",
+"type": "Property Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": "playback",
+"displayname": "Playback",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"260",
+"*",
+"437",
+"384",
+"234"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "panel_switcher",
+"displayname": "Panel Switcher",
+"type": "Panel Switcher",
+"bitmap": null,
+"optional": "visible",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "command_line",
+"displayname": null,
+"type": "Command Line",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "playback_panel",
+"displayname": null,
+"type": "Playback Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "animation_panel",
+"displayname": null,
+"type": "Animation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "sendtostatus",
+"displayname": "Send To",
+"type": "Netview",
+"bitmap": null,
+"optional": "hidden",
+"props": {
+"url": "$XSI_HOME\\Addons\\NetView_Database\\OneClickStatus.html"
+}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": "main_right",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "switcher",
+"name": "Screen1Tray",
+"displayname": null,
+"type": "tray",
+"buttonside": "top",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "120,24",
+"sizes": [
+"*",
+"*",
+"*",
+"*",
+"*",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "switcher",
+"name": "Animation",
+"displayname": null,
+"type": "tray",
+"buttonside": "top",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "120,24",
+"sizes": [
+"*",
+"*",
+"*",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "fcurveeditor",
+"displayname": "F Curves",
+"type": "Animation Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "dopesheet",
+"displayname": "Dopesheet",
+"type": "DopeSheet",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "animation_mixer",
+"displayname": "Mixer",
+"type": "Animation Mixer",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "All",
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"*",
+"30%",
+"20%",
+"28"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "fcv",
+"displayname": null,
+"type": "Fcurve Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "ds",
+"displayname": null,
+"type": "Standalone Dopesheet",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "am",
+"displayname": null,
+"type": "Animation Mixer",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "timeline1",
+"displayname": null,
+"type": "Timeline",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frame",
+"name": "schematic",
+"displayname": "Schematic",
+"type": "Schematic",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "switcher",
+"name": "Rendering",
+"displayname": null,
+"type": "tray",
+"buttonside": "top",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "120,24",
+"sizes": [
+"*",
+"*",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "materials",
+"displayname": "Materials",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"*",
+"350"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "pane578",
+"displayname": null,
+"type": "Material Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "pane581",
+"displayname": null,
+"type": "Material Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frame",
+"name": "render tree",
+"displayname": "Render Tree",
+"type": "Render Tree",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "texture_editor",
+"displayname": "Texture Editor",
+"type": "Texture Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frame",
+"name": "ice",
+"displayname": "ICE",
+"type": "ICE Tree",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "Compositing",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"105",
+"40%",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "paint_brush_list",
+"displayname": null,
+"type": "Fx Paint Brush List",
+"bitmap": "brushpanel",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "fxtree",
+"displayname": null,
+"type": "FX Tree",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "fxviews",
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"*",
+"25%"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "fxviewer",
+"displayname": null,
+"type": "Fx Viewer",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "fxselector",
+"displayname": null,
+"type": "Fx Operator Selector",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": "Plugins",
+"displayname": "Plugins",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"630",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "PM_SDK_FS",
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"426",
+"537"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "plugin_manager",
+"displayname": null,
+"type": "Plugin Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "sdk_explorer",
+"displayname": null,
+"type": "SDK Explorer",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frame",
+"name": "script_editor",
+"displayname": null,
+"type": "Script Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+}
+]
+}
+]
+}
+},
+"Default": {
+"name": "Default",
+"file": "default.xsily",
+"width": 1282,
+"height": 959,
+"trees": [
+{
+"kind": "frameset",
+"name": null,
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"*",
+"48"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "main",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"*",
+"135"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "VM_Frameset",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"299",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "switcher",
+"name": "module_menu",
+"displayname": "Module Menu",
+"type": "tray",
+"buttonside": "bottom",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "26,26",
+"sizes": [
+"105",
+"216",
+"105",
+"*"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "toolbar_panel",
+"displayname": null,
+"type": "Toolbar Panel",
+"bitmap": "toolbar",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "weight_paint_panel",
+"displayname": null,
+"type": "Weight Paint Panel",
+"bitmap": "weightpanel",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "palette_and_script_toolbar_frameset",
+"displayname": null,
+"bitmap": "palettetab",
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"269",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "palettes",
+"displayname": null,
+"type": "Palettes",
+"bitmap": "palettetab",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "scripts",
+"displayname": null,
+"type": "Scripts",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frameset",
+"name": "PresetManagerFS",
+"displayname": null,
+"bitmap": "presetmanager",
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"327",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "explorer",
+"displayname": "Explorer",
+"type": "Explorer",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "preset_manager",
+"displayname": "Preset Manager",
+"type": "Preset Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": null,
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"79",
+"*",
+"26",
+"22"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "main_shelf",
+"displayname": "Main Shelf",
+"type": "Main Shelf",
+"bitmap": null,
+"optional": "hidden",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "vm",
+"displayname": null,
+"type": "View Manager",
+"bitmap": null,
+"optional": null,
+"props": {
+"layout": "standard"
+}
+},
+{
+"kind": "frame",
+"name": "timeline",
+"displayname": "Timeline",
+"type": "Timeline",
+"bitmap": null,
+"optional": "visible",
+"props": {
+"type": "global",
+"dopesheet": "true"
+}
+},
+{
+"kind": "frame",
+"name": "timerange",
+"displayname": "Timerange",
+"type": "Timerange",
+"bitmap": null,
+"optional": "visible",
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "switcher",
+"name": "mcp",
+"displayname": "MCP",
+"type": "tray",
+"buttonside": "bottom_inv",
+"orientation": "vertical",
+"active": 0,
+"buttonsize": "44,23",
+"sizes": [
+"135",
+"196",
+"300"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "switcher",
+"name": null,
+"displayname": "MCP",
+"type": "panel",
+"buttonside": "user",
+"orientation": "vertical",
+"active": 0,
+"buttonsize": null,
+"sizes": [
+"283",
+"334",
+"52",
+"90",
+"91"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "selection_panel",
+"displayname": null,
+"type": "Selection Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "transformation_panel",
+"displayname": null,
+"type": "Transformation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "snap_panel",
+"displayname": null,
+"type": "Snap Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "constraint_panel",
+"displayname": null,
+"type": "Constraint Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "edit_panel",
+"displayname": null,
+"type": "Edit Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frameset",
+"name": null,
+"displayname": "KP/L",
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"125",
+"386",
+"39%"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "mini_transform_panel",
+"displayname": null,
+"type": "Mini Transform Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "keying_panel",
+"displayname": null,
+"type": "Keying Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "switcher",
+"name": "layers_panel",
+"displayname": "LayersPanel",
+"type": "tray",
+"buttonside": "top",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "96,20",
+"sizes": [
+"*",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "animation_layer_manager",
+"displayname": "Animation",
+"type": "Animation Layer Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "scene_layer_manager",
+"displayname": "Scene",
+"type": "Layer Control",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frame",
+"name": "property_editor",
+"displayname": "PPG",
+"type": "Property Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": "playback",
+"displayname": "Playback",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"260",
+"*",
+"437",
+"384",
+"234"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "panel_switcher",
+"displayname": "Panel Switcher",
+"type": "Panel Switcher",
+"bitmap": null,
+"optional": "visible",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "command_line",
+"displayname": null,
+"type": "Command Line",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "playback_panel",
+"displayname": null,
+"type": "Playback Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "animation_panel",
+"displayname": null,
+"type": "Animation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "sendtostatus",
+"displayname": "Send To",
+"type": "Netview",
+"bitmap": null,
+"optional": "hidden",
+"props": {
+"url": "$XSI_HOME\\Addons\\NetView_Database\\OneClickStatus.html"
+}
+}
+]
+}
+]
+}
+],
+"tree": {
+"kind": "frameset",
+"name": null,
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"*",
+"48"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "main",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "movable",
+"sizes": [
+"*",
+"135"
+],
+"optional": null,
+"children": [
+{
+"kind": "frameset",
+"name": "VM_Frameset",
+"displayname": null,
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"299",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "switcher",
+"name": "module_menu",
+"displayname": "Module Menu",
+"type": "tray",
+"buttonside": "bottom",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "26,26",
+"sizes": [
+"105",
+"216",
+"105",
+"*"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "toolbar_panel",
+"displayname": null,
+"type": "Toolbar Panel",
+"bitmap": "toolbar",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "weight_paint_panel",
+"displayname": null,
+"type": "Weight Paint Panel",
+"bitmap": "weightpanel",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frameset",
+"name": "palette_and_script_toolbar_frameset",
+"displayname": null,
+"bitmap": "palettetab",
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"269",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "palettes",
+"displayname": null,
+"type": "Palettes",
+"bitmap": "palettetab",
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "scripts",
+"displayname": null,
+"type": "Scripts",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frameset",
+"name": "PresetManagerFS",
+"displayname": null,
+"bitmap": "presetmanager",
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"327",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "explorer",
+"displayname": "Explorer",
+"type": "Explorer",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "preset_manager",
+"displayname": "Preset Manager",
+"type": "Preset Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": null,
+"displayname": null,
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "none",
+"sizes": [
+"79",
+"*",
+"26",
+"22"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "main_shelf",
+"displayname": "Main Shelf",
+"type": "Main Shelf",
+"bitmap": null,
+"optional": "hidden",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "vm",
+"displayname": null,
+"type": "View Manager",
+"bitmap": null,
+"optional": null,
+"props": {
+"layout": "standard"
+}
+},
+{
+"kind": "frame",
+"name": "timeline",
+"displayname": "Timeline",
+"type": "Timeline",
+"bitmap": null,
+"optional": "visible",
+"props": {
+"type": "global",
+"dopesheet": "true"
+}
+},
+{
+"kind": "frame",
+"name": "timerange",
+"displayname": "Timerange",
+"type": "Timerange",
+"bitmap": null,
+"optional": "visible",
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "switcher",
+"name": "mcp",
+"displayname": "MCP",
+"type": "tray",
+"buttonside": "bottom_inv",
+"orientation": "vertical",
+"active": 0,
+"buttonsize": "44,23",
+"sizes": [
+"135",
+"196",
+"300"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "switcher",
+"name": null,
+"displayname": "MCP",
+"type": "panel",
+"buttonside": "user",
+"orientation": "vertical",
+"active": 0,
+"buttonsize": null,
+"sizes": [
+"283",
+"334",
+"52",
+"90",
+"91"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "selection_panel",
+"displayname": null,
+"type": "Selection Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "transformation_panel",
+"displayname": null,
+"type": "Transformation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "snap_panel",
+"displayname": null,
+"type": "Snap Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "constraint_panel",
+"displayname": null,
+"type": "Constraint Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "edit_panel",
+"displayname": null,
+"type": "Edit Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+},
+{
+"kind": "frameset",
+"name": null,
+"displayname": "KP/L",
+"bitmap": null,
+"orientation": "vertical",
+"splitter": "movable",
+"sizes": [
+"125",
+"386",
+"39%"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "mini_transform_panel",
+"displayname": null,
+"type": "Mini Transform Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "keying_panel",
+"displayname": null,
+"type": "Keying Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "switcher",
+"name": "layers_panel",
+"displayname": "LayersPanel",
+"type": "tray",
+"buttonside": "top",
+"orientation": "horizontal",
+"active": 0,
+"buttonsize": "96,20",
+"sizes": [
+"*",
+"*"
+],
+"optional": null,
+"children": [
+{
+"kind": "frame",
+"name": "animation_layer_manager",
+"displayname": "Animation",
+"type": "Animation Layer Manager",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "scene_layer_manager",
+"displayname": "Scene",
+"type": "Layer Control",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frame",
+"name": "property_editor",
+"displayname": "PPG",
+"type": "Property Editor",
+"bitmap": null,
+"optional": null,
+"props": {}
+}
+]
+}
+]
+},
+{
+"kind": "frameset",
+"name": "playback",
+"displayname": "Playback",
+"bitmap": null,
+"orientation": "horizontal",
+"splitter": "none",
+"sizes": [
+"260",
+"*",
+"437",
+"384",
+"234"
+],
+"optional": "visible",
+"children": [
+{
+"kind": "frame",
+"name": "panel_switcher",
+"displayname": "Panel Switcher",
+"type": "Panel Switcher",
+"bitmap": null,
+"optional": "visible",
+"props": {}
+},
+{
+"kind": "frame",
+"name": "command_line",
+"displayname": null,
+"type": "Command Line",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "playback_panel",
+"displayname": null,
+"type": "Playback Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "animation_panel",
+"displayname": null,
+"type": "Animation Panel",
+"bitmap": null,
+"optional": null,
+"props": {}
+},
+{
+"kind": "frame",
+"name": "sendtostatus",
+"displayname": "Send To",
+"type": "Netview",
+"bitmap": null,
+"optional": "hidden",
+"props": {
+"url": "$XSI_HOME\\Addons\\NetView_Database\\OneClickStatus.html"
+}
+}
+]
+}
+]
+}
+}
+}
