@@ -20,7 +20,9 @@ class FrozenGeom extends Operator { constructor(readonly data: any, label = 'Fro
 const cache = new Map<string, Promise<PData>>();
 /** Fetch a .json.gz: some hosts serve it with Content-Encoding (already inflated), others as raw gzip bytes. */
 export async function fetchMaybeGzip(url: string): Promise<string> {
-  const res = await fetch(url); if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
+  let res = await fetch(url);
+  if (!res.ok && url.endsWith('.gz')) res = await fetch(url.slice(0, -3)); // hosts that do not serve .gz get the plain file
+  if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
   const buf = new Uint8Array(await res.arrayBuffer());
   if (buf[0] === 0x1f && buf[1] === 0x8b) { const ds = new DecompressionStream('gzip'); return await new Response(new Blob([buf]).stream().pipeThrough(ds)).text(); }
   return new TextDecoder().decode(buf);
