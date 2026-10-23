@@ -3,6 +3,8 @@ import { App } from './core/commands';
 import { registerBuiltins } from './commands';
 import { registerModelCommands, registerModelAliases } from './commands/model';
 import { registerUICommands } from './commands/ui';
+import { registerPresetModels } from './commands/presets';
+import { registerModelCommands2 } from './commands/model2';
 import { LayoutEngine, DEFAULT_LAYOUT } from './ui/layout';
 import { toolbarPanel, menuStatus, runMenuPath } from './ui/toolbarPanel';
 import { explorerView } from './ui/explorer';
@@ -23,6 +25,8 @@ registerBuiltins(app);
 registerModelCommands(app);
 registerModelAliases(app);
 registerUICommands(app);
+registerPresetModels(app);
+registerModelCommands2(app);
 (window as any).Application = app; (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
 
 const appEl = document.getElementById('app')!;

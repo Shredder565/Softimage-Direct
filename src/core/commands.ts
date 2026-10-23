@@ -69,7 +69,8 @@ export class App {
     const def = this.commands.get(name);
     if (!def) { this.logMsg('error', `Command not implemented: ${name}`); return undefined; }
     const full: Record<string, any> = {};
-    for (const a of def.args) full[a.name] = args[a.name] !== undefined ? args[a.name] : a.default;
+    const alias = (n: string) => n === 'InputObj' ? 'InputObjs' : n === 'InputObjs' ? 'InputObj' : n; // Softimage scripts use both spellings
+    for (const a of def.args) full[a.name] = args[a.name] !== undefined ? args[a.name] : args[alias(a.name)] !== undefined ? args[alias(a.name)] : a.default;
     const argText = def.args.map(a => fmtArg(full[a.name])).join(', ');
     const nested = this.pendingUndo !== null;
     if (!nested) this.pendingUndo = [];

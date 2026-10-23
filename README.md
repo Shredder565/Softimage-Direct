@@ -56,10 +56,25 @@ Screenshot: `docs/screenshots/mcp-clone.png`.
 
 Checks: `tools/model_shot.mjs` (sphere → point/edge/polygon modes → move → empty click), screenshots `docs/screenshots/model-*.png`.
 
+### UI data taken directly from the installation (`tools/build_si_ui.py`)
+
+- **Key map** — `Data/Preferences/KeyMaps/*.xsikm` parsed into `src/data/si/keymaps.json`; `src/ui/keymap.ts` dispatches by context (Tweak Tool, Transform Tool, Global, View Shortcuts, Layout Shortcuts, XSI) exactly like `XSIKeyMap`. Switch maps with `?keymap=` or Edit ▸ Keyboard Mapping.
+- **Toolbar bitmaps** — the 107 `.bmp` toolbar icons packed into `public/si/icons.png` (cyan key → alpha).
+- **Toolbars / shelves** — `.xsitb` files (VBScript buttons) parsed; `src/ui/shelf.ts` runs each button's command through the command map.
+- **Layouts** — `Data/Layouts/*.xsily` frameset trees drive the `LayoutEngine` (`src/ui/layout.ts`); `.xsivw` view definitions are opened as floating views.
+- **Menus** — every `MENU`/`MENUEX` resource read out of `XSI.exe`, `mcp.dll`, `viewcontrol.dll`, `vm.dll`, `viewinteraction.dll` (`tools/pe_resources.py` → `menus.json`): main menu bar, File menu, viewport camera/visibility/display/ViewCube menus, MCP option menus, tool-option menus.
+- **Status bar** — mouse-button hints come from the `.dict` localisation files (`tools/parse_dict.py`).
+- **Property pages** — `C3DKineState`, `C3DVisibilityAndDisplay`, `C3DDisplayProp`, `C3DGeomApprox`, `C3DCamera*`, `C3DSceneColors`, `C3DAmbientLighting` and the `C3DPrefs*` pages are laid out from their SPDL (`propsets.json`); File ▸ Preferences shows the real preference pages and the values are applied (point size, pick tolerance, click-to-deselect, surround selection, auto-inspect, wheel rate…).
+- **Preset models** — the 21 `XSI_SAMPLES/Models/*.emdl` presets (skeletons, bipeds, rigs, bodies, faces, meshes) were exported from the running application by `tools/si_export_models.js` and are rebuilt by Get ▸ Primitive ▸ Model (`public/si/models/*.json.gz`). The `*_Generated` rig variants map to the same hierarchies; rig control curves exported without CVs are rebuilt as empty curve lists.
+
+### Formerly greyed Model-menu items (`src/commands/model2.ts`, `src/core/nurbs.ts`)
+
+NURBS surface operators (Open/Close, Snip, Extend to Curve, Stitch, Snap Boundary, Fit, Fillet, Trim by Projection, Delete Trim, Continuity Manager, Bezier-knot corners), curve fillet, Gator, Footprints, user normals (reset/average/normalize/copy/paste/settings/Tweak Normals tool), Paint / Push / Vertex Colour tools with Brush Properties, Spine / Tail / Control Splines, referenced models (new / empty / convert / update / reload / resolution / make local / commit / deltas — stored in `localStorage`), Stand-in and GeoShader primitives, Light Rig from Image, ICE Particle Volume shader. `tools/model2_check.mjs` exercises all of them.
+
 ## Keys
 
 Space object · T point · E edge · Y polygon · V translate · C rotate · X scale · K key · Ctrl+Z/Y undo/redo ·
-Alt+drag orbit · MMB pan · wheel zoom · 1–4 switch module · Enter/Esc finish/cancel a tool.
+Alt+drag orbit · MMB pan · wheel zoom · 1–4 switch module · Enter/Esc finish/cancel a tool. The full map is the real `Default.xsikm`.
 
 ## Fidelity verification (against Softimage 2015 SP2)
 
@@ -69,4 +84,4 @@ The testbed is checked against the real application, not against assumptions:
 - `tools/parse_spdl.py` + `tools/build_opdefs.py` — parse the 995 `.spdl` definition files and merge them with the runtime dump into `src/data/opdefs.json` (labels, enums, UI ranges, property-page layouts).
 - `tools/compare_deformers.mjs` — vertex-exact comparison of Twist/Bend/Taper/Bulge/Shear/Push/Smooth/Relax/Fold against recorded Softimage results (all 13 cases match).
 - `tools/compare_topology.mjs` — same for the polygon tools on a 3×3×3 cube (21 of 25 cases exact; Bevel, Dice frame and Polygon Reduction are approximations).
-- `tools/walk_model_menu.mjs` — runs every Model-toolbar item in the built app (323 run, 67 greyed with reasons, 0 failures).
+- `tools/walk_model_menu.mjs` — runs every Model-toolbar item in the built app (390 run, 0 greyed, 0 failures).

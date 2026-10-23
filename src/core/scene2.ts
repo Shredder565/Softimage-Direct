@@ -74,7 +74,10 @@ export class SurfaceGeomOperator extends Operator {
   apply(): MeshData | null {
     const p: Record<string, number> = {}; for (const x of this.params) p[x.name] = Number(x.value);
     const f = C.surfacePrimitives[this.preset]; if (!f) return null; const { fn, closedU, closedV } = f(p);
-    return C.tessellateSurface(fn, p.subdivu, p.subdivv, closedU, closedV);
+    const m = C.tessellateSurface(fn, p.subdivu, p.subdivv, closedU, closedV) as any;
+    const nu = closedU ? p.subdivu : p.subdivu + 1, nv = closedV ? p.subdivv : p.subdivv + 1; const cps: [number, number, number][] = [];
+    for (let j = 0; j < nv; j++) for (let i = 0; i < nu; i++) cps.push(fn(i / p.subdivu, j / p.subdivv));
+    m.nurbs = { nu, nv, degU: 1, degV: 1, closedU, closedV, cps }; return m;
   }
 }
 export function makeSurfaceGeomOperator(preset: string) {

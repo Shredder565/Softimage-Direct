@@ -164,6 +164,7 @@ export function viewManager(app: App, host: HTMLElement) {
           const wgeo = polygonWire(mesh); if (w) { w.geometry.dispose(); w.geometry = wgeo; } else { w = new THREE.LineSegments(wgeo, new THREE.LineBasicMaterial({ color: 0xffffff })); (w as any)._kind = 'wire'; g.add(w); }
         }
         (m as any)._matShaded = materialFor(o, false); (m as any)._matTextured = materialFor(o, true);
+        applyUserNormals(o, m, mesh); applyPaintDisplay(o, m, mesh);
         // Wireframe colour: Selected white; the object active for component selection uses the Active colour;
         // otherwise the object's wire colour (layer colour, else the Geometry scene colour = black).
         const lc = o.layer ? new THREE.Color(...(o.layer.val('color') as V3)) : new THREE.Color(SI.geometry);
@@ -183,7 +184,7 @@ export function viewManager(app: App, host: HTMLElement) {
         (ln.material as THREE.LineBasicMaterial).color.set(selected ? SI.selected : SI.ctrl);
       } else {
         removeChild(g, 'mesh'); removeChild(g, 'wire');
-        let mkr = child(g, 'marker') as THREE.Object3D | undefined; const tag = kindTag + '|' + (o.primitive?.name ?? '') + '|' + (o.val?.('length') ?? '') + '|' + (o.primitive?.val('size') ?? '');
+        let mkr = child(g, 'marker') as THREE.Object3D | undefined; const tag = kindTag + '|' + (o.primitive?.name ?? '') + '|' + (o.val?.('length') ?? '') + '|' + (o.primitive?.val('size') ?? '') + '|' + (o.type === 'standin' ? o.primitive!.params.map(p => p.value).join(',') : '');
         if (!mkr || (mkr as any)._tag !== tag) { if (mkr) g.remove(mkr); mkr = marker(o); (mkr as any)._kind = 'marker'; (mkr as any)._tag = tag; g.add(mkr); }
         const colr = selected ? SI.selected : o.kind === 'model' ? SI.nullcol : o.type === 'bone' || o.type === 'root' ? 0xe0c060 : o.type === 'eff' ? 0xff6060 : o.type === 'light' ? SI.light : o.type === 'camera' ? SI.camera : o.type === 'implicit' ? SI.ctrl : SI.nullcol;
         mkr.traverse(c => { if ((c as any).material && (c as any)._kind !== 'light') ((c as any).material as THREE.LineBasicMaterial).color.set(colr); });
@@ -194,6 +195,27 @@ export function viewManager(app: App, host: HTMLElement) {
     for (const [o, g] of nodes) if (!seen.has(o)) { scene.remove(g); nodes.delete(o); }
     syncHighlights(); syncToolPreview(); syncGizmo();
     needs = true;
+  };
+  /** "User Normals" property: per-point overrides blended into the shading normals (Modify > Component > Set User Normals). */
+  const applyUserNormals = (o: X3DObject, m: THREE.Mesh, mesh: MeshData) => {
+    const p = o.property('usernormals') as any; const map: Map<number, [number, number, number]> | undefined = p?.normals; const geo = m.geometry;
+    const stamp = map ? [...map.entries()].map(([k, v]) => k + ':' + v.map(x => x.toFixed(2)).join(',')).join(';') : '';
+    if ((geo as any)._unStamp === stamp) return; (geo as any)._unStamp = stamp;
+    geo.computeVertexNormals(); if (!map?.size || p?.val('show') === false) return;
+    const n = geo.attributes.normal as THREE.BufferAttribute; for (const [i, v] of map) if (i * 3 + 2 < n.array.length) { n.setXYZ(i, v[0], v[1], v[2]); } n.needsUpdate = true;
+    void mesh;
+  };
+  /** Weight maps / vertex colours show as vertex colours while their property is selected or a paint tool is active on the object. */
+  const applyPaintDisplay = (o: X3DObject, m: THREE.Mesh, mesh: MeshData) => {
+    const sel = app.selection[app.selection.length - 1]; const tool: any = app.activeTool; const prop = (sel && (sel.type === 'weightmap' || sel.type === 'vertexcolor') && sel.parent === o) ? sel : (tool?.paintObj === o ? (o.property('weightmap') ?? o.property('vertexcolor')) : null);
+    const geo = m.geometry;
+    if (!prop) { if ((geo as any)._painted) { geo.deleteAttribute('color'); (geo as any)._painted = false; } return; }
+    const values: Map<number, any> = (prop as any).values ?? new Map(); const n = mesh.positions.length / 3; const col = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) { if (prop.type === 'weightmap') { const w = Number(values.get(i) ?? 0); col[i * 3] = w; col[i * 3 + 1] = 0.15 + 0.3 * w; col[i * 3 + 2] = 1 - w; } else { const c = values.get(i) ?? [0.5, 0.5, 0.5]; col[i * 3] = c[0]; col[i * 3 + 1] = c[1]; col[i * 3 + 2] = c[2]; } }
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3)); (geo as any)._painted = true;
+    // a private vertex-coloured material (the cached ones are shared between objects)
+    let pm = (m as any)._paintMat as THREE.Material | undefined; if (!pm) { pm = new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1.5, polygonOffsetUnits: 2 }); (m as any)._paintMat = pm; }
+    (m as any)._matShaded = pm; (m as any)._matTextured = pm;
   };
   const child = (g: THREE.Object3D, k: string) => g.children.find(c => (c as any)._kind === k);
   const removeChild = (g: THREE.Object3D, k: string) => { const c = child(g, k); if (c) g.remove(c); };
@@ -413,7 +435,11 @@ export function viewManager(app: App, host: HTMLElement) {
       if (vp.kind === 'persp') cam.lookAt(orbit.target);
       needs = true; return;
     }
-    if (app.activeTool) { if (app.activeTool.onMove && drag.moved) { const at = vpAt(e); if (at) { app.activeTool.onMove(planePoint(vp, at.nx, at.ny)); syncToolPreview(); needs = true; } } return; }
+    if (app.activeTool) {
+      const t: any = app.activeTool;
+      if (t.onPaint && drag.button === 0 && !e.altKey) { const at = vpAt(e); if (at) { prepCam(vp, at.r); const po = pickObject(vp, at.nx, at.ny); const pc = pickComponent(vp, at, po?.obj, po?.hit, t.pickKind); const w = po ? [po.hit.point.x, po.hit.point.y, po.hit.point.z] : planePoint(vp, at.nx, at.ny); t.onPaint(w, po?.obj ?? null, pc, [(e.movementX ?? 0), -(e.movementY ?? 0), 0]); needs = true; } return; }
+      if (t.onMove && drag.moved) { const at = vpAt(e); if (at) { t.onMove(planePoint(vp, at.nx, at.ny)); syncToolPreview(); needs = true; } } return;
+    }
     if (tool.mode === 'select') {
       if (!drag.moved) return;
       const b = root.getBoundingClientRect();
@@ -610,6 +636,8 @@ function marker(o: X3DObject): THREE.Object3D {
     else if (shape === 'Spiral') { const pts: number[][] = []; for (let i = 0; i <= 48; i++) { const a = i / 48 * Math.PI * 6; pts.push([s * (i / 48) * Math.cos(a), i / 48 * s, s * (i / 48) * Math.sin(a)]); } g.add(line(pts)); }
     else if (shape === 'Bone') { g.add(line([[0, 0, 0], [s * 0.3, s * 0.3, 0], [2 * s, 0, 0], [s * 0.3, -s * 0.3, 0]], true)); }
   }
+  else if (t === 'standin') { const p = o.primitive!; const a = [Number(p.val('bboxminx')), Number(p.val('bboxminy')), Number(p.val('bboxminz'))], b = [Number(p.val('bboxmaxx')), Number(p.val('bboxmaxy')), Number(p.val('bboxmaxz'))]; g.add(line([[a[0], a[1], a[2]], [b[0], a[1], a[2]], [b[0], a[1], b[2]], [a[0], a[1], b[2]]], true)); g.add(line([[a[0], b[1], a[2]], [b[0], b[1], a[2]], [b[0], b[1], b[2]], [a[0], b[1], b[2]]], true)); for (const [x, z] of [[a[0], a[2]], [b[0], a[2]], [b[0], b[2]], [a[0], b[2]]]) g.add(line([[x, a[1], z], [x, b[1], z]])); g.add(line([[a[0], a[1], a[2]], [b[0], b[1], b[2]]])); g.add(line([[b[0], a[1], a[2]], [a[0], b[1], b[2]]])); }
+  else if (t === 'geoshader') { const s = Number(o.primitive?.val('size') ?? 2) / 2; g.add(circle(s, 'x', 16), circle(s, 'y', 16), circle(s, 'z', 16)); g.add(line([[-s, -s, 0], [s, s, 0]])); g.add(line([[-s, s, 0], [s, -s, 0]])); }
   else { g.add(line([[-1, 0, 0], [1, 0, 0]])); g.add(line([[0, -1, 0], [0, 1, 0]])); g.add(line([[0, 0, -1], [0, 0, 1]])); if (o.kind === 'model') g.add(line([[-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1]], true)); }
   return g;
 }
