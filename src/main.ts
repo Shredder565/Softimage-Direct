@@ -7,6 +7,7 @@ import { registerPresetModels } from './commands/presets';
 import { registerModelCommands2 } from './commands/model2';
 import { registerAnimCommands } from './commands/anim';
 import { registerRenderCommands } from './commands/render';
+import { renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
 import { registerToolbarCommands, palettesView, toolbarView, newToolbar, customizeToolbars, openToolbarWindow, userToolbars } from './ui/toolbars';
 import { playbackPanel, animationPanel, timerange, layerManager, xsiExplorer, scriptHistory } from './ui/views';
 import { LayoutEngine, layoutByName, currentLayoutName } from './ui/layout';
@@ -64,6 +65,8 @@ layout.registerView('Main Shelf', h => mainShelf(app, h));
 for (const n of ['Selection Panel', 'Transformation Panel', 'Snap Panel', 'Constraint Panel', 'Edit Panel', 'Mini Transform Panel'] as const) layout.registerView(n, h => { mcpPanel(app, h, n === 'Selection Panel' ? { only: ['Select'] } : n === 'Transformation Panel' ? { only: ['Transform'] } : n === 'Snap Panel' ? { only: ['Snap'] } : n === 'Constraint Panel' ? { only: ['Constrain'] } : n === 'Edit Panel' ? { only: ['Edit'] } : { only: ['Transform'], cls: 'mini' }); });
 layout.registerView('Palettes', h => palettesView(app, h)); layout.registerView('Scripts', h => toolbarView(app, h, 'Scripts'));
 window.addEventListener('toolbarmenu', (e: any) => { const l = e.detail?.label; if (l === 'New Custom Toolbar...') newToolbar(app, 'toolbar'); else if (l === 'New Custom Shelf...') newToolbar(app, 'shelf'); else if (l === 'Customize Toolbars...') customizeToolbars(app); else if (l === 'New Custom Relational View') app.logMsg('info', 'Custom relational views: use View > Layouts > New Blank Layout'); else openToolbarWindow(app, l); });
+const SHELL: Record<string, (h: HTMLElement) => void> = { 'Render Tree': h => renderTree(app, h), 'Texture Editor': h => textureEditor(app, h), 'Schematic': h => schematic(app, h), 'Animation Editor': h => animationEditor(app, h, 'fcurve'), 'DopeSheet': h => animationEditor(app, h, 'dopesheet'), 'Spreadsheet': h => spreadsheet(app, h), 'Plugin Manager': h => pluginManager(app, h), 'Netview': h => netview(app, h), 'Image Clips': h => imageClips(app, h), 'Sources': h => imageClips(app, h), 'Render Manager': h => renderManager(app, h), 'Material Manager': h => materialManager(app, h), 'Material Panel': h => materialPanel(app, h), 'Weight Paint Panel': h => weightPaintPanel(app, h), 'Preset Manager': h => presetManager(app, h), 'Animation Mixer': h => animationMixer(app, h), 'Expression Editor': h => { animationEditor(app, h, 'fcurve'); } };
+for (const [k, f] of Object.entries(SHELL)) layout.registerView(k, f);
 layout.registerView('Scene Layer Manager', h => layerManager(app, h)); layout.registerView('Script History', h => scriptHistory(app, h)); layout.registerView('XSI Explorer', h => xsiExplorer(app, h));
 layout.build(layoutByName(currentLayoutName()) ?? layoutByName('Default')!, root);
 installLayoutEditing(app, layout, root);
@@ -89,7 +92,7 @@ const openView = (name: string) => {
     'Animation Panel': h => animationPanel(app, h), 'Playback Panel': h => playbackPanel(app, h), 'Timeline': h => timeline(app, h), 'Timerange': h => timerange(app, h),
     'Selection Panel': h => mcpPanel(app, h, { only: ['Select'] }), 'Transformation Panel': h => mcpPanel(app, h, { only: ['Transform'] }), 'Snap Panel': h => mcpPanel(app, h, { only: ['Snap'] }), 'Edit Panel': h => mcpPanel(app, h, { only: ['Constrain', 'Edit'] }), 'Mini Transform Panel': h => mcpPanel(app, h, { only: ['Transform'], cls: 'mini' }),
   };
-  const b = builders[name]; if (!b) { app.logMsg('info', `View "${name}": not implemented`); return; }
+  const b = builders[name] ?? SHELL[name]; if (!b) { app.logMsg('info', `View "${name}": not implemented`); return; }
   openFloating(name, (body) => b(body), { w, h, key });
 };
 window.addEventListener('openview', (e: any) => openView(e.detail?.name));

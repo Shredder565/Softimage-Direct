@@ -21,6 +21,8 @@ export class FCurve {
       const a = ks[i], b = ks[i + 1];
       if (time >= a.time && time <= b.time) {
         const t = (time - a.time) / (b.time - a.time);
+        const interp = (this as any).interp ?? 'spline';
+        if (interp === 'step') return a.value; if (interp === 'linear') return a.value + (b.value - a.value) * t;
         const s = t * t * (3 - 2 * t); // smoothstep ~ default spline ease
         return a.value + (b.value - a.value) * s;
       }

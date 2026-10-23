@@ -161,7 +161,7 @@ export function viewManager(app: App, host: HTMLElement) {
         let m = child(g, 'mesh') as THREE.Mesh | undefined, w = child(g, 'wire') as THREE.LineSegments | undefined;
         if (!m || (m.geometry as any)._src !== mesh) {
           const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(mesh.positions, 3)); geo.setIndex(new THREE.BufferAttribute(mesh.indices, 1)); geo.computeVertexNormals(); (geo as any)._src = mesh;
-          const proj = o.property('uvprojection'); if (proj) { const uv = meshUVProjection(mesh, String(proj.val('kind'))); const ur = Number(proj.val('urepeat')), vr = Number(proj.val('vrepeat')), uo = Number(proj.val('uoffset')), vo = Number(proj.val('voffset')); for (let i = 0; i < uv.length; i += 2) { uv[i] = uv[i] * ur + uo; uv[i + 1] = uv[i + 1] * vr + vo; } geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); }
+          const proj = o.property('uvprojection'); if (proj) { const edited = (proj as any).uvs as Float32Array | undefined; const uv = edited && edited.length === mesh.positions.length / 3 * 2 ? new Float32Array(edited) : meshUVProjection(mesh, String(proj.val('kind'))); const ur = Number(proj.val('urepeat')), vr = Number(proj.val('vrepeat')), uo = Number(proj.val('uoffset')), vo = Number(proj.val('voffset')); if (!edited) for (let i = 0; i < uv.length; i += 2) { uv[i] = uv[i] * ur + uo; uv[i + 1] = uv[i + 1] * vr + vo; } geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); }
           if (m) { m.geometry.dispose(); m.geometry = geo; } else { m = new THREE.Mesh(geo, new THREE.MeshPhongMaterial()); (m as any)._kind = 'mesh'; g.add(m); }
           const wgeo = polygonWire(mesh); if (w) { w.geometry.dispose(); w.geometry = wgeo; } else { w = new THREE.LineSegments(wgeo, new THREE.LineBasicMaterial({ color: 0xffffff })); (w as any)._kind = 'wire'; g.add(w); }
         }
@@ -336,7 +336,7 @@ export function viewManager(app: App, host: HTMLElement) {
     vps.forEach((vp, i) => {
       const r = rect(i); if (r.w <= 0 || r.h <= 0) return;
       renderer.setViewport(r.x, H - r.y - r.h, r.w, r.h); renderer.setScissor(r.x, H - r.y - r.h, r.w, r.h);
-      prepCam(vp, r);
+      prepCam(vp, r); if (i === active) (window as any).__activeCamera = vp.camera;
       if (!XT.beforeRender(vp as any, r)) return;
       const fast = XT.fastManip(vp as any) && !!drag && drag.moved;
       const d = fast ? 'wireframe' : vp.display; const shaded = d !== 'wireframe' && d !== 'bounding box';
@@ -586,6 +586,7 @@ export function viewManager(app: App, host: HTMLElement) {
     if (e.key === 'Enter') { app.activeTool.onFinish(); sync(); } else if (e.key === 'Escape') { app.activeTool.onCancel(); app.activeTool = null; app.events.emit('selection'); sync(); }
   });
 
+  window.addEventListener('uvedit', () => { for (const [, g] of nodes) { const m = child(g, 'mesh') as any; if (m) (m.geometry as any)._src = null; } sync(); });
   app.events.on('scene', sync); app.events.on('selection', sync); app.events.on('params', sync); app.events.on('frame', sync);
   window.addEventListener('resize', resize);
   sync();

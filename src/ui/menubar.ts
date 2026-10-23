@@ -18,7 +18,8 @@ export function menubar(app: App, host: HTMLElement) {
   const tops: SiMenuItem[] = [file ?? main[0], ...main.slice(1)];
   const clipboard: { objs: any[]; cut: boolean } = { objs: [], cut: false };
 
-  const viewsSubmenu = (): SiMenuItem[] => SI_VIEWS.map(v => ({ label: v.name, id: -1 }));
+  const EXTRA_VIEWS = ['Render Tree', 'Texture Editor', 'Schematic', 'Animation Editor', 'DopeSheet', 'Animation Mixer', 'Spreadsheet', 'Plugin Manager', 'Netview', 'Image Clips', 'Render Manager', 'Material Manager', 'Weight Paint Panel', 'Preset Manager', 'Scene Layer Manager', 'XSI Explorer', 'Script History'];
+  const viewsSubmenu = (): SiMenuItem[] => [...SI_VIEWS.map(v => ({ label: v.name, id: -1 })), { separator: true }, ...EXTRA_VIEWS.filter(n => !SI_VIEWS.some(v => v.name === n)).map(n => ({ label: n, id: -1 }))];
   const layoutsSubmenu = (): SiMenuItem[] => layoutNames().map(n => ({ label: n, id: -2 }));
   const displaySubmenu = (): SiMenuItem[] => ['Bounding Box', 'Wireframe', 'Hidden Line', 'Constant', 'Shaded', 'Textured', 'Texture Decal', 'Realtime Shaders'].map(l => ({ label: l, id: -3 }));
   /** Expand Softimage's insertion points the way the running app does. */
