@@ -333,3 +333,16 @@ button, select, input { font-family: inherit; }
 .layout-edit .le-name { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .layout-edit .le-view { font-size: 10px; max-width: 120px; }
 .frame.hidden .layout-edit { display: flex; }
+
+/* ---- palettes, user toolbars, dialogs */
+.palettes, .user-toolbar { padding: 4px; font: 11px Tahoma, Verdana, sans-serif; height: 100%; overflow: auto; box-sizing: border-box; display: flex; flex-direction: column; gap: 3px; }
+.tb-group { background: #8a8886; color: #111; padding: 1px 4px; margin-top: 3px; }
+.pal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
+.pal-swatch { height: 18px; border: 1px solid #333; border-radius: 2px; cursor: pointer; }
+.xp-btn.wide { width: 100%; text-align: center; }
+.tb-items { display: flex; flex-direction: column; gap: 2px; } .tb-foot { display: flex; gap: 3px; margin-top: 4px; }
+.dlg { display: flex; flex-direction: column; gap: 3px; padding: 6px; font: 11px Tahoma, Verdana, sans-serif; }
+.dlg label { color: #222; } .dlg input, .dlg textarea, .dlg select { background: #363333; color: #eee; border: 1px solid #222; font: 11px Tahoma, Verdana, sans-serif; padding: 2px; }
+.dlg .row { display: flex; gap: 4px; align-items: center; } .dlg .row label { width: 90px; } .dlg .row input, .dlg .row select { flex: 1; }
+.dlg-btns { display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; } .dlg-btns button { min-width: 60px; }
+.dlg .hint { color: #444; font-size: 10px; } .dlg .cmds { height: 200px; }

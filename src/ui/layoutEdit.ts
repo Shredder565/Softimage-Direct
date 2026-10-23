@@ -1,6 +1,7 @@
 // View > Layouts: switching between the shipped layouts, layout editing (reorder / hide / change the view of a frame,
 // drag splitters), saving user layouts, New Blank Layout (Single / Dual Screen), New Layout From, Rename, Manage.
 import { App } from '../core/commands';
+import { userToolbars, saveToolbars } from './toolbars';
 import { LayoutEngine, LayoutNode, captureLayout, saveUserLayout, switchLayout, layoutNames, layoutByName, currentLayoutName, userLayouts } from './layout';
 
 export function installLayoutEditing(app: App, layout: LayoutEngine, root: HTMLElement) {
@@ -25,7 +26,7 @@ export function installLayoutEditing(app: App, layout: LayoutEngine, root: HTMLE
     if (path.includes('New Layout From')) { const src = layoutByName(label); if (!src) return; const n = prompt(`New layout from "${label}" — name:`, label + '_copy'); if (!n) return; saveUserLayout(n, JSON.parse(JSON.stringify(src))); switchLayout(n); return; }
     switch (label) {
       case 'Edit Current Layout': start(); return; case 'Exit Layout Editing': stop(); return; case 'Save Layouts': save(); stop(); return;
-      case 'Manage...': { const u = userLayouts(); const names = Object.keys(u); if (!names.length) { alert('No user layouts to manage (shipped layouts cannot be deleted).'); return; } const r = prompt('Delete user layout:\n' + names.map((n, i) => `${i + 1}. ${n}`).join('\n'), ''); const n = /^\d+$/.test(r ?? '') ? names[Number(r) - 1] : r; if (n && u[n]) { saveUserLayout(n, null); app.logMsg('info', `Layout "${n}" deleted`); if (currentLayoutName() === n) switchLayout('Default'); } return; }
+      case 'Manage...': { const u = userLayouts(); const tbs = userToolbars(); const names = [...Object.keys(u).map(n => 'Layout: ' + n), ...tbs.map(t => `${t.kind === 'shelf' ? 'Shelf' : 'Toolbar'}: ${t.name}`)]; if (!names.length) { alert('Manage Layouts, Views, Shelves and Toolbars\n\nNo user layouts, shelves or toolbars to delete (shipped ones cannot be removed).'); return; } const r = prompt('Manage Layouts, Views, Shelves and Toolbars — delete:\n' + names.map((n, i) => `${i + 1}. ${n}`).join('\n'), ''); const pick = /^\d+$/.test(r ?? '') ? names[Number(r) - 1] : r; if (!pick) return; if (pick.startsWith('Layout: ')) { const n = pick.slice(8); saveUserLayout(n, null); app.logMsg('info', `Layout "${n}" deleted`); if (currentLayoutName() === n) switchLayout('Default'); } else { const n = pick.replace(/^(Shelf|Toolbar): /, ''); saveToolbars(tbs.filter(t => t.name !== n)); app.logMsg('info', `Toolbar "${n}" deleted`); } return; }
       case 'Rename Layout': { const cur = currentLayoutName(); const n = prompt('Rename layout:', cur); if (!n || n === cur) return; const t = layoutByName(cur); if (t) { saveUserLayout(n, t); if (userLayouts()[cur]) saveUserLayout(cur, null); switchLayout(n); } return; }
     }
     if (layoutNames().includes(label)) { if (label !== currentLayoutName()) switchLayout(label); return; }

@@ -169,7 +169,7 @@ export function viewManager(app: App, host: HTMLElement) {
         applyUserNormals(o, m, mesh); applyPaintDisplay(o, m, mesh);
         // Wireframe colour: Selected white; the object active for component selection uses the Active colour;
         // otherwise the object's wire colour (layer colour, else the Geometry scene colour = black).
-        const lc = o.layer ? new THREE.Color(...(o.layer.val('color') as V3)) : new THREE.Color(SI.geometry);
+        const dp = o.property('display'); const lc = dp?.val('wirecol') ? new THREE.Color(...(dp.val('wirecolorrgb') as V3)) : o.layer ? new THREE.Color(...(o.layer.val('color') as V3)) : new THREE.Color(SI.geometry);
         const activeComp = app.selMode !== 'object' && o === compTarget();
         (w!.material as THREE.LineBasicMaterial).color.copy(activeComp ? new THREE.Color(SI.active) : selected ? new THREE.Color(SI.selected) : lc);
         (w as any)._selected = selected || activeComp;

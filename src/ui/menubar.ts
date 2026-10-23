@@ -1,6 +1,8 @@
 // Main menubar built from XSI.exe's own menu resources (File = MENU 344, Edit/View/Display/Window/Help = MENU 128),
 // with the runtime-inserted entries Softimage adds at its "insertion points" (views, layouts, display modes).
 import { layoutNames, currentLayoutName } from './layout';
+import { userToolbars } from './toolbars';
+const userToolbarNames = () => userToolbars().map(t => t.name);
 import { App } from '../core/commands';
 import { SI_MENUS, SI_VIEWS, SiMenuItem, openSiMenu } from './si';
 import { minimizeAll, restoreAll, closeAll } from './floating';
@@ -21,7 +23,7 @@ export function menubar(app: App, host: HTMLElement) {
   const displaySubmenu = (): SiMenuItem[] => ['Bounding Box', 'Wireframe', 'Hidden Line', 'Constant', 'Shaded', 'Textured', 'Texture Decal', 'Realtime Shaders'].map(l => ({ label: l, id: -3 }));
   /** Expand Softimage's insertion points the way the running app does. */
   const expand = (items: SiMenuItem[]): SiMenuItem[] => items.flatMap(it => {
-    if (it.label === 'View insertion point') return [{ label: 'Views', items: viewsSubmenu() }, { label: 'Optional Panels', items: [{ label: 'Main Shelf', id: -4 }, { label: 'Module Menu', id: -4 }, { label: 'MCP', id: -4 }, { label: 'Timeline', id: -4 }, { label: 'Timerange', id: -4 }, { label: 'Playback', id: -4 }] }];
+    if (it.label === 'View insertion point') return [{ label: 'Views', items: viewsSubmenu() }, { label: 'Toolbars', items: [...userToolbarNames().map(n => ({ label: n, id: -9 })), { label: 'Palettes', id: -1 }, { label: 'Scripts', id: -1 }] }, { label: 'Optional Panels', items: [{ label: 'Main Shelf', id: -4 }, { label: 'Module Menu', id: -4 }, { label: 'MCP', id: -4 }, { label: 'Timeline', id: -4 }, { label: 'Timerange', id: -4 }, { label: 'Playback', id: -4 }] }];
     if (it.label === 'Layout Insertion Point') return layoutsSubmenu();
     if (it.label === 'New Layout From') return [{ label: 'New Layout From', items: layoutNames().map(n => ({ label: n, id: -8 })) }];
     if (it.label === 'Display Insertion Point') return [...displaySubmenu(), { separator: true }, { label: 'Scene Colors...', id: -5 }, { label: 'Visibility Options...', id: -6 }];
@@ -45,7 +47,8 @@ export function menubar(app: App, host: HTMLElement) {
       case -7: ev('openscene', { name: l }); return;
       case -8: ev('layoutmenu', { label: l, path: [...path, 'New Layout From'] }); return;
     }
-    if (path.includes('Layouts')) { ev('layoutmenu', { label: l, path }); return; }
+    if (path.includes('Layouts') || l === 'Manage...') { ev('layoutmenu', { label: l, path }); return; }
+    if (['New Custom Relational View', 'New Custom Shelf...', 'New Custom Toolbar...', 'Customize Toolbars...'].includes(l) || it.id === -9) { ev('toolbarmenu', { label: l }); return; }
     switch (l) {
       case 'New Scene': if (confirm('New scene? (unsaved work is lost)')) app.run('NewScene'); return;
       case 'Open...': ev('openscene'); return; case 'Save': ev('savescene'); return; case 'Save As...': ev('savescene', { as: true }); return; case 'Save Backup': ev('savescene', { backup: true }); return;
