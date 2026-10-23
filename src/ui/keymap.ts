@@ -10,7 +10,12 @@ const explorer = (scope: string) => { const bar = document.querySelector<HTMLEle
 const setMode = (m: 'select' | 'translate' | 'rotate' | 'scale') => tool.setMode(m);
 const mcp = (k: string, v: any) => { const A = (window as any).__mcp; if (A) A(k, v); };
 
+const ev = (n: string, d: any = {}) => window.dispatchEvent(new CustomEvent(n, { detail: d }));
 export const ACTIONS: Record<string, Action> = {
+  // viewport navigation tools, render region, stereo, visibility/display options
+  'Navigation Tool': () => ev('navtool', { tool: 'Navigation Tool' }), 'Dolly Tool': () => ev('navtool', { tool: 'Dolly Tool' }), 'Track Tool': () => ev('navtool', { tool: 'Track Tool' }), 'Zoom Tool': () => ev('navtool', { tool: 'Zoom Tool' }), 'Pan and Zoom Tool': () => ev('navtool', { tool: 'Pan & Zoom Tool' }), 'Orbit Tool': () => ev('navtool', { tool: 'Orbit Tool' }), 'Roll Tool': () => ev('navtool', { tool: 'Roll Tool' }), 'Pivot Tool': () => ev('navtool', { tool: 'Pivot Tool' }), 'Fly Tool': () => ev('navtool', { tool: 'Fly Tool' }), 'Walk Tool': () => ev('navtool', { tool: 'Walk Tool' }),
+  'Render Region Tool': () => ev('renderregion'), 'Refresh All Render Regions': () => ev('renderregion-refresh'), 'Delete Render Region': () => ev('deleterenderregion'), 'Show/Hide Render Region': () => ev('renderregion-toggle'), 'Refresh Render Region': () => ev('renderregion-refresh'), 'Isolate Selected': (app) => app.run('IsolateSelected'),
+  'Toggle Headlight Display Mode': () => ev('displaytoggle', { item: 'Headlight' }), 'Visibility Options (All Cameras)': () => ev('openvisibility'), 'Display Options (All Cameras)': () => ev('opendisplayoptions'), 'Toggle Stereo': () => ev('stereomode', { mode: 'Active' }),
   // tools
   'Translate Tool': () => setMode('translate'), 'Rotation Tool': () => setMode('rotate'), 'Scaling Tool': () => setMode('scale'),
   'Object Select Tool': (app) => { setMode('select'); app.setSelMode('object'); }, 'Object Select Tool (Extended Selection)': (app) => { setMode('select'); app.setSelMode('object'); },

@@ -10,6 +10,7 @@ import { meshEdges, edgeKey } from '../core/topology';
 import { catmullClark, meshUVProjection } from '../core/topology2';
 import { tessellateCurve } from '../core/curves';
 import type { MeshData } from '../core/geometry';
+import { installViewExtras, DISPLAY_MENU } from './viewExtras';
 import { SI_MENUS, SiMenuItem, openSiMenu, siIcon, hasIcon } from './si';
 
 /** Scene colours and display preferences, decoded from Softimage 2015's C3DSceneColors / C3DPrefsDisplay / C3DPrefsTweak SPDL defaults. */
@@ -23,7 +24,7 @@ export const tool = { mode: 'select' as ToolMode, axes: { x: true, y: true, z: t
 (window as any).__tool = tool;
 
 /** Per-viewport state: the camdisp display mode and the camvis "eye" menu toggles (C3DCameraVisibilityProp). */
-interface Viewport { name: string; kind: 'ortho' | 'persp'; camera: THREE.Camera; el: HTMLElement; display: string; flags: Record<string, boolean>; head: { view: HTMLElement; disp: HTMLElement; labels: HTMLElement } }
+interface Viewport { name: string; kind: 'ortho' | 'persp'; camera: THREE.Camera; el: HTMLElement; display: string; flags: Record<string, boolean>; head: { view: HTMLElement; disp: HTMLElement; labels: HTMLElement }; x?: any }
 export const DISPLAY_MODES = ['Bounding Box', 'Wireframe', 'Hidden Line', 'Constant', 'Shaded', 'Textured', 'Texture Decal', 'Realtime Shaders'];
 const VIS_DEFAULT: Record<string, boolean> = { 'Grid': true, 'Lights': true, 'Cameras': true, '3D Geometry': true, 'Implicit Geometry': true, 'Curves': true, 'Point Clouds': true, 'Nulls': true, 'Chains': true, 'Lattices': true, 'Control Objects': true, 'Name': false, 'Points': false, 'Centers': false, 'Normals': false, 'Polygon Normals': false, 'XRay Surfaces': false, 'Selection Info': false, 'PolyMesh Boundaries and Hard Edges': false, 'Subdivision Surfaces': true };
 type V3 = [number, number, number];
@@ -40,7 +41,7 @@ export function viewManager(app: App, host: HTMLElement) {
   const scene = new THREE.Scene(); scene.background = new THREE.Color(SI.background);
   scene.add(new THREE.AmbientLight(0xffffff, 0.5));
   const defaultLights = new THREE.Group(); const key = new THREE.DirectionalLight(0xffffff, 1.0); key.position.set(12, 20, 15); const fill = new THREE.DirectionalLight(0xffffff, 0.35); fill.position.set(-15, 5, -10); defaultLights.add(key, fill); scene.add(defaultLights);
-  const grid = new THREE.GridHelper(40, 40, SI.grid, 0x5e5e5e); scene.add(grid);
+  let grid = new THREE.GridHelper(40, 40, SI.grid, 0x5e5e5e); grid.name = 'grid'; scene.add(grid);
   const axesH = new THREE.AxesHelper(4); scene.add(axesH);
   // Component display: selected polygons = translucent Component red, selected edges/points = Component red,
   // unselected points (point mode only) = Vertex blue at the Display pref point size, hover = Highlight colour.
@@ -64,16 +65,17 @@ export function viewManager(app: App, host: HTMLElement) {
     const mbtn = (text: string, title: string, icon?: string) => { const x = document.createElement('button'); x.className = 'vp-menu-btn'; if (icon && hasIcon(icon)) x.appendChild(siIcon(icon, 0.5)); else x.textContent = text; x.title = title; return x; };
     const viewBtn = mbtn(name, 'View menu: cameras and orthographic views'); const camBtn = mbtn('📷', 'Camera menu', 'camera'); const eyeBtn = mbtn('👁', 'Visibility menu (Shift+S)');
     const sp = document.createElement('div'); sp.className = 'spacer';
-    const dispBtn = mbtn(kind === 'persp' ? 'Shaded' : 'Wireframe', 'Display mode'); const cubeBtn = mbtn('⌂', 'ViewCube menu');
+    const dispBtn = mbtn(kind === 'persp' ? 'Shaded' : 'Wireframe', 'Display mode'); const stereoBtn = mbtn('◐', 'Stereo menu'); const cubeBtn = mbtn('⌂', 'ViewCube menu');
     const vlabels = document.createElement('div'); vlabels.className = 'vp-names';
-    head.append(b, viewBtn, camBtn, eyeBtn, sp, dispBtn, cubeBtn); el.append(head, vlabels); labels.appendChild(el);
+    head.append(b, viewBtn, camBtn, eyeBtn, sp, dispBtn, stereoBtn, cubeBtn); el.append(head, vlabels); labels.appendChild(el);
     const vp: Viewport = { name, kind, camera: cam, el, display: dispBtn.textContent!.toLowerCase(), flags: { ...VIS_DEFAULT }, head: { view: viewBtn, disp: dispBtn, labels: vlabels } };
     const at = (x: HTMLElement) => { const r = x.getBoundingClientRect(); return { x: r.left, y: r.bottom }; };
     viewBtn.onclick = (e) => { e.stopPropagation(); const p = at(viewBtn); const cams = [...app.scene.allObjects()].filter(o => o.type === 'camera' || o.type === 'light').map(o => ({ label: o.name, id: -10 }));
       openSiMenu([...(SI_MENUS.vmLayout ?? []).map(it => ({ ...it, label: it.label === 'Perspective' ? 'Camera' : it.label })), { separator: true }, ...cams, { separator: true }, { label: 'User', id: -11 }], p.x, p.y, (it) => { switchView(vp, it.label!); needs = true; }, { checked: it => it.label === vp.name }); };
     camBtn.onclick = (e) => { e.stopPropagation(); const p = at(camBtn); openSiMenu(SI_MENUS.viewCamera ?? [], p.x, p.y, (it) => cameraMenu(vp, it.label!), {}); };
     eyeBtn.onclick = (e) => { e.stopPropagation(); const p = at(eyeBtn); openSiMenu(SI_MENUS.viewVisibility ?? [], p.x, p.y, (it) => visibilityMenu(vp, it.label!), { checked: it => it.label! in vp.flags ? vp.flags[it.label!] : undefined }); };
-    dispBtn.onclick = (e) => { e.stopPropagation(); const p = at(dispBtn); openSiMenu(DISPLAY_MODES.map(l => ({ label: l, id: -12 })), p.x, p.y, (it) => setDisplay(vp, it.label!), { checked: it => it.label!.toLowerCase() === vp.display }); };
+    dispBtn.onclick = (e) => { e.stopPropagation(); const p = at(dispBtn); openSiMenu(DISPLAY_MENU, p.x, p.y, (it, path) => XT.displayMenu(vp, it.label!, path), { checked: XT.displayChecked(vp) }); };
+    stereoBtn.onclick = (e) => { e.stopPropagation(); const p = at(stereoBtn); openSiMenu(XT.stereoMenuItems(), p.x, p.y, (it) => XT.stereoMenu(vp, it.label!), { checked: XT.stereoChecked(vp) }); };
     cubeBtn.onclick = (e) => { e.stopPropagation(); const p = at(cubeBtn); openSiMenu(SI_MENUS.viewCube ?? [], p.x, p.y, (it) => { if (it.label === 'Home' || it.label === 'Reset Home') switchView(vp, vp.name); else if (it.label === 'Lock to Selection') { (window as any).__orbitSelected = (window as any).__orbitSelected ? 0 : 2; } else app.logMsg('info', `ViewCube: ${it.label} not implemented`); needs = true; }, {}); };
     return vp;
   };
@@ -82,7 +84,7 @@ export function viewManager(app: App, host: HTMLElement) {
   vps.push(mk('Camera', 'persp', new THREE.Vector3(9.5, 7.3, 12.3), new THREE.Vector3(0, 1, 0)));
   vps.push(mk('Front', 'ortho', new THREE.Vector3(0, 0, 100), new THREE.Vector3(0, 1, 0)));
   vps.push(mk('Right', 'ortho', new THREE.Vector3(100, 0, 0), new THREE.Vector3(0, 1, 0)));
-  const setDisplay = (vp: Viewport, mode: string) => { vp.display = mode.toLowerCase(); vp.head.disp.textContent = DISPLAY_MODES.find(m => m.toLowerCase() === vp.display) ?? mode; needs = true; };
+  const setDisplay = (vp: Viewport, mode: string) => { vp.display = mode.toLowerCase().replace('textured decal', 'texture decal').replace('hidden line removal', 'hidden line'); vp.head.disp.textContent = DISPLAY_MODES.find(m => m.toLowerCase() === vp.display) ?? mode; needs = true; };
   const cameraMenu = (vp: Viewport, label: string) => {
     switch (label) {
       case 'Frame Selection': frameBox(app.selectedObjects); return; case 'Center Selection': frameBox(app.selectedObjects, true); return; case 'Frame All': frameBox([...app.scene.allObjects()].filter(o => o.visible)); return;
@@ -90,14 +92,14 @@ export function viewManager(app: App, host: HTMLElement) {
       case 'Select Camera': { const c = [...app.scene.allObjects()].find(o => o.type === 'camera'); if (c) app.select([c]); return; } case 'Properties...': { const c = [...app.scene.allObjects()].find(o => o.type === 'camera'); if (c) app.events.emit('inspect', c); return; }
       case 'Undo': app.undo(); return; case 'Redo': app.redo(); return; case 'Scene Colors...': window.dispatchEvent(new CustomEvent('openprefs', { detail: { page: 'Scene Colors' } })); return;
     }
-    app.logMsg('info', `Camera menu: ${label} not implemented`);
+    if (!XT.cameraMenu(vp, label)) app.logMsg('info', `Camera menu: ${label} not implemented`);
   };
   const visibilityMenu = (vp: Viewport, label: string) => {
     if (label in vp.flags) { vp.flags[label] = !vp.flags[label]; needs = true; return; }
     if (label === 'Check All Objects' || label === 'Uncheck All Objects') { for (const k of ['Lights', 'Cameras', '3D Geometry', 'Implicit Geometry', 'Curves', 'Point Clouds', 'Nulls', 'Chains', 'Lattices', 'Control Objects']) vp.flags[k] = label.startsWith('Check'); needs = true; return; }
     if (label === 'Check All' || label === 'Uncheck All') { for (const k of ['Name', 'Points', 'Centers', 'Normals', 'Polygon Normals', 'XRay Surfaces', 'PolyMesh Boundaries and Hard Edges']) vp.flags[k] = label === 'Check All'; needs = true; return; }
     if (label === 'Visibility Options...') { window.dispatchEvent(new CustomEvent('openvisibility', { detail: { vp: vp.name } })); return; }
-    app.logMsg('info', `Visibility menu: ${label} not implemented`);
+    if (!XT.visibilityMenu(vp, label)) app.logMsg('info', `Visibility menu: ${label} not implemented`);
   };
   const orbit = { target: new THREE.Vector3(0, 0, 0) };
   const switchView = (vp: Viewport, name: string) => {
@@ -304,6 +306,8 @@ export function viewManager(app: App, host: HTMLElement) {
   const bboxFor = (g: THREE.Group) => { let b = child(g, 'bbox') as THREE.LineSegments | undefined; const m = child(g, 'mesh') as THREE.Mesh | undefined; if (!m) return undefined; if (!b || (b as any)._src !== m.geometry) { if (b) g.remove(b); m.geometry.computeBoundingBox(); const bb = m.geometry.boundingBox!; const e = new THREE.EdgesGeometry(new THREE.BoxGeometry(bb.max.x - bb.min.x, bb.max.y - bb.min.y, bb.max.z - bb.min.z)); b = new THREE.LineSegments(e, new THREE.LineBasicMaterial({ color: SI.geometry })); b.position.copy(bb.getCenter(new THREE.Vector3())); (b as any)._kind = 'bbox'; (b as any)._src = m.geometry; g.add(b); } return b; };
   const hiddenLineMat = new THREE.MeshBasicMaterial({ color: SI.background, polygonOffset: true, polygonOffsetFactor: 1.5, polygonOffsetUnits: 2 });
   const constantMats = new Map<THREE.Material, THREE.Material>();
+  const decalMats = new Map<THREE.Material, THREE.Material>();
+  const decalFor = (base: THREE.Material) => { let m = decalMats.get(base); if (!m) { m = new THREE.MeshBasicMaterial({ color: (base as any).color ?? 0xb3b3b3, map: (base as any).map ?? null, polygonOffset: true, polygonOffsetFactor: 1.5, polygonOffsetUnits: 2, side: THREE.DoubleSide }); decalMats.set(base, m); } return m; };
   const TYPE_FLAG: Record<string, string> = { light: 'Lights', camera: 'Cameras', null: 'Nulls', implicit: 'Implicit Geometry', lattice: 'Lattices', root: 'Chains', bone: 'Chains', eff: 'Chains' };
   const prepCam = (vp: Viewport, r: { w: number; h: number }) => { const c = vp.camera as any; if (vp.kind === 'persp') c.aspect = r.w / r.h; else { const z = c._zoom ?? 20, a = r.w / r.h; c.left = -z * a; c.right = z * a; c.top = z; c.bottom = -z; } c.updateProjectionMatrix(); c.updateMatrixWorld(); };
   const normalsObj = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: SI.vertex })); scene.add(normalsObj);
@@ -323,6 +327,7 @@ export function viewManager(app: App, host: HTMLElement) {
     host.innerHTML = '';
     for (const o of app.scene.allObjects()) { if (!o.visible) continue; const v = new THREE.Vector3().setFromMatrixPosition(o.globalMatrix()).project(vp.camera); if (v.z > 1) continue; const s = document.createElement('span'); s.className = 'vp-name'; s.textContent = o.name; s.style.left = ((v.x + 1) / 2) * r.w + 4 + 'px'; s.style.top = ((1 - v.y) / 2) * r.h - 6 + 'px'; host.appendChild(s); }
   };
+  const XT = installViewExtras({ app, vps: vps as any, renderer, scene, get grid() { return grid; }, set grid(g) { grid = g; }, axes: axesH, defaultLights, root, rect, prepCam: prepCam as any, orbit, switchView: switchView as any, frameBox: (o, c) => frameBox(o, c), setDisplay: setDisplay as any, needs: () => { needs = true; }, active: () => active, setActive: (i) => { active = i; }, vpAt: (e) => vpAt(e) });
   const frameLoop = () => {
     requestAnimationFrame(frameLoop);
     if (!needs) return; needs = false;
@@ -332,13 +337,14 @@ export function viewManager(app: App, host: HTMLElement) {
       const r = rect(i); if (r.w <= 0 || r.h <= 0) return;
       renderer.setViewport(r.x, H - r.y - r.h, r.w, r.h); renderer.setScissor(r.x, H - r.y - r.h, r.w, r.h);
       prepCam(vp, r);
-      const d = vp.display; const shaded = d !== 'wireframe' && d !== 'bounding box';
-      grid.visible = vp.flags['Grid']; axesH.visible = vp.flags['Grid'];
+      if (!XT.beforeRender(vp as any, r)) return;
+      const fast = XT.fastManip(vp as any) && !!drag && drag.moved;
+      const d = fast ? 'wireframe' : vp.display; const shaded = d !== 'wireframe' && d !== 'bounding box';
       for (const [o, g] of nodes) {
         const f = TYPE_FLAG[o.type] ?? (o.primitive?.type === 'crvlist' ? 'Curves' : o.primitive?.type === 'polymsh' || o.primitive?.type === 'surfmsh' ? '3D Geometry' : '');
-        g.visible = o.visible && (f ? vp.flags[f] !== false : true);
+        g.visible = o.visible && (f ? vp.flags[f] !== false : true) && XT.isolated(vp as any, o);
         for (const ch of g.children) { const k = (ch as any)._kind;
-          if (k === 'mesh') { ch.visible = shaded; const m = ch as THREE.Mesh; const base = d === 'textured' || d === 'texture decal' || d === 'realtime shaders' ? (ch as any)._matTextured : (ch as any)._matShaded;
+          if (k === 'mesh') { ch.visible = shaded; const m = ch as THREE.Mesh; const base = d === 'textured' || d === 'texture decal' || d === 'realtime shaders' || d === 'rotoscope' ? (d === 'texture decal' ? decalFor((ch as any)._matTextured) : (ch as any)._matTextured) : (ch as any)._matShaded;
             if (d === 'hidden line') m.material = hiddenLineMat; else if (d === 'constant') { let c = constantMats.get(base); if (!c) { c = new THREE.MeshBasicMaterial({ color: (base as any).color ?? 0xb3b3b3, polygonOffset: true, polygonOffsetFactor: 1.5, polygonOffsetUnits: 2 }); constantMats.set(base, c); } m.material = c; } else m.material = base;
             if (vp.flags['XRay Surfaces']) { (m.material as THREE.Material).transparent = true; (m.material as THREE.Material).opacity = 0.35; } else if ((m.material as any)._xrayed) { (m.material as THREE.Material).transparent = false; (m.material as THREE.Material).opacity = 1; } (m.material as any)._xrayed = vp.flags['XRay Surfaces']; }
           else if (k === 'wire') ch.visible = d === 'wireframe' || d === 'hidden line' || (shaded && !!(ch as any)._selected);
@@ -348,9 +354,11 @@ export function viewManager(app: App, host: HTMLElement) {
       }
       allPoints.visible = vp.flags['Points'] || app.selMode === 'point' || !!app.activeTool?.pickKind;
       scaleGizmo(vp, r); syncNormals(vp); syncCenters(vp);
-      renderer.render(scene, vp.camera);
+      if (!XT.render(vp as any, r)) renderer.render(scene, vp.camera);
+      XT.afterRender(vp as any, r);
       syncNames(vp, r);
     });
+    XT.afterFrame();
   };
   frameLoop();
 
@@ -398,6 +406,7 @@ export function viewManager(app: App, host: HTMLElement) {
     const at = vpAt(e); if (!at) return;
     vps[active].el.classList.remove('active'); active = at.i; vps[active].el.classList.add('active');
     const vp = vps[at.i]; prepCam(vp, at.r); (window as any).__viewDir = vp.camera.getWorldDirection(new THREE.Vector3()).toArray();
+    if (XT.pointerDown(e, at)) { renderer.domElement.setPointerCapture(e.pointerId); return; }
     const start = new Map<string, number>();
     const objs = app.selectedObjects;
     for (const o of objs) for (const p of o.kinematics.local.params) start.set(o.id + '.' + p.name, p.value);
@@ -416,6 +425,7 @@ export function viewManager(app: App, host: HTMLElement) {
     }
   });
   renderer.domElement.addEventListener('pointermove', (e) => {
+    if (XT.pointerMove(e)) return;
     if (!drag) { hover(e); return; }
     const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
     if (Math.abs(dx) + Math.abs(dy) > 2) drag.moved = true;
@@ -505,6 +515,7 @@ export function viewManager(app: App, host: HTMLElement) {
   };
   renderer.domElement.addEventListener('pointerleave', () => { if (hoverKey) { hoverKey = ''; hoverClear(); needs = true; } });
   renderer.domElement.addEventListener('pointerup', (e) => {
+    if (XT.pointerUp(e)) return;
     if (!drag) return; const d = drag; drag = null; rubber.style.display = 'none';
     const mode = e.shiftKey ? 'add' : e.ctrlKey ? 'toggle' : 'replace';
     if (app.activeTool) {
