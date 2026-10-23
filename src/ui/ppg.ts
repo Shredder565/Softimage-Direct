@@ -5,7 +5,8 @@ import { Node, X3DObject, GeomOperator } from '../core/scene';
 import { Parameter, ParamSet } from '../core/params';
 import type { LayoutNode } from '../core/opdefs';
 
-export function propertyEditor(app: App, host: HTMLElement) {
+export function propertyEditor(app: App, host: HTMLElement, target?: () => Node | undefined) {
+  const current = () => target ? target() : app.selection[app.selection.length - 1];
   const root = document.createElement('div'); root.className = 'ppg';
   const title = document.createElement('div'); title.className = 'ppg-title';
   const bar = document.createElement('div'); bar.className = 'ppg-bar';
@@ -35,11 +36,12 @@ export function propertyEditor(app: App, host: HTMLElement) {
   };
 
   const render = () => {
-    const n = app.selection[app.selection.length - 1];
+    const n = current();
     tabs.innerHTML = ''; body.innerHTML = '';
     if (!n) { title.textContent = 'Property Editor'; body.innerHTML = '<div class="ppg-empty">Select an object, property or operator to inspect.</div>'; return; }
     const obj = n instanceof X3DObject ? n : (n as any).parentObj ?? n.parent;
-    title.textContent = (obj && obj !== n ? obj.fullName + ' : ' : '') + (n instanceof X3DObject ? n.fullName + ' (General)' : n.name);
+    // Softimage titles the editor "<parent> : <object> (General)" for objects and "<object> : <node>" for nested nodes.
+    title.textContent = n instanceof X3DObject ? `${(n as any).parentObj?.name ?? 'Scene_Root'} : ${n.name} (General)` : (obj && obj !== n ? obj.name + ' : ' : '') + n.name;
     const pg = pages(n);
     if (!pg.some(([k]) => k === activeTab)) activeTab = pg[0]?.[0] ?? '';
     for (const [k] of pg) { const t = document.createElement('div'); t.className = 'ppg-tab' + (k === activeTab ? ' active' : ''); t.textContent = k; t.onclick = () => { activeTab = k; render(); }; tabs.appendChild(t); }
@@ -80,13 +82,13 @@ export function propertyEditor(app: App, host: HTMLElement) {
   };
   let lastKeys = '';
   const refresh = () => {
-    const n = app.selection[app.selection.length - 1];
+    const n = current();
     const keys = n ? pages(n).map(([k]) => k).join('|') : '';
     if (keys !== lastKeys) { lastKeys = keys; render(); return; }
     body.querySelectorAll<HTMLElement>('[data-param]').forEach(el => { const p = (el as any)._param as Parameter; if (!p) return; const v = p.value; const input = el.querySelector<HTMLInputElement>('input.val'); if (input && document.activeElement !== input) input.value = fmtNum(v); const r = el.querySelector<HTMLInputElement>('input[type=range]'); if (r && document.activeElement !== r) r.value = String(v); const sel = el.querySelector<HTMLSelectElement>('select'); if (sel) sel.value = String(v); const cb = el.querySelector<HTMLInputElement>('input[type=checkbox]'); if (cb) cb.checked = !!v; const dot = el.querySelector<HTMLElement>('.anim-dot'); if (dot) dot.className = 'anim-dot' + dotState(app, p); });
   };
   let lastNode: Node | undefined;
-  const renderSel = () => { const n = app.selection[app.selection.length - 1]; if (n !== lastNode) { activeTab = ''; lastNode = n; } lastKeys = n ? pages(n).map(([k]) => k).join('|') : ''; render(); };
+  const renderSel = () => { const n = current(); if (n !== lastNode) { activeTab = ''; lastNode = n; } lastKeys = n ? pages(n).map(([k]) => k).join('|') : ''; render(); };
   renderSel();
   app.events.on('selection', renderSel); app.events.on('scene', refresh); app.events.on('params', refresh); app.events.on('frame', refresh);
 }

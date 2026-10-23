@@ -11,6 +11,12 @@ import { catmullClark, meshUVProjection } from '../core/topology2';
 import { tessellateCurve } from '../core/curves';
 import type { MeshData } from '../core/geometry';
 
+/** Scene colours and display preferences, decoded from Softimage 2015's C3DSceneColors / C3DPrefsDisplay / C3DPrefsTweak SPDL defaults. */
+export const SI = {
+  selected: 0xffffff, geometry: 0x000000, active: 0xffd200, component: 0xff0000, vertex: 0x0000ff, highlight: 0xe1ffff, subselection: 0xa0bcbc,
+  background: 0x7f7f7f, grid: 0x191919, viewport: 0x666666, light: 0xcd4b00, camera: 0x1428a0, nullcol: 0x006200, ctrl: 0x006200,
+  pointSize: 5, pickTol: 15, clickToDeselect: false, surroundPolygons: false, surroundEdges: false,
+};
 export type ToolMode = 'select' | 'translate' | 'rotate' | 'scale';
 export const tool = { mode: 'select' as ToolMode, axes: { x: true, y: true, z: true }, setMode: (_m: ToolMode) => { } };
 (window as any).__tool = tool;
@@ -27,16 +33,23 @@ export function viewManager(app: App, host: HTMLElement) {
   const rubber = document.createElement('div'); rubber.className = 'rubber'; rubber.style.display = 'none'; root.appendChild(rubber);
   const toolHint = document.createElement('div'); toolHint.className = 'tool-hint'; toolHint.style.display = 'none'; root.appendChild(toolHint);
 
-  const scene = new THREE.Scene(); scene.background = new THREE.Color(0x4a4a4a);
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(SI.background);
   scene.add(new THREE.AmbientLight(0xffffff, 0.5));
   const defaultLights = new THREE.Group(); const key = new THREE.DirectionalLight(0xffffff, 1.0); key.position.set(12, 20, 15); const fill = new THREE.DirectionalLight(0xffffff, 0.35); fill.position.set(-15, 5, -10); defaultLights.add(key, fill); scene.add(defaultLights);
-  const grid = new THREE.GridHelper(40, 40, 0x7a7a7a, 0x5a5a5a); scene.add(grid);
+  const grid = new THREE.GridHelper(40, 40, SI.grid, 0x5e5e5e); scene.add(grid);
   const axesH = new THREE.AxesHelper(4); scene.add(axesH);
-  const hlPolys = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial({ color: 0xff4a2a, transparent: true, opacity: 0.45, side: THREE.DoubleSide, depthTest: false })); hlPolys.renderOrder = 10; scene.add(hlPolys);
-  const hlEdges = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0xff4a2a, depthTest: false })); hlEdges.renderOrder = 11; scene.add(hlEdges);
-  const hlPoints = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: 0xff4a2a, size: 7, sizeAttenuation: false, depthTest: false })); hlPoints.renderOrder = 12; scene.add(hlPoints);
-  const allPoints = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: 0xd8d8d8, size: 4, sizeAttenuation: false, depthTest: false })); allPoints.renderOrder = 9; scene.add(allPoints);
+  // Component display: selected polygons = translucent Component red, selected edges/points = Component red,
+  // unselected points (point mode only) = Vertex blue at the Display pref point size, hover = Highlight colour.
+  const hlPolys = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial({ color: SI.component, transparent: true, opacity: 0.5, side: THREE.DoubleSide, depthTest: true, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })); hlPolys.renderOrder = 10; scene.add(hlPolys);
+  const hlEdges = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: SI.component, depthTest: false })); hlEdges.renderOrder = 11; scene.add(hlEdges);
+  const hlPoints = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: SI.component, size: SI.pointSize, sizeAttenuation: false, depthTest: false })); hlPoints.renderOrder = 12; scene.add(hlPoints);
+  const allPoints = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: SI.vertex, size: SI.pointSize, sizeAttenuation: false, depthTest: false })); allPoints.renderOrder = 9; scene.add(allPoints);
+  const hoverPoly = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial({ color: SI.highlight, transparent: true, opacity: 0.35, side: THREE.DoubleSide, depthTest: false })); hoverPoly.renderOrder = 13; scene.add(hoverPoly);
+  const hoverLine = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: SI.highlight, depthTest: false })); hoverLine.renderOrder = 14; scene.add(hoverLine);
+  const hoverPoint = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: SI.highlight, size: SI.pointSize + 2, sizeAttenuation: false, depthTest: false })); hoverPoint.renderOrder = 15; scene.add(hoverPoint);
+  const gizmo = new THREE.Group(); scene.add(gizmo);
   const toolPreview = new THREE.Group(); scene.add(toolPreview);
+  (window as any).__three = { scene, needs: () => { needs = true; } };
 
   const mk = (name: string, kind: 'ortho' | 'persp', pos: THREE.Vector3, up: THREE.Vector3): Viewport => {
     const cam: THREE.Camera = kind === 'ortho' ? new THREE.OrthographicCamera(-20, 20, 20, -20, -1000, 1000) : new THREE.PerspectiveCamera(53.6, 1, 0.1, 5000);
@@ -55,14 +68,14 @@ export function viewManager(app: App, host: HTMLElement) {
   };
   const vps: Viewport[] = [
     mk('Top', 'ortho', new THREE.Vector3(0, 100, 0), new THREE.Vector3(0, 0, -1)),
-    mk('Camera', 'persp', new THREE.Vector3(22, 16, 28), new THREE.Vector3(0, 1, 0)),
+    mk('Camera', 'persp', new THREE.Vector3(9.5, 7.3, 12.3), new THREE.Vector3(0, 1, 0)),
     mk('Front', 'ortho', new THREE.Vector3(0, 0, 100), new THREE.Vector3(0, 1, 0)),
     mk('Right', 'ortho', new THREE.Vector3(100, 0, 0), new THREE.Vector3(0, 1, 0)),
   ];
   const orbit = { target: new THREE.Vector3(0, 0, 0) };
   const switchView = (vp: Viewport, name: string) => {
     const c = vp.camera;
-    if (name === 'Top') { c.position.set(0, 100, 0); c.up.set(0, 0, -1); } else if (name === 'Front') { c.position.set(0, 0, 100); c.up.set(0, 1, 0); } else if (name === 'Right') { c.position.set(100, 0, 0); c.up.set(0, 1, 0); } else { c.position.set(22, 16, 28); c.up.set(0, 1, 0); }
+    if (name === 'Top') { c.position.set(0, 100, 0); c.up.set(0, 0, -1); } else if (name === 'Front') { c.position.set(0, 0, 100); c.up.set(0, 1, 0); } else if (name === 'Right') { c.position.set(100, 0, 0); c.up.set(0, 1, 0); } else { c.position.set(9.5, 7.3, 12.3); c.up.set(0, 1, 0); }
     vp.name = name; vp.el.querySelector('b')!.textContent = name[0]; c.lookAt(orbit.target); (c as any)._zoom = 20;
   };
   let active = 1; vps[active].el.classList.add('active');
@@ -124,31 +137,35 @@ export function viewManager(app: App, host: HTMLElement) {
           const wgeo = polygonWire(mesh); if (w) { w.geometry.dispose(); w.geometry = wgeo; } else { w = new THREE.LineSegments(wgeo, new THREE.LineBasicMaterial({ color: 0xffffff })); (w as any)._kind = 'wire'; g.add(w); }
         }
         (m as any)._matShaded = materialFor(o, false); (m as any)._matTextured = materialFor(o, true);
-        const lc = o.layer ? new THREE.Color(...(o.layer.val('color') as V3)) : new THREE.Color(o.primitive.type === 'surfmsh' ? 0x2a4a6a : 0x1a1a1a);
-        (w!.material as THREE.LineBasicMaterial).color.copy(selected ? new THREE.Color(0xffffff) : lc);
+        // Wireframe colour: Selected white; the object active for component selection uses the Active colour;
+        // otherwise the object's wire colour (layer colour, else the Geometry scene colour = black).
+        const lc = o.layer ? new THREE.Color(...(o.layer.val('color') as V3)) : new THREE.Color(SI.geometry);
+        const activeComp = app.selMode !== 'object' && o === compTarget();
+        (w!.material as THREE.LineBasicMaterial).color.copy(activeComp ? new THREE.Color(SI.active) : selected ? new THREE.Color(SI.selected) : lc);
+        (w as any)._selected = selected || activeComp;
         removeChild(g, 'marker');
       } else if (o.primitive?.type === 'crvlist' && payload?.cvs) {
         removeChild(g, 'mesh'); removeChild(g, 'wire');
         let ln = child(g, 'marker') as THREE.Line | undefined;
         if (!ln || (ln as any)._src !== payload) { const pts = tessellateCurve(payload, 8).map(p => new THREE.Vector3(...p)); const geo = new THREE.BufferGeometry().setFromPoints(pts); if (ln) { ln.geometry.dispose(); ln.geometry = geo; } else { ln = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xffffff })); (ln as any)._kind = 'marker'; g.add(ln); } (ln as any)._src = payload; }
-        (ln.material as THREE.LineBasicMaterial).color.set(selected ? 0xffffff : 0x3cc0ff);
+        (ln.material as THREE.LineBasicMaterial).color.set(selected ? SI.selected : SI.geometry);
       } else if (o.primitive?.type === 'lattice' && payload?.points) {
         removeChild(g, 'mesh'); removeChild(g, 'wire');
         let ln = child(g, 'marker') as THREE.LineSegments | undefined;
         if (!ln || (ln as any)._src !== payload) { const [sx, sy, sz] = payload.sub; const idx = (i: number, j: number, k: number) => k * (sy + 1) * (sx + 1) + j * (sx + 1) + i; const ix: number[] = []; for (let k = 0; k <= sz; k++) for (let j = 0; j <= sy; j++) for (let i = 0; i <= sx; i++) { if (i < sx) ix.push(idx(i, j, k), idx(i + 1, j, k)); if (j < sy) ix.push(idx(i, j, k), idx(i, j + 1, k)); if (k < sz) ix.push(idx(i, j, k), idx(i, j, k + 1)); } const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(geomPoints(payload)!, 3)); geo.setIndex(ix); if (ln) { ln.geometry.dispose(); ln.geometry = geo; } else { ln = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0xffffff })); (ln as any)._kind = 'marker'; g.add(ln); } (ln as any)._src = payload; }
-        (ln.material as THREE.LineBasicMaterial).color.set(selected ? 0xffffff : 0xd0a040);
+        (ln.material as THREE.LineBasicMaterial).color.set(selected ? SI.selected : SI.ctrl);
       } else {
         removeChild(g, 'mesh'); removeChild(g, 'wire');
         let mkr = child(g, 'marker') as THREE.Object3D | undefined; const tag = kindTag + '|' + (o.primitive?.name ?? '') + '|' + (o.val?.('length') ?? '') + '|' + (o.primitive?.val('size') ?? '');
         if (!mkr || (mkr as any)._tag !== tag) { if (mkr) g.remove(mkr); mkr = marker(o); (mkr as any)._kind = 'marker'; (mkr as any)._tag = tag; g.add(mkr); }
-        const colr = selected ? 0xffffff : o.kind === 'model' ? 0x4c87c5 : o.type === 'bone' || o.type === 'root' ? 0xe0c060 : o.type === 'eff' ? 0xff6060 : o.type === 'light' ? 0xffe070 : o.type === 'implicit' ? 0x90d0a0 : 0x9ad24a;
+        const colr = selected ? SI.selected : o.kind === 'model' ? SI.nullcol : o.type === 'bone' || o.type === 'root' ? 0xe0c060 : o.type === 'eff' ? 0xff6060 : o.type === 'light' ? SI.light : o.type === 'camera' ? SI.camera : o.type === 'implicit' ? SI.ctrl : SI.nullcol;
         mkr.traverse(c => { if ((c as any).material && (c as any)._kind !== 'light') ((c as any).material as THREE.LineBasicMaterial).color.set(colr); });
         if (o.type === 'light') { userLights++; let L = child(g, 'light') as THREE.Light | undefined; const kind = o.primitive?.val('type'); if (!L) { L = kind === 'spot' ? new THREE.SpotLight(0xffffff, 60, 0, 0.6, 0.4) : kind === 'infinite' ? new THREE.DirectionalLight(0xffffff, 1) : new THREE.PointLight(0xffffff, 80); (L as any)._kind = 'light'; g.add(L); if ((L as any).target) { (L as any).target.position.set(0, 0, -1); g.add((L as any).target); } } const c = o.primitive?.val('soft_light.color') as number[] | undefined; if (c) L.color.setRGB(c[0], c[1], c[2]); const inten = Number(o.primitive?.val('soft_light.intensity') ?? 0.75); L.intensity = kind === 'infinite' ? inten * 1.5 : inten * 100; }
       }
     }
     defaultLights.visible = userLights === 0;
     for (const [o, g] of nodes) if (!seen.has(o)) { scene.remove(g); nodes.delete(o); }
-    syncHighlights(); syncToolPreview();
+    syncHighlights(); syncToolPreview(); syncGizmo();
     needs = true;
   };
   const child = (g: THREE.Object3D, k: string) => g.children.find(c => (c as any)._kind === k);
@@ -174,6 +191,50 @@ export function viewManager(app: App, host: HTMLElement) {
     for (const pl of t.preview()) { if (pl.length < 1) continue; const geo = new THREE.BufferGeometry().setFromPoints(pl.map(p => new THREE.Vector3(...p))); toolPreview.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xffd34d, depthTest: false }))); toolPreview.add(new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xffd34d, size: 6, sizeAttenuation: false, depthTest: false }))); }
   };
 
+  // ---- SRT manipulator (Softimage: red X / green Y / blue Z handles, yellow centre square = view-plane / uniform)
+  const gizmoCenter = new THREE.Vector3(); let gizmoOn = false;
+  const selectionCenter = (): THREE.Vector3 | null => {
+    const cs = app.compSel;
+    if (app.selMode !== 'object' && cs && cs.obj.primitive) {
+      const pts = geomPoints(cs.obj.primitive.geom()); const mesh = cs.obj.primitive.mesh(); if (!pts) return null;
+      const ids = cs.kind === 'point' ? [...cs.points] : cs.kind === 'polygon' ? [...new Set([...cs.polygons].flatMap(p => mesh?.polygons[p] ?? []))] : [...new Set([...cs.edges].flatMap(k => k.split('-').map(Number)))];
+      if (!ids.length) return null; const c = new THREE.Vector3(); for (const i of ids) c.add(new THREE.Vector3(pts[i * 3], pts[i * 3 + 1], pts[i * 3 + 2])); c.divideScalar(ids.length).applyMatrix4(cs.obj.globalMatrix()); return c;
+    }
+    const objs = app.selectedObjects; if (!objs.length) return null;
+    const c = new THREE.Vector3(); for (const o of objs) c.add(new THREE.Vector3().setFromMatrixPosition(o.globalMatrix())); return c.divideScalar(objs.length);
+  };
+  const axisVec = (ax: 'x' | 'y' | 'z') => new THREE.Vector3(ax === 'x' ? 1 : 0, ax === 'y' ? 1 : 0, ax === 'z' ? 1 : 0);
+  const syncGizmo = () => {
+    gizmo.clear(); gizmoOn = false;
+    if (tool.mode === 'select' || app.activeTool) return;
+    const c = selectionCenter(); if (!c) return; gizmoCenter.copy(c); gizmoOn = true; gizmo.position.copy(c);
+    const mat = (col: number) => new THREE.LineBasicMaterial({ color: col, depthTest: false });
+    const seg = (pts: number[][], col: number) => { const g = new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(...p))); const l = new THREE.Line(g, mat(col)); l.renderOrder = 20; return l; };
+    const cols = { x: 0xff0000, y: 0x00ff00, z: 0x0000ff };
+    for (const ax of ['x', 'y', 'z'] as const) {
+      const on = tool.axes[ax]; const col = on ? cols[ax] : 0x808080; const a = axisVec(ax).toArray();
+      if (tool.mode === 'rotate') { const pts: number[][] = []; for (let i = 0; i <= 48; i++) { const t = i / 48 * Math.PI * 2; const u = ax === 'x' ? [0, Math.cos(t), Math.sin(t)] : ax === 'y' ? [Math.cos(t), 0, Math.sin(t)] : [Math.cos(t), Math.sin(t), 0]; pts.push(u); } gizmo.add(seg(pts, col)); }
+      else {
+        gizmo.add(seg([[0, 0, 0], a], col));
+        if (tool.mode === 'translate') { const cone = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.22, 10), new THREE.MeshBasicMaterial({ color: col, depthTest: false })); cone.renderOrder = 21; cone.position.set(a[0], a[1], a[2]); cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), axisVec(ax)); gizmo.add(cone); }
+        else { const box = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1), new THREE.MeshBasicMaterial({ color: col, depthTest: false })); box.renderOrder = 21; box.position.set(a[0], a[1], a[2]); gizmo.add(box); }
+      }
+    }
+    const centre = new THREE.Points(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3()]), new THREE.PointsMaterial({ color: 0xffd200, size: 9, sizeAttenuation: false, depthTest: false })); centre.renderOrder = 22; gizmo.add(centre);
+  };
+  const gizmoPx = 70; // handle length in pixels
+  const pxScaleOf = (vp: Viewport, r: { w: number; h: number }) => { const cam = vp.camera as any; return vp.kind === 'ortho' ? (cam._zoom ?? 20) * 2 / r.h : gizmoCenter.distanceTo(cam.position) * Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * 2 / r.h; };
+  const scaleGizmo = (vp: Viewport, r: { w: number; h: number }) => { gizmo.visible = gizmoOn; if (!gizmoOn) return; const s = pxScaleOf(vp, r) * gizmoPx; gizmo.scale.set(s, s, s); };
+  /** Which manipulator handle is under the cursor: an axis, the centre square, or none. */
+  const pickHandle = (vp: Viewport, at: { x: number; y: number; r: any }): 'x' | 'y' | 'z' | 'centre' | null => {
+    if (!gizmoOn) return null; prepCam(vp, at.r);
+    const P = (v: THREE.Vector3) => { const q = v.clone().project(vp.camera); return { x: at.r.x + ((q.x + 1) / 2) * at.r.w, y: at.r.y + ((1 - q.y) / 2) * at.r.h }; };
+    const c = P(gizmoCenter); if (Math.hypot(c.x - at.x, c.y - at.y) < 8) return 'centre';
+    const s = pxScaleOf(vp, at.r) * gizmoPx; let best: 'x' | 'y' | 'z' | null = null, bd = 7;
+    for (const ax of ['x', 'y', 'z'] as const) { const tip = P(gizmoCenter.clone().add(axisVec(ax).multiplyScalar(s))); const d = tool.mode === 'rotate' ? Math.abs(Math.hypot(tip.x - c.x, tip.y - c.y) - Math.hypot(at.x - c.x, at.y - c.y)) : distToSeg(at.x, at.y, c, tip); if (d < bd) { bd = d; best = ax; } }
+    return best;
+  };
+
   // ---- render loop
   let needs = true;
   const resize = () => { const w = root.clientWidth, h = root.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); needs = true; };
@@ -189,7 +250,9 @@ export function viewManager(app: App, host: HTMLElement) {
       const r = rect(i); if (r.w <= 0 || r.h <= 0) return;
       renderer.setViewport(r.x, H - r.y - r.h, r.w, r.h); renderer.setScissor(r.x, H - r.y - r.h, r.w, r.h);
       prepCam(vp, r);
-      for (const g of nodes.values()) for (const ch of g.children) { const k = (ch as any)._kind; if (k === 'mesh') { ch.visible = vp.display !== 'wireframe' && vp.display !== 'bounding box'; (ch as THREE.Mesh).material = vp.display === 'textured' ? (ch as any)._matTextured : (ch as any)._matShaded; } }
+      const shaded = vp.display !== 'wireframe' && vp.display !== 'bounding box';
+      for (const g of nodes.values()) for (const ch of g.children) { const k = (ch as any)._kind; if (k === 'mesh') { ch.visible = shaded; (ch as THREE.Mesh).material = vp.display === 'textured' ? (ch as any)._matTextured : (ch as any)._matShaded; } else if (k === 'wire') ch.visible = !shaded || !!(ch as any)._selected; }
+      scaleGizmo(vp, r);
       renderer.render(scene, vp.camera);
     });
   };
@@ -216,9 +279,9 @@ export function viewManager(app: App, host: HTMLElement) {
     if (kind === 'polygon') { if (!hit || hit.faceIndex === undefined || hit.faceIndex === null || !mesh || (hit.object.parent as any)?._obj !== target) return null; const dm = (hit.object as THREE.Mesh).geometry as any; const src = dm._src as MeshData; const pi = src.triPoly[hit.faceIndex]; if (src !== mesh) return null; return { obj: target, kind, item: pi, worldPoint: [hit.point.x, hit.point.y, hit.point.z] as V3 }; }
     const M = target.globalMatrix(); prepCam(vp, at.r);
     const n = pts.length / 3; const pp = new Array(n); for (let i = 0; i < n; i++) pp[i] = project(vp, at.r, M, pts, i);
-    if (kind === 'point') { let best = -1, bd = 12; for (let i = 0; i < n; i++) { const d = Math.hypot(pp[i].x - at.x, pp[i].y - at.y); if (d < bd) { bd = d; best = i; } } return best >= 0 ? { obj: target, kind, item: best, worldPoint: wp(best) } : null; }
+    if (kind === 'point') { let best = -1, bd = SI.pickTol; for (let i = 0; i < n; i++) { const d = Math.hypot(pp[i].x - at.x, pp[i].y - at.y); if (d < bd) { bd = d; best = i; } } return best >= 0 ? { obj: target, kind, item: best, worldPoint: wp(best) } : null; }
     if (!mesh) return null;
-    let bestE: [number, number] | null = null, bd = 8;
+    let bestE: [number, number] | null = null, bd = SI.pickTol / 2;
     for (const [a, b] of meshEdges(mesh)) { const d = distToSeg(at.x, at.y, pp[a], pp[b]); if (d < bd) { bd = d; bestE = [a, b]; } }
     if (!bestE) return null; const A = wp(bestE[0]), B = wp(bestE[1]); const w: V3 = hit ? [hit.point.x, hit.point.y, hit.point.z] : [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2, (A[2] + B[2]) / 2];
     return { obj: target, kind, item: edgeKey(bestE[0], bestE[1]), worldPoint: w };
@@ -232,7 +295,7 @@ export function viewManager(app: App, host: HTMLElement) {
   };
 
   // ---- interaction
-  interface Drag { vp: Viewport; at: any; sx: number; sy: number; button: number; start: Map<string, number>; objs: X3DObject[]; camPos: THREE.Vector3; tgt: THREE.Vector3; moved: boolean; tweak?: { op: MoveComponentOperator; obj: X3DObject; pts: number[]; weights: Map<number, number>; startDeltas: Map<number, V3>; fresh: boolean } }
+  interface Drag { vp: Viewport; at: any; sx: number; sy: number; button: number; start: Map<string, number>; objs: X3DObject[]; camPos: THREE.Vector3; tgt: THREE.Vector3; moved: boolean; handle?: 'x' | 'y' | 'z' | 'centre' | null; tweak?: { op: MoveComponentOperator; obj: X3DObject; pts: number[]; weights: Map<number, number>; startDeltas: Map<number, V3>; fresh: boolean } }
   let drag: Drag | null = null;
   renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
   renderer.domElement.addEventListener('pointerdown', (e) => {
@@ -242,7 +305,7 @@ export function viewManager(app: App, host: HTMLElement) {
     const start = new Map<string, number>();
     const objs = app.selectedObjects;
     for (const o of objs) for (const p of o.kinematics.local.params) start.set(o.id + '.' + p.name, p.value);
-    drag = { vp, at, sx: e.clientX, sy: e.clientY, button: e.button, start, objs, camPos: vp.camera.position.clone(), tgt: orbit.target.clone(), moved: false };
+    drag = { vp, at, sx: e.clientX, sy: e.clientY, button: e.button, start, objs, camPos: vp.camera.position.clone(), tgt: orbit.target.clone(), moved: false, handle: e.button === 0 && !e.altKey ? pickHandle(vp, at) : null };
     renderer.domElement.setPointerCapture(e.pointerId);
     const cs = app.compSel;
     if (e.button === 0 && !e.altKey && !app.activeTool && tool.mode !== 'select' && cs && cs.obj.primitive) {
@@ -257,7 +320,7 @@ export function viewManager(app: App, host: HTMLElement) {
     }
   });
   renderer.domElement.addEventListener('pointermove', (e) => {
-    if (!drag) { if (app.activeTool?.onMove) { /* sketch needs button held */ } return; }
+    if (!drag) { hover(e); return; }
     const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
     if (Math.abs(dx) + Math.abs(dy) > 2) drag.moved = true;
     const vp = drag.vp, cam = vp.camera as any;
@@ -284,22 +347,31 @@ export function viewManager(app: App, host: HTMLElement) {
       rubber.style.display = 'block'; rubber.style.left = x0 + 'px'; rubber.style.top = y0 + 'px'; rubber.style.width = Math.abs(dx) + 'px'; rubber.style.height = Math.abs(dy) + 'px';
       return;
     }
-    const pxScale = vp.kind === 'ortho' ? (cam._zoom ?? 20) * 2 / drag.at.r.h : drag.camPos.distanceTo(drag.tgt) / 400;
+    const pxScale = vp.kind === 'ortho' ? (cam._zoom ?? 20) * 2 / drag.at.r.h : (gizmoOn ? gizmoCenter : drag.tgt).distanceTo(drag.camPos) * Math.tan(THREE.MathUtils.degToRad((cam.fov ?? 53.6) / 2)) * 2 / drag.at.r.h;
     const right = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 0), up = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 1);
-    const delta = right.multiplyScalar(dx * pxScale).add(up.multiplyScalar(-dy * pxScale));
+    let delta = right.multiplyScalar(dx * pxScale).add(up.multiplyScalar(-dy * pxScale));
+    const h = drag.handle; const axisMask = { x: tool.axes.x, y: tool.axes.y, z: tool.axes.z };
+    if (h === 'x' || h === 'y' || h === 'z') { // axis handle: slide along the handle's screen direction
+      prepCam(vp, drag.at.r); const rr = drag.at.r; const P = (v: THREE.Vector3) => { const q = v.clone().project(vp.camera); return new THREE.Vector2(((q.x + 1) / 2) * rr.w, ((1 - q.y) / 2) * rr.h); };
+      const c = P(gizmoCenter), t = P(gizmoCenter.clone().add(axisVec(h))); const dir = t.clone().sub(c); const l2 = dir.lengthSq() || 1;
+      const k = (dx * dir.x + dy * dir.y) / l2; delta = axisVec(h).multiplyScalar(k); axisMask.x = h === 'x'; axisMask.y = h === 'y'; axisMask.z = h === 'z';
+    }
+    (drag as any).axisMask = axisMask; (drag as any).delta = delta;
     if (drag.tweak) {
       const t = drag.tweak; const inv = t.obj.globalMatrix().invert(); inv.setPosition(0, 0, 0);
-      const ld = delta.clone().applyMatrix4(inv); const d: V3 = [tool.axes.x ? ld.x : 0, tool.axes.y ? ld.y : 0, tool.axes.z ? ld.z : 0];
+      const ld = delta.clone().applyMatrix4(inv); const d: V3 = [axisMask.x ? ld.x : 0, axisMask.y ? ld.y : 0, axisMask.z ? ld.z : 0];
       const prim = t.obj.primitive!; const base = geomPoints(prim.operators.slice(0, -1).reduce((m: any, op) => op.apply(m), null)) ?? geomPoints(prim.geom())!;
       if (tool.mode === 'translate') for (const p of t.pts) { const s = t.startDeltas.get(p) ?? [0, 0, 0]; const w = t.weights.get(p) ?? 1; let nd = [s[0] + d[0] * w, s[1] + d[1] * w, s[2] + d[2] * w]; const S = (tool as any).snap; if (S?.on && S.grid && w === 1) { nd = [0, 1, 2].map(k => Math.round(base[p * 3 + k] + nd[k]) - base[p * 3 + k]); } t.op.deltas.set(p, nd as V3); }
       if ((app as any).symmetry && tool.mode === 'translate') { // mirror the edit across the local X plane onto the matching points
         const n = base.length / 3; for (const p of t.pts) { const d0 = t.op.deltas.get(p); if (!d0) continue; const mx = -base[p * 3], my = base[p * 3 + 1], mz = base[p * 3 + 2]; for (let q = 0; q < n; q++) { if (q === p || t.pts.includes(q)) continue; if (Math.abs(base[q * 3] - mx) < 1e-4 && Math.abs(base[q * 3 + 1] - my) < 1e-4 && Math.abs(base[q * 3 + 2] - mz) < 1e-4) { t.op.deltas.set(q, [-d0[0], d0[1], d0[2]]); break; } } }
       }
-      else {
+      if (tool.mode !== 'translate') {
         const sel = t.pts.filter(p => t.weights.get(p) === 1); const c = [0, 0, 0]; for (const p of sel) for (let k = 0; k < 3; k++) c[k] += base[p * 3 + k] / sel.length;
         const f = tool.mode === 'scale' ? Math.max(0.01, 1 + dx * 0.01) : 1, ang = tool.mode === 'rotate' ? dx * 0.01 : 0;
+        const rotAx = h === 'x' || h === 'z' ? h : (axisMask.x && !axisMask.y && !axisMask.z) ? 'x' : (axisMask.z && !axisMask.x && !axisMask.y) ? 'z' : 'y';
+        const sm = h === 'x' || h === 'y' || h === 'z' ? { x: h === 'x', y: h === 'y', z: h === 'z' } : axisMask;
         for (const p of t.pts) { const s = t.startDeltas.get(p) ?? [0, 0, 0]; const w = t.weights.get(p) ?? 1; const v = [base[p * 3] + s[0] - c[0], base[p * 3 + 1] + s[1] - c[1], base[p * 3 + 2] + s[2] - c[2]];
-          let nv = v.map(x => x * (1 + (f - 1) * w)); if (ang) { const a = ang * w; nv = [v[0] * Math.cos(a) - v[2] * Math.sin(a), v[1], v[0] * Math.sin(a) + v[2] * Math.cos(a)]; }
+          let nv = v.map((x, k) => (['x', 'y', 'z'][k] && (sm as any)[['x', 'y', 'z'][k]]) ? x * (1 + (f - 1) * w) : x); if (ang) { const a = ang * w, ca = Math.cos(a), sa = Math.sin(a); nv = rotAx === 'y' ? [v[0] * ca - v[2] * sa, v[1], v[0] * sa + v[2] * ca] : rotAx === 'x' ? [v[0], v[1] * ca - v[2] * sa, v[1] * sa + v[2] * ca] : [v[0] * ca - v[1] * sa, v[0] * sa + v[1] * ca, v[2]]; }
           t.op.deltas.set(p, [nv[0] - v[0] + s[0], nv[1] - v[1] + s[1], nv[2] - v[2] + s[2]]); }
       }
       prim.dirty = true; sync(); return;
@@ -307,13 +379,31 @@ export function viewManager(app: App, host: HTMLElement) {
     const snapV = (v: number[]): number[] => { const S = (tool as any).snap; if (!S?.on) return v; if (S.grid) return v.map(x => Math.round(x)); if (S.point || S.midpoint) { let best: number[] | null = null, bd = 0.75; for (const other of app.scene.allObjects()) { if (drag!.objs.includes(other)) continue; const m = other.primitive?.mesh(); if (!m) continue; const M = other.globalMatrix(); for (let i = 0; i < m.positions.length; i += 3) { const q = new THREE.Vector3(m.positions[i], m.positions[i + 1], m.positions[i + 2]).applyMatrix4(M); const d = Math.hypot(q.x - v[0], q.y - v[1], q.z - v[2]); if (d < bd) { bd = d; best = [q.x, q.y, q.z]; } } } if (best) return best; } return v; };
     for (const o of drag.objs) {
       const l = o.kinematics.local;
-      if (tool.mode === 'translate' && (app as any).centerMode) { if (tool.axes.x) l.get('pposx')!.value = (drag.start.get(o.id + '.pposx') ?? 0) + delta.x; if (tool.axes.y) l.get('pposy')!.value = (drag.start.get(o.id + '.pposy') ?? 0) + delta.y; if (tool.axes.z) l.get('pposz')!.value = (drag.start.get(o.id + '.pposz') ?? 0) + delta.z; continue; }
-      if (tool.mode === 'translate') { const np = [drag.start.get(o.id + '.posx')! + (tool.axes.x ? delta.x : 0), drag.start.get(o.id + '.posy')! + (tool.axes.y ? delta.y : 0), drag.start.get(o.id + '.posz')! + (tool.axes.z ? delta.z : 0)]; const sp = snapV(np); l.get('posx')!.value = sp[0]; l.get('posy')!.value = sp[1]; l.get('posz')!.value = sp[2]; }
-      else if (tool.mode === 'rotate') { const a = dx * 0.5; if (tool.axes.x && !tool.axes.y && !tool.axes.z) l.get('rotx')!.value = drag.start.get(o.id + '.rotx')! + a; else if (tool.axes.z && !tool.axes.x && !tool.axes.y) l.get('rotz')!.value = drag.start.get(o.id + '.rotz')! + a; else l.get('roty')!.value = drag.start.get(o.id + '.roty')! + a; }
-      else if (tool.mode === 'scale') { const f = Math.max(0.01, 1 + dx * 0.01); for (const ax of ['x', 'y', 'z']) if ((tool.axes as any)[ax]) l.get('scl' + ax)!.value = drag.start.get(o.id + '.scl' + ax)! * f; }
+      if (tool.mode === 'translate' && (app as any).centerMode) { if (axisMask.x) l.get('pposx')!.value = (drag.start.get(o.id + '.pposx') ?? 0) + delta.x; if (axisMask.y) l.get('pposy')!.value = (drag.start.get(o.id + '.pposy') ?? 0) + delta.y; if (axisMask.z) l.get('pposz')!.value = (drag.start.get(o.id + '.pposz') ?? 0) + delta.z; continue; }
+      if (tool.mode === 'translate') { const np = [drag.start.get(o.id + '.posx')! + (axisMask.x ? delta.x : 0), drag.start.get(o.id + '.posy')! + (axisMask.y ? delta.y : 0), drag.start.get(o.id + '.posz')! + (axisMask.z ? delta.z : 0)]; const sp = snapV(np); l.get('posx')!.value = sp[0]; l.get('posy')!.value = sp[1]; l.get('posz')!.value = sp[2]; }
+      else if (tool.mode === 'rotate') { const a = dx * 0.5; const ax = h === 'x' || h === 'y' || h === 'z' ? h : (axisMask.x && !axisMask.y && !axisMask.z) ? 'x' : (axisMask.z && !axisMask.x && !axisMask.y) ? 'z' : 'y'; l.get('rot' + ax)!.value = drag.start.get(o.id + '.rot' + ax)! + a; }
+      else if (tool.mode === 'scale') { const f = Math.max(0.01, 1 + dx * 0.01); const m = h === 'x' || h === 'y' || h === 'z' ? { x: h === 'x', y: h === 'y', z: h === 'z' } : axisMask; for (const ax of ['x', 'y', 'z']) if ((m as any)[ax]) l.get('scl' + ax)!.value = drag.start.get(o.id + '.scl' + ax)! * f; }
     }
     sync(); app.events.emit('params');
   });
+  /** Highlight the component under the cursor (Softimage draws it in the Highlight colour before you click). */
+  const hoverClear = () => { for (const h of [hoverPoly, hoverLine, hoverPoint]) { h.geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(0), 3)); h.geometry.setIndex(null); } };
+  let hoverKey = '';
+  const hover = (e: PointerEvent) => {
+    if (app.selMode === 'object' && !app.activeTool?.pickKind) { if (hoverKey) { hoverKey = ''; hoverClear(); needs = true; } return; }
+    const at = vpAt(e); if (!at) return; const vp = vps[at.i]; prepCam(vp, at.r);
+    const po = pickObject(vp, at.nx, at.ny); const pc = pickComponent(vp, at, po?.obj, po?.hit, app.activeTool?.pickKind);
+    const key = pc ? pc.kind + ':' + pc.item : ''; if (key === hoverKey) return; hoverKey = key; hoverClear();
+    if (pc) {
+      const pts = geomPoints(pc.obj.primitive!.geom())!; const pos = new THREE.BufferAttribute(pts, 3); const M = pc.obj.globalMatrix(); for (const h of [hoverPoly, hoverLine, hoverPoint]) { h.matrixAutoUpdate = false; h.matrix.copy(M); }
+      if (pc.kind === 'point') { const i = pc.item as number; hoverPoint.geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([pts[i * 3], pts[i * 3 + 1], pts[i * 3 + 2]]), 3)); }
+      else if (pc.kind === 'edge') { const [a, b] = String(pc.item).split('-').map(Number); hoverLine.geometry.setAttribute('position', pos); hoverLine.geometry.setIndex([a, b]); }
+      else { const mesh = pc.obj.primitive!.mesh()!; const idx: number[] = []; mesh.triPoly.forEach((p, t) => { if (p === pc.item) idx.push(mesh.indices[t * 3], mesh.indices[t * 3 + 1], mesh.indices[t * 3 + 2]); }); hoverPoly.geometry.setAttribute('position', pos); hoverPoly.geometry.setIndex(idx); }
+      for (const h of [hoverPoly, hoverLine, hoverPoint]) h.geometry.computeBoundingSphere();
+    }
+    needs = true;
+  };
+  renderer.domElement.addEventListener('pointerleave', () => { if (hoverKey) { hoverKey = ''; hoverClear(); needs = true; } });
   renderer.domElement.addEventListener('pointerup', (e) => {
     if (!drag) return; const d = drag; drag = null; rubber.style.display = 'none';
     const mode = e.shiftKey ? 'add' : e.ctrlKey ? 'toggle' : 'replace';
@@ -336,11 +426,11 @@ export function viewManager(app: App, host: HTMLElement) {
     if (!d.moved && d.button === 0 && !e.altKey) {
       const at = vpAt(e); if (!at) return; const vp = vps[at.i]; prepCam(vp, at.r);
       const po = pickObject(vp, at.nx, at.ny);
-      if (app.selMode === 'object') { let target = po?.obj ?? null; if (target && (app as any).groupMode) { let t: any = target; while (t.parentObj && t.parentObj !== app.scene.root) t = t.parentObj; target = t; } app.select(target ? [target] : [], mode); return; }
+      if (app.selMode === 'object') { let target = po?.obj ?? null; if (target && (app as any).groupMode) { let t: any = target; while (t.parentObj && t.parentObj !== app.scene.root) t = t.parentObj; target = t; } if (!target && !SI.clickToDeselect && mode === 'replace') return; app.select(target ? [target] : [], mode); return; }
       const pc = pickComponent(vp, at, po?.obj, po?.hit);
       if (pc) app.selectComponents(pc.obj, pc.kind, [pc.item], mode);
-      else if (po && mode === 'replace') { app.compSel = null; app.select([po.obj]); }
-      else if (mode === 'replace') { app.compSel = null; app.select([]); }
+      else if (po && mode === 'replace' && po.obj !== compTarget()) { app.compSel = null; app.select([po.obj]); }
+      else if (mode === 'replace' && compTarget()) app.selectComponents(compTarget()!, app.selMode as any, [], mode);
       return;
     }
     if (d.moved && d.button === 0 && !e.altKey && tool.mode === 'select') {
@@ -358,8 +448,10 @@ export function viewManager(app: App, host: HTMLElement) {
       const kind = app.selMode as 'point' | 'edge' | 'polygon'; const mesh = target.primitive!.mesh();
       if (kind === 'point') app.selectComponents(target, 'point', pp.map((p, i) => inside(p) ? i : -1).filter(i => i >= 0), mode);
       else if (!mesh) return;
-      else if (kind === 'edge') app.selectComponents(target, 'edge', meshEdges(mesh).filter(([a, b]) => inside(pp[a]) && inside(pp[b])).map(([a, b]) => edgeKey(a, b)), mode);
-      else app.selectComponents(target, 'polygon', mesh.polygons.map((f, i) => f.every(v => inside(pp[v])) ? i : -1).filter(i => i >= 0), mode);
+      // Softimage rectangle selection: an edge is picked when the rectangle touches it (Surround Edges off) and a
+      // polygon when any part of it overlaps the rectangle (Surround Polygons off); hidden components are included.
+      else if (kind === 'edge') app.selectComponents(target, 'edge', meshEdges(mesh).filter(([a, b]) => SI.surroundEdges ? inside(pp[a]) && inside(pp[b]) : segRect(pp[a], pp[b], x0, y0, x1, y1)).map(([a, b]) => edgeKey(a, b)), mode);
+      else app.selectComponents(target, 'polygon', mesh.polygons.map((f, i) => (SI.surroundPolygons ? f.every(v => inside(pp[v])) : polyRect(f.map(v => pp[v]), x0, y0, x1, y1)) ? i : -1).filter(i => i >= 0), mode);
       return;
     }
     if (d.moved && d.button === 0 && !e.altKey && tool.mode !== 'select' && d.objs.length) {
@@ -386,9 +478,33 @@ export function viewManager(app: App, host: HTMLElement) {
   app.events.on('scene', sync); app.events.on('selection', sync); app.events.on('params', sync); app.events.on('frame', sync);
   window.addEventListener('resize', resize);
   sync();
-  return { frameAll: () => { for (const vp of vps) switchView(vp, vp.name); needs = true; } };
+  const frameBox = (objs: X3DObject[]) => {
+    const box = new THREE.Box3();
+    for (const o of objs) { const pts = o.primitive ? geomPoints(o.primitive.geom()) : null; const M = o.globalMatrix(); if (pts) for (let i = 0; i < pts.length; i += 3) box.expandByPoint(new THREE.Vector3(pts[i], pts[i + 1], pts[i + 2]).applyMatrix4(M)); else box.expandByPoint(new THREE.Vector3().setFromMatrixPosition(M)); }
+    if (box.isEmpty()) return; const c = box.getCenter(new THREE.Vector3()); const size = Math.max(box.getSize(new THREE.Vector3()).length(), 2);
+    for (const vp of vps) { const cam = vp.camera as any; if (vp.kind === 'ortho') { const dir = cam.getWorldDirection(new THREE.Vector3()); cam.position.copy(c).sub(dir.multiplyScalar(100)); cam._zoom = size * 0.6; cam.lookAt(c); } else { const d = cam.position.clone().sub(orbit.target).normalize().multiplyScalar(size * 1.2); orbit.target.copy(c); cam.position.copy(c).add(d); cam.lookAt(c); } }
+    needs = true;
+  };
+  window.addEventListener('framesel', () => frameBox(app.selectedObjects.length ? app.selectedObjects : [...app.scene.allObjects()].filter(o => o.visible)));
+  return { frameAll: () => { for (const vp of vps) switchView(vp, vp.name); needs = true; }, frameSelection: () => frameBox(app.selectedObjects) };
 }
 
+/** Segment / axis-aligned rectangle overlap test in screen space. */
+function segRect(a: { x: number; y: number }, b: { x: number; y: number }, x0: number, y0: number, x1: number, y1: number) {
+  const inside = (p: { x: number; y: number }) => p.x >= x0 && p.x <= x1 && p.y >= y0 && p.y <= y1;
+  if (inside(a) || inside(b)) return true;
+  const cross = (p: { x: number; y: number }, q: { x: number; y: number }, r: { x: number; y: number }, s: { x: number; y: number }) => { const d = (q.x - p.x) * (s.y - r.y) - (q.y - p.y) * (s.x - r.x); if (!d) return false; const t = ((r.x - p.x) * (s.y - r.y) - (r.y - p.y) * (s.x - r.x)) / d, u = ((r.x - p.x) * (q.y - p.y) - (r.y - p.y) * (q.x - p.x)) / d; return t >= 0 && t <= 1 && u >= 0 && u <= 1; };
+  const c = [{ x: x0, y: y0 }, { x: x1, y: y0 }, { x: x1, y: y1 }, { x: x0, y: y1 }];
+  for (let i = 0; i < 4; i++) if (cross(a, b, c[i], c[(i + 1) % 4])) return true;
+  return false;
+}
+/** Polygon / rectangle overlap: any vertex inside, any edge crossing, or the rectangle inside the polygon. */
+function polyRect(pp: { x: number; y: number }[], x0: number, y0: number, x1: number, y1: number) {
+  for (let i = 0; i < pp.length; i++) if (segRect(pp[i], pp[(i + 1) % pp.length], x0, y0, x1, y1)) return true;
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2; let inside = false;
+  for (let i = 0, j = pp.length - 1; i < pp.length; j = i++) { const a = pp[i], b = pp[j]; if ((a.y > cy) !== (b.y > cy) && cx < (b.x - a.x) * (cy - a.y) / (b.y - a.y) + a.x) inside = !inside; }
+  return inside;
+}
 function distToSeg(px: number, py: number, a: { x: number; y: number }, b: { x: number; y: number }) {
   const dx = b.x - a.x, dy = b.y - a.y, l2 = dx * dx + dy * dy || 1; let t = ((px - a.x) * dx + (py - a.y) * dy) / l2; t = Math.max(0, Math.min(1, t));
   return Math.hypot(px - (a.x + t * dx), py - (a.y + t * dy));

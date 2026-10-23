@@ -5,7 +5,7 @@ import fs from 'fs';
 const ref = JSON.parse(fs.readFileSync(process.argv[2] ?? 'data/dump/si_topo_ref.json', 'utf8'));
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--headless=new', '--use-gl=swiftshader', '--enable-unsafe-swiftshader'] });
 const p = await b.newPage({ viewport: { width: 1200, height: 800 } });
-await p.goto('http://localhost:4173/'); await p.waitForTimeout(1000);
+await p.goto('http://localhost:4173/?demo'); await p.waitForTimeout(1000);
 const R = (v) => Math.round(v * 1000) / 1000;
 const key = (q) => q.map(R).join(',');
 const base = ref.base;

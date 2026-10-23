@@ -39,6 +39,23 @@ npm run build    # static build in dist/
 
 Screenshot: `docs/screenshots/mcp-clone.png`.
 
+### Viewport modeling behaviour (observed on 2015 SP2, colours from `C3DSceneColors.spdl`)
+- New objects: Softimage starts on an empty scene; creating a primitive selects it and pops a **floating property editor**
+  (`Scene_Root : sphere (General)`), per the Interaction pref *Popup Property Editors on Node Creation* (`?demo` restores the starter scene).
+- Shaded views draw the wireframe only on **selected** objects (Selected = white); in point/edge/polygon mode the active
+  object's wire turns to the *Active* colour (255,210,0); unselected wire colour is the Geometry colour (black). Background 127 grey.
+- Points are shown only in point mode: Vertex blue, Display pref point size 5; selected components are Component red
+  (points, edges, translucent polygon fill); the component under the cursor is pre-highlighted in the Highlight colour.
+- Rectangle selection goes through the object (hidden points/edges/polygons included); an edge is picked when the rectangle
+  touches it, a polygon when any part overlaps (*Surround Edges/Polygons* off); point pick tolerance 15 px (`Tweak.picktol`).
+- Clicking empty space does **not** deselect objects (`Select.clicktodeselect = false`); Ctrl+Shift+A deselects all.
+- `v`/`c`/`x` show the SRT manipulator at the selection centre (red X / green Y / blue Z handles, yellow centre square);
+  dragging a handle constrains to that axis, dragging the centre or empty space moves in the view plane (`siView`), the
+  mesh deforms live, and the edit lands in a `MoveComponent` operator in the construction history. `f` frames the selection, `a` frames all.
+- Default camera matches Softimage's (≈ 9.5, 7.3, 12.3 looking at the origin).
+
+Checks: `tools/model_shot.mjs` (sphere → point/edge/polygon modes → move → empty click), screenshots `docs/screenshots/model-*.png`.
+
 ## Keys
 
 Space object · T point · E edge · Y polygon · V translate · C rotate · X scale · K key · Ctrl+Z/Y undo/redo ·

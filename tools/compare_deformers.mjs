@@ -5,7 +5,7 @@ import fs from 'fs';
 const ref = JSON.parse(fs.readFileSync(new URL('../data/dump/si_deform_ref.json', import.meta.url), 'utf8'));
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--headless=new', '--use-gl=swiftshader', '--enable-unsafe-swiftshader'] });
 const p = await b.newPage({ viewport: { width: 1200, height: 800 } });
-await p.goto('http://localhost:4173/'); await p.waitForTimeout(1000);
+await p.goto('http://localhost:4173/?demo'); await p.waitForTimeout(1000);
 const cases = { Twist: {}, Bend: {}, Taper: {}, Bulge: {}, Shear: {}, Push_1: { preset: 'Push', set: { ampl: 1 } }, Smooth: {}, Relax: {}, Fold: {}, Twist_Y: { preset: 'Twist', set: { axis: 1 } }, Bend_bottom: { preset: 'Bend', set: { bottom: true } }, Bend_dir90: { preset: 'Bend', set: { dir: 90 } }, Taper_neg: { preset: 'Taper', set: { ampl: -0.5 } } };
 for (const [name, c] of Object.entries(cases)) {
   const r = ref[name]; if (!r) continue;

@@ -68,7 +68,7 @@ export function mcpPanel(app: App, host: HTMLElement) {
   const tr = section('Transform', collapsed);
   const tmodes: { m: typeof tool.mode; l: string; k: string; prefix: string }[] = [{ m: 'scale', l: 's', k: 'X', prefix: 'scl' }, { m: 'rotate', l: 'r', k: 'C', prefix: 'rot' }, { m: 'translate', l: 't', k: 'V', prefix: 'pos' }];
   const modeB: HTMLElement[] = [], axisB: Record<string, HTMLElement[]> = {}, fields: Record<string, HTMLInputElement[]> = {};
-  const setMode = (m: typeof tool.mode) => { tool.mode = m; modeB.forEach(b => b.classList.toggle('on', (b as any)._m === m)); };
+  const setMode = (m: typeof tool.mode) => { tool.mode = m; modeB.forEach(b => b.classList.toggle('on', (b as any)._m === m)); app.events.emit('selection'); };
   tool.setMode = setMode;
   const setAxis = (ax: 'x' | 'y' | 'z', on: boolean) => { (tool.axes as any)[ax] = on; for (const k in axisB) axisB[k].forEach(b => { if ((b as any)._ax === ax) b.classList.toggle('on', on); }); };
   const OPTIONS: Record<string, string[]> = { scale: ['Uniform Scaling', 'Add', 'Volume', 'Scale Relative to Center'], rotate: ['Add', 'Increment 15°', 'Increment 45°', 'Interactive'], translate: ['Add', 'Planar XY', 'Planar YZ', 'Planar XZ', 'Snap to Pivot'] };
@@ -137,6 +137,9 @@ export function mcpPanel(app: App, host: HTMLElement) {
     else if (k === '1') { app.module = 'Model' as any; app.events.emit('module'); } else if (k === '2') { app.module = 'Animate' as any; app.events.emit('module'); } else if (k === '3') { app.module = 'Render' as any; app.events.emit('module'); } else if (k === '4') { app.module = 'Simulate' as any; app.events.emit('module'); }
     else if (k === 'arrowright') app.run('NextFrame'); else if (k === 'arrowleft') app.run('PrevFrame');
     else if (k === '8') showExplorer('Scene');
+    else if (k === 'f' && !e.ctrlKey) window.dispatchEvent(new CustomEvent('framesel'));
+    else if (k === 'a' && e.ctrlKey && e.shiftKey) { e.preventDefault(); app.compSel = null; app.select([]); }
+    else if (k === 'a' && !e.ctrlKey) window.dispatchEvent(new CustomEvent('frameall'));
   });
   void Model;
 }

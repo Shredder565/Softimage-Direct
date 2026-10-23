@@ -30,7 +30,7 @@ export interface CommandDef {
 
 export interface UndoEntry { label: string; undo(): void; redo(): void; }
 
-type EventName = 'scene' | 'selection' | 'log' | 'undo' | 'module' | 'frame' | 'params';
+type EventName = 'scene' | 'selection' | 'log' | 'undo' | 'module' | 'frame' | 'params' | 'inspect' | 'newscene';
 
 export class EventBus {
   private m = new Map<EventName, Set<(d?: any) => void>>();
@@ -91,6 +91,7 @@ export class App {
         this.events.emit('undo');
       }
       this.events.emit('scene');
+      if (this.autoInspect && result instanceof Node && /^(Create|Apply|Add|Get|Make|Duplicate|SI)/.test(name) && name !== 'CreateGroup') this.events.emit('inspect', result);
     }
     return result;
   }
