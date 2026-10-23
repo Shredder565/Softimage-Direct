@@ -269,3 +269,53 @@ button, select, input { font-family: inherit; }
 .prefs-page { overflow: auto; min-width: 0; }
 .prefs-foot { grid-column: 1 / -1; padding: 3px; border-top: 1px solid var(--line); }
 .prefs-page .ppg-row { grid-template-columns: 18px 260px 1fr; } .prefs-page .ppg-row.align-right.is-check { grid-template-columns: 18px 260px 16px; }
+
+/* ---- panels painted with Softimage's own mcp.dll bitmaps (PLAYU / 465 / LAYERU) */
+.bmp-panel { position: relative; flex: none; image-rendering: pixelated; }
+.bmp-hit { position: absolute; background: transparent; border: 0; padding: 0; margin: 0; cursor: default; font: 11px Tahoma, Verdana, sans-serif; color: #202020; border-radius: 3px; }
+.bmp-hit:hover { background: rgba(255,255,255,.14); }
+.bmp-hit:active, .bmp-hit.on { background: rgba(0,0,0,.22); box-shadow: inset 1px 1px 2px rgba(0,0,0,.45); }
+.bmp-hit.bounce { outline: 1px dashed #ffd34d; outline-offset: -2px; }
+.bmp-hit.keyed { background: rgba(255,40,40,.35); } .bmp-hit.animated:not(.keyed) { background: rgba(60,200,60,.25); }
+.bmp-hit.text { text-align: left; padding-left: 4px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: #111; }
+.bmp-hit.text.dark { color: #e8e8e8; }
+.bmp-hit:hover.text { background: rgba(255,255,255,.08); }
+.bmp-field { position: absolute; background: transparent; border: 0; color: #f0f0f0; font: 11px Tahoma, Verdana, sans-serif; padding: 0 2px; outline: none; }
+.bmp-field.dark { background: #363333; }
+.bottom-row { display: flex; align-items: flex-start; gap: 2px; background: #aaa8a6; }
+
+/* ---- Timerange: global start / play range slider / global end */
+.timerange { display: flex; align-items: center; gap: 4px; padding: 2px 6px; background: #a9a7a5; height: 100%; box-sizing: border-box; }
+.timerange input { width: 44px; background: #363333; color: #eee; border: 1px solid #222; font: 11px Tahoma, Verdana, sans-serif; padding: 1px 2px; }
+.timerange .bar { position: relative; flex: 1; height: 14px; background: #6a6866; border: 1px solid #3a3a3a; cursor: ew-resize; }
+.timerange .fill { position: absolute; top: 0; bottom: 0; background: #c9c6c2; }
+.timerange .handle { position: absolute; top: -1px; width: 6px; height: 16px; margin-left: -3px; background: #e4e1dd; border: 1px solid #333; cursor: col-resize; z-index: 2; }
+.timerange .cur { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: #ffd34d; pointer-events: none; z-index: 3; }
+
+/* ---- Scene Layer Manager */
+.layer-mgr { background: #a9a7a5; height: 100%; overflow: auto; font: 11px Tahoma, Verdana, sans-serif; }
+.layer-table { border-collapse: collapse; width: 100%; }
+.layer-table th { background: #8a8886; color: #111; font-weight: normal; text-align: left; padding: 1px 4px; border-bottom: 1px solid #555; }
+.layer-table td { padding: 1px 4px; border-bottom: 1px solid #949290; }
+.layer-table tr.current td { background: #c3c0bb; }
+.layer-table input.name { width: 120px; background: #363333; color: #eee; border: 1px solid #222; font: inherit; }
+.layer-table input[type=color] { width: 22px; height: 14px; padding: 0; border: 1px solid #333; background: none; }
+
+/* ---- XSI Explorer: scope list beside the explorer */
+.xsi-explorer { display: flex; height: 100%; }
+.xp-scopes { width: 118px; flex: none; background: #a9a7a5; border-right: 1px solid #5a5856; overflow: auto; font: 11px Tahoma, Verdana, sans-serif; }
+.xp-scope-title { background: #8a8886; color: #111; padding: 2px 4px; margin-top: 2px; }
+.xp-scope { padding: 1px 10px; cursor: default; color: #111; }
+.xp-scope.dim { color: #666; } .xp-scope:hover { background: #bcb9b5; } .xp-scope.on { background: #3a5a8c; color: #fff; }
+.xp-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.xp-main .explorer { flex: 1; min-height: 0; }
+
+/* ---- Script History */
+.script-history { display: flex; flex-direction: column; height: 100%; }
+.script-history .log { flex: 1; overflow: auto; }
+
+/* ---- MCP sections as standalone views; mini transform panel */
+.mcp.mini .mcp-sec-head { display: none; }
+.mcp.mini { width: 200px; }
+
+.kp-row .nm.marked { background: #ffd34d; color: #111; }

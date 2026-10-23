@@ -34,14 +34,27 @@ export class AnimationManager {
   private _frame = 1;
   startFrame = 1;
   endFrame = 100;
+  /** Global (scene) range shown in the Timerange panel; the play range is a sub-range of it. */
+  globalStart = 1;
+  globalEnd = 100;
   fps = 30;
   playing = false;
+  /** Playback menu: Play All Frames (false) or Real-Time Playback at `speed` (1, .75, .5, .25). */
+  realtime = true; speed = 1;
+  /** Loop button / Playback Options: 'loop' | 'once' | 'bounce'. */
+  loopMode: 'loop' | 'once' | 'bounce' = 'loop'; private dir = 1;
+  playbackView = 'All Views'; updateMode = 'Update All';
+  /** Marked parameters (Animation > Parameters, keying panel marks) and named marking sets. */
+  readonly marked = new Set<Parameter>(); readonly markingSets = new Map<string, Parameter[]>();
+  /** Expressions: param -> source text, evaluated every frame with Fc (current frame) like Softimage's expression language subset. */
+  readonly expressions = new Map<Parameter, { text: string; fn: (fc: number, t: number) => number }>();
   private listeners = new Set<(frame: number) => void>();
 
   get frame() { return this._frame; }
   set frame(f: number) {
     this._frame = f;
     for (const [p, fc] of this.fcurves) if (fc.keys.length) p.value = fc.eval(f);
+    for (const [p, ex] of this.expressions) { try { const v = ex.fn(f, f / this.fps); if (Number.isFinite(v)) p.value = v; } catch { /* bad expression: leave the value */ } }
     for (const l of this.listeners) l(f);
   }
   onFrame(l: (f: number) => void) { this.listeners.add(l); return () => this.listeners.delete(l); }
@@ -53,7 +66,16 @@ export class AnimationManager {
   isAnimated(p: Parameter) { return (this.fcurves.get(p)?.keys.length ?? 0) > 0; }
   setKey(p: Parameter, time = this._frame, value = p.value) { this.fcurve(p, true)!.addKey(time, Number(value)); }
   removeKey(p: Parameter, time = this._frame) { this.fcurves.get(p)?.removeKey(time); }
-  removeAnimation(p: Parameter) { this.fcurves.delete(p); }
+  removeAnimation(p: Parameter) { this.fcurves.delete(p); this.expressions.delete(p); }
+  /** Softimage expression subset: Fc, T, cond(), sin/cos/..., other parameters by script name are resolved by `lookup`. */
+  setExpression(p: Parameter, text: string, lookup: (name: string) => Parameter | undefined) {
+    const refs: Parameter[] = []; const src = text.replace(/\b([A-Za-z_][\w.]*\.[\w.]+)\b/g, (m) => { const q = lookup(m); if (!q) return m; refs.push(q); return `__r[${refs.length - 1}].value`; });
+    const fn = new Function('Fc', 'T', '__r', 'with (Math) { const cond = (c, a, b) => c ? a : b; const PI = Math.PI; return (' + src + '); }') as any;
+    this.expressions.set(p, { text, fn: (fc, t) => fn(fc, t, refs) }); this.fcurves.delete(p); this.frame = this._frame;
+  }
+  expression(p: Parameter) { return this.expressions.get(p)?.text; }
+  /** All key times on a set of parameters, sorted. */
+  keyTimes(params: Iterable<Parameter>) { const s = new Set<number>(); for (const p of params) for (const k of this.fcurve(p)?.keys ?? []) s.add(k.time); return [...s].sort((a, b) => a - b); }
 
   private timer: number | null = null;
   play() {
@@ -63,10 +85,12 @@ export class AnimationManager {
     const step = () => {
       if (!this.playing) return;
       const now = performance.now();
-      if (now - last >= 1000 / this.fps) {
-        last = now;
-        let f = this._frame + 1;
-        if (f > this.endFrame) f = this.startFrame;
+      const dt = this.realtime ? 1000 / (this.fps * this.speed) : 0;
+      if (now - last >= dt) {
+        const steps = this.realtime ? Math.max(1, Math.floor((now - last) / dt)) : 1; last = now;
+        let f = this._frame + steps * this.dir;
+        if (this.loopMode === 'bounce') { if (f > this.endFrame) { f = this.endFrame; this.dir = -1; } else if (f < this.startFrame) { f = this.startFrame; this.dir = 1; } }
+        else if (f > this.endFrame) { if (this.loopMode === 'once') { this.frame = this.endFrame; this.stop(); return; } f = this.startFrame; }
         this.frame = f;
       }
       this.timer = requestAnimationFrame(step);

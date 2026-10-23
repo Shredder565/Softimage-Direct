@@ -93,16 +93,58 @@ def parse_strings(data, off, size, block):
     return out
 
 
+CLASSES = {0x80: 'button', 0x81: 'edit', 0x82: 'static', 0x83: 'listbox', 0x84: 'scrollbar', 0x85: 'combobox'}
+
+
+def sz_or_ord(data, pos):
+    """Read a DLGTEMPLATE 'sz_Or_Ord' (0xFFFF + word, or a UTF-16 string)."""
+    w = struct.unpack_from('<H', data, pos)[0]
+    if w == 0xFFFF: return struct.unpack_from('<H', data, pos + 2)[0], pos + 4
+    if w == 0: return '', pos + 2
+    s = pos
+    while data[pos:pos + 2] != b'\x00\x00': pos += 2
+    return data[s:pos].decode('utf-16le', 'replace'), pos + 2
+
+
+def parse_dialog(data, off, size):
+    """Parse DLGTEMPLATE / DLGTEMPLATEEX into {title, style, rect, font, controls:[{cls,text,id,x,y,w,h,style}]}."""
+    sig, = struct.unpack_from('<H', data, off + 2)
+    ex = struct.unpack_from('<H', data, off)[0] == 1 and sig == 0xFFFF
+    if ex:
+        helpid, exstyle, style, n, x, y, w, h = struct.unpack_from('<IIIHhhhh', data, off + 4); pos = off + 26
+    else:
+        style, exstyle, n, x, y, w, h = struct.unpack_from('<IIHhhhh', data, off); pos = off + 18
+    menu, pos = sz_or_ord(data, pos); cls, pos = sz_or_ord(data, pos); title, pos = sz_or_ord(data, pos)
+    font = None
+    if style & 0x40:  # DS_SETFONT
+        pt = struct.unpack_from('<H', data, pos)[0]; pos += 2
+        if ex: pos += 4
+        name, pos = sz_or_ord(data, pos); font = [pt, name]
+    ctrls = []
+    for i in range(n):
+        pos = (pos + 3) & ~3
+        if ex: chelp, cex, cstyle, cx, cy, cw, ch, cid = struct.unpack_from('<IIIhhhhI', data, pos); pos += 24
+        else: cstyle, cex, cx, cy, cw, ch, cid = struct.unpack_from('<IIhhhhH', data, pos); pos += 18
+        ccls, pos = sz_or_ord(data, pos); text, pos = sz_or_ord(data, pos)
+        extra = struct.unpack_from('<H', data, pos)[0]; pos += 2 + extra
+        if isinstance(ccls, int): ccls = CLASSES.get(ccls, hex(ccls))
+        ctrls.append({'cls': ccls, 'text': text, 'id': cid, 'x': cx, 'y': cy, 'w': cw, 'h': ch, 'style': cstyle})
+    return {'title': title, 'style': style, 'rect': [x, y, w, h], 'font': font, 'controls': ctrls}
+
+
 def dump(path):
     data = open(path, 'rb').read(); secs, rsrc_rva = sections(data)
     base = rva2off(secs, rsrc_rva)
-    res = {'menus': {}, 'strings': {}}
+    res = {'menus': {}, 'strings': {}, 'dialogs': {}}
     for entry in walk(data, base, base, secs):
         typ, name, lang, off, size = entry[0], entry[1], entry[2], entry[3], entry[4]
         if off is None: continue
         if typ == 4:
             try: res['menus'][str(name)] = parse_menu(data, off, size)
             except Exception as e: res['menus'][str(name)] = {'error': str(e)}
+        elif typ == 5:
+            try: res['dialogs'][str(name)] = parse_dialog(data, off, size)
+            except Exception as e: res['dialogs'][str(name)] = {'error': str(e)}
         elif typ == 6 and isinstance(name, int):
             res['strings'].update({str(k): v for k, v in parse_strings(data, off, size, name).items()})
     return res
@@ -114,5 +156,5 @@ if __name__ == '__main__':
     allr = {}
     for p in args:
         r = dump(p); allr[p.split('/')[-1]] = r
-        print(p.split('/')[-1], 'menus', len(r['menus']), 'strings', len(r['strings']))
+        print(p.split('/')[-1], 'menus', len(r['menus']), 'strings', len(r['strings']), 'dialogs', len(r['dialogs']))
     json.dump(allr, open(out, 'w'), indent=0)

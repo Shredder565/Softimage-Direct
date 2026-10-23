@@ -143,6 +143,7 @@ export function explorerView(app: App, host: HTMLElement) {
   search.oninput = render;
   render();
   app.events.on('scene', render); app.events.on('selection', () => { if (!state.lock) render(); }); app.events.on('params', render);
+  return { setScope: (sc: string) => { if (SCOPES.includes(sc as Scope)) { state.scope = sc as Scope; render(); } }, render, state };
 }
 
 function iconLetter(n: Node) {

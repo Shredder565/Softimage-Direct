@@ -5,6 +5,8 @@ import { registerModelCommands, registerModelAliases } from './commands/model';
 import { registerUICommands } from './commands/ui';
 import { registerPresetModels } from './commands/presets';
 import { registerModelCommands2 } from './commands/model2';
+import { registerAnimCommands } from './commands/anim';
+import { playbackPanel, animationPanel, timerange, layerManager, xsiExplorer, scriptHistory } from './ui/views';
 import { LayoutEngine, DEFAULT_LAYOUT } from './ui/layout';
 import { toolbarPanel, menuStatus, runMenuPath } from './ui/toolbarPanel';
 import { explorerView } from './ui/explorer';
@@ -12,7 +14,7 @@ import { mcpPanel } from './ui/mcp';
 import { installKeymap } from './ui/keymap';
 import { propertyEditor } from './ui/ppg';
 import { viewManager } from './ui/viewManager';
-import { keyingPanel, layerControl, timeline, timerange, playbackPanel, animationPanel, commandLine, scriptLog } from './ui/panels';
+import { keyingPanel, layerControl, timeline, commandLine, scriptLog } from './ui/panels';
 import { mainShelf, panelSwitcher } from './ui/shelf';
 import { menubar } from './ui/menubar';
 import { statusBar } from './ui/statusbar';
@@ -27,7 +29,8 @@ registerModelAliases(app);
 registerUICommands(app);
 registerPresetModels(app);
 registerModelCommands2(app);
-(window as any).Application = app; (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
+registerAnimCommands(app);
+(window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
 
 const appEl = document.getElementById('app')!;
 menubar(app, appEl);
@@ -37,7 +40,7 @@ statusBar(app, appEl);
 const layout = new LayoutEngine(); (window as any).__layout = layout;
 layout.iconFactory = (name) => hasIcon(name) ? siIcon(name) : Object.assign(document.createElement('span'), { textContent: name });
 layout.registerView('Toolbar Panel', h => toolbarPanel(app, h));
-layout.registerView('Explorer', h => explorerView(app, h));
+layout.registerView('Explorer', h => { explorerView(app, h); });
 layout.registerView('Script Log', h => scriptLog(app, h));
 let vm: ReturnType<typeof viewManager> | null = null;
 layout.registerView('View Manager', h => { vm = viewManager(app, h); });
@@ -68,13 +71,16 @@ window.addEventListener('togglepanel', (e: any) => {
 // ---- Floating views (View > Views, shelf/explorer buttons, Enter on a selection)
 const openView = (name: string) => {
   const key = 'view:' + name; const size = SI_VIEWS.find(v => v.name === name)?.defaultsize?.split(',').map(Number);
-  const w = size ? Math.min(900, size[2] - size[0]) : 420, h = size ? Math.min(600, size[3] - size[1]) : 400;
+  const w = name === 'Mini Transform Panel' ? 200 : Math.max(320, size ? Math.min(900, size[2] - size[0]) : 420), h = size ? Math.min(600, size[3] - size[1]) : 400;
   const builders: Record<string, (host: HTMLElement) => void> = {
     'Explorer': h => explorerView(app, h), 'Property Editor': h => propertyEditor(app, h), 'Script Editor': h => scriptLog(app, h), 'Script History View': h => scriptLog(app, h),
     'Keying Panel': h => keyingPanel(app, h), 'Layer Control': h => layerControl(app, h), 'Main Shelf': h => mainShelf(app, h), 'Toolbar Panel': h => toolbarPanel(app, h), 'Command Line': h => commandLine(app, h),
+    'Script History': h => scriptHistory(app, h), 'Scene Layer Manager': h => layerManager(app, h), 'XSI Explorer': h => xsiExplorer(app, h),
+    'Animation Panel': h => animationPanel(app, h), 'Playback Panel': h => playbackPanel(app, h), 'Timeline': h => timeline(app, h), 'Timerange': h => timerange(app, h),
+    'Selection Panel': h => mcpPanel(app, h, { only: ['Select'] }), 'Transformation Panel': h => mcpPanel(app, h, { only: ['Transform'] }), 'Snap Panel': h => mcpPanel(app, h, { only: ['Snap'] }), 'Edit Panel': h => mcpPanel(app, h, { only: ['Constrain', 'Edit'] }), 'Mini Transform Panel': h => mcpPanel(app, h, { only: ['Transform'], cls: 'mini' }),
   };
   const b = builders[name]; if (!b) { app.logMsg('info', `View "${name}": not implemented`); return; }
-  openFloating(name, (body) => b(body), { w, h, key, x: 120, y: 80 });
+  openFloating(name, (body) => b(body), { w, h, key });
 };
 window.addEventListener('openview', (e: any) => openView(e.detail?.name));
 window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail?.page));

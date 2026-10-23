@@ -24,8 +24,11 @@ const field = (axis: string, onCommit: (v: number) => void) => {
   w.append(i, a); return { w, i };
 };
 
-export function mcpPanel(app: App, host: HTMLElement) {
-  const root = document.createElement('div'); root.className = 'mcp';
+/** The full MCP, or (with `only`) one of its sections as a standalone view: Selection / Transformation / Snap / Edit Panel, Mini Transform Panel. */
+export function mcpPanel(app: App, host: HTMLElement, opts: { only?: string[]; cls?: string } = {}) {
+  const root = document.createElement('div'); root.className = 'mcp ' + (opts.cls ?? '');
+  const want = (t: string) => !opts.only || opts.only.includes(t);
+  const add = (t: string, el: HTMLElement) => { if (want(t)) root.appendChild(el); };
   host.appendChild(root);
   const collapsed = new Set<string>();
   const A = app as any; A.centerMode ??= false; A.groupMode ??= false; A.symmetry ??= false; A.cog ??= false; A.immediate ??= false; A.cnsComp ??= false; A.childComp ??= false;
@@ -64,7 +67,7 @@ export function mcpPanel(app: App, host: HTMLElement) {
   const exploreB = button('Explore', (e) => { e.stopPropagation(); const r = (e.target as HTMLElement).getBoundingClientRect(); const items = (SI_MENUS.mcpExplore ?? []).map(it => it.label?.startsWith('TITLE:') ? { label: it.label.slice(6), items: [] as SiMenuItem[], title: true } as any : it); openSiMenu(items, r.left, r.bottom, (it) => { const l = it.label ?? ''; const scope = ['Layers', 'Passes', 'Materials', 'Groups', 'Application'].includes(l) ? l : /Current|Scene|Environment|Lights|Cameras|Operators|Shaders|Images|Animation|Audio|Sources|Mixers|Constraints|Property|Custom|Texture/.test(l) ? 'Scene' : 'Scene'; showExplorer(scope); }, { enabled: it => !(it as any).title }); }, 'Open an Explorer (8)', 'has-menu');
   sel.body.appendChild(grid(2, exploreB, button('Scene', () => showExplorer('Scene'), 'Explorer scoped to the scene')));
   sel.body.appendChild(grid(2, button('Selection', () => showExplorer('Selection'), 'Explorer scoped to the current selection', 'has-menu'), button('Clusters', () => showExplorer('Selection'), 'Clusters of the selected object')));
-  root.appendChild(sel.el);
+  add('Select', sel.el);
 
   // ------------------------------------------------------------- Transform
   const tr = section('Transform', collapsed);
@@ -93,7 +96,7 @@ export function mcpPanel(app: App, host: HTMLElement) {
   symB.oncontextmenu = (e) => { e.preventDefault(); openSiMenu(SI_MENUS.mcpSymmetry ?? [], e.clientX, e.clientY, (it) => { if (['YZ', 'XZ', 'XY'].includes(it.label!)) { A.symPlane = it.label; A.symmetry = true; upd(); } else app.logMsg('info', 'Symmetry Properties: not implemented'); }, { checked: it => ['YZ', 'XZ', 'XY'].includes(it.label!) ? (A.symPlane ?? 'YZ') === it.label : undefined }); };
   (window as any).__mcp = (k: string, v: any) => { if (k === 'ref') refB.find(b => b.textContent === v)?.click(); else if (k === 'axis') { (tool.axes as any)[v] = !(tool.axes as any)[v]; app.events.emit('selection'); } else if (k === 'prop') propB.click(); else if (k === 'cog') cogB.click(); else if (k === 'sym') symB.click(); };
   tr.body.appendChild(grid(3, cogB, propB, symB));
-  root.appendChild(tr.el);
+  add('Transform', tr.el);
 
   // ------------------------------------------------------------------- Snap
   const sn = section('Snap', collapsed);
@@ -102,21 +105,21 @@ export function mcpPanel(app: App, host: HTMLElement) {
   const snapKinds: [string, string, string][] = [['point', '•', 'Snap to points'], ['curve', '∿', 'Snap to curves / edges'], ['midpoint', '◌', 'Snap to midpoints'], ['grid', '▦', 'Snap to the grid']];
   const snapB = snapKinds.map(([k, g, t]) => { const b = button(g, () => { S[k] = !S[k]; upd(); }, t, 'icon'); (b as any)._k = k; return b; });
   sn.body.appendChild(grid(5, snapOn, ...snapB));
-  root.appendChild(sn.el);
+  add('Snap', sn.el);
 
   // -------------------------------------------------------------- Constrain
   const cn = section('Constrain', collapsed);
   cn.body.appendChild(grid(2, button('Parent', () => { const objs = app.selectedObjects; if (objs.length < 2) { app.logMsg('info', 'Parent: select the children, then Shift-click the parent (or pick it) and click Parent'); return; } const parent = objs[objs.length - 1]; app.run('ParentObj', { Parent: parent.fullName, Children: objs.slice(0, -1) }); }, 'Parent: make the last-selected object the parent of the others'), button('Cut', () => app.run('CutObj'), 'Cut the hierarchical link (reparent to the scene root)')));
   const cnsB = button('CnsComp', () => { A.cnsComp = !A.cnsComp; upd(); }, 'Constraint compensation'), chdB = button('ChldComp', () => { A.childComp = !A.childComp; upd(); }, 'Child transform compensation (children keep their global pose when the parent moves)');
   cn.body.appendChild(grid(2, cnsB, chdB));
-  root.appendChild(cn.el);
+  add('Constrain', cn.el);
 
   // ------------------------------------------------------------------- Edit
   const ed = section('Edit', collapsed);
   ed.body.appendChild(grid(2, button('Freeze', () => app.run('FreezeObj'), 'Freeze: collapse the construction history'), button('Group', () => app.run('CreateGroup'), 'Group the selected objects')));
   const immB = button('Immed', () => { A.immediate = !A.immediate; upd(); }, 'Immediate mode: operators are applied and frozen right away');
   ed.body.appendChild(grid(2, button('Freeze M', () => app.run('FreezeModeling'), 'Freeze Modeling: freeze operators below the Modeling marker'), immB));
-  root.appendChild(ed.el);
+  add('Edit', ed.el);
 
   // --------------------------------------------------------------- updates
   const upd = () => {

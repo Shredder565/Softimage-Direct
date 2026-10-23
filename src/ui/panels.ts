@@ -24,7 +24,7 @@ export function keyingPanel(app: App, host: HTMLElement) {
         const r = document.createElement('div'); r.className = 'kp-row';
         const dot = document.createElement('div'); const fc = app.anim.fcurve(p); dot.className = 'anim-dot' + (fc?.keys.length ? (fc.hasKey(app.anim.frame) ? ' keyed' : ' animated') : '');
         dot.onclick = () => app.run(fc?.hasKey(app.anim.frame) ? 'RemoveKey' : 'SaveKey', { InputObjs: p.fullName });
-        const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = p.label;
+        const nm = document.createElement('span'); nm.className = 'nm' + (app.anim.marked.has(p) ? ' marked' : ''); nm.textContent = p.label; nm.title = 'Click to mark / unmark (Shift: add)'; nm.onclick = (e) => { if (!e.shiftKey && !app.anim.marked.has(p)) app.anim.marked.clear(); if (app.anim.marked.has(p)) app.anim.marked.delete(p); else app.anim.marked.add(p); app.events.emit('params'); };
         const i = document.createElement('input'); i.type = 'number'; i.step = '0.1'; i.value = String(Math.round(p.value * 1000) / 1000); i.onchange = () => app.setParam(p, Number(i.value));
         r.append(dot, nm, i); root.appendChild(r);
       }

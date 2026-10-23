@@ -899,7 +899,4860 @@
 }
 ]
 },
-"strings": {}
+"strings": {},
+"dialogs": {
+"IDD_PROPPAGE_LARGE": {
+"title": "Property Page",
+"style": 1220542528,
+"rect": [
+0,
+0,
+235,
+156
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "static",
+"text": "TODO: layout property page",
+"id": 65535,
+"x": 73,
+"y": 74,
+"w": 90,
+"h": 8,
+"style": 1342308352
+}
+]
+},
+"102": {
+"title": "Command Mapping",
+"style": 2428502208,
+"rect": [
+0,
+0,
+561,
+292
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "static",
+"text": "&Key Map:",
+"id": 4294967295,
+"x": 6,
+"y": 5,
+"w": 38,
+"h": 11,
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1000,
+"x": 44,
+"y": 4,
+"w": 100,
+"h": 74,
+"style": 1344340227
+},
+{
+"cls": "button",
+"text": "&New",
+"id": 1001,
+"x": 150,
+"y": 4,
+"w": 38,
+"h": 11,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Remove",
+"id": 1002,
+"x": 188,
+"y": 4,
+"w": 38,
+"h": 11,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "&Group:",
+"id": 4294967295,
+"x": 6,
+"y": 18,
+"w": 32,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "SysListView32",
+"text": "List1",
+"id": 1159,
+"x": 4,
+"y": 27,
+"w": 109,
+"h": 60,
+"style": 1350680733
+},
+{
+"cls": "static",
+"text": "&Command:",
+"id": 4294967295,
+"x": 118,
+"y": 18,
+"w": 38,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "SysListView32",
+"text": "List1",
+"id": 1160,
+"x": 116,
+"y": 27,
+"w": 258,
+"h": 60,
+"style": 1350682781
+},
+{
+"cls": "button",
+"text": "Description:",
+"id": 4294967295,
+"x": 378,
+"y": 27,
+"w": 137,
+"h": 60,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "[description]",
+"id": 1006,
+"x": 383,
+"y": 35,
+"w": 126,
+"h": 35,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Binding:",
+"id": 4294967295,
+"x": 380,
+"y": 75,
+"w": 37,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Cl&ear",
+"id": 1163,
+"x": 483,
+"y": 74,
+"w": 28,
+"h": 11,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Ctr&l",
+"id": 1023,
+"x": 389,
+"y": 92,
+"w": 24,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "&Shift",
+"id": 1024,
+"x": 437,
+"y": 92,
+"w": 26,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "&Alt",
+"id": 1025,
+"x": 486,
+"y": 92,
+"w": 21,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Aux Mod&1",
+"id": 1026,
+"x": 10,
+"y": 192,
+"w": 60,
+"h": 10,
+"style": 1073807363
+},
+{
+"cls": "button",
+"text": "Aux Mod&2",
+"id": 1027,
+"x": 72,
+"y": 192,
+"w": 60,
+"h": 10,
+"style": 1073807363
+},
+{
+"cls": "button",
+"text": "Aux Mod&3",
+"id": 1028,
+"x": 134,
+"y": 192,
+"w": 60,
+"h": 10,
+"style": 1073807363
+},
+{
+"cls": "button",
+"text": " Conte&xt:",
+"id": 1015,
+"x": 4,
+"y": 91,
+"w": 39,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1016,
+"x": 45,
+"y": 91,
+"w": 68,
+"h": 30,
+"style": 1344340227
+},
+{
+"cls": "button",
+"text": " &View:",
+"id": 1019,
+"x": 117,
+"y": 92,
+"w": 38,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1020,
+"x": 155,
+"y": 92,
+"w": 138,
+"h": 30,
+"style": 1344340227
+},
+{
+"cls": "static",
+"text": "&Device:",
+"id": 4294967295,
+"x": 4,
+"y": 191,
+"w": 26,
+"h": 8,
+"style": 1073872896
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1008,
+"x": 32,
+"y": 186,
+"w": 116,
+"h": 50,
+"style": 1075904771
+},
+{
+"cls": "static",
+"text": "",
+"id": 1007,
+"x": 4,
+"y": 116,
+"w": 553,
+"h": 173,
+"style": 1073876992
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 517,
+"y": 28,
+"w": 42,
+"h": 11,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 517,
+"y": 40,
+"w": 42,
+"h": 11,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "View in &Browser",
+"id": 3,
+"x": 226,
+"y": 4,
+"w": 69,
+"h": 11,
+"style": 1342246656
+},
+{
+"cls": "static",
+"text": "Static",
+"id": 1004,
+"x": 422,
+"y": 75,
+"w": 59,
+"h": 11,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Help",
+"id": 9,
+"x": 517,
+"y": 52,
+"w": 42,
+"h": 11,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "To assign a key binding, drag a command to the diagram below.",
+"id": 4294967295,
+"x": 6,
+"y": 106,
+"w": 454,
+"h": 8,
+"style": 1342308352
+}
+]
+},
+"104": {
+"title": "Save Preset As...",
+"style": 2429026496,
+"rect": [
+0,
+0,
+187,
+121
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Preset Name:",
+"id": 4294967295,
+"x": 9,
+"y": 6,
+"w": 115,
+"h": 9,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1021,
+"x": 8,
+"y": 17,
+"w": 173,
+"h": 18,
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "Preset Description:",
+"id": 4294967295,
+"x": 8,
+"y": 46,
+"w": 172,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1022,
+"x": 8,
+"y": 58,
+"w": 173,
+"h": 32,
+"style": 1352732740
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 35,
+"y": 100,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 101,
+"y": 100,
+"w": 51,
+"h": 14,
+"style": 1342242816
+}
+]
+},
+"105": {
+"title": "",
+"style": 1073741888,
+"rect": [
+0,
+0,
+190,
+160
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "{80CF59F3-49D3-11CF-91E0-00A024079957}",
+"text": "",
+"id": 1018,
+"x": 63,
+"y": 43,
+"w": 84,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "{80CF59F3-49D3-11CF-91E0-00A024079957}",
+"text": "",
+"id": 1020,
+"x": 63,
+"y": 62,
+"w": 84,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1019,
+"x": 84,
+"y": 93,
+"w": 78,
+"h": 10,
+"style": 1350631552
+},
+{
+"cls": "{80CF5A1B-49D3-11CF-91E0-00A024079957}",
+"text": "",
+"id": 1016,
+"x": 96,
+"y": 111,
+"w": 18,
+"h": 18,
+"style": 1342177280
+},
+{
+"cls": "static",
+"text": "Color",
+"id": 4294967295,
+"x": 72,
+"y": 117,
+"w": 21,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Heads",
+"id": 4294967295,
+"x": 39,
+"y": 45,
+"w": 24,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Cache Directory",
+"id": 4294967295,
+"x": 26,
+"y": 95,
+"w": 55,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Heads and Tails (sec)",
+"id": 4294967295,
+"x": 33,
+"y": 27,
+"w": 117,
+"h": 60,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Tails",
+"id": 4294967295,
+"x": 39,
+"y": 65,
+"w": 24,
+"h": 8,
+"style": 1342308352
+}
+]
+},
+"106": {
+"title": "",
+"style": 2160591552,
+"rect": [
+0,
+0,
+200,
+138
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 23,
+"y": 111,
+"w": 70,
+"h": 15,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 103,
+"y": 111,
+"w": 70,
+"h": 15,
+"style": 1342242816
+},
+{
+"cls": "DSGrid",
+"text": "Parameters",
+"id": 202,
+"x": 14,
+"y": 10,
+"w": 164,
+"h": 90,
+"style": 1342242816
+}
+]
+},
+"136": {
+"title": "",
+"style": 1342177344,
+"rect": [
+0,
+0,
+342,
+149
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "Video Settings",
+"id": 4294967295,
+"x": 6,
+"y": 6,
+"w": 150,
+"h": 110,
+"style": 1342308359
+},
+{
+"cls": "static",
+"text": "Format",
+"id": 1006,
+"x": 15,
+"y": 19,
+"w": 25,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "NTSC D1 4/3",
+"id": 1153,
+"x": 70,
+"y": 17,
+"w": 72,
+"h": 13,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Frame Rate",
+"id": 1007,
+"x": 15,
+"y": 34,
+"w": 40,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1067,
+"x": 70,
+"y": 33,
+"w": 72,
+"h": 12,
+"style": 1478557955
+},
+{
+"cls": "static",
+"text": "Frame Size",
+"id": 1004,
+"x": 15,
+"y": 48,
+"w": 39,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1018,
+"x": 70,
+"y": 46,
+"w": 29,
+"h": 10,
+"style": 1484857472
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1019,
+"x": 113,
+"y": 46,
+"w": 29,
+"h": 10,
+"style": 1484857472
+},
+{
+"cls": "static",
+"text": "Field Dominance",
+"id": 4294967295,
+"x": 15,
+"y": 62,
+"w": 53,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1070,
+"x": 70,
+"y": 61,
+"w": 72,
+"h": 12,
+"style": 1478557955
+},
+{
+"cls": "static",
+"text": "Color Space",
+"id": 4294967295,
+"x": 15,
+"y": 76,
+"w": 42,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1078,
+"x": 70,
+"y": 75,
+"w": 72,
+"h": 12,
+"style": 1478557955
+},
+{
+"cls": "static",
+"text": "Aspect Ratio",
+"id": 4294967295,
+"x": 15,
+"y": 90,
+"w": 43,
+"h": 9,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1021,
+"x": 70,
+"y": 88,
+"w": 29,
+"h": 10,
+"style": 1484857472
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1022,
+"x": 113,
+"y": 88,
+"w": 29,
+"h": 10,
+"style": 1484857472
+},
+{
+"cls": "static",
+"text": "Pixel Ratio",
+"id": 1008,
+"x": 15,
+"y": 104,
+"w": 36,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Static",
+"id": 1020,
+"x": 70,
+"y": 104,
+"w": 20,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Working Video Settings",
+"id": 4294967295,
+"x": 162,
+"y": 6,
+"w": 164,
+"h": 110,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Resolution",
+"id": 1010,
+"x": 171,
+"y": 24,
+"w": 37,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1068,
+"x": 219,
+"y": 23,
+"w": 82,
+"h": 12,
+"style": 1344340227
+},
+{
+"cls": "button",
+"text": "Uncompressed",
+"id": 1072,
+"x": 180,
+"y": 36,
+"w": 64,
+"h": 11,
+"style": 1342308361
+},
+{
+"cls": "button",
+"text": "Compressed",
+"id": 1071,
+"x": 180,
+"y": 46,
+"w": 64,
+"h": 11,
+"style": 1342242825
+},
+{
+"cls": "static",
+"text": "Preferred Ratio",
+"id": 1011,
+"x": 197,
+"y": 59,
+"w": 52,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1069,
+"x": 249,
+"y": 58,
+"w": 52,
+"h": 12,
+"style": 1344339971
+},
+{
+"cls": "static",
+"text": "If a clip has no media with the above settings:",
+"id": 1075,
+"x": 171,
+"y": 74,
+"w": 148,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Display a 'media not available' message",
+"id": 1074,
+"x": 180,
+"y": 88,
+"w": 142,
+"h": 11,
+"style": 1342308361
+},
+{
+"cls": "button",
+"text": "Use the closest media format available",
+"id": 1073,
+"x": 180,
+"y": 98,
+"w": 142,
+"h": 11,
+"style": 1342242825
+},
+{
+"cls": "button",
+"text": "Default Timecode Format",
+"id": 1180,
+"x": 162,
+"y": 120,
+"w": 164,
+"h": 24,
+"style": 1342308359
+},
+{
+"cls": "button",
+"text": "Drop Frame",
+"id": 1181,
+"x": 180,
+"y": 131,
+"w": 51,
+"h": 10,
+"style": 1342242825
+},
+{
+"cls": "button",
+"text": "Non Drop Frame",
+"id": 1182,
+"x": 242,
+"y": 131,
+"w": 64,
+"h": 10,
+"style": 1342177289
+},
+{
+"cls": "button",
+"text": "Audio Settings",
+"id": 4294967295,
+"x": 7,
+"y": 120,
+"w": 148,
+"h": 24,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Sample Rate",
+"id": 1009,
+"x": 17,
+"y": 131,
+"w": 44,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1066,
+"x": 64,
+"y": 131,
+"w": 82,
+"h": 12,
+"style": 1344339971
+}
+]
+},
+"139": {
+"title": "",
+"style": 1073741888,
+"rect": [
+0,
+0,
+36,
+1024
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": []
+},
+"159": {
+"title": "Script Button",
+"style": 2160066752,
+"rect": [
+0,
+0,
+264,
+63
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Select the type of button you wish to create:",
+"id": 4294967295,
+"x": 11,
+"y": 9,
+"w": 172,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Script Button",
+"id": 800,
+"x": 19,
+"y": 25,
+"w": 142,
+"h": 10,
+"style": 1342308361
+},
+{
+"cls": "button",
+"text": "Script Command (external file)",
+"id": 801,
+"x": 19,
+"y": 40,
+"w": 142,
+"h": 10,
+"style": 1342177289
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 201,
+"y": 14,
+"w": 50,
+"h": 14,
+"style": 1342373889
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 201,
+"y": 37,
+"w": 50,
+"h": 14,
+"style": 1342373888
+}
+]
+},
+"166": {
+"title": "Rename Layout",
+"style": 2160591040,
+"rect": [
+0,
+0,
+172,
+45
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 60,
+"y": 24,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 115,
+"y": 24,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1020,
+"x": 9,
+"y": 6,
+"w": 155,
+"h": 12,
+"style": 1350631552
+}
+]
+},
+"167": {
+"title": "Customize Spacer",
+"style": 2160591040,
+"rect": [
+0,
+0,
+142,
+80
+],
+"font": [
+10,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 27,
+"y": 59,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 85,
+"y": 59,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Width:",
+"id": 4294967295,
+"x": 8,
+"y": 13,
+"w": 40,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1303,
+"x": 52,
+"y": 12,
+"w": 80,
+"h": 12,
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "Height:",
+"id": 4294967295,
+"x": 8,
+"y": 33,
+"w": 40,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1304,
+"x": 52,
+"y": 32,
+"w": 80,
+"h": 12,
+"style": 1350631552
+}
+]
+},
+"169": {
+"title": "",
+"style": 1073741888,
+"rect": [
+0,
+0,
+490,
+186
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "Auto-process When Stopped (hidden)",
+"id": 1095,
+"x": 322,
+"y": 165,
+"w": 144,
+"h": 14,
+"style": 1073807363
+},
+{
+"cls": "button",
+"text": "Make Backup When Saving (hidden)",
+"id": 1015,
+"x": 321,
+"y": 144,
+"w": 72,
+"h": 19,
+"style": 1073815555
+}
+]
+},
+"207": {
+"title": "",
+"style": 2160591040,
+"rect": [
+0,
+0,
+494,
+241
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 323,
+"y": 219,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 375,
+"y": 219,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "SysTabControl32",
+"text": "Tab1",
+"id": 1040,
+"x": 0,
+"y": 0,
+"w": 490,
+"h": 216,
+"style": 1342390784
+},
+{
+"cls": "button",
+"text": "Help",
+"id": 9,
+"x": 427,
+"y": 219,
+"w": 50,
+"h": 14,
+"style": 1342242816
+}
+]
+},
+"210": {
+"title": "",
+"style": 1073742144,
+"rect": [
+0,
+0,
+580,
+10
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "{321A94C3-4C7B-11CF-91DA-B6947C7FDF19}",
+"text": "",
+"id": 1055,
+"x": 511,
+"y": 0,
+"w": 69,
+"h": 10,
+"style": 1342177280
+}
+]
+},
+"211": {
+"title": "",
+"style": 2248147520,
+"rect": [
+0,
+0,
+302,
+170
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": []
+},
+"225": {
+"title": "",
+"style": 1375731776,
+"rect": [
+0,
+0,
+378,
+212
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "combobox",
+"text": "",
+"id": 1068,
+"x": 224,
+"y": 4,
+"w": 84,
+"h": 70,
+"style": 1344340227
+},
+{
+"cls": "static",
+"text": "Keyword Filter:",
+"id": 4294967295,
+"x": 162,
+"y": 6,
+"w": 62,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "",
+"id": 1087,
+"x": 162,
+"y": 186,
+"w": 208,
+"h": 17,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Hint: After selecting a category, drag a tool from the list onto your toolbar.",
+"id": 4294967295,
+"x": 6,
+"y": 174,
+"w": 146,
+"h": 18,
+"style": 1342308352
+},
+{
+"cls": "SysListView32",
+"text": "List1",
+"id": 1088,
+"x": 162,
+"y": 24,
+"w": 209,
+"h": 160,
+"style": 1350631437
+},
+{
+"cls": "button",
+"text": "Remove",
+"id": 1193,
+"x": 87,
+"y": 132,
+"w": 71,
+"h": 17,
+"style": 1342242816
+},
+{
+"cls": "listbox",
+"text": "",
+"id": 1290,
+"x": 6,
+"y": 24,
+"w": 144,
+"h": 103,
+"style": 1352732995
+},
+{
+"cls": "static",
+"text": "Group:",
+"id": 4294967295,
+"x": 6,
+"y": 6,
+"w": 62,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Help",
+"id": 1194,
+"x": 6,
+"y": 150,
+"w": 71,
+"h": 17,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Details...",
+"id": 1195,
+"x": 6,
+"y": 132,
+"w": 71,
+"h": 17,
+"style": 1342242816
+}
+]
+},
+"259": {
+"title": "",
+"style": 1073741888,
+"rect": [
+0,
+0,
+255,
+62
+],
+"font": [
+12,
+"Arial"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Project Name",
+"id": 4294967295,
+"x": 31,
+"y": 27,
+"w": 40,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Location",
+"id": 4294967295,
+"x": 31,
+"y": 42,
+"w": 29,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1094,
+"x": 74,
+"y": 26,
+"w": 145,
+"h": 10,
+"style": 1350631552
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1095,
+"x": 74,
+"y": 40,
+"w": 126,
+"h": 10,
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "...",
+"id": 4,
+"x": 202,
+"y": 40,
+"w": 18,
+"h": 10,
+"style": 1342242816
+}
+]
+},
+"281": {
+"title": "Project Manager",
+"style": 2160066756,
+"rect": [
+0,
+0,
+415,
+234
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "listbox",
+"text": "",
+"id": 1088,
+"x": 7,
+"y": 54,
+"w": 103,
+"h": 138,
+"style": 1352728963
+},
+{
+"cls": "button",
+"text": "&New Project...",
+"id": 1102,
+"x": 121,
+"y": 54,
+"w": 86,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Set as Default",
+"id": 1106,
+"x": 121,
+"y": 68,
+"w": 86,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Add Project...",
+"id": 3028,
+"x": 126,
+"y": 105,
+"w": 76,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Remove from List",
+"id": 3024,
+"x": 126,
+"y": 119,
+"w": 76,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Scan Disk",
+"id": 7,
+"x": 126,
+"y": 133,
+"w": 76,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "C&lear List",
+"id": 3025,
+"x": 126,
+"y": 147,
+"w": 76,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Import List...",
+"id": 3026,
+"x": 126,
+"y": 161,
+"w": 76,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Export List...",
+"id": 3027,
+"x": 126,
+"y": 175,
+"w": 76,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Delete &Project",
+"id": 1103,
+"x": 121,
+"y": 194,
+"w": 86,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Open ",
+"id": 1104,
+"x": 343,
+"y": 55,
+"w": 67,
+"h": 13,
+"style": 1342373889
+},
+{
+"cls": "button",
+"text": "&Delete",
+"id": 10,
+"x": 343,
+"y": 70,
+"w": 67,
+"h": 13,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Help",
+"id": 8,
+"x": 343,
+"y": 85,
+"w": 67,
+"h": 13,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Close",
+"id": 2,
+"x": 343,
+"y": 217,
+"w": 67,
+"h": 13,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Select a Sequence:",
+"id": 1166,
+"x": 218,
+"y": 45,
+"w": 122,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "&Archive...",
+"id": 3,
+"x": 114,
+"y": 220,
+"w": 62,
+"h": 13,
+"style": 1073807360
+},
+{
+"cls": "button",
+"text": "&Restore...",
+"id": 6,
+"x": 112,
+"y": 220,
+"w": 62,
+"h": 13,
+"style": 1073807360
+},
+{
+"cls": "static",
+"text": "Project Path:",
+"id": 4294967295,
+"x": 7,
+"y": 209,
+"w": 92,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1150,
+"x": 7,
+"y": 218,
+"w": 201,
+"h": 12,
+"style": 1350633600
+},
+{
+"cls": "button",
+"text": "...",
+"id": 9,
+"x": 126,
+"y": 222,
+"w": 18,
+"h": 11,
+"style": 1073807360
+},
+{
+"cls": "button",
+"text": "&Copy To...",
+"id": 3029,
+"x": 113,
+"y": 220,
+"w": 62,
+"h": 13,
+"style": 1073807360
+},
+{
+"cls": "static",
+"text": "Select a Project:",
+"id": 4294967295,
+"x": 7,
+"y": 45,
+"w": 133,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Project List",
+"id": 4294967295,
+"x": 121,
+"y": 95,
+"w": 86,
+"h": 95,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Sort By: ",
+"id": 4294967295,
+"x": 7,
+"y": 195,
+"w": 43,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1282,
+"x": 52,
+"y": 193,
+"w": 57,
+"h": 45,
+"style": 1344339971
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1283,
+"x": 189,
+"y": 202,
+"w": 202,
+"h": 12,
+"style": 1082198144
+},
+{
+"cls": "static",
+"text": "From Project List :",
+"id": 4294967295,
+"x": 189,
+"y": 196,
+"w": 61,
+"h": 8,
+"style": 1073872896
+},
+{
+"cls": "button",
+"text": "Set Active Project",
+"id": 1231,
+"x": 121,
+"y": 83,
+"w": 86,
+"h": 12,
+"style": 1342242816
+}
+]
+},
+"287": {
+"title": "Autodesk\u00ae Softimage\u00ae",
+"style": 2160591044,
+"rect": [
+0,
+0,
+211,
+79
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "static",
+"text": "A preset by this name already exists on one of the toolbars. Either rename the one you want to add, or use it to replace the other preset.",
+"id": 4294967295,
+"x": 37,
+"y": 5,
+"w": 159,
+"h": 42,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Rename",
+"id": 1102,
+"x": 31,
+"y": 52,
+"w": 54,
+"h": 18,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Replace ",
+"id": 1103,
+"x": 89,
+"y": 52,
+"w": 54,
+"h": 18,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 147,
+"y": 52,
+"w": 54,
+"h": 18,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": 128,
+"id": 4294967295,
+"x": 7,
+"y": 5,
+"w": 20,
+"h": 20,
+"style": 1342177283
+}
+]
+},
+"289": {
+"title": "",
+"style": 1073741888,
+"rect": [
+0,
+0,
+190,
+160
+],
+"font": [
+11,
+"Arial"
+],
+"controls": []
+},
+"304": {
+"title": "",
+"style": 2160591040,
+"rect": [
+0,
+0,
+279,
+232
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 115,
+"y": 214,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 165,
+"y": 214,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "SysTabControl32",
+"text": "Tab1",
+"id": 1040,
+"x": 7,
+"y": 0,
+"w": 265,
+"h": 208,
+"style": 1342373888
+},
+{
+"cls": "button",
+"text": "Help",
+"id": 9,
+"x": 220,
+"y": 214,
+"w": 50,
+"h": 14,
+"style": 1342242816
+}
+]
+},
+"315": {
+"title": "Edit layout",
+"style": 2160591040,
+"rect": [
+0,
+0,
+221,
+146
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "Save",
+"id": 1,
+"x": 149,
+"y": 7,
+"w": 68,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Don't Save",
+"id": 2,
+"x": 149,
+"y": 25,
+"w": 68,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "listbox",
+"text": "",
+"id": 1088,
+"x": 7,
+"y": 63,
+"w": 136,
+"h": 76,
+"style": 1344340305
+},
+{
+"cls": "static",
+"text": "You have modified the layouts listed below with a checkmark.",
+"id": 4294967295,
+"x": 7,
+"y": 7,
+"w": 134,
+"h": 18,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Do you want to save your modifications for future sessions?",
+"id": 4294967295,
+"x": 7,
+"y": 30,
+"w": 131,
+"h": 31,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Revert",
+"id": 1114,
+"x": 149,
+"y": 125,
+"w": 68,
+"h": 14,
+"style": 1073807360
+}
+]
+},
+"316": {
+"title": "Change Icon",
+"style": 2160591040,
+"rect": [
+0,
+0,
+376,
+159
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 258,
+"y": 138,
+"w": 56,
+"h": 15,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 314,
+"y": 138,
+"w": 56,
+"h": 15,
+"style": 1342242816
+},
+{
+"cls": "SysListView32",
+"text": "List2",
+"id": 1115,
+"x": 7,
+"y": 8,
+"w": 362,
+"h": 110,
+"style": 1350633484
+},
+{
+"cls": "edit",
+"text": "",
+"id": 3023,
+"x": 7,
+"y": 138,
+"w": 95,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "Name",
+"id": 4294967295,
+"x": 7,
+"y": 128,
+"w": 31,
+"h": 8,
+"style": 1342308352
+}
+]
+},
+"317": {
+"title": "Autodesk\u00ae Softimage\u00ae",
+"style": 2160066752,
+"rect": [
+34,
+22,
+115,
+34
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Autosave in progress.",
+"id": 3030,
+"x": 3,
+"y": 13,
+"w": 110,
+"h": 8,
+"style": 1342308353
+}
+]
+},
+"319": {
+"title": "Add Script Command",
+"style": 2160591552,
+"rect": [
+0,
+0,
+188,
+256
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "edit",
+"text": "",
+"id": 1133,
+"x": 5,
+"y": 15,
+"w": 120,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1134,
+"x": 5,
+"y": 40,
+"w": 120,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1171,
+"x": 5,
+"y": 65,
+"w": 120,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1136,
+"x": 5,
+"y": 90,
+"w": 100,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "...",
+"id": 1154,
+"x": 105,
+"y": 90,
+"w": 20,
+"h": 10,
+"style": 1342242816
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1135,
+"x": 5,
+"y": 115,
+"w": 120,
+"h": 30,
+"style": 1344340226
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1131,
+"x": 5,
+"y": 140,
+"w": 120,
+"h": 30,
+"style": 1344340226
+},
+{
+"cls": "button",
+"text": ";states=NEW_",
+"id": 1020,
+"x": 70,
+"y": 157,
+"w": 19,
+"h": 11,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": ";states=DELETE_",
+"id": 1021,
+"x": 89,
+"y": 157,
+"w": 12,
+"h": 11,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": ";states=UP_",
+"id": 1023,
+"x": 100,
+"y": 157,
+"w": 12,
+"h": 11,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": ";states=DOWN_",
+"id": 1022,
+"x": 112,
+"y": 157,
+"w": 12,
+"h": 11,
+"style": 1342242816
+},
+{
+"cls": "DSGrid",
+"text": "Parameters",
+"id": 202,
+"x": 5,
+"y": 171,
+"w": 120,
+"h": 66,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 130,
+"y": 7,
+"w": 54,
+"h": 16,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 130,
+"y": 25,
+"w": 54,
+"h": 16,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Help",
+"id": 4,
+"x": 130,
+"y": 43,
+"w": 54,
+"h": 16,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Parse Script",
+"id": 1132,
+"x": 130,
+"y": 140,
+"w": 54,
+"h": 16,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Command / Button Name",
+"id": 4294967295,
+"x": 5,
+"y": 5,
+"w": 120,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Script Command Name",
+"id": 4294967295,
+"x": 5,
+"y": 30,
+"w": 120,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Script Procedure",
+"id": 4294967295,
+"x": 5,
+"y": 130,
+"w": 120,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Parsing a script reveals the procedures in the script but may also execute global code in the script.",
+"id": 4294967295,
+"x": 130,
+"y": 171,
+"w": 54,
+"h": 65,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Script Language",
+"id": 4294967295,
+"x": 5,
+"y": 105,
+"w": 120,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Filename",
+"id": 4294967295,
+"x": 5,
+"y": 80,
+"w": 120,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Description",
+"id": 4294967295,
+"x": 5,
+"y": 55,
+"w": 120,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Parameters",
+"id": 1222,
+"x": 5,
+"y": 159,
+"w": 42,
+"h": 8,
+"style": 1342308352
+}
+]
+},
+"326": {
+"title": "Specify a folder for the preset list to search for presets",
+"style": 2160591040,
+"rect": [
+0,
+0,
+198,
+125
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 47,
+"y": 105,
+"w": 50,
+"h": 15,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 101,
+"y": 105,
+"w": 50,
+"h": 15,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Button Label:",
+"id": 4294967295,
+"x": 11,
+"y": 6,
+"w": 60,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Preset Folder:",
+"id": 4294967295,
+"x": 11,
+"y": 73,
+"w": 62,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1144,
+"x": 11,
+"y": 17,
+"w": 136,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1021,
+"x": 11,
+"y": 83,
+"w": 136,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "...",
+"id": 1143,
+"x": 150,
+"y": 84,
+"w": 23,
+"h": 13,
+"style": 1342242816
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1162,
+"x": 11,
+"y": 51,
+"w": 136,
+"h": 55,
+"style": 1344339971
+},
+{
+"cls": "static",
+"text": "Root Of Path To Preset Folder:",
+"id": 4294967295,
+"x": 11,
+"y": 40,
+"w": 142,
+"h": 10,
+"style": 1342308352
+}
+]
+},
+"327": {
+"title": "Customize Popup Menu Button",
+"style": 2160591040,
+"rect": [
+0,
+0,
+207,
+133
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "Close",
+"id": 1,
+"x": 136,
+"y": 111,
+"w": 70,
+"h": 15,
+"style": 1342242817
+},
+{
+"cls": "listbox",
+"text": "",
+"id": 1145,
+"x": 7,
+"y": 7,
+"w": 122,
+"h": 117,
+"style": 1352732929
+},
+{
+"cls": "button",
+"text": "Move Up",
+"id": 1146,
+"x": 136,
+"y": 7,
+"w": 70,
+"h": 15,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Move Down",
+"id": 1147,
+"x": 136,
+"y": 23,
+"w": 70,
+"h": 15,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Remove",
+"id": 1148,
+"x": 136,
+"y": 39,
+"w": 70,
+"h": 15,
+"style": 1342242816
+}
+]
+},
+"331": {
+"title": "Layout Explorer",
+"style": 2160591040,
+"rect": [
+0,
+0,
+471,
+351
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 414,
+"y": 7,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 414,
+"y": 24,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "SysTreeView32",
+"text": "Tree1",
+"id": 1147,
+"x": 7,
+"y": 7,
+"w": 398,
+"h": 319,
+"style": 1350631431
+},
+{
+"cls": "static",
+"text": "The DS Focus is believe to be :",
+"id": 65535,
+"x": 7,
+"y": 333,
+"w": 130,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "no where",
+"id": 1148,
+"x": 143,
+"y": 333,
+"w": 165,
+"h": 8,
+"style": 1342308352
+}
+]
+},
+"345": {
+"title": "Crash detected",
+"style": 2160591040,
+"rect": [
+0,
+0,
+494,
+199
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "Send email to Autodesk",
+"id": 1166,
+"x": 288,
+"y": 178,
+"w": 106,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 402,
+"y": 178,
+"w": 70,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1167,
+"x": 7,
+"y": 57,
+"w": 480,
+"h": 101,
+"style": 1353781444
+},
+{
+"cls": "static",
+"text": "A crash has just been experienced. In order to help our development team isolate the cause, please comment on what you were doing prior to the crash. All information that you can provide is useful",
+"id": 4294967295,
+"x": 7,
+"y": 7,
+"w": 480,
+"h": 19,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "IMPORTANT: Please use CTRL-Enter to change line",
+"id": 4294967295,
+"x": 7,
+"y": 32,
+"w": 255,
+"h": 14,
+"style": 1342308352
+}
+]
+},
+"346": {
+"title": "Package Add-On",
+"style": 2160590912,
+"rect": [
+0,
+0,
+429,
+202
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "listbox",
+"text": "",
+"id": 1179,
+"x": 9,
+"y": 27,
+"w": 66,
+"h": 133,
+"style": 1352728833
+},
+{
+"cls": "DSGrid",
+"text": ";tooltip=\"The Auxiliary Grid\"",
+"id": 1252,
+"x": 78,
+"y": 27,
+"w": 281,
+"h": 133,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Select &All",
+"id": 3028,
+"x": 364,
+"y": 28,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Select &None",
+"id": 3029,
+"x": 364,
+"y": 46,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Add",
+"id": 1253,
+"x": 364,
+"y": 85,
+"w": 50,
+"h": 14,
+"style": 1073807360
+},
+{
+"cls": "button",
+"text": "Remove",
+"id": 3032,
+"x": 364,
+"y": 104,
+"w": 50,
+"h": 14,
+"style": 1073807360
+},
+{
+"cls": "button",
+"text": "Browse",
+"id": 3033,
+"x": 364,
+"y": 123,
+"w": 50,
+"h": 14,
+"style": 1073807360
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1210,
+"x": 12,
+"y": 177,
+"w": 79,
+"h": 30,
+"style": 1344339971
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1221,
+"x": 126,
+"y": 177,
+"w": 55,
+"h": 12,
+"style": 1484849280
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1209,
+"x": 198,
+"y": 177,
+"w": 89,
+"h": 30,
+"style": 1344339971
+},
+{
+"cls": "button",
+"text": "&Help",
+"id": 9,
+"x": 312,
+"y": 167,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "A&dvanced",
+"id": 3030,
+"x": 366,
+"y": 167,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Cancel",
+"id": 2,
+"x": 312,
+"y": 183,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Package...",
+"id": 3027,
+"x": 366,
+"y": 183,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Items to Package",
+"id": 4294967295,
+"x": 7,
+"y": 2,
+"w": 415,
+"h": 161,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Type",
+"id": 1007,
+"x": 13,
+"y": 14,
+"w": 22,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Installation Sub-Directory",
+"id": 4294967295,
+"x": 7,
+"y": 167,
+"w": 179,
+"h": 25,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Items",
+"id": 1008,
+"x": 82,
+"y": 14,
+"w": 22,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Installation Default Destination",
+"id": 4294967295,
+"x": 193,
+"y": 167,
+"w": 106,
+"h": 25,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Custom:",
+"id": 1285,
+"x": 93,
+"y": 178,
+"w": 28,
+"h": 10,
+"style": 1476526080
+}
+]
+},
+"347": {
+"title": "Install Add-On",
+"style": 2160590912,
+"rect": [
+0,
+0,
+429,
+239
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "edit",
+"text": "",
+"id": 1182,
+"x": 76,
+"y": 8,
+"w": 285,
+"h": 12,
+"style": 1350631552
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1209,
+"x": 11,
+"y": 200,
+"w": 82,
+"h": 30,
+"style": 1344340227
+},
+{
+"cls": "listbox",
+"text": "",
+"id": 1183,
+"x": 9,
+"y": 53,
+"w": 65,
+"h": 123,
+"style": 1352728833
+},
+{
+"cls": "button",
+"text": "Select &All",
+"id": 3028,
+"x": 366,
+"y": 52,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Select &None",
+"id": 3029,
+"x": 366,
+"y": 70,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "A&dvanced...",
+"id": 3030,
+"x": 366,
+"y": 199,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Help",
+"id": 9,
+"x": 366,
+"y": 218,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Items to Install",
+"id": 4294967295,
+"x": 7,
+"y": 26,
+"w": 415,
+"h": 155,
+"style": 1342177287
+},
+{
+"cls": "button",
+"text": "&Install",
+"id": 3026,
+"x": 159,
+"y": 218,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "...",
+"id": 3027,
+"x": 364,
+"y": 8,
+"w": 16,
+"h": 13,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Type",
+"id": 1007,
+"x": 12,
+"y": 40,
+"w": 22,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Filename",
+"id": 4294967295,
+"x": 36,
+"y": 10,
+"w": 32,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Destination",
+"id": 4294967295,
+"x": 7,
+"y": 184,
+"w": 354,
+"h": 30,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Root Location",
+"id": 4294967295,
+"x": 12,
+"y": 192,
+"w": 46,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1212,
+"x": 96,
+"y": 200,
+"w": 261,
+"h": 12,
+"style": 1342244992
+},
+{
+"cls": "button",
+"text": "&Cancel",
+"id": 2,
+"x": 219,
+"y": 218,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Items",
+"id": 1008,
+"x": 77,
+"y": 40,
+"w": 22,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "DSGrid",
+"text": "Items",
+"id": 1255,
+"x": 77,
+"y": 53,
+"w": 284,
+"h": 122,
+"style": 1342242816
+}
+]
+},
+"360": {
+"title": "License connection lost",
+"style": 2160066752,
+"rect": [
+0,
+0,
+209,
+114
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Save your work before you close? \nAny unsaved work will be lost.",
+"id": 4294967295,
+"x": 13,
+"y": 20,
+"w": 182,
+"h": 22,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Quit Without Saving",
+"id": 1172,
+"x": 108,
+"y": 63,
+"w": 85,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Save As",
+"id": 1174,
+"x": 13,
+"y": 63,
+"w": 85,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "",
+"id": 4294967295,
+"x": 7,
+"y": 6,
+"w": 195,
+"h": 97,
+"style": 1342177287
+}
+]
+},
+"361": {
+"title": "Duplicate Object Found",
+"style": 2160066752,
+"rect": [
+0,
+0,
+202,
+82
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 21,
+"y": 48,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "&Skip",
+"id": 2,
+"x": 127,
+"y": 48,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1020,
+"x": 21,
+"y": 30,
+"w": 155,
+"h": 12,
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "Rename Object",
+"id": 4294967295,
+"x": 22,
+"y": 18,
+"w": 155,
+"h": 9,
+"style": 1342308352
+}
+]
+},
+"364": {
+"title": "Restore factory default layout",
+"style": 2160591040,
+"rect": [
+0,
+0,
+221,
+77
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 36,
+"y": 50,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 131,
+"y": 50,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "static",
+"text": "This will PERMANENTLY remove your personalised settings for this layout and restore the factory default. It cannot be undone. You will need to restart application to see effect. Continue ?",
+"id": 1192,
+"x": 8,
+"y": 11,
+"w": 204,
+"h": 38,
+"style": 1342308353
+}
+]
+},
+"365": {
+"title": "Autodesk\u00ae Softimage\u00ae New Features Tour",
+"style": 2160066752,
+"rect": [
+0,
+0,
+276,
+101
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "edit",
+"text": "",
+"id": 1205,
+"x": 17,
+"y": 47,
+"w": 191,
+"h": 16,
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "Browse",
+"id": 1201,
+"x": 219,
+"y": 47,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 158,
+"y": 80,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 219,
+"y": 80,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "The New Features Tour cannot be found on this system. Please specify the location where it can be found. Then, click OK.",
+"id": 65535,
+"x": 17,
+"y": 15,
+"w": 220,
+"h": 18,
+"style": 1342308352
+}
+]
+},
+"366": {
+"title": "Autodesk\u00ae Softimage\u00ae New Features Tour",
+"style": 2160591040,
+"rect": [
+0,
+0,
+328,
+143
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "&Yes",
+"id": 1,
+"x": 271,
+"y": 67,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "&No",
+"id": 2,
+"x": 271,
+"y": 87,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Don't display this message again.",
+"id": 1178,
+"x": 7,
+"y": 124,
+"w": 118,
+"h": 12,
+"style": 1342246147
+},
+{
+"cls": "static",
+"text": 368,
+"id": 4294967295,
+"x": 7,
+"y": 7,
+"w": 314,
+"h": 56,
+"style": 1342177294
+},
+{
+"cls": "static",
+"text": "Do you want to run the New Features Tour?",
+"id": 4294967295,
+"x": 15,
+"y": 65,
+"w": 140,
+"h": 13,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "You can also run the New Features Tour  later by choosing\n\"New Features Tour\" from the Help menu in Autodesk\u00ae Softimage\u00ae.",
+"id": 4294967295,
+"x": 15,
+"y": 87,
+"w": 247,
+"h": 20,
+"style": 1342308352
+}
+]
+},
+"372": {
+"title": "Autodesk\u00ae Softimage\u00ae New Features Tour",
+"style": 2160066752,
+"rect": [
+0,
+0,
+200,
+66
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "Yes",
+"id": 1,
+"x": 86,
+"y": 45,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "No",
+"id": 2,
+"x": 143,
+"y": 45,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Would you want Autodesk\u00ae Softimage\u00ae to remember the path of the New Features Tour for later use?",
+"id": 65535,
+"x": 19,
+"y": 17,
+"w": 167,
+"h": 20,
+"style": 1342308352
+}
+]
+},
+"374": {
+"title": "Autodesk\u00ae Softimage\u00ae New Features Tour",
+"style": 2160066752,
+"rect": [
+0,
+0,
+230,
+54
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "&Ok",
+"id": 1,
+"x": 89,
+"y": 32,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "static",
+"text": "The New Features Tour has been launched. Click on the 'Ok' button to continue with Autodesk\u00ae Softimage\u00ae.",
+"id": 65535,
+"x": 7,
+"y": 7,
+"w": 216,
+"h": 22,
+"style": 1342308352
+}
+]
+},
+"375": {
+"title": "UnInstall Add-On",
+"style": 2160590912,
+"rect": [
+0,
+0,
+462,
+255
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "&Uninstall",
+"id": 1213,
+"x": 344,
+"y": 182,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Un&register",
+"id": 1233,
+"x": 290,
+"y": 182,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Install...",
+"id": 1231,
+"x": 398,
+"y": 182,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "DSGrid",
+"text": "Addon",
+"id": 1246,
+"x": 11,
+"y": 22,
+"w": 441,
+"h": 159,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Properties...",
+"id": 1217,
+"x": 399,
+"y": 182,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Done",
+"id": 1,
+"x": 405,
+"y": 238,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "&Help",
+"id": 9,
+"x": 405,
+"y": 222,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "StaticTop1\nStaticBottom1",
+"id": 1250,
+"x": 37,
+"y": 201,
+"w": 329,
+"h": 16,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "",
+"id": 1251,
+"x": 11,
+"y": 204,
+"w": 21,
+"h": 20,
+"style": 1342177795
+},
+{
+"cls": "static",
+"text": "Static",
+"id": 1265,
+"x": 12,
+"y": 9,
+"w": 283,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "StaticTop2\nStaticBottom2",
+"id": 1252,
+"x": 37,
+"y": 218,
+"w": 329,
+"h": 16,
+"style": 1342308352
+}
+]
+},
+"376": {
+"title": "Add-On Information",
+"style": 2160590912,
+"rect": [
+0,
+0,
+375,
+321
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "edit",
+"text": "",
+"id": 1225,
+"x": 195,
+"y": 18,
+"w": 166,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1242,
+"x": 195,
+"y": 36,
+"w": 166,
+"h": 29,
+"style": 1344340227
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1224,
+"x": 63,
+"y": 16,
+"w": 80,
+"h": 14,
+"style": 1350633600
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1223,
+"x": 63,
+"y": 33,
+"w": 80,
+"h": 14,
+"style": 1350633600
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1236,
+"x": 63,
+"y": 71,
+"w": 210,
+"h": 24,
+"style": 1352733700
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1235,
+"x": 63,
+"y": 97,
+"w": 210,
+"h": 43,
+"style": 1352733700
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1238,
+"x": 63,
+"y": 142,
+"w": 210,
+"h": 24,
+"style": 1352733700
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1226,
+"x": 63,
+"y": 184,
+"w": 210,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1228,
+"x": 63,
+"y": 202,
+"w": 210,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1227,
+"x": 63,
+"y": 219,
+"w": 210,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1232,
+"x": 63,
+"y": 273,
+"w": 184,
+"h": 14,
+"style": 1216413824
+},
+{
+"cls": "button",
+"text": "...",
+"id": 1233,
+"x": 253,
+"y": 273,
+"w": 19,
+"h": 14,
+"style": 1208025088
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1237,
+"x": 63,
+"y": 256,
+"w": 210,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "listbox",
+"text": "",
+"id": 1229,
+"x": 290,
+"y": 73,
+"w": 71,
+"h": 52,
+"style": 1352730961
+},
+{
+"cls": "listbox",
+"text": "",
+"id": 1243,
+"x": 290,
+"y": 153,
+"w": 71,
+"h": 79,
+"style": 1352730961
+},
+{
+"cls": "button",
+"text": "&Done",
+"id": 1,
+"x": 162,
+"y": 300,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Help",
+"id": 9,
+"x": 318,
+"y": 300,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Version",
+"id": 65535,
+"x": 7,
+"y": 7,
+"w": 142,
+"h": 49,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Softimage Version",
+"id": 65535,
+"x": 12,
+"y": 19,
+"w": 38,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Add-On Version",
+"id": 65535,
+"x": 12,
+"y": 36,
+"w": 50,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Description",
+"id": 65535,
+"x": 7,
+"y": 58,
+"w": 273,
+"h": 112,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Author Name",
+"id": 65535,
+"x": 13,
+"y": 188,
+"w": 42,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Company",
+"id": 65535,
+"x": 13,
+"y": 220,
+"w": 30,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Author",
+"id": 65535,
+"x": 7,
+"y": 173,
+"w": 272,
+"h": 66,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Thumbnail",
+"id": 65535,
+"x": 13,
+"y": 276,
+"w": 34,
+"h": 8,
+"style": 1073872896
+},
+{
+"cls": "button",
+"text": "Platforms",
+"id": 65535,
+"x": 284,
+"y": 58,
+"w": 84,
+"h": 74,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Description",
+"id": 65535,
+"x": 13,
+"y": 102,
+"w": 36,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "URL",
+"id": 65535,
+"x": 13,
+"y": 258,
+"w": 16,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Author E-mail",
+"id": 65535,
+"x": 13,
+"y": 204,
+"w": 42,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Summary",
+"id": 65535,
+"x": 13,
+"y": 80,
+"w": 30,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Usage",
+"id": 65535,
+"x": 13,
+"y": 147,
+"w": 22,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Category",
+"id": 65535,
+"x": 162,
+"y": 38,
+"w": 29,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Languages",
+"id": 65535,
+"x": 284,
+"y": 139,
+"w": 84,
+"h": 99,
+"style": 1342177287
+},
+{
+"cls": "button",
+"text": "General",
+"id": 65535,
+"x": 157,
+"y": 7,
+"w": 211,
+"h": 49,
+"style": 1342177287
+},
+{
+"cls": "button",
+"text": "Additional Info",
+"id": 65535,
+"x": 7,
+"y": 244,
+"w": 271,
+"h": 49,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Title",
+"id": 65535,
+"x": 162,
+"y": 20,
+"w": 30,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "(Ctrl+Enter for new line)",
+"id": 65535,
+"x": 198,
+"y": 63,
+"w": 74,
+"h": 8,
+"style": 1342308352
+}
+]
+},
+"383": {
+"title": "Events",
+"style": 2160591040,
+"rect": [
+0,
+0,
+393,
+218
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 83,
+"y": 191,
+"w": 68,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "DSGrid",
+"text": "Event",
+"id": 1256,
+"x": 19,
+"y": 9,
+"w": 353,
+"h": 134,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Cancel",
+"id": 2,
+"x": 163,
+"y": 191,
+"w": 68,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "",
+"id": 1261,
+"x": 20,
+"y": 153,
+"w": 353,
+"h": 27,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "&Help",
+"id": 9,
+"x": 243,
+"y": 191,
+"w": 68,
+"h": 14,
+"style": 1342242816
+}
+]
+},
+"394": {
+"title": "Property Page",
+"style": 1220542528,
+"rect": [
+0,
+0,
+210,
+154
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "static",
+"text": "TODO: layout property page",
+"id": 65535,
+"x": 60,
+"y": 73,
+"w": 90,
+"h": 8,
+"style": 1342308352
+}
+]
+},
+"397": {
+"title": "Autodesk\u00ae Softimage\u00ae Foundation",
+"style": 2160066752,
+"rect": [
+0,
+0,
+311,
+129
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "edit",
+"text": "",
+"id": 1289,
+"x": 113,
+"y": 57,
+"w": 177,
+"h": 12,
+"style": 1350631552
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1021,
+"x": 113,
+"y": 77,
+"w": 177,
+"h": 12,
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 54,
+"y": 108,
+"w": 58,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Back",
+"id": 1284,
+"x": 127,
+"y": 108,
+"w": 58,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Request key",
+"id": 1231,
+"x": 200,
+"y": 108,
+"w": 58,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Note: If you have a retail package, please note that the registration code on the registration card in the box is not a license key. If you have not registered on softimage.com to obtain your license key, please click on \"Request key\".",
+"id": 65535,
+"x": 12,
+"y": 11,
+"w": 285,
+"h": 32,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Enter the email registered to:",
+"id": 65535,
+"x": 16,
+"y": 59,
+"w": 94,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Enter your license key",
+"id": 65535,
+"x": 16,
+"y": 79,
+"w": 72,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Registration",
+"id": 65535,
+"x": 12,
+"y": 45,
+"w": 285,
+"h": 55,
+"style": 1342177287
+}
+]
+},
+"398": {
+"title": "Autodesk\u00ae Softimage\u00ae Foundation",
+"style": 2160066752,
+"rect": [
+0,
+0,
+362,
+130
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "Purchase online",
+"id": 1287,
+"x": 13,
+"y": 108,
+"w": 74,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Request key",
+"id": 1231,
+"x": 91,
+"y": 108,
+"w": 74,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Enter key",
+"id": 3,
+"x": 169,
+"y": 108,
+"w": 74,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "",
+"id": 1286,
+"x": 247,
+"y": 108,
+"w": 74,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "If you have already purchased a boxed copy from a retailer, please click on \"Request key\" to request a license key.\n\nIf you have already purchased a copy and have received your license key via email, please click on \"Enter key\".",
+"id": 65535,
+"x": 13,
+"y": 56,
+"w": 307,
+"h": 47,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "If you would like to purchase a copy of Autodesk\u00ae Softimage\u00ae Foundation, please click \"Purchase online\" to obtain your license key.",
+"id": 65535,
+"x": 13,
+"y": 31,
+"w": 307,
+"h": 18,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "",
+"id": 1288,
+"x": 13,
+"y": 6,
+"w": 307,
+"h": 19,
+"style": 1342308352
+}
+]
+},
+"403": {
+"title": "Manage Layouts, Views, Shelves and Toolbars",
+"style": 2160591040,
+"rect": [
+0,
+0,
+301,
+315
+],
+"font": [
+9,
+"Tahoma"
+],
+"controls": [
+{
+"cls": "listbox",
+"text": "",
+"id": 1291,
+"x": 12,
+"y": 36,
+"w": 273,
+"h": 61,
+"style": 1352859729
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1294,
+"x": 12,
+"y": 93,
+"w": 273,
+"h": 14,
+"style": 1350633600
+},
+{
+"cls": "listbox",
+"text": "",
+"id": 1292,
+"x": 12,
+"y": 125,
+"w": 273,
+"h": 61,
+"style": 1352728657
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1295,
+"x": 12,
+"y": 182,
+"w": 273,
+"h": 14,
+"style": 1350633600
+},
+{
+"cls": "listbox",
+"text": "",
+"id": 1293,
+"x": 12,
+"y": 214,
+"w": 273,
+"h": 61,
+"style": 1352728657
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1296,
+"x": 12,
+"y": 271,
+"w": 273,
+"h": 14,
+"style": 1350633600
+},
+{
+"cls": "button",
+"text": "Delete",
+"id": 1,
+"x": 184,
+"y": 294,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Close",
+"id": 2,
+"x": 244,
+"y": 294,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "  Layouts  ",
+"id": 1297,
+"x": 7,
+"y": 26,
+"w": 287,
+"h": 85,
+"style": 1342177287
+},
+{
+"cls": "button",
+"text": "  Views (incl. Shelves)  ",
+"id": 1298,
+"x": 7,
+"y": 115,
+"w": 287,
+"h": 85,
+"style": 1342177287
+},
+{
+"cls": "button",
+"text": "  Toolbars (old)  ",
+"id": 1299,
+"x": 7,
+"y": 204,
+"w": 287,
+"h": 85,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Place a checkmark next to each of the layouts, views and ds toolbars that you wish to delete.",
+"id": 1300,
+"x": 7,
+"y": 7,
+"w": 287,
+"h": 17,
+"style": 1342308352
+}
+]
+},
+"404": {
+"title": "Customize Button",
+"style": 2160591048,
+"rect": [
+0,
+0,
+208,
+121
+],
+"font": [
+8,
+"MS Shell Dlg"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 150,
+"y": 12,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 150,
+"y": 33,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1001,
+"x": 72,
+"y": 42,
+"w": 51,
+"h": 14,
+"style": 1484849280
+},
+{
+"cls": "button",
+"text": "User Button Size",
+"id": 4294967295,
+"x": 6,
+"y": 6,
+"w": 138,
+"h": 59,
+"style": 1342177287
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1021,
+"x": 72,
+"y": 21,
+"w": 51,
+"h": 14,
+"style": 1484849280
+},
+{
+"cls": "button",
+"text": "Width:",
+"id": 1178,
+"x": 18,
+"y": 24,
+"w": 48,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Height:",
+"id": 1281,
+"x": 18,
+"y": 44,
+"w": 48,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1000,
+"x": 72,
+"y": 75,
+"w": 72,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "Button Label:",
+"id": 1002,
+"x": 9,
+"y": 78,
+"w": 59,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "static",
+"text": "Bitmap:",
+"id": 4294967295,
+"x": 22,
+"y": 99,
+"w": 46,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1035,
+"x": 72,
+"y": 97,
+"w": 72,
+"h": 14,
+"style": 1350631552
+}
+]
+},
+"405": {
+"title": "Interaction Mode",
+"style": 2428502208,
+"rect": [
+0,
+0,
+219,
+70
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 97,
+"y": 46,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 156,
+"y": 46,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Set my mouse and keyboard interaction to:",
+"id": 4294967295,
+"x": 10,
+"y": 10,
+"w": 181,
+"h": 15,
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 3036,
+"x": 10,
+"y": 25,
+"w": 96,
+"h": 30,
+"style": 1344471043
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 3037,
+"x": 116,
+"y": 25,
+"w": 90,
+"h": 30,
+"style": 1344471043
+}
+]
+},
+"406": {
+"title": "Customize Button",
+"style": 2160591040,
+"rect": [
+0,
+0,
+259,
+239
+],
+"font": [
+10,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 198,
+"y": 190,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 198,
+"y": 210,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1001,
+"x": 72,
+"y": 150,
+"w": 51,
+"h": 12,
+"style": 1484849280
+},
+{
+"cls": "button",
+"text": "User Button Size",
+"id": 4294967295,
+"x": 6,
+"y": 120,
+"w": 162,
+"h": 53,
+"style": 1342177287
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1021,
+"x": 72,
+"y": 132,
+"w": 51,
+"h": 12,
+"style": 1484849280
+},
+{
+"cls": "button",
+"text": "Width:",
+"id": 1178,
+"x": 18,
+"y": 133,
+"w": 48,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Height:",
+"id": 1281,
+"x": 18,
+"y": 151,
+"w": 48,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1000,
+"x": 72,
+"y": 179,
+"w": 96,
+"h": 12,
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "Button Label:",
+"id": 1002,
+"x": 7,
+"y": 180,
+"w": 61,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Script Commands",
+"id": 4294967295,
+"x": 6,
+"y": 6,
+"w": 246,
+"h": 90,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Scripting Language:",
+"id": 4294967295,
+"x": 66,
+"y": 105,
+"w": 96,
+"h": 12,
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1003,
+"x": 168,
+"y": 102,
+"w": 84,
+"h": 84,
+"style": 1344340227
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1004,
+"x": 12,
+"y": 18,
+"w": 234,
+"h": 72,
+"style": 1352732804
+},
+{
+"cls": "button",
+"text": "Run",
+"id": 1231,
+"x": 198,
+"y": 126,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Tooltip:",
+"id": 4294967295,
+"x": 17,
+"y": 199,
+"w": 47,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1005,
+"x": 72,
+"y": 197,
+"w": 96,
+"h": 12,
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "Bitmap:",
+"id": 4294967295,
+"x": 17,
+"y": 217,
+"w": 45,
+"h": 9,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1035,
+"x": 72,
+"y": 215,
+"w": 96,
+"h": 12,
+"style": 1350631552
+}
+]
+},
+"410": {
+"title": "Migrate Preferences",
+"style": 2160591048,
+"rect": [
+0,
+0,
+442,
+202
+],
+"font": [
+8,
+"MS Shell Dlg"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 166,
+"y": 181,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 224,
+"y": 181,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "listbox",
+"text": "",
+"id": 3034,
+"x": 7,
+"y": 19,
+"w": 428,
+"h": 157,
+"style": 1353777411
+},
+{
+"cls": "static",
+"text": "Please select a version to migrate from:",
+"id": 4294967295,
+"x": 7,
+"y": 7,
+"w": 128,
+"h": 8,
+"style": 1342308352
+}
+]
+},
+"429": {
+"title": "OpenGL Context Lost",
+"style": 2160066754,
+"rect": [
+0,
+0,
+209,
+134
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "static",
+"text": "The OpenGL context has been lost and Softimage will have to be restarted. You can choose to save your work now before the application terminates. You may also want to disable HQV in the Display Preferences before re-loading.",
+"id": 4294967295,
+"x": 13,
+"y": 20,
+"w": 182,
+"h": 42,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Abort the application",
+"id": 4294967295,
+"x": 13,
+"y": 95,
+"w": 66,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Abort",
+"id": 1172,
+"x": 110,
+"y": 92,
+"w": 85,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Save As",
+"id": 1174,
+"x": 110,
+"y": 69,
+"w": 85,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Save your work",
+"id": 4294967295,
+"x": 13,
+"y": 72,
+"w": 50,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "",
+"id": 4294967295,
+"x": 7,
+"y": 6,
+"w": 195,
+"h": 117,
+"style": 1342177287
+}
+]
+}
+}
 },
 "mcp.dll": {
 "menus": {
@@ -3787,7 +8640,615 @@
 }
 ]
 },
-"strings": {}
+"strings": {},
+"dialogs": {
+"220": {
+"title": "Current Time",
+"style": 2429026496,
+"rect": [
+0,
+0,
+186,
+95
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 129,
+"y": 18,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 129,
+"y": 47,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "FRAME",
+"id": 65535,
+"x": 40,
+"y": 20,
+"w": 51,
+"h": 9,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "SECOND",
+"id": 65535,
+"x": 40,
+"y": 42,
+"w": 51,
+"h": 9,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "MILLISECOND",
+"id": 65535,
+"x": 40,
+"y": 64,
+"w": 51,
+"h": 9,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "",
+"id": 282,
+"x": 15,
+"y": 15,
+"w": 15,
+"h": 20,
+"style": 1342308361
+},
+{
+"cls": "button",
+"text": "",
+"id": 283,
+"x": 15,
+"y": 37,
+"w": 15,
+"h": 20,
+"style": 1342177289
+},
+{
+"cls": "button",
+"text": "",
+"id": 284,
+"x": 15,
+"y": 59,
+"w": 15,
+"h": 20,
+"style": 1342177289
+}
+]
+},
+"346": {
+"title": "",
+"style": 1442840640,
+"rect": [
+0,
+0,
+87,
+56
+],
+"font": [
+8,
+"Arial"
+],
+"controls": [
+{
+"cls": "{E1DD70E6-BB54-11D1-BC93-005345000000}",
+"text": "",
+"id": 9901,
+"x": 0,
+"y": 0,
+"w": 86,
+"h": 55,
+"style": 1342242816
+}
+]
+},
+"489": {
+"title": "set from code using dictionnary",
+"style": 2160066754,
+"rect": [
+0,
+0,
+225,
+62
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 26,
+"y": 41,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "static",
+"text": "set from code using dictionnary",
+"id": 329,
+"x": 7,
+"y": 7,
+"w": 211,
+"h": 29,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Help",
+"id": 9,
+"x": 131,
+"y": 41,
+"w": 50,
+"h": 14,
+"style": 1342242816
+}
+]
+},
+"9100": {
+"title": "",
+"style": 1442840640,
+"rect": [
+0,
+0,
+88,
+36
+],
+"font": [
+8,
+"Arial"
+],
+"controls": [
+{
+"cls": "combobox",
+"text": "",
+"id": 300,
+"x": 3,
+"y": 15,
+"w": 79,
+"h": 49,
+"style": 1344339971
+},
+{
+"cls": "{E1DD70E6-BB54-11D1-BC93-005345000000}",
+"text": "",
+"id": 9101,
+"x": 0,
+"y": 0,
+"w": 88,
+"h": 36,
+"style": 1342242816
+}
+]
+},
+"9200": {
+"title": "",
+"style": 1442840640,
+"rect": [
+0,
+0,
+90,
+163
+],
+"font": [
+8,
+"Arial"
+],
+"controls": [
+{
+"cls": "edit",
+"text": "",
+"id": 267,
+"x": 2,
+"y": 100,
+"w": 84,
+"h": 12,
+"style": 1350631552
+},
+{
+"cls": "edit",
+"text": "",
+"id": 269,
+"x": 2,
+"y": 113,
+"w": 67,
+"h": 12,
+"style": 1350631552
+},
+{
+"cls": "{E1DD70E6-BB54-11D1-BC93-005345000000}",
+"text": "",
+"id": 9201,
+"x": 0,
+"y": 0,
+"w": 90,
+"h": 163,
+"style": 1342242816
+}
+]
+},
+"9400": {
+"title": "",
+"style": 1442840640,
+"rect": [
+0,
+0,
+86,
+195
+],
+"font": [
+8,
+"Arial"
+],
+"controls": [
+{
+"cls": "edit",
+"text": "",
+"id": 600,
+"x": 3,
+"y": 17,
+"w": 44,
+"h": 12,
+"style": 1350770816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 602,
+"x": 3,
+"y": 29,
+"w": 44,
+"h": 12,
+"style": 1350639744
+},
+{
+"cls": "edit",
+"text": "",
+"id": 601,
+"x": 3,
+"y": 41,
+"w": 44,
+"h": 12,
+"style": 1350639744
+},
+{
+"cls": "edit",
+"text": "",
+"id": 603,
+"x": 3,
+"y": 57,
+"w": 44,
+"h": 12,
+"style": 1350770816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 604,
+"x": 3,
+"y": 69,
+"w": 44,
+"h": 12,
+"style": 1350639744
+},
+{
+"cls": "edit",
+"text": "",
+"id": 605,
+"x": 3,
+"y": 81,
+"w": 44,
+"h": 12,
+"style": 1350639744
+},
+{
+"cls": "edit",
+"text": "",
+"id": 606,
+"x": 3,
+"y": 98,
+"w": 44,
+"h": 12,
+"style": 1350770816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 607,
+"x": 3,
+"y": 110,
+"w": 44,
+"h": 12,
+"style": 1350639744
+},
+{
+"cls": "edit",
+"text": "",
+"id": 608,
+"x": 3,
+"y": 122,
+"w": 44,
+"h": 12,
+"style": 1350639744
+},
+{
+"cls": "{E1DD70E6-BB54-11D1-BC93-005345000000}",
+"text": "",
+"id": 316,
+"x": 0,
+"y": 0,
+"w": 86,
+"h": 192,
+"style": 1342177280
+}
+]
+},
+"9500": {
+"title": "",
+"style": 1442840640,
+"rect": [
+0,
+0,
+87,
+55
+],
+"font": [
+8,
+"Arial"
+],
+"controls": [
+{
+"cls": "{E1DD70E6-BB54-11D1-BC93-005345000000}",
+"text": "",
+"id": 317,
+"x": 0,
+"y": 0,
+"w": 87,
+"h": 54,
+"style": 1342242816
+}
+]
+},
+"9700": {
+"title": "",
+"style": 1442840640,
+"rect": [
+0,
+0,
+287,
+22
+],
+"font": [
+8,
+"Arial"
+],
+"controls": [
+{
+"cls": "edit",
+"text": "",
+"id": 264,
+"x": 235,
+"y": 5,
+"w": 29,
+"h": 12,
+"style": 1350639744
+},
+{
+"cls": "{E1DD70E6-BB54-11D1-BC93-005345000000}",
+"text": "",
+"id": 9701,
+"x": 0,
+"y": 0,
+"w": 287,
+"h": 22,
+"style": 1342242816
+}
+]
+},
+"9800": {
+"title": "",
+"style": 1442840640,
+"rect": [
+0,
+0,
+256,
+27
+],
+"font": [
+8,
+"Arial"
+],
+"controls": [
+{
+"cls": "edit",
+"text": "",
+"id": 285,
+"x": 68,
+"y": 15,
+"w": 141,
+"h": 12,
+"style": 1350631552
+},
+{
+"cls": "{E1DD70E6-BB54-11D1-BC93-005345000000}",
+"text": "",
+"id": 9801,
+"x": 0,
+"y": 0,
+"w": 256,
+"h": 27,
+"style": 1342242816
+}
+]
+},
+"10000": {
+"title": "",
+"style": 1442840640,
+"rect": [
+0,
+0,
+87,
+33
+],
+"font": [
+8,
+"Arial"
+],
+"controls": [
+{
+"cls": "{E1DD70E6-BB54-11D1-BC93-005345000000}",
+"text": "",
+"id": 10001,
+"x": 0,
+"y": 0,
+"w": 86,
+"h": 33,
+"style": 1342242816
+}
+]
+},
+"11001": {
+"title": "",
+"style": 1442840640,
+"rect": [
+0,
+0,
+134,
+69
+],
+"font": [
+8,
+"Arial"
+],
+"controls": [
+{
+"cls": "edit",
+"text": "",
+"id": 600,
+"x": 2,
+"y": 14,
+"w": 36,
+"h": 12,
+"style": 1350770816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 602,
+"x": 38,
+"y": 14,
+"w": 36,
+"h": 12,
+"style": 1350639744
+},
+{
+"cls": "edit",
+"text": "",
+"id": 601,
+"x": 74,
+"y": 14,
+"w": 36,
+"h": 12,
+"style": 1350639744
+},
+{
+"cls": "edit",
+"text": "",
+"id": 603,
+"x": 2,
+"y": 28,
+"w": 36,
+"h": 12,
+"style": 1350770816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 604,
+"x": 38,
+"y": 28,
+"w": 36,
+"h": 12,
+"style": 1350639744
+},
+{
+"cls": "edit",
+"text": "",
+"id": 605,
+"x": 74,
+"y": 28,
+"w": 36,
+"h": 12,
+"style": 1350639744
+},
+{
+"cls": "edit",
+"text": "",
+"id": 606,
+"x": 2,
+"y": 41,
+"w": 36,
+"h": 12,
+"style": 1350770816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 607,
+"x": 38,
+"y": 41,
+"w": 36,
+"h": 12,
+"style": 1350639744
+},
+{
+"cls": "edit",
+"text": "",
+"id": 608,
+"x": 74,
+"y": 41,
+"w": 36,
+"h": 12,
+"style": 1350639744
+},
+{
+"cls": "{E1DD70E6-BB54-11D1-BC93-005345000000}",
+"text": "",
+"id": 316,
+"x": 0,
+"y": 0,
+"w": 133,
+"h": 69,
+"style": 1342177280
+}
+]
+}
+}
 },
 "vm.dll": {
 "menus": {
@@ -4040,7 +9501,653 @@
 }
 ]
 },
-"strings": {}
+"strings": {},
+"dialogs": {
+"100": {
+"title": "",
+"style": 1073741888,
+"rect": [
+0,
+0,
+127,
+27
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "Button1",
+"id": 205,
+"x": 41,
+"y": 4,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Static",
+"id": 65535,
+"x": 0,
+"y": 11,
+"w": 19,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Static",
+"id": 65535,
+"x": 93,
+"y": 9,
+"w": 19,
+"h": 8,
+"style": 1342308352
+}
+]
+},
+"274": {
+"title": "Interface Test Dialog",
+"style": 2160591040,
+"rect": [
+0,
+0,
+202,
+113
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "Scene Explorer",
+"id": 207,
+"x": 34,
+"y": 18,
+"w": 64,
+"h": 10,
+"style": 1342308361
+},
+{
+"cls": "button",
+"text": "Schematic View",
+"id": 208,
+"x": 34,
+"y": 34,
+"w": 67,
+"h": 10,
+"style": 1476526089
+},
+{
+"cls": "button",
+"text": "FCurve Editor",
+"id": 209,
+"x": 34,
+"y": 50,
+"w": 59,
+"h": 10,
+"style": 1342308361
+},
+{
+"cls": "button",
+"text": "Viewer",
+"id": 210,
+"x": 34,
+"y": 67,
+"w": 37,
+"h": 10,
+"style": 1342308361
+},
+{
+"cls": "button",
+"text": "Client Selection",
+"id": 65535,
+"x": 7,
+"y": 7,
+"w": 188,
+"h": 76,
+"style": 1342177287
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 43,
+"y": 92,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 116,
+"y": 92,
+"w": 50,
+"h": 14,
+"style": 1342242817
+}
+]
+},
+"275": {
+"title": "Interface Test Dialog",
+"style": 2160591040,
+"rect": [
+0,
+0,
+194,
+117
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "View Point",
+"id": 208,
+"x": 17,
+"y": 20,
+"w": 49,
+"h": 10,
+"style": 1342308361
+},
+{
+"cls": "button",
+"text": "Monitor",
+"id": 210,
+"x": 17,
+"y": 37,
+"w": 39,
+"h": 10,
+"style": 1342308361
+},
+{
+"cls": "button",
+"text": "Scene Camera",
+"id": 209,
+"x": 17,
+"y": 54,
+"w": 63,
+"h": 10,
+"style": 1342308361
+},
+{
+"cls": "button",
+"text": "Spot Light",
+"id": 211,
+"x": 17,
+"y": 71,
+"w": 48,
+"h": 10,
+"style": 1342308361
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 212,
+"x": 104,
+"y": 19,
+"w": 76,
+"h": 30,
+"style": 1344340226
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 213,
+"x": 103,
+"y": 51,
+"w": 76,
+"h": 30,
+"style": 1344340226
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 215,
+"x": 103,
+"y": 71,
+"w": 76,
+"h": 30,
+"style": 1344340226
+},
+{
+"cls": "button",
+"text": "Camera Selection",
+"id": 65535,
+"x": 7,
+"y": 7,
+"w": 180,
+"h": 83,
+"style": 1342177287
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 36,
+"y": 96,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 106,
+"y": 96,
+"w": 50,
+"h": 14,
+"style": 1342242817
+}
+]
+},
+"386": {
+"title": "Capture Viewport",
+"style": 2160593088,
+"rect": [
+0,
+0,
+312,
+244
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "static",
+"text": "&Output Filename",
+"id": 65535,
+"x": 7,
+"y": 5,
+"w": 55,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 213,
+"x": 7,
+"y": 16,
+"w": 276,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "...",
+"id": 230,
+"x": 288,
+"y": 17,
+"w": 17,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "&Format",
+"id": 65535,
+"x": 7,
+"y": 39,
+"w": 34,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 217,
+"x": 42,
+"y": 37,
+"w": 104,
+"h": 81,
+"style": 1344340227
+},
+{
+"cls": "button",
+"text": "Codec...",
+"id": 240,
+"x": 154,
+"y": 36,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "&Padding",
+"id": 218,
+"x": 214,
+"y": 39,
+"w": 34,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 220,
+"x": 249,
+"y": 37,
+"w": 57,
+"h": 45,
+"style": 1344339970
+},
+{
+"cls": "button",
+"text": "Picture Settings",
+"id": 65535,
+"x": 7,
+"y": 58,
+"w": 298,
+"h": 73,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Image &Size:",
+"id": 231,
+"x": 21,
+"y": 75,
+"w": 50,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 223,
+"x": 78,
+"y": 73,
+"w": 40,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "x",
+"id": 232,
+"x": 127,
+"y": 76,
+"w": 8,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 224,
+"x": 142,
+"y": 73,
+"w": 40,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "&Scale",
+"id": 233,
+"x": 195,
+"y": 75,
+"w": 28,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 226,
+"x": 224,
+"y": 73,
+"w": 57,
+"h": 64,
+"style": 1344339971
+},
+{
+"cls": "static",
+"text": "Pixel &Ratio:",
+"id": 234,
+"x": 21,
+"y": 97,
+"w": 50,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 225,
+"x": 78,
+"y": 94,
+"w": 40,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "&User Pixel Ratio",
+"id": 241,
+"x": 142,
+"y": 96,
+"w": 86,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Record Audio Track",
+"id": 239,
+"x": 21,
+"y": 115,
+"w": 99,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "static",
+"text": "Picture Ratio :",
+"id": 235,
+"x": 210,
+"y": 116,
+"w": 47,
+"h": 8,
+"style": 1073872896
+},
+{
+"cls": "edit",
+"text": "",
+"id": 227,
+"x": 260,
+"y": 113,
+"w": 40,
+"h": 14,
+"style": 1082198144
+},
+{
+"cls": "button",
+"text": "&Sequence",
+"id": 65535,
+"x": 7,
+"y": 135,
+"w": 229,
+"h": 49,
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "&From",
+"id": 65535,
+"x": 21,
+"y": 152,
+"w": 28,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 214,
+"x": 49,
+"y": 150,
+"w": 40,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "To",
+"id": 65535,
+"x": 96,
+"y": 153,
+"w": 19,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 215,
+"x": 115,
+"y": 150,
+"w": 40,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "Step",
+"id": 65535,
+"x": 162,
+"y": 152,
+"w": 16,
+"h": 8,
+"style": 1073872896
+},
+{
+"cls": "edit",
+"text": "",
+"id": 216,
+"x": 185,
+"y": 150,
+"w": 40,
+"h": 14,
+"style": 1082196096
+},
+{
+"cls": "button",
+"text": "Remember Last Sequence",
+"id": 259,
+"x": 49,
+"y": 169,
+"w": 134,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Return to Current Frame When Done",
+"id": 392,
+"x": 8,
+"y": 190,
+"w": 130,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Launch Flipbook When Done",
+"id": 221,
+"x": 8,
+"y": 201,
+"w": 110,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "&Play Videos With Native Players",
+"id": 222,
+"x": 8,
+"y": 212,
+"w": 120,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "OpenGL &Anti-Aliasing (multi-pass)",
+"id": 238,
+"x": 8,
+"y": 223,
+"w": 145,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "static",
+"text": "Frame Rate:",
+"id": 237,
+"x": 142,
+"y": 191,
+"w": 42,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 236,
+"x": 196,
+"y": 189,
+"w": 40,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 247,
+"y": 146,
+"w": 53,
+"h": 16,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 247,
+"y": 166,
+"w": 53,
+"h": 16,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Help",
+"id": 9,
+"x": 247,
+"y": 190,
+"w": 53,
+"h": 16,
+"style": 1342242816
+}
+]
+}
+}
 },
 "viewinteraction.dll": {
 "menus": {
@@ -4611,15 +10718,141 @@
 }
 ]
 },
-"strings": {}
+"strings": {},
+"dialogs": {
+"337": {
+"title": "Polygon Winding",
+"style": 2160591040,
+"rect": [
+0,
+0,
+226,
+121
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "Invert Others",
+"id": 1000,
+"x": 12,
+"y": 100,
+"w": 56,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 156,
+"y": 100,
+"w": 58,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "This operation will connect two polygons, each with different edge-winding orientation, resulting in a double-boundary edge. ",
+"id": 65535,
+"x": 8,
+"y": 4,
+"w": 204,
+"h": 20,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "You can either :",
+"id": 65535,
+"x": 8,
+"y": 39,
+"w": 56,
+"h": 11,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Create this polygon and Invert Other conflicting polygons",
+"id": 65535,
+"x": 12,
+"y": 51,
+"w": 189,
+"h": 11,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Create this polygon with Double Edges",
+"id": 65535,
+"x": 12,
+"y": 64,
+"w": 189,
+"h": 11,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Cancel the operation (ESC)",
+"id": 65535,
+"x": 12,
+"y": 78,
+"w": 189,
+"h": 10,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Double Edges",
+"id": 3,
+"x": 84,
+"y": 100,
+"w": 60,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "The default behaviour can be set in the User Preferences",
+"id": 65535,
+"x": 8,
+"y": 25,
+"w": 196,
+"h": 8,
+"style": 1342308352
+}
+]
+}
+}
 },
 "toolbar.dll": {
 "menus": {},
-"strings": {}
+"strings": {},
+"dialogs": {
+"103": {
+"title": "",
+"style": 1174405184,
+"rect": [
+0,
+0,
+330,
+16
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": []
+}
+}
 },
 "prefs.dll": {
 "menus": {},
-"strings": {}
+"strings": {},
+"dialogs": {}
 },
 "sceneexplorer.dll": {
 "menus": {
@@ -6302,7 +12535,35 @@
 }
 ]
 },
-"strings": {}
+"strings": {},
+"dialogs": {
+"725": {
+"title": "Dialog",
+"style": 2160591040,
+"rect": [
+0,
+0,
+186,
+95
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "edit",
+"text": "",
+"id": 800,
+"x": 15,
+"y": 14,
+"w": 156,
+"h": 19,
+"style": 1350631552
+}
+]
+}
+}
 },
 "viewcontrol.dll": {
 "menus": {
@@ -7280,7 +13541,8 @@
 }
 ]
 },
-"strings": {}
+"strings": {},
+"dialogs": {}
 },
 "genppg.dll": {
 "menus": {
@@ -7732,15 +13994,121 @@
 }
 ]
 },
-"strings": {}
+"strings": {},
+"dialogs": {
+"232": {
+"title": "Error in Logic Script",
+"style": 2160591040,
+"rect": [
+0,
+0,
+357,
+241
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Error message:",
+"id": 65535,
+"x": 5,
+"y": 5,
+"w": 48,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 211,
+"x": 5,
+"y": 15,
+"w": 280,
+"h": 12,
+"style": 1350633600
+},
+{
+"cls": "static",
+"text": "Error Location:",
+"id": 65535,
+"x": 5,
+"y": 35,
+"w": 47,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 212,
+"x": 5,
+"y": 45,
+"w": 280,
+"h": 190,
+"style": 1350631556
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 340,
+"y": 230,
+"w": 10,
+"h": 9,
+"style": 1073807361
+},
+{
+"cls": "button",
+"text": "Close",
+"id": 2,
+"x": 300,
+"y": 5,
+"w": 50,
+"h": 14,
+"style": 1342242816
+}
+]
+},
+"3401": {
+"title": "",
+"style": 1174405184,
+"rect": [
+0,
+0,
+191,
+141
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Loading Property Pages...",
+"id": 212,
+"x": 50,
+"y": 65,
+"w": 130,
+"h": 8,
+"style": 1073872897
+}
+]
+}
+}
 },
 "manipulators.dll": {
 "menus": {},
-"strings": {}
+"strings": {},
+"dialogs": {}
 },
 "transformmanager.dll": {
 "menus": {},
-"strings": {}
+"strings": {},
+"dialogs": {}
 },
 "uiut.dll": {
 "menus": {
@@ -9343,14 +15711,1319 @@
 }
 ]
 },
-"strings": {}
+"strings": {},
+"dialogs": {
+"15": {
+"title": "",
+"style": 1073741888,
+"rect": [
+0,
+0,
+190,
+160
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Distance Limit:",
+"id": 65535,
+"x": 13,
+"y": 0,
+"w": 62,
+"h": 9,
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": ";class=dsnewnumberctrl;min=0;max=20;decimals=1",
+"id": 204,
+"x": 24,
+"y": 9,
+"w": 156,
+"h": 11,
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Tag Only",
+"id": 203,
+"x": 114,
+"y": 35,
+"w": 46,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Consider Neighbourhood",
+"id": 202,
+"x": 12,
+"y": 35,
+"w": 97,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Global",
+"id": 200,
+"x": 64,
+"y": 23,
+"w": 37,
+"h": 10,
+"style": 1342373897
+},
+{
+"cls": "button",
+"text": "Local",
+"id": 201,
+"x": 113,
+"y": 23,
+"w": 34,
+"h": 10,
+"style": 1342242825
+},
+{
+"cls": "{2B7E1C4D-72D6-11D0-82E3-00A0243E3665}",
+"text": "",
+"id": 205,
+"x": 5,
+"y": 50,
+"w": 173,
+"h": 89,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Linear",
+"id": 206,
+"x": 11,
+"y": 143,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Exponential 1",
+"id": 207,
+"x": 69,
+"y": 143,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Exponential 2",
+"id": 208,
+"x": 128,
+"y": 143,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Coordinates:",
+"id": 65535,
+"x": 13,
+"y": 24,
+"w": 43,
+"h": 8,
+"style": 1342308352
+}
+]
+},
+"129": {
+"title": "Parameter Connection List",
+"style": 2160591040,
+"rect": [
+0,
+0,
+227,
+247
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "listbox",
+"text": "",
+"id": 220,
+"x": 20,
+"y": 13,
+"w": 185,
+"h": 201,
+"style": 1352728841
+},
+{
+"cls": "button",
+"text": "Connect",
+"id": 1,
+"x": 96,
+"y": 220,
+"w": 50,
+"h": 14,
+"style": 1342373889
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 153,
+"y": 220,
+"w": 50,
+"h": 14,
+"style": 1342242816
+}
+]
+},
+"137": {
+"title": "",
+"style": 1342177344,
+"rect": [
+0,
+0,
+167,
+115
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Child Property Frame rectangle",
+"id": 216,
+"x": 0,
+"y": 0,
+"w": 167,
+"h": 114,
+"style": 1073741825
+}
+]
+},
+"138": {
+"title": "",
+"style": 1342177344,
+"rect": [
+0,
+0,
+200,
+200
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Child Property Frame rectangle",
+"id": 216,
+"x": 0,
+"y": 12,
+"w": 200,
+"h": 187,
+"style": 1073741825
+},
+{
+"cls": "DsNewRegionButtonCtrl",
+"text": "LoadSaveCtrl",
+"id": 235,
+"x": 138,
+"y": 0,
+"w": 33,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "DsNewRegionButtonCtrl",
+"text": "InspNavCtrl",
+"id": 234,
+"x": 0,
+"y": 0,
+"w": 35,
+"h": 12,
+"style": 1342242816
+}
+]
+},
+"139": {
+"title": "",
+"style": 1342177344,
+"rect": [
+0,
+0,
+167,
+200
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Child Property Frame rectangle",
+"id": 216,
+"x": 0,
+"y": 12,
+"w": 167,
+"h": 187,
+"style": 1073741825
+},
+{
+"cls": "DsAnimationCtrl2",
+"text": ";tooltip=Animation control",
+"id": 218,
+"x": 0,
+"y": 0,
+"w": 45,
+"h": 12,
+"style": 1342177280
+},
+{
+"cls": "DsNewRegionButtonCtrl",
+"text": "LoadSaveCtrl",
+"id": 235,
+"x": 86,
+"y": 0,
+"w": 33,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "DsNewRegionButtonCtrl",
+"text": "InspNavCtrl",
+"id": 234,
+"x": 47,
+"y": 0,
+"w": 35,
+"h": 12,
+"style": 1342242816
+}
+]
+},
+"141": {
+"title": "",
+"style": 1342177344,
+"rect": [
+0,
+0,
+200,
+200
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Child Property Frame rectangle",
+"id": 216,
+"x": 0,
+"y": 12,
+"w": 200,
+"h": 187,
+"style": 1073741825
+},
+{
+"cls": "DsNewRegionButtonCtrl",
+"text": "LoadSaveCtrl",
+"id": 235,
+"x": 138,
+"y": 0,
+"w": 33,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "DsAnimationCtrl2",
+"text": ";tooltip=Animation control",
+"id": 218,
+"x": 0,
+"y": 0,
+"w": 46,
+"h": 12,
+"style": 1342177280
+},
+{
+"cls": "button",
+"text": "Render",
+"id": 231,
+"x": 53,
+"y": 0,
+"w": 32,
+"h": 11,
+"style": 1342242816
+},
+{
+"cls": "DsNewRegionButtonCtrl",
+"text": "InspNavCtrl",
+"id": 234,
+"x": 91,
+"y": 0,
+"w": 35,
+"h": 12,
+"style": 1342242816
+}
+]
+},
+"142": {
+"title": "",
+"style": 1342177344,
+"rect": [
+0,
+0,
+167,
+200
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Child Property Frame rectangle",
+"id": 216,
+"x": 0,
+"y": 12,
+"w": 167,
+"h": 187,
+"style": 1073741825
+},
+{
+"cls": "DsNewRegionButtonCtrl",
+"text": "LoadSaveCtrl",
+"id": 235,
+"x": 85,
+"y": 0,
+"w": 33,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "DsAnimationCtrl2",
+"text": ";tooltip=Animation control",
+"id": 218,
+"x": 0,
+"y": 0,
+"w": 46,
+"h": 12,
+"style": 1342177280
+},
+{
+"cls": "DsNewRegionButtonCtrl",
+"text": "InspNavCtrl",
+"id": 234,
+"x": 48,
+"y": 0,
+"w": 35,
+"h": 12,
+"style": 1342242816
+}
+]
+},
+"143": {
+"title": "Dialog",
+"style": 2160853056,
+"rect": [
+0,
+0,
+304,
+257
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 191,
+"y": 236,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 247,
+"y": 236,
+"w": 50,
+"h": 14,
+"style": 1342242816
+}
+]
+},
+"144": {
+"title": "",
+"style": 1342177344,
+"rect": [
+0,
+0,
+200,
+200
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Child Property Frame rectangle",
+"id": 216,
+"x": 0,
+"y": 12,
+"w": 200,
+"h": 187,
+"style": 1073741825
+},
+{
+"cls": "DsNewRegionButtonCtrl",
+"text": "LoadSaveCtrl",
+"id": 235,
+"x": 138,
+"y": 0,
+"w": 33,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "DsNewRegionButtonCtrl",
+"text": "InspNavCtrl",
+"id": 234,
+"x": 0,
+"y": 0,
+"w": 35,
+"h": 12,
+"style": 1342242816
+}
+]
+},
+"145": {
+"title": "",
+"style": 1342177344,
+"rect": [
+0,
+0,
+200,
+200
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Child Property Frame rectangle",
+"id": 216,
+"x": 0,
+"y": 12,
+"w": 200,
+"h": 187,
+"style": 1073741825
+},
+{
+"cls": "DsNewRegionButtonCtrl",
+"text": "LoadSaveCtrl",
+"id": 235,
+"x": 138,
+"y": 0,
+"w": 33,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "DsNewRegionButtonCtrl",
+"text": "InspNavCtrl",
+"id": 234,
+"x": 0,
+"y": 0,
+"w": 35,
+"h": 12,
+"style": 1342242816
+}
+]
+},
+"147": {
+"title": "",
+"style": 1375731776,
+"rect": [
+0,
+0,
+200,
+181
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "static",
+"text": "Child Property Frame rectangle",
+"id": 216,
+"x": 41,
+"y": 12,
+"w": 159,
+"h": 168,
+"style": 1082130433
+},
+{
+"cls": "DsAnimationCtrl2",
+"text": ";tooltip=Animation control",
+"id": 218,
+"x": 0,
+"y": 0,
+"w": 45,
+"h": 12,
+"style": 1342177280
+},
+{
+"cls": "DsNewRegionButtonCtrl",
+"text": "LoadSaveCtrl",
+"id": 235,
+"x": 138,
+"y": 0,
+"w": 33,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "DsNewRegionButtonCtrl",
+"text": "InspNavCtrl",
+"id": 234,
+"x": 82,
+"y": 0,
+"w": 35,
+"h": 12,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Position Reference For Widget",
+"id": 243,
+"x": 0,
+"y": 12,
+"w": 42,
+"h": 168,
+"style": 1082130432
+},
+{
+"cls": "button",
+"text": ";tip=Reset All Parameters to Defaults",
+"id": 244,
+"x": 63,
+"y": 0,
+"w": 14,
+"h": 12,
+"style": 1342242880
+},
+{
+"cls": "button",
+"text": ";tip=Reset Current Parameter Group To Defaults",
+"id": 245,
+"x": 49,
+"y": 0,
+"w": 14,
+"h": 12,
+"style": 1342242880
+}
+]
+},
+"157": {
+"title": "",
+"style": 2160591040,
+"rect": [
+0,
+0,
+186,
+87
+],
+"font": [
+10,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 25,
+"y": 58,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 104,
+"y": 58,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 248,
+"x": 15,
+"y": 33,
+"w": 154,
+"h": 17,
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "Please enter the Name",
+"id": 65535,
+"x": 15,
+"y": 12,
+"w": 152,
+"h": 17,
+"style": 1342308352
+}
+]
+},
+"160": {
+"title": "Relational View Editor - Set Pane Relationships",
+"style": 2160591040,
+"rect": [
+0,
+0,
+471,
+183
+],
+"font": [
+10,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 414,
+"y": 144,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 414,
+"y": 166,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Add Relationship",
+"id": 300,
+"x": 7,
+"y": 144,
+"w": 84,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Validate Relationships",
+"id": 301,
+"x": 7,
+"y": 166,
+"w": 84,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "edit",
+"text": "",
+"id": 302,
+"x": 100,
+"y": 144,
+"w": 305,
+"h": 36,
+"style": 1350637636
+}
+]
+},
+"162": {
+"title": "Relational View - Bitmap Editor",
+"style": 2160591040,
+"rect": [
+0,
+0,
+293,
+182
+],
+"font": [
+10,
+"Arial"
+],
+"controls": [
+{
+"cls": "listbox",
+"text": "",
+"id": 259,
+"x": 7,
+"y": 24,
+"w": 120,
+"h": 123,
+"style": 1352728835
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 269,
+"x": 177,
+"y": 161,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 232,
+"y": 161,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Load All Default Bitmaps",
+"id": 271,
+"x": 18,
+"y": 154,
+"w": 99,
+"h": 13,
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Import New Bitmap",
+"id": 272,
+"x": 166,
+"y": 54,
+"w": 85,
+"h": 13,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "The imported bitmap will be copied to the user directory. The filename syntax for bitmaps is filename.bmp and filename_highlight.bmp",
+"id": 65535,
+"x": 150,
+"y": 84,
+"w": 126,
+"h": 34,
+"style": 1342308352
+}
+]
+},
+"357": {
+"title": "",
+"style": 1073741888,
+"rect": [
+0,
+0,
+211,
+190
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "Name",
+"id": 213,
+"x": 13,
+"y": 16,
+"w": 74,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Transition",
+"id": 216,
+"x": 13,
+"y": 33,
+"w": 74,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Track Display Options",
+"id": 4294967295,
+"x": 7,
+"y": 4,
+"w": 197,
+"h": 98,
+"style": 1342177287
+},
+{
+"cls": "button",
+"text": "Markers",
+"id": 219,
+"x": 13,
+"y": 50,
+"w": 83,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Tooltips",
+"id": 222,
+"x": 13,
+"y": 67,
+"w": 79,
+"h": 10,
+"style": 1342242819
+}
+]
+},
+"358": {
+"title": "",
+"style": 1073741888,
+"rect": [
+0,
+0,
+211,
+190
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "Track Visibility",
+"id": 4294967295,
+"x": 7,
+"y": 4,
+"w": 197,
+"h": 68,
+"style": 1342177287
+},
+{
+"cls": "button",
+"text": "Animation",
+"id": 227,
+"x": 13,
+"y": 18,
+"w": 66,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Shape",
+"id": 228,
+"x": 13,
+"y": 32,
+"w": 65,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Audio",
+"id": 229,
+"x": 13,
+"y": 46,
+"w": 66,
+"h": 10,
+"style": 1342242819
+}
+]
+},
+"359": {
+"title": "",
+"style": 1073741888,
+"rect": [
+0,
+0,
+211,
+190
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "Name",
+"id": 213,
+"x": 19,
+"y": 20,
+"w": 75,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Clip in/out",
+"id": 214,
+"x": 19,
+"y": 50,
+"w": 73,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Extrap.Type",
+"id": 215,
+"x": 19,
+"y": 79,
+"w": 79,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Scale",
+"id": 218,
+"x": 19,
+"y": 64,
+"w": 72,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Clip Display Options",
+"id": 4294967295,
+"x": 7,
+"y": 4,
+"w": 197,
+"h": 128,
+"style": 1342177287
+},
+{
+"cls": "button",
+"text": "Weight Curves",
+"id": 223,
+"x": 108,
+"y": 50,
+"w": 89,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Time Warp",
+"id": 224,
+"x": 108,
+"y": 64,
+"w": 89,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Audio Wave",
+"id": 232,
+"x": 108,
+"y": 79,
+"w": 89,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Markers",
+"id": 219,
+"x": 108,
+"y": 107,
+"w": 83,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Tooltips",
+"id": 221,
+"x": 108,
+"y": 20,
+"w": 90,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Cycle Marks",
+"id": 225,
+"x": 19,
+"y": 107,
+"w": 75,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Effects",
+"id": 220,
+"x": 19,
+"y": 35,
+"w": 83,
+"h": 10,
+"style": 1342242819
+}
+]
+},
+"360": {
+"title": "",
+"style": 1073741888,
+"rect": [
+0,
+0,
+211,
+190
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "Marker Display Options",
+"id": 4294967295,
+"x": 7,
+"y": 7,
+"w": 197,
+"h": 87,
+"style": 1342177287
+},
+{
+"cls": "button",
+"text": "Marker Name",
+"id": 244,
+"x": 14,
+"y": 22,
+"w": 82,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Marker Value",
+"id": 227,
+"x": 14,
+"y": 38,
+"w": 80,
+"h": 10,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Tooltips",
+"id": 228,
+"x": 14,
+"y": 54,
+"w": 79,
+"h": 10,
+"style": 1342242819
+}
+]
+}
+}
 },
 "siuitasks.dll": {
 "menus": {},
-"strings": {}
+"strings": {},
+"dialogs": {
+"201": {
+"title": "Assemble NurbsMesh (SCM)",
+"style": 2160591040,
+"rect": [
+0,
+0,
+195,
+125
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"controls": [
+{
+"cls": "button",
+"text": "&OK",
+"id": 1,
+"x": 14,
+"y": 97,
+"w": 50,
+"h": 14,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "&Cancel",
+"id": 2,
+"x": 75,
+"y": 97,
+"w": 50,
+"h": 14,
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "SCM Tolerance",
+"id": 201,
+"x": 26,
+"y": 19,
+"w": 50,
+"h": 8,
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 202,
+"x": 83,
+"y": 16,
+"w": 40,
+"h": 14,
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "Copy User Clusters Locally",
+"id": 203,
+"x": 26,
+"y": 37,
+"w": 99,
+"h": 14,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Copy Materials and Textures Locally ",
+"id": 204,
+"x": 26,
+"y": 54,
+"w": 135,
+"h": 14,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Center To Geometric Center",
+"id": 205,
+"x": 26,
+"y": 71,
+"w": 104,
+"h": 14,
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "&Help",
+"id": 9,
+"x": 137,
+"y": 97,
+"w": 45,
+"h": 14,
+"style": 1342242816
+}
+]
+},
+"202": {
+"title": "User Keyword(s)",
+"style": 2160591040,
+"rect": [
+0,
+0,
+195,
+64
+],
+"font": [
+11,
+"Arial"
+],
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"x": 21,
+"y": 40,
+"w": 59,
+"h": 17,
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"x": 113,
+"y": 40,
+"w": 59,
+"h": 17,
+"style": 1342242816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 248,
+"x": 8,
+"y": 22,
+"w": 180,
+"h": 18,
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "Please enter the User Keywords (comma separated)",
+"id": 4294967295,
+"x": 9,
+"y": 7,
+"w": 179,
+"h": 8,
+"style": 1342308353
+}
+]
+}
+}
 },
 "siviewtasks.dll": {
 "menus": {},
-"strings": {}
+"strings": {},
+"dialogs": {}
 }
 }
