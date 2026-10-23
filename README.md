@@ -21,6 +21,24 @@ npm run build    # static build in dist/
 - `data/` — the full extracted reference data (2,950-command registry dumped from Softimage, menu trees, mappings).
 - `tools/` — the Softimage dump script used to extract the command registry.
 
+### MCP (Main Command Panel)
+`src/ui/mcp.ts` reproduces the Softimage MCP on the right of the viewports, laid out from the 2015 SP2 panel
+(Select / Transform / Snap / Constrain / Edit sections with the dark `◣ Title` headers):
+
+- **Select**: arrow (select tool, Esc), Group / Center modes, Object / Point / Edge / Polygon filters, Sample,
+  the filter combo (Object, Polygon Mesh, Curve, Light, Camera, Null, Model, Cluster, Property …), the select-by-name
+  field with ▲/▼ cycling through matches, and Explore / Scene / Selection / Clusters which switch the left tray to
+  the Explorer with that scope.
+- **Transform**: s / r / t rows (X / C / V) with per-axis enable toggles, the `≡` options menu, the three dark axis
+  fields (editable; commits `kine.local.*` on Enter), reference modes Global / Local / View / Par / Ref / Plane,
+  COG / Prop / Sym.
+- **Snap**: ON plus point / curve / midpoint / grid targets (used by the viewport drag and tweak tools).
+- **Constrain**: Parent / Cut (`ParentObj` / `CutObj` on the selection), CnsComp / ChldComp toggles.
+- **Edit**: Freeze (`FreezeObj`), Group (`CreateGroup`, groups appear under the Explorer's *Groups* scope),
+  Freeze M (`FreezeModeling`), Immed (freezes the stack after each topology operator).
+
+Screenshot: `docs/screenshots/mcp-clone.png`.
+
 ## Keys
 
 Space object · T point · E edge · Y polygon · V translate · C rotate · X scale · K key · Ctrl+Z/Y undo/redo ·

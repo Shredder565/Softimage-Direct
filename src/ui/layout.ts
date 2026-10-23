@@ -111,11 +111,8 @@ export const DEFAULT_LAYOUT: LayoutNode = {
         {
           kind: 'switcher', name: 'mcp', buttonSide: 'bottom', labels: ['MCP', 'KP/L', 'PPG'], children: [
             {
-              kind: 'frameset', orientation: 'vertical', sizes: ['*', '*', '60', '90'], children: [
-                { kind: 'frame', name: 'selection_panel', view: 'Selection Panel' },
-                { kind: 'frame', name: 'transformation_panel', view: 'Transformation Panel' },
-                { kind: 'frame', name: 'snap_panel', view: 'Snap Panel' },
-                { kind: 'frame', name: 'edit_panel', view: 'Edit Panel' },
+              kind: 'frameset', orientation: 'vertical', sizes: ['*'], children: [
+                { kind: 'frame', name: 'mcp_panel', view: 'MCP' },
               ],
             },
             {

@@ -5,7 +5,7 @@ import { App } from '../core/commands';
 import { Node, X3DObject, Scene, Layer, Material, MarkerNode, Property, Model, Camera, Light, Null } from '../core/scene';
 import { Parameter } from '../core/params';
 
-type Scope = 'Scene' | 'Layers' | 'Passes' | 'Materials' | 'Selection' | 'Application';
+type Scope = 'Scene' | 'Layers' | 'Passes' | 'Materials' | 'Groups' | 'Selection' | 'Application';
 const FILTERS = ['All', 'All + Animatable Parameters', 'All except parameters', 'Objects only', 'Models only', 'Primitives and Properties', 'Geometry Operators', 'Materials and Shaders', 'Animated Parameters'] as const;
 const SHOW_PARAMS = ['No Parameters', 'Animated Parameters', 'Animatable Parameters', 'Keyable Parameters', 'All Parameters'] as const;
 const SORT = ['None (creation)', 'Alphabetical', 'Type + Alphabetical'] as const;
@@ -20,7 +20,8 @@ export function explorerView(app: App, host: HTMLElement) {
     b.onclick = (e) => { e.stopPropagation(); const r = b.getBoundingClientRect(); popup(build(), r.left, r.bottom); }; (b as any)._refresh = refreshLabel; return b;
   };
   const radio = <T extends string>(items: readonly T[], get: () => T, set: (v: T) => void) => items.map(i => ({ label: i, checked: get() === i, fn: () => { set(i); render(); } }));
-  const SCOPES: Scope[] = ['Scene', 'Layers', 'Passes', 'Materials', 'Selection', 'Application'];
+  const SCOPES: Scope[] = ['Scene', 'Layers', 'Passes', 'Materials', 'Groups', 'Selection', 'Application'];
+  (window as any).__explorerScope = (sc: Scope) => { if (SCOPES.includes(sc)) { state.scope = sc; render(); } };
   const scopeLabel = () => state.scope === 'Scene' ? app.scene.root.name : state.scope;
   const scope = menuBtn(scopeLabel, () => radio(SCOPES, () => state.scope, v => { state.scope = v; }));
   const viewBtn = menuBtn(() => 'View', () => [...radio(SHOW_PARAMS, () => state.show, v => { state.show = v; }), { label: '', sep: true }, ...radio(SORT, () => state.sort, v => { state.sort = v; }), { label: '', sep: true }, ...radio(FLATTEN, () => state.flatten, v => { state.flatten = v; }), { label: '', sep: true }, { label: 'Parameter Values', checked: state.values, fn: () => { state.values = !state.values; render(); } }, { label: 'Use Script Names', checked: state.scriptNames, fn: () => { state.scriptNames = !state.scriptNames; render(); } }, { label: 'Track Selection', checked: state.track, fn: () => { state.track = !state.track; render(); } }, { label: '', sep: true }, { label: 'Expand All', fn: () => { expandAll(true); render(); } }, { label: 'Collapse All', fn: () => { expandAll(false); render(); } }]);
@@ -38,7 +39,7 @@ export function explorerView(app: App, host: HTMLElement) {
   const expanded = new Set<number>(); let first = true; let renaming: Node | null = null;
   const rows: { node: Node; el: HTMLElement }[] = [];
 
-  const roots = (): Node[] => { const sc = app.scene; switch (state.scope) { case 'Layers': return sc.layers; case 'Passes': return sc.passes; case 'Materials': return sc.materials; case 'Selection': return app.selection.filter(n => n instanceof X3DObject); case 'Application': return [sc]; default: return [sc.root]; } };
+  const roots = (): Node[] => { const sc = app.scene; switch (state.scope) { case 'Layers': return sc.layers; case 'Passes': return sc.passes; case 'Materials': return sc.materials; case 'Groups': return sc.groupList; case 'Selection': return app.selection.filter(n => n instanceof X3DObject); case 'Application': return [sc]; default: return [sc.root]; } };
   const expandAll = (on: boolean) => { const walk = (n: Node) => { if (on) expanded.add(n.id); else expanded.delete(n.id); for (const c of n.explorerChildren()) walk(c); }; for (const r of roots()) walk(r); if (!on) for (const r of roots()) expanded.add(r.id); };
   const passes = (n: Node): boolean => {
     switch (state.filter) {

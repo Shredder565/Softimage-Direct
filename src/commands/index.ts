@@ -1,7 +1,7 @@
 // Built-in commands. Scripting names and argument lists follow Softimage's registry (commands_full.json)
 // so a Softimage script like  CreatePrim "Cube", "MeshSurface"  maps 1:1.
 import { App } from '../core/commands';
-import { X3DObject, Model, Null, Primitive, Light, Camera, makeGeomOperator, makeDeformOperator, makePhong, makeLambert, Material, Property, makeDisplay, makeGeomApprox, Node, Shader, makeTopologyOperator, TopologyOperator, makeVisibility } from '../core/scene';
+import { X3DObject, Model, Null, Primitive, Light, Camera, Group, makeGeomOperator, makeDeformOperator, makePhong, makeLambert, Material, Property, makeDisplay, makeGeomApprox, Node, Shader, makeTopologyOperator, TopologyOperator, makeVisibility } from '../core/scene';
 import { extractPolygons, meshEdges } from '../core/topology';
 import { color, num, bool } from '../core/params';
 import { Operator } from '../core/scene';
@@ -126,6 +126,13 @@ export function registerBuiltins(app: App) {
     },
   });
   app.register({ name: 'DeleteOp', label: 'Delete Operator', category: 'Operator', args: [{ name: 'Operator' }], execute(app, a) { for (const n of app.selection) if (n.kind === 'operator' && n.type !== 'geom') { const prim = n.parent as Primitive; const idx = prim.operators.indexOf(n as any); app.record('Delete op', () => prim.removeOperator(n as any), () => { prim.addOperator(n as any); prim.operators.splice(prim.operators.indexOf(n as any), 1); prim.operators.splice(idx, 0, n as any); prim.dirty = true; }); } app.select([]); } });
+  app.register({ name: 'CreateGroup', label: 'Create Group', category: 'Edit', description: 'Groups the selected objects (MCP Edit > Group).', args: [{ name: 'Name', default: 'Group' }, { name: 'InputObjs', default: '' }], execute(app, a) {
+    const objs = app.targets(a.InputObjs); if (!objs.length) throw new Error('Select the objects to group');
+    const g = new Group(app.scene.uniqueName(a.Name || 'Group')); g.members.push(...objs); g.parent = app.scene.root;
+    app.record('Group', () => { app.scene.groupList.push(g); }, () => { const i = app.scene.groupList.indexOf(g); if (i >= 0) app.scene.groupList.splice(i, 1); });
+    app.select([g]); return g;
+  } });
+  app.register({ name: 'FreezeModeling', label: 'Freeze Modeling', category: 'Modeling', description: 'Freezes the modeling region of the construction history (MCP Edit > Freeze M).', args: [{ name: 'InputObjs', default: '' }], execute(app, a) { return app.run('FreezeObj', { InputObjs: a.InputObjs }); } });
   app.register({ name: 'FreezeObj', label: 'Freeze', category: 'Modeling', description: 'Collapses the construction history into the geometry.', args: [{ name: 'InputObjs', default: '' }], execute(app, a) {
     for (const o of app.targets(a.InputObjs)) {
       const prim = o.primitive; if (!prim || prim.operators.length < 2) continue;
@@ -157,6 +164,7 @@ export function registerBuiltins(app: App) {
       const op = makeTopologyOperator(preset, sel)!;
       const prim = obj.primitive!;
       app.record(preset, () => prim.addOperator(op), () => prim.removeOperator(op));
+      if ((app as any).immediate) app.run('FreezeObj', { InputObjs: [obj] });
       app.compSel = null; app.select([op]);
       return op;
     },

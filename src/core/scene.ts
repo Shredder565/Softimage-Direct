@@ -371,6 +371,12 @@ export class Layer extends Node {
   readonly members = new Set<X3DObject>();
   constructor(name: string) { super(name, 'layer', 'layer', [bool('viewvis', true, 'View Visibility'), bool('rendvis', true, 'Render Visibility'), bool('selectability', true, 'Selectable'), color('color', [0.6, 0.6, 0.6], 'Color')]); }
 }
+/** A Softimage group: a named set of objects (Edit > Group in the MCP). */
+export class Group extends Node {
+  readonly members: X3DObject[] = [];
+  constructor(name: string) { super(name, 'group', 'folder', []); }
+  explorerChildren(): Node[] { return [...this.members]; }
+}
 export class Pass extends Node { constructor(name: string) { super(name, 'pass', 'pass', [bool('Active', true, 'Active'), int('FrameStart', 1, 'Start Frame'), int('FrameEnd', 100, 'End Frame')]); } }
 
 // ---------------------------------------------------------------- scene
@@ -379,6 +385,7 @@ export class Scene extends Node {
   readonly layers: Layer[] = [];
   readonly passes: Pass[] = [];
   readonly materials: Material[] = [];   // sources > materials library
+  readonly groupList: Group[] = [];
   constructor() {
     super('Scene', 'scene', 'scene', [str('Name', 'Untitled', 'Scene Name')]);
     this.root = new Model('Scene_Root');

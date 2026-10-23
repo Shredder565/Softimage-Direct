@@ -291,7 +291,10 @@ export function viewManager(app: App, host: HTMLElement) {
       const t = drag.tweak; const inv = t.obj.globalMatrix().invert(); inv.setPosition(0, 0, 0);
       const ld = delta.clone().applyMatrix4(inv); const d: V3 = [tool.axes.x ? ld.x : 0, tool.axes.y ? ld.y : 0, tool.axes.z ? ld.z : 0];
       const prim = t.obj.primitive!; const base = geomPoints(prim.operators.slice(0, -1).reduce((m: any, op) => op.apply(m), null)) ?? geomPoints(prim.geom())!;
-      if (tool.mode === 'translate') for (const p of t.pts) { const s = t.startDeltas.get(p) ?? [0, 0, 0]; const w = t.weights.get(p) ?? 1; t.op.deltas.set(p, [s[0] + d[0] * w, s[1] + d[1] * w, s[2] + d[2] * w]); }
+      if (tool.mode === 'translate') for (const p of t.pts) { const s = t.startDeltas.get(p) ?? [0, 0, 0]; const w = t.weights.get(p) ?? 1; let nd = [s[0] + d[0] * w, s[1] + d[1] * w, s[2] + d[2] * w]; const S = (tool as any).snap; if (S?.on && S.grid && w === 1) { nd = [0, 1, 2].map(k => Math.round(base[p * 3 + k] + nd[k]) - base[p * 3 + k]); } t.op.deltas.set(p, nd as V3); }
+      if ((app as any).symmetry && tool.mode === 'translate') { // mirror the edit across the local X plane onto the matching points
+        const n = base.length / 3; for (const p of t.pts) { const d0 = t.op.deltas.get(p); if (!d0) continue; const mx = -base[p * 3], my = base[p * 3 + 1], mz = base[p * 3 + 2]; for (let q = 0; q < n; q++) { if (q === p || t.pts.includes(q)) continue; if (Math.abs(base[q * 3] - mx) < 1e-4 && Math.abs(base[q * 3 + 1] - my) < 1e-4 && Math.abs(base[q * 3 + 2] - mz) < 1e-4) { t.op.deltas.set(q, [-d0[0], d0[1], d0[2]]); break; } } }
+      }
       else {
         const sel = t.pts.filter(p => t.weights.get(p) === 1); const c = [0, 0, 0]; for (const p of sel) for (let k = 0; k < 3; k++) c[k] += base[p * 3 + k] / sel.length;
         const f = tool.mode === 'scale' ? Math.max(0.01, 1 + dx * 0.01) : 1, ang = tool.mode === 'rotate' ? dx * 0.01 : 0;
@@ -301,9 +304,11 @@ export function viewManager(app: App, host: HTMLElement) {
       }
       prim.dirty = true; sync(); return;
     }
+    const snapV = (v: number[]): number[] => { const S = (tool as any).snap; if (!S?.on) return v; if (S.grid) return v.map(x => Math.round(x)); if (S.point || S.midpoint) { let best: number[] | null = null, bd = 0.75; for (const other of app.scene.allObjects()) { if (drag!.objs.includes(other)) continue; const m = other.primitive?.mesh(); if (!m) continue; const M = other.globalMatrix(); for (let i = 0; i < m.positions.length; i += 3) { const q = new THREE.Vector3(m.positions[i], m.positions[i + 1], m.positions[i + 2]).applyMatrix4(M); const d = Math.hypot(q.x - v[0], q.y - v[1], q.z - v[2]); if (d < bd) { bd = d; best = [q.x, q.y, q.z]; } } } if (best) return best; } return v; };
     for (const o of drag.objs) {
       const l = o.kinematics.local;
-      if (tool.mode === 'translate') { if (tool.axes.x) l.get('posx')!.value = drag.start.get(o.id + '.posx')! + delta.x; if (tool.axes.y) l.get('posy')!.value = drag.start.get(o.id + '.posy')! + delta.y; if (tool.axes.z) l.get('posz')!.value = drag.start.get(o.id + '.posz')! + delta.z; }
+      if (tool.mode === 'translate' && (app as any).centerMode) { if (tool.axes.x) l.get('pposx')!.value = (drag.start.get(o.id + '.pposx') ?? 0) + delta.x; if (tool.axes.y) l.get('pposy')!.value = (drag.start.get(o.id + '.pposy') ?? 0) + delta.y; if (tool.axes.z) l.get('pposz')!.value = (drag.start.get(o.id + '.pposz') ?? 0) + delta.z; continue; }
+      if (tool.mode === 'translate') { const np = [drag.start.get(o.id + '.posx')! + (tool.axes.x ? delta.x : 0), drag.start.get(o.id + '.posy')! + (tool.axes.y ? delta.y : 0), drag.start.get(o.id + '.posz')! + (tool.axes.z ? delta.z : 0)]; const sp = snapV(np); l.get('posx')!.value = sp[0]; l.get('posy')!.value = sp[1]; l.get('posz')!.value = sp[2]; }
       else if (tool.mode === 'rotate') { const a = dx * 0.5; if (tool.axes.x && !tool.axes.y && !tool.axes.z) l.get('rotx')!.value = drag.start.get(o.id + '.rotx')! + a; else if (tool.axes.z && !tool.axes.x && !tool.axes.y) l.get('rotz')!.value = drag.start.get(o.id + '.rotz')! + a; else l.get('roty')!.value = drag.start.get(o.id + '.roty')! + a; }
       else if (tool.mode === 'scale') { const f = Math.max(0.01, 1 + dx * 0.01); for (const ax of ['x', 'y', 'z']) if ((tool.axes as any)[ax]) l.get('scl' + ax)!.value = drag.start.get(o.id + '.scl' + ax)! * f; }
     }
@@ -331,7 +336,7 @@ export function viewManager(app: App, host: HTMLElement) {
     if (!d.moved && d.button === 0 && !e.altKey) {
       const at = vpAt(e); if (!at) return; const vp = vps[at.i]; prepCam(vp, at.r);
       const po = pickObject(vp, at.nx, at.ny);
-      if (app.selMode === 'object') { app.select(po ? [po.obj] : [], mode); return; }
+      if (app.selMode === 'object') { let target = po?.obj ?? null; if (target && (app as any).groupMode) { let t: any = target; while (t.parentObj && t.parentObj !== app.scene.root) t = t.parentObj; target = t; } app.select(target ? [target] : [], mode); return; }
       const pc = pickComponent(vp, at, po?.obj, po?.hit);
       if (pc) app.selectComponents(pc.obj, pc.kind, [pc.item], mode);
       else if (po && mode === 'replace') { app.compSel = null; app.select([po.obj]); }
