@@ -2,7 +2,9 @@
 // so a Softimage script like  CreatePrim "Cube", "MeshSurface"  maps 1:1.
 import { App } from '../core/commands';
 import { X3DObject, Model, Null, Primitive, Light, Camera, Group, makeGeomOperator, makeDeformOperator, makePhong, makeLambert, Material, Property, makeDisplay, makeGeomApprox, Node, Shader, makeTopologyOperator, TopologyOperator, makeVisibility } from '../core/scene';
-import { Cluster } from '../core/scene';
+import { Cluster, threeOrder } from '../core/scene';
+import * as THREE from 'three';
+import { makeAimRig } from './constraints';
 import { siMessage } from '../ui/si';
 import { extractPolygons, meshEdges } from '../core/topology';
 import { color, num, bool } from '../core/params';
@@ -50,9 +52,9 @@ export function registerBuiltins(app: App) {
       if (/Empty/i.test(a.PresetObj)) return app.run('CreatePrim', { PresetObj: 'Empty', GeometryType: /Cloud/i.test(a.PresetObj) ? 'PointCloud' : 'MeshSurface', Name: a.Name });
       let obj: X3DObject;
       const name = app.scene.uniqueName(a.Name || a.PresetObj.toLowerCase());
+      if (a.PresetObj === 'Camera' || a.PresetObj === 'Spot') { const rig = makeAimRig(app, a.PresetObj, a.Name || a.PresetObj, a.Parent ? app.scene.find(a.Parent) : null); app.select([rig.obj]); return rig.root; }
       if (a.PresetObj === 'Null') obj = new Null(name);
-      else if (a.PresetObj === 'Camera') obj = new Camera(name);
-      else if (['Point', 'Infinite', 'Spot'].includes(a.PresetObj)) obj = new Light(name, a.PresetObj.toLowerCase() as any);
+      else if (['Point', 'Infinite'].includes(a.PresetObj)) obj = new Light(name, a.PresetObj.toLowerCase() as any);
       else throw new Error(`Implicit primitive ${a.PresetObj} not available yet`);
       addObject(app, obj, a.Parent ? app.scene.find(a.Parent) : null);
       app.select([obj]); return obj;
@@ -100,8 +102,18 @@ export function registerBuiltins(app: App) {
     execute(app, a) { for (const o of app.targets(a.InputObj)) ['x', 'y', 'z'].forEach((ax, i) => { const p = o.kinematics.local.get('pos' + ax)!; const v = [a.X, a.Y, a.Z][i]; app.setParam(p, a.Mode === 'siAbsolute' ? v : p.value + v, 'Translate'); }); },
   });
   app.register({
-    name: 'Rotate', label: 'Rotate', category: 'Manipulation', args: [{ name: 'InputObj', default: '' }, { name: 'X', default: 0 }, { name: 'Y', default: 0 }, { name: 'Z', default: 0 }, { name: 'Mode', default: 'siRelative' }],
-    execute(app, a) { for (const o of app.targets(a.InputObj)) ['x', 'y', 'z'].forEach((ax, i) => { const p = o.kinematics.local.get('rot' + ax)!; const v = [a.X, a.Y, a.Z][i]; app.setParam(p, a.Mode === 'siAbsolute' ? v : p.value + v, 'Rotate'); }); },
+    name: 'Rotate', label: 'Rotate', category: 'Manipulation', args: [{ name: 'InputObj', default: '' }, { name: 'X', default: 0 }, { name: 'Y', default: 0 }, { name: 'Z', default: 0 }, { name: 'Mode', default: 'siRelative' }, { name: 'RefFrame', default: 'siParent' }],
+    execute(app, a) {
+      for (const o of app.targets(a.InputObj)) {
+        const l = o.kinematics.local; const ref = String(a.RefFrame ?? 'siParent');
+        if (a.Mode === 'siAbsolute' || ref === 'siParent' || ref === 'siObj') { ['x', 'y', 'z'].forEach((ax, i) => { const p = l.get('rot' + ax)!; const v = [a.X, a.Y, a.Z][i]; app.setParam(p, a.Mode === 'siAbsolute' ? v : p.value + v, 'Rotate'); }); continue; }
+        // siLocal / siGlobal relative rotation: compose quaternions (verified against Softimage's Rotate siLocal/siGlobal results)
+        const d = Math.PI / 180, order = threeOrder(l.val('rotorder')); let q = new THREE.Quaternion().setFromEuler(new THREE.Euler(l.val('rotx') * d, l.val('roty') * d, l.val('rotz') * d, order));
+        const pq = new THREE.Quaternion(); if (o.parentObj) o.parentObj.globalMatrix().decompose(new THREE.Vector3(), pq, new THREE.Vector3()); const pinv = pq.clone().invert();
+        for (const [i, ax] of [[0, 'x'], [1, 'y'], [2, 'z']] as [number, string][]) { const ang = Number([a.X, a.Y, a.Z][i]) || 0; if (!ang) continue; const base = new THREE.Vector3(ax === 'x' ? 1 : 0, ax === 'y' ? 1 : 0, ax === 'z' ? 1 : 0); const axisP = ref === 'siLocal' ? base.applyQuaternion(q) : base.applyQuaternion(pinv); q = new THREE.Quaternion().setFromAxisAngle(axisP.normalize(), ang * d).multiply(q); }
+        const e = new THREE.Euler().setFromQuaternion(q, order); app.setParam(l.get('rotx')!, e.x / d, 'Rotate'); app.setParam(l.get('roty')!, e.y / d, 'Rotate'); app.setParam(l.get('rotz')!, e.z / d, 'Rotate');
+      }
+    },
   });
   app.register({
     name: 'Scale', label: 'Scale', category: 'Manipulation', args: [{ name: 'InputObj', default: '' }, { name: 'X', default: 1 }, { name: 'Y', default: 1 }, { name: 'Z', default: 1 }, { name: 'Mode', default: 'siRelative' }],

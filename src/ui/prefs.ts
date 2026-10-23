@@ -18,7 +18,9 @@ export function preferenceSets(app: App): Map<string, ParamSet> {
   if (prefs) return prefs; prefs = new Map();
   let saved: Record<string, Record<string, any>> = {}; try { saved = JSON.parse(localStorage.getItem('si.prefs') ?? '{}'); } catch { /* ignore */ }
   for (const k of [...PREF_PAGES, 'C3DSceneColors']) {
-    const set = new ParamSet(pageLabel(k), 'preferences', siPropDefs(k, saved[k] ?? {})); set.layout = siPropLayout(k) as any; (set as any).siKey = k;
+    // The SPDL default for Surround Polygons is TRUE, but the running application rectangle-selects overlapped polygons (verified); keep the observed behaviour.
+    const overrides = k === 'C3DPrefsSelect' ? { surroundpolygons: false, ...(saved[k] ?? {}) } : (saved[k] ?? {});
+    const set = new ParamSet(pageLabel(k), 'preferences', siPropDefs(k, overrides)); set.layout = siPropLayout(k) as any; (set as any).siKey = k;
     set.onChange(() => { apply(app, k, set); persist(); }); prefs.set(k, set);
   }
   for (const [k, set] of prefs) apply(app, k, set);

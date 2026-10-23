@@ -25,6 +25,11 @@ export class Node extends ParamSet {
   explorerChildren(): Node[] { return []; }
 }
 
+/** Softimage rotation orders are extrinsic (XYZ = rotate about parent X, then Y, then Z), which is three.js's reversed
+ *  intrinsic string: SI XYZ → THREE 'ZYX'. Verified against the running application (Rotate siLocal/siGlobal probes). */
+export const SI_ROT_ORDERS = ['XYZ', 'XZY', 'YXZ', 'YZX', 'ZXY', 'ZYX'];
+export function threeOrder(siOrder: any): THREE.EulerOrder { const s = SI_ROT_ORDERS[Number(siOrder) || 0] ?? 'XYZ'; return s.split('').reverse().join('') as THREE.EulerOrder; }
+
 // ------------------------------------------------------------- clusters
 /** A named set of components of one object (pnt / edge / poly / sample clusters). Properties such as weight maps,
  *  vertex colours and texture projections live on clusters, exactly as in Softimage. */
@@ -309,13 +314,57 @@ export class Kinematics extends Node {
   }
   localMatrix(): THREE.Matrix4 {
     const l = this.local, d = Math.PI / 180;
-    const e = new THREE.Euler(l.val('rotx') * d, l.val('roty') * d, l.val('rotz') * d, ['XYZ', 'XZY', 'YXZ', 'YZX', 'ZXY', 'ZYX'][l.val('rotorder')] as any);
+    const e = new THREE.Euler(l.val('rotx') * d, l.val('roty') * d, l.val('rotz') * d, threeOrder(l.val('rotorder')));
     return new THREE.Matrix4().compose(new THREE.Vector3(l.val('posx'), l.val('posy'), l.val('posz')), new THREE.Quaternion().setFromEuler(e), new THREE.Vector3(l.val('sclx'), l.val('scly'), l.val('sclz')));
   }
   explorerChildren() { return [this.local, this.global]; }
 }
 
 // ---------------------------------------------------------------- X3DObject
+// ------------------------------------------------------------- constraints
+/** Kinematic constraints live on the object as properties (Direction Cns, Position Cns, Orientation Cns, Pose Cns, Up Vector…)
+ *  with a `targets` list, like Softimage's Kinematics > Constraints. Evaluated on top of the local transform. */
+export class Constraint extends Property {
+  targets: X3DObject[] = [];
+  constructor(name: string, type: string, defs: any[], targets: X3DObject[]) { super(name, type, defs); this.targets = targets; }
+}
+let evaluating = 0;
+export function applyConstraints(o: X3DObject, g: THREE.Matrix4): THREE.Matrix4 {
+  if (evaluating > 8) return g; // guard against constraint cycles
+  for (const c of o.properties) {
+    if (!(c instanceof Constraint) || !c.targets.length || c.val('active') === false) continue;
+    const alive = c.targets.filter(t => t.parentObj || t === o); if (!alive.length) continue;
+    evaluating++;
+    try {
+      const p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3(); g.decompose(p, q, s);
+      const tg = alive.map(t => t.globalMatrix()); const tp = tg.map(m => new THREE.Vector3().setFromMatrixPosition(m)); const tc = tp.reduce((a, b) => a.add(b), new THREE.Vector3()).multiplyScalar(1 / tp.length);
+      const blend = Number(c.val('blendweight') ?? 1);
+      if (c.type === 'dircns') {
+        // point the chosen local axis (-Z for cameras and lights, +X for bones) at the target, up vector = world Y unless an up-vector reference is set
+        const axis = c.val('dirx') ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 0, -1); const dir = tc.clone().sub(p); if (dir.lengthSq() < 1e-12) return g; dir.normalize();
+        const up = new THREE.Vector3(0, 1, 0); const upRef = (c as any).upVector as X3DObject | undefined; if (upRef) up.copy(new THREE.Vector3().setFromMatrixPosition(upRef.globalMatrix()).sub(p).normalize());
+        const z = axis.z ? dir.clone().negate() : new THREE.Vector3().crossVectors(axis.x ? dir : up, up).normalize(); const m = new THREE.Matrix4();
+        if (axis.z) { const x = new THREE.Vector3().crossVectors(up, z).normalize(); if (x.lengthSq() < 1e-8) x.set(1, 0, 0); const y = new THREE.Vector3().crossVectors(z, x); m.makeBasis(x, y, z); }
+        else { const x = dir; const zz = new THREE.Vector3().crossVectors(x, up).normalize(); if (zz.lengthSq() < 1e-8) zz.set(0, 0, 1); const y = new THREE.Vector3().crossVectors(zz, x); m.makeBasis(x, y, zz); }
+        const roll = Number(c.val('roll') ?? 0) * Math.PI / 180; const nq = new THREE.Quaternion().setFromRotationMatrix(m); if (roll) nq.multiply(new THREE.Quaternion().setFromAxisAngle(axis.z ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(1, 0, 0), roll));
+        g = new THREE.Matrix4().compose(p, blend < 1 ? q.clone().slerp(nq, blend) : nq, s);
+      } else if (c.type === 'poscns') {
+        const off = new THREE.Vector3(Number(c.val('offsetx') ?? 0), Number(c.val('offsety') ?? 0), Number(c.val('offsetz') ?? 0)); const np = tc.clone().add(off); g = new THREE.Matrix4().compose(blend < 1 ? p.clone().lerp(np, blend) : np, q, s);
+      } else if (c.type === 'oricns') {
+        const tq = new THREE.Quaternion(); tg[0].decompose(new THREE.Vector3(), tq, new THREE.Vector3()); const off = new THREE.Euler(Number(c.val('offsetx') ?? 0) * Math.PI / 180, Number(c.val('offsety') ?? 0) * Math.PI / 180, Number(c.val('offsetz') ?? 0) * Math.PI / 180, 'ZYX'); tq.multiply(new THREE.Quaternion().setFromEuler(off)); g = new THREE.Matrix4().compose(p, blend < 1 ? q.clone().slerp(tq, blend) : tq, s);
+      } else if (c.type === 'posecns') {
+        const tq = new THREE.Quaternion(), ts = new THREE.Vector3(); tg[0].decompose(new THREE.Vector3(), tq, ts); g = new THREE.Matrix4().compose(blend < 1 ? p.clone().lerp(tc, blend) : tc, blend < 1 ? q.clone().slerp(tq, blend) : tq, c.val('cnsscl') === false ? s : ts);
+      } else if (c.type === 'sclcns') {
+        const ts = new THREE.Vector3(); tg[0].decompose(new THREE.Vector3(), new THREE.Quaternion(), ts); g = new THREE.Matrix4().compose(p, q, ts);
+      } else if (c.type === 'dstcns') {
+        const dist = Number(c.val('distance') ?? 1); const dir = p.clone().sub(tc); if (dir.lengthSq() > 1e-12) { dir.normalize(); g = new THREE.Matrix4().compose(tc.clone().add(dir.multiplyScalar(dist)), q, s); }
+      }
+    } finally { evaluating--; }
+  }
+  return g;
+}
+
+
 export class X3DObject extends Node {
   parentObj: X3DObject | null = null;
   readonly children: X3DObject[] = [];
@@ -345,11 +394,12 @@ export class X3DObject extends Node {
   get visible(): boolean { return !!this.property('visibility')?.val('viewvis'); }
   globalMatrix(): THREE.Matrix4 {
     const m = this.kinematics.localMatrix();
-    return this.parentObj ? this.parentObj.globalMatrix().multiply(m) : m;
+    const g = this.parentObj ? this.parentObj.globalMatrix().multiply(m) : m;
+    return applyConstraints(this, g);
   }
   updateGlobal() {
     const g = this.globalMatrix(), p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3();
-    g.decompose(p, q, s); const e = new THREE.Euler().setFromQuaternion(q), r = 180 / Math.PI;
+    g.decompose(p, q, s); const e = new THREE.Euler().setFromQuaternion(q, threeOrder(this.kinematics.local.val('rotorder'))), r = 180 / Math.PI;
     const G = this.kinematics.global;
     G.get('posx')!.def.value = p.x; // readonly: set internal silently
     (G.get('posx') as any)._value = p.x; (G.get('posy') as any)._value = p.y; (G.get('posz') as any)._value = p.z;

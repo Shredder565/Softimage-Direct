@@ -2,7 +2,7 @@
 // other objects, lattices, implicit primitives, skeleton chains, text, and the richer deformers.
 import { siParamDefs, siLayout, siName } from './opdefs';
 import * as THREE from 'three';
-import { X3DObject, Primitive, Operator, Node, makeDisplay, makeGeomApprox } from './scene';
+import { X3DObject, Primitive, Operator, Node, makeDisplay, makeGeomApprox, threeOrder } from './scene';
 import { num, int, bool, enumP, str } from './params';
 import { MeshData } from './geometry';
 import * as C from './curves';
@@ -286,9 +286,9 @@ export class ChainRoot extends X3DObject {
       const q = new THREE.Quaternion().setFromUnitVectors(v1.normalize(), v2.normalize());
       // apply in the bone's parent space
       const parentG = bone.parentObj ? bone.parentObj.globalMatrix() : new THREE.Matrix4(); const toRoot = rootInv.clone().multiply(parentG); const rotParent = new THREE.Quaternion().setFromRotationMatrix(toRoot).invert();
-      const local = new THREE.Quaternion().setFromEuler(new THREE.Euler(bone.kinematics.local.val('rotx') * Math.PI / 180, bone.kinematics.local.val('roty') * Math.PI / 180, bone.kinematics.local.val('rotz') * Math.PI / 180));
+      const local = new THREE.Quaternion().setFromEuler(new THREE.Euler(bone.kinematics.local.val('rotx') * Math.PI / 180, bone.kinematics.local.val('roty') * Math.PI / 180, bone.kinematics.local.val('rotz') * Math.PI / 180, threeOrder(bone.kinematics.local.val('rotorder'))));
       const nq = rotParent.clone().multiply(q).multiply(rotParent.clone().invert()).multiply(local);
-      const e = new THREE.Euler().setFromQuaternion(nq); const l = bone.kinematics.local; (l.get('rotx') as any)._value = e.x * 180 / Math.PI; (l.get('roty') as any)._value = e.y * 180 / Math.PI; (l.get('rotz') as any)._value = e.z * 180 / Math.PI;
+      const e = new THREE.Euler().setFromQuaternion(nq, threeOrder(bone.kinematics.local.val('rotorder'))); const l = bone.kinematics.local; (l.get('rotx') as any)._value = e.x * 180 / Math.PI; (l.get('roty') as any)._value = e.y * 180 / Math.PI; (l.get('rotz') as any)._value = e.z * 180 / Math.PI;
     }
   }
   chainEnd(): THREE.Vector3 { const last = this.bones[this.bones.length - 1]; return new THREE.Vector3(last.val('length'), 0, 0).applyMatrix4(last.globalMatrix()); }
@@ -304,7 +304,7 @@ export function makeChain(name: string, pts: V3[], planar: boolean): ChainRoot {
     const bone = new Bone(`${name === 'root' ? '' : name + '_'}bone${i}`, len);
     // orient bone X toward b, in parent's space
     const dir = b.clone().sub(a).normalize(); const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(1, 0, 0), dir);
-    const parentRot = new THREE.Quaternion().setFromRotationMatrix(prevG); const local = parentRot.clone().invert().multiply(q); const e = new THREE.Euler().setFromQuaternion(local);
+    const parentRot = new THREE.Quaternion().setFromRotationMatrix(prevG); const local = parentRot.clone().invert().multiply(q); const e = new THREE.Euler().setFromQuaternion(local, threeOrder(bone.kinematics.local.val('rotorder')));
     const l = bone.kinematics.local; l.set('rotx', e.x * 180 / Math.PI); l.set('roty', e.y * 180 / Math.PI); l.set('rotz', e.z * 180 / Math.PI);
     if (i > 1) l.set('posx', (parent as Bone).val('length'));
     parent.addChild(bone); root.bones.push(bone); parent = bone; prevG = bone.globalMatrix();

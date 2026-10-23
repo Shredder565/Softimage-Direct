@@ -4,7 +4,7 @@
 // component tweaking (with proportional falloff) and interactive tools (curve/chain drawing, add vertex...).
 import * as THREE from 'three';
 import { App } from '../core/commands';
-import { X3DObject, MoveComponentOperator, geomPoints, Model } from '../core/scene';
+import { X3DObject, MoveComponentOperator, geomPoints, Model, threeOrder } from '../core/scene';
 import { ChainRoot, Bone } from '../core/scene2';
 import { meshEdges, edgeKey } from '../core/topology';
 import { catmullClark, meshUVProjection } from '../core/topology2';
@@ -277,7 +277,16 @@ export function viewManager(app: App, host: HTMLElement) {
     const objs = app.selectedObjects; if (!objs.length) return null;
     const c = new THREE.Vector3(); for (const o of objs) c.add(new THREE.Vector3().setFromMatrixPosition(o.globalMatrix())); return c.divideScalar(objs.length);
   };
-  const axisVec = (ax: 'x' | 'y' | 'z') => new THREE.Vector3(ax === 'x' ? 1 : 0, ax === 'y' ? 1 : 0, ax === 'z' ? 1 : 0);
+  const baseAxis = (ax: 'x' | 'y' | 'z') => new THREE.Vector3(ax === 'x' ? 1 : 0, ax === 'y' ? 1 : 0, ax === 'z' ? 1 : 0);
+  const globalQ = (o: X3DObject | null | undefined) => { const q = new THREE.Quaternion(); if (o) o.globalMatrix().decompose(new THREE.Vector3(), q, new THREE.Vector3()); return q; };
+  /** Orientation of the manipulation reference frame (MCP Global / Local / View / Par / Ref / Plane) for an object. */
+  const frameQ = (o?: X3DObject | null): THREE.Quaternion => {
+    const ref = (tool as any).ref ?? 'Global'; const obj = o ?? app.selectedObjects[0];
+    if (ref === 'Local') return globalQ(obj); if (ref === 'Par') return globalQ(obj?.parentObj);
+    if (ref === 'View') return vps[active].camera.quaternion.clone();
+    return new THREE.Quaternion();
+  };
+  const axisVec = (ax: 'x' | 'y' | 'z', o?: X3DObject | null) => baseAxis(ax).applyQuaternion(frameQ(o));
   const syncGizmo = () => {
     gizmo.clear(); gizmoOn = false;
     if (tool.mode === 'select' || app.activeTool) return;
@@ -287,7 +296,7 @@ export function viewManager(app: App, host: HTMLElement) {
     const cols = { x: 0xff0000, y: 0x00ff00, z: 0x0000ff };
     for (const ax of ['x', 'y', 'z'] as const) {
       const on = tool.axes[ax]; const col = on ? cols[ax] : 0x808080; const a = axisVec(ax).toArray();
-      if (tool.mode === 'rotate') { const pts: number[][] = []; for (let i = 0; i <= 48; i++) { const t = i / 48 * Math.PI * 2; const u = ax === 'x' ? [0, Math.cos(t), Math.sin(t)] : ax === 'y' ? [Math.cos(t), 0, Math.sin(t)] : [Math.cos(t), Math.sin(t), 0]; pts.push(u); } gizmo.add(seg(pts, col)); }
+      if (tool.mode === 'rotate') { const fq = frameQ(); const pts: number[][] = []; for (let i = 0; i <= 48; i++) { const t = i / 48 * Math.PI * 2; const u = ax === 'x' ? [0, Math.cos(t), Math.sin(t)] : ax === 'y' ? [Math.cos(t), 0, Math.sin(t)] : [Math.cos(t), Math.sin(t), 0]; pts.push(new THREE.Vector3(...u).applyQuaternion(fq).toArray()); } gizmo.add(seg(pts, col)); }
       else {
         gizmo.add(seg([[0, 0, 0], a], col));
         if (tool.mode === 'translate') { const cone = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.22, 10), new THREE.MeshBasicMaterial({ color: col, depthTest: false })); cone.renderOrder = 21; cone.position.set(a[0], a[1], a[2]); cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), axisVec(ax)); gizmo.add(cone); }
@@ -514,8 +523,20 @@ export function viewManager(app: App, host: HTMLElement) {
     for (const o of drag.objs) {
       const l = o.kinematics.local;
       if (tool.mode === 'translate' && (app as any).centerMode) { if (axisMask.x) l.get('pposx')!.value = (drag.start.get(o.id + '.pposx') ?? 0) + delta.x; if (axisMask.y) l.get('pposy')!.value = (drag.start.get(o.id + '.pposy') ?? 0) + delta.y; if (axisMask.z) l.get('pposz')!.value = (drag.start.get(o.id + '.pposz') ?? 0) + delta.z; continue; }
-      if (tool.mode === 'translate') { const np = [drag.start.get(o.id + '.posx')! + (axisMask.x ? delta.x : 0), drag.start.get(o.id + '.posy')! + (axisMask.y ? delta.y : 0), drag.start.get(o.id + '.posz')! + (axisMask.z ? delta.z : 0)]; const sp = snapV(np); l.get('posx')!.value = sp[0]; l.get('posy')!.value = sp[1]; l.get('posz')!.value = sp[2]; }
-      else if (tool.mode === 'rotate') { const a = dx * 0.5; const ax = h === 'x' || h === 'y' || h === 'z' ? h : (axisMask.x && !axisMask.y && !axisMask.z) ? 'x' : (axisMask.z && !axisMask.x && !axisMask.y) ? 'z' : 'y'; l.get('rot' + ax)!.value = drag.start.get(o.id + '.rot' + ax)! + a; }
+      const parentInv = globalQ(o.parentObj).invert();
+      if (tool.mode === 'translate') {
+        // world-space delta → keep only the enabled axes of the reference frame (an axis handle already is one) → parent space
+        let wd = delta.clone(); if (!(h === 'x' || h === 'y' || h === 'z')) { const keep = new THREE.Vector3(); for (const ax of ['x', 'y', 'z'] as const) if (axisMask[ax]) { const v = axisVec(ax, o); keep.add(v.multiplyScalar(wd.dot(v))); } wd = keep; }
+        const pd = wd.applyQuaternion(parentInv); const np = [drag.start.get(o.id + '.posx')! + pd.x, drag.start.get(o.id + '.posy')! + pd.y, drag.start.get(o.id + '.posz')! + pd.z]; const sp = snapV(np); l.get('posx')!.value = sp[0]; l.get('posy')!.value = sp[1]; l.get('posz')!.value = sp[2]; }
+      else if (tool.mode === 'rotate') {
+        // rotate about the frame axis: Local = the object's own axes, Global = world axes, Par = parent's axes, View = camera axes
+        const a = dx * 0.5; const ax = h === 'x' || h === 'y' || h === 'z' ? h : (axisMask.x && !axisMask.y && !axisMask.z) ? 'x' : (axisMask.z && !axisMask.x && !axisMask.y) ? 'z' : 'y';
+        const order = threeOrder(drag.start.get(o.id + '.rotorder') ?? l.val('rotorder') ?? 0); const d = Math.PI / 180;
+        const startQ = new THREE.Quaternion().setFromEuler(new THREE.Euler(drag.start.get(o.id + '.rotx')! * d, drag.start.get(o.id + '.roty')! * d, drag.start.get(o.id + '.rotz')! * d, order));
+        const ref = (tool as any).ref ?? 'Global'; const startGlobal = ref === 'Local' ? globalQ(o.parentObj).multiply(startQ) : null;
+        const axisW = ref === 'Local' ? baseAxis(ax).applyQuaternion(startGlobal!) : axisVec(ax, o); const axisP = axisW.applyQuaternion(parentInv).normalize();
+        const nq = new THREE.Quaternion().setFromAxisAngle(axisP, a * d).multiply(startQ); const e = new THREE.Euler().setFromQuaternion(nq, order);
+        l.get('rotx')!.value = e.x / d; l.get('roty')!.value = e.y / d; l.get('rotz')!.value = e.z / d; }
       else if (tool.mode === 'scale') { const f = Math.max(0.01, 1 + dx * 0.01); const m = h === 'x' || h === 'y' || h === 'z' ? { x: h === 'x', y: h === 'y', z: h === 'z' } : axisMask; for (const ax of ['x', 'y', 'z']) if ((m as any)[ax]) l.get('scl' + ax)!.value = drag.start.get(o.id + '.scl' + ax)! * f; }
     }
     sync(); app.events.emit('params');
@@ -586,7 +607,7 @@ export function viewManager(app: App, host: HTMLElement) {
       // Softimage rectangle selection: an edge is picked when the rectangle touches it (Surround Edges off) and a
       // polygon when any part of it overlaps the rectangle (Surround Polygons off); hidden components are included.
       else if (kind === 'edge') app.selectComponents(target, 'edge', meshEdges(mesh).filter(([a, b]) => SI.surroundEdges ? inside(pp[a]) && inside(pp[b]) : segRect(pp[a], pp[b], x0, y0, x1, y1)).map(([a, b]) => edgeKey(a, b)), mode);
-      else app.selectComponents(target, 'polygon', mesh.polygons.map((f, i) => (SI.surroundPolygons ? f.every(v => inside(pp[v])) : polyRect(f.map(v => pp[v]), x0, y0, x1, y1)) ? i : -1).filter(i => i >= 0), mode);
+      else { const ids = mesh.polygons.map((f, i) => (SI.surroundPolygons ? f.every(v => inside(pp[v])) : polyRect(f.map(v => pp[v]), x0, y0, x1, y1)) ? i : -1).filter(i => i >= 0); app.selectComponents(target, 'polygon', ids, mode); }
       return;
     }
     if (d.moved && d.button === 0 && !e.altKey && tool.mode !== 'select' && d.objs.length) {
