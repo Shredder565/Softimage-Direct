@@ -209,11 +209,15 @@ export function viewManager(app: App, host: HTMLElement) {
         (ln.material as THREE.LineBasicMaterial).color.set(selected ? SI.selected : SI.ctrl);
       } else {
         removeChild(g, 'mesh'); removeChild(g, 'wire');
-        let mkr = child(g, 'marker') as THREE.Object3D | undefined; const tag = kindTag + '|' + (o.primitive?.name ?? '') + '|' + (o.val?.('length') ?? '') + '|' + (o.primitive?.val('size') ?? '') + '|' + (o.type === 'standin' ? o.primitive!.params.map(p => p.value).join(',') : '');
+        let mkr = child(g, 'marker') as THREE.Object3D | undefined; const tag = kindTag + '|' + (o.primitive?.name ?? '') + '|' + (o.val?.('length') ?? '') + '|' + (o.primitive?.val('size') ?? '') + '|' + (o.type === 'light' ? o.primitive?.val('LightCone') ?? '' : '') + '|' + (o.type === 'standin' ? o.primitive!.params.map(p => p.value).join(',') : '');
         if (!mkr || (mkr as any)._tag !== tag) { if (mkr) g.remove(mkr); mkr = marker(o); (mkr as any)._kind = 'marker'; (mkr as any)._tag = tag; g.add(mkr); }
         const colr = selected ? SI.selected : o.kind === 'model' ? SI.nullcol : o.type === 'bone' || o.type === 'root' ? 0xe0c060 : o.type === 'eff' ? 0xff6060 : o.type === 'light' ? SI.light : o.type === 'camera' ? SI.camera : o.type === 'implicit' ? SI.ctrl : SI.nullcol;
-        mkr.traverse(c => { if ((c as any).material && (c as any)._kind !== 'light') ((c as any).material as THREE.LineBasicMaterial).color.set(colr); });
-        if (o.type === 'light') { userLights++; let L = child(g, 'light') as THREE.Light | undefined; const kind = o.primitive?.val('type'); if (!L) { L = kind === 'spot' ? new THREE.SpotLight(0xffffff, 60, 0, 0.6, 0.4) : kind === 'infinite' ? new THREE.DirectionalLight(0xffffff, 1) : new THREE.PointLight(0xffffff, 80); (L as any)._kind = 'light'; g.add(L); if ((L as any).target) { (L as any).target.position.set(0, 0, -1); g.add((L as any).target); } } const c = o.primitive?.val('soft_light.color') as number[] | undefined; if (c) L.color.setRGB(c[0], c[1], c[2]); const inten = Number(o.primitive?.val('soft_light.intensity') ?? 0.75); L.intensity = kind === 'infinite' ? inten * 1.5 : inten * 100; }
+        mkr.traverse(c => { if ((c as any).material && (c as any)._kind !== 'light' && (c as any)._kind !== 'aimline') ((c as any).material as THREE.LineBasicMaterial).color.set(colr); });
+        if (o.type === 'light') { userLights++; let L = child(g, 'light') as THREE.Light | undefined; const kind = o.primitive?.val('type'); if (!L) { L = kind === 'spot' ? new THREE.SpotLight(0xffffff, 60, 0, 0.6, 0.4) : kind === 'infinite' ? new THREE.DirectionalLight(0xffffff, 1) : new THREE.PointLight(0xffffff, 80); (L as any)._kind = 'light'; g.add(L); if ((L as any).target) { (L as any).target.position.set(0, 0, -1); g.add((L as any).target); } } const c = o.primitive?.val('soft_light.color') as number[] | undefined; if (c) L.color.setRGB(c[0], c[1], c[2]); const inten = Number(o.primitive?.val('soft_light.intensity') ?? 0.75); L.intensity = kind === 'infinite' ? inten * 1.5 : inten * 100;
+          // spot / infinite lights with a direction constraint show the interest line (Softimage draws it light → interest)
+          const cns = o.properties.find(p => p.type === 'dircns') as any; const tgt: X3DObject | undefined = cns?.targets?.find((t: X3DObject) => t.parentObj); let al = child(g, 'aimline') as THREE.Line | undefined;
+          if (tgt) { const inv = o.globalMatrix().invert(); const lp = new THREE.Vector3().setFromMatrixPosition(tgt.globalMatrix()).applyMatrix4(inv); if (!al) { al = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineDashedMaterial({ color: SI.light, dashSize: 0.3, gapSize: 0.2 })); (al as any)._kind = 'aimline'; g.add(al); } al.geometry.setFromPoints([new THREE.Vector3(), lp]); al.computeLineDistances(); al.visible = true; } else if (al) al.visible = false;
+          if (kind === 'spot' && L instanceof THREE.SpotLight) { const ca = Number(o.primitive?.val('LightCone') ?? 30); L.angle = THREE.MathUtils.degToRad(Math.max(1, Math.min(179, ca)) / 2); } }
       }
     }
     defaultLights.visible = userLights === 0;
@@ -314,7 +318,15 @@ export function viewManager(app: App, host: HTMLElement) {
     const P = (v: THREE.Vector3) => { const q = v.clone().project(vp.camera); return { x: at.r.x + ((q.x + 1) / 2) * at.r.w, y: at.r.y + ((1 - q.y) / 2) * at.r.h }; };
     const c = P(gizmoCenter); if (Math.hypot(c.x - at.x, c.y - at.y) < 8) return 'centre';
     const s = pxScaleOf(vp, at.r) * gizmoPx; let best: 'x' | 'y' | 'z' | null = null, bd = 7;
-    for (const ax of ['x', 'y', 'z'] as const) { const tip = P(gizmoCenter.clone().add(axisVec(ax).multiplyScalar(s))); const d = tool.mode === 'rotate' ? Math.abs(Math.hypot(tip.x - c.x, tip.y - c.y) - Math.hypot(at.x - c.x, at.y - c.y)) : distToSeg(at.x, at.y, c, tip); if (d < bd) { bd = d; best = ax; } }
+    const fq = frameQ();
+    for (const ax of ['x', 'y', 'z'] as const) {
+      let d: number;
+      if (tool.mode === 'rotate') { // nearest point on the ring that lies in the plane perpendicular to this frame axis (front half only, like the drawn ring)
+        d = Infinity; const camDir = vp.camera.getWorldDirection(new THREE.Vector3());
+        for (let i = 0; i < 64; i++) { const t = i / 64 * Math.PI * 2; const u = ax === 'x' ? [0, Math.cos(t), Math.sin(t)] : ax === 'y' ? [Math.cos(t), 0, Math.sin(t)] : [Math.cos(t), Math.sin(t), 0]; const w = new THREE.Vector3(...u).applyQuaternion(fq); if (vp.kind === 'persp' && w.dot(camDir) > 0.35) continue; const q = P(gizmoCenter.clone().add(w.multiplyScalar(s))); d = Math.min(d, Math.hypot(q.x - at.x, q.y - at.y)); }
+      } else { const tip = P(gizmoCenter.clone().add(axisVec(ax).multiplyScalar(s))); d = distToSeg(at.x, at.y, c, tip); }
+      if (d < bd) { bd = d; best = ax; }
+    }
     return best;
   };
 
@@ -460,7 +472,7 @@ export function viewManager(app: App, host: HTMLElement) {
   renderer.domElement.addEventListener('pointermove', (e) => {
     if (XT.pointerMove(e)) return;
     if (!drag) { hover(e); return; }
-    const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+    const ev = e; const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
     if (Math.abs(dx) + Math.abs(dy) > 2) drag.moved = true;
     const vp = drag.vp, cam = vp.camera as any;
     const navigating = e.altKey || drag.button !== 0;
@@ -530,7 +542,10 @@ export function viewManager(app: App, host: HTMLElement) {
         const pd = wd.applyQuaternion(parentInv); const np = [drag.start.get(o.id + '.posx')! + pd.x, drag.start.get(o.id + '.posy')! + pd.y, drag.start.get(o.id + '.posz')! + pd.z]; const sp = snapV(np); l.get('posx')!.value = sp[0]; l.get('posy')!.value = sp[1]; l.get('posz')!.value = sp[2]; }
       else if (tool.mode === 'rotate') {
         // rotate about the frame axis: Local = the object's own axes, Global = world axes, Par = parent's axes, View = camera axes
-        const a = dx * 0.5; const ax = h === 'x' || h === 'y' || h === 'z' ? h : (axisMask.x && !axisMask.y && !axisMask.z) ? 'x' : (axisMask.z && !axisMask.x && !axisMask.y) ? 'z' : 'y';
+        const ax = h === 'x' || h === 'y' || h === 'z' ? h : (axisMask.x && !axisMask.y && !axisMask.z) ? 'x' : (axisMask.z && !axisMask.x && !axisMask.y) ? 'z' : 'y';
+        // angle swept by the cursor around the manipulator centre (ring drag), signed by whether the axis faces the camera; a free drag is dx-driven
+        let a = dx * 0.5;
+        if (h === 'x' || h === 'y' || h === 'z') { prepCam(vp, drag.at.r); const rr = drag.at.r; const q = gizmoCenter.clone().project(vp.camera); const cx = rr.x + ((q.x + 1) / 2) * rr.w, cy = rr.y + ((1 - q.y) / 2) * rr.h; const a0 = Math.atan2(drag.sy - cy, drag.sx - cx), a1 = Math.atan2(ev.clientY - cy, ev.clientX - cx); let sw = a1 - a0; while (sw > Math.PI) sw -= 2 * Math.PI; while (sw < -Math.PI) sw += 2 * Math.PI; const facing = axisVec(ax, o).dot(vp.camera.getWorldDirection(new THREE.Vector3())) < 0 ? 1 : -1; a = -sw * 180 / Math.PI * facing; }
         const order = threeOrder(drag.start.get(o.id + '.rotorder') ?? l.val('rotorder') ?? 0); const d = Math.PI / 180;
         const startQ = new THREE.Quaternion().setFromEuler(new THREE.Euler(drag.start.get(o.id + '.rotx')! * d, drag.start.get(o.id + '.roty')! * d, drag.start.get(o.id + '.rotz')! * d, order));
         const ref = (tool as any).ref ?? 'Global'; const startGlobal = ref === 'Local' ? globalQ(o.parentObj).multiply(startQ) : null;
@@ -547,7 +562,7 @@ export function viewManager(app: App, host: HTMLElement) {
   const hover = (e: PointerEvent) => {
     if (app.selMode === 'object' && !app.activeTool?.pickKind) { if (hoverKey) { hoverKey = ''; hoverClear(); needs = true; } return; }
     const at = vpAt(e); if (!at) return; const vp = vps[at.i]; prepCam(vp, at.r);
-    const po = pickObject(vp, at.nx, at.ny); const pc = pickComponent(vp, at, po?.obj, po?.hit, app.activeTool?.pickKind);
+    const po = pickObject(vp, at.nx, at.ny); let pc = pickComponent(vp, at, po?.obj, po?.hit, app.activeTool?.pickKind); if (!pc && po && !app.activeTool?.pickKind && po.obj !== compTarget() && po.obj.primitive && geomPoints(po.obj.primitive.geom())) pc = pickComponent(vp, at, po.obj, po.hit, app.selMode as any);
     const key = pc ? pc.kind + ':' + pc.item : ''; if (key === hoverKey) return; hoverKey = key; hoverClear();
     if (pc) {
       const pts = geomPoints(pc.obj.primitive!.geom())!; const pos = new THREE.BufferAttribute(pts, 3); const M = pc.obj.globalMatrix(); for (const h of [hoverPoly, hoverLine, hoverPoint]) { h.matrixAutoUpdate = false; h.matrix.copy(M); }
@@ -562,7 +577,7 @@ export function viewManager(app: App, host: HTMLElement) {
   renderer.domElement.addEventListener('pointerup', (e) => {
     if (XT.pointerUp(e)) return;
     if (!drag) return; const d = drag; drag = null; rubber.style.display = 'none';
-    const mode = e.shiftKey ? 'add' : e.ctrlKey ? 'toggle' : 'replace';
+    let mode: 'add' | 'toggle' | 'replace' = e.shiftKey ? 'add' : e.ctrlKey ? 'toggle' : 'replace';
     if (app.activeTool) {
       const t = app.activeTool; const at = vpAt(e); if (!at) return; const vp = vps[at.i]; prepCam(vp, at.r);
       if (d.button === 2 && !d.moved) { t.onFinish(); sync(); return; }
@@ -583,8 +598,9 @@ export function viewManager(app: App, host: HTMLElement) {
       const at = vpAt(e); if (!at) return; const vp = vps[at.i]; prepCam(vp, at.r);
       const po = pickObject(vp, at.nx, at.ny);
       if (app.selMode === 'object') { let target = po?.obj ?? null; if (target && (app as any).groupMode) { let t: any = target; while (t.parentObj && t.parentObj !== app.scene.root) t = t.parentObj; target = t; } if (!target && !SI.clickToDeselect && mode === 'replace') return; app.select(target ? [target] : [], mode); return; }
-      const pc = pickComponent(vp, at, po?.obj, po?.hit);
-      if (pc) app.selectComponents(pc.obj, pc.kind, [pc.item], mode);
+      let pc = pickComponent(vp, at, po?.obj, po?.hit);
+      if (!pc && po && po.obj !== compTarget() && po.obj.primitive && geomPoints(po.obj.primitive.geom())) pc = pickComponent(vp, at, po.obj, po.hit, app.selMode as any); // Softimage: picking a component of another object switches to it
+      if (pc) { if (pc.obj !== compTarget()) mode = 'replace'; app.selectComponents(pc.obj, pc.kind, [pc.item], mode); }
       else if (po && mode === 'replace' && po.obj !== compTarget()) { app.compSel = null; app.select([po.obj]); }
       else if (mode === 'replace' && compTarget()) app.selectComponents(compTarget()!, app.selMode as any, [], mode);
       return;
@@ -678,7 +694,7 @@ function marker(o: X3DObject): THREE.Object3D {
   const circle = (r: number, axis: 'x' | 'y' | 'z', n = 24) => { const pts: number[][] = []; for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2; pts.push(axis === 'y' ? [r * Math.cos(a), 0, r * Math.sin(a)] : axis === 'x' ? [0, r * Math.cos(a), r * Math.sin(a)] : [r * Math.cos(a), r * Math.sin(a), 0]); } return line(pts, true); };
   const t = o.type;
   if (t === 'camera') { g.add(line([[-1, -0.7, 0], [1, -0.7, 0], [1, 0.7, 0], [-1, 0.7, 0]], true)); g.add(line([[0, 0, 0], [0, 0, -3]])); g.add(line([[-0.6, 0.7, 0], [0, 1.4, 0], [0.6, 0.7, 0]])); g.add(line([[-1.5, -1, -3], [1.5, -1, -3], [1.5, 1, -3], [-1.5, 1, -3]], true)); }
-  else if (t === 'light') { const kind = o.primitive?.val('type'); if (kind === 'spot') { g.add(line([[0, 0, 0], [1, 0, -3]])); g.add(line([[0, 0, 0], [-1, 0, -3]])); g.add(line([[0, 0, 0], [0, 1, -3]])); g.add(line([[0, 0, 0], [0, -1, -3]])); g.add(circle(1, 'z').translateZ(-3)); } else if (kind === 'infinite') { g.add(line([[0, 0, 0], [0, 0, -4]])); g.add(line([[0, 0, -4], [0.4, 0, -3.2]])); g.add(line([[0, 0, -4], [-0.4, 0, -3.2]])); } else { for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2; g.add(line([[Math.cos(a) * 0.5, Math.sin(a) * 0.5, 0], [Math.cos(a) * 1.5, Math.sin(a) * 1.5, 0]])); } } }
+  else if (t === 'light') { const kind = o.primitive?.val('type'); if (kind === 'spot') { const r = 3 * Math.tan(THREE.MathUtils.degToRad(Math.max(1, Math.min(179, Number(o.primitive?.val('LightCone') ?? 30))) / 2)); g.add(line([[0, 0, 0], [r, 0, -3]])); g.add(line([[0, 0, 0], [-r, 0, -3]])); g.add(line([[0, 0, 0], [0, r, -3]])); g.add(line([[0, 0, 0], [0, -r, -3]])); g.add(circle(r, 'z').translateZ(-3)); } else if (kind === 'infinite') { g.add(line([[0, 0, 0], [0, 0, -4]])); g.add(line([[0, 0, -4], [0.4, 0, -3.2]])); g.add(line([[0, 0, -4], [-0.4, 0, -3.2]])); } else { for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2; g.add(line([[Math.cos(a) * 0.5, Math.sin(a) * 0.5, 0], [Math.cos(a) * 1.5, Math.sin(a) * 1.5, 0]])); } } }
   else if (t === 'bone') { const L = Number(o.val('length') ?? 2), w = Math.min(0.5, L * 0.12); const b = [[0, 0, 0], [L * 0.15, w, 0], [L, 0, 0], [L * 0.15, -w, 0], [0, 0, 0], [L * 0.15, 0, w], [L, 0, 0], [L * 0.15, 0, -w], [0, 0, 0]]; g.add(line(b)); g.add(line([[L * 0.15, w, 0], [L * 0.15, 0, w], [L * 0.15, -w, 0], [L * 0.15, 0, -w]], true)); }
   else if (t === 'root') { g.add(line([[-0.7, 0, 0], [0.7, 0, 0]])); g.add(line([[0, -0.7, 0], [0, 0.7, 0]])); g.add(line([[0, 0, -0.7], [0, 0, 0.7]])); g.add(circle(0.7, 'y', 12)); }
   else if (t === 'eff') { g.add(line([[0.6, 0, 0], [0, 0.6, 0], [-0.6, 0, 0], [0, -0.6, 0]], true)); g.add(line([[0, 0, 0.6], [0, 0.6, 0], [0, 0, -0.6], [0, -0.6, 0]], true)); }
