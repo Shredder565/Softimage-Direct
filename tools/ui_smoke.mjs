@@ -64,6 +64,10 @@ else {
   if (missingViews.length) fail.push(`unregistered Softimage layout frame types (${missingViews.length}): ${missingViews.join(', ')}`);
   else ok.push(`all ${LAYOUT_FRAME_TYPES.length} Softimage layout frame types registered`);
   if (audit.placeholderFrames?.length) note.push(`placeholder frames in Default layout: ${audit.placeholderFrames.length}`);
+  const gep = audit.getEnableParity;
+  if (!gep) note.push('getEnableParity missing from __uiAudit');
+  else if (!gep.ok) fail.push(`Get enable Model↔Animate mismatches: ${JSON.stringify(gep.mismatches?.slice?.(0, 5) ?? gep.mismatches)}`);
+  else ok.push(`Get enable parity Model=${gep.modelGet} Animate=${gep.animateGet} shared=${gep.shared}`);
 }
 
 // Open floating views

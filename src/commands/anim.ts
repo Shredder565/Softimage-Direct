@@ -8,6 +8,7 @@ import { Parameter, num, str, int } from '../core/params';
 import { evaluateMixer, installMixerEval, mixerDump, clipWeightsAt } from '../core/mixer';
 import { ensureShapeBase, ensureShapeOperator, evaluateShapes } from '../core/shape';
 import { findParam } from './index';
+import { openFloating } from '../ui/floating';
 
 type Group = 'Transforms' | 'Scaling' | 'Rotation' | 'Translation' | 'All' | 'Marked';
 const PREFIX: Record<string, string> = { Scaling: 'scl', Rotation: 'rot', Translation: 'pos' };
@@ -152,7 +153,78 @@ export function registerAnimCommands(app: App) {
     app.logMsg('info', `ConvertEulerToQuaternion: continuous euler on ${n} object(s)`); return n;
   } });
   app.register({ name: 'ConvertQuaternionToEuler', label: 'Convert Quaternion to Euler', category: 'Animation', args: [], execute: (app) => app.run('MakeRotationKeysContinuous') });
-  for (const n of ['SetScriptedOp', 'ParameterConnectionEditor']) app.register({ name: n, label: n.replace(/([A-Z])/g, ' $1').trim(), category: 'Animation', args: [], execute(app) { app.logMsg('info', `${n}: not available in this build`); } });
+  // Soft scripted-op / connection editor (not silent): soft PPG UIs over expression links. Full Softimage scripted-op runtime / PPG chrome remains out of scope.
+  app.register({ name: 'SetScriptedOp', label: 'Set Scripted Operator', category: 'Animation', args: [{ name: 'Target', default: '' }, { name: 'Code', default: '' }], execute(app, a) {
+    const ps = a.Target ? resolve(app, a.Target) : keyTargets(app, 'Marked');
+    if (!ps.length) throw new Error('Mark a parameter (or pass Target) for a scripted operator');
+    const p0 = ps[0];
+    const existing = A.expression(p0) ?? 'Fc';
+    openFloating('Set Scripted Operator', (body, win) => {
+      body.classList.add('soft-dialog');
+      body.innerHTML = `<div class="hint">Soft scripted operator — expression evaluated each frame (Fc = frame). Softimage scripted-op runtime / PPG chrome not in this build.</div>
+        <label>Parameter <input class="sop-target" readonly /></label>
+        <label>Code<textarea class="sop-code" rows="6" spellcheck="false"></textarea></label>
+        <div class="row"><button class="sop-apply">Apply</button><button class="sop-cancel">Cancel</button></div>`;
+      const tgt = body.querySelector('.sop-target') as HTMLInputElement;
+      const code = body.querySelector('.sop-code') as HTMLTextAreaElement;
+      tgt.value = ps.length === 1 ? p0.fullName : `${ps.length} marked parameters`;
+      code.value = String(a.Code || existing);
+      body.querySelector('.sop-cancel')!.addEventListener('click', () => win.close());
+      body.querySelector('.sop-apply')!.addEventListener('click', () => {
+        const text = code.value.trim(); if (!text) return;
+        for (const p of ps) {
+          const old = A.expressions.get(p); const oldFc = A.fcurve(p);
+          app.record('Scripted Op', () => A.setExpression(p, text, s => findParam(app, s)), () => { A.expressions.delete(p); if (old) A.expressions.set(p, old); if (oldFc) A.fcurves.set(p, oldFc); });
+        }
+        emit();
+        app.logMsg('info', `SetScriptedOp: soft expression on ${ps.length} parameter(s)`);
+        win.close();
+      });
+    }, { w: 440, h: 280, key: 'SetScriptedOp' });
+    if (a.Code) {
+      const text = String(a.Code);
+      for (const p of ps) A.setExpression(p, text, s => findParam(app, s));
+      emit();
+    }
+    return ps.length;
+  } });
+  app.register({ name: 'ParameterConnectionEditor', label: 'Parameter Connection Editor', category: 'Animation', args: [], undoable: false, execute(app) {
+    openFloating('Parameter Connection Editor', (body, win) => {
+      body.classList.add('soft-dialog');
+      body.innerHTML = `<div class="hint">Soft connection editor — lists expression / link drivers on the scene. Softimage PPG connection chrome is an accepted UI follow-up.</div>
+        <div class="cnx-list"></div>
+        <div class="row"><button class="cnx-refresh">Refresh</button><button class="cnx-animed">Open Animation Editor</button><button class="cnx-close">Close</button></div>`;
+      const list = body.querySelector('.cnx-list')!;
+      const render = () => {
+        const rows: { p: Parameter; text: string }[] = [];
+        for (const [p, ex] of A.expressions) rows.push({ p, text: ex.text });
+        list.innerHTML = '';
+        if (!rows.length) { list.innerHTML = '<div class="hint">No parameter connections. Use Set Expression / Link With / Set Scripted Operator.</div>'; return; }
+        for (const { p, text } of rows) {
+          const row = document.createElement('div'); row.className = 'cnx-row';
+          row.innerHTML = `<code class="cnx-name"></code><input class="cnx-expr" spellcheck="false" /><button class="cnx-apply">Set</button><button class="cnx-break">Disconnect</button>`;
+          (row.querySelector('.cnx-name') as HTMLElement).textContent = p.fullName;
+          const inp = row.querySelector('.cnx-expr') as HTMLInputElement; inp.value = text;
+          row.querySelector('.cnx-apply')!.addEventListener('click', () => {
+            const t = inp.value.trim(); if (!t) return;
+            A.setExpression(p, t, s => findParam(app, s)); emit(); app.logMsg('info', `Connection: ${p.fullName} ← ${t}`); render();
+          });
+          row.querySelector('.cnx-break')!.addEventListener('click', () => {
+            A.expressions.delete(p); emit(); app.logMsg('info', `Disconnected ${p.fullName}`); render();
+          });
+          list.appendChild(row);
+        }
+      };
+      body.querySelector('.cnx-refresh')!.addEventListener('click', render);
+      body.querySelector('.cnx-animed')!.addEventListener('click', () => window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'Animation Editor' } })));
+      body.querySelector('.cnx-close')!.addEventListener('click', () => win.close());
+      render();
+      const off1 = app.events.on('params', render); const off2 = app.events.on('selection', render);
+      const prev = win.close; win.close = () => { off1(); off2(); prev(); };
+    }, { w: 560, h: 360, key: 'ParameterConnectionEditor' });
+    app.logMsg('info', 'ParameterConnectionEditor: soft connection list open');
+    return A.expressions.size;
+  } });
   app.register({ name: 'MakeRotationKeysContinuous', label: 'Make Rotation Keys Continuous', category: 'Animation', args: [], execute(app) { let n = 0; for (const p of keyTargets(app, 'Rotation')) { const fc = A.fcurve(p); if (!fc) continue; const old = fc.keys.map(k => ({ ...k })); app.record('Continuous', () => { for (let i = 1; i < fc.keys.length; i++) { let v = fc.keys[i].value; const prev = fc.keys[i - 1].value; while (v - prev > 180) v -= 360; while (prev - v > 180) v += 360; fc.keys[i].value = v; } }, () => { fc.keys = old; }); n++; } emit(); return n; } });
   // ---- playback
   app.register({ name: 'SetPlaybackMode', label: 'Playback Mode', category: 'Playback', args: [{ name: 'Mode', default: 'Real-Time Playback' }], undoable: false, execute(app, a) { const m = String(a.Mode); A.realtime = m !== 'Play All Frames'; A.speed = m.includes('75') ? .75 : m.includes('50') ? .5 : m.includes('25') ? .25 : 1; app.events.emit('frame'); } });
@@ -457,10 +529,58 @@ export function registerAnimCommands(app: App) {
     return app.run('ImportAction', a);
   } });
 
-  // ---- devices / capture (Tools > Devices) — wired no-ops for menu walk; Softimage device drivers are OS-bound
-  app.register({ name: 'InspectDevices', label: 'Manage Device Drivers', category: 'Devices', args: [], undoable: false, execute(app) { app.logMsg('info', 'InspectDevices: no device drivers in this build'); return null; } });
-  app.register({ name: 'EnableAllDevices', label: 'Enable All Devices', category: 'Devices', args: [], undoable: false, execute(app) { (app as any).devicesEnabled = true; app.logMsg('info', 'Devices enabled'); } });
-  app.register({ name: 'DisableAllDevices', label: 'Disable All Devices', category: 'Devices', args: [], undoable: false, execute(app) { (app as any).devicesEnabled = false; app.logMsg('info', 'Devices disabled'); } });
+  // ---- devices / capture (Tools > Devices) — soft Device Drivers PPG; OS device drivers stay out of web scope
+  app.register({ name: 'InspectDevices', label: 'Manage Device Drivers', category: 'Devices', args: [], undoable: false, execute(app) {
+    const registry: { name: string; kind: string; enabled: boolean }[] = (app as any).deviceDrivers ??= [];
+    openFloating('Device Drivers', (body, win) => {
+      body.classList.add('soft-dialog');
+      const render = () => {
+        const on = !!(app as any).devicesEnabled;
+        body.innerHTML = `<div class="hint">Soft Device Drivers panel — Softimage OS device drivers are not available in this web build. Registry is empty unless scripted.</div>
+          <div class="row"><label><input type="checkbox" class="dev-master" ${on ? 'checked' : ''}/> Devices enabled</label></div>
+          <div class="dev-list"></div>
+          <div class="row"><button class="dev-add">Add Soft Driver…</button><button class="dev-close">Close</button></div>`;
+        const list = body.querySelector('.dev-list')!;
+        if (!registry.length) list.innerHTML = '<div class="hint">(no device drivers registered)</div>';
+        for (const d of registry) {
+          const row = document.createElement('div'); row.className = 'cnx-row';
+          row.innerHTML = `<code></code><label><input type="checkbox" class="dev-on"/> enabled</label><button class="dev-rm">Remove</button>`;
+          (row.querySelector('code') as HTMLElement).textContent = `${d.name} (${d.kind})`;
+          const cb = row.querySelector('.dev-on') as HTMLInputElement; cb.checked = d.enabled;
+          cb.onchange = () => { d.enabled = cb.checked; app.logMsg('info', `Device ${d.name}: ${d.enabled ? 'on' : 'off'}`); };
+          row.querySelector('.dev-rm')!.addEventListener('click', () => { const i = registry.indexOf(d); if (i >= 0) registry.splice(i, 1); render(); });
+          list.appendChild(row);
+        }
+        body.querySelector('.dev-master')!.addEventListener('change', (e) => {
+          (app as any).devicesEnabled = (e.target as HTMLInputElement).checked;
+          app.logMsg('info', (app as any).devicesEnabled ? 'Devices enabled' : 'Devices disabled');
+        });
+        body.querySelector('.dev-add')!.addEventListener('click', () => {
+          const name = prompt('Soft device driver name:', 'SoftDriver') || '';
+          if (!name) return;
+          registry.push({ name, kind: 'soft', enabled: true });
+          (app as any).devicesEnabled = true;
+          render();
+        });
+        body.querySelector('.dev-close')!.addEventListener('click', () => win.close());
+      };
+      render();
+    }, { w: 420, h: 320, key: 'InspectDevices' });
+    app.logMsg('info', `InspectDevices: ${registry.length} soft driver(s), devices ${(app as any).devicesEnabled ? 'on' : 'off'}`);
+    return { drivers: registry.length, enabled: !!(app as any).devicesEnabled };
+  } });
+  app.register({ name: 'EnableAllDevices', label: 'Enable All Devices', category: 'Devices', args: [], undoable: false, execute(app) {
+    (app as any).devicesEnabled = true;
+    const registry: { enabled: boolean }[] = (app as any).deviceDrivers ?? [];
+    for (const d of registry) d.enabled = true;
+    app.logMsg('info', 'Devices enabled');
+  } });
+  app.register({ name: 'DisableAllDevices', label: 'Disable All Devices', category: 'Devices', args: [], undoable: false, execute(app) {
+    (app as any).devicesEnabled = false;
+    const registry: { enabled: boolean }[] = (app as any).deviceDrivers ?? [];
+    for (const d of registry) d.enabled = false;
+    app.logMsg('info', 'Devices disabled');
+  } });
   app.register({ name: 'CaptureViewport', label: 'Capture Viewport', category: 'Devices', args: [{ name: 'Target', default: -1 }, { name: 'Interactive', default: false }], undoable: false, execute(app) { app.logMsg('info', 'CaptureViewport: frame capture recorded (flipbook UI optional)'); return null; } });
 
   // ---- character tags / biped helpers (Create > Character)
