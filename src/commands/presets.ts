@@ -68,9 +68,17 @@ export function registerPresetModels(app: App) {
   app.register({ name: 'ImportPresetModelData', label: 'Import Preset Model Data', category: 'Primitive', args: [{ name: 'Data', default: null }, { name: 'Name', default: '' }], execute: (app, a) => buildPresetModel(app, a.Data, a.Name || undefined) });
   app.register({
     name: 'GetPresetModel', label: 'Get Preset Model', category: 'Primitive', args: [{ name: 'ModelName', default: 'Bull' }, { name: 'Name', default: '' }, { name: 'Parent', default: '' }, { name: 'PsetName', default: '' }], undoable: false,
-    canRun: (a) => { const k = a.ModelName ?? a.PresetObj; return !!PRESET_MODELS[k] || Object.values(PRESET_MODELS).includes(String(k).replace(/\.emdl$/i, '').replace(/_Generated$/, '')); },
+    canRun: (a) => {
+      const k = String(a.ModelName ?? a.PresetObj ?? '');
+      if (/Quadruped_Guide|Biped_Guide|Proportional Guide/i.test(k)) return true;
+      return !!PRESET_MODELS[k] || Object.values(PRESET_MODELS).includes(k.replace(/\.emdl$/i, '').replace(/_Generated$/, ''));
+    },
     execute(app, a) {
-      const k = a.ModelName ?? a.PresetObj; const file = PRESET_MODELS[k] ?? String(k).replace(/\.emdl$/i, '').replace(/_Generated$/, ''); // the menu loads the *_Generated rig files; the exported rigs are the same hierarchies
+      const k = String(a.ModelName ?? a.PresetObj ?? '');
+      // Animate > Create > Character > Quadruped Guide maps here; route to the procedural guide builder.
+      if (/Quadruped_Guide/i.test(k)) return app.run('GetQuadrupedGuide', { ModelName: k, GuideStyle: 0 });
+      if (/Biped_Guide/i.test(k)) return app.run('GetProportionalGuide', { ModelName: k, GuideStyle: 0 });
+      const file = PRESET_MODELS[k] ?? k.replace(/\.emdl$/i, '').replace(/_Generated$/, ''); // the menu loads the *_Generated rig files; the exported rigs are the same hierarchies
       if (!Object.values(PRESET_MODELS).includes(file)) throw new Error(`Preset model "${k}" is not bundled`);
       app.logMsg('info', `Loading preset model ${file}.emdl …`);
       const p = loadPreset(file).then(data => { const m = app.run('ImportPresetModelData', { Data: data, Name: a.Name }); app.events.emit('scene'); return m; }).catch(e => app.logMsg('error', `GetPresetModel: ${e?.message ?? e}`));

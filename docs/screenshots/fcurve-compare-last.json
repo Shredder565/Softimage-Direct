@@ -1,0 +1,144 @@
+{
+  "ok": true,
+  "diffs": [],
+  "dump": {
+    "name": "FCurve",
+    "extrap": 1,
+    "key_count": 3,
+    "keys": [
+      {
+        "time": 1,
+        "value": 0,
+        "left": 0,
+        "right": 0,
+        "constr": null,
+        "interp": 3
+      },
+      {
+        "time": 10,
+        "value": 5,
+        "left": 5,
+        "right": 5,
+        "constr": null,
+        "interp": 3
+      },
+      {
+        "time": 20,
+        "value": 0,
+        "left": 0,
+        "right": 0,
+        "constr": null,
+        "interp": 3
+      }
+    ]
+  },
+  "evalExpected": [
+    {
+      "frame": 1,
+      "value": 0
+    },
+    {
+      "frame": 5,
+      "value": 2.085048010973937
+    },
+    {
+      "frame": 10,
+      "value": 5
+    },
+    {
+      "frame": 15,
+      "value": 2.5
+    },
+    {
+      "frame": 20,
+      "value": 0
+    }
+  ],
+  "samples": [
+    {
+      "frame": 1,
+      "value": 0
+    },
+    {
+      "frame": 2,
+      "value": 0.17146776406035666
+    },
+    {
+      "frame": 3,
+      "value": 0.6310013717421125
+    },
+    {
+      "frame": 4,
+      "value": 1.2962962962962963
+    },
+    {
+      "frame": 5,
+      "value": 2.085048010973937
+    },
+    {
+      "frame": 6,
+      "value": 2.914951989026063
+    },
+    {
+      "frame": 7,
+      "value": 3.7037037037037033
+    },
+    {
+      "frame": 8,
+      "value": 4.368998628257888
+    },
+    {
+      "frame": 9,
+      "value": 4.828532235939643
+    },
+    {
+      "frame": 10,
+      "value": 5
+    },
+    {
+      "frame": 11,
+      "value": 4.859999999999999
+    },
+    {
+      "frame": 12,
+      "value": 4.48
+    },
+    {
+      "frame": 13,
+      "value": 3.92
+    },
+    {
+      "frame": 14,
+      "value": 3.2399999999999993
+    },
+    {
+      "frame": 15,
+      "value": 2.5
+    },
+    {
+      "frame": 16,
+      "value": 1.7599999999999993
+    },
+    {
+      "frame": 17,
+      "value": 1.0800000000000005
+    },
+    {
+      "frame": 18,
+      "value": 0.5199999999999994
+    },
+    {
+      "frame": 19,
+      "value": 0.14000000000000012
+    },
+    {
+      "frame": 20,
+      "value": 0
+    }
+  ],
+  "handled": {
+    "frame": 5,
+    "value": 2.1947873799725652,
+    "flatRef": 2.085048010973937
+  }
+}

@@ -296,7 +296,56 @@ export function presetManager(app: App, host: HTMLElement) {
   const render = () => { list.innerHTML = ''; const q = search.value.toLowerCase(); for (const [l, fn] of CATS[sel.value]) if (!q || l.toLowerCase().includes(q)) list.appendChild(btn(l, 'Apply preset', fn)); };
   sel.onchange = render; search.oninput = render; render();
 }
-export function animationMixer(app: App, host: HTMLElement) { const root = el('div', 'mixer'); host.appendChild(root); root.appendChild(head(btn('Store Action', 'Store the animation of the selection as an action source', () => { const n = prompt('Action name:', 'Action'); if (!n) return; const src: any = { name: n, keys: [] as any[] }; for (const p of animParams(app)) src.keys.push({ path: p.fullName, keys: (app.anim.fcurve(p)?.keys ?? []).map(k => ({ ...k })) }); const all = JSON.parse(localStorage.getItem('si.actions') ?? '[]'); all.push(src); localStorage.setItem('si.actions', JSON.stringify(all)); render(); }), btn('Refresh', '', () => render()))); const body = el('div', 'tb-items'); root.appendChild(body); const render = () => { body.innerHTML = ''; const all: any[] = JSON.parse(localStorage.getItem('si.actions') ?? '[]'); if (!all.length) body.appendChild(el('div', 'hint', 'No action sources. Store Action keeps the selection\'s f-curves as a reusable clip.')); for (const a of all) { const b = btn(`${a.name} (${a.keys.length} curves)`, 'Apply this action to the selection (re-keys the stored parameters)', () => { for (const k of a.keys) { const objName = k.path.split('.')[0]; const o = app.selectedObjects[0]; const path = o ? k.path.replace(objName, o.name) : k.path; for (const key of k.keys) app.run('SaveKey', { InputObjs: path, Time: key.time, Value: key.value }); } }); body.appendChild(b); } }; render(); }
+export function animationMixer(app: App, host: HTMLElement) {
+  const root = el('div', 'mixer'); host.appendChild(root);
+  const sources = () => {
+    const hostModel = app.selectedObjects[0]?.model ?? app.scene.root;
+    return [...hostModel.properties.filter(p => p.type === 'actionsource'), ...app.scene.root.properties.filter(p => p.type === 'actionsource')];
+  };
+  const mix = () => (app.selectedObjects[0]?.model ?? app.scene.root).property('mixer') ?? app.scene.root.property('mixer');
+  root.appendChild(head(
+    btn('Store Action', 'Store selection animation as an action source on the model', () => { app.run('StoreAction', { Name: prompt('Action name:', 'Action') || 'Action', AddClip: true }); render(); }),
+    btn('Apply', 'Apply the selected action source', () => { app.run('ApplyAction'); render(); }),
+    btn('Refresh', '', () => render()),
+  ));
+  const body = el('div', 'tb-items'); root.appendChild(body);
+  const render = () => {
+    body.innerHTML = '';
+    const m = mix();
+    body.appendChild(el('div', 'hint', m ? `Mixer: ${m.val('Name') || 'Mixer'} · Active=${m.val('Active')} · Start=${m.val('start')} · Duration=${m.val('duration')}` : 'No Mixer on Scene_Root'));
+    const all = sources();
+    if (!all.length) body.appendChild(el('div', 'hint', 'No action sources. Store Action keeps current values / f-curves as a reusable source (Softimage Animation Mixer).'));
+    for (const a of all) {
+      const nKeys = (() => { try { return Object.keys(JSON.parse(a.val('fcurves') || '{}')).length; } catch { return 0; } })();
+      const b = btn(`${a.name} (${a.val('items') || 0} params, ${nKeys} fcurves)`, 'Select / apply this action source', () => { app.select([a]); app.run('ApplyAction'); });
+      body.appendChild(b);
+    }
+    const clips: any[] = (m as any)?.clips ?? [];
+    if (clips.length) {
+      body.appendChild(el('div', 'hint', `Clips on mixer tracks (${clips.length}):`));
+      for (const c of clips) body.appendChild(el('div', 'hint', `• [T${c.track ?? 0}] ${c.name} @ ${c.start} (${c.duration}f)`));
+    }
+    const transitions: any[] = (m as any)?.transitions ?? [];
+    if (transitions.length) {
+      body.appendChild(el('div', 'hint', `Transitions (${transitions.length}):`));
+      for (const t of transitions) body.appendChild(el('div', 'hint', `• ${t.kind}: ${t.from} → ${t.to} (${t.length}f)`));
+    }
+    const compounds: any[] = (m as any)?.compounds ?? [];
+    if (compounds.length) {
+      body.appendChild(el('div', 'hint', `Compounds (${compounds.length}):`));
+      for (const c of compounds) body.appendChild(el('div', 'hint', `• ${c.name}: [${(c.clips || []).join(', ')}] @ ${c.start}`));
+    }
+    root.querySelector('.mixer-actions')?.remove();
+    const actions = el('div', 'mixer-actions');
+    actions.append(
+      btn('Add Transition', 'Bridge last two clips', () => { app.run('AddTransition'); render(); }),
+      btn('Create Compound', 'Compound all clips', () => { app.run('CreateCompound'); render(); }),
+      btn('Equalize', 'Pack clips end-to-end', () => { app.run('EqualizeClips'); render(); }),
+    );
+    root.appendChild(actions);
+  };
+  app.events.on('scene', render); app.events.on('params', render); render();
+}
 export { Property };
 
 // ================================================================ ICE Tree (node editor for ICETree operators)

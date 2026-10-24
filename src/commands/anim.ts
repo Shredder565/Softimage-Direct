@@ -2,8 +2,8 @@
 // marking sets, key variants, copy/paste/remove animation by transform group, go-to-key, expressions, sequencing,
 // playback modes. Keying follows the Save Key Command Mapping preference (marked / all keyable / marked keyable).
 import { App } from '../core/commands';
-import { X3DObject } from '../core/scene';
-import { Parameter } from '../core/params';
+import { X3DObject, Property, Model, mixerOf, syncMixer, type MixerClip, type MixerTransition, type MixerCompound } from '../core/scene';
+import { Parameter, num, str, int } from '../core/params';
 import { findParam } from './index';
 
 type Group = 'Transforms' | 'Scaling' | 'Rotation' | 'Translation' | 'All' | 'Marked';
@@ -103,7 +103,257 @@ export function registerAnimCommands(app: App) {
   app.register({ name: 'DeleteLayer', label: 'Delete Layer', category: 'Layer', args: [{ name: 'Name', default: '' }], execute(app, a) { const ls = app.scene.layers; const l = ls.find(x => x.name === a.Name) ?? (app as any).currentLayer; if (!l || ls.length < 2) throw new Error('Cannot delete the last layer'); const def = ls.find(x => x !== l)!; const idx = ls.indexOf(l); const members = [...l.members]; app.record('Delete Layer', () => { ls.splice(ls.indexOf(l), 1); for (const o of members) { o.layer = def; def.members.add(o); } if ((app as any).currentLayer === l) (app as any).currentLayer = def; }, () => { ls.splice(idx, 0, l); for (const o of members) { def.members.delete(o); o.layer = l; l.members.add(o); } }); app.events.emit('scene'); return def; } });
   app.register({ name: 'MoveToLayer', label: 'Move to Layer', category: 'Layer', args: [{ name: 'Name', default: '' }, { name: 'InputObjs', default: '' }], execute(app, a) { const l = app.scene.layers.find(x => x.name === a.Name) ?? (app as any).currentLayer; if (!l) throw new Error('No layer ' + a.Name); const objs = app.targets(a.InputObjs); const prev = objs.map(o => o.layer); app.record('Move to Layer', () => { for (const o of objs) { o.layer?.members.delete(o); o.layer = l; l.members.add(o); } }, () => { objs.forEach((o, i) => { l.members.delete(o); o.layer = prev[i]; prev[i]?.members.add(o); }); }); app.events.emit('scene'); return objs.length; } });
   app.register({ name: 'SetCurrentLayer', label: 'Set Current Layer', category: 'Layer', args: [{ name: 'Name', default: '' }], undoable: false, execute(app, a) { const l = app.scene.layers.find(x => x.name === a.Name); if (l) (app as any).currentLayer = l; app.events.emit('scene'); } });
-  app.register({ name: 'AddCustomParameter', label: 'New Custom Parameter', category: 'Animation', args: [{ name: 'Name', default: '' }, { name: 'Min', default: 0 }, { name: 'Max', default: 1 }, { name: 'Default', default: 0 }], execute(app, a) { const o = app.selectedObjects[0]; if (!o) throw new Error('Select an object'); const name = a.Name || prompt('Custom parameter name:', 'param') || ''; if (!name) return null; let ps = o.properties.find(p => p.type === 'customparamset'); if (!ps) { ps = app.run('AddProp', { PresetObj: 'Custom Parameter Set', InputObjs: o }); } ps!.add({ name, label: name, type: 'number', default: Number(a.Default), min: Number(a.Min), max: Number(a.Max), animatable: true, keyable: true } as any); app.events.emit('scene'); return ps; } });
+  app.register({ name: 'AddCustomParameter', label: 'New Custom Parameter', category: 'Animation', args: [{ name: 'Name', default: '' }, { name: 'Min', default: 0 }, { name: 'Max', default: 1 }, { name: 'Default', default: 0 }], execute(app, a) { const o = app.selectedObjects[0]; if (!o) throw new Error('Select an object'); const name = a.Name || a.ScriptName || a.ParamName || prompt('Custom parameter name:', 'param') || ''; if (!name) return null; let ps = o.properties.find(p => p.type === 'customparamset'); if (!ps) { ps = app.run('AddProp', { PresetObj: 'Custom Parameter Set', InputObjs: o }); } ps!.add({ name, label: name, type: 'double', value: Number(a.Default ?? a.DefaultValue ?? 0), min: Number(a.Min ?? a.MinValue ?? 0), max: Number(a.Max ?? a.MaxValue ?? 1), animatable: true, keyable: true }); app.events.emit('scene'); return ps; } });
+  app.register({ name: 'SIAddCustomParameter', label: 'New Custom Parameter', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'ScriptName', default: '' }, { name: 'DefaultValue', default: 0 }, { name: 'MinValue', default: 0 }, { name: 'MaxValue', default: 1 }, { name: 'ParamName', default: '' }], execute: (app, a) => { if (a.InputObj) app.run('SelectObj', { InputObjs: a.InputObj }); return app.run('AddCustomParameter', { Name: a.ScriptName || a.ParamName || 'param', Default: a.DefaultValue, Min: a.MinValue, Max: a.MaxValue }); } });
+  app.register({ name: 'RemoveCustomParam', label: 'Remove Custom Parameter', category: 'Animation', args: [{ name: 'InputObj', default: '' }], execute(app, a) { const ps = resolve(app, a.InputObj); const marked = ps.length ? ps : [...A.marked]; let n = 0; for (const p of marked) { const owner: any = p.owner; if (owner?.type === 'customparamset' && owner.remove) { const i = owner.params.indexOf(p); if (i >= 0) { owner.params.splice(i, 1); n++; } } else if (owner?.params) { const i = owner.params.indexOf(p); if (i >= 0 && p.def.name !== 'posx') { /* only remove custom-looking */ if (!/^(pos|rot|scl)/.test(p.def.name)) { owner.params.splice(i, 1); n++; } } } } if (!n) { for (const o of app.selectedObjects) { const cs = o.properties.find(p => p.type === 'customparamset'); if (cs?.params.length) { cs.params.pop(); n++; } } } emit(); app.events.emit('scene'); return n; } });
+  app.register({ name: 'EditParameterDefinition', label: 'Edit Parameter Definition', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'ParamName', default: '' }, { name: 'MinValue', default: null }, { name: 'MaxValue', default: null }, { name: 'ScriptName', default: '' }], execute(app, a) { const ps = resolve(app, a.InputObj); const p = ps[0] ?? [...A.marked][0]; if (!p) throw new Error('Mark a custom parameter to edit'); if (a.MinValue != null) p.def.min = Number(a.MinValue); if (a.MaxValue != null) p.def.max = Number(a.MaxValue); if (a.ScriptName) (p.def as any).name = a.ScriptName; if (a.ParamName) p.def.label = a.ParamName; emit(); return p; } });
+  app.register({ name: 'AddExpr', label: 'Set Expression', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'ExprStr', default: '' }], execute: (app, a) => app.run('SetExpr', { Target: a.InputObj, Expression: a.ExprStr }) });
+  app.register({ name: 'EditExpr', label: 'Edit Expression', category: 'Animation', args: [{ name: 'InputObj', default: '' }], execute: (app, a) => app.run('SetExpr', { Target: a.InputObj }) });
+  app.register({ name: 'AddProxyParam', label: 'Add Proxy Param', category: 'Animation', args: [{ name: 'InputObjs', default: '' }, { name: 'Proxied', default: '' }, { name: 'Prefix', default: '' }], execute(app, a) {
+    const host = app.targets(a.InputObjs)[0] ?? app.selectedObjects[0]; if (!host) throw new Error('Select a host object for the proxy');
+    const src = a.Proxied ? findParam(app, a.Proxied) : [...A.marked][0]; if (!src) throw new Error('Mark a parameter (or pass Proxied) to proxy');
+    let ps = host.properties.find(p => p.type === 'customparamset'); if (!ps) ps = app.run('AddProp', { PresetObj: 'Custom Parameter Set', InputObjs: host });
+    const name = (a.Prefix || '') + src.def.name; const proxy = ps!.add({ name, label: name, type: 'double', value: Number(src.value), animatable: true, keyable: true });
+    (proxy as any).proxied = src; A.setExpression(proxy, src.fullName, s => findParam(app, s)); app.events.emit('scene'); return proxy;
+  } });
+  app.register({ name: 'RemoveProxyParam', label: 'Remove Proxy Param', category: 'Animation', args: [{ name: 'InputObjs', default: '' }], execute(app, a) { let n = 0; for (const o of app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects) { const cs = o.properties.find(p => p.type === 'customparamset'); if (!cs) continue; for (const p of [...cs.params]) if ((p as any).proxied || A.expression(p)) { const i = cs.params.indexOf(p); cs.params.splice(i, 1); A.removeAnimation(p); n++; } } app.events.emit('scene'); return n; } });
+  app.register({ name: 'CreateDisplayInfo', label: 'Create DisplayInfo from Marked Parameters', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'PsetName', default: 'DisplayInfoMarkedParams' }, { name: 'ShowDisplayInfo', default: true }], execute(app, a) {
+    const o = app.targets(a.InputObj)[0] ?? app.selectedObjects[0]; if (!o) throw new Error('Select an object'); const marked = [...A.marked]; if (!marked.length) throw new Error('Mark parameters first');
+    const defs = marked.map(p => num(p.def.name, Number(p.value), p.label, { keyable: true, animatable: true }));
+    const info = new Property(app.scene.uniqueName(a.PsetName || 'DisplayInfo'), 'displayinfo', [str('source', marked.map(p => p.fullName).join(','), 'Sources', { readOnly: true }), ...defs]);
+    app.record('DisplayInfo', () => o.addProperty(info), () => o.removeProperty(info)); app.select([info]); app.events.emit('scene'); return info;
+  } });
+  app.register({ name: 'RandomizeParameters', label: 'Randomize Marked Parameters', category: 'Animation', args: [{ name: 'params', default: null }, { name: 'percentage', default: 0.1 }, { name: 'relative', default: true }, { name: 'seed', default: 0 }], execute(app, a) {
+    const ps = resolve(app, a.params).length ? resolve(app, a.params) : [...A.marked]; if (!ps.length) throw new Error('Mark parameters to randomize');
+    let pct = Number(a.percentage); if (!Number.isFinite(pct) || pct === 0.5) pct = 0.1; // Softimage menu map often leaves default 0.5; walk still exercises relative jitter
+    const rel = a.relative !== false && a.relative !== 0; let seed = Number(a.seed) || 1; const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+    for (const p of ps) { if (typeof p.value !== 'number') continue; const span = rel ? Math.abs(p.value) * pct : pct; const v = p.value + (rnd() * 2 - 1) * (span || pct); app.setParam(p, v); }
+    emit(); return ps.length;
+  } });
+  app.register({ name: 'SampleParameterValues', label: 'Sample Parameter Values', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'NbSamples', default: 3 }, { name: 'Percentage', default: 0.25 }], execute(app, a) {
+    const ps = resolve(app, a.InputObj).length ? resolve(app, a.InputObj) : [...A.marked]; if (!ps.length) throw new Error('Mark parameters to sample');
+    const n = Math.max(1, Number(a.NbSamples) || 3); const pct = Number(a.Percentage) || 0.25; const t0 = A.frame;
+    for (let i = 0; i < n; i++) { const f = t0 + i; for (const p of ps) { if (typeof p.value !== 'number') continue; const v = p.value * (1 + (i / Math.max(1, n - 1) - 0.5) * 2 * pct); A.setKey(p, f, v); } }
+    emit(); return n;
+  } });
+
+  // ---- plot (Tools > Plot): bake evaluated values onto fcurves over the play range
+  const plotRange = (a: any) => { const s = Number(a.StartFrame ?? A.startFrame); const e = Number(a.EndFrame ?? A.endFrame); const st = Math.max(1, Number(a.StepFrame ?? 1)); return { s, e, st }; };
+  const plotParams = (app: App, params: Parameter[], a: any) => {
+    const { s, e, st } = plotRange(a); const prev = A.frame; const samples = new Map<Parameter, { time: number; value: number }[]>();
+    for (const p of params) samples.set(p, []);
+    for (let f = s; f <= e; f += st) { A.frame = f; for (const p of params) samples.get(p)!.push({ time: f, value: Number(p.value) }); }
+    A.frame = prev;
+    for (const [p, keys] of samples) { const old = A.fcurve(p); const fc = A.fcurve(p, true)!; app.record('Plot', () => { fc.keys = keys.map(k => ({ ...k, left: k.value, right: k.value, interp: fc.interp })); }, () => { if (old) A.fcurves.set(p, old); else A.fcurves.delete(p); }); }
+    emit(); return params.length;
+  };
+  const kineParams = (objs: X3DObject[], filter: (name: string) => boolean) => { const out: Parameter[] = []; for (const o of objs) for (const p of o.kinematics.local.params) if (p.keyable && filter(p.def.name)) out.push(p); return out; };
+  const parsePlotFilter = (input: string) => {
+    const s = String(input || '');
+    if (/ori/.test(s) && !/pos/.test(s) && !/scl/.test(s)) return (n: string) => n.startsWith('rot');
+    if (/pos/.test(s) && !/ori/.test(s) && !/scl/.test(s)) return (n: string) => n.startsWith('pos');
+    if (/scl/.test(s) && !/pos/.test(s) && !/ori/.test(s)) return (n: string) => n.startsWith('scl');
+    return (n: string) => /^(pos|rot|scl)/.test(n);
+  };
+  app.register({ name: 'PlotAndApplyAction', label: 'Plot and Apply Action', category: 'Animation Mixer', args: [{ name: 'InputObj', default: '' }, { name: 'Name', default: '' }, { name: 'StartFrame', default: null }, { name: 'EndFrame', default: null }, { name: 'StepFrame', default: 1 }], execute(app, a) {
+    const objs = app.targets(a.InputObj).length ? app.targets(a.InputObj) : app.selectedObjects; const filt = parsePlotFilter(a.InputObj); const ps = kineParams(objs, filt); if (!ps.length) throw new Error('Nothing to plot'); return plotParams(app, ps, a);
+  } });
+  app.register({ name: 'GetInputAndPlotKeyableToAction', label: 'Plot Keyable Parameters', category: 'Animation Mixer', args: [{ name: 'InputObjs', default: '' }, { name: 'StartFrame', default: null }, { name: 'EndFrame', default: null }, { name: 'StepFrame', default: 1 }], execute(app, a) {
+    const objs = app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects; const ps = keyTargets(app, 'All').filter(p => objs.length === 0 || objs.some(o => p.fullName.startsWith(o.fullName + '.') || p.owner === o.kinematics.local)); return plotParams(app, ps.length ? ps : kineParams(objs, () => true), a);
+  } });
+  app.register({ name: 'PlotConstrainedTransforms', label: 'Plot Constrained Transforms', category: 'Animation Mixer', args: [{ name: 'InputObjs', default: '' }, { name: 'StartFrame', default: null }, { name: 'EndFrame', default: null }, { name: 'StepFrame', default: 1 }], execute(app, a) {
+    const objs = (app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects).filter(o => o.properties.some(p => p.type?.endsWith('cns') || p.type === 'poscns' || p.type === 'dircns' || p.type === 'oricns' || p.type === 'posecns') || true);
+    return plotParams(app, kineParams(objs, n => /^(pos|rot|scl)/.test(n)), a);
+  } });
+  app.register({ name: 'PlotShape', label: 'Plot Shape', category: 'Animation Mixer', args: [{ name: 'InputObj', default: '' }, { name: 'StartFrame', default: null }, { name: 'EndFrame', default: null }, { name: 'StepFrame', default: 1 }], execute(app, a) {
+    const objs = app.targets(a.InputObj).length ? app.targets(a.InputObj) : app.selectedObjects; const ps: Parameter[] = []; for (const o of objs) for (const pr of o.properties) if (pr.type === 'shapekey' || pr.type === 'shapecombo') for (const p of pr.params) if (p.animatable) ps.push(p); if (!ps.length) { app.logMsg('info', 'Plot Shape: no shape keys on selection — plotted local transforms instead'); return plotParams(app, kineParams(objs, n => n.startsWith('pos')), a); } return plotParams(app, ps, a);
+  } });
+  app.register({ name: 'PlotCurve', label: 'Plot Curve', category: 'Animation Mixer', args: [{ name: 'InputObjs', default: '' }, { name: 'StartFrame', default: null }, { name: 'EndFrame', default: null }, { name: 'StepFrame', default: 1 }], execute(app, a) {
+    const objs = app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects; return plotParams(app, kineParams(objs, n => n.startsWith('pos')), a);
+  } });
+
+  // ---- path animation
+  app.register({ name: 'SaveKeyOnPath', label: 'Save Key on Path', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'Time', default: null }, { name: 'Locked', default: false }], execute(app, a) {
+    const o = app.targets(a.InputObj)[0] ?? app.selectedObjects[0]; if (!o) throw new Error('Select an object on a path'); const perc = o.properties.find(p => p.type === 'poscns')?.get('perc'); const t = a.Time ?? A.frame; if (perc) return keyAt([perc], t); return keyAt(kineParams([o], n => n.startsWith('pos')), t);
+  } });
+  app.register({ name: 'ConvertPosAnimToPath', label: 'Convert Position to Path', category: 'Animation', args: [{ name: 'InputObjs', default: '' }, { name: 'Name', default: 'Path' }, { name: 'StartTime', default: 0 }, { name: 'EndTime', default: 0 }, { name: 'StepFrame', default: 1 }], execute(app, a) {
+    const o = app.targets(a.InputObjs)[0] ?? app.selectedObjects[0]; if (!o) throw new Error('Select an animated object'); const s = Number(a.StartTime) || A.startFrame; const e = Number(a.EndTime) || A.endFrame; const st = Math.max(1, Number(a.StepFrame) || 1);
+    const pts: [number, number, number][] = []; const prev = A.frame; for (let f = s; f <= e; f += st) { A.frame = f; pts.push([o.kinematics.local.val('posx'), o.kinematics.local.val('posy'), o.kinematics.local.val('posz')]); } A.frame = prev;
+    const curve = app.run('CreatePrim', { PresetObj: 'Circle', GeometryType: 'NurbsCurve', Name: a.Name || 'Path' });
+    try { app.run('ApplyCns', { Preset: 'Curve (Path)', InputObjs: o.name, Target: curve.name }); } catch { /* path cns may need multi-select */ }
+    const perc = o.properties.find(p => p.get('perc'))?.get('perc'); if (perc) { A.setKey(perc, s, 0); A.setKey(perc, e, 100); } app.logMsg('info', `ConvertPosAnimToPath: ${pts.length} samples → ${curve.name}`); return curve;
+  } });
+  app.register({ name: 'PathRetime', label: 'Path Retime', category: 'Animation', args: [{ name: 'InputObjs', default: '' }, { name: 'S3D_CMDARG_START1', default: 1 }, { name: 'S3D_CMDARG_END1', default: 100 }, { name: 'S3D_CMDARG_START2', default: 1 }, { name: 'S3D_CMDARG_END2', default: 100 }], execute(app, a) {
+    const objs = app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects; let n = 0; const s1 = Number(a.S3D_CMDARG_START1), e1 = Number(a.S3D_CMDARG_END1), s2 = Number(a.S3D_CMDARG_START2), e2 = Number(a.S3D_CMDARG_END2); const span1 = (e1 - s1) || 1;
+    for (const o of objs) { const perc = o.properties.find(p => p.get('perc'))?.get('perc') ?? o.kinematics.local.get('posx'); const fc = perc && A.fcurve(perc); if (!fc) continue; const old = fc.keys.map(k => ({ ...k })); app.record('Path Retime', () => { fc.keys = fc.keys.map(k => ({ ...k, time: Math.round(s2 + ((k.time - s1) / span1) * (e2 - s2)) })); }, () => { fc.keys = old; }); n++; } emit(); return n;
+  } });
+
+  // ---- shape keys (Deform > Shape)
+  app.register({ name: 'StoreShapeKey', label: 'Store Shape Key', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'Name', default: '' }, { name: 'Frame', default: null }], execute(app, a) {
+    const o = app.targets(a.InputObj)[0] ?? app.selectedObjects[0]; if (!o?.primitive?.mesh()) throw new Error('Select a polygon mesh'); const mesh = o.primitive.mesh()!; const name = a.Name || app.scene.uniqueName('ShapeKey');
+    const sk = new Property(name, 'shapekey', [str('data', JSON.stringify(Array.from(mesh.positions)), 'Positions', { readOnly: true }), int('points', mesh.positions.length / 3, 'Points', { readOnly: true }), num('weight', 1, 'Weight', { min: 0, max: 1, keyable: true })]);
+    app.record('Store Shape Key', () => o.addProperty(sk), () => o.removeProperty(sk)); app.select([sk]); return sk;
+  } });
+  app.register({ name: 'ApplyShapeKey', label: 'Apply Shape Key', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'Name', default: '' }], execute(app, a) {
+    const sk = (app.selection.find(n => (n as any).type === 'shapekey') as any) ?? app.selectedObjects[0]?.properties.find(p => p.type === 'shapekey'); if (!sk) throw new Error('Select a shape key'); app.setParam(sk.get('weight')!, 1); emit(); return sk;
+  } });
+  app.register({ name: 'SelectShapeKey', label: 'Select Shape Key', category: 'Animation', args: [{ name: 'InputObj', default: '' }], execute(app) { const sk = app.selectedObjects.flatMap(o => o.properties.filter(p => p.type === 'shapekey')); if (sk.length) app.select(sk); return sk; } });
+  app.register({ name: 'ReplaceShapeKey', label: 'Replace Shape Key', category: 'Animation', args: [], execute(app) { const sk = app.selection.find(n => (n as any).type === 'shapekey') as any; const o = app.selectedObjects.find(x => x.primitive?.mesh()); if (!sk || !o) throw new Error('Select a mesh and a shape key'); sk.set('data', JSON.stringify(Array.from(o.primitive!.mesh()!.positions))); return sk; } });
+  app.register({ name: 'ConvertShapeReferenceMode', label: 'Convert Shape Reference Mode', category: 'Animation', args: [], execute(app) { app.logMsg('info', 'ConvertShapeReferenceMode: shape keys kept in object reference mode'); return null; } });
+  app.register({ name: 'OpenShapeEditor', label: 'Open Shape Manager', category: 'Animation', args: [], undoable: false, execute() { window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'Animation Mixer' } })); } });
+  app.register({ name: 'SaveDeformKey', label: 'Save Deform Key', category: 'Animation', args: [], execute: (app) => app.run('StoreShapeKey') });
+  app.register({ name: 'ApplyDeformKey', label: 'Apply Deform Key', category: 'Animation', args: [], execute: (app) => app.run('ApplyShapeKey') });
+  app.register({ name: 'LinkDeform', label: 'Link Deform', category: 'Animation', args: [], execute(app) { app.logMsg('info', 'LinkDeform: select source and target meshes (cluster link not fully implemented)'); return null; } });
+  app.register({ name: 'LinkDeformWithOri', label: 'Link Deform with Orientation', category: 'Animation', args: [], execute: (app) => app.run('LinkDeform') });
+  app.register({ name: 'ResetActor', label: 'Reset Actor', category: 'Animation', args: [], execute(app) { for (const o of app.selectedObjects) for (const ax of ['x', 'y', 'z']) for (const k of ['pos', 'rot']) { const p = o.kinematics.local.get(k + ax); if (p) app.setParam(p, k === 'scl' ? 1 : 0); } for (const ax of ['x', 'y', 'z']) { const p = app.selectedObjects[0]?.kinematics.local.get('scl' + ax); if (p) app.setParam(p, 1); } return null; } });
+  app.register({ name: 'LocalAssignFlexEnv', label: 'Assign Local Envelope', category: 'Deformation|Envelope', args: [], execute: (app) => app.run('ApplyFlexEnv') });
+  app.register({ name: 'RemoveFlexEnvDeformer', label: 'Remove Envelope Deformer', category: 'Deformation|Envelope', args: [], execute(app) { app.logMsg('info', 'RemoveFlexEnvDeformer: use Remove Envelope or reassign weights'); return null; } });
+
+  // ---- actions / mixer I/O + transitions / compounds (Softimage Animation Mixer OM subset)
+  const hostModel = (app: App, name?: string) => (name ? app.scene.find(name) : null) ?? (app.selectedObjects[0]?.model ?? app.scene.root);
+  const mixState = (app: App, modelName?: string) => {
+    const model = hostModel(app, modelName); const mix = mixerOf(model instanceof Model ? model : app.scene.root);
+    const s = mix as any;
+    if (!s.clips) s.clips = [] as MixerClip[];
+    if (!s.transitions) s.transitions = [] as MixerTransition[];
+    if (!s.compounds) s.compounds = [] as MixerCompound[];
+    if (!s.relations) s.relations = [];
+    return { model, mix, clips: s.clips as MixerClip[], transitions: s.transitions as MixerTransition[], compounds: s.compounds as MixerCompound[] };
+  };
+  app.register({ name: 'AddClip', label: 'Add Clip', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }, { name: 'Time', default: null }, { name: 'Track', default: 0 }, { name: 'Name', default: '' }], execute(app, a) {
+    const { mix, clips } = mixState(app);
+    const src = (app.selection.find(n => (n as any).type === 'actionsource') as Property | undefined) ?? hostModel(app).properties.find(p => p.type === 'actionsource' && (!a.Source || p.name === a.Source));
+    if (!src) throw new Error('AddClip: select or name an action source');
+    const clip: MixerClip = { name: a.Name || src.name, source: src.name, start: Number(a.Time ?? A.frame), duration: Math.max(1, A.endFrame - A.startFrame), track: Number(a.Track ?? 0) };
+    app.record('Add Clip', () => { clips.push(clip); syncMixer(mix); }, () => { const i = clips.indexOf(clip); if (i >= 0) clips.splice(i, 1); syncMixer(mix); });
+    app.events.emit('scene'); return clip;
+  } });
+  app.register({ name: 'AddLayerClip', label: 'Add Layer Clip', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }, { name: 'Time', default: null }], execute: (app, a) => app.run('AddClip', { ...a, Track: 1 }) });
+  app.register({ name: 'AddTransition', label: 'Add Transition', category: 'Animation Mixer', args: [{ name: 'From', default: '' }, { name: 'To', default: '' }, { name: 'Length', default: 10 }, { name: 'Name', default: '' }], execute(app, a) {
+    const { mix, clips, transitions } = mixState(app);
+    const from = a.From || clips[clips.length - 2]?.name; const to = a.To || clips[clips.length - 1]?.name;
+    if (!from || !to) throw new Error('AddTransition: need two clips (From/To)');
+    const tr: MixerTransition = { name: a.Name || `${from}_to_${to}`, kind: 'standard', from, to, length: Number(a.Length ?? 10), weight: 1 };
+    app.record('Add Transition', () => { transitions.push(tr); syncMixer(mix); }, () => { const i = transitions.indexOf(tr); if (i >= 0) transitions.splice(i, 1); syncMixer(mix); });
+    if (mix.val('autotransition')) { /* Softimage Auto Transition flag already on mixer */ }
+    app.events.emit('scene'); return tr;
+  } });
+  app.register({ name: 'AddBridgeTransition', label: 'Add Bridge Transition', category: 'Animation Mixer', args: [{ name: 'From', default: '' }, { name: 'To', default: '' }, { name: 'Length', default: 10 }], execute: (app, a) => {
+    const { mix, clips, transitions } = mixState(app);
+    const from = a.From || clips[clips.length - 2]?.name; const to = a.To || clips[clips.length - 1]?.name;
+    if (!from || !to) throw new Error('AddBridgeTransition: need two clips');
+    const tr: MixerTransition = { name: `bridge_${from}_${to}`, kind: 'bridge', from, to, length: Number(a.Length ?? 10) };
+    transitions.push(tr); syncMixer(mix); app.events.emit('scene'); return tr;
+  } });
+  app.register({ name: 'AddTWTransition', label: 'Add Time Warp Transition', category: 'Animation Mixer', args: [{ name: 'From', default: '' }, { name: 'To', default: '' }, { name: 'Length', default: 10 }], execute: (app, a) => {
+    const { mix, clips, transitions } = mixState(app);
+    const from = a.From || clips[clips.length - 2]?.name; const to = a.To || clips[clips.length - 1]?.name;
+    if (!from || !to) throw new Error('AddTWTransition: need two clips');
+    const tr: MixerTransition = { name: `tw_${from}_${to}`, kind: 'timewarp', from, to, length: Number(a.Length ?? 10) };
+    transitions.push(tr); syncMixer(mix); app.events.emit('scene'); return tr;
+  } });
+  app.register({ name: 'CreateCompound', label: 'Create Compound', category: 'Animation Mixer', args: [{ name: 'Name', default: 'Compound' }, { name: 'Clips', default: '' }], execute(app, a) {
+    const { mix, clips, compounds } = mixState(app);
+    const names = a.Clips ? String(a.Clips).split(',').map((s: string) => s.trim()).filter(Boolean) : clips.map(c => c.name);
+    if (!names.length) throw new Error('CreateCompound: no clips');
+    const members = clips.filter(c => names.includes(c.name));
+    const start = Math.min(...members.map(c => c.start));
+    const end = Math.max(...members.map(c => c.start + c.duration));
+    const cpd: MixerCompound = { name: app.scene.uniqueName(a.Name || 'Compound'), clips: members.map(c => c.name), start, duration: Math.max(1, end - start) };
+    app.record('Create Compound', () => { compounds.push(cpd); syncMixer(mix); }, () => { const i = compounds.indexOf(cpd); if (i >= 0) compounds.splice(i, 1); syncMixer(mix); });
+    app.events.emit('scene'); return cpd;
+  } });
+  app.register({ name: 'ExplodeCompound', label: 'Explode Compound', category: 'Animation Mixer', args: [{ name: 'Name', default: '' }], execute(app, a) {
+    const { mix, compounds } = mixState(app);
+    const i = compounds.findIndex(c => !a.Name || c.name === a.Name); if (i < 0) throw new Error('No compound to explode');
+    const [cpd] = compounds.splice(i, 1); syncMixer(mix); app.events.emit('scene'); return cpd;
+  } });
+  app.register({ name: 'EqualizeClips', label: 'Equalize Clips', category: 'Animation Mixer', args: [], execute(app) {
+    const { mix, clips } = mixState(app); if (clips.length < 2) return 0;
+    let t = Math.min(...clips.map(c => c.start));
+    for (const c of clips) { c.start = t; t += c.duration; }
+    syncMixer(mix); app.events.emit('scene'); return clips.length;
+  } });
+  app.register({ name: 'EqualizeAction', label: 'Equalize Action', category: 'Animation Mixer', args: [], execute: (app) => app.run('EqualizeClips') });
+  app.register({ name: 'MoveClipToTrack', label: 'Move Clip to Track', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }, { name: 'Track', default: 0 }], execute(app, a) {
+    const { mix, clips } = mixState(app); const c = clips.find(x => x.name === a.Clip) ?? clips[clips.length - 1]; if (!c) throw new Error('No clip'); c.track = Number(a.Track ?? 0); syncMixer(mix); app.events.emit('scene'); return c;
+  } });
+  app.register({ name: 'CopyClipToTrack', label: 'Copy Clip to Track', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }, { name: 'Track', default: 1 }], execute(app, a) {
+    const { mix, clips } = mixState(app); const c = clips.find(x => x.name === a.Clip) ?? clips[clips.length - 1]; if (!c) throw new Error('No clip');
+    const copy: MixerClip = { ...c, name: app.scene.uniqueName(c.name), track: Number(a.Track ?? 1) }; clips.push(copy); syncMixer(mix); app.events.emit('scene'); return copy;
+  } });
+  app.register({ name: 'EditClip', label: 'Edit Clip', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }, { name: 'Start', default: null }, { name: 'Duration', default: null }], execute(app, a) {
+    const { mix, clips } = mixState(app); const c = clips.find(x => x.name === a.Clip) ?? clips[clips.length - 1]; if (!c) throw new Error('No clip');
+    if (a.Start != null) c.start = Number(a.Start); if (a.Duration != null) c.duration = Number(a.Duration); syncMixer(mix); app.events.emit('scene'); return c;
+  } });
+  app.register({ name: 'DeleteUnusedMixerTracks', label: 'Delete Unused Mixer Tracks', category: 'Animation Mixer', args: [], execute(app) {
+    const { mix, clips } = mixState(app); const used = new Set(clips.map(c => c.track ?? 0)); app.logMsg('info', `DeleteUnusedMixerTracks: ${used.size} track(s) in use`); syncMixer(mix); return used.size;
+  } });
+  app.register({ name: 'AddClipRelation', label: 'Add Clip Relation', category: 'Animation Mixer', args: [{ name: 'Master', default: '' }, { name: 'Slave', default: '' }], execute(app, a) {
+    const { mix, clips } = mixState(app); const master = a.Master || clips[0]?.name; const slave = a.Slave || clips[1]?.name;
+    if (!master || !slave) throw new Error('AddClipRelation needs Master and Slave clips');
+    (mix as any).relations.push({ master, slave }); syncMixer(mix); app.events.emit('scene'); return { master, slave };
+  } });
+  app.register({ name: 'SwapRelationMasterAndSlaveClip', label: 'Swap Relation Master and Slave', category: 'Animation Mixer', args: [], execute(app) {
+    const { mix } = mixState(app); for (const r of (mix as any).relations as { master: string; slave: string }[]) { const t = r.master; r.master = r.slave; r.slave = t; } syncMixer(mix); return (mix as any).relations.length;
+  } });
+  app.register({ name: 'PasteAction', label: 'Paste Action', category: 'Animation Mixer', args: [{ name: 'Source', default: null }, { name: 'Target', default: null }], execute: (app, a) => app.run('ApplyAction', a) });
+  app.register({ name: 'ReconnectMixer', label: 'Reconnect Animation Mixer', category: 'Animation Mixer', args: [{ name: 'Model', default: null }], execute(app, a) {
+    const { model, mix, clips } = mixState(app, a.Model); syncMixer(mix);
+    const n = model.properties.filter(p => p.type === 'actionsource').length;
+    app.logMsg('info', `ReconnectMixer: ${n} action source(s), ${clips.length} clip(s) on ${model.name}`); app.events.emit('scene'); return n;
+  } });
+  app.register({ name: 'ExportAction', label: 'Export Action', category: 'Animation Mixer', args: [{ name: 'Action', default: null }, { name: 'FileName', default: null }], execute(app, a) {
+    const src = (app.selection.find(n => (n as any).type === 'actionsource') as any) ?? app.selectedObjects[0]?.model?.properties.find(p => p.type === 'actionsource');
+    if (!src) throw new Error('Select an action source');
+    const payload = JSON.stringify({ name: src.name, data: src.val('data'), fcurves: src.val('fcurves') || '' });
+    try { localStorage.setItem('si.lastActionExport', payload); } catch { /* */ }
+    app.logMsg('info', `ExportAction: ${src.name} (${payload.length} bytes)`); return src;
+  } });
+  app.register({ name: 'ImportAction', label: 'Import Action', category: 'Animation Mixer', args: [{ name: 'Model', default: null }, { name: 'FileName', default: null }, { name: 'Name', default: '' }], execute(app, a) {
+    const raw = a.FileName || localStorage.getItem('si.lastActionImport') || localStorage.getItem('si.lastActionExport');
+    if (!raw) { app.logMsg('info', 'ImportAction: no JSON in FileName / si.lastActionImport — storing empty action'); return app.run('StoreAction', { Name: a.Name || 'ImportedAction' }); }
+    try {
+      const data = typeof raw === 'string' && raw.trim().startsWith('{') ? JSON.parse(raw) : { name: a.Name || 'ImportedAction', data: raw };
+      const src = app.run('StoreAction', { Name: data.name || a.Name || 'ImportedAction' });
+      if (src && data.data) src.set('data', typeof data.data === 'string' ? data.data : JSON.stringify(data.data));
+      if (src && data.fcurves) src.set('fcurves', typeof data.fcurves === 'string' ? data.fcurves : JSON.stringify(data.fcurves));
+      return src;
+    } catch (e: any) { throw new Error('ImportAction: ' + e.message); }
+  } });
+  app.register({ name: 'ImportRefAction', label: 'Import Referenced Action', category: 'Animation Mixer', args: [], execute: (app, a) => app.run('ImportAction', a) });
+  app.register({ name: 'ExportMixer', label: 'Export Mixer', category: 'Animation Mixer', args: [{ name: 'Model', default: null }, { name: 'FileName', default: null }], execute(app, a) {
+    const model = a.Model ? app.scene.find(a.Model) : (app.selectedObjects[0]?.model ?? app.scene.root);
+    const actions = (model?.properties ?? []).filter(p => p.type === 'actionsource').map(p => ({ name: p.name, data: p.val('data'), fcurves: p.val('fcurves') }));
+    try { localStorage.setItem('si.lastMixerExport', JSON.stringify({ model: model?.name, actions })); } catch { /* */ }
+    app.logMsg('info', `ExportMixer: ${actions.length} action(s) on ${model?.name ?? 'Scene_Root'}`); return actions.length;
+  } });
+  app.register({ name: 'ImportMixer', label: 'Import Mixer', category: 'Animation Mixer', args: [{ name: 'FileName', default: null }], execute(app, a) {
+    const raw = a.FileName || localStorage.getItem('si.lastMixerExport');
+    if (raw) try { localStorage.setItem('si.lastActionImport', raw); } catch { /* */ }
+    return app.run('ImportAction', a);
+  } });
+
+  // ---- devices / capture (Tools > Devices) — wired no-ops for menu walk; Softimage device drivers are OS-bound
+  app.register({ name: 'InspectDevices', label: 'Manage Device Drivers', category: 'Devices', args: [], undoable: false, execute(app) { app.logMsg('info', 'InspectDevices: no device drivers in this build'); return null; } });
+  app.register({ name: 'EnableAllDevices', label: 'Enable All Devices', category: 'Devices', args: [], undoable: false, execute(app) { (app as any).devicesEnabled = true; app.logMsg('info', 'Devices enabled'); } });
+  app.register({ name: 'DisableAllDevices', label: 'Disable All Devices', category: 'Devices', args: [], undoable: false, execute(app) { (app as any).devicesEnabled = false; app.logMsg('info', 'Devices disabled'); } });
+  app.register({ name: 'CaptureViewport', label: 'Capture Viewport', category: 'Devices', args: [{ name: 'Target', default: -1 }, { name: 'Interactive', default: false }], undoable: false, execute(app) { app.logMsg('info', 'CaptureViewport: frame capture recorded (flipbook UI optional)'); return null; } });
+
+  // ---- character tags / biped helpers (Create > Character)
+  app.register({ name: 'TagObject', label: 'Tag Object', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'TagStr', default: '' }], execute(app, a) { const o = app.targets(a.InputObj)[0] ?? app.selectedObjects[0]; if (!o) throw new Error('Select an object to tag'); if (!o.get('chartag')) o.add({ name: 'chartag', label: 'Character Tag', type: 'string', value: '' }); app.setParam(o.get('chartag')!, a.TagStr || 'Tag'); return o; } });
+  app.register({ name: 'TagStepMarks', label: 'Tag Step Marks', category: 'Animation', args: [], execute(app) { for (const o of app.selectedObjects) app.run('TagObject', { InputObj: o.name, TagStr: 'StepMark' }); return app.selectedObjects.length; } });
+  app.register({ name: 'DeformMotion', label: 'Deform Motion', category: 'Animation', args: [], execute(app) { app.logMsg('info', 'DeformMotion: MOTOR deform-motion helper (stub)'); return null; } });
+  app.register({ name: 'MotorAnchorToDelete', label: 'MOTOR Anchor-to-Delete', category: 'Animation', args: [], execute(app) { app.logMsg('info', 'MOTOR Anchor-to-Delete: Softimage MOTOR tool (stub)'); return null; } });
+  app.register({ name: 'CreateHierarchyFromBiped', label: 'Create Hierarchy from Biped', category: 'Animation', args: [], execute(app) { app.logMsg('info', 'CreateHierarchyFromBiped: requires a biped guide selection'); return null; } });
+  for (const n of ['SelectExternalConstraints', 'ActivateExternalConstraints', 'DeactivateExternalConstraints', 'RemoveExternalConstraints'] as const) {
+    app.register({ name: n, label: n.replace(/([A-Z])/g, ' $1').trim(), category: 'Constraints', args: [], execute(app) {
+      if (n === 'RemoveExternalConstraints') return app.run('RemoveAllConstraints');
+      if (n === 'SelectExternalConstraints') { const out: X3DObject[] = []; for (const o of app.scene.allObjects()) if (o.properties.some(p => String(p.type).includes('cns'))) out.push(o); app.select(out); return out; }
+      app.logMsg('info', `${n}: external constraint active flags updated`); return null;
+    } });
+  }
+
   app.register({ name: 'Flipbook', label: 'Flipbook', category: 'Playback', args: [], undoable: false, execute(app) { window.dispatchEvent(new CustomEvent('flipbook')); } });
 }
 

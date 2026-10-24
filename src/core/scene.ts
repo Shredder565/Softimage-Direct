@@ -510,6 +510,53 @@ export class Group extends Node {
 export class Pass extends Node { constructor(name: string) { super(name, 'pass', 'pass', [bool('Active', true, 'Active'), int('FrameStart', 1, 'Start Frame'), int('FrameEnd', 100, 'End Frame')]); } }
 
 // ---------------------------------------------------------------- scene
+/** Softimage Mixer clip on a track (PC dump nested Sources/Tracks). */
+export type MixerClip = { name: string; source: string; start: number; duration: number; track?: number };
+/** Softimage mixer transition between two clips (AddTransition / AddBridgeTransition / AddTWTransition). */
+export type MixerTransition = { name: string; kind: 'standard' | 'bridge' | 'timewarp'; from: string; to: string; length: number; weight?: number };
+/** Softimage mixer compound (CreateCompound / ExplodeCompound). */
+export type MixerCompound = { name: string; clips: string[]; start: number; duration: number };
+
+/** Softimage scene Mixer (probe from si_anim_fcurve_golden.json): Sources/Tracks/Transitions/…. */
+export function makeMixer(): Property {
+  const m = new Property('Mixer', 'mixer', [
+    str('Name', 'Mixer', 'Name'), bool('Hidden', false, 'Hidden'), bool('Active', true, 'Active'),
+    num('start', 1, 'Start time'), num('duration', 100, 'Duration'),
+    str('markers', '', 'Markers'), str('ui', '', 'UI properties'), str('templates', '', 'Templates'),
+    bool('autotransition', false, 'Auto Transition'),
+    str('sources', '[]', 'Sources', { readOnly: true }), str('tracks', '[]', 'Tracks', { readOnly: true }),
+    str('transitions', '[]', 'Transitions', { readOnly: true }), str('compounds', '[]', 'Compounds', { readOnly: true }),
+    str('relations', '[]', 'Relations', { readOnly: true }),
+  ]);
+  const state = m as any;
+  state.clips = [] as MixerClip[];
+  state.transitions = [] as MixerTransition[];
+  state.compounds = [] as MixerCompound[];
+  state.relations = [] as { master: string; slave: string }[];
+  return m;
+}
+export function mixerOf(host: { property: (t: string) => Property | undefined; addProperty: (p: Property) => Property }): Property {
+  return host.property('mixer') ?? host.addProperty(makeMixer());
+}
+/** Persist in-memory mixer arrays onto Softimage-visible nested string params. */
+export function syncMixer(mix: Property) {
+  const s = mix as any;
+  const clips: MixerClip[] = s.clips ?? (s.clips = []);
+  const transitions: MixerTransition[] = s.transitions ?? (s.transitions = []);
+  const compounds: MixerCompound[] = s.compounds ?? (s.compounds = []);
+  const relations = s.relations ?? (s.relations = []);
+  mix.set('sources', JSON.stringify([...new Set(clips.map(c => c.source))]));
+  mix.set('tracks', JSON.stringify(clips));
+  mix.set('transitions', JSON.stringify(transitions));
+  mix.set('compounds', JSON.stringify(compounds));
+  mix.set('relations', JSON.stringify(relations));
+  if (clips.length) {
+    const end = Math.max(...clips.map(c => c.start + c.duration), Number(mix.val('duration')) || 1);
+    mix.set('duration', end);
+  }
+  return mix;
+}
+
 export class Scene extends Node {
   readonly root: Model;
   readonly layers: Layer[] = [];
@@ -522,6 +569,7 @@ export class Scene extends Node {
     this.root.parent = this;
     this.root.setMaterial(this.newMaterial('Scene_Material', makePhong()));
     this.root.addProperty(makeDisplay()); this.root.addProperty(makeGeomApprox());
+    this.root.addProperty(makeMixer());
     this.addLayer('Layer_Default'); this.addPass('Default_Pass');
   }
   newMaterial(name: string, surface: Shader) { const m = new Material(this.uniqueName(name)); m.setSurface(surface); this.materials.push(m); return m; }

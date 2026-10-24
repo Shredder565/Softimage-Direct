@@ -1,0 +1,122 @@
+{
+  "ok": true,
+  "diffs": [],
+  "r": {
+    "present": true,
+    "name": "Mixer",
+    "sources": [
+      "A",
+      "B"
+    ],
+    "tracks": [
+      {
+        "name": "A",
+        "source": "A",
+        "start": 1,
+        "duration": 99,
+        "track": 0
+      },
+      {
+        "name": "B",
+        "source": "B",
+        "start": 100,
+        "duration": 99,
+        "track": 0
+      }
+    ],
+    "transitions": [
+      {
+        "name": "A_to_B",
+        "kind": "standard",
+        "from": "A",
+        "to": "B",
+        "length": 8,
+        "weight": 1
+      },
+      {
+        "name": "bridge_A_B",
+        "kind": "bridge",
+        "from": "A",
+        "to": "B",
+        "length": 5
+      }
+    ],
+    "compounds": [
+      {
+        "name": "Combo",
+        "clips": [
+          "A",
+          "B"
+        ],
+        "start": 1,
+        "duration": 138
+      }
+    ],
+    "nested": [
+      {
+        "k": "Name",
+        "has": true
+      },
+      {
+        "k": "Hidden",
+        "has": true
+      },
+      {
+        "k": "Active",
+        "has": true
+      },
+      {
+        "k": "start",
+        "has": true
+      },
+      {
+        "k": "duration",
+        "has": true
+      },
+      {
+        "k": "sources",
+        "has": true
+      },
+      {
+        "k": "tracks",
+        "has": true
+      },
+      {
+        "k": "transitions",
+        "has": true
+      },
+      {
+        "k": "compounds",
+        "has": true
+      },
+      {
+        "k": "relations",
+        "has": true
+      }
+    ],
+    "tr": {
+      "name": "A_to_B",
+      "kind": "standard",
+      "from": "A",
+      "to": "B",
+      "length": 8,
+      "weight": 1
+    },
+    "bridge": {
+      "name": "bridge_A_B",
+      "kind": "bridge",
+      "from": "A",
+      "to": "B",
+      "length": 5
+    },
+    "cpd": {
+      "name": "Combo",
+      "clips": [
+        "A",
+        "B"
+      ],
+      "start": 1,
+      "duration": 138
+    }
+  }
+}

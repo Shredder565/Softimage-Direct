@@ -19,7 +19,13 @@ export const CNS_PRESETS: Record<string, { type: string; label: string; min: num
   Symmetry: { type: 'poscns', label: 'Symmetry Cns', min: 1, defs: () => [bool('active', true, 'Active')] },
   'Object to Cluster': { type: 'poscns', label: 'Object to Cluster Cns', min: 1, defs: () => [bool('active', true, 'Active')] },
 };
-const ALIAS: Record<string, string> = { 'Pin Object into Position (Toggle)': 'Position', 'Curve (Param)': 'Curve (Path)', 'Surface (Param)': 'Position', 'Chain Up Vector': 'Up-Vector', 'Chain Preferred Axis': 'Up-Vector', 'Bounding Volume': 'Position', 'Bounding Plane': 'Position' };
+const ALIAS: Record<string, string> = {
+  'Pin Object into Position (Toggle)': 'Position', 'Curve (Param)': 'Curve (Path)', 'Surface (Param)': 'Position',
+  'Chain Up Vector': 'Up-Vector', 'Chain Preferred Axis': 'Up-Vector', 'Bounding Volume': 'Position', 'Bounding Plane': 'Position',
+  // Animate > Create > Path menu binds ApplyCns with PresetObj Path / Trajectory (Softimage PE)
+  Path: 'Curve (Path)', Trajectory: 'Curve (Path)', 'Curve (Path)': 'Curve (Path)',
+};
+const cnsKey = (a: any) => ALIAS[a.Preset ?? a.PresetObj] ?? (a.Preset ?? a.PresetObj);
 
 export function addConstraint(app: App, o: X3DObject, preset: string, targets: X3DObject[]): Constraint {
   const k = ALIAS[preset] ?? preset; const d = CNS_PRESETS[k]; if (!d) throw new Error(`Constraint "${preset}" is not available`);
@@ -32,14 +38,15 @@ export function registerConstraintCommands(app: App) {
   app.register({
     name: 'ApplyCns', label: 'Apply Constraint', category: 'Constraints', description: 'Constrains the selected object(s) to the picked object(s).',
     args: [{ name: 'Preset', default: 'Position' }, { name: 'InputObjs', default: '' }, { name: 'Target', default: '' }, { name: 'Compensate', default: false }],
-    canRun: (a) => !!(CNS_PRESETS[ALIAS[a.Preset] ?? a.Preset]),
+    canRun: (a) => !!(CNS_PRESETS[cnsKey(a)]),
     execute(app, a) {
-      let objs = app.targets(a.InputObjs); let targets = app.targets(a.Target);
+      const preset = cnsKey(a);
+      let objs = app.targets(a.InputObjs || a.ConstrainedObj); let targets = app.targets(a.Target || a.ConstrainingObj);
       if (!targets.length) { // MCP usage: last selected = constraining object, the rest get constrained
-        if (objs.length < 2) throw new Error(`${a.Preset}: select the object(s) to constrain, then add the constraining object to the selection and apply again`);
+        if (objs.length < 2) throw new Error(`${preset}: select the object(s) to constrain, then add the constraining object to the selection and apply again`);
         targets = [objs[objs.length - 1]]; objs = objs.slice(0, -1);
       }
-      const out = objs.map(o => addConstraint(app, o, a.Preset, targets)); app.events.emit('scene'); app.select(out); return out.length === 1 ? out[0] : out;
+      const out = objs.map(o => addConstraint(app, o, preset, targets)); app.events.emit('scene'); app.select(out); return out.length === 1 ? out[0] : out;
     },
   });
   app.register({ name: 'RemoveCns', label: 'Remove Constraint', category: 'Constraints', args: [{ name: 'InputObjs', default: '' }, { name: 'Type', default: '' }], execute(app, a) { let k = 0; for (const o of app.targets(a.InputObjs)) { const cs = o.properties.filter(p => p instanceof Constraint && (!a.Type || p.type === a.Type)); const last = a.Type ? cs : cs.slice(-1); for (const c of last) { app.record('Remove ' + c.name, () => o.removeProperty(c), () => o.addProperty(c)); k++; } } app.events.emit('scene'); return k; } });

@@ -1,30 +1,104 @@
 // FCurves: keys on a parameter, evaluated per frame. Mirrors Softimage's "fcurve" animation source.
 import { Parameter } from './params';
 
-export interface Key { time: number; value: number; }
+/**
+ * Softimage FCurveKey fields (PC dump): time/value + Left/Right (bezier handle values) + interp.
+ * When Left==Right==Value (default golden), Softimage uses flat tangents → hermite with m0=m1=0
+ * which equals smoothstep between keys.
+ */
+export interface Key { time: number; value: number; left?: number; right?: number; interp?: number; }
+
+/** Softimage FCurve defaults from PC dump (`si_anim_fcurve_golden.json`): extrap=1, key interp=3 (spline). */
+export const SI_FCURVE_EXTRAP_CONSTANT = 1;
+export const SI_FCURVE_EXTRAP_LINEAR = 2;
+export const SI_FCURVE_EXTRAP_CYCLE = 3;
+export const SI_FCURVE_EXTRAP_OSCILLATE = 4;
+export const SI_KEY_INTERP_CONSTANT = 0;
+export const SI_KEY_INTERP_LINEAR = 1;
+export const SI_KEY_INTERP_SPLINE = 3;
 
 export class FCurve {
   keys: Key[] = [];
+  /** Softimage FCurve.extrapolation (1 = constant / default in golden dump). */
+  extrap = SI_FCURVE_EXTRAP_CONSTANT;
+  /** Default key interpolation when a key omits `interp` (3 = spline). */
+  interp = SI_KEY_INTERP_SPLINE;
   constructor(readonly param: Parameter) {}
-  addKey(time: number, value: number) {
+  addKey(time: number, value: number, extra?: Partial<Key>) {
     const k = this.keys.find(k => k.time === time);
-    if (k) k.value = value; else { this.keys.push({ time, value }); this.keys.sort((a, b) => a.time - b.time); }
+    if (k) { k.value = value; if (extra) Object.assign(k, extra); if (k.left === undefined) k.left = value; if (k.right === undefined) k.right = value; }
+    else { this.keys.push({ time, value, left: value, right: value, interp: this.interp, ...extra }); this.keys.sort((a, b) => a.time - b.time); }
   }
   removeKey(time: number) { this.keys = this.keys.filter(k => k.time !== time); }
   hasKey(time: number) { return this.keys.some(k => k.time === time); }
+  /** Softimage-style dump used by compare_fcurves.mjs. */
+  dump() {
+    return { name: 'FCurve', extrap: this.extrap, key_count: this.keys.length, keys: this.keys.map(k => ({ time: k.time, value: k.value, left: k.left ?? k.value, right: k.right ?? k.value, constr: null, interp: k.interp ?? this.interp })) };
+  }
+  /** Sample evaluated values over an inclusive frame range (for eval goldens). */
+  sample(start: number, end: number, step = 1): { frame: number; value: number }[] {
+    const out: { frame: number; value: number }[] = [];
+    for (let f = start; f <= end; f += step) out.push({ frame: f, value: this.eval(f) });
+    return out;
+  }
+  private slopeAt(i: number, side: 'left' | 'right'): number {
+    const k = this.keys[i];
+    const v = k.value, L = k.left ?? v, R = k.right ?? v;
+    // Softimage Left/Right are handle *values*; convert to slope vs neighbouring key span.
+    if (side === 'left') {
+      if (L !== v && i > 0) { const dt = k.time - this.keys[i - 1].time; return dt ? (2 * (v - L)) / dt : 0; }
+      return 0; // flat when Left==Value (golden default)
+    }
+    if (R !== v && i + 1 < this.keys.length) { const dt = this.keys[i + 1].time - k.time; return dt ? (2 * (R - v)) / dt : 0; }
+    return 0;
+  }
+  private hermite(a: Key, b: Key, i: number, time: number): number {
+    const dt = b.time - a.time; if (!dt) return a.value;
+    const t = (time - a.time) / dt;
+    const m0 = this.slopeAt(i, 'right') * dt;
+    const m1 = this.slopeAt(i + 1, 'left') * dt;
+    const t2 = t * t, t3 = t2 * t;
+    const h00 = 2 * t3 - 3 * t2 + 1, h10 = t3 - 2 * t2 + t, h01 = -2 * t3 + 3 * t2, h11 = t3 - t2;
+    return h00 * a.value + h10 * m0 + h01 * b.value + h11 * m1;
+  }
+  private mapExtrapolated(time: number): number {
+    const ks = this.keys; if (!ks.length) return time;
+    const t0 = ks[0].time, t1 = ks[ks.length - 1].time, span = t1 - t0;
+    if (time >= t0 && time <= t1) return time;
+    if (this.extrap === SI_FCURVE_EXTRAP_CONSTANT || span <= 0) return time < t0 ? t0 : t1;
+    if (this.extrap === SI_FCURVE_EXTRAP_LINEAR) return time; // eval will linear-extend via first/last segment
+    if (this.extrap === SI_FCURVE_EXTRAP_CYCLE) {
+      const u = ((time - t0) % span + span) % span; return t0 + u;
+    }
+    if (this.extrap === SI_FCURVE_EXTRAP_OSCILLATE) {
+      const n = Math.floor((time - t0) / span); const u = ((time - t0) % span + span) % span;
+      return (n % 2 === 0) ? t0 + u : t1 - u;
+    }
+    return time < t0 ? t0 : t1;
+  }
   eval(time: number): number {
     const ks = this.keys;
     if (!ks.length) return this.param.value;
-    if (time <= ks[0].time) return ks[0].value;
-    if (time >= ks[ks.length - 1].time) return ks[ks.length - 1].value;
+    // Linear extrapolation past ends
+    if (this.extrap === SI_FCURVE_EXTRAP_LINEAR && time < ks[0].time && ks.length >= 2) {
+      const a = ks[0], b = ks[1]; const t = (time - a.time) / (b.time - a.time); return a.value + (b.value - a.value) * t;
+    }
+    if (this.extrap === SI_FCURVE_EXTRAP_LINEAR && time > ks[ks.length - 1].time && ks.length >= 2) {
+      const a = ks[ks.length - 2], b = ks[ks.length - 1]; const t = (time - a.time) / (b.time - a.time); return a.value + (b.value - a.value) * t;
+    }
+    const te = this.mapExtrapolated(time);
+    if (te <= ks[0].time) return ks[0].value;
+    if (te >= ks[ks.length - 1].time) return ks[ks.length - 1].value;
     for (let i = 0; i + 1 < ks.length; i++) {
       const a = ks[i], b = ks[i + 1];
-      if (time >= a.time && time <= b.time) {
-        const t = (time - a.time) / (b.time - a.time);
-        const interp = (this as any).interp ?? 'spline';
-        if (interp === 'step') return a.value; if (interp === 'linear') return a.value + (b.value - a.value) * t;
-        const s = t * t * (3 - 2 * t); // smoothstep ~ default spline ease
-        return a.value + (b.value - a.value) * s;
+      if (te >= a.time && te <= b.time) {
+        const kind = a.interp ?? this.interp;
+        // Softimage siInterpolation*: 0 constant, 1 linear, 3 spline (default golden)
+        if (kind === SI_KEY_INTERP_CONSTANT) return a.value;
+        if (kind === SI_KEY_INTERP_LINEAR) {
+          const t = (te - a.time) / (b.time - a.time); return a.value + (b.value - a.value) * t;
+        }
+        return this.hermite(a, b, i, te);
       }
     }
     return ks[ks.length - 1].value;

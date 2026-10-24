@@ -87,7 +87,7 @@ function buildArgs(it: MenuItem, bound: { cmd: string; name: string; args: [stri
     if (bound.cmd === 'GetPrim' && path.includes('Point Cloud') && it.label === 'Empty') args.PresetObj = 'EmptyPointCloud';
     if (bound.cmd === 'CreatePrim' && !args.GeometryType) args.GeometryType = path.includes('Surface') ? 'NurbsSurface' : path.includes('Curve') ? 'NurbsCurve' : path.includes('Point Cloud') ? 'PointCloud' : 'MeshSurface';
   }
-  if (['ApplyOp', 'ApplyTopoOp', 'ApplyGenOp', 'ApplyKinematicOp', 'ApplyPropVolumeOp', 'AddProp', 'GetPrimLight', 'GetPrimCamera'].includes(bound.cmd)) { args.Preset = args.PresetObj; args.PresetObj = bound.name.replace(/ Op$/, ''); if (bound.cmd === 'GetPrimLight' || bound.cmd === 'GetPrimCamera' || bound.name === 'Apply Topology Operator' || bound.name === 'Apply Operator') args.PresetObj = it.label; }
+  if (['ApplyOp', 'ApplyTopoOp', 'ApplyGenOp', 'ApplyKinematicOp', 'ApplyPropVolumeOp', 'AddProp', 'GetPrimLight', 'GetPrimCamera', 'ApplyCns'].includes(bound.cmd)) { args.Preset = args.Preset ?? args.PresetObj; args.PresetObj = bound.name.replace(/ Op$/, ''); if (bound.cmd === 'GetPrimLight' || bound.cmd === 'GetPrimCamera' || bound.name === 'Apply Topology Operator' || bound.name === 'Apply Operator') args.PresetObj = it.label; if (bound.cmd === 'ApplyCns') { args.Preset = args.Preset ?? args.PresetObj ?? it.label; args.PresetObj = args.Preset; } }
   if (!bound.cmd || bound.cmd === 'ApplyShader') { /* handled by aliases */ }
   if (bound.cmd === 'AddProp' && path.includes('Texture Projection')) { args.Type = it.label; }
   if (bound.cmd === 'SIApplyShader' || bound.cmd === 'ApplyShader') args.PresetObj = it.label;
