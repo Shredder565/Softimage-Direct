@@ -26,7 +26,9 @@ import { explorerView } from './ui/explorer';
 import { mcpPanel } from './ui/mcp';
 import { installKeymap } from './ui/keymap';
 import { propertyEditor } from './ui/ppg';
+import { applyPpgChrome, ppgChromeAudit } from './ui/ppgChrome';
 import { viewManager, SI as ViewportSI, DEFAULT_CAMERA_POS, DEFAULT_CAMERA_INTEREST, DEFAULT_CAMERA_FOV } from './ui/viewManager';
+applyPpgChrome();
 import { keyingPanel, layerControl, timeline, commandLine, scriptLog } from './ui/panels';
 import { mainShelf, panelSwitcher } from './ui/shelf';
 import { menubar, menubarStatus } from './ui/menubar';
@@ -241,6 +243,8 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
       siTransformSize: ViewportSI.transformSize,
       attestedDefaultCamera: { pos: DEFAULT_CAMERA_POS, interest: DEFAULT_CAMERA_INTEREST, fov: DEFAULT_CAMERA_FOV },
     },
+    // Phase B — Softimage PPG / floating dialog shell chrome (uiut PE host + RT_BITMAP)
+    ppgChrome: ppgChromeAudit(),
   };
 };
 (window as any).__menubarStatus = () => menubarStatus();
@@ -263,9 +267,10 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
 let floatPPG: { win: ReturnType<typeof openFloating>; node: any } | null = null;
 const openFloatingPPG = (node: any) => {
   if (floatPPG && app.recyclePPG) { floatPPG.node = node; app.events.emit('selection'); return; }
-  if (floatPPG && !app.recyclePPG) { const fixed = node; openFloating('', (body, w) => { propertyEditor(app, body, () => fixed); setTimeout(() => w.setTitle(body.querySelector('.ppg-title')?.textContent ?? '')); }, { w: 420, cls: 'ppg-window' }); return; }
+  const ppgW = (applyPpgChrome().tokens.floatDefaultWidthPx) || 420;
+  if (floatPPG && !app.recyclePPG) { const fixed = node; openFloating('', (body, w) => { propertyEditor(app, body, () => fixed); setTimeout(() => w.setTitle(body.querySelector('.ppg-title')?.textContent ?? '')); }, { w: ppgW, cls: 'ppg-window' }); return; }
   const state = { win: null as any, node }; floatPPG = state;
-  state.win = openFloating('', (body, w) => { propertyEditor(app, body, () => floatPPG?.node); const sync = () => w.setTitle(body.querySelector('.ppg-title')?.textContent ?? ''); setTimeout(sync); app.events.on('selection', () => setTimeout(sync)); app.events.on('scene', () => setTimeout(sync)); }, { w: 420, x: 60, y: 40, cls: 'ppg-window' });
+  state.win = openFloating('', (body, w) => { propertyEditor(app, body, () => floatPPG?.node); const sync = () => w.setTitle(body.querySelector('.ppg-title')?.textContent ?? ''); setTimeout(sync); app.events.on('selection', () => setTimeout(sync)); app.events.on('scene', () => setTimeout(sync)); }, { w: ppgW, x: 60, y: 40, cls: 'ppg-window' });
   const win = state.win;
   const obs = new MutationObserver(() => { if (!document.body.contains(win.el)) { floatPPG = null; obs.disconnect(); } }); obs.observe(appEl, { childList: true });
 };

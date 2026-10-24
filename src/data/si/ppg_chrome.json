@@ -1,0 +1,575 @@
+{
+  "softimage": "2015 SP2",
+  "source": {
+    "pe": "internal/softimage-pc-dumps/dialogs/pe-dialogs-ui-model.json",
+    "uiut_bitmaps": "data/si/pe_bitmaps/uiut/",
+    "views": "src/data/si/views.json",
+    "pc_dialogs": "internal/softimage-pc-dumps/dialogs/"
+  },
+  "canonicalHostDialog": "147",
+  "hosts": {
+    "138": {
+      "title": "",
+      "font": [
+        11,
+        "Arial"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        200,
+        200
+      ],
+      "controls": {
+        "childFrame": {
+          "id": 216,
+          "cls": "static",
+          "text": "Child Property Frame rectangle",
+          "rect_dlu": [
+            0,
+            12,
+            200,
+            187
+          ]
+        },
+        "loadSave": {
+          "id": 235,
+          "cls": "DsNewRegionButtonCtrl",
+          "text": "LoadSaveCtrl",
+          "rect_dlu": [
+            138,
+            0,
+            33,
+            12
+          ]
+        },
+        "inspNav": {
+          "id": 234,
+          "cls": "DsNewRegionButtonCtrl",
+          "text": "InspNavCtrl",
+          "rect_dlu": [
+            0,
+            0,
+            35,
+            12
+          ]
+        }
+      },
+      "control_count": 3
+    },
+    "139": {
+      "title": "",
+      "font": [
+        11,
+        "Arial"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        167,
+        200
+      ],
+      "controls": {
+        "childFrame": {
+          "id": 216,
+          "cls": "static",
+          "text": "Child Property Frame rectangle",
+          "rect_dlu": [
+            0,
+            12,
+            167,
+            187
+          ]
+        },
+        "animation": {
+          "id": 218,
+          "cls": "DsAnimationCtrl2",
+          "text": ";tooltip=Animation control",
+          "rect_dlu": [
+            0,
+            0,
+            45,
+            12
+          ]
+        },
+        "loadSave": {
+          "id": 235,
+          "cls": "DsNewRegionButtonCtrl",
+          "text": "LoadSaveCtrl",
+          "rect_dlu": [
+            86,
+            0,
+            33,
+            12
+          ]
+        },
+        "inspNav": {
+          "id": 234,
+          "cls": "DsNewRegionButtonCtrl",
+          "text": "InspNavCtrl",
+          "rect_dlu": [
+            47,
+            0,
+            35,
+            12
+          ]
+        }
+      },
+      "control_count": 4
+    },
+    "141": {
+      "title": "",
+      "font": [
+        11,
+        "Arial"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        200,
+        200
+      ],
+      "controls": {
+        "childFrame": {
+          "id": 216,
+          "cls": "static",
+          "text": "Child Property Frame rectangle",
+          "rect_dlu": [
+            0,
+            12,
+            200,
+            187
+          ]
+        },
+        "loadSave": {
+          "id": 235,
+          "cls": "DsNewRegionButtonCtrl",
+          "text": "LoadSaveCtrl",
+          "rect_dlu": [
+            138,
+            0,
+            33,
+            12
+          ]
+        },
+        "animation": {
+          "id": 218,
+          "cls": "DsAnimationCtrl2",
+          "text": ";tooltip=Animation control",
+          "rect_dlu": [
+            0,
+            0,
+            46,
+            12
+          ]
+        },
+        "inspNav": {
+          "id": 234,
+          "cls": "DsNewRegionButtonCtrl",
+          "text": "InspNavCtrl",
+          "rect_dlu": [
+            91,
+            0,
+            35,
+            12
+          ]
+        }
+      },
+      "control_count": 5
+    },
+    "142": {
+      "title": "",
+      "font": [
+        11,
+        "Arial"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        167,
+        200
+      ],
+      "controls": {
+        "childFrame": {
+          "id": 216,
+          "cls": "static",
+          "text": "Child Property Frame rectangle",
+          "rect_dlu": [
+            0,
+            12,
+            167,
+            187
+          ]
+        },
+        "loadSave": {
+          "id": 235,
+          "cls": "DsNewRegionButtonCtrl",
+          "text": "LoadSaveCtrl",
+          "rect_dlu": [
+            85,
+            0,
+            33,
+            12
+          ]
+        },
+        "animation": {
+          "id": 218,
+          "cls": "DsAnimationCtrl2",
+          "text": ";tooltip=Animation control",
+          "rect_dlu": [
+            0,
+            0,
+            46,
+            12
+          ]
+        },
+        "inspNav": {
+          "id": 234,
+          "cls": "DsNewRegionButtonCtrl",
+          "text": "InspNavCtrl",
+          "rect_dlu": [
+            48,
+            0,
+            35,
+            12
+          ]
+        }
+      },
+      "control_count": 4
+    },
+    "144": {
+      "title": "",
+      "font": [
+        11,
+        "Arial"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        200,
+        200
+      ],
+      "controls": {
+        "childFrame": {
+          "id": 216,
+          "cls": "static",
+          "text": "Child Property Frame rectangle",
+          "rect_dlu": [
+            0,
+            12,
+            200,
+            187
+          ]
+        },
+        "loadSave": {
+          "id": 235,
+          "cls": "DsNewRegionButtonCtrl",
+          "text": "LoadSaveCtrl",
+          "rect_dlu": [
+            138,
+            0,
+            33,
+            12
+          ]
+        },
+        "inspNav": {
+          "id": 234,
+          "cls": "DsNewRegionButtonCtrl",
+          "text": "InspNavCtrl",
+          "rect_dlu": [
+            0,
+            0,
+            35,
+            12
+          ]
+        }
+      },
+      "control_count": 3
+    },
+    "145": {
+      "title": "",
+      "font": [
+        11,
+        "Arial"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        200,
+        200
+      ],
+      "controls": {
+        "childFrame": {
+          "id": 216,
+          "cls": "static",
+          "text": "Child Property Frame rectangle",
+          "rect_dlu": [
+            0,
+            12,
+            200,
+            187
+          ]
+        },
+        "loadSave": {
+          "id": 235,
+          "cls": "DsNewRegionButtonCtrl",
+          "text": "LoadSaveCtrl",
+          "rect_dlu": [
+            138,
+            0,
+            33,
+            12
+          ]
+        },
+        "inspNav": {
+          "id": 234,
+          "cls": "DsNewRegionButtonCtrl",
+          "text": "InspNavCtrl",
+          "rect_dlu": [
+            0,
+            0,
+            35,
+            12
+          ]
+        }
+      },
+      "control_count": 3
+    },
+    "147": {
+      "title": "",
+      "font": [
+        11,
+        "Arial"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        200,
+        181
+      ],
+      "controls": {
+        "childFrame": {
+          "id": 216,
+          "cls": "static",
+          "text": "Child Property Frame rectangle",
+          "rect_dlu": [
+            41,
+            12,
+            159,
+            168
+          ]
+        },
+        "animation": {
+          "id": 218,
+          "cls": "DsAnimationCtrl2",
+          "text": ";tooltip=Animation control",
+          "rect_dlu": [
+            0,
+            0,
+            45,
+            12
+          ]
+        },
+        "loadSave": {
+          "id": 235,
+          "cls": "DsNewRegionButtonCtrl",
+          "text": "LoadSaveCtrl",
+          "rect_dlu": [
+            138,
+            0,
+            33,
+            12
+          ]
+        },
+        "inspNav": {
+          "id": 234,
+          "cls": "DsNewRegionButtonCtrl",
+          "text": "InspNavCtrl",
+          "rect_dlu": [
+            82,
+            0,
+            35,
+            12
+          ]
+        }
+      },
+      "control_count": 7
+    }
+  },
+  "bitmaps": {
+    "inspNav": {
+      "peId": "137",
+      "peSize": [
+        71,
+        25
+      ],
+      "public": "si/mcp/ppgnav.png",
+      "publicSize": [
+        71,
+        25
+      ],
+      "hit": [
+        {
+          "id": "up",
+          "x": 2,
+          "w": 22,
+          "h": 21,
+          "top": 2
+        },
+        {
+          "id": "prev",
+          "x": 25,
+          "w": 22,
+          "h": 21,
+          "top": 2
+        },
+        {
+          "id": "next",
+          "x": 48,
+          "w": 22,
+          "h": 21,
+          "top": 2
+        }
+      ]
+    },
+    "tools": {
+      "peId": "141",
+      "peSize": [
+        66,
+        25
+      ],
+      "public": "si/mcp/ppgtools.png",
+      "publicSize": [
+        66,
+        25
+      ],
+      "hit": [
+        {
+          "id": "lock",
+          "x": 2,
+          "w": 20,
+          "h": 21,
+          "top": 2
+        },
+        {
+          "id": "recycle",
+          "x": 23,
+          "w": 20,
+          "h": 21,
+          "top": 2
+        },
+        {
+          "id": "help",
+          "x": 44,
+          "w": 20,
+          "h": 21,
+          "top": 2
+        }
+      ]
+    }
+  },
+  "tokens": {
+    "fontFamily": "Arial, \"MS Sans Serif\", Tahoma, sans-serif",
+    "fontPtHost": 11,
+    "fontPtDialog": 8,
+    "titleBarHeightPx": 16,
+    "toolbarHeightPx": 25,
+    "tabFontPx": 10,
+    "rowLabelWidthPx": 108,
+    "animDotPx": 12,
+    "rowGapPx": 4,
+    "bodyPadPx": 4,
+    "groupHeadBorder": "#8a8683",
+    "valueFieldBg": "#2e2e2e",
+    "valueFieldFg": "#f2f2f2",
+    "sliderTrackTop": "#d8d4d1",
+    "sliderTrackBot": "#c6c2bf",
+    "sliderBorder": "#6a6663",
+    "sliderThumbPx": 3,
+    "sliderHeightPx": 13,
+    "numFieldWidthPx": 56,
+    "inputHeightPx": 17,
+    "checkboxPx": 13,
+    "floatDefaultWidthPx": 420,
+    "floatBorder": "#3a3836",
+    "floatTitleGradient": [
+      "#7c7876",
+      "#5a5654"
+    ],
+    "ppgTitleGradient": [
+      "#8f9bb0",
+      "#6f7d96"
+    ]
+  },
+  "layoutOpts": {
+    "alignRightCommon": true,
+    "labelWidthPctCommon": [
+      50,
+      40,
+      45
+    ],
+    "spdlStats": {
+      "spdl_files": 989,
+      "with_layout": 658,
+      "model_ui_with_layout": 432
+    }
+  },
+  "bitmapMatch": {
+    "inspNav": true,
+    "tools": true
+  },
+  "inventory": {
+    "uiutHostDialogs": [
+      "138",
+      "139",
+      "141",
+      "142",
+      "144",
+      "145",
+      "147"
+    ],
+    "genppgDialogs": [
+      "232",
+      "3401"
+    ],
+    "propertyPageLarge": {
+      "title": "Property Page",
+      "style": 1220542528,
+      "rect": [
+        0,
+        0,
+        235,
+        156
+      ],
+      "font": [
+        8,
+        "MS Sans Serif"
+      ],
+      "controls": [
+        {
+          "cls": "static",
+          "text": "TODO: layout property page",
+          "id": 65535,
+          "x": 73,
+          "y": 74,
+          "w": 90,
+          "h": 8,
+          "style": 1342308352
+        }
+      ]
+    },
+    "propertyEditorView": {
+      "left": 50,
+      "top": 50,
+      "width": 125,
+      "height": 265,
+      "raw": "50,50,125,265"
+    }
+  },
+  "notes": [
+    "PPG host chrome is owner-draw (uiut InspNavCtrl / LoadSaveCtrl); DLU rects place controls, RT_BITMAP sizes paint them.",
+    "Dialog 147 is the fullest Softimage PPG toolbar (animation + reset all/group + nav + load/save).",
+    "Shared PPG shell only \u2014 Model-specific opdef layouts owned by Model PPG worker.",
+    "No Softimage Desktop takeover \u2014 PE/SPDL file scrape only."
+  ]
+}

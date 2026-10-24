@@ -203,6 +203,16 @@ else {
   else if (!['Select', 'Transform', 'Snap', 'Constrain', 'Edit'].every(s => hm.sections?.includes(s))) {
     fail.push(`MCP skin sections missing: ${JSON.stringify(hm.sections)}`);
   } else ok.push(`MCP PE bitmap hit-maps (${hm.hitCount} hits, sections ${hm.sections.join('+')})`);
+
+  // Phase B — Softimage PPG shell chrome (uiut PE host 147 + RT_BITMAP nav/tools)
+  const pc = audit.ppgChrome;
+  if (!pc) fail.push('ppgChrome missing from __uiAudit');
+  else if (pc.hostDialog !== '147') fail.push(`ppgChrome hostDialog expected 147 got ${pc.hostDialog}`);
+  else if (!pc.bitmapMatch?.inspNav || !pc.bitmapMatch?.tools) fail.push(`ppgChrome PE↔public bitmap mismatch: ${JSON.stringify(pc.bitmapMatch)}`);
+  else if (!pc.tokensApplied) fail.push('ppgChrome CSS tokens not applied (--ppg-label-w)');
+  else if (pc.expectNavW !== 71 || pc.expectToolsW !== 66) fail.push(`ppgChrome bitmap sizes expected 71×66 got nav=${pc.expectNavW} tools=${pc.expectToolsW}`);
+  else if (pc.fontHost !== 11) fail.push(`ppgChrome fontHost expected 11 (uiut Arial) got ${pc.fontHost}`);
+  else ok.push(`PPG shell chrome host=${pc.hostDialog} nav=${pc.expectNavW}x25 tools=${pc.expectToolsW}x25 font=${pc.fontHost}pt`);
 }
 
 // Open floating views
