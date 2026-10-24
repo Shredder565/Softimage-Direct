@@ -5,12 +5,15 @@ import { userToolbars } from './toolbars';
 const userToolbarNames = () => userToolbars().map(t => t.name);
 import { App } from '../core/commands';
 import { SI_MENUS, SI_VIEWS, SiMenuItem, openSiMenu } from './si';
-import { minimizeAll, restoreAll, closeAll, floatingWindows } from './floating';
+import { minimizeAll, restoreAll, closeAll, floatingWindows, openFloating } from './floating';
 import { construction } from '../core/scene';
 import { keymapNames, setKeymap, currentKeymap, bindingFor } from './keymap';
 
 const ev = (name: string, detail?: any) => window.dispatchEvent(new CustomEvent(name, { detail }));
 const KEY_OF: Record<string, string> = { 'New Scene': 'New Scene', 'Open...': 'Open Scene', 'Save': 'Save Scene', 'Undo': 'Undo', 'Redo': 'Redo', 'Repeat': 'Repeat', 'Cut': 'Cut', 'Copy': 'Copy', 'Paste': 'Paste', 'Delete Selected': 'Delete', 'Select All': 'Select All', 'Exit': 'Quit', 'Softimage Help': 'Users Guide' };
+
+/** Host DCC Send-to / Add-On packaging — intentionally silent (documented gaps). */
+const isOutOfScopeMenubarPath = (path: string[]) => path.some(p => /^Send to /.test(p) || p === 'Add-On');
 
 /** Softimage PE leaves with id≥0 that the clone actually handles (others are grey / silent — see ui-documented-gaps). */
 const WIRED_LABELS = new Set([
@@ -21,8 +24,32 @@ const WIRED_LABELS = new Set([
   'About Softimage', 'Softimage Help', 'Softimage SDK Help', "What's New",
   'Softimage Learning Channel', '1-Minute Startup Movies', 'Learning Path', 'Softimage Wiki', 'Services and Support',
   'Softimage Home Page', 'Try Other Autodesk Products',
+  'Customer Involvement Program...', 'Desktop Analytics...',
   'Manage...', 'New Custom Relational View', 'New Custom Shelf...', 'New Custom Toolbar...', 'Customize Toolbars...',
 ]);
+
+const lsBool = (key: string, fallback = false) => { try { const v = localStorage.getItem(key); return v == null ? fallback : v === '1'; } catch { return fallback; } };
+const setLsBool = (key: string, on: boolean) => { try { localStorage.setItem(key, on ? '1' : '0'); } catch { /* */ } };
+
+/** Soft Softimage CIP / Desktop Analytics dialogs (local prefs only — no phone-home). */
+function openParticipationDialog(app: App, kind: 'cip' | 'analytics') {
+  const key = kind === 'cip' ? 'si.cip' : 'si.analytics';
+  const title = kind === 'cip' ? 'Customer Involvement Program' : 'Desktop Analytics';
+  openFloating(title, (body, win) => {
+    body.classList.add('soft-dialog');
+    const on = lsBool(key, false);
+    body.innerHTML = `<div class="hint">Softimage ${title} dialog — Softimage-Direct keeps this preference locally and does not send telemetry.</div>
+      <div class="row"><label><input type="checkbox" class="part-on" ${on ? 'checked' : ''}/> ${kind === 'cip' ? 'Participate in the Customer Involvement Program' : 'Share Desktop Analytics'}</label></div>
+      <div class="row"><button class="part-ok">OK</button><button class="part-cancel">Cancel</button></div>`;
+    body.querySelector('.part-ok')!.addEventListener('click', () => {
+      const checked = (body.querySelector('.part-on') as HTMLInputElement).checked;
+      setLsBool(key, checked);
+      app.logMsg('info', `${title}: ${checked ? 'on' : 'off'} (local only)`);
+      win.close();
+    });
+    body.querySelector('.part-cancel')!.addEventListener('click', () => win.close());
+  }, { w: 420, h: 180, key: `help-${kind}` });
+}
 
 const IMPORT_EXPORT_WIRED = new Set([
   'Model...', 'Referenced Model...', 'Delta...',
@@ -64,6 +91,8 @@ export function menubarIsWired(it: SiMenuItem, path: string[] = []): boolean {
   const l = it.label ?? '';
   const id = it.id;
   if (id !== undefined && id !== null && id < 0) return true;
+  // Send-to Maya/Max/Mudbox + Add-On packaging stay grey (host DCC / addon APIs).
+  if (isOutOfScopeMenubarPath(path)) return false;
   if (WIRED_LABELS.has(l)) return true;
   if (path.includes('Layouts')) return true;
   if ((path.includes('Import') || path.includes('Export') || path.includes('Alembic')) && IMPORT_EXPORT_WIRED.has(l)) return true;
@@ -155,6 +184,10 @@ export function menubar(app: App, host: HTMLElement) {
       case -13: app.run(l.startsWith('Model') ? 'ImportModel' : l.startsWith('Referenced') ? 'ImportRefModels' : 'ImportDelta'); return;
       case -14: app.run(l.startsWith('Model') ? 'ExportModel' : 'ExportDelta'); return;
     }
+    if (isOutOfScopeMenubarPath(path)) {
+      app.logMsg('info', `${path.join(' > ')} > ${l}: not implemented (Send-to / Add-On — see ui-documented-gaps)`);
+      return;
+    }
     if (pickImportExport(app, path, l)) return;
     if (path.includes('Layouts') || l === 'Manage...') { ev('layoutmenu', { label: l, path }); return; }
     if (['New Custom Relational View', 'New Custom Shelf...', 'New Custom Toolbar...', 'Customize Toolbars...'].includes(l) || it.id === -9) { ev('toolbarmenu', { label: l }); return; }
@@ -195,6 +228,8 @@ export function menubar(app: App, host: HTMLElement) {
       case 'Minimize All': minimizeAll(); return; case 'Restore All': restoreAll(); return; case 'Close All': closeAll(); return;
       default: if (it.id === -12) { const w = floatingWindows()[Number(l.split(' ')[0]) - 1]; w?.focus(); return; }
       case 'Restore Default': ev('togglepanel', { name: '*restore' }); return; case 'Show All': ev('togglepanel', { name: '*all', show: true }); return; case 'Hide All': ev('togglepanel', { name: '*all', show: false }); return;
+      case 'Customer Involvement Program...': openParticipationDialog(app, 'cip'); return;
+      case 'Desktop Analytics...': openParticipationDialog(app, 'analytics'); return;
       case 'About Softimage': alert('Softimage-Direct — a web reimplementation of Autodesk Softimage 2015 SP2\'s modeling toolset.\nUI data (menus, key maps, bitmaps, strings) are read from the original installation files.'); return;
       case 'Softimage Help': case 'Softimage SDK Help': case "What's New": window.open(HELP_URLS[l] ?? 'https://help.autodesk.com/view/SI/2015/ENU/', '_blank'); return;
     }

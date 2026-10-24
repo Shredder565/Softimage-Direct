@@ -1,11 +1,11 @@
 {
   "leaves": 148,
-  "wired": 132,
-  "silent": 16,
+  "wired": 133,
+  "silent": 15,
   "byTop": {
     "File": {
-      "wired": 30,
-      "silent": 14
+      "wired": 29,
+      "silent": 15
     },
     "Edit": {
       "wired": 8,
@@ -24,8 +24,8 @@
       "silent": 0
     },
     "Help": {
-      "wired": 16,
-      "silent": 2
+      "wired": 18,
+      "silent": 0
     }
   },
   "silentSample": [
@@ -34,6 +34,7 @@
     "File > Send to Maya > Update current Maya scene",
     "File > Send to Maya > Add to current Maya scene",
     "File > Send to Maya > Select previously sent objects",
+    "File > Send to Maya > Preferences...",
     "File > Send to Mudbox > Send as new Mudbox scene",
     "File > Send to Mudbox > Update current Mudbox scene",
     "File > Send to Mudbox > Add to current Mudbox scene",
@@ -42,9 +43,7 @@
     "File > Add-On > UnInstall ...",
     "File > Add-On > Package Location...",
     "File > Add-On > Package...",
-    "File > Add-On > Edit...",
-    "Help > Customer Involvement Program...",
-    "Help > Desktop Analytics..."
+    "File > Add-On > Edit..."
   ],
   "pageErrors": [],
   "silentAll": [
@@ -53,6 +52,7 @@
     "File > Send to Maya > Update current Maya scene",
     "File > Send to Maya > Add to current Maya scene",
     "File > Send to Maya > Select previously sent objects",
+    "File > Send to Maya > Preferences...",
     "File > Send to Mudbox > Send as new Mudbox scene",
     "File > Send to Mudbox > Update current Mudbox scene",
     "File > Send to Mudbox > Add to current Mudbox scene",
@@ -61,8 +61,6 @@
     "File > Add-On > UnInstall ...",
     "File > Add-On > Package Location...",
     "File > Add-On > Package...",
-    "File > Add-On > Edit...",
-    "Help > Customer Involvement Program...",
-    "Help > Desktop Analytics..."
+    "File > Add-On > Edit..."
   ]
 }
