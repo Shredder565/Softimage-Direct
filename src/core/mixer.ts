@@ -23,6 +23,7 @@ export function clipWeightsAt(frame: number, clips: MixerClip[], transitions: Mi
   const byName = new Map(clips.map(c => [c.name, c]));
   const out: ClipWeight[] = [];
   for (const clip of clips) {
+    if (clip.mute) continue;
     const end = clip.start + clip.duration;
     let w = frame >= clip.start && frame < end ? 1 : 0;
     let localTime = frame - clip.start;
@@ -44,11 +45,25 @@ export function clipWeightsAt(frame: number, clips: MixerClip[], transitions: Mi
         else if (clip.name === tr.to) { w = Math.max(w, u); if (frame < clip.start) localTime = 0; }
       }
     }
+    w *= Number(clip.weight ?? 1);
     if (w > 1e-8) out.push({ clip, weight: w, localTime });
   }
-  const sum = out.reduce((s, x) => s + x.weight, 0);
-  if (sum > 0) for (const x of out) x.weight /= sum;
-  return out;
+  // Normalize non-additive clips per track; additive clips keep raw weight (layer on top).
+  const byTrack = new Map<number, ClipWeight[]>();
+  for (const x of out) {
+    const t = x.clip.track ?? 0;
+    if (!byTrack.has(t)) byTrack.set(t, []);
+    byTrack.get(t)!.push(x);
+  }
+  const normed: ClipWeight[] = [];
+  for (const group of byTrack.values()) {
+    const replace = group.filter(x => !x.clip.additive);
+    const add = group.filter(x => x.clip.additive);
+    const sum = replace.reduce((s, x) => s + x.weight, 0);
+    if (sum > 0) for (const x of replace) x.weight /= sum;
+    normed.push(...replace, ...add);
+  }
+  return normed;
 }
 
 function actionPayload(src: Property): { values: Record<string, number>; fcurves: Record<string, { time: number; value: number; interp?: number; left?: number; right?: number }[]> } {
@@ -105,23 +120,28 @@ export function evaluateMixer(app: MixerHost, frame = app.anim.frame, apply = tr
 
   const lookup = (path: string) => resolveParam(app, path);
 
-  const acc = new Map<string, { sum: number; w: number }>();
-  for (const cw of weights) {
+  // Tracks evaluated low→high; additive clips add delta vs base value.
+  const ordered = [...weights].sort((a, b) => (a.clip.track ?? 0) - (b.clip.track ?? 0));
+  const values: Record<string, number> = {};
+  for (const cw of ordered) {
     const src = sources.get(cw.clip.source); if (!src) continue;
     const vals = sampleSource(src, cw.localTime, lookup);
     for (const [path, v] of Object.entries(vals)) {
       if (!Number.isFinite(v)) continue;
-      const a = acc.get(path) ?? { sum: 0, w: 0 };
-      a.sum += v * cw.weight; a.w += cw.weight; acc.set(path, a);
+      if (cw.clip.additive) {
+        // Softimage additive layer: accumulate weighted action values onto lower tracks.
+        const under = values[path] ?? Number(lookup(path)?.value ?? 0);
+        values[path] = under + v * cw.weight;
+      } else {
+        const prev = values[path];
+        values[path] = prev == null ? v : prev * (1 - cw.weight) + v * cw.weight;
+      }
     }
   }
-  const values: Record<string, number> = {};
-  for (const [path, a] of acc) {
-    const v = a.w > 0 ? a.sum / a.w : 0;
-    values[path] = v;
-    if (apply) {
+  if (apply) {
+    for (const [path, v] of Object.entries(values)) {
       const p = lookup(path);
-      if (p) { p.value = v; }
+      if (p) p.value = v;
     }
   }
   if (apply && Object.keys(values).length) app.events.emit('params');

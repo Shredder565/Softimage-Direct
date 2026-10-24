@@ -20,6 +20,12 @@
     },
     "nOff": 1,
     "inactive": false,
-    "pathHasPerc": true
+    "pathHasPerc": true,
+    "clamped": {
+      "x": 1
+    },
+    "onPlane": {
+      "y": 0
+    }
   }
 }

@@ -16,13 +16,16 @@ export const CNS_PRESETS: Record<string, { type: string; label: string; min: num
   '2 Points': { type: 'poscns', label: '2 Points Cns', min: 2, defs: () => [bool('active', true, 'Active'), num('blendweight', 1, 'Blend Weight', { min: 0, max: 1 })] },
   '3 Points': { type: 'poscns', label: '3 Points Cns', min: 3, defs: () => [bool('active', true, 'Active'), num('blendweight', 1, 'Blend Weight', { min: 0, max: 1 })] },
   'N Points': { type: 'poscns', label: 'N Points Cns', min: 1, defs: () => [bool('active', true, 'Active'), num('blendweight', 1, 'Blend Weight', { min: 0, max: 1 })] },
-  'Curve (Path)': { type: 'poscns', label: 'Path Cns', min: 1, defs: () => [bool('active', true, 'Active'), num('perc', 0, 'Path %', { min: 0, max: 100 })] },
+  'Curve (Path)': { type: 'poscns', label: 'Path Cns', min: 1, defs: () => [bool('active', true, 'Active'), num('perc', 0, 'Path %', { min: 0, max: 100 }), bool('tangent', false, 'Align to Tangent'), num('offsetx', 0, 'Offset X'), num('offsety', 0, 'Offset Y'), num('offsetz', 0, 'Offset Z')] },
   Symmetry: { type: 'poscns', label: 'Symmetry Cns', min: 1, defs: () => [bool('active', true, 'Active'), num('blendweight', 1, 'Blend Weight', { min: 0, max: 1 }), num('offsetx', 0, 'Offset X'), num('offsety', 0, 'Offset Y'), num('offsetz', 0, 'Offset Z')] },
-  'Object to Cluster': { type: 'poscns', label: 'Object to Cluster Cns', min: 1, defs: () => [bool('active', true, 'Active')] },
+  'Object to Cluster': { type: 'poscns', label: 'Object to Cluster Cns', min: 1, defs: () => [bool('active', true, 'Active'), num('blendweight', 1, 'Blend Weight', { min: 0, max: 1 }), num('offsetx', 0, 'Offset X'), num('offsety', 0, 'Offset Y'), num('offsetz', 0, 'Offset Z')] },
+  'Bounding Volume': { type: 'poscns', label: 'Bounding Volume Cns', min: 1, defs: () => [bool('active', true, 'Active'), num('blendweight', 1, 'Blend Weight', { min: 0, max: 1 })] },
+  'Bounding Plane': { type: 'poscns', label: 'Bounding Plane Cns', min: 1, defs: () => [bool('active', true, 'Active'), num('axis', 1, 'Plane Axis (0=X 1=Y 2=Z)'), num('blendweight', 1, 'Blend Weight', { min: 0, max: 1 })] },
+  'Surface (Param)': { type: 'poscns', label: 'Surface Param Cns', min: 1, defs: () => [bool('active', true, 'Active'), num('blendweight', 1, 'Blend Weight', { min: 0, max: 1 }), num('offsetx', 0, 'Offset X'), num('offsety', 0, 'Offset Y'), num('offsetz', 0, 'Offset Z')] },
 };
 const ALIAS: Record<string, string> = {
-  'Pin Object into Position (Toggle)': 'Position', 'Curve (Param)': 'Curve (Path)', 'Surface (Param)': 'Position',
-  'Chain Up Vector': 'Up-Vector', 'Chain Preferred Axis': 'Up-Vector', 'Bounding Volume': 'Position', 'Bounding Plane': 'Position',
+  'Pin Object into Position (Toggle)': 'Position', 'Curve (Param)': 'Curve (Path)',
+  'Chain Up Vector': 'Up-Vector', 'Chain Preferred Axis': 'Up-Vector',
   // Animate > Create > Path menu binds ApplyCns with PresetObj Path / Trajectory (Softimage PE)
   Path: 'Curve (Path)', Trajectory: 'Curve (Path)', 'Curve (Path)': 'Curve (Path)',
 };
@@ -32,6 +35,16 @@ export function addConstraint(app: App, o: X3DObject, preset: string, targets: X
   const k = ALIAS[preset] ?? preset; const d = CNS_PRESETS[k]; if (!d) throw new Error(`Constraint "${preset}" is not available`);
   const c = new Constraint(d.label, d.type, d.defs(), targets); if (d.type === 'dircns' && (o.type === 'bone' || o.type === 'root')) c.set('dirx', true);
   if (k === 'Symmetry') (c as any)._symmetry = true;
+  if (k === 'Bounding Volume') (c as any)._bndVolume = true;
+  if (k === 'Bounding Plane') (c as any)._bndPlane = true;
+  if (k === 'Object to Cluster') {
+    const cs = app.componentSel();
+    if (cs?.sel.kind === 'point' && cs.sel.indices.length) (c as any)._cluster = { obj: cs.obj, indices: [...cs.sel.indices] };
+    else if (targets[0]?.clusters?.[0]) {
+      const cl = targets[0].clusters[0]; const elems = (cl as any).elements ?? (cl as any).indices;
+      (c as any)._cluster = { obj: targets[0], indices: elems ? [...elems] : [0] };
+    }
+  }
   if (d.type === 'upvct') { const dir = o.properties.find(p => p instanceof Constraint && p.type === 'dircns') as any; if (dir) { dir.upVector = targets[0]; dir.set('upvct_active', true); return dir; } }
   // Softimage Compensate: keep current world pose by baking offsets into the constraint.
   if (compensate && targets[0] && (d.type === 'poscns' || d.type === 'posecns')) {

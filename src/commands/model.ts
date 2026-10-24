@@ -428,15 +428,29 @@ export function registerModelAliases(app: App) {
   // static-pose actions (Store/Apply Skeleton Pose use these)
   app.register({ name: 'StoreAction', label: 'Store Action', category: 'Animation Mixer', description: 'Stores current values and/or fcurves of the selection as an action source on the model (Softimage StoreAction modes).', args: [{ name: 'Model', default: '' }, { name: 'InputObj', default: '' }, { name: 'Mode', default: 4 }, { name: 'Name', default: 'StoredStaticPose' }, { name: 'RemoveAnim', default: true }, { name: 'StartFrame', default: 0 }, { name: 'EndFrame', default: 0 }, { name: 'Consider Time', default: false }, { name: 'Ripple', default: false }, { name: 'AddClip', default: false }, { name: 'ClipOffset', default: 0 }, { name: 'IncludeAnimLayers', default: false }], execute(app, a) {
     const objs = app.targets(a.InputObj); const model = (a.Model ? app.scene.find(a.Model) : null) ?? objs[0]?.model ?? app.scene.root;
-    const mode = Number(a.Mode ?? 4); const wantFcurves = mode === 1 || mode === 3 || mode === 9 || /Fcv|Fcurve/i.test(String(a.Name || ''));
-    const wantExpr = mode === 3 || /Expression/i.test(String(a.Name || ''));
+    // Softimage StoreAction modes: 1/9 = fcurves, 3 = fcurves+expr, 4/10 = static current values.
+    const mode = Number(a.Mode ?? 4);
+    const nameHint = String(a.Name || '');
+    const wantFcurves = mode === 1 || mode === 3 || mode === 9 || /Fcv|Fcurve/i.test(nameHint);
+    const wantExpr = mode === 3 || /Expression/i.test(nameHint);
     const marked = [...app.anim.marked]; const keySet: any[] = (app as any).currentKeySet ?? [];
     const pickParams = () => {
-      if (keySet.length && /Character|KeySet|Key Set/i.test(String(a.Name || ''))) return keySet as import('../core/params').Parameter[];
-      if (marked.length && /Marked|Params/i.test(String(a.Name || ''))) return marked;
-      if (/Keyable/i.test(String(a.Name || ''))) { const out: import('../core/params').Parameter[] = []; for (const o of (objs.length ? objs : app.selectedObjects)) out.push(...o.kinematics.local.params.filter(p => p.keyable)); return out; }
-      if (/Animated/i.test(String(a.Name || '')) || wantFcurves) { const out: import('../core/params').Parameter[] = []; for (const [p, fc] of app.anim.fcurves) if (fc.keys.length) out.push(p); if (out.length) return out; }
-      const out: import('../core/params').Parameter[] = []; for (const o of (objs.length ? objs : app.selectedObjects)) for (const ax of ['x', 'y', 'z']) for (const k of ['pos', 'rot', 'scl']) { const p = o.kinematics.local.get(k + ax); if (p) out.push(p); } return out;
+      const host = objs.length ? objs : app.selectedObjects;
+      if (keySet.length && (/Character|KeySet|Key Set/i.test(nameHint) || mode === 9)) return keySet as import('../core/params').Parameter[];
+      if (marked.length && /Marked/i.test(nameHint)) return marked;
+      if (/Keyable/i.test(nameHint)) {
+        const out: import('../core/params').Parameter[] = [];
+        for (const o of host) out.push(...o.kinematics.local.params.filter(p => p.keyable));
+        if (out.length) return out;
+      }
+      if (/Animated/i.test(nameHint) || (wantFcurves && !/Transform/i.test(nameHint))) {
+        const out: import('../core/params').Parameter[] = [];
+        for (const [p, fc] of app.anim.fcurves) if (fc.keys.length) out.push(p);
+        if (out.length) return out;
+      }
+      const out: import('../core/params').Parameter[] = [];
+      for (const o of host) for (const ax of ['x', 'y', 'z']) for (const k of ['pos', 'rot', 'scl']) { const p = o.kinematics.local.get(k + ax); if (p) out.push(p); }
+      return out;
     };
     const params = pickParams(); const values: Record<string, number> = {}; const fcurves: Record<string, { time: number; value: number; interp?: number }[]> = {}; const exprs: Record<string, string> = {};
     for (const p of params) {
