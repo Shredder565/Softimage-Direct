@@ -146,6 +146,33 @@ for (const layout of LAYOUTS) {
       else ok.push(`layout ${layout} loaded (reported ${a.layout})`);
     } else ok.push(`layout ${layout}`);
     if (pageErrors.length) { fail.push(`layout ${layout} pageerrors: ${pageErrors.slice(0, 3).join(' | ')}`); pageErrors.length = 0; }
+    // Dual shell chrome from layouts.json / Dual.xsily (50|50 + Screen1Tray + MCP bottom_inv)
+    if (layout === 'Dual') {
+      const dual = await p.evaluate(() => {
+        const root = document.querySelector('#root > .frameset');
+        const sizes = root?.dataset?.sizes ?? '';
+        const screen1 = [...document.querySelectorAll('.switcher[data-name="Screen1Tray"] > .switcher-bar > .switcher-btn')]
+          .map(b => b.dataset.label || b.textContent?.trim());
+        const mcp = [...document.querySelectorAll('.switcher[data-name="mcp"] > .switcher-bar > .switcher-btn')]
+          .map(b => b.dataset.label || b.textContent?.trim());
+        const mcpInv = !!document.querySelector('.switcher[data-name="mcp"].inv');
+        const modMenu = document.querySelector('.switcher[data-name="module_menu"]');
+        const modBtn = modMenu?.querySelector('.switcher-btn.icon');
+        const modSize = modBtn ? { w: modBtn.offsetWidth, h: modBtn.offsetHeight } : null;
+        return { sizes, screen1, mcp, mcpInv, modSize };
+      });
+      if (dual.sizes !== '50%,50%') fail.push(`Dual root sizes expected 50%,50% got ${dual.sizes}`);
+      else ok.push('Dual 50%/50% shell split');
+      const wantScreen = ['Animation', 'Schematic', 'Rendering', 'ICE', 'Compositing', 'Plugins'];
+      if (wantScreen.every((l, i) => dual.screen1[i] === l)) ok.push('Dual Screen1Tray labels');
+      else fail.push(`Dual Screen1Tray labels got ${JSON.stringify(dual.screen1)}`);
+      const wantMcp = ['MCP', 'KP/L', 'PPG'];
+      if (wantMcp.every((l, i) => dual.mcp[i] === l) && dual.mcpInv) ok.push('Dual MCP bottom_inv tabs');
+      else fail.push(`Dual MCP tabs/inv got ${JSON.stringify(dual.mcp)} inv=${dual.mcpInv}`);
+      if (dual.modSize && dual.modSize.w >= 24 && dual.modSize.w <= 30 && dual.modSize.h >= 24 && dual.modSize.h <= 30) {
+        ok.push(`Dual module_menu buttonsize ~26x26 (${dual.modSize.w}x${dual.modSize.h})`);
+      } else fail.push(`Dual module_menu buttonsize expected ~26x26 got ${JSON.stringify(dual.modSize)}`);
+    }
   } catch (e) {
     fail.push(`layout ${layout}: ${e.message || e}`);
   }
