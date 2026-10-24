@@ -20,6 +20,7 @@ import menusData from './data/menus.json';
 import { installLayoutEditing } from './ui/layoutEdit';
 import { toolbarPanel, menuStatus, runMenuPath, getEnableParity } from './ui/toolbarPanel';
 import { commandEnabled, mcpSampleEnabled } from './ui/cmdEnable';
+import { mcpMatrixMeta, mcpSelectionContext, matrixCommandEnabled, peMenuItemGrayed } from './ui/mcpEnableMatrix';
 import { explorerView } from './ui/explorer';
 import { mcpPanel } from './ui/mcp';
 import { installKeymap } from './ui/keymap';
@@ -180,7 +181,7 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     prefsPages: [...prefs.keys()],
     prefsPageCount: prefs.size,
     getEnableParity: getEnableParity(app),
-    // Softimage GetEnabled-driven MCP button state (Ghidra command-flag model)
+    // Softimage GetEnabled-driven MCP button state (Ghidra command-flag model + matrix overlay)
     mcpEnable: {
       sample: mcpSampleEnabled(app),
       parent: commandEnabled(app, 'ParentObj'),
@@ -189,7 +190,18 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
       group: commandEnabled(app, 'CreateGroup'),
       freezeM: commandEnabled(app, 'FreezeModeling'),
       selCount: app.selectedObjects.length,
+      // Softimage-pc XSIBATCH bools (Translate/Rotate/Scale/Duplicate attested true even empty)
+      translate: commandEnabled(app, 'Translate'),
+      rotate: commandEnabled(app, 'Rotate'),
+      scale: commandEnabled(app, 'Scale'),
+      duplicate: commandEnabled(app, 'Duplicate'),
+      context: mcpSelectionContext(app),
+      matrixTranslate: matrixCommandEnabled(app, 'Translate'),
+      matrixParentObj: matrixCommandEnabled(app, 'ParentObj'),
     },
+    mcpMatrix: mcpMatrixMeta(),
+    peGrayedClusterWithCenter: peMenuItemGrayed('Create Cluster with Center'),
+    peGrayedSelectability: peMenuItemGrayed('Selectability'),
   };
 };
 (window as any).__menubarStatus = () => menubarStatus();

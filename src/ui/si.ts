@@ -8,8 +8,9 @@ import shelf from '../data/si/shelf.json';
 import panelswitcher from '../data/si/panelswitcher.json';
 import views from '../data/si/views.json';
 import type { App } from '../core/commands';
+import { peMenuItemGrayed } from './mcpEnableMatrix';
 
-export type SiMenuItem = { label?: string; id?: number | null; accel?: string; items?: SiMenuItem[]; separator?: boolean };
+export type SiMenuItem = { label?: string; id?: number | null; accel?: string; items?: SiMenuItem[]; separator?: boolean; grayed?: boolean };
 export const SI_MENUS = menus as unknown as Record<string, SiMenuItem[]>;
 export const SI_STRINGS = strings as unknown as Record<string, Record<string, string>>;
 export const SI_KEYMAPS = keymaps as unknown as Record<string, Record<string, { name: string; key: string; mods: string[] }[]>>;
@@ -65,6 +66,13 @@ function splitArgs(s: string): any[] {
   return out;
 }
 
+/** Softimage PE f_grayed / opts.enabled — grey seed from dump when no caller predicate. */
+function menuItemEnabled(it: SiMenuItem, path: string[] | undefined, opts: { enabled?: (it: SiMenuItem, path?: string[]) => boolean }): boolean {
+  if (opts.enabled) return !!opts.enabled(it, path);
+  if (it.grayed || peMenuItemGrayed(it.label)) return false;
+  return true;
+}
+
 /** Generic popup for a menu tree copied from a Softimage menu resource. `onPick(label, item)` handles leaves. */
 export function openSiMenu(items: SiMenuItem[], x: number, y: number, onPick: (it: SiMenuItem, path: string[]) => void, opts: { checked?: (it: SiMenuItem) => boolean | undefined; enabled?: (it: SiMenuItem, path?: string[]) => boolean } = {}, path: string[] = [], level = 0) {
   closeSiMenus(level);
@@ -76,7 +84,12 @@ export function openSiMenu(items: SiMenuItem[], x: number, y: number, onPick: (i
     if (it.accel) { const a = document.createElement('span'); a.className = 'menu-accel'; a.textContent = it.accel; row.appendChild(a); }
     const nextPath = [...path, it.label ?? ''];
     if (it.items) { row.classList.add('has-sub'); row.onpointerenter = () => { const r = row.getBoundingClientRect(); openSiMenu(it.items!, r.right - 2, r.top - 2, onPick, opts, nextPath, level + 1); }; }
-    else { if (opts.enabled && !opts.enabled(it, path)) row.classList.add('disabled'); row.onpointerenter = () => closeSiMenus(level + 1); row.onclick = () => { closeSiMenus(); onPick(it, nextPath); }; }
+    else {
+      const en = menuItemEnabled(it, path, opts);
+      if (!en) row.classList.add('disabled');
+      row.onpointerenter = () => closeSiMenus(level + 1);
+      row.onclick = () => { if (!menuItemEnabled(it, path, opts)) return; closeSiMenus(); onPick(it, nextPath); };
+    }
     m.appendChild(row);
   }
   document.body.appendChild(m);

@@ -1,0 +1,649 @@
+{
+  "meta": {
+    "softimage": "13.2.163.0",
+    "source": "si_mcp_enabled_matrix.json",
+    "mode": "PE static + XSIBATCH Command.Enabled (no GUI)",
+    "note": "XSIBATCH Command.Enabled bools where non-null; null falls back to Direct canRun. PE f_grayed = static resource defaults."
+  },
+  "contexts": {
+    "empty": {
+      "selection": {
+        "count": 0,
+        "names": [],
+        "types": []
+      },
+      "commands": {
+        "SelectTool": null,
+        "Translate": true,
+        "TranslateTool": null,
+        "Rotate": true,
+        "RotateTool": null,
+        "Scale": true,
+        "ScaleTool": null,
+        "SetSelFilter": null,
+        "ToggleSnap": null,
+        "ToggleProportional": null,
+        "ToggleSymmetry": null,
+        "Parent": null,
+        "ParentObj": null,
+        "ParentTool": null,
+        "CutRelation": null,
+        "CutObj": null,
+        "CreateGroup": null,
+        "Ungroup": null,
+        "FreezeObj": null,
+        "FreezeModeling": null,
+        "SetKey": null,
+        "RemoveKey": null,
+        "ClearAllKeys": null,
+        "PlayForward": null,
+        "PlayBackward": null,
+        "FirstFrame": null,
+        "LastFrame": null,
+        "NextFrame": null,
+        "PreviousFrame": null,
+        "ToggleCOG": null,
+        "ToggleProp": null,
+        "ActivateObjectSelFilter": null,
+        "ActivatePointSelFilter": null,
+        "ActivateEdgeSelFilter": null,
+        "ActivatePolygonSelFilter": null,
+        "ActivateObject": null,
+        "ActivateVertex": null,
+        "ActivateEdge": null,
+        "ActivatePolygon": null,
+        "siToggleSnap": null,
+        "SnapToggle": null,
+        "ActivateSnap": null,
+        "CenterGeometry": null,
+        "ResetTransform": null,
+        "FreezeTransformations": null,
+        "Duplicate": true,
+        "DeleteObj": null,
+        "InspectObj": null,
+        "SetLocalTransform": null,
+        "SetGlobalTransform": null
+      }
+    },
+    "single_mesh": {
+      "selection": {
+        "count": 1,
+        "names": [
+          "cube"
+        ],
+        "types": [
+          "polymsh"
+        ]
+      },
+      "commands": {
+        "SelectTool": null,
+        "Translate": true,
+        "TranslateTool": null,
+        "Rotate": true,
+        "RotateTool": null,
+        "Scale": true,
+        "ScaleTool": null,
+        "SetSelFilter": null,
+        "ToggleSnap": null,
+        "ToggleProportional": null,
+        "ToggleSymmetry": null,
+        "Parent": null,
+        "ParentObj": null,
+        "ParentTool": null,
+        "CutRelation": null,
+        "CutObj": null,
+        "CreateGroup": null,
+        "Ungroup": null,
+        "FreezeObj": null,
+        "FreezeModeling": null,
+        "SetKey": null,
+        "RemoveKey": null,
+        "ClearAllKeys": null,
+        "PlayForward": null,
+        "PlayBackward": null,
+        "FirstFrame": null,
+        "LastFrame": null,
+        "NextFrame": null,
+        "PreviousFrame": null,
+        "ToggleCOG": null,
+        "ToggleProp": null,
+        "ActivateObjectSelFilter": null,
+        "ActivatePointSelFilter": null,
+        "ActivateEdgeSelFilter": null,
+        "ActivatePolygonSelFilter": null,
+        "ActivateObject": null,
+        "ActivateVertex": null,
+        "ActivateEdge": null,
+        "ActivatePolygon": null,
+        "siToggleSnap": null,
+        "SnapToggle": null,
+        "ActivateSnap": null,
+        "CenterGeometry": null,
+        "ResetTransform": null,
+        "FreezeTransformations": null,
+        "Duplicate": true,
+        "DeleteObj": null,
+        "InspectObj": null,
+        "SetLocalTransform": null,
+        "SetGlobalTransform": null
+      }
+    },
+    "multi_mesh": {
+      "selection": {
+        "count": 2,
+        "names": [
+          "cube",
+          "sphere"
+        ],
+        "types": [
+          "polymsh",
+          "polymsh"
+        ]
+      },
+      "commands": {
+        "SelectTool": null,
+        "Translate": true,
+        "TranslateTool": null,
+        "Rotate": true,
+        "RotateTool": null,
+        "Scale": true,
+        "ScaleTool": null,
+        "SetSelFilter": null,
+        "ToggleSnap": null,
+        "ToggleProportional": null,
+        "ToggleSymmetry": null,
+        "Parent": null,
+        "ParentObj": null,
+        "ParentTool": null,
+        "CutRelation": null,
+        "CutObj": null,
+        "CreateGroup": null,
+        "Ungroup": null,
+        "FreezeObj": null,
+        "FreezeModeling": null,
+        "SetKey": null,
+        "RemoveKey": null,
+        "ClearAllKeys": null,
+        "PlayForward": null,
+        "PlayBackward": null,
+        "FirstFrame": null,
+        "LastFrame": null,
+        "NextFrame": null,
+        "PreviousFrame": null,
+        "ToggleCOG": null,
+        "ToggleProp": null,
+        "ActivateObjectSelFilter": null,
+        "ActivatePointSelFilter": null,
+        "ActivateEdgeSelFilter": null,
+        "ActivatePolygonSelFilter": null,
+        "ActivateObject": null,
+        "ActivateVertex": null,
+        "ActivateEdge": null,
+        "ActivatePolygon": null,
+        "siToggleSnap": null,
+        "SnapToggle": null,
+        "ActivateSnap": null,
+        "CenterGeometry": null,
+        "ResetTransform": null,
+        "FreezeTransformations": null,
+        "Duplicate": true,
+        "DeleteObj": null,
+        "InspectObj": null,
+        "SetLocalTransform": null,
+        "SetGlobalTransform": null
+      }
+    },
+    "single_null": {
+      "selection": {
+        "count": 1,
+        "names": [
+          "null"
+        ],
+        "types": [
+          "null"
+        ]
+      },
+      "commands": {
+        "SelectTool": null,
+        "Translate": true,
+        "TranslateTool": null,
+        "Rotate": true,
+        "RotateTool": null,
+        "Scale": true,
+        "ScaleTool": null,
+        "SetSelFilter": null,
+        "ToggleSnap": null,
+        "ToggleProportional": null,
+        "ToggleSymmetry": null,
+        "Parent": null,
+        "ParentObj": null,
+        "ParentTool": null,
+        "CutRelation": null,
+        "CutObj": null,
+        "CreateGroup": null,
+        "Ungroup": null,
+        "FreezeObj": null,
+        "FreezeModeling": null,
+        "SetKey": null,
+        "RemoveKey": null,
+        "ClearAllKeys": null,
+        "PlayForward": null,
+        "PlayBackward": null,
+        "FirstFrame": null,
+        "LastFrame": null,
+        "NextFrame": null,
+        "PreviousFrame": null,
+        "ToggleCOG": null,
+        "ToggleProp": null,
+        "ActivateObjectSelFilter": null,
+        "ActivatePointSelFilter": null,
+        "ActivateEdgeSelFilter": null,
+        "ActivatePolygonSelFilter": null,
+        "ActivateObject": null,
+        "ActivateVertex": null,
+        "ActivateEdge": null,
+        "ActivatePolygon": null,
+        "siToggleSnap": null,
+        "SnapToggle": null,
+        "ActivateSnap": null,
+        "CenterGeometry": null,
+        "ResetTransform": null,
+        "FreezeTransformations": null,
+        "Duplicate": true,
+        "DeleteObj": null,
+        "InspectObj": null,
+        "SetLocalTransform": null,
+        "SetGlobalTransform": null
+      }
+    },
+    "mesh_points_attempt": {
+      "selection": {
+        "count": 1,
+        "names": [
+          "cube"
+        ],
+        "types": [
+          "polymsh"
+        ]
+      },
+      "commands": {
+        "SelectTool": null,
+        "Translate": true,
+        "TranslateTool": null,
+        "Rotate": true,
+        "RotateTool": null,
+        "Scale": true,
+        "ScaleTool": null,
+        "SetSelFilter": null,
+        "ToggleSnap": null,
+        "ToggleProportional": null,
+        "ToggleSymmetry": null,
+        "Parent": null,
+        "ParentObj": null,
+        "ParentTool": null,
+        "CutRelation": null,
+        "CutObj": null,
+        "CreateGroup": null,
+        "Ungroup": null,
+        "FreezeObj": null,
+        "FreezeModeling": null,
+        "SetKey": null,
+        "RemoveKey": null,
+        "ClearAllKeys": null,
+        "PlayForward": null,
+        "PlayBackward": null,
+        "FirstFrame": null,
+        "LastFrame": null,
+        "NextFrame": null,
+        "PreviousFrame": null,
+        "ToggleCOG": null,
+        "ToggleProp": null,
+        "ActivateObjectSelFilter": null,
+        "ActivatePointSelFilter": null,
+        "ActivateEdgeSelFilter": null,
+        "ActivatePolygonSelFilter": null,
+        "ActivateObject": null,
+        "ActivateVertex": null,
+        "ActivateEdge": null,
+        "ActivatePolygon": null,
+        "siToggleSnap": null,
+        "SnapToggle": null,
+        "ActivateSnap": null,
+        "CenterGeometry": null,
+        "ResetTransform": null,
+        "FreezeTransformations": null,
+        "Duplicate": true,
+        "DeleteObj": null,
+        "InspectObj": null,
+        "SetLocalTransform": null,
+        "SetGlobalTransform": null
+      }
+    }
+  },
+  "pe_static_grayed": [
+    {
+      "menu": 203,
+      "label": "Create Cluster &with Center",
+      "cmd": 33122,
+      "norm": "create cluster with center"
+    },
+    {
+      "menu": 350,
+      "label": "&Selectability",
+      "cmd": 32892,
+      "norm": "selectability"
+    },
+    {
+      "menu": 354,
+      "label": "&Front Face Only",
+      "cmd": 32920,
+      "norm": "front face only"
+    },
+    {
+      "menu": 354,
+      "label": "Bac&k Face Only",
+      "cmd": 32921,
+      "norm": "back face only"
+    },
+    {
+      "menu": 354,
+      "label": "Bo&th",
+      "cmd": 32922,
+      "norm": "both"
+    },
+    {
+      "menu": 354,
+      "label": "Select &Ungrouped Components",
+      "cmd": 32927,
+      "norm": "select ungrouped components"
+    },
+    {
+      "menu": 354,
+      "label": "n-Points",
+      "cmd": 33111,
+      "norm": "n-points"
+    },
+    {
+      "menu": 354,
+      "label": "S&ymmetry",
+      "cmd": 32821,
+      "norm": "symmetry"
+    },
+    {
+      "menu": 354,
+      "label": "Direction-&Interest",
+      "cmd": 32829,
+      "norm": "direction-interest"
+    },
+    {
+      "menu": 354,
+      "label": "Bounding Pla&ne",
+      "cmd": 32835,
+      "norm": "bounding plane"
+    },
+    {
+      "menu": 354,
+      "label": "Bounding &Box",
+      "cmd": 32836,
+      "norm": "bounding box"
+    },
+    {
+      "menu": 354,
+      "label": "D&ynamic",
+      "cmd": null,
+      "norm": "dynamic"
+    },
+    {
+      "menu": 354,
+      "label": "Inertia",
+      "cmd": 32838,
+      "norm": "inertia"
+    },
+    {
+      "menu": 354,
+      "label": "Nail",
+      "cmd": 32841,
+      "norm": "nail"
+    },
+    {
+      "menu": 354,
+      "label": "Pendulum",
+      "cmd": 32839,
+      "norm": "pendulum"
+    },
+    {
+      "menu": 354,
+      "label": "Spring",
+      "cmd": 32840,
+      "norm": "spring"
+    },
+    {
+      "menu": 354,
+      "label": "&Collision",
+      "cmd": null,
+      "norm": "collision"
+    },
+    {
+      "menu": 354,
+      "label": "Any in Project",
+      "cmd": 32844,
+      "norm": "any in project"
+    },
+    {
+      "menu": 354,
+      "label": "Any in Scene",
+      "cmd": 32845,
+      "norm": "any in scene"
+    },
+    {
+      "menu": 354,
+      "label": "Any in Volume",
+      "cmd": 32846,
+      "norm": "any in volume"
+    },
+    {
+      "menu": 354,
+      "label": "One to One",
+      "cmd": 32847,
+      "norm": "one to one"
+    },
+    {
+      "menu": 354,
+      "label": "One to Many",
+      "cmd": 32848,
+      "norm": "one to many"
+    },
+    {
+      "menu": 354,
+      "label": "Multi-lateral in Group",
+      "cmd": 32849,
+      "norm": "multi-lateral in group"
+    },
+    {
+      "menu": 354,
+      "label": "&Substitute Input",
+      "cmd": 32834,
+      "norm": "substitute input"
+    },
+    {
+      "menu": 354,
+      "label": "Attac&h Control Object",
+      "cmd": 32814,
+      "norm": "attach control object"
+    },
+    {
+      "menu": 354,
+      "label": "Joint IK Manip.",
+      "cmd": 32852,
+      "norm": "joint ik manip."
+    },
+    {
+      "menu": 354,
+      "label": "Hierarchy IK Manip.",
+      "cmd": 32853,
+      "norm": "hierarchy ik manip."
+    },
+    {
+      "menu": 354,
+      "label": "Curve IK Manip.",
+      "cmd": 32854,
+      "norm": "curve ik manip."
+    },
+    {
+      "menu": 354,
+      "label": "Uniform Scaling",
+      "cmd": 32827,
+      "norm": "uniform scaling"
+    },
+    {
+      "menu": 354,
+      "label": "Interactive Update",
+      "cmd": 32858,
+      "norm": "interactive update"
+    },
+    {
+      "menu": 354,
+      "label": "Snap Setup...",
+      "cmd": 32859,
+      "norm": "snap setup..."
+    },
+    {
+      "menu": 354,
+      "label": "A&lign",
+      "cmd": 32819,
+      "norm": "align"
+    },
+    {
+      "menu": 354,
+      "label": "&Distribute",
+      "cmd": 32820,
+      "norm": "distribute"
+    },
+    {
+      "menu": 354,
+      "label": "&Store Static Pose",
+      "cmd": 32830,
+      "norm": "store static pose"
+    },
+    {
+      "menu": 354,
+      "label": "&Apply Static Pose",
+      "cmd": 32831,
+      "norm": "apply static pose"
+    },
+    {
+      "menu": 354,
+      "label": "&Hierarchy Compensation",
+      "cmd": 32855,
+      "norm": "hierarchy compensation"
+    },
+    {
+      "menu": 354,
+      "label": "Hierarchy &Manipulation",
+      "cmd": 32856,
+      "norm": "hierarchy manipulation"
+    },
+    {
+      "menu": 354,
+      "label": "Classic &Scaling",
+      "cmd": 32862,
+      "norm": "classic scaling"
+    },
+    {
+      "menu": 354,
+      "label": "Contin&uous Rotation",
+      "cmd": 32857,
+      "norm": "continuous rotation"
+    },
+    {
+      "menu": 354,
+      "label": "Operators...",
+      "cmd": 33107,
+      "norm": "operators..."
+    },
+    {
+      "menu": 354,
+      "label": "Add &Input",
+      "cmd": 32850,
+      "norm": "add input"
+    },
+    {
+      "menu": 354,
+      "label": "Remo&ve Input",
+      "cmd": 32851,
+      "norm": "remove input"
+    },
+    {
+      "menu": 354,
+      "label": "Su&bstitute Input",
+      "cmd": 32861,
+      "norm": "substitute input"
+    },
+    {
+      "menu": 354,
+      "label": "Remove &Last Operator",
+      "cmd": 32866,
+      "norm": "remove last operator"
+    },
+    {
+      "menu": 354,
+      "label": "Make Property &Local",
+      "cmd": 32837,
+      "norm": "make property local"
+    },
+    {
+      "menu": 354,
+      "label": "Make Object Uni&que",
+      "cmd": 32793,
+      "norm": "make object unique"
+    },
+    {
+      "menu": 354,
+      "label": "Fas&t Playback",
+      "cmd": 32860,
+      "norm": "fast playback"
+    },
+    {
+      "menu": 354,
+      "label": "Flip Flop Play",
+      "cmd": 32779,
+      "norm": "flip flop play"
+    },
+    {
+      "menu": 354,
+      "label": "&Clear",
+      "cmd": 32880,
+      "norm": "clear"
+    },
+    {
+      "menu": 354,
+      "label": "Capture Setting ...",
+      "cmd": 32882,
+      "norm": "capture setting ..."
+    },
+    {
+      "menu": 354,
+      "label": "&Clear",
+      "cmd": 32870,
+      "norm": "clear"
+    },
+    {
+      "menu": 354,
+      "label": "&Reset to Default",
+      "cmd": 32961,
+      "norm": "reset to default"
+    },
+    {
+      "menu": 356,
+      "label": "Polynode",
+      "cmd": 32896,
+      "norm": "polynode"
+    }
+  ],
+  "bool_attested": [
+    "Duplicate",
+    "Rotate",
+    "Scale",
+    "Translate"
+  ]
+}
