@@ -28,7 +28,9 @@ export function menubar(app: App, host: HTMLElement) {
     if (it.label === 'Layout Insertion Point') return layoutsSubmenu();
     if (it.label === 'New Layout From') return [{ label: 'New Layout From', items: layoutNames().map(n => ({ label: n, id: -8 })) }];
     if (it.label === 'Display Insertion Point') return [...displaySubmenu(), { separator: true }, { label: 'Scene Colors...', id: -5 }, { label: 'Visibility Options...', id: -6 }];
-    if (it.label === 'Edit Insertion Point' || it.label === 'Crosswalk Insertion Point' || it.label === 'Import Insertion Point' || it.label === 'Export Insertion Point') return [];
+    if (it.label === 'Import Insertion Point') return [{ label: 'Model...', id: -13 }, { label: 'Referenced Model...', id: -13 }, { label: 'Delta...', id: -13 }];
+    if (it.label === 'Export Insertion Point') return [{ label: 'Model...', id: -14 }, { label: 'Delta...', id: -14 }];
+    if (it.label === 'Edit Insertion Point' || it.label === 'Crosswalk Insertion Point') return [];
     if (it.label === 'Recent Scenes') return [{ label: 'Recent Scenes', items: recent().map(n => ({ label: n, id: -7 })) }];
     if (it.label === 'Recent Models') return [];
     if (it.label === 'Window' && it.items) { const wins = floatingWindows(); return [{ ...it, items: [...expand(it.items), ...(wins.length ? [{ separator: true } as SiMenuItem, ...wins.map((w, i) => ({ label: `${i + 1} ${w.title}`, id: -12 }))] : [])] }]; }
@@ -48,6 +50,8 @@ export function menubar(app: App, host: HTMLElement) {
       case -6: ev('openvisibility'); return;
       case -7: ev('openscene', { name: l }); return;
       case -8: ev('layoutmenu', { label: l, path: [...path, 'New Layout From'] }); return;
+      case -13: app.run(l.startsWith('Model') ? 'ImportModel' : l.startsWith('Referenced') ? 'ImportRefModels' : 'ImportDelta'); return;
+      case -14: app.run(l.startsWith('Model') ? 'ExportModel' : 'ExportDelta'); return;
     }
     if (path.includes('Layouts') || l === 'Manage...') { ev('layoutmenu', { label: l, path }); return; }
     if (['New Custom Relational View', 'New Custom Shelf...', 'New Custom Toolbar...', 'Customize Toolbars...'].includes(l) || it.id === -9) { ev('toolbarmenu', { label: l }); return; }
