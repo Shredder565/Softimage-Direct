@@ -109,23 +109,40 @@ export function mcpPanel(app: App, host: HTMLElement, opts: { only?: string[]; c
 
   // -------------------------------------------------------------- Constrain
   const cn = section('Constrain', collapsed);
-  cn.body.appendChild(grid(2, button('Parent', () => { const objs = app.selectedObjects; if (objs.length < 2) { app.logMsg('info', 'Parent: select the children, then Shift-click the parent (or pick it) and click Parent'); return; } const parent = objs[objs.length - 1]; app.run('ParentObj', { Parent: parent.fullName, Children: objs.slice(0, -1) }); }, 'Parent: make the last-selected object the parent of the others'), button('Cut', () => app.run('CutObj'), 'Cut the hierarchical link (reparent to the scene root)')));
+  const parentB = button('Parent', () => { const objs = app.selectedObjects; if (objs.length < 2) { app.logMsg('info', 'Parent: select the children, then Shift-click the parent (or pick it) and click Parent'); return; } const parent = objs[objs.length - 1]; app.run('ParentObj', { Parent: parent.fullName, Children: objs.slice(0, -1) }); }, 'Parent: make the last-selected object the parent of the others');
+  const cutB = button('Cut', () => app.run('CutObj'), 'Cut the hierarchical link (reparent to the scene root)');
+  cn.body.appendChild(grid(2, parentB, cutB));
   const cnsB = button('CnsComp', () => { A.cnsComp = !A.cnsComp; upd(); }, 'Constraint compensation'), chdB = button('ChldComp', () => { A.childComp = !A.childComp; upd(); }, 'Child transform compensation (children keep their global pose when the parent moves)');
   cn.body.appendChild(grid(2, cnsB, chdB));
   add('Constrain', cn.el);
 
   // ------------------------------------------------------------------- Edit
   const ed = section('Edit', collapsed);
-  ed.body.appendChild(grid(2, button('Freeze', () => app.run('FreezeObj'), 'Freeze: collapse the construction history'), button('Group', () => app.run('CreateGroup'), 'Group the selected objects')));
+  const freezeB = button('Freeze', () => app.run('FreezeObj'), 'Freeze: collapse the construction history');
+  const groupEditB = button('Group', () => app.run('CreateGroup'), 'Group the selected objects');
+  ed.body.appendChild(grid(2, freezeB, groupEditB));
   const immB = button('Immed', () => { A.immediate = !A.immediate; upd(); }, 'Immediate mode: operators are applied and frozen right away');
-  ed.body.appendChild(grid(2, button('Freeze M', () => app.run('FreezeModeling'), 'Freeze Modeling: freeze operators below the Modeling marker'), immB));
+  const freezeMB = button('Freeze M', () => app.run('FreezeModeling'), 'Freeze Modeling: freeze operators below the Modeling marker');
+  ed.body.appendChild(grid(2, freezeMB, immB));
   add('Edit', ed.el);
 
   // --------------------------------------------------------------- updates
   const upd = () => {
     modeBtns.forEach(b => { const on = (b as any)._m === app.selMode; b.classList.toggle('on', on); });
     groupB.classList.toggle('on', !!A.groupMode); centerB.classList.toggle('on', !!A.centerMode);
-    const o = app.selectedObjects[0];
+    const sel = app.selectedObjects;
+    const o = sel[0];
+    const hasMesh = sel.some(x => !!x.primitive?.mesh());
+    const hasCloud = sel.some(x => x.type === 'pointcloud');
+    const hasParentLink = sel.some(x => x.parentObj && x.parentObj !== app.scene.root);
+    // Heuristic greying from selection context. PC dumps (si_mcp_state.json, mcp-dll string candidates)
+    // do not encode Softimage's live MCP Enabled map — that still needs observation / Ghidra.
+    sampleB.disabled = !hasCloud;
+    parentB.disabled = sel.length < 2;
+    cutB.disabled = !hasParentLink;
+    freezeB.disabled = sel.length === 0;
+    groupEditB.disabled = sel.length === 0;
+    freezeMB.disabled = sel.length === 0 || !hasMesh;
     for (const md of tmodes) fields[md.m].forEach((i, k) => { if (document.activeElement === i) return; i.value = o ? String(Math.round(o.kinematics.local.val(md.prefix + 'xyz'[k]) * 1000) / 1000) : ''; });
     cogB.classList.toggle('on', !!A.cog); propB.classList.toggle('on', !!app.proportional.on); symB.classList.toggle('on', !!A.symmetry);
     snapOn.classList.toggle('on', !!S.on); snapB.forEach(b => b.classList.toggle('on', !!S[(b as any)._k]));
