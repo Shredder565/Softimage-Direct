@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { makeAimRig } from './constraints';
 import { App, InteractiveTool } from '../core/commands';
-import { X3DObject, Model, Primitive, Property, makeDisplay, makeGeomApprox, makePhong, makeLambert, makeSiShader, Shader, Null, Camera, Light, Operator, makeTopologyOperator, TopologyOperator, MoveComponentOperator, mixerOf } from '../core/scene';
+import { X3DObject, Model, Primitive, Property, makeDisplay, makeGeomApprox, makePhong, makeLambert, makeSiShader, Shader, Null, Camera, Light, Operator, makeTopologyOperator, TopologyOperator, MoveComponentOperator, mixerOf, syncMixer } from '../core/scene';
 import { topoDefs } from '../core/scene';
 import { siName } from '../core/opdefs';
 import * as S2 from '../core/scene2';
@@ -450,9 +450,8 @@ export function registerModelAliases(app: App) {
     if (a.AddClip) {
       const mix = mixerOf(model instanceof Model ? model : app.scene.root);
       const clips: any[] = (mix as any).clips ?? ((mix as any).clips = []);
-      const clip = { name: src.name, source: src.name, start: Number(a.ClipOffset ?? app.anim.frame), duration: Math.max(1, app.anim.endFrame - app.anim.startFrame) };
-      clips.push(clip);
-      try { mix.set('sources', JSON.stringify(clips.map(c => c.source))); mix.set('tracks', JSON.stringify(clips)); } catch { /* */ }
+      clips.push({ name: src.name, source: src.name, start: Number(a.ClipOffset ?? app.anim.frame), duration: Math.max(1, app.anim.endFrame - app.anim.startFrame), track: 0 });
+      syncMixer(mix);
     }
     app.select([src]); return src;
   } });

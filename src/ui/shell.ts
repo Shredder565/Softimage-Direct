@@ -323,8 +323,26 @@ export function animationMixer(app: App, host: HTMLElement) {
     const clips: any[] = (m as any)?.clips ?? [];
     if (clips.length) {
       body.appendChild(el('div', 'hint', `Clips on mixer tracks (${clips.length}):`));
-      for (const c of clips) body.appendChild(el('div', 'hint', `• ${c.name} @ ${c.start} (${c.duration}f)`));
+      for (const c of clips) body.appendChild(el('div', 'hint', `• [T${c.track ?? 0}] ${c.name} @ ${c.start} (${c.duration}f)`));
     }
+    const transitions: any[] = (m as any)?.transitions ?? [];
+    if (transitions.length) {
+      body.appendChild(el('div', 'hint', `Transitions (${transitions.length}):`));
+      for (const t of transitions) body.appendChild(el('div', 'hint', `• ${t.kind}: ${t.from} → ${t.to} (${t.length}f)`));
+    }
+    const compounds: any[] = (m as any)?.compounds ?? [];
+    if (compounds.length) {
+      body.appendChild(el('div', 'hint', `Compounds (${compounds.length}):`));
+      for (const c of compounds) body.appendChild(el('div', 'hint', `• ${c.name}: [${(c.clips || []).join(', ')}] @ ${c.start}`));
+    }
+    root.querySelector('.mixer-actions')?.remove();
+    const actions = el('div', 'mixer-actions');
+    actions.append(
+      btn('Add Transition', 'Bridge last two clips', () => { app.run('AddTransition'); render(); }),
+      btn('Create Compound', 'Compound all clips', () => { app.run('CreateCompound'); render(); }),
+      btn('Equalize', 'Pack clips end-to-end', () => { app.run('EqualizeClips'); render(); }),
+    );
+    root.appendChild(actions);
   };
   app.events.on('scene', render); app.events.on('params', render); render();
 }

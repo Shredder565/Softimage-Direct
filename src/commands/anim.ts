@@ -2,7 +2,7 @@
 // marking sets, key variants, copy/paste/remove animation by transform group, go-to-key, expressions, sequencing,
 // playback modes. Keying follows the Save Key Command Mapping preference (marked / all keyable / marked keyable).
 import { App } from '../core/commands';
-import { X3DObject, Property } from '../core/scene';
+import { X3DObject, Property, Model, mixerOf, syncMixer, type MixerClip, type MixerTransition, type MixerCompound } from '../core/scene';
 import { Parameter, num, str, int } from '../core/params';
 import { findParam } from './index';
 
@@ -209,9 +209,100 @@ export function registerAnimCommands(app: App) {
   app.register({ name: 'LocalAssignFlexEnv', label: 'Assign Local Envelope', category: 'Deformation|Envelope', args: [], execute: (app) => app.run('ApplyFlexEnv') });
   app.register({ name: 'RemoveFlexEnvDeformer', label: 'Remove Envelope Deformer', category: 'Deformation|Envelope', args: [], execute(app) { app.logMsg('info', 'RemoveFlexEnvDeformer: use Remove Envelope or reassign weights'); return null; } });
 
-  // ---- actions / mixer I/O
+  // ---- actions / mixer I/O + transitions / compounds (Softimage Animation Mixer OM subset)
+  const hostModel = (app: App, name?: string) => (name ? app.scene.find(name) : null) ?? (app.selectedObjects[0]?.model ?? app.scene.root);
+  const mixState = (app: App, modelName?: string) => {
+    const model = hostModel(app, modelName); const mix = mixerOf(model instanceof Model ? model : app.scene.root);
+    const s = mix as any;
+    if (!s.clips) s.clips = [] as MixerClip[];
+    if (!s.transitions) s.transitions = [] as MixerTransition[];
+    if (!s.compounds) s.compounds = [] as MixerCompound[];
+    if (!s.relations) s.relations = [];
+    return { model, mix, clips: s.clips as MixerClip[], transitions: s.transitions as MixerTransition[], compounds: s.compounds as MixerCompound[] };
+  };
+  app.register({ name: 'AddClip', label: 'Add Clip', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }, { name: 'Time', default: null }, { name: 'Track', default: 0 }, { name: 'Name', default: '' }], execute(app, a) {
+    const { mix, clips } = mixState(app);
+    const src = (app.selection.find(n => (n as any).type === 'actionsource') as Property | undefined) ?? hostModel(app).properties.find(p => p.type === 'actionsource' && (!a.Source || p.name === a.Source));
+    if (!src) throw new Error('AddClip: select or name an action source');
+    const clip: MixerClip = { name: a.Name || src.name, source: src.name, start: Number(a.Time ?? A.frame), duration: Math.max(1, A.endFrame - A.startFrame), track: Number(a.Track ?? 0) };
+    app.record('Add Clip', () => { clips.push(clip); syncMixer(mix); }, () => { const i = clips.indexOf(clip); if (i >= 0) clips.splice(i, 1); syncMixer(mix); });
+    app.events.emit('scene'); return clip;
+  } });
+  app.register({ name: 'AddLayerClip', label: 'Add Layer Clip', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }, { name: 'Time', default: null }], execute: (app, a) => app.run('AddClip', { ...a, Track: 1 }) });
+  app.register({ name: 'AddTransition', label: 'Add Transition', category: 'Animation Mixer', args: [{ name: 'From', default: '' }, { name: 'To', default: '' }, { name: 'Length', default: 10 }, { name: 'Name', default: '' }], execute(app, a) {
+    const { mix, clips, transitions } = mixState(app);
+    const from = a.From || clips[clips.length - 2]?.name; const to = a.To || clips[clips.length - 1]?.name;
+    if (!from || !to) throw new Error('AddTransition: need two clips (From/To)');
+    const tr: MixerTransition = { name: a.Name || `${from}_to_${to}`, kind: 'standard', from, to, length: Number(a.Length ?? 10), weight: 1 };
+    app.record('Add Transition', () => { transitions.push(tr); syncMixer(mix); }, () => { const i = transitions.indexOf(tr); if (i >= 0) transitions.splice(i, 1); syncMixer(mix); });
+    if (mix.val('autotransition')) { /* Softimage Auto Transition flag already on mixer */ }
+    app.events.emit('scene'); return tr;
+  } });
+  app.register({ name: 'AddBridgeTransition', label: 'Add Bridge Transition', category: 'Animation Mixer', args: [{ name: 'From', default: '' }, { name: 'To', default: '' }, { name: 'Length', default: 10 }], execute: (app, a) => {
+    const { mix, clips, transitions } = mixState(app);
+    const from = a.From || clips[clips.length - 2]?.name; const to = a.To || clips[clips.length - 1]?.name;
+    if (!from || !to) throw new Error('AddBridgeTransition: need two clips');
+    const tr: MixerTransition = { name: `bridge_${from}_${to}`, kind: 'bridge', from, to, length: Number(a.Length ?? 10) };
+    transitions.push(tr); syncMixer(mix); app.events.emit('scene'); return tr;
+  } });
+  app.register({ name: 'AddTWTransition', label: 'Add Time Warp Transition', category: 'Animation Mixer', args: [{ name: 'From', default: '' }, { name: 'To', default: '' }, { name: 'Length', default: 10 }], execute: (app, a) => {
+    const { mix, clips, transitions } = mixState(app);
+    const from = a.From || clips[clips.length - 2]?.name; const to = a.To || clips[clips.length - 1]?.name;
+    if (!from || !to) throw new Error('AddTWTransition: need two clips');
+    const tr: MixerTransition = { name: `tw_${from}_${to}`, kind: 'timewarp', from, to, length: Number(a.Length ?? 10) };
+    transitions.push(tr); syncMixer(mix); app.events.emit('scene'); return tr;
+  } });
+  app.register({ name: 'CreateCompound', label: 'Create Compound', category: 'Animation Mixer', args: [{ name: 'Name', default: 'Compound' }, { name: 'Clips', default: '' }], execute(app, a) {
+    const { mix, clips, compounds } = mixState(app);
+    const names = a.Clips ? String(a.Clips).split(',').map((s: string) => s.trim()).filter(Boolean) : clips.map(c => c.name);
+    if (!names.length) throw new Error('CreateCompound: no clips');
+    const members = clips.filter(c => names.includes(c.name));
+    const start = Math.min(...members.map(c => c.start));
+    const end = Math.max(...members.map(c => c.start + c.duration));
+    const cpd: MixerCompound = { name: app.scene.uniqueName(a.Name || 'Compound'), clips: members.map(c => c.name), start, duration: Math.max(1, end - start) };
+    app.record('Create Compound', () => { compounds.push(cpd); syncMixer(mix); }, () => { const i = compounds.indexOf(cpd); if (i >= 0) compounds.splice(i, 1); syncMixer(mix); });
+    app.events.emit('scene'); return cpd;
+  } });
+  app.register({ name: 'ExplodeCompound', label: 'Explode Compound', category: 'Animation Mixer', args: [{ name: 'Name', default: '' }], execute(app, a) {
+    const { mix, compounds } = mixState(app);
+    const i = compounds.findIndex(c => !a.Name || c.name === a.Name); if (i < 0) throw new Error('No compound to explode');
+    const [cpd] = compounds.splice(i, 1); syncMixer(mix); app.events.emit('scene'); return cpd;
+  } });
+  app.register({ name: 'EqualizeClips', label: 'Equalize Clips', category: 'Animation Mixer', args: [], execute(app) {
+    const { mix, clips } = mixState(app); if (clips.length < 2) return 0;
+    let t = Math.min(...clips.map(c => c.start));
+    for (const c of clips) { c.start = t; t += c.duration; }
+    syncMixer(mix); app.events.emit('scene'); return clips.length;
+  } });
+  app.register({ name: 'EqualizeAction', label: 'Equalize Action', category: 'Animation Mixer', args: [], execute: (app) => app.run('EqualizeClips') });
+  app.register({ name: 'MoveClipToTrack', label: 'Move Clip to Track', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }, { name: 'Track', default: 0 }], execute(app, a) {
+    const { mix, clips } = mixState(app); const c = clips.find(x => x.name === a.Clip) ?? clips[clips.length - 1]; if (!c) throw new Error('No clip'); c.track = Number(a.Track ?? 0); syncMixer(mix); app.events.emit('scene'); return c;
+  } });
+  app.register({ name: 'CopyClipToTrack', label: 'Copy Clip to Track', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }, { name: 'Track', default: 1 }], execute(app, a) {
+    const { mix, clips } = mixState(app); const c = clips.find(x => x.name === a.Clip) ?? clips[clips.length - 1]; if (!c) throw new Error('No clip');
+    const copy: MixerClip = { ...c, name: app.scene.uniqueName(c.name), track: Number(a.Track ?? 1) }; clips.push(copy); syncMixer(mix); app.events.emit('scene'); return copy;
+  } });
+  app.register({ name: 'EditClip', label: 'Edit Clip', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }, { name: 'Start', default: null }, { name: 'Duration', default: null }], execute(app, a) {
+    const { mix, clips } = mixState(app); const c = clips.find(x => x.name === a.Clip) ?? clips[clips.length - 1]; if (!c) throw new Error('No clip');
+    if (a.Start != null) c.start = Number(a.Start); if (a.Duration != null) c.duration = Number(a.Duration); syncMixer(mix); app.events.emit('scene'); return c;
+  } });
+  app.register({ name: 'DeleteUnusedMixerTracks', label: 'Delete Unused Mixer Tracks', category: 'Animation Mixer', args: [], execute(app) {
+    const { mix, clips } = mixState(app); const used = new Set(clips.map(c => c.track ?? 0)); app.logMsg('info', `DeleteUnusedMixerTracks: ${used.size} track(s) in use`); syncMixer(mix); return used.size;
+  } });
+  app.register({ name: 'AddClipRelation', label: 'Add Clip Relation', category: 'Animation Mixer', args: [{ name: 'Master', default: '' }, { name: 'Slave', default: '' }], execute(app, a) {
+    const { mix, clips } = mixState(app); const master = a.Master || clips[0]?.name; const slave = a.Slave || clips[1]?.name;
+    if (!master || !slave) throw new Error('AddClipRelation needs Master and Slave clips');
+    (mix as any).relations.push({ master, slave }); syncMixer(mix); app.events.emit('scene'); return { master, slave };
+  } });
+  app.register({ name: 'SwapRelationMasterAndSlaveClip', label: 'Swap Relation Master and Slave', category: 'Animation Mixer', args: [], execute(app) {
+    const { mix } = mixState(app); for (const r of (mix as any).relations as { master: string; slave: string }[]) { const t = r.master; r.master = r.slave; r.slave = t; } syncMixer(mix); return (mix as any).relations.length;
+  } });
   app.register({ name: 'PasteAction', label: 'Paste Action', category: 'Animation Mixer', args: [{ name: 'Source', default: null }, { name: 'Target', default: null }], execute: (app, a) => app.run('ApplyAction', a) });
-  app.register({ name: 'ReconnectMixer', label: 'Reconnect Animation Mixer', category: 'Animation Mixer', args: [{ name: 'Model', default: null }], execute(app, a) { const model = a.Model ? app.scene.find(a.Model) : (app.selectedObjects[0]?.model ?? app.scene.root); const n = model?.properties.filter(p => p.type === 'actionsource').length ?? 0; app.logMsg('info', `ReconnectMixer: ${n} action source(s) on ${model?.name ?? 'Scene_Root'}`); app.events.emit('scene'); return n; } });
+  app.register({ name: 'ReconnectMixer', label: 'Reconnect Animation Mixer', category: 'Animation Mixer', args: [{ name: 'Model', default: null }], execute(app, a) {
+    const { model, mix, clips } = mixState(app, a.Model); syncMixer(mix);
+    const n = model.properties.filter(p => p.type === 'actionsource').length;
+    app.logMsg('info', `ReconnectMixer: ${n} action source(s), ${clips.length} clip(s) on ${model.name}`); app.events.emit('scene'); return n;
+  } });
   app.register({ name: 'ExportAction', label: 'Export Action', category: 'Animation Mixer', args: [{ name: 'Action', default: null }, { name: 'FileName', default: null }], execute(app, a) {
     const src = (app.selection.find(n => (n as any).type === 'actionsource') as any) ?? app.selectedObjects[0]?.model?.properties.find(p => p.type === 'actionsource');
     if (!src) throw new Error('Select an action source');
