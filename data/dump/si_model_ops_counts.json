@@ -1,0 +1,145 @@
+{
+  "meta": {
+    "source": [
+      "data/dump/si_model_dump.json",
+      "data/dump/si_model_dump2.json"
+    ],
+    "note": "Softimage count locks for OT-* / Boolean ops outside compare_topology. Direct CSG Boolean meshes differ (three-bvh); SI counts documented for exit checklist, not enforced as Direct equality."
+  },
+  "boolean": {
+    "Difference": {
+      "dump": "si_model_dump.json",
+      "leaf": "Modify/Poly. Mesh/Boolean/Difference",
+      "used": "cube;sphere",
+      "si": {
+        "cube": {
+          "points": 100,
+          "polys": 87
+        },
+        "sphere": {
+          "points": 58,
+          "polys": 64
+        }
+      },
+      "direct": "nontrivial CSG mesh on boolean object; typical ~134 pts / 191 polys (not SI-equal)"
+    },
+    "Union": {
+      "dump": "si_model_dump.json",
+      "leaf": "Modify/Poly. Mesh/Boolean/Union",
+      "used": "cube;sphere",
+      "si": {
+        "cube": {
+          "points": 113,
+          "polys": 101
+        },
+        "sphere": {
+          "points": 58,
+          "polys": 64
+        }
+      }
+    },
+    "Intersection": {
+      "dump": "si_model_dump2.json",
+      "leaf": "Modify/Poly. Mesh/Boolean/Intersect",
+      "used": "cube;sphere",
+      "si": {
+        "cube": {
+          "points": 58,
+          "polys": 64
+        },
+        "sphere": {
+          "points": 58,
+          "polys": 64
+        }
+      },
+      "note": "dump2 counts look like undeformed inputs \u2014 treat SI intersect golden as weak"
+    }
+  },
+  "ot": {
+    "Triangulate": {
+      "dump": "si_model_dump2.json",
+      "leaf": "Modify/Poly. Mesh/Triangulate",
+      "si": {
+        "points": 218,
+        "polys": 216
+      },
+      "note": "SI recipe mesh unknown (not cube333). Direct lock: cube333 \u2192 all triangles, npolys=108, npts=56."
+    },
+    "ExtractPolygons_keep": {
+      "dump": "si_model_dump2.json",
+      "si": {
+        "cube": {
+          "points": 56,
+          "polys": 54
+        },
+        "extracted": {
+          "points": 6,
+          "polys": 2
+        }
+      }
+    },
+    "ExtractPolygons_delete": {
+      "dump": "si_model_dump2.json",
+      "si": {
+        "cube": {
+          "points": 56,
+          "polys": 52
+        },
+        "extracted": {
+          "points": 0,
+          "polys": 0
+        }
+      },
+      "note": "SI extracted empty in dump2 delete path \u2014 Direct should still emit a part mesh when polys selected"
+    },
+    "FilterPoints": {
+      "dump": "si_model_dump.json",
+      "used": "cube.pnt[0,1,2,3]",
+      "si": {
+        "points": 56,
+        "polys": 54
+      },
+      "note": "Softimage default distance leaves counts unchanged"
+    },
+    "FilterEdges": {
+      "dump": "si_model_dump.json",
+      "used": "cube.edge[0,1,2,3]",
+      "si": {
+        "points": 56,
+        "polys": 54
+      }
+    },
+    "FilterPolygons": {
+      "dump": "si_model_dump.json",
+      "used": "cube.poly[0,1,2]",
+      "si": {
+        "points": 56,
+        "polys": 54
+      }
+    },
+    "SpinEdges": {
+      "dump": "si_model_dump2.json",
+      "si": {
+        "points": 56,
+        "polys": 54
+      },
+      "note": "command OK; count lock weak without known edge set"
+    },
+    "CurveClean": {
+      "dump": "si_model_dump.json",
+      "used": "circle",
+      "si": {
+        "points": 8
+      },
+      "note": "Softimage Clean on default circle \u2192 8 CVs"
+    },
+    "DissolveAndClean": {
+      "dump": "si_model_dump.json",
+      "used": "cube.poly[0,1,2]",
+      "si": {
+        "points": 55,
+        "polys": 52
+      }
+    }
+  }
+}

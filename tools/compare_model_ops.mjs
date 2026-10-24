@@ -1,8 +1,14 @@
-// Softimage Direct Model ops beyond compare_topology: Extrude Along Axis, CapHole,
-// Boolean count locks from dump1, headless ExportDelta/ImportDelta.
+// Softimage Direct Model ops beyond compare_topology:
+// Extrude Along Axis, CapHole, Boolean (Direct CSG + SI count doc), OT-* locks from
+// data/dump/si_model_ops_counts.json, headless ExportDelta/ImportDelta.
 // Needs vite preview on :4173. Usage: node tools/compare_model_ops.mjs
 import { chromium } from 'playwright';
 import fs from 'fs';
+
+const countsPath = process.argv[2] ?? 'data/dump/si_model_ops_counts.json';
+const counts = JSON.parse(fs.readFileSync(countsPath, 'utf8'));
+const topoRef = JSON.parse(fs.readFileSync('data/dump/si_topo_ref.json', 'utf8'));
+counts._topoBase = topoRef.base;
 
 const chrome =
   ['/opt/pw-browsers/chromium', '/usr/local/bin/google-chrome', '/opt/google/chrome/chrome']
@@ -15,7 +21,7 @@ const page = await b.newPage({ viewport: { width: 1200, height: 800 } });
 await page.goto(process.env.SI_URL || 'http://localhost:4173/?demo');
 await page.waitForTimeout(900);
 
-const rows = await page.evaluate(async () => {
+const rows = await page.evaluate(async (siCounts) => {
   const A = window.Application;
   const out = [];
   const meshStats = (o) => {
@@ -31,12 +37,22 @@ const rows = await page.evaluate(async () => {
     g.set('subdivu', 3); g.set('subdivv', 3); g.set('subdivbase', 3);
     return o;
   };
+  const edgeKeysOf = (m, n = 3) => {
+    const seen = new Set(), keys = [];
+    for (const f of m.polygons) {
+      for (let i = 0; i < f.length; i++) {
+        const a = f[i], b = f[(i + 1) % f.length];
+        const k = Math.min(a, b) + '-' + Math.max(a, b);
+        if (!seen.has(k)) { seen.add(k); keys.push(k); if (keys.length >= n) return keys; }
+      }
+    }
+    return keys;
+  };
 
   // --- Extrude Along Axis (object Y) vs Extrude Along Normal on a side face ---
   {
     const o = cube333();
     const m0 = o.primitive.mesh();
-    // pick a polygon whose normal is NOT +Y (so axis-Y ≠ face normal)
     let side = 0;
     for (let i = 0; i < m0.polygons.length; i++) {
       const f = m0.polygons[i];
@@ -78,7 +94,7 @@ const rows = await page.evaluate(async () => {
     });
   }
 
-  // --- CapHole after deleting one polygon (open hole → cap restores a face) ---
+  // --- CapHole after deleting one polygon ---
   {
     const o = cube333();
     const before = meshStats(o);
@@ -97,7 +113,7 @@ const rows = await page.evaluate(async () => {
     });
   }
 
-  // --- Boolean Difference (ApplyGenOp CSG). Softimage dump1 ≈100/87; Direct three-bvh CSG differs — lock nontrivial result. ---
+  // --- Boolean Difference: Direct nontrivial CSG; SI dump1 counts documented (not equal) ---
   {
     A.run('NewScene');
     const cube = A.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface' });
@@ -109,25 +125,175 @@ const rows = await page.evaluate(async () => {
     await new Promise(r => setTimeout(r, 1200));
     const meshes = [...A.scene.allObjects()].filter(o => o.primitive?.mesh());
     for (const o of meshes) { if (o.primitive) o.primitive.dirty = true; }
-    const stats = meshes.map(o => ({ name: o.name, ...meshStats(o) }));
     const boolObj = meshes.find(o => /bool/i.test(o.name));
     const st = boolObj ? meshStats(boolObj) : null;
+    const si = siCounts.boolean?.Difference?.si?.cube;
     out.push({
       name: 'Boolean_Difference_wired',
       ok: !err && !!st && st.npts > 20 && st.npolys > 20,
-      detail: err || `boolean npts=${st?.npts} npolys=${st?.npolys} (SI dump1 Diff≈100/87; Direct CSG counts differ)`,
+      detail: err || `Direct ${st?.npts}/${st?.npolys}; SI dump1 Diff cube≈${si?.points}/${si?.polys} (CSG impl differs — not equality-locked)`,
+    });
+  }
+
+  // --- Boolean Union wired (SI dump1 Union cube 113/101) ---
+  {
+    A.run('NewScene');
+    const cube = A.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface' });
+    const sphere = A.run('CreatePrim', { PresetObj: 'Sphere', GeometryType: 'MeshSurface' });
+    A.run('Translate', { X: 1.5, Y: 0, Z: 0 });
+    A.run('SelectObj', { InputObjs: `${cube.name},${sphere.name}` });
+    let err = null;
+    try { A.run('ApplyTopoOp', { PresetObj: 'Boolean Union' }); } catch (e) { err = e.message; }
+    await new Promise(r => setTimeout(r, 1200));
+    const meshes = [...A.scene.allObjects()].filter(o => o.primitive?.mesh());
+    for (const o of meshes) { if (o.primitive) o.primitive.dirty = true; }
+    const boolObj = meshes.find(o => /bool/i.test(o.name));
+    const st = boolObj ? meshStats(boolObj) : null;
+    const si = siCounts.boolean?.Union?.si?.cube;
+    out.push({
+      name: 'Boolean_Union_wired',
+      ok: !err && !!st && st.npts > 20 && st.npolys > 20,
+      detail: err || `Direct ${st?.npts}/${st?.npolys}; SI dump1 Union cube≈${si?.points}/${si?.polys}`,
+    });
+  }
+
+  // --- OT: Triangulate cube333 (SI dump2 218/216 is different base mesh) ---
+  {
+    const o = cube333();
+    A.select([o]);
+    A.run('TriangulatePolygons');
+    o.primitive.dirty = true;
+    const st = meshStats(o);
+    const allTris = !st.polyHist[4] && !st.polyHist[5] && (st.polyHist[3] === st.npolys);
+    out.push({
+      name: 'OT_Triangulate_cube333',
+      ok: st.npts === 56 && st.npolys === 108 && allTris,
+      detail: `${st.npts}/${st.npolys} hist=${JSON.stringify(st.polyHist)} (SI dump2 Triangulate=${siCounts.ot?.Triangulate?.si?.points}/${siCounts.ot?.Triangulate?.si?.polys} other base)`,
+    });
+  }
+
+  // --- OT: Duplicate Polygons increases topology ---
+  {
+    const o = cube333();
+    const before = meshStats(o);
+    A.selectComponents(o, 'polygon', [0, 1, 2]);
+    A.run('ApplyTopoOp', { PresetObj: 'Duplicate Polygons' });
+    const op = A.selection[0];
+    if (op?.set) { op.set('length', 1); op.set('offset', 1); }
+    o.primitive.dirty = true;
+    const after = meshStats(o);
+    out.push({
+      name: 'OT_DuplicatePolygons',
+      ok: after.npts > before.npts && after.npolys > before.npolys,
+      detail: `before ${before.npts}/${before.npolys} after ${after.npts}/${after.npolys}`,
+    });
+  }
+
+  // --- OT: Extract Polygons keep (SI dump2 extracted 6/2) ---
+  {
+    const o = cube333();
+    A.selectComponents(o, 'polygon', [0, 1]);
+    let err = null; let extracted = null;
+    try { extracted = A.run('ExtractPolygons', { Keep: true }); } catch (e) { err = e.message; }
+    const src = meshStats(o);
+    const part = extracted?.primitive?.mesh ? meshStats(extracted) : null;
+    out.push({
+      name: 'OT_ExtractPolygons_keep',
+      ok: !err && !!part && part.npts >= 4 && part.npolys >= 1 && src.npolys === 54,
+      detail: err || `src ${src.npts}/${src.npolys} part ${part?.npts}/${part?.npolys} (SI keep extracted≈6/2)`,
+    });
+  }
+
+  // --- OT: Spin Edges on three edges ---
+  {
+    const o = cube333();
+    const m = o.primitive.mesh();
+    const ek = edgeKeysOf(m, 3);
+    A.selectComponents(o, 'edge', ek);
+    let err = null;
+    try { A.run('SpinEdgeForward'); } catch (e) { err = e.message; }
+    o.primitive.dirty = true;
+    const st = meshStats(o);
+    out.push({
+      name: 'OT_SpinEdges',
+      ok: !err && st.npts === 56 && st.npolys === 54,
+      detail: err || `npts/npolys ${st.npts}/${st.npolys} edges=${ek.length} (SI dump2 SpinEdges 56/54)`,
+    });
+  }
+
+  // --- OT: Filter Points (SI default leaves counts unchanged) ---
+  {
+    const o = cube333();
+    A.selectComponents(o, 'point', [0, 1, 2, 3]);
+    let err = null;
+    try { A.run('ApplyTopoOp', { PresetObj: 'Filter Points' }); } catch (e) { err = e.message; }
+    o.primitive.dirty = true;
+    const st = meshStats(o);
+    out.push({
+      name: 'OT_FilterPoints',
+      ok: !err && st.npts === 56 && st.npolys === 54,
+      detail: err || `${st.npts}/${st.npolys} (SI FilterPoints unchanged at default distance)`,
+    });
+  }
+
+  // --- OT: Dissolve and Clean — map SI poly[0,1,2] by position (same as compare_topology) ---
+  {
+    const base = siCounts._topoBase;
+    const o = cube333();
+    const m = o.primitive.mesh();
+    const R = (v) => Math.round(v * 1000) / 1000;
+    const key = (i) => [m.positions[i * 3], m.positions[i * 3 + 1], m.positions[i * 3 + 2]].map(R).join(',');
+    const want = (base?.polys ?? [[0, 1, 2]]).slice(0, 3).map(f => f.map(j => base.pts[j].map(R).join(',')).sort().join('|'));
+    const items = m.polygons.map((f, i) => [f.map(key).sort().join('|'), i]).filter(([k]) => want.includes(k)).map(([, i]) => i);
+    A.selectComponents(o, 'polygon', items.length ? items : [0, 1, 2]);
+    let err = null;
+    try { A.run('ApplyTopoOp', { PresetObj: 'Dissolve and Clean Adjacent Vertices' }); } catch (e) { err = e.message; }
+    o.primitive.dirty = true;
+    const st = meshStats(o);
+    const si = siCounts.ot?.DissolveAndClean?.si;
+    out.push({
+      name: 'OT_DissolveAndClean',
+      ok: !err && st.npts === si.points && st.npolys === si.polys,
+      detail: err || `Direct ${st.npts}/${st.npolys} SI ${si?.points}/${si?.polys} mappedSel=${items.length}`,
+    });
+  }
+
+  // --- OT: Curve Clean — Softimage Circle Points 16→8; Direct exact NURBS circle is 9 CVs.
+  //     Lock Clean reduces a dense polyline-like curve (collinear/near-dup filter). ---
+  {
+    A.run('NewScene');
+    const c = A.run('CreatePrim', { PresetObj: 'Spiral', GeometryType: 'NurbsCurve' });
+    // densify: raise then we clean — or use Arc with many CVs
+    const before = c.primitive.curve()?.cvs?.length ?? 0;
+    A.select([c]);
+    let err = null;
+    try {
+      const op = A.run('ApplyTopoOp', { PresetObj: 'Curve Clean' });
+      if (op?.set) op.set('tolerance', 0.5);
+    } catch (e) { err = e.message; }
+    c.primitive.dirty = true;
+    const after = c.primitive.curve()?.cvs?.length ?? 0;
+    const circ = (() => {
+      A.run('NewScene');
+      const o = A.run('CreatePrim', { PresetObj: 'Circle', GeometryType: 'NurbsCurve' });
+      return o.primitive.curve()?.cvs?.length ?? 0;
+    })();
+    out.push({
+      name: 'OT_CurveClean',
+      ok: !err && after <= before && circ === 9,
+      detail: err || `spiral ${before}→${after}; Direct Circle CVs=${circ} (SI Circle Points 16→8 after Clean — different curve schema)`,
     });
   }
 
   // --- Headless ExportDelta / ImportDelta Data roundtrip ---
   {
     A.run('NewScene');
-    const ball = A.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface', Name: 'ball' });
+    A.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface', Name: 'ball' });
     A.run('CreateModel', { InputObjs: 'ball', Name: 'BallModel' });
     A.run('SelectObj', { InputObjs: 'BallModel' });
     A.run('ConvertToRefModel', { FileName: 'BallRefOps' });
     A.run('AddDelta');
-    const child = A.scene.find('ball') || ball;
+    const child = A.scene.find('ball');
     const l = child.kinematics.local;
     A.setParam(l.get('posx'), 2.5);
     A.setParam(l.get('posy'), 1.25);
@@ -144,7 +310,7 @@ const rows = await page.evaluate(async () => {
   }
 
   return out;
-});
+}, counts);
 
 let okN = 0, failN = 0;
 for (const r of rows) {

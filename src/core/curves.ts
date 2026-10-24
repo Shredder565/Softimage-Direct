@@ -266,9 +266,27 @@ export function raiseDegree(c: CurveData): CurveData {
   }
   const pts = sampleCurve(c, c.cvs.length + 1); return makeCurve(pts, c.degree + 1, c.closed);
 }
+/** Softimage Curve Clean: drop near-duplicate CVs, then collinear midpoints (angle/chord tolerance). */
 export function cleanCurve(c: CurveData, tol = 1e-3): CurveData {
-  const cvs = c.cvs.filter((p, i, a) => i === 0 || Math.hypot(p[0] - a[i - 1][0], p[1] - a[i - 1][1], p[2] - a[i - 1][2]) > tol);
-  return { ...c, cvs, knots: uniformKnots(cvs.length, Math.min(c.degree, cvs.length - 1), c.closed), degree: Math.min(c.degree, cvs.length - 1) };
+  const dist = (a: typeof c.cvs[0], b: typeof c.cvs[0]) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+  let cvs = c.cvs.filter((p, i, a) => i === 0 || dist(p, a[i - 1]) > tol);
+  // remove collinear midpoints (Softimage Clean collapses flat spans)
+  const cosTol = Math.cos((2 * Math.PI) / 180); // ~2°
+  const keep: typeof cvs = [];
+  for (let i = 0; i < cvs.length; i++) {
+    if (!c.closed && (i === 0 || i === cvs.length - 1)) { keep.push(cvs[i]); continue; }
+    const prev = cvs[(i - 1 + cvs.length) % cvs.length], cur = cvs[i], next = cvs[(i + 1) % cvs.length];
+    const d0 = dist(prev, cur), d1 = dist(cur, next); if (d0 < tol || d1 < tol) continue;
+    const u = [(cur[0] - prev[0]) / d0, (cur[1] - prev[1]) / d0, (cur[2] - prev[2]) / d0];
+    const v = [(next[0] - cur[0]) / d1, (next[1] - cur[1]) / d1, (next[2] - cur[2]) / d1];
+    const dot = u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
+    if (dot > cosTol) continue; // nearly collinear → drop
+    keep.push(cur);
+  }
+  if (keep.length < (c.closed ? 3 : 2)) cvs = c.cvs.slice(0, Math.max(c.closed ? 3 : 2, Math.min(c.cvs.length, 4)));
+  else cvs = keep;
+  const degree = Math.min(c.degree, Math.max(1, cvs.length - (c.closed ? 0 : 1)));
+  return { ...c, cvs, knots: uniformKnots(cvs.length, degree, c.closed), degree };
 }
 export function fitCurve(c: CurveData, nbCVs: number, degree = 3): CurveData { return makeCurve(sampleCurve(c, Math.max(degree + 1, nbCVs)), degree, c.closed); }
 export function reparameterize(c: CurveData): CurveData { return { ...c, knots: uniformKnots(c.cvs.length, c.degree, c.closed) }; }
