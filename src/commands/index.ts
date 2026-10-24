@@ -198,7 +198,9 @@ export function registerBuiltins(app: App) {
 
   // -------------------------------------------------------------- topology
   const TOPO: Record<string, string> = {  // Softimage ApplyTopoOp preset display name -> our operator
-    'Extrude Component Along Normal': 'Extrude Along Normal', 'Inset Polygons': 'Inset Polygons', 'Offset Polygons': 'Offset Polygons', 'Local Subdivision': 'Local Subdivision', 'Delete Component': 'Delete Components',
+    'Extrude Component Along Normal': 'Extrude Along Normal', 'ExtrudeComponentNormal': 'Extrude Along Normal',
+    'Extrude Component Along Axis': 'Extrude Along Axis', 'ExtrudeComponentAxis': 'Extrude Along Axis', 'Extrude Along Axis': 'Extrude Along Axis',
+    'Inset Polygons': 'Inset Polygons', 'InsetPolygons': 'Inset Polygons', 'Offset Polygons': 'Offset Polygons', 'Local Subdivision': 'Local Subdivision', 'Delete Component': 'Delete Components',
     'Duplicate Polygons Along Curve': 'Duplicate Polygons', 'Duplicate Polygons': 'Duplicate Polygons', 'Subdivide Polygon': 'Subdivide Polygons',
     'Collapse': 'Collapse Components', 'Weld Points': 'Weld Points', 'Weld Edges': 'Weld Points', 'Invert Polygons': 'Invert Polygons', 'Triangulate': 'Triangulate',
     'Filter Points': 'Filter Points', 'Symmetrize Polygons': 'Symmetrize Polygons', 'Apply Thickness': 'Apply Thickness', 'Split Edge': 'Split Edges',

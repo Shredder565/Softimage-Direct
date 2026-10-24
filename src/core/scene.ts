@@ -225,7 +225,7 @@ export function makeDeformOperator(preset: string): DeformOperator | null {
 // ----------------------------------------------------------- topology ops
 /** Softimage op type for each topology preset; parameters come from the real definitions (opdefs.json). */
 export const TOPO_TYPES: Record<string, string> = {
-  'Extrude Along Normal': 'extrudenormalop', 'Inset Polygons': 'extrudecompaxisop', 'Split Edges': 'splitedgeop', 'Weld Points': 'weldpointsop',
+  'Extrude Along Normal': 'extrudenormalop', 'Extrude Along Axis': 'extrudecompaxisop', 'Inset Polygons': 'extrudecompaxisop', 'Split Edges': 'splitedgeop', 'Weld Points': 'weldpointsop',
   'Filter Points': 'filterpointsbydistancesop', 'Symmetrize Polygons': 'symmetrizepolygonop', 'Subdivide Polygons': 'subdividepolygonop', 'Triangulate': 'subdividepolygonop',
   'Collapse Components': 'collapseop', 'Invert Polygons': 'invertpolygonop', 'Delete Components': 'deletecomponentop', 'Bevel': 'bevelop', 'Bridge Polygons': 'bridgeop',
   'Quadrangulate': 'quadrangulateop', 'Dissolve': 'dissolvecompop', 'Disconnect': 'disconnectcompop', 'Spin Edges': 'spinedgeop', 'Slice': 'slicepolygonsop',
@@ -254,6 +254,10 @@ export class TopologyOperator extends Operator {
     if (!input || this.val('mute')) return input;
     switch (this.preset) {
       case 'Extrude Along Normal': return topo.extrudeAlongNormal(input, this.sel, this.p('length'), this.p('inset'), this.p('subdivs'), !!this.val('duplicate'));
+      case 'Extrude Along Axis': {
+        const ax = topo.extrudeAxisDirection(input, this.sel, !!this.val('x'), this.get('y') ? !!this.val('y') : true, !!this.val('z'), this.p('frame', undefined, 1));
+        return topo.extrudeAlongAxis(input, this.sel, ax, this.p('length'), this.p('inset'), this.p('subdivs'), !!this.val('duplicate'));
+      }
       case 'Inset Polygons': return topo.extrudeAlongNormal(input, this.sel, this.p('length', undefined, 0), this.p('inset', undefined, 0.2), this.p('subdivs'), !!this.val('duplicate'));
       case 'Offset Polygons': return topo.offsetPolygons(input, this.sel, this.p('offset', undefined, 0.2));
       case 'Local Subdivision': return topo.localSubdivision(input, this.sel, Math.max(1, this.p('subdivisionlevel', undefined, 1)));
@@ -275,6 +279,7 @@ export class TopologyOperator extends Operator {
 export function makeTopologyOperator(preset: string, sel: CompSel): TopologyOperator | null {
   switch (preset) {
     case 'Extrude Along Normal': return new TopologyOperator(preset, sel, [num('length', 1, 'Length', { min: -100, max: 100 }), num('inset', 0, 'Inset', { min: -2, max: 1 })]);
+    case 'Extrude Along Axis': return new TopologyOperator(preset, sel, []);
     case 'Inset Polygons': return new TopologyOperator(preset, sel, [num('inset', 0.3, 'Inset', { min: 0, max: 1 })]);
     case 'Duplicate Polygons': return new TopologyOperator(preset, sel, [num('offset', 1, 'Offset', { min: -100, max: 100 })]);
     case 'Split Edges': return new TopologyOperator(preset, sel, [num('ratio', 0.5, 'Split Ratio', { min: 0.01, max: 0.99 })]);

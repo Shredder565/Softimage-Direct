@@ -267,8 +267,10 @@ writeJson("si_model_prims.json", { meta: meta, primitives: prims });
 
 // ---- Extra topology goldens (beyond si_topo_params_dump) ----
 var topoCases = [
-  ["Extrude Component Along Axis", "{OBJ}.poly[0]", "extrude_axis_poly0"],
-  ["Extrude Component Along Normal", "{OBJ}.poly[0]", "extrude_normal_poly0"],
+  ["ExtrudeComponentAxis", "{OBJ}.poly[0]", "extrude_axis_poly0"],
+  ["Extrude Component Along Axis", "{OBJ}.poly[0]", "extrude_axis_poly0_long"],
+  ["ExtrudeComponentNormal", "{OBJ}.poly[0]", "extrude_normal_poly0"],
+  ["Extrude Component Along Normal", "{OBJ}.poly[0]", "extrude_normal_poly0_long"],
   ["Inset Polygons", "{OBJ}.poly[0]", "inset_poly0"],
   ["Subdivide Polygons", "{OBJ}.poly[0,1]", "subdivide_poly01"],
   ["Dissolve Component", "{OBJ}.edge[0]", "dissolve_edge0"],
@@ -297,7 +299,8 @@ for (var t = 0; t < topoCases.length; t++) {
   if (r.error) {
     // common alternate names
     var alts = [];
-    if (tc[0].indexOf("Extrude") >= 0) alts.push("ExtrudeComponent", "Extrude Along Axis", "Extrude");
+    if (tc[0].indexOf("Extrude") >= 0 && tc[0].indexOf("Axis") >= 0) alts.push("ExtrudeComponentAxis", "Extrude Along Axis", "ExtrudeComponent");
+    else if (tc[0].indexOf("Extrude") >= 0) alts.push("ExtrudeComponentNormal", "Extrude Along Normal", "ExtrudeComponent", "Extrude");
     if (tc[0].indexOf("Inset") >= 0) alts.push("Inset", "InsetPolygons");
     if (tc[0].indexOf("Subdivide") >= 0) alts.push("SubdividePolygons", "Subdivide");
     if (tc[0].indexOf("Dissolve") >= 0) alts.push("DissolveComponent", "Dissolve");
@@ -320,17 +323,107 @@ for (var t = 0; t < topoCases.length; t++) {
   }
   topoExtra[tc[2]] = r;
 }
+
+// CapHole: open a hole then CapHole (headless-friendly recipe)
+function caseCapHole() {
+  NewScene(null, false);
+  var obj = cube333();
+  var err = null;
+  try {
+    Application.ExecuteCommand("DeleteComponent", [obj.Name + ".poly[0]"]);
+  } catch (eDel) {
+    try { applyTopo("Delete Component", obj.Name + ".poly[0]"); }
+    catch (e2) { err = "Delete failed: " + String(eDel.description || eDel); }
+  }
+  try {
+    Application.ExecuteCommand("CapHole", [obj.Name]);
+  } catch (eCap) {
+    try { Application.ExecuteCommand("CapHole", [obj.Name + ".edge[*]"]); }
+    catch (e3) {
+      try { applyTopo("Cap Hole", obj.Name); }
+      catch (e4) { err = (err ? err + "; " : "") + String(eCap.description || eCap); }
+    }
+  }
+  var op = lastOp(obj);
+  var r = meshDump(obj);
+  r.preset = "CapHole";
+  r.selection = obj.Name + " after DeleteComponent poly[0]";
+  r.note = "caphole_after_delete_poly0";
+  r.error = err;
+  if (op) {
+    r.op_name = op.Name;
+    r.op_type = op.Type;
+    r.params = dumpParamsMap(op.Parameters);
+    r.params_full = dumpParamsList(op.Parameters);
+  } else {
+    r.params = {};
+    r.params_full = [];
+  }
+  return r;
+}
+LogMessage("topo caphole_after_delete_poly0");
+topoExtra["caphole_after_delete_poly0"] = caseCapHole();
+
 writeJson("si_model_topo_extra.json", { meta: meta, cases: topoExtra });
 
 // ---- Deformers (Model Deform) ----
+// Single-input deformers on the cube; multi-input (Lattice/Wave/Curve/Spine) need a helper object.
+function dumpDeformWithHelper(preset, helperKind, helperGeom) {
+  NewScene(null, false);
+  var obj = cube333();
+  var helper = null;
+  var row = { preset: preset, ok: false, error: null, helper: helperKind };
+  try {
+    helper = CreatePrim(helperKind, helperGeom, null, null);
+    var hName = Dictionary.GetObject(helper.Name || String(helper)).Name;
+    try { Translate(hName, 6, 0, 0, null); } catch (eT) {}
+    var conn = obj.Name + ";" + hName;
+    SelectObj(conn);
+    try {
+      applyOp(preset, conn);
+      row.ok = true;
+      row.connection = conn;
+    } catch (e) {
+      try {
+        applyOp(preset, obj.Name);
+        row.ok = true;
+        row.connection = obj.Name;
+        row.note = "fell_back_to_mesh_only";
+      } catch (e2) {
+        row.error = String(e.description || e);
+      }
+    }
+  } catch (e0) {
+    row.error = String(e0.description || e0);
+  }
+  var op = lastOp(obj);
+  row.mesh = meshDump(obj);
+  if (op) {
+    row.op_name = op.Name;
+    row.op_type = op.Type;
+    row.params = dumpParamsMap(op.Parameters);
+    row.params_full = dumpParamsList(op.Parameters);
+  }
+  return row;
+}
+
 var deformPresets = [
-  "Twist", "Bend", "Taper", "Bulge", "Shear", "Push", "Smooth", "Relax", "Fold",
-  "Lattice", "Wave", "Deform by Curve", "Deform by Spine"
+  "Twist", "Bend", "Taper", "Bulge", "Shear", "Push", "Smooth", "Relax", "Fold"
+];
+var deformHelpers = [
+  ["Lattice", "Lattice", "Lattice"],
+  ["Wave", "Wave", "Null"],
+  ["Deform by Curve", "Circle", "NurbsCurve"],
+  ["Deform by Spine", "Circle", "NurbsCurve"]
 ];
 var deforms = {};
 for (var d = 0; d < deformPresets.length; d++) {
   LogMessage("deform " + deformPresets[d]);
   deforms[deformPresets[d]] = dumpDeform(deformPresets[d]);
+}
+for (var h = 0; h < deformHelpers.length; h++) {
+  LogMessage("deform helper " + deformHelpers[h][0]);
+  deforms[deformHelpers[h][0]] = dumpDeformWithHelper(deformHelpers[h][0], deformHelpers[h][1], deformHelpers[h][2]);
 }
 writeJson("si_model_deform.json", { meta: meta, cases: deforms });
 

@@ -200,9 +200,62 @@ export function registerModelCommands2(app: App) {
   // every parameter change inside a referenced model with a Delta is recorded in it (relative path → value), like Softimage's delta modifications
   const relPath = (p: any, m: X3DObject): string | null => { const chain: string[] = []; let n: any = p; while (n && n !== m) { chain.unshift(n.name); n = n.owner ?? n.parent ?? n.parentObj; } return n === m ? chain.join('.') : null; };
   app.events.on('params', (p: any) => { if (!p || !p.name) return; let n: any = p; while (n && !(n instanceof Model)) n = n.owner ?? n.parent ?? n.parentObj; const m = n as Model | undefined; if (!m || !refOf(m)) return; const d = m.properties.find(x => x.type === 'delta' && x.val('active') !== false) as any; if (!d) return; const path = relPath(p, m); if (!path) return; d.changes.set(path, p.value); d.set('changes', d.changes.size); });
-  app.register({ name: 'ExportDelta', label: 'Export Delta', category: 'Model', args: [], execute(app) { const m = modelOf(app); const r = refOf(m); if (!m || !r?.file) throw new Error('Select a referenced model'); const base = JSON.parse(localStorage.getItem('si.refmodel.' + r.file) ?? 'null'); const cur = exportModel(m); const delta: any[] = []; for (const n of cur.nodes) { const b = base?.nodes?.find((x: any) => x.name === n.name); if (!b || JSON.stringify(b.xf) !== JSON.stringify(n.xf)) delta.push({ name: n.name, xf: n.xf }); } const params = Object.fromEntries([...((m.properties.find(x => x.type === 'delta') as any)?.changes ?? new Map())]); const text = JSON.stringify({ model: m.name, file: r.file, delta, params }, null, 1); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' })); a.download = m.name + '.delta.json'; a.click(); app.logMsg('info', `Exported delta with ${delta.length} change(s)`); return delta; } });
-  app.register({ name: 'ImportDelta', label: 'Import Delta', category: 'Model', args: [{ name: 'Reference', default: false }], undoable: false, execute(app) { const m = modelOf(app); if (!m) throw new Error('Select a model'); const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json'; inp.onchange = () => { const f = inp.files?.[0]; if (!f) return; f.text().then(t => { const d = JSON.parse(t); let n = 0; for (const e of d.delta ?? []) { const o = [...m.children, ...descendants(m)].find(x => x.name === e.name); if (!o) continue; const l = o.kinematics.local; const { pos, rot, scl } = e.xf; app.setParam(l.get('posx')!, pos[0]); app.setParam(l.get('posy')!, pos[1]); app.setParam(l.get('posz')!, pos[2]); app.setParam(l.get('rotx')!, rot[0]); app.setParam(l.get('roty')!, rot[1]); app.setParam(l.get('rotz')!, rot[2]); app.setParam(l.get('sclx')!, scl[0]); app.setParam(l.get('scly')!, scl[1]); app.setParam(l.get('sclz')!, scl[2]); n++; } for (const [path, v] of Object.entries(d.params ?? {})) { const parts = String(path).split('.'); let node: any = m; for (const part of parts.slice(0, -1)) node = node?.children?.find((c: any) => c.name === part) ?? node?.properties?.find((c: any) => c.name === part) ?? (node?.primitive?.name === part ? node.primitive : null) ?? node?.primitive?.operators?.find((c: any) => c.name === part) ?? (part === 'kine' || part === 'Kinematics' ? node.kinematics : part === 'local' || part === 'Local' || part === 'Local Transform' ? (node.local ?? node.kinematics?.local ?? node) : part === 'global' || part === 'Global' ? (node.global ?? node) : null); const prm = node?.get?.(parts[parts.length - 1]); if (prm) { app.setParam(prm, v); n++; } } app.logMsg('info', `Imported delta: ${n} change(s)`); }); }; inp.click(); return null; } });
   const descendants = (o: X3DObject): X3DObject[] => o.children.flatMap(c => [c, ...descendants(c)]);
+  const buildDelta = (m: Model) => {
+    const r = refOf(m); if (!r?.file) throw new Error('Select a referenced model');
+    const base = JSON.parse(localStorage.getItem('si.refmodel.' + r.file) ?? 'null');
+    const cur = exportModel(m); const delta: any[] = [];
+    for (const n of cur.nodes) { const b = base?.nodes?.find((x: any) => x.name === n.name); if (!b || JSON.stringify(b.xf) !== JSON.stringify(n.xf)) delta.push({ name: n.name, xf: n.xf }); }
+    const params = Object.fromEntries([...((m.properties.find(x => x.type === 'delta') as any)?.changes ?? new Map())]);
+    return { model: m.name, file: r.file, delta, params };
+  };
+  const applyDeltaPayload = (app: App, m: Model, d: any) => {
+    let n = 0;
+    for (const e of d.delta ?? []) {
+      const o = [...m.children, ...descendants(m)].find(x => x.name === e.name); if (!o) continue;
+      const l = o.kinematics.local; const { pos, rot, scl } = e.xf;
+      app.setParam(l.get('posx')!, pos[0]); app.setParam(l.get('posy')!, pos[1]); app.setParam(l.get('posz')!, pos[2]);
+      app.setParam(l.get('rotx')!, rot[0]); app.setParam(l.get('roty')!, rot[1]); app.setParam(l.get('rotz')!, rot[2]);
+      app.setParam(l.get('sclx')!, scl[0]); app.setParam(l.get('scly')!, scl[1]); app.setParam(l.get('sclz')!, scl[2]); n++;
+    }
+    for (const [path, v] of Object.entries(d.params ?? {})) {
+      const parts = String(path).split('.'); let node: any = m;
+      for (const part of parts.slice(0, -1)) node = node?.children?.find((c: any) => c.name === part) ?? node?.properties?.find((c: any) => c.name === part) ?? (node?.primitive?.name === part ? node.primitive : null) ?? node?.primitive?.operators?.find((c: any) => c.name === part) ?? (part === 'kine' || part === 'Kinematics' ? node.kinematics : part === 'local' || part === 'Local' || part === 'Local Transform' ? (node.local ?? node.kinematics?.local ?? node) : part === 'global' || part === 'Global' ? (node.global ?? node) : null);
+      const prm = node?.get?.(parts[parts.length - 1]); if (prm) { app.setParam(prm, v); n++; }
+    }
+    return n;
+  };
+  app.register({
+    name: 'ExportDelta', label: 'Export Delta', category: 'Model',
+    args: [{ name: 'FileName', default: '' }, { name: 'Data', default: false }],
+    execute(app, a) {
+      const m = modelOf(app); if (!m) throw new Error('Select a referenced model');
+      const payload = buildDelta(m); const text = JSON.stringify(payload, null, 1);
+      const key = a.FileName || (m.name + '.delta');
+      localStorage.setItem('si.delta.' + key, text);
+      if (!a.Data && !a.FileName) { const el = document.createElement('a'); el.href = URL.createObjectURL(new Blob([text], { type: 'application/json' })); el.download = m.name + '.delta.json'; el.click(); }
+      app.logMsg('info', `Exported delta with ${payload.delta.length} change(s)` + (a.FileName ? ` to ${key}` : ''));
+      return a.Data ? payload : payload.delta;
+    },
+  });
+  app.register({
+    name: 'ImportDelta', label: 'Import Delta', category: 'Model',
+    args: [{ name: 'Reference', default: false }, { name: 'FileName', default: '' }, { name: 'Data', default: null }],
+    undoable: false,
+    execute(app, a) {
+      const m = modelOf(app); if (!m) throw new Error('Select a model');
+      const apply = (d: any) => { const n = applyDeltaPayload(app, m, d); app.logMsg('info', `Imported delta: ${n} change(s)`); return n; };
+      if (a.Data && typeof a.Data === 'object') return apply(a.Data);
+      if (a.FileName) {
+        const ls = localStorage.getItem('si.delta.' + a.FileName) ?? localStorage.getItem('si.delta.' + a.FileName + '.delta');
+        if (!ls) throw new Error(`Delta file "${a.FileName}" not found`);
+        return apply(JSON.parse(ls));
+      }
+      const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json';
+      inp.onchange = () => { const f = inp.files?.[0]; if (!f) return; f.text().then(t => apply(JSON.parse(t))); };
+      inp.click(); return null;
+    },
+  });
   // ---- User normals (a "User Normals" property holding per-point normals; the viewport shades with them)
   const normalsProp = (app: App, o: X3DObject, create = true) => { let p = o.property('usernormals'); if (!p && create) { p = new Property('User Normals', 'usernormals', [num('length', 1, 'Display Length', { min: 0 }), bool('show', true, 'Show in Viewports')]); (p as any).normals = new Map<number, V3>(); const pp = p; const cl = mapCluster(app, o, 'pnt'); app.record('User Normals', () => cl.addProperty(pp), () => cl.removeProperty(pp)); } return p; };
   const computedNormals = (m: MeshData): V3[] => { const n: V3[] = Array.from({ length: m.positions.length / 3 }, () => [0, 0, 0] as V3); for (let t = 0; t < m.indices.length; t += 3) { const a = m.indices[t], b = m.indices[t + 1], c = m.indices[t + 2]; const A = [m.positions[a * 3], m.positions[a * 3 + 1], m.positions[a * 3 + 2]], B = [m.positions[b * 3], m.positions[b * 3 + 1], m.positions[b * 3 + 2]], C = [m.positions[c * 3], m.positions[c * 3 + 1], m.positions[c * 3 + 2]]; const u = [B[0] - A[0], B[1] - A[1], B[2] - A[2]], v = [C[0] - A[0], C[1] - A[1], C[2] - A[2]]; const nn = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]]; for (const i of [a, b, c]) { n[i][0] += nn[0]; n[i][1] += nn[1]; n[i][2] += nn[2]; } } return n.map(v => { const l = Math.hypot(...v) || 1; return [v[0] / l, v[1] / l, v[2] / l] as V3; }); };
