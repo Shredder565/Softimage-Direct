@@ -2,3 +2,4 @@ node_modules/
 dist/
 *.tmp.mjs
 node_modules
+__pycache__/
