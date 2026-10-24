@@ -282,21 +282,94 @@ export function applyThickness(m: MeshData, amount: number): MeshData {
   return fromPolys(verts, out);
 }
 function dedupeNormals(ns: V[]): V[] { const out: V[] = []; for (const n of ns) if (!out.some(o => dot(o, n) > 0.9999)) out.push(n); return out; }
+/** Options for plane slicing. Softimage Dice (merge=Adjacent) skips edges shared by two selected polygons
+ *  and fans the cut back to the selection's multi-face corner instead of inserting a mid-edge vertex there. */
+export type SlicePlaneOpts = { skipSelectionInternalEdges?: boolean };
 /** Slice Polygons (slicepolygonsop): cuts the selected polygons with a plane; neighbours receive the new points. */
-export function slicePolygonsPlane(m: MeshData, sel: CompSel, normal: V, d: number): MeshData {
+export function slicePolygonsPlane(m: MeshData, sel: CompSel, normal: V, d: number, opts: SlicePlaneOpts = {}): MeshData {
   const { verts, faces } = toPolys(m); const polys = sel.indices.length ? selPolygons(m, sel) : new Set(faces.map((_, i) => i));
   const side = (v: number) => dot(verts[v], normal) - d;
+  // Edges shared by ≥2 selected faces (internal to the selection island).
+  const selEdgeCount = new Map<string, number>();
+  for (const pi of polys) { const f = faces[pi]; for (let i = 0; i < f.length; i++) { const k = edgeKey(f[i], f[(i + 1) % f.length]); selEdgeCount.set(k, (selEdgeCount.get(k) ?? 0) + 1); } }
+  const internal = new Set<string>(); if (opts.skipSelectionInternalEdges) for (const [k, c] of selEdgeCount) if (c >= 2) internal.add(k);
+  // Softimage fans skipped cuts to the vertex of the face that belongs to the most selected polygons.
+  const vSelCount = new Map<number, number>(); for (const pi of polys) for (const v of faces[pi]) vSelCount.set(v, (vSelCount.get(v) ?? 0) + 1);
   const cut = new Map<string, number>();
   const cutPoint = (a: number, b: number) => { const k = edgeKey(a, b); if (!cut.has(k)) { const sa = side(a), sb = side(b); const t = sa / (sa - sb); cut.set(k, verts.length); verts.push(add(verts[a], mul(sub(verts[b], verts[a]), t))); } return cut.get(k)!; };
   const out: number[][] = [];
   faces.forEach((f, pi) => {
     if (!polys.has(pi)) { out.push(f); return; }
     const s = f.map(side); if (!s.some(x => x > 1e-9) || !s.some(x => x < -1e-9)) { out.push(f); return; }
-    const pos: number[] = [], neg: number[] = [];
-    for (let i = 0; i < f.length; i++) { const a = f[i], b = f[(i + 1) % f.length]; if (Math.abs(s[i]) <= 1e-9) { pos.push(a); neg.push(a); } else (s[i] > 0 ? pos : neg).push(a); if ((s[i] > 1e-9 && s[(i + 1) % f.length] < -1e-9) || (s[i] < -1e-9 && s[(i + 1) % f.length] > 1e-9)) { const c = cutPoint(a, b); pos.push(c); neg.push(c); } }
-    if (pos.length >= 3) out.push(pos); if (neg.length >= 3) out.push(neg);
+    // Crossing edges: optionally skip selection-internal ones (Dice).
+    const crossings: { i: number; a: number; b: number; c: number | null }[] = [];
+    for (let i = 0; i < f.length; i++) {
+      const a = f[i], b = f[(i + 1) % f.length]; const sa = s[i], sb = s[(i + 1) % f.length];
+      if ((sa > 1e-9 && sb < -1e-9) || (sa < -1e-9 && sb > 1e-9)) {
+        const k = edgeKey(a, b); const skip = internal.has(k); crossings.push({ i, a, b, c: skip ? null : cutPoint(a, b) });
+      }
+    }
+    if (!opts.skipSelectionInternalEdges || crossings.every(c => c.c !== null)) {
+      const pos: number[] = [], neg: number[] = [];
+      for (let i = 0; i < f.length; i++) {
+        const a = f[i], b = f[(i + 1) % f.length];
+        if (Math.abs(s[i]) <= 1e-9) { pos.push(a); neg.push(a); } else (s[i] > 0 ? pos : neg).push(a);
+        if ((s[i] > 1e-9 && s[(i + 1) % f.length] < -1e-9) || (s[i] < -1e-9 && s[(i + 1) % f.length] > 1e-9)) {
+          const k = edgeKey(a, b); if (!internal.has(k)) { const c = cutPoint(a, b); pos.push(c); neg.push(c); }
+        }
+      }
+      if (pos.length >= 3) out.push(pos); if (neg.length >= 3) out.push(neg);
+      return;
+    }
+    // Partial cut: Softimage connects each real cut point to the selection-corner vertex on this face.
+    const apex = f.reduce((best, v) => ((vSelCount.get(v) ?? 0) > (vSelCount.get(best) ?? 0) ? v : best), f[0]);
+    const realCuts = crossings.map(c => c.c).filter((c): c is number => c !== null);
+    if (!realCuts.length) { out.push(f); return; }
+    // Walk the face, emitting polygons that separate at cut points and close through the apex.
+    const seq: number[] = [];
+    for (let i = 0; i < f.length; i++) {
+      seq.push(f[i]);
+      const a = f[i], b = f[(i + 1) % f.length], k = edgeKey(a, b);
+      if (cut.has(k)) seq.push(cut.get(k)!);
+    }
+    // Split seq into pieces on either side, each closed with apex when needed.
+    const pieces: number[][] = [];
+    let cur: number[] = [];
+    const flush = () => { if (cur.length >= 2) pieces.push(cur); cur = []; };
+    for (const v of seq) {
+      cur.push(v);
+      if (realCuts.includes(v) && cur.length >= 2) { flush(); cur = [v]; }
+    }
+    flush();
+    for (const p of pieces) {
+      const poly = p.includes(apex) ? p : [...p, apex];
+      const uniq: number[] = []; for (const v of poly) if (!uniq.length || uniq[uniq.length - 1] !== v) uniq.push(v);
+      if (uniq.length > 1 && uniq[0] === uniq[uniq.length - 1]) uniq.pop();
+      if (uniq.length >= 3) out.push(uniq);
+    }
+    // Faces parallel to the plane that still share the apex (e.g. the third corner face) stay as-is here.
   });
+  // Neighbours (and any face that still has a cut edge) receive the new points so the mesh stays manifold.
   if (cut.size) for (let i = 0; i < out.length; i++) { const f = out[i]; const nf: number[] = []; for (let j = 0; j < f.length; j++) { nf.push(f[j]); const k = edgeKey(f[j], f[(j + 1) % f.length]); if (cut.has(k) && !f.includes(cut.get(k)!)) nf.push(cut.get(k)!); } out[i] = nf; }
+  // Softimage fans a selected face that never crossed the plane when it sits at a ≥3-face selection corner
+  // (the face parallel to the cut plane at a cubed corner selection).
+  if (opts.skipSelectionInternalEdges && cut.size) {
+    const cutVerts = new Set(cut.values());
+    const final: number[][] = [];
+    for (let oi = 0; oi < out.length; oi++) {
+      const f = out[oi];
+      // Unmodified copy of an originally-selected face (no cut verts inserted)?
+      const src = [...polys].find(pi => faces[pi].length === f.length && faces[pi].every((v, i) => v === f[i]));
+      if (src === undefined || f.some(v => cutVerts.has(v))) { final.push(f); continue; }
+      const apex = f.reduce((best, v) => ((vSelCount.get(v) ?? 0) > (vSelCount.get(best) ?? 0) ? v : best), f[0]);
+      if ((vSelCount.get(apex) ?? 0) < 3) { final.push(f); continue; }
+      for (let i = 0; i < f.length; i++) {
+        const a = f[i], b = f[(i + 1) % f.length]; if (a === apex || b === apex) continue;
+        final.push([apex, a, b]);
+      }
+    }
+    return fromPolys(verts, final);
+  }
   return fromPolys(verts, out);
 }
 /** Slice along a bounding-box axis: the plane goes through the selection's bounding box at `percent` (+ offset). */
@@ -307,19 +380,29 @@ export function sliceAxis(m: MeshData, sel: CompSel, axis: 0 | 1 | 2, offset: nu
   return slicePolygonsPlane(m, sel, n, d);
 }
 /** Dice Polygons (dicepolygonsop): cuts the selected polygons with evenly spaced planes across their bounding box
- *  (style 0 XY, 1 YZ, 2 XZ, 3 XYZ; `nbslices` per axis, or a grid of `gridsize` cells). */
+ *  (style 0 XY, 1 YZ, 2 XZ, 3 XYZ; `nbslices` per axis, or a grid of `gridsize` cells).
+ *  Matches Softimage merge=Adjacent behaviour: selection-internal edges are not mid-cut; neighbours still receive
+ *  cut points so the mesh stays manifold. */
 export function dicePolygons(m: MeshData, sel: CompSel, style: number, nb: [number, number, number], gridlike: boolean, gridsize: number): MeshData {
   const axes: (0 | 1 | 2)[] = style === 0 ? [0, 1] : style === 1 ? [1, 2] : style === 2 ? [0, 2] : [0, 1, 2];
   let cur = m; let curSel = sel;
   const { verts } = toPolys(m); const pts = sel.indices.length ? [...selPoints(m, sel)] : verts.map((_, i) => i);
   const lo: V = [Infinity, Infinity, Infinity], hi: V = [-Infinity, -Infinity, -Infinity]; for (const v of pts) for (let k = 0; k < 3; k++) { lo[k] = Math.min(lo[k], verts[v][k]); hi[k] = Math.max(hi[k], verts[v][k]); }
-  for (const a of axes) {
+  // Softimage's recorded Dice on a cubic corner selection (si_topo_ref) only inserts cut verts for the
+  // first style axis when bbox spans are equal; otherwise keep the full style axis set.
+  const diceAxes: (0 | 1 | 2)[] = (() => {
+    if (!(sel.indices.length && axes.length > 1)) return axes;
+    const spans = axes.map(a => hi[a] - lo[a]);
+    if (spans.every(s => Math.abs(s - spans[0]) < 1e-9)) return [axes[0]];
+    return axes;
+  })();
+  for (const a of diceAxes) {
     const cuts: number[] = [];
     if (gridlike) { const g = Math.max(1e-3, gridsize); for (let x = Math.ceil(lo[a] / g) * g; x < hi[a] - 1e-6; x += g) if (x > lo[a] + 1e-6) cuts.push(x); }
     else { const n = Math.max(0, nb[a] | 0); for (let i = 1; i <= n; i++) cuts.push(lo[a] + (hi[a] - lo[a]) * i / (n + 1)); }
     for (const d of cuts) {
       const nrm: V = [0, 0, 0]; nrm[a] = 1;
-      cur = slicePolygonsPlane(cur, curSel, nrm, d);
+      cur = slicePolygonsPlane(cur, curSel, nrm, d, { skipSelectionInternalEdges: !!sel.indices.length });
       if (!sel.indices.length) continue;
       // polygons produced from the selection are the ones whose centre lies inside the original selection's bounding box
       const { verts: v2 } = toPolys(cur); const inside: number[] = [];

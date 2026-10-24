@@ -317,7 +317,8 @@ export function bevelEdges(m: MeshData, sel: CompSel, width: number, subdivs = 0
   if (!selE.size) return m;
   const edgeFaces = new Map<string, number[]>(); faces.forEach((f, fi) => { for (let i = 0; i < f.length; i++) { const k = edgeKey(f[i], f[(i + 1) % f.length]); (edgeFaces.get(k) ?? edgeFaces.set(k, []).get(k)!).push(fi); } });
   let avg = 0; for (const k of selE) { const [a, b] = k.split('-').map(Number); avg += Math.hypot(...sub(verts[a], verts[b])); } avg /= selE.size;
-  const w = relative ? Math.max(1e-4, Math.min(0.49, width)) * avg : width; // relative: `width` is a fraction of the average selected edge length (Softimage ratio 0.5 ≈ L/16 per side)
+  // relative: `width` is a fraction of the average selected edge length (Softimage ratio 0.5 → L/16 per side).
+  const w = relative ? Math.max(1e-4, Math.min(0.49, width)) * avg : width;
   // 2. per face corner: the new corner vertex (offset inside the face away from each bevelled incident edge)
   const corner = new Map<string, number>(); // "v|fi" -> new vertex index
   const cornerPos = (f: number[], i: number): V => {
@@ -340,19 +341,80 @@ export function bevelEdges(m: MeshData, sel: CompSel, width: number, subdivs = 0
     let prev = l0; for (let r = 1; r <= subdivs; r++) { const t = r / (subdivs + 1); const row = [p, q].map((v, j) => { const A = verts[j ? l0[1] : l0[0]], B = verts[v], C = verts[j ? l1[1] : l1[0]]; const pt = add(add(mul(A, (1 - t) ** 2), mul(B, 2 * (1 - t) * t)), mul(C, t * t)); verts.push(pt); return verts.length - 1; }); strips.push([prev[1], prev[0], row[0], row[1]]); prev = row; }
     strips.push([prev[1], prev[0], l1[0], l1[1]]);
   }
-  // 4. junction polygons at vertices touched by ≥1 bevelled edge: the ring of that vertex's face corners (plus itself when some face kept it)
+  // 4. junction polygons at vertices touched by ≥1 bevelled edge.
+  // Softimage (default miter=false, tesselatejunctions=true): a 2-bevel-edge corner becomes a triangle
+  // (two neighbour-side offsets + an apex inset into the selected face) and the original vertex is removed
+  // from every face; ≥3-edge junctions stay as an n-gon of corner verts only (no original vertex).
   const vFaces = new Map<number, number[]>(); faces.forEach((f, fi) => f.forEach(v => (vFaces.get(v) ?? vFaces.set(v, []).get(v)!).push(fi)));
   const junctions: number[][] = [];
+  /** Softimage 2-edge corners: replace the consumed vertex in untouched neighbour faces with these two offsets (→ penta). */
+  const fanIn = new Map<number, [number, number]>();
   for (let v = 0; v < n; v++) {
-    const fs = vFaces.get(v) ?? []; const ring = [...new Set(fs.map(fi => corner.get(v + '|' + fi) ?? v))]; if (ring.length < 3) continue;
-    const incident = [...selE].filter(k => k.split('-').map(Number).includes(v)); if (miter && incident.length <= 2 && !ring.includes(v)) { /* sharp corner: keep strips only */ }
-    let nrm: V = [0, 0, 0]; for (const fi of fs) nrm = add(nrm, faceNormal(verts, faces[fi])); nrm = norm(nrm);
-    const c = verts[v]; const x = norm(sub(verts[ring.find(i => i !== v) ?? ring[0]], c)); const y = cross(nrm, x);
-    ring.sort((p, q) => Math.atan2(dot(sub(verts[p], c), y), dot(sub(verts[p], c), x)) - Math.atan2(dot(sub(verts[q], c), y), dot(sub(verts[q], c), x)));
+    const incident = [...selE].filter(k => k.split('-').map(Number).includes(v));
+    if (!incident.length) continue;
+    const fs = vFaces.get(v) ?? [];
+    const cornersAt = fs.map(fi => corner.get(v + '|' + fi)).filter((c): c is number => c !== undefined);
     if (miter && incident.length === 2 && subdivs === 0) continue;
+    // Softimage's tri+penta pattern at 2-edge corners is for polygon-border bevels (both edges consecutive
+    // on one selected face). Pure edge selections keep the generic n-gon junction (si_topo_ref Bevel_edges).
+    if (sel.kind === 'polygon' && incident.length === 2 && subdivs === 0 && cornersAt.length >= 2) {
+      // Softimage 2-edge junction: triangle of the two offsets that lie on faces with a single bevelled
+      // edge at v (neighbour sides) plus an apex pushed into the face that has both bevelled edges.
+      const both: number[] = []; const single: number[] = [];
+      for (const fi of fs) {
+        const f = faces[fi]; const i = f.indexOf(v); if (i < 0) continue;
+        const e1 = selE.has(edgeKey(v, f[(i - 1 + f.length) % f.length])), e2 = selE.has(edgeKey(v, f[(i + 1) % f.length]));
+        const c = corner.get(v + '|' + fi); if (c === undefined) continue;
+        if (e1 && e2) both.push(c); else if (e1 || e2) single.push(c);
+      }
+      if (single.length >= 2) {
+        let apex = both[0];
+        if (apex === undefined) { apex = verts.length; verts.push(verts[v]); }
+        // Softimage apex = v + (u1+u2)*w (not unit-bisector): on a 90° corner this lands at v+(±w,±w).
+        const [a, b] = incident.map(k => { const [p, q] = k.split('-').map(Number); return p === v ? q : p; });
+        const u1 = norm(sub(verts[a], verts[v])), u2 = norm(sub(verts[b], verts[v]));
+        verts[apex] = add(verts[v], mul(add(u1, u2), w));
+        // Order single[] to match Softimage winding around the apex (by angle in the dual-bevel face plane).
+        let nrm: V = [0, 0, 0]; for (const fi of fs) nrm = add(nrm, faceNormal(verts, faces[fi])); nrm = norm(nrm);
+        const c0 = verts[v]; const x = norm(sub(verts[single[0]], c0)); const y = cross(nrm, x);
+        single.sort((p, q) => Math.atan2(dot(sub(verts[p], c0), y), dot(sub(verts[p], c0), x)) - Math.atan2(dot(sub(verts[q], c0), y), dot(sub(verts[q], c0), x)));
+        junctions.push([single[0], single[1], apex]);
+        fanIn.set(v, [single[0], single[1]]);
+        continue;
+      }
+    }
+    const ring = [...new Set(cornersAt)]; if (ring.length < 3) continue;
+    let nrm: V = [0, 0, 0]; for (const fi of fs) nrm = add(nrm, faceNormal(verts, faces[fi])); nrm = norm(nrm);
+    const c = verts[v]; const x = norm(sub(verts[ring[0]], c)); const y = cross(nrm, x);
+    ring.sort((p, q) => Math.atan2(dot(sub(verts[p], c), y), dot(sub(verts[p], c), x)) - Math.atan2(dot(sub(verts[q], c), y), dot(sub(verts[q], c), x)));
     junctions.push(ring.reverse());
+    if (ring.length >= 2) fanIn.set(v, [ring[0], ring[1]]);
   }
-  return fromPolys(verts, [...newFaces, ...strips, ...junctions]);
+  // Softimage removes consumed bevel endpoints: faces that still hold them (no per-face corner) become
+  // n+1-gons by substituting the two fan-in offsets (quad → penta at a 2-edge corner).
+  const bevelEndpoints = new Set<number>(); for (const k of selE) k.split('-').map(Number).forEach(v => bevelEndpoints.add(v));
+  const cleaned = [...newFaces, ...strips, ...junctions].map((f, fi) => {
+    const g: number[] = [];
+    for (const v of f) {
+      if (!bevelEndpoints.has(v) || v >= n) { g.push(v); continue; }
+      const viaFace = fi < newFaces.length ? corner.get(v + '|' + fi) : undefined;
+      if (viaFace !== undefined) { g.push(viaFace); continue; }
+      const fan = fanIn.get(v);
+      if (fan) { g.push(fan[0], fan[1]); continue; }
+      // else drop
+    }
+    const h: number[] = []; for (const x of g) if (!h.length || h[h.length - 1] !== x) h.push(x);
+    if (h.length > 1 && h[0] === h[h.length - 1]) h.pop();
+    return h;
+  }).filter(f => f.length >= 3);
+  // Weld coincident vertices (Softimage merges chamfer ends that land on the same point) and drop unused.
+  const key = (p: V) => p.map(x => Math.round(x * 1e6) / 1e6).join(',');
+  const map = new Map<string, number>(); const outV: V[] = [];
+  const remap = (i: number) => { const k = key(verts[i]); if (!map.has(k)) { map.set(k, outV.length); outV.push(verts[i]); } return map.get(k)!; };
+  const welded = cleaned.map(f => { const g = f.map(remap); const h: number[] = []; for (const v of g) if (!h.length || h[h.length - 1] !== v) h.push(v); if (h.length > 1 && h[0] === h[h.length - 1]) h.pop(); return h; }).filter(f => f.length >= 3);
+  const re = new Map<number, number>(); const vv: V[] = [];
+  for (const f of welded) for (let i = 0; i < f.length; i++) { const v = f[i]; if (!re.has(v)) { re.set(v, vv.length); vv.push(outV[v]); } f[i] = re.get(v)!; }
+  return fromPolys(vv, welded);
 }
 
 // ----------------------------------------------------------- dice in a reference frame
@@ -364,10 +426,15 @@ export function diceInFrame(m: MeshData, sel: CompSel, basis: [V, V, V], slicer:
   const diced = slicer(fromPolys(verts.map(to), faces), sel); const { verts: v2, faces: f2 } = toPolys(diced);
   return fromPolys(v2.map(from), f2);
 }
-/** Average-normal frame of the selected polygons (or of the whole mesh): z = normal, x = longest edge projected, y = z × x. */
+/** Average-normal frame of the selected polygons (or of the whole mesh): z = normal, x = longest edge projected, y = z × x.
+ *  Softimage's Local Components on a set of axis-aligned faces (e.g. a cube corner) keeps object axes — the average
+ *  diagonal normal would otherwise disagree with recorded Dice dumps (`si_topo_ref`). */
 export function selectionFrame(m: MeshData, sel: CompSel): [V, V, V] {
   const { verts, faces } = toPolys(m); const ps = sel.indices.length || sel.edges?.length ? [...selPolygons(m, sel)] : faces.map((_, i) => i);
-  let nz: V = [0, 0, 0]; for (const pi of ps) nz = add(nz, faceNormal(verts, faces[pi])); nz = norm(nz); if (!Math.hypot(...nz)) nz = [0, 1, 0];
+  const nrms = ps.map(pi => faceNormal(verts, faces[pi]));
+  const axisAligned = nrms.length > 0 && nrms.every(n => { const a = [Math.abs(n[0]), Math.abs(n[1]), Math.abs(n[2])]; return a.filter(x => x > 0.9).length === 1; });
+  if (axisAligned) return [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+  let nz: V = [0, 0, 0]; for (const n of nrms) nz = add(nz, n); nz = norm(nz); if (!Math.hypot(...nz)) nz = [0, 1, 0];
   let best: V = [1, 0, 0], bl = -1; for (const pi of ps) { const f = faces[pi]; for (let i = 0; i < f.length; i++) { const e = sub(verts[f[(i + 1) % f.length]], verts[f[i]]); const l = Math.hypot(...e); if (l > bl) { bl = l; best = e; } } }
   let x = sub(best, mul(nz, dot(best, nz))); if (Math.hypot(...x) < 1e-6) x = Math.abs(nz[1]) < 0.9 ? cross(nz, [0, 1, 0]) : cross(nz, [1, 0, 0]); x = norm(x); const y = norm(cross(nz, x));
   return [x, y, nz];
@@ -379,23 +446,74 @@ const qPlane = (a: number, b: number, c: number, d: number): Q => [a * a, a * b,
 const qAdd = (p: Q, q: Q): Q => p.map((x, i) => x + q[i]);
 const qEval = (q: Q, v: V) => { const [x, y, z] = v; return q[0] * x * x + 2 * q[1] * x * y + 2 * q[2] * x * z + 2 * q[3] * x + q[4] * y * y + 2 * q[5] * y * z + 2 * q[6] * y + q[7] * z * z + 2 * q[8] * z + q[9]; };
 /** Polygon Reduction with Garland–Heckbert quadrics: collapses the cheapest edges until `ratio` (0..1) of the polygons remain.
- *  Boundary edges and vertices are kept when `preserveBoundaries`; `symmetric` keeps collapses mirrored across X. */
-export function reduceQuadric(m: MeshData, ratio: number, preserveBoundaries = true, quadLineWeight = 0): MeshData {
-  let { verts, faces } = toPolys(m); const target = Math.max(2, Math.floor(faces.length * Math.max(0.01, Math.min(1, ratio)))); if (faces.length <= target) return m;
+ *  Boundary edges and vertices are kept when `preserveBoundaries`. Softimage defaults `enforcesymmetry=true`: collapses
+ *  are mirrored across the mesh bbox centre's X/Y/Z planes so a symmetric cube stays symmetric. */
+export function reduceQuadric(m: MeshData, ratio: number, preserveBoundaries = true, quadLineWeight = 0, enforceSymmetry = false): MeshData {
+  let { verts, faces } = toPolys(m);
+  // Softimage dump keeps 28 of 54 polys at default ratio 50 — slightly above floor(n/2). Prefer ceil so 50% → 27
+  // is not under-shot when collapses remove two faces at once; still not vertex-exact (see docs).
+  const target = Math.max(2, Math.ceil(faces.length * Math.max(0.01, Math.min(1, ratio)))); if (faces.length <= target) return m;
   const quad = (f: number[]): Q => { const nrm = faceNormal(verts, f); const p0 = verts[f[0]]; return qPlane(nrm[0], nrm[1], nrm[2], -dot(nrm, p0)); };
   const alive = new Set(faces.map((_, i) => i)); const vFaces: Set<number>[] = verts.map(() => new Set()); faces.forEach((f, fi) => f.forEach(v => vFaces[v].add(fi)));
   const vQ: Q[] = verts.map(() => qPlane(0, 0, 0, 0)); faces.forEach((f, fi) => { const q = quad(f); f.forEach(v => { vQ[v] = qAdd(vQ[v], q); }); void fi; });
   const edgeCount = () => { const c = new Map<string, number>(); for (const fi of alive) { const f = faces[fi]; for (let i = 0; i < f.length; i++) { const k = edgeKey(f[i], f[(i + 1) % f.length]); c.set(k, (c.get(k) ?? 0) + 1); } } return c; };
   let ec = edgeCount(); const boundaryV = new Set<number>(); for (const [k, c] of ec) if (c < 2) k.split('-').map(Number).forEach(v => boundaryV.add(v));
-  const cost = (a: number, b: number): [number, V] => { const q = qAdd(vQ[a], vQ[b]); const cands: V[] = [mul(add(verts[a], verts[b]), 0.5), verts[a], verts[b]]; let best = cands[0], bc = Infinity; for (const c of cands) { const e = qEval(q, c); if (e < bc) { bc = e; best = c; } } return [bc + quadLineWeight * Math.hypot(...sub(verts[a], verts[b])), best]; };
+  // Bbox centre for Softimage-style symmetry.
+  let lo: V = [Infinity, Infinity, Infinity], hi: V = [-Infinity, -Infinity, -Infinity];
+  verts.forEach(p => { for (let k = 0; k < 3; k++) { lo[k] = Math.min(lo[k], p[k]); hi[k] = Math.max(hi[k], p[k]); } });
+  const mid: V = mul(add(lo, hi), 0.5);
+  const R = (x: number) => Math.round(x * 1e5) / 1e5;
+  const vKey = (p: V) => `${R(p[0])},${R(p[1])},${R(p[2])}`;
+  const vertAt = new Map<string, number>(); verts.forEach((p, i) => vertAt.set(vKey(p), i));
+  const mirrorV = (i: number, axis: number): number | null => {
+    const p = verts[i]; const q: V = [p[0], p[1], p[2]]; q[axis] = 2 * mid[axis] - q[axis]; return vertAt.get(vKey(q)) ?? null;
+  };
+  const cost = (a: number, b: number): [number, V] => {
+    const q = qAdd(vQ[a], vQ[b]); const cands: V[] = [mul(add(verts[a], verts[b]), 0.5), verts[a], verts[b]];
+    let best = cands[0], bc = Infinity; for (const c of cands) { const e = qEval(q, c); if (e < bc) { bc = e; best = c; } }
+    // Softimage metric default "Distance to plane minimization" — slight preference for existing endpoints (useexistingvertexposition is false, but symmetry wants planar snaps).
+    return [bc + quadLineWeight * Math.hypot(...sub(verts[a], verts[b])), best];
+  };
+  const collapseOne = (a: number, b: number, p: V) => {
+    if (a === b) return;
+    // Keep the surviving index stable; remap b → a.
+    verts[a] = p; vQ[a] = qAdd(vQ[a], vQ[b]); vertAt.delete(vKey(verts[b])); vertAt.set(vKey(p), a);
+    for (const fi of [...vFaces[b]]) {
+      const f = faces[fi].map(v => v === b ? a : v).filter((v, i, arr) => v !== arr[(i + 1) % arr.length]);
+      if (new Set(f).size < 3) { alive.delete(fi); f.forEach(v => vFaces[v]?.delete(fi)); }
+      else { faces[fi] = f; vFaces[a].add(fi); }
+    }
+    vFaces[b] = new Set();
+  };
   let guard = 0;
   while (alive.size > target && guard++ < 20000) {
     let best: [number, number, V] | null = null, bc = Infinity;
-    for (const [k, c] of ec) { const [a, b] = k.split('-').map(Number); if (preserveBoundaries && (c < 2 || boundaryV.has(a) || boundaryV.has(b))) continue; const [cc, p] = cost(a, b); if (cc < bc) { bc = cc; best = [a, b, p]; } }
-    if (!best) break; const [a, b, p] = best;
-    verts[a] = p; vQ[a] = qAdd(vQ[a], vQ[b]);
-    for (const fi of vFaces[b]) { const f = faces[fi].map(v => v === b ? a : v).filter((v, i, arr) => v !== arr[(i + 1) % arr.length]); if (new Set(f).size < 3) { alive.delete(fi); f.forEach(v => vFaces[v]?.delete(fi)); } else { faces[fi] = f; vFaces[a].add(fi); } }
-    vFaces[b] = new Set(); ec = edgeCount();
+    for (const [k, c] of ec) {
+      const [a, b] = k.split('-').map(Number);
+      if (preserveBoundaries && (c < 2 || boundaryV.has(a) || boundaryV.has(b))) continue;
+      const [cc, p] = cost(a, b); if (cc < bc) { bc = cc; best = [a, b, p]; }
+    }
+    if (!best) break;
+    const [a0, b0, p0] = best;
+    const batch: [number, number, V][] = [[a0, b0, p0]];
+    if (enforceSymmetry) {
+      for (let axis = 0; axis < 3; axis++) {
+        const ma = mirrorV(a0, axis), mb = mirrorV(b0, axis);
+        if (ma === null || mb === null) continue;
+        if ((ma === a0 && mb === b0) || (ma === b0 && mb === a0)) continue; // edge already on the plane
+        const mk = edgeKey(ma, mb); if (!ec.has(mk)) continue;
+        const mp: V = [p0[0], p0[1], p0[2]]; mp[axis] = 2 * mid[axis] - mp[axis];
+        batch.push([ma, mb, mp]);
+      }
+    }
+    // Dedup batch by surviving edge key.
+    const seen = new Set<string>();
+    for (const [a, b, p] of batch) {
+      const k = edgeKey(a, b); if (seen.has(k)) continue; seen.add(k);
+      if (!ec.has(k) && a !== b) continue;
+      collapseOne(a, b, p);
+    }
+    ec = edgeCount();
   }
   const used = new Map<number, number>(); const outV: V[] = []; const outF: number[][] = [];
   for (const fi of alive) outF.push(faces[fi].map(v => { if (!used.has(v)) { used.set(v, outV.length); outV.push(verts[v]); } return used.get(v)!; }));
