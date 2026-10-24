@@ -22,12 +22,19 @@ button, select, input { font-family: inherit; }
 .view-placeholder-title { font-weight: 700; color: var(--text, #ddd); margin-bottom: 6px; }
 .view-placeholder.deferred { border-left: 3px solid #6a6a40; padding-left: 10px; }
 .view-placeholder button { margin-top: 8px; font: 11px Tahoma, sans-serif; }
-.switcher { width: 100%; height: 100%; display: flex; flex-direction: column; }
+.switcher { width: 100%; height: 100%; display: flex; flex-direction: column; --sw-btn-w: 30px; --sw-btn-h: 28px; }
+.switcher.side-left, .switcher.side-right { flex-direction: row; }
 .switcher-body { flex: 1; min-height: 0; position: relative; }
 .switcher-pane { position: absolute; inset: 0; display: none; } .switcher-pane.active { display: block; }
 .switcher-bar { display: flex; gap: 2px; background: var(--bg); padding: 2px; border-top: 1px solid var(--line); }
+.switcher.side-top > .switcher-bar { border-top: none; border-bottom: 1px solid var(--line); }
+.switcher.side-left > .switcher-bar, .switcher.side-right > .switcher-bar { flex-direction: column; border-top: none; }
+.switcher.side-left > .switcher-bar { border-right: 1px solid var(--line); }
+.switcher.side-right > .switcher-bar { border-left: 1px solid var(--line); }
+.switcher.inv > .switcher-bar { background: var(--bg2); }
 .switcher-btn { flex: 1; background: linear-gradient(var(--btn-top), var(--btn-bot)); color: var(--text); border: 1px solid var(--line); border-radius: 2px; padding: 3px; font-size: 11px; cursor: pointer; }
 .switcher-btn.active { background: #e6e3e0; }
+.switcher.inv > .switcher-bar > .switcher-btn.active { background: var(--panel); border-color: var(--line2); }
 .splitter { position: absolute; z-index: 5; background: transparent; }
 .splitter.horizontal { width: 6px; cursor: col-resize; } .splitter.vertical { height: 6px; cursor: row-resize; }
 .splitter:hover { background: rgba(232,184,74,.4); }
@@ -234,7 +241,7 @@ button, select, input { font-family: inherit; }
 /* ---- Softimage bitmaps / icon tabs ---- */
 .si-icon { display: inline-block; background-repeat: no-repeat; image-rendering: pixelated; vertical-align: middle; }
 .si-icon.missing { font-size: 8px; color: var(--muted); }
-.switcher-btn.icon { padding: 1px; flex: 0 0 auto; width: 30px; height: 28px; display: inline-flex; align-items: center; justify-content: center; }
+.switcher-btn.icon { padding: 1px; flex: 0 0 auto; width: var(--sw-btn-w); height: var(--sw-btn-h); display: inline-flex; align-items: center; justify-content: center; }
 .switcher-bar:has(.switcher-btn.icon) { justify-content: flex-start; }
 .frame.hidden, .switcher.hidden, .frameset.hidden { visibility: hidden; overflow: hidden; min-width: 0; min-height: 0; }
 

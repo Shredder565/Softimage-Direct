@@ -1,9 +1,10 @@
 // Generic layout engine: a frameset tree like Softimage's *.xsily files.
 // framesets split space horizontally/vertically; switchers show one child at a time with tab buttons;
 // frames host a registered view type by name.
+export type ButtonSide = 'top' | 'bottom' | 'left' | 'right';
 export type LayoutNode =
   | { kind: 'frameset'; orientation: 'horizontal' | 'vertical'; sizes: string[]; children: LayoutNode[]; name?: string; splitter?: boolean }
-  | { kind: 'switcher'; name: string; buttonSide: 'top' | 'bottom' | 'left'; children: LayoutNode[]; labels?: string[]; icons?: (string | undefined)[]; active?: number }
+  | { kind: 'switcher'; name: string; buttonSide: ButtonSide; children: LayoutNode[]; labels?: string[]; icons?: (string | undefined)[]; active?: number; buttonSize?: string; inv?: boolean }
   | { kind: 'frame'; name: string; view: string; label?: string; hidden?: boolean };
 
 export type ViewFactory = (host: HTMLElement) => void | { destroy?: () => void };
@@ -59,15 +60,20 @@ export class LayoutEngine {
       applyTracks(el, node.orientation);
       return el;
     }
-    // switcher
-    const el = div('switcher side-' + node.buttonSide, node.name);
+    // switcher — Softimage tray/panel chrome (buttonside / buttonsize from *.xsily)
+    const el = div('switcher side-' + node.buttonSide + (node.inv ? ' inv' : ''), node.name);
     const bar = div('switcher-bar');
     const body = div('switcher-body');
     const panes: HTMLElement[] = [];
+    const bs = parseButtonSize(node.buttonSize);
+    if (bs) { el.style.setProperty('--sw-btn-w', bs.w + 'px'); el.style.setProperty('--sw-btn-h', bs.h + 'px'); }
     node.children.forEach((c, i) => {
       const pane = div('switcher-pane'); pane.appendChild(this.make(c)); panes.push(pane); body.appendChild(pane);
       const b = document.createElement('button'); b.className = 'switcher-btn'; const label = node.labels?.[i] ?? (c.kind === 'frame' ? (c.label ?? c.view) : (c.name ?? 'Tab'));
-      b.dataset.label = label; b.title = label; const ic = node.icons?.[i]; if (ic) b.dataset.icon = ic; if (ic && this.iconFactory) { b.appendChild(this.iconFactory(ic)); b.classList.add('icon'); } else b.textContent = label;
+      b.dataset.label = label; b.title = label; const ic = node.icons?.[i]; if (ic) b.dataset.icon = ic;
+      if (ic && this.iconFactory) { b.appendChild(this.iconFactory(ic)); b.classList.add('icon'); }
+      else b.textContent = label;
+      if (bs) { b.style.width = bs.w + 'px'; b.style.height = bs.h + 'px'; b.style.flex = '0 0 auto'; }
       b.onclick = () => { panes.forEach((p, j) => p.classList.toggle('active', i === j)); Array.from(bar.children).forEach((x, j) => x.classList.toggle('active', i === j)); window.dispatchEvent(new Event('resize')); };
       bar.appendChild(b);
     });
@@ -75,6 +81,14 @@ export class LayoutEngine {
     if (node.buttonSide === 'top' || node.buttonSide === 'left') { el.appendChild(bar); el.appendChild(body); } else { el.appendChild(body); el.appendChild(bar); }
     return el;
   }
+}
+
+/** Softimage buttonsize="W,H" from layout trays (module_menu 26,26 · mcp 44,23 · Dual Screen1Tray 120,24). */
+function parseButtonSize(s?: string): { w: number; h: number } | null {
+  if (!s) return null;
+  const m = /^(\d+)\s*,\s*(\d+)$/.exec(s.trim());
+  if (!m) return null;
+  return { w: Number(m[1]), h: Number(m[2]) };
 }
 
 /** Grid tracks from the frameset's declared sizes, skipping hidden children (Softimage "optional" panels). */
@@ -116,15 +130,42 @@ function addSplitter(grid: HTMLElement, orientation: 'horizontal' | 'vertical', 
 
 import siLayout from '../data/si/layout_default.json';
 import siLayouts from '../data/si/layouts.json';
-type SiNode = { kind: string; name?: string; displayname?: string; type?: string; bitmap?: string; optional?: string; orientation?: string; splitter?: string; sizes?: string[]; buttonside?: string; active?: number; children?: SiNode[] };
+type SiNode = { kind: string; name?: string; displayname?: string; type?: string; bitmap?: string; optional?: string; orientation?: string; splitter?: string; sizes?: string[]; buttonside?: string; buttonsize?: string; active?: number; children?: SiNode[] };
 /** Frame types in default.xsily -> registered view names; anything else shows a placeholder with its Softimage name. */
 const VIEW_OF: Record<string, string> = { 'Toolbar Panel': 'Toolbar Panel', 'Explorer': 'Explorer', 'Scripts': 'Scripts', 'View Manager': 'View Manager', 'Timeline': 'Timeline', 'Timerange': 'Timerange', 'Keying Panel': 'Keying Panel', 'Layer Control': 'Layer Control', 'Property Editor': 'Property Editor', 'Panel Switcher': 'Panel Switcher', 'Command Line': 'Command Line', 'Playback Panel': 'Playback Panel', 'Animation Panel': 'Animation Panel', 'Main Shelf': 'Main Shelf', 'Mini Transform Panel': 'Mini Transform Panel', 'Preset Manager': 'Preset Manager', 'Palettes': 'Palettes', 'Weight Paint Panel': 'Weight Paint Panel', 'Animation Layer Manager': 'Animation Layer Manager', 'Selection Panel': 'Selection Panel', 'Transformation Panel': 'Transformation Panel', 'Snap Panel': 'Snap Panel', 'Constraint Panel': 'Constraint Panel', 'Edit Panel': 'Edit Panel', 'Netview': 'Netview', 'Animation Editor': 'Animation Editor', 'Fcurve Editor': 'Animation Editor', 'DopeSheet': 'DopeSheet', 'Standalone Dopesheet': 'DopeSheet', 'Animation Mixer': 'Animation Mixer', 'Schematic': 'Schematic', 'Material Manager': 'Material Manager', 'Material Panel': 'Material Panel', 'Render Tree': 'Render Tree', 'Texture Editor': 'Texture Editor', 'ICE Tree': 'ICE Tree', 'FX Tree': 'FX Tree', 'Fx Viewer': 'Fx Viewer', 'Fx Paint Brush List': 'Fx Paint Brush List', 'Fx Operator Selector': 'Fx Operator Selector', 'Plugin Manager': 'Plugin Manager', 'SDK Explorer': 'SDK Explorer', 'Script Editor': 'Script Editor' };
+/** Softimage toolbar bitmaps used as tray tab tips when displayname is null (module_menu icon strip). */
+const BITMAP_TAB_LABEL: Record<string, string> = {
+  toolbar: 'Toolbar', weightpanel: 'Weight Paint', palettetab: 'Palettes', presetmanager: 'Preset Manager',
+};
+/** Softimage *.xsily buttonside → Direct tray side. bottom_inv = MCP column tabs (inverted chrome at bottom). */
+function convertButtonSide(side?: string): { buttonSide: ButtonSide; inv?: boolean } {
+  switch ((side ?? 'bottom').toLowerCase()) {
+    case 'top': return { buttonSide: 'top' };
+    case 'left': return { buttonSide: 'left' };
+    case 'right': return { buttonSide: 'right' };
+    case 'bottom_inv': return { buttonSide: 'bottom', inv: true };
+    case 'user': return { buttonSide: 'bottom' }; // panel-type switchers collapse before this runs
+    default: return { buttonSide: 'bottom' };
+  }
+}
+/** Softimage tray tab label: displayname, else bitmap tip, else frame type / node name (never raw frameset ids when an icon exists). */
+function switcherChildLabel(k: SiNode): string {
+  if (k.displayname) return k.displayname;
+  if (k.bitmap && BITMAP_TAB_LABEL[k.bitmap]) return BITMAP_TAB_LABEL[k.bitmap];
+  if (k.kind === 'frame') return k.type ?? k.name ?? 'Tab';
+  return k.name ?? k.type ?? 'Tab';
+}
 function convert(n: SiNode): LayoutNode {
   if (n.kind === 'frame') return { kind: 'frame', name: n.name!, view: VIEW_OF[n.type!] ?? n.type!, label: n.displayname ?? n.type, hidden: n.optional === 'hidden' };
   if (n.kind === 'switcher') {
     if (n.type === 'panel') return { kind: 'frame', name: 'mcp_panel', view: 'MCP', label: 'MCP' }; // the five MCP panels stacked = our MCP view
     const kids = n.children ?? [];
-    return { kind: 'switcher', name: n.name!, buttonSide: n.buttonside === 'top' ? 'top' : 'bottom', active: n.active ?? 0, children: kids.map(convert), labels: kids.map(k => k.displayname ?? (k.kind === 'frame' ? k.type! : k.name!)), icons: kids.map(k => k.bitmap) };
+    const side = convertButtonSide(n.buttonside);
+    return {
+      kind: 'switcher', name: n.name!, buttonSide: side.buttonSide, inv: side.inv, buttonSize: n.buttonsize,
+      active: n.active ?? 0, children: kids.map(convert),
+      labels: kids.map(switcherChildLabel), icons: kids.map(k => k.bitmap),
+    };
   }
   return { kind: 'frameset', name: n.name, orientation: n.orientation === 'horizontal' ? 'horizontal' : 'vertical', sizes: n.sizes ?? ['*'], splitter: n.splitter === 'movable', children: (n.children ?? []).map(convert) };
 }
@@ -144,7 +185,13 @@ export function captureLayout(root: HTMLElement): LayoutNode | null {
   const walk = (el: HTMLElement): LayoutNode | null => {
     if (el.classList.contains('frame')) return { kind: 'frame', name: el.dataset.name!, view: el.dataset.view!, label: el.dataset.label, hidden: el.classList.contains('hidden') };
     if (el.classList.contains('frameset')) { const kids = Array.from(el.children).filter(c => !c.classList.contains('splitter')) as HTMLElement[]; const horiz = el.classList.contains('horizontal'); const tracks = (horiz ? el.style.gridTemplateColumns : el.style.gridTemplateRows).split(' '); const sizes = kids.map((k, i) => k.classList.contains('hidden') ? ((el.dataset.sizes ?? '').split(',')[i] ?? '*') : tracks[i]?.endsWith('px') ? String(Math.round(parseFloat(tracks[i]))) : '*'); return { kind: 'frameset', name: el.dataset.name, orientation: horiz ? 'horizontal' : 'vertical', sizes, splitter: !!el.querySelector(':scope > .splitter'), children: kids.map(walk).filter(Boolean) as LayoutNode[] }; }
-    if (el.classList.contains('switcher')) { const body = el.querySelector(':scope > .switcher-body')!; const bar = el.querySelector(':scope > .switcher-bar')!; const panes = Array.from(body.children) as HTMLElement[]; const kids = panes.map(p => walk(p.firstElementChild as HTMLElement)).filter(Boolean) as LayoutNode[]; return { kind: 'switcher', name: el.dataset.name!, buttonSide: el.classList.contains('side-top') ? 'top' : 'bottom', active: Math.max(0, panes.findIndex(p => p.classList.contains('active'))), children: kids, labels: Array.from(bar.children).map(b => (b as HTMLElement).dataset.label ?? ''), icons: Array.from(bar.children).map(b => (b as HTMLElement).dataset.icon || undefined) }; }
+    if (el.classList.contains('switcher')) {
+      const body = el.querySelector(':scope > .switcher-body')!; const bar = el.querySelector(':scope > .switcher-bar')!;
+      const panes = Array.from(body.children) as HTMLElement[];
+      const kids = panes.map(p => walk(p.firstElementChild as HTMLElement)).filter(Boolean) as LayoutNode[];
+      const buttonSide: ButtonSide = el.classList.contains('side-top') ? 'top' : el.classList.contains('side-left') ? 'left' : el.classList.contains('side-right') ? 'right' : 'bottom';
+      return { kind: 'switcher', name: el.dataset.name!, buttonSide, inv: el.classList.contains('inv'), active: Math.max(0, panes.findIndex(p => p.classList.contains('active'))), children: kids, labels: Array.from(bar.children).map(b => (b as HTMLElement).dataset.label ?? ''), icons: Array.from(bar.children).map(b => (b as HTMLElement).dataset.icon || undefined) };
+    }
     return null;
   };
   const top = root.firstElementChild as HTMLElement | null; return top ? walk(top) : null;
