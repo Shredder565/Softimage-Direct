@@ -5581,6 +5581,47 @@
           ]
         },
         {
+          "label": "Force",
+          "items": [
+            {
+              "label": "Attractor",
+              "id": 40908
+            },
+            {
+              "label": "Drag",
+              "id": 41155
+            },
+            {
+              "label": "Eddy",
+              "id": 41117
+            },
+            {
+              "label": "Fan",
+              "id": 41118
+            },
+            {
+              "label": "Gravity",
+              "id": 40906
+            },
+            {
+              "label": "Toric",
+              "id": 41332
+            },
+            {
+              "label": "Turbulence",
+              "id": 41156
+            },
+            {
+              "label": "Vortex",
+              "id": 40909
+            },
+            {
+              "label": "Wind",
+              "id": 40907
+            }
+          ]
+        },
+        {
           "label": "Property",
           "items": [
             {
@@ -5849,146 +5890,287 @@
       ]
     },
     {
-      "label": "Particles",
+      "label": "Create",
       "items": [
         {
-          "label": "Create",
+          "label": "Rigid Body",
           "items": [
             {
-              "label": "Anchor-to-Delete",
-              "id": 41609
+              "label": "Active Rigid Body",
+              "id": 41283
+            },
+            {
+              "label": "Passive Rigid Body",
+              "id": 41284
+            },
+            {
+              "label": "Compound Rigid Body",
+              "id": 41467
+            },
+            {
+              "label": "Rigid Constraint",
+              "items": [
+                {
+                  "label": "Hinge",
+                  "id": 41286
+                },
+                {
+                  "label": "Ball and Socket",
+                  "id": 41287
+                },
+                {
+                  "label": "Spring",
+                  "id": 41289
+                },
+                {
+                  "label": "Slider",
+                  "id": 41288
+                },
+                {
+                  "label": "Fixed",
+                  "id": 41296
+                }
+              ]
+            },
+            {
+              "label": "Multi Constraint Tool",
+              "items": [
+                {
+                  "label": "Hinge",
+                  "id": 41317
+                },
+                {
+                  "label": "Ball and Socket",
+                  "id": 41318
+                },
+                {
+                  "label": "Spring",
+                  "id": 41320
+                },
+                {
+                  "label": "Slider",
+                  "id": 41319
+                },
+                {
+                  "label": "Fixed",
+                  "id": 41321
+                }
+              ]
+            },
+            {
+              "label": "Environment",
+              "id": 41312
             }
           ]
         },
         {
-          "label": "On Emission",
+          "label": "Soft Body",
           "items": [
             {
-              "label": "Anchor-to-Delete",
-              "id": 41610
+              "label": "From Selection",
+              "id": 40916
             }
           ]
         },
         {
-          "label": "After Emission",
+          "label": "Cloth",
           "items": [
             {
-              "label": "Anchor-to-Delete",
-              "id": 41611
-            }
-          ]
-        },
-        {
-          "label": "Force",
-          "items": [
+              "label": "From Selection",
+              "id": 41015
+            },
             {
-              "label": "Anchor-to-Delete",
-              "id": 41614
-            }
-          ]
-        },
-        {
-          "label": "Collision",
-          "items": [
+              "separator": true
+            },
             {
-              "label": "Anchor-to-Delete",
-              "id": 41613
-            }
-          ]
-        },
-        {
-          "label": "Simulation",
-          "items": [
-            {
-              "label": "Anchor-to-Delete",
-              "id": 41603
-            }
-          ]
-        },
-        {
-          "label": "Model Library",
-          "items": [
-            {
-              "label": "Anchor-to-Delete",
-              "id": 41621
+              "label": "Local Cloth Cluster",
+              "id": 41053
             }
           ]
         }
       ]
     },
     {
-      "label": "Deform",
+      "label": "Modify",
       "items": [
         {
-          "label": "Create",
+          "label": "Rigid Body",
           "items": [
             {
-              "label": "Anchor-to-Delete",
-              "id": 41616
+              "label": "Edit Rigid Body...",
+              "id": 41308
+            },
+            {
+              "label": "Edit Simulation Properties ...",
+              "id": 41378
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "Add Compound Shape...",
+              "id": 41469
+            },
+            {
+              "label": "Set Initial State",
+              "id": 41292
+            },
+            {
+              "label": "Use Animation as Initial State",
+              "id": 41293
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "Remove Rigid Body",
+              "id": 41299
             }
           ]
         },
         {
-          "label": "Simulate",
-          "items": [
-            {
-              "label": "Anchor-to-Delete",
-              "id": 41626
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "label": "Kinematics",
-      "items": [
+          "label": "Shader",
+          "id": 40914
+        },
         {
-          "label": "Effects",
+          "label": "Deform",
           "items": [
             {
-              "label": "Anchor-to-Delete",
-              "id": 41629
+              "label": "by Curve",
+              "id": 32958
+            },
+            {
+              "label": "by Cage",
+              "id": 41080
+            },
+            {
+              "label": "by Lattice",
+              "id": 32960
+            },
+            {
+              "label": "by Spine",
+              "id": 40709
+            },
+            {
+              "label": "by Surface",
+              "id": 32959
+            },
+            {
+              "label": "by Volume",
+              "id": 41089
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "Bend",
+              "id": 32953
+            },
+            {
+              "label": "Bulge",
+              "id": 40142
+            },
+            {
+              "label": "Shear",
+              "id": 40143
+            },
+            {
+              "label": "Taper",
+              "id": 32955
+            },
+            {
+              "label": "Twist",
+              "id": 32954
+            },
+            {
+              "label": "Fold",
+              "id": 41369
+            },
+            {
+              "label": "Footprints  (ice)",
+              "id": 41557
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "Push",
+              "id": 40568
+            },
+            {
+              "label": "Relax",
+              "id": 41298
+            },
+            {
+              "label": "Smooth",
+              "id": 41273
+            },
+            {
+              "label": "Shrink Wrap",
+              "id": 40901
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "Quick Stretch",
+              "id": 32951
+            },
+            {
+              "label": "Wave",
+              "id": 32961
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "Randomize",
+              "id": 32962
+            },
+            {
+              "label": "Shape Jitter",
+              "id": 32963
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "Cluster Center",
+              "id": 40730
             }
           ]
         },
         {
-          "label": "Constrain",
+          "label": "Soft Body",
           "items": [
             {
-              "label": "Anchor-to-Delete",
-              "id": 41628
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "label": "CrowdFX",
-      "items": [
-        {
-          "label": "Actors",
-          "items": [
+              "label": "Apply Force",
+              "id": 40910
+            },
             {
-              "label": "Anchor-to-Delete",
-              "id": 41644
+              "label": "Set Obstacle",
+              "id": 40815
+            },
+            {
+              "label": "Disconnect Obstacle/Force/Emitter",
+              "id": 41236
             }
           ]
         },
         {
-          "label": "Crowd",
+          "label": "Cloth",
           "items": [
             {
-              "label": "Anchor-to-Delete",
-              "id": 41646
-            }
-          ]
-        },
-        {
-          "label": "Simulation",
-          "items": [
+              "label": "Apply Force",
+              "id": 40910
+            },
             {
-              "label": "Anchor-to-Delete",
-              "id": 41645
+              "label": "Set Obstacle",
+              "id": 40815
+            },
+            {
+              "label": "Disconnect Obstacle/Force/Emitter",
+              "id": 41236
             }
           ]
         }

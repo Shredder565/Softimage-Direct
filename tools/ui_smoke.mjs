@@ -83,6 +83,7 @@ for (const name of OPEN_VIEWS) {
 }
 
 // Switch Softimage module toolbar heads (menus.json trees must render without placeholder)
+const moduleTops = {};
 for (const m of ['Animate', 'Model', 'Render', 'Simulate', 'ICE', 'Hair']) {
   try {
     await p.evaluate((mod) => window.__switchModule?.(mod), m);
@@ -90,10 +91,28 @@ for (const m of ['Animate', 'Model', 'Render', 'Simulate', 'ICE', 'Hair']) {
     const label = await p.evaluate(() => document.querySelector('.module-select')?.value);
     const hasPlaceholder = await p.evaluate(() => !!document.querySelector('.toolbar-panel .view-placeholder'));
     const btnCount = await p.evaluate(() => document.querySelectorAll('.toolbar-panel .tb-btn').length);
+    const groups = await p.evaluate(() => [...document.querySelectorAll('.toolbar-panel .tb-group')].map(el => el.textContent.trim()));
+    const btns = await p.evaluate(() => [...document.querySelectorAll('.toolbar-panel .tb-btn')].map(el => el.textContent.trim()));
+    moduleTops[m] = { groups, btns };
     if (label === m && !hasPlaceholder && btnCount > 0) ok.push(`module switch → ${m} (${btnCount} groups)`);
     else fail.push(`module switch → ${m} (got ${label}, placeholder=${hasPlaceholder}, btns=${btnCount})`);
   } catch (e) {
     fail.push(`module switch ${m}: ${e.message || e}`);
+  }
+}
+
+// Simulate (MENU 205 Rigid/Soft/Cloth) must not alias ICE (MENU 303 Particles/CrowdFX)
+{
+  const sim = moduleTops.Simulate;
+  const ice = moduleTops.ICE;
+  if (!sim || !ice) fail.push('Simulate vs ICE: missing module chrome after switch');
+  else {
+    const simKey = JSON.stringify(sim);
+    const iceKey = JSON.stringify(ice);
+    if (simKey === iceKey) fail.push('Simulate tree identical to ICE (must use MENU 205, not alias 303)');
+    else if (!sim.btns.includes('Rigid Body') || !ice.groups.includes('Particles')) {
+      fail.push(`Simulate vs ICE shape mismatch: Simulate btns=${sim.btns.join('|')} ICE groups=${ice.groups.join('|')}`);
+    } else ok.push('Simulate≠ICE (205 Rigid/Soft/Cloth vs 303 Particles/CrowdFX)');
   }
 }
 

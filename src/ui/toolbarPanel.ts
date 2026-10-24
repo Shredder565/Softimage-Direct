@@ -12,7 +12,7 @@ export function toolbarPanel(app: App, host: HTMLElement) {
   const root = document.createElement('div'); root.className = 'toolbar-panel ' + app.module;
   const sel = document.createElement('select'); sel.className = 'module-select ' + app.module;
   // Softimage module heads. PE trees from toolbarobj.dll live in `src/data/menus.json`
-  // (Model 204, Animate 237, Render 234, Hair 297, ICE/Simulate 303 — Simulate aliases ICE; no dedicated Simulate RT_MENU).
+  // (Model 204, Animate 237, Render 234, Simulate 205 Rigid/Soft/Cloth, ICE 303 Particles/CrowdFX, Hair 297).
   for (const m of ['Model', 'Animate', 'Render', 'Simulate', 'ICE', 'Hair']) {
     const o = document.createElement('option'); o.value = m;
     o.textContent = MENUS[m] ? m : `${m} (menu not in install data yet)`;
