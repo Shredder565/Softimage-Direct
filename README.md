@@ -1,8 +1,18 @@
 # Softimage Direct
 
+[![Latest Release](https://img.shields.io/github/v/release/Shredder565/Softimage-Direct?label=Latest%20Release)](https://github.com/Shredder565/Softimage-Direct/releases/latest)
+
 A clean-room reimplementation of Autodesk Softimage 2015's Model and Animate toolsets as a web application
 (TypeScript + Three.js). The UI, menu trees, command names and argument lists follow the original, extracted
 from the data files that ship with Softimage (menus, command maps, layouts, dictionaries) — not from its code.
+
+## Latest Releases
+
+Desktop builds ship as **AfterImage** (Windows NSIS installer; no Softimage/Autodesk binaries).
+
+- [Releases](https://github.com/Shredder565/Softimage-Direct/releases) — all published versions
+- [Latest release](https://github.com/Shredder565/Softimage-Direct/releases/latest) — always the current stable
+- **Download:** [AfterImage-1.0.0-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.0/AfterImage-1.0.0-setup.exe)
 
 ## Run
 
@@ -14,14 +24,14 @@ npm run build    # static build in dist/
 
 ## Windows installer (AfterImage)
 
-Desktop packaging brands the app as **AfterImage**. On Windows:
+Prefer the [Latest Releases](#latest-releases) download above. To build locally on Windows:
 
 ```
 npm ci
 npm run build:win   # → release/AfterImage-1.0.0-setup.exe
 ```
 
-Or use GitHub Actions (*Build AfterImage Windows installer*) / push tag `v1.0.0`. See [docs/PACKAGING.md](docs/PACKAGING.md).
+Or use GitHub Actions (*Build AfterImage Windows installer*) / push a version tag. See [docs/PACKAGING.md](docs/PACKAGING.md).
 
 ## Layout
 
