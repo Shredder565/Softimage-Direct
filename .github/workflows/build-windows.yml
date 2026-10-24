@@ -49,7 +49,8 @@ jobs:
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
-          name: AfterImage-${{ github.ref_name }}-setup
+          # Keep artifact names slash-free (PR refs look like "42/merge").
+          name: AfterImage-windows-setup
           path: release/AfterImage-*-setup.exe
           if-no-files-found: error
 
