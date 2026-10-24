@@ -1,0 +1,4306 @@
+{
+  "meta": {
+    "module": "Animate",
+    "rt_menu_id": 237,
+    "leaf_count": 345,
+    "section_counts": {
+      "Get": 170,
+      "Create": 76,
+      "Deform": 55,
+      "Actions": 24,
+      "Tools": 20
+    },
+    "walk_harness_hint": "tools/walk_animate_menu.mjs should iterate leaves[].path_str / id; separators omitted; grey/fail vs Softimage Direct menu_commands map."
+  },
+  "leaves": [
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Null"
+      ],
+      "path_str": "Get / Primitive / Null",
+      "section": "Get",
+      "label": "Null",
+      "id": 32823,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Curve",
+        "Arc"
+      ],
+      "path_str": "Get / Primitive / Curve / Arc",
+      "section": "Get",
+      "label": "Arc",
+      "id": 32834,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Curve",
+        "Circle"
+      ],
+      "path_str": "Get / Primitive / Curve / Circle",
+      "section": "Get",
+      "label": "Circle",
+      "id": 32837,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Curve",
+        "Spiral"
+      ],
+      "path_str": "Get / Primitive / Curve / Spiral",
+      "section": "Get",
+      "label": "Spiral",
+      "id": 32841,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Curve",
+        "Square"
+      ],
+      "path_str": "Get / Primitive / Curve / Square",
+      "section": "Get",
+      "label": "Square",
+      "id": 32842,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Polygon Mesh",
+        "Cone"
+      ],
+      "path_str": "Get / Primitive / Polygon Mesh / Cone",
+      "section": "Get",
+      "label": "Cone",
+      "id": 32844,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Polygon Mesh",
+        "Cube"
+      ],
+      "path_str": "Get / Primitive / Polygon Mesh / Cube",
+      "section": "Get",
+      "label": "Cube",
+      "id": 32845,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Polygon Mesh",
+        "Cylinder"
+      ],
+      "path_str": "Get / Primitive / Polygon Mesh / Cylinder",
+      "section": "Get",
+      "label": "Cylinder",
+      "id": 32846,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Polygon Mesh",
+        "Disc"
+      ],
+      "path_str": "Get / Primitive / Polygon Mesh / Disc",
+      "section": "Get",
+      "label": "Disc",
+      "id": 32847,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Polygon Mesh",
+        "Grid"
+      ],
+      "path_str": "Get / Primitive / Polygon Mesh / Grid",
+      "section": "Get",
+      "label": "Grid",
+      "id": 32850,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Polygon Mesh",
+        "Sphere"
+      ],
+      "path_str": "Get / Primitive / Polygon Mesh / Sphere",
+      "section": "Get",
+      "label": "Sphere",
+      "id": 32855,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Polygon Mesh",
+        "Torus"
+      ],
+      "path_str": "Get / Primitive / Polygon Mesh / Torus",
+      "section": "Get",
+      "label": "Torus",
+      "id": 32853,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Polygon Mesh",
+        "Dodecahedron"
+      ],
+      "path_str": "Get / Primitive / Polygon Mesh / Dodecahedron",
+      "section": "Get",
+      "label": "Dodecahedron",
+      "id": 32848,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Polygon Mesh",
+        "Icosahedron"
+      ],
+      "path_str": "Get / Primitive / Polygon Mesh / Icosahedron",
+      "section": "Get",
+      "label": "Icosahedron",
+      "id": 32851,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Polygon Mesh",
+        "Octahedron"
+      ],
+      "path_str": "Get / Primitive / Polygon Mesh / Octahedron",
+      "section": "Get",
+      "label": "Octahedron",
+      "id": 32852,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Polygon Mesh",
+        "Tetrahedron"
+      ],
+      "path_str": "Get / Primitive / Polygon Mesh / Tetrahedron",
+      "section": "Get",
+      "label": "Tetrahedron",
+      "id": 32857,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Polygon Mesh",
+        "Rhombicosidodecahedron"
+      ],
+      "path_str": "Get / Primitive / Polygon Mesh / Rhombicosidodecahedron",
+      "section": "Get",
+      "label": "Rhombicosidodecahedron",
+      "id": 41137,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Polygon Mesh",
+        "Soccer Ball"
+      ],
+      "path_str": "Get / Primitive / Polygon Mesh / Soccer Ball",
+      "section": "Get",
+      "label": "Soccer Ball",
+      "id": 41136,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Polygon Mesh",
+        "Empty"
+      ],
+      "path_str": "Get / Primitive / Polygon Mesh / Empty",
+      "section": "Get",
+      "label": "Empty",
+      "id": 41547,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Surface",
+        "Cone"
+      ],
+      "path_str": "Get / Primitive / Surface / Cone",
+      "section": "Get",
+      "label": "Cone",
+      "id": 32858,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Surface",
+        "Cube"
+      ],
+      "path_str": "Get / Primitive / Surface / Cube",
+      "section": "Get",
+      "label": "Cube",
+      "id": 32859,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Surface",
+        "Cylinder"
+      ],
+      "path_str": "Get / Primitive / Surface / Cylinder",
+      "section": "Get",
+      "label": "Cylinder",
+      "id": 32860,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Surface",
+        "Disc"
+      ],
+      "path_str": "Get / Primitive / Surface / Disc",
+      "section": "Get",
+      "label": "Disc",
+      "id": 32861,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Surface",
+        "Grid"
+      ],
+      "path_str": "Get / Primitive / Surface / Grid",
+      "section": "Get",
+      "label": "Grid",
+      "id": 32862,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Surface",
+        "Sphere"
+      ],
+      "path_str": "Get / Primitive / Surface / Sphere",
+      "section": "Get",
+      "label": "Sphere",
+      "id": 32863,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Surface",
+        "Torus"
+      ],
+      "path_str": "Get / Primitive / Surface / Torus",
+      "section": "Get",
+      "label": "Torus",
+      "id": 32865,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Point Cloud",
+        "Cone"
+      ],
+      "path_str": "Get / Primitive / Point Cloud / Cone",
+      "section": "Get",
+      "label": "Cone",
+      "id": 41531,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Point Cloud",
+        "Cube"
+      ],
+      "path_str": "Get / Primitive / Point Cloud / Cube",
+      "section": "Get",
+      "label": "Cube",
+      "id": 41532,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Point Cloud",
+        "Cylinder"
+      ],
+      "path_str": "Get / Primitive / Point Cloud / Cylinder",
+      "section": "Get",
+      "label": "Cylinder",
+      "id": 41533,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Point Cloud",
+        "Disc"
+      ],
+      "path_str": "Get / Primitive / Point Cloud / Disc",
+      "section": "Get",
+      "label": "Disc",
+      "id": 41534,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Point Cloud",
+        "Grid"
+      ],
+      "path_str": "Get / Primitive / Point Cloud / Grid",
+      "section": "Get",
+      "label": "Grid",
+      "id": 41535,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Point Cloud",
+        "Sphere"
+      ],
+      "path_str": "Get / Primitive / Point Cloud / Sphere",
+      "section": "Get",
+      "label": "Sphere",
+      "id": 41536,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Point Cloud",
+        "Torus"
+      ],
+      "path_str": "Get / Primitive / Point Cloud / Torus",
+      "section": "Get",
+      "label": "Torus",
+      "id": 41537,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Point Cloud",
+        "Empty"
+      ],
+      "path_str": "Get / Primitive / Point Cloud / Empty",
+      "section": "Get",
+      "label": "Empty",
+      "id": 41546,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Implicit",
+        "Arc"
+      ],
+      "path_str": "Get / Primitive / Implicit / Arc",
+      "section": "Get",
+      "label": "Arc",
+      "id": 33020,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Implicit",
+        "Circle"
+      ],
+      "path_str": "Get / Primitive / Implicit / Circle",
+      "section": "Get",
+      "label": "Circle",
+      "id": 33019,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Implicit",
+        "Spiral"
+      ],
+      "path_str": "Get / Primitive / Implicit / Spiral",
+      "section": "Get",
+      "label": "Spiral",
+      "id": 33021,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Implicit",
+        "Square"
+      ],
+      "path_str": "Get / Primitive / Implicit / Square",
+      "section": "Get",
+      "label": "Square",
+      "id": 33026,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Implicit",
+        "Bone"
+      ],
+      "path_str": "Get / Primitive / Implicit / Bone",
+      "section": "Get",
+      "label": "Bone",
+      "id": 33024,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Implicit",
+        "Cone"
+      ],
+      "path_str": "Get / Primitive / Implicit / Cone",
+      "section": "Get",
+      "label": "Cone",
+      "id": 33023,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Implicit",
+        "Cube"
+      ],
+      "path_str": "Get / Primitive / Implicit / Cube",
+      "section": "Get",
+      "label": "Cube",
+      "id": 33018,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Implicit",
+        "Cylinder"
+      ],
+      "path_str": "Get / Primitive / Implicit / Cylinder",
+      "section": "Get",
+      "label": "Cylinder",
+      "id": 33025,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Implicit",
+        "Disc"
+      ],
+      "path_str": "Get / Primitive / Implicit / Disc",
+      "section": "Get",
+      "label": "Disc",
+      "id": 40190,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Implicit",
+        "Grid"
+      ],
+      "path_str": "Get / Primitive / Implicit / Grid",
+      "section": "Get",
+      "label": "Grid",
+      "id": 33017,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Implicit",
+        "Sphere"
+      ],
+      "path_str": "Get / Primitive / Implicit / Sphere",
+      "section": "Get",
+      "label": "Sphere",
+      "id": 33015,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Implicit",
+        "Torus"
+      ],
+      "path_str": "Get / Primitive / Implicit / Torus",
+      "section": "Get",
+      "label": "Torus",
+      "id": 33016,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Control Object",
+        "Wave"
+      ],
+      "path_str": "Get / Primitive / Control Object / Wave",
+      "section": "Get",
+      "label": "Wave",
+      "id": 40034,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Control Object",
+        "Volume Deform"
+      ],
+      "path_str": "Get / Primitive / Control Object / Volume Deform",
+      "section": "Get",
+      "label": "Volume Deform",
+      "id": 41090,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Control Object",
+        "Attractor"
+      ],
+      "path_str": "Get / Primitive / Control Object / Attractor",
+      "section": "Get",
+      "label": "Attractor",
+      "id": 40908,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Control Object",
+        "Drag"
+      ],
+      "path_str": "Get / Primitive / Control Object / Drag",
+      "section": "Get",
+      "label": "Drag",
+      "id": 41155,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Control Object",
+        "Eddy"
+      ],
+      "path_str": "Get / Primitive / Control Object / Eddy",
+      "section": "Get",
+      "label": "Eddy",
+      "id": 41117,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Control Object",
+        "Fan"
+      ],
+      "path_str": "Get / Primitive / Control Object / Fan",
+      "section": "Get",
+      "label": "Fan",
+      "id": 41118,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Control Object",
+        "Gravity"
+      ],
+      "path_str": "Get / Primitive / Control Object / Gravity",
+      "section": "Get",
+      "label": "Gravity",
+      "id": 40906,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Control Object",
+        "Turbulence"
+      ],
+      "path_str": "Get / Primitive / Control Object / Turbulence",
+      "section": "Get",
+      "label": "Turbulence",
+      "id": 41156,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Control Object",
+        "Vortex"
+      ],
+      "path_str": "Get / Primitive / Control Object / Vortex",
+      "section": "Get",
+      "label": "Vortex",
+      "id": 40909,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Control Object",
+        "Wind"
+      ],
+      "path_str": "Get / Primitive / Control Object / Wind",
+      "section": "Get",
+      "label": "Wind",
+      "id": 40907,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Lattice"
+      ],
+      "path_str": "Get / Primitive / Lattice",
+      "section": "Get",
+      "label": "Lattice",
+      "id": 33040,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Stand-in"
+      ],
+      "path_str": "Get / Primitive / Stand-in",
+      "section": "Get",
+      "label": "Stand-in",
+      "id": 41554,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Geometry Shader Primitive"
+      ],
+      "path_str": "Get / Primitive / Geometry Shader Primitive",
+      "section": "Get",
+      "label": "Geometry Shader Primitive",
+      "id": 41171,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Annotation"
+      ],
+      "path_str": "Get / Primitive / Annotation",
+      "section": "Get",
+      "label": "Annotation",
+      "id": 41633,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Camera",
+        "Perspective"
+      ],
+      "path_str": "Get / Primitive / Camera / Perspective",
+      "section": "Get",
+      "label": "Perspective",
+      "id": 32891,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Camera",
+        "Telephoto"
+      ],
+      "path_str": "Get / Primitive / Camera / Telephoto",
+      "section": "Get",
+      "label": "Telephoto",
+      "id": 40638,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Camera",
+        "Wide Angle"
+      ],
+      "path_str": "Get / Primitive / Camera / Wide Angle",
+      "section": "Get",
+      "label": "Wide Angle",
+      "id": 40639,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Camera",
+        "Orthographic"
+      ],
+      "path_str": "Get / Primitive / Camera / Orthographic",
+      "section": "Get",
+      "label": "Orthographic",
+      "id": 40640,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Camera",
+        "More..."
+      ],
+      "path_str": "Get / Primitive / Camera / More...",
+      "section": "Get",
+      "label": "More...",
+      "id": 40586,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Light",
+        "Infinite"
+      ],
+      "path_str": "Get / Primitive / Light / Infinite",
+      "section": "Get",
+      "label": "Infinite",
+      "id": 40648,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Light",
+        "Light Box"
+      ],
+      "path_str": "Get / Primitive / Light / Light Box",
+      "section": "Get",
+      "label": "Light Box",
+      "id": 40644,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Light",
+        "Neon"
+      ],
+      "path_str": "Get / Primitive / Light / Neon",
+      "section": "Get",
+      "label": "Neon",
+      "id": 40587,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Light",
+        "Point"
+      ],
+      "path_str": "Get / Primitive / Light / Point",
+      "section": "Get",
+      "label": "Point",
+      "id": 40649,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Light",
+        "Spot"
+      ],
+      "path_str": "Get / Primitive / Light / Spot",
+      "section": "Get",
+      "label": "Spot",
+      "id": 40650,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Light",
+        "Flat"
+      ],
+      "path_str": "Get / Primitive / Light / Flat",
+      "section": "Get",
+      "label": "Flat",
+      "id": 41591,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Light",
+        "More..."
+      ],
+      "path_str": "Get / Primitive / Light / More...",
+      "section": "Get",
+      "label": "More...",
+      "id": 40590,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Light",
+        "Associate Light"
+      ],
+      "path_str": "Get / Primitive / Light / Associate Light",
+      "section": "Get",
+      "label": "Associate Light",
+      "id": 41190,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Light",
+        "Light Rig from Image"
+      ],
+      "path_str": "Get / Primitive / Light / Light Rig from Image",
+      "section": "Get",
+      "label": "Light Rig from Image",
+      "id": 41256,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Skeleton - Man - Basic"
+      ],
+      "path_str": "Get / Primitive / Model / Skeleton - Man - Basic",
+      "section": "Get",
+      "label": "Skeleton - Man - Basic",
+      "id": 41073,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Skeleton - Man - Complete"
+      ],
+      "path_str": "Get / Primitive / Model / Skeleton - Man - Complete",
+      "section": "Get",
+      "label": "Skeleton - Man - Complete",
+      "id": 41074,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Skeleton - Woman - Basic"
+      ],
+      "path_str": "Get / Primitive / Model / Skeleton - Woman - Basic",
+      "section": "Get",
+      "label": "Skeleton - Woman - Basic",
+      "id": 41076,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Skeleton - Woman - Complete"
+      ],
+      "path_str": "Get / Primitive / Model / Skeleton - Woman - Complete",
+      "section": "Get",
+      "label": "Skeleton - Woman - Complete",
+      "id": 41077,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Biped - Box"
+      ],
+      "path_str": "Get / Primitive / Model / Biped - Box",
+      "section": "Get",
+      "label": "Biped - Box",
+      "id": 41227,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Biped - SI|3D Skeleton"
+      ],
+      "path_str": "Get / Primitive / Model / Biped - SI|3D Skeleton",
+      "section": "Get",
+      "label": "Biped - SI|3D Skeleton",
+      "id": 41228,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Biped - Skeleton"
+      ],
+      "path_str": "Get / Primitive / Model / Biped - Skeleton",
+      "section": "Get",
+      "label": "Biped - Skeleton",
+      "id": 41229,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Biped - Rig"
+      ],
+      "path_str": "Get / Primitive / Model / Biped - Rig",
+      "section": "Get",
+      "label": "Biped - Rig",
+      "id": 41230,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Quadruped - Rig"
+      ],
+      "path_str": "Get / Primitive / Model / Quadruped - Rig",
+      "section": "Get",
+      "label": "Quadruped - Rig",
+      "id": 41231,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Body - Man"
+      ],
+      "path_str": "Get / Primitive / Model / Body - Man",
+      "section": "Get",
+      "label": "Body - Man",
+      "id": 41060,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Body - Woman"
+      ],
+      "path_str": "Get / Primitive / Model / Body - Woman",
+      "section": "Get",
+      "label": "Body - Woman",
+      "id": 41061,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Face - Man"
+      ],
+      "path_str": "Get / Primitive / Model / Face - Man",
+      "section": "Get",
+      "label": "Face - Man",
+      "id": 41042,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Face - Woman"
+      ],
+      "path_str": "Get / Primitive / Model / Face - Woman",
+      "section": "Get",
+      "label": "Face - Woman",
+      "id": 41068,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Character - Man"
+      ],
+      "path_str": "Get / Primitive / Model / Character - Man",
+      "section": "Get",
+      "label": "Character - Man",
+      "id": 41255,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Mesh - Bull"
+      ],
+      "path_str": "Get / Primitive / Model / Mesh - Bull",
+      "section": "Get",
+      "label": "Mesh - Bull",
+      "id": 41634,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Mesh - Car"
+      ],
+      "path_str": "Get / Primitive / Model / Mesh - Car",
+      "section": "Get",
+      "label": "Mesh - Car",
+      "id": 41635,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Mesh - Fish"
+      ],
+      "path_str": "Get / Primitive / Model / Mesh - Fish",
+      "section": "Get",
+      "label": "Mesh - Fish",
+      "id": 41636,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Mesh - Horse"
+      ],
+      "path_str": "Get / Primitive / Model / Mesh - Horse",
+      "section": "Get",
+      "label": "Mesh - Horse",
+      "id": 41637,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Mesh - Lizard"
+      ],
+      "path_str": "Get / Primitive / Model / Mesh - Lizard",
+      "section": "Get",
+      "label": "Mesh - Lizard",
+      "id": 41638,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Mesh - Male"
+      ],
+      "path_str": "Get / Primitive / Model / Mesh - Male",
+      "section": "Get",
+      "label": "Mesh - Male",
+      "id": 41639,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Primitive",
+        "Model",
+        "Mesh - T.rex"
+      ],
+      "path_str": "Get / Primitive / Model / Mesh - T.rex",
+      "section": "Get",
+      "label": "Mesh - T.rex",
+      "id": 41640,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Assign Material"
+      ],
+      "path_str": "Get / Material / Assign Material",
+      "section": "Get",
+      "label": "Assign Material",
+      "id": 41314,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "UnAssign Material"
+      ],
+      "path_str": "Get / Material / UnAssign Material",
+      "section": "Get",
+      "label": "UnAssign Material",
+      "id": 41324,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Make Material Local"
+      ],
+      "path_str": "Get / Material / Make Material Local",
+      "section": "Get",
+      "label": "Make Material Local",
+      "id": 41326,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Phong"
+      ],
+      "path_str": "Get / Material / Phong",
+      "section": "Get",
+      "label": "Phong",
+      "id": 40932,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Lambert"
+      ],
+      "path_str": "Get / Material / Lambert",
+      "section": "Get",
+      "label": "Lambert",
+      "id": 40933,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Blinn"
+      ],
+      "path_str": "Get / Material / Blinn",
+      "section": "Get",
+      "label": "Blinn",
+      "id": 40934,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Cook-Torrance"
+      ],
+      "path_str": "Get / Material / Cook-Torrance",
+      "section": "Get",
+      "label": "Cook-Torrance",
+      "id": 40935,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Strauss"
+      ],
+      "path_str": "Get / Material / Strauss",
+      "section": "Get",
+      "label": "Strauss",
+      "id": 40936,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Anisotropic"
+      ],
+      "path_str": "Get / Material / Anisotropic",
+      "section": "Get",
+      "label": "Anisotropic",
+      "id": 40937,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Constant"
+      ],
+      "path_str": "Get / Material / Constant",
+      "section": "Get",
+      "label": "Constant",
+      "id": 41066,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "ICE Particle Volume"
+      ],
+      "path_str": "Get / Material / ICE Particle Volume",
+      "section": "Get",
+      "label": "ICE Particle Volume",
+      "id": 41577,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Ambient Occlusion"
+      ],
+      "path_str": "Get / Material / Ambient Occlusion",
+      "section": "Get",
+      "label": "Ambient Occlusion",
+      "id": 41576,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Architectural"
+      ],
+      "path_str": "Get / Material / Architectural",
+      "section": "Get",
+      "label": "Architectural",
+      "id": 41568,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Car Paint"
+      ],
+      "path_str": "Get / Material / Car Paint",
+      "section": "Get",
+      "label": "Car Paint",
+      "id": 41570,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Toon Host"
+      ],
+      "path_str": "Get / Material / Toon Host",
+      "section": "Get",
+      "label": "Toon Host",
+      "id": 41145,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Toon Paint"
+      ],
+      "path_str": "Get / Material / Toon Paint",
+      "section": "Get",
+      "label": "Toon Paint",
+      "id": 41144,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Toon Paint Ambient"
+      ],
+      "path_str": "Get / Material / Toon Paint Ambient",
+      "section": "Get",
+      "label": "Toon Paint Ambient",
+      "id": 41183,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Toon Paint and Host"
+      ],
+      "path_str": "Get / Material / Toon Paint and Host",
+      "section": "Get",
+      "label": "Toon Paint and Host",
+      "id": 41143,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Toon Paint Highlight"
+      ],
+      "path_str": "Get / Material / Toon Paint Highlight",
+      "section": "Get",
+      "label": "Toon Paint Highlight",
+      "id": 41184,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Toon Paint Rimlight"
+      ],
+      "path_str": "Get / Material / Toon Paint Rimlight",
+      "section": "Get",
+      "label": "Toon Paint Rimlight",
+      "id": 41185,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "Toon Paint Rounded"
+      ],
+      "path_str": "Get / Material / Toon Paint Rounded",
+      "section": "Get",
+      "label": "Toon Paint Rounded",
+      "id": 41186,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Material",
+        "More..."
+      ],
+      "path_str": "Get / Material / More...",
+      "section": "Get",
+      "label": "More...",
+      "id": 40753,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "Create New Projection..."
+      ],
+      "path_str": "Get / Property / Texture Projection / Create New Projection...",
+      "section": "Get",
+      "label": "Create New Projection...",
+      "id": 40561,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "UV"
+      ],
+      "path_str": "Get / Property / Texture Projection / UV",
+      "section": "Get",
+      "label": "UV",
+      "id": 40970,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "Planar XY"
+      ],
+      "path_str": "Get / Property / Texture Projection / Planar XY",
+      "section": "Get",
+      "label": "Planar XY",
+      "id": 40971,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "Planar YZ"
+      ],
+      "path_str": "Get / Property / Texture Projection / Planar YZ",
+      "section": "Get",
+      "label": "Planar YZ",
+      "id": 40972,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "Planar XZ"
+      ],
+      "path_str": "Get / Property / Texture Projection / Planar XZ",
+      "section": "Get",
+      "label": "Planar XZ",
+      "id": 40973,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "Cylindrical"
+      ],
+      "path_str": "Get / Property / Texture Projection / Cylindrical",
+      "section": "Get",
+      "label": "Cylindrical",
+      "id": 40974,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "Spherical"
+      ],
+      "path_str": "Get / Property / Texture Projection / Spherical",
+      "section": "Get",
+      "label": "Spherical",
+      "id": 40975,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "Spatial"
+      ],
+      "path_str": "Get / Property / Texture Projection / Spatial",
+      "section": "Get",
+      "label": "Spatial",
+      "id": 40977,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "Cubic"
+      ],
+      "path_str": "Get / Property / Texture Projection / Cubic",
+      "section": "Get",
+      "label": "Cubic",
+      "id": 41300,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "Camera Projection"
+      ],
+      "path_str": "Get / Property / Texture Projection / Camera Projection",
+      "section": "Get",
+      "label": "Camera Projection",
+      "id": 40976,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "Unique UVs (polymesh)"
+      ],
+      "path_str": "Get / Property / Texture Projection / Unique UVs (polymesh)",
+      "section": "Get",
+      "label": "Unique UVs (polymesh)",
+      "id": 1900,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "Contour Stretch UVs"
+      ],
+      "path_str": "Get / Property / Texture Projection / Contour Stretch UVs",
+      "section": "Get",
+      "label": "Contour Stretch UVs",
+      "id": 1901,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "Connect to Projection"
+      ],
+      "path_str": "Get / Property / Texture Projection / Connect to Projection",
+      "section": "Get",
+      "label": "Connect to Projection",
+      "id": 33177,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "Connect to Support"
+      ],
+      "path_str": "Get / Property / Texture Projection / Connect to Support",
+      "section": "Get",
+      "label": "Connect to Support",
+      "id": 33176,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Projection",
+        "Constrain Support to Bounding Box"
+      ],
+      "path_str": "Get / Property / Texture Projection / Constrain Support to Bounding Box",
+      "section": "Get",
+      "label": "Constrain Support to Bounding Box",
+      "id": 40203,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Map",
+        "Texture Map"
+      ],
+      "path_str": "Get / Property / Texture Map / Texture Map",
+      "section": "Get",
+      "label": "Texture Map",
+      "id": 41101,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Map",
+        "UV"
+      ],
+      "path_str": "Get / Property / Texture Map / UV",
+      "section": "Get",
+      "label": "UV",
+      "id": 41102,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Map",
+        "XY"
+      ],
+      "path_str": "Get / Property / Texture Map / XY",
+      "section": "Get",
+      "label": "XY",
+      "id": 41103,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Map",
+        "YZ"
+      ],
+      "path_str": "Get / Property / Texture Map / YZ",
+      "section": "Get",
+      "label": "YZ",
+      "id": 41104,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Map",
+        "XZ"
+      ],
+      "path_str": "Get / Property / Texture Map / XZ",
+      "section": "Get",
+      "label": "XZ",
+      "id": 41105,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Map",
+        "Cylindrical"
+      ],
+      "path_str": "Get / Property / Texture Map / Cylindrical",
+      "section": "Get",
+      "label": "Cylindrical",
+      "id": 41106,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Map",
+        "Spherical"
+      ],
+      "path_str": "Get / Property / Texture Map / Spherical",
+      "section": "Get",
+      "label": "Spherical",
+      "id": 41107,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Map",
+        "Camera"
+      ],
+      "path_str": "Get / Property / Texture Map / Camera",
+      "section": "Get",
+      "label": "Camera",
+      "id": 41108,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Map",
+        "Cubic"
+      ],
+      "path_str": "Get / Property / Texture Map / Cubic",
+      "section": "Get",
+      "label": "Cubic",
+      "id": 41301,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Texture Map",
+        "Spatial"
+      ],
+      "path_str": "Get / Property / Texture Map / Spatial",
+      "section": "Get",
+      "label": "Spatial",
+      "id": 41109,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Color At Vertices Map"
+      ],
+      "path_str": "Get / Property / Color At Vertices Map",
+      "section": "Get",
+      "label": "Color At Vertices Map",
+      "id": 40980,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Render Map"
+      ],
+      "path_str": "Get / Property / Render Map",
+      "section": "Get",
+      "label": "Render Map",
+      "id": 41095,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Symmetry Map"
+      ],
+      "path_str": "Get / Property / Symmetry Map",
+      "section": "Get",
+      "label": "Symmetry Map",
+      "id": 40591,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "User Data Map",
+        "New Template"
+      ],
+      "path_str": "Get / Property / User Data Map / New Template",
+      "section": "Get",
+      "label": "New Template",
+      "id": 41177,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "User Data Map",
+        "New Template Parameter"
+      ],
+      "path_str": "Get / Property / User Data Map / New Template Parameter",
+      "section": "Get",
+      "label": "New Template Parameter",
+      "id": 41179,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "User Data Map",
+        "New Templated Data Map"
+      ],
+      "path_str": "Get / Property / User Data Map / New Templated Data Map",
+      "section": "Get",
+      "label": "New Templated Data Map",
+      "id": 41180,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "User Data Map",
+        "Set User Data Value"
+      ],
+      "path_str": "Get / Property / User Data Map / Set User Data Value",
+      "section": "Get",
+      "label": "Set User Data Value",
+      "id": 41181,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "User Data Map",
+        "Edit User Data Value"
+      ],
+      "path_str": "Get / Property / User Data Map / Edit User Data Value",
+      "section": "Get",
+      "label": "Edit User Data Value",
+      "id": 41182,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Weight Map"
+      ],
+      "path_str": "Get / Property / Weight Map",
+      "section": "Get",
+      "label": "Weight Map",
+      "id": 40248,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "GATOR"
+      ],
+      "path_str": "Get / Property / GATOR",
+      "section": "Get",
+      "label": "GATOR",
+      "id": 41333,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Map Paint Tools",
+        "Paint Tool"
+      ],
+      "path_str": "Get / Property / Map Paint Tools / Paint Tool",
+      "section": "Get",
+      "label": "Paint Tool",
+      "id": 40707,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Map Paint Tools",
+        "Paint Push Tool"
+      ],
+      "path_str": "Get / Property / Map Paint Tools / Paint Push Tool",
+      "section": "Get",
+      "label": "Paint Push Tool",
+      "id": 41038,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Map Paint Tools",
+        "Paint Vertex Color Tool"
+      ],
+      "path_str": "Get / Property / Map Paint Tools / Paint Vertex Color Tool",
+      "section": "Get",
+      "label": "Paint Vertex Color Tool",
+      "id": 41070,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Map Paint Tools",
+        "Brush Properties..."
+      ],
+      "path_str": "Get / Property / Map Paint Tools / Brush Properties...",
+      "section": "Get",
+      "label": "Brush Properties...",
+      "id": 40506,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Annotation"
+      ],
+      "path_str": "Get / Property / Annotation",
+      "section": "Get",
+      "label": "Annotation",
+      "id": 41067,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Attribute Display"
+      ],
+      "path_str": "Get / Property / Attribute Display",
+      "section": "Get",
+      "label": "Attribute Display",
+      "id": 40619,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Display"
+      ],
+      "path_str": "Get / Property / Display",
+      "section": "Get",
+      "label": "Display",
+      "id": 40614,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Polygon Cluster Visibility"
+      ],
+      "path_str": "Get / Property / Polygon Cluster Visibility",
+      "section": "Get",
+      "label": "Polygon Cluster Visibility",
+      "id": 41223,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Geometry Approximation"
+      ],
+      "path_str": "Get / Property / Geometry Approximation",
+      "section": "Get",
+      "label": "Geometry Approximation",
+      "id": 40615,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Static KineState"
+      ],
+      "path_str": "Get / Property / Static KineState",
+      "section": "Get",
+      "label": "Static KineState",
+      "id": 40623,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Synoptic"
+      ],
+      "path_str": "Get / Property / Synoptic",
+      "section": "Get",
+      "label": "Synoptic",
+      "id": 41096,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Transform Setup"
+      ],
+      "path_str": "Get / Property / Transform Setup",
+      "section": "Get",
+      "label": "Transform Setup",
+      "id": 33178,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Override"
+      ],
+      "path_str": "Get / Property / Override",
+      "section": "Get",
+      "label": "Override",
+      "id": 40794,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Store in Override",
+        "Materials"
+      ],
+      "path_str": "Get / Property / Store in Override / Materials",
+      "section": "Get",
+      "label": "Materials",
+      "id": 40903,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Store in Override",
+        "Visibility"
+      ],
+      "path_str": "Get / Property / Store in Override / Visibility",
+      "section": "Get",
+      "label": "Visibility",
+      "id": 40913,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Store in Override",
+        "Geometry Approximation"
+      ],
+      "path_str": "Get / Property / Store in Override / Geometry Approximation",
+      "section": "Get",
+      "label": "Geometry Approximation",
+      "id": 40911,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Store in Override",
+        "Selected Properties"
+      ],
+      "path_str": "Get / Property / Store in Override / Selected Properties",
+      "section": "Get",
+      "label": "Selected Properties",
+      "id": 40912,
+      "accel": null
+    },
+    {
+      "path": [
+        "Get",
+        "Property",
+        "Delete Override"
+      ],
+      "path_str": "Get / Property / Delete Override",
+      "section": "Get",
+      "label": "Delete Override",
+      "id": 41071,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "New Custom Parameter Set"
+      ],
+      "path_str": "Create / Parameter / New Custom Parameter Set",
+      "section": "Create",
+      "label": "New Custom Parameter Set",
+      "id": 40711,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "Edit Custom Parameter Sets..."
+      ],
+      "path_str": "Create / Parameter / Edit Custom Parameter Sets...",
+      "section": "Create",
+      "label": "Edit Custom Parameter Sets...",
+      "id": 40786,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "New Custom Parameter"
+      ],
+      "path_str": "Create / Parameter / New Custom Parameter",
+      "section": "Create",
+      "label": "New Custom Parameter",
+      "id": 40170,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "Remove Custom Parameter"
+      ],
+      "path_str": "Create / Parameter / Remove Custom Parameter",
+      "section": "Create",
+      "label": "Remove Custom Parameter",
+      "id": 40797,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "Edit Parameter Definition..."
+      ],
+      "path_str": "Create / Parameter / Edit Parameter Definition...",
+      "section": "Create",
+      "label": "Edit Parameter Definition...",
+      "id": 40144,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "Set Expression..."
+      ],
+      "path_str": "Create / Parameter / Set Expression...",
+      "section": "Create",
+      "label": "Set Expression...",
+      "id": 40171,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "Edit Expression..."
+      ],
+      "path_str": "Create / Parameter / Edit Expression...",
+      "section": "Create",
+      "label": "Edit Expression...",
+      "id": 40166,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "New Proxy Parameter"
+      ],
+      "path_str": "Create / Parameter / New Proxy Parameter",
+      "section": "Create",
+      "label": "New Proxy Parameter",
+      "id": 40989,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "Remove Proxy Parameter"
+      ],
+      "path_str": "Create / Parameter / Remove Proxy Parameter",
+      "section": "Create",
+      "label": "Remove Proxy Parameter",
+      "id": 40990,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "New DisplayInfo from Marked Parameters"
+      ],
+      "path_str": "Create / Parameter / New DisplayInfo from Marked Parameters",
+      "section": "Create",
+      "label": "New DisplayInfo from Marked Parameters",
+      "id": 41187,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "Randomize Marked Parameters",
+        "10% Relative"
+      ],
+      "path_str": "Create / Parameter / Randomize Marked Parameters / 10% Relative",
+      "section": "Create",
+      "label": "10% Relative",
+      "id": 41172,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "Randomize Marked Parameters",
+        "25% Relative"
+      ],
+      "path_str": "Create / Parameter / Randomize Marked Parameters / 25% Relative",
+      "section": "Create",
+      "label": "25% Relative",
+      "id": 41173,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "Randomize Marked Parameters",
+        "50% Relative"
+      ],
+      "path_str": "Create / Parameter / Randomize Marked Parameters / 50% Relative",
+      "section": "Create",
+      "label": "50% Relative",
+      "id": 41174,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "Randomize Marked Parameters",
+        "75% Absolute"
+      ],
+      "path_str": "Create / Parameter / Randomize Marked Parameters / 75% Absolute",
+      "section": "Create",
+      "label": "75% Absolute",
+      "id": 41175,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "Randomize Marked Parameters",
+        "100%  Absolute"
+      ],
+      "path_str": "Create / Parameter / Randomize Marked Parameters / 100%  Absolute",
+      "section": "Create",
+      "label": "100%  Absolute",
+      "id": 41176,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Parameter",
+        "Sample/Bracket Parameter Values..."
+      ],
+      "path_str": "Create / Parameter / Sample/Bracket Parameter Values...",
+      "section": "Create",
+      "label": "Sample/Bracket Parameter Values...",
+      "id": 41188,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Curve",
+        "Draw Cubic by CVs"
+      ],
+      "path_str": "Create / Curve / Draw Cubic by CVs",
+      "section": "Create",
+      "label": "Draw Cubic by CVs",
+      "id": 40567,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Curve",
+        "Draw Cubic by Bezier-Knot Points"
+      ],
+      "path_str": "Create / Curve / Draw Cubic by Bezier-Knot Points",
+      "section": "Create",
+      "label": "Draw Cubic by Bezier-Knot Points",
+      "id": 41343,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Curve",
+        "Draw Cubic by Knot Points"
+      ],
+      "path_str": "Create / Curve / Draw Cubic by Knot Points",
+      "section": "Create",
+      "label": "Draw Cubic by Knot Points",
+      "id": 32840,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Curve",
+        "Draw Linear"
+      ],
+      "path_str": "Create / Curve / Draw Linear",
+      "section": "Create",
+      "label": "Draw Linear",
+      "id": 32839,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Curve",
+        "Sketch"
+      ],
+      "path_str": "Create / Curve / Sketch",
+      "section": "Create",
+      "label": "Sketch",
+      "id": 40542,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Curve",
+        "Extract Segment"
+      ],
+      "path_str": "Create / Curve / Extract Segment",
+      "section": "Create",
+      "label": "Extract Segment",
+      "id": 40033,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Curve",
+        "Extract from Edges"
+      ],
+      "path_str": "Create / Curve / Extract from Edges",
+      "section": "Create",
+      "label": "Extract from Edges",
+      "id": 41313,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Curve",
+        "Extract from Surface"
+      ],
+      "path_str": "Create / Curve / Extract from Surface",
+      "section": "Create",
+      "label": "Extract from Surface",
+      "id": 32964,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Curve",
+        "Extract from Subcurves"
+      ],
+      "path_str": "Create / Curve / Extract from Subcurves",
+      "section": "Create",
+      "label": "Extract from Subcurves",
+      "id": 41099,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Curve",
+        "Fit on Curve"
+      ],
+      "path_str": "Create / Curve / Fit on Curve",
+      "section": "Create",
+      "label": "Fit on Curve",
+      "id": 32836,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Curve",
+        "Blend"
+      ],
+      "path_str": "Create / Curve / Blend",
+      "section": "Create",
+      "label": "Blend",
+      "id": 40757,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Curve",
+        "Fillet Intersection"
+      ],
+      "path_str": "Create / Curve / Fillet Intersection",
+      "section": "Create",
+      "label": "Fillet Intersection",
+      "id": 40530,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Curve",
+        "Intersect Surfaces"
+      ],
+      "path_str": "Create / Curve / Intersect Surfaces",
+      "section": "Create",
+      "label": "Intersect Surfaces",
+      "id": 32914,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Curve",
+        "Merge"
+      ],
+      "path_str": "Create / Curve / Merge",
+      "section": "Create",
+      "label": "Merge",
+      "id": 40528,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Path",
+        "Set Path"
+      ],
+      "path_str": "Create / Path / Set Path",
+      "section": "Create",
+      "label": "Set Path",
+      "id": 40177,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Path",
+        "Set Trajectory"
+      ],
+      "path_str": "Create / Path / Set Trajectory",
+      "section": "Create",
+      "label": "Set Trajectory",
+      "id": 40178,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Path",
+        "Save Key on Path"
+      ],
+      "path_str": "Create / Path / Save Key on Path",
+      "section": "Create",
+      "label": "Save Key on Path",
+      "id": 40749,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Path",
+        "Save Locked Key on Path"
+      ],
+      "path_str": "Create / Path / Save Locked Key on Path",
+      "section": "Create",
+      "label": "Save Locked Key on Path",
+      "id": 40750,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Path",
+        "Convert Position Fcurves to Path"
+      ],
+      "path_str": "Create / Path / Convert Position Fcurves to Path",
+      "section": "Create",
+      "label": "Convert Position Fcurves to Path",
+      "id": 40176,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Path",
+        "Path Retime"
+      ],
+      "path_str": "Create / Path / Path Retime",
+      "section": "Create",
+      "label": "Path Retime",
+      "id": 41082,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Draw 2D Chain"
+      ],
+      "path_str": "Create / Skeleton / Draw 2D Chain",
+      "section": "Create",
+      "label": "Draw 2D Chain",
+      "id": 40789,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Draw 3D Chain"
+      ],
+      "path_str": "Create / Skeleton / Draw 3D Chain",
+      "section": "Create",
+      "label": "Draw 3D Chain",
+      "id": 40788,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Inspect Chain Properties..."
+      ],
+      "path_str": "Create / Skeleton / Inspect Chain Properties...",
+      "section": "Create",
+      "label": "Inspect Chain Properties...",
+      "id": 41178,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Chain Up Vector"
+      ],
+      "path_str": "Create / Skeleton / Chain Up Vector",
+      "section": "Create",
+      "label": "Chain Up Vector",
+      "id": 40930,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Chain Preferred Axis"
+      ],
+      "path_str": "Create / Skeleton / Chain Preferred Axis",
+      "section": "Create",
+      "label": "Chain Preferred Axis",
+      "id": 40931,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Add Bone to Chain"
+      ],
+      "path_str": "Create / Skeleton / Add Bone to Chain",
+      "section": "Create",
+      "label": "Add Bone to Chain",
+      "id": 40924,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Break Chain at Bone"
+      ],
+      "path_str": "Create / Skeleton / Break Chain at Bone",
+      "section": "Create",
+      "label": "Break Chain at Bone",
+      "id": 40927,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Move Joint/Branch"
+      ],
+      "path_str": "Create / Skeleton / Move Joint/Branch",
+      "section": "Create",
+      "label": "Move Joint/Branch",
+      "id": 41214,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Set Minimum Rotation Limit"
+      ],
+      "path_str": "Create / Skeleton / Set Minimum Rotation Limit",
+      "section": "Create",
+      "label": "Set Minimum Rotation Limit",
+      "id": 40925,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Set Maximum Rotation Limit"
+      ],
+      "path_str": "Create / Skeleton / Set Maximum Rotation Limit",
+      "section": "Create",
+      "label": "Set Maximum Rotation Limit",
+      "id": 40926,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Reset Bone to Preferred Rotation"
+      ],
+      "path_str": "Create / Skeleton / Reset Bone to Preferred Rotation",
+      "section": "Create",
+      "label": "Reset Bone to Preferred Rotation",
+      "id": 41036,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Align Root to First Bone"
+      ],
+      "path_str": "Create / Skeleton / Align Root to First Bone",
+      "section": "Create",
+      "label": "Align Root to First Bone",
+      "id": 41211,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Key All Bone Rotations"
+      ],
+      "path_str": "Create / Skeleton / Key All Bone Rotations",
+      "section": "Create",
+      "label": "Key All Bone Rotations",
+      "id": 40929,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Create Chain from Curve"
+      ],
+      "path_str": "Create / Skeleton / Create Chain from Curve",
+      "section": "Create",
+      "label": "Create Chain from Curve",
+      "id": 40928,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Create Spine"
+      ],
+      "path_str": "Create / Skeleton / Create Spine",
+      "section": "Create",
+      "label": "Create Spine",
+      "id": 41213,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Create Tail"
+      ],
+      "path_str": "Create / Skeleton / Create Tail",
+      "section": "Create",
+      "label": "Create Tail",
+      "id": 41322,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Create Control Splines"
+      ],
+      "path_str": "Create / Skeleton / Create Control Splines",
+      "section": "Create",
+      "label": "Create Control Splines",
+      "id": 41323,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Duplicate Symmetry"
+      ],
+      "path_str": "Create / Skeleton / Duplicate Symmetry",
+      "section": "Create",
+      "label": "Duplicate Symmetry",
+      "id": 41005,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Store Skeleton Pose"
+      ],
+      "path_str": "Create / Skeleton / Store Skeleton Pose",
+      "section": "Create",
+      "label": "Store Skeleton Pose",
+      "id": 41010,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Apply Skeleton Pose"
+      ],
+      "path_str": "Create / Skeleton / Apply Skeleton Pose",
+      "section": "Create",
+      "label": "Apply Skeleton Pose",
+      "id": 41011,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Set Neutral Pose"
+      ],
+      "path_str": "Create / Skeleton / Set Neutral Pose",
+      "section": "Create",
+      "label": "Set Neutral Pose",
+      "id": 41310,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Remove Neutral Pose"
+      ],
+      "path_str": "Create / Skeleton / Remove Neutral Pose",
+      "section": "Create",
+      "label": "Remove Neutral Pose",
+      "id": 41309,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "SI|3D Skeleton Drawing"
+      ],
+      "path_str": "Create / Skeleton / SI|3D Skeleton Drawing",
+      "section": "Create",
+      "label": "SI|3D Skeleton Drawing",
+      "id": 41164,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Skeleton",
+        "Align Root to First Bone When Drawing"
+      ],
+      "path_str": "Create / Skeleton / Align Root to First Bone When Drawing",
+      "section": "Create",
+      "label": "Align Root to First Bone When Drawing",
+      "id": 41259,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Biped Guide"
+      ],
+      "path_str": "Create / Character / Biped Guide",
+      "section": "Create",
+      "label": "Biped Guide",
+      "id": 41123,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Biped Dog Leg Guide"
+      ],
+      "path_str": "Create / Character / Biped Dog Leg Guide",
+      "section": "Create",
+      "label": "Biped Dog Leg Guide",
+      "id": 41315,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Quadruped Guide"
+      ],
+      "path_str": "Create / Character / Quadruped Guide",
+      "section": "Create",
+      "label": "Quadruped Guide",
+      "id": 41197,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Rig from Biped Guide"
+      ],
+      "path_str": "Create / Character / Rig from Biped Guide",
+      "section": "Create",
+      "label": "Rig from Biped Guide",
+      "id": 41130,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Rig from Biped Dog Leg Guide"
+      ],
+      "path_str": "Create / Character / Rig from Biped Dog Leg Guide",
+      "section": "Create",
+      "label": "Rig from Biped Dog Leg Guide",
+      "id": 41316,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Rig from Quadruped Guide"
+      ],
+      "path_str": "Create / Character / Rig from Quadruped Guide",
+      "section": "Create",
+      "label": "Rig from Quadruped Guide",
+      "id": 41199,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Hierarchy from Guide"
+      ],
+      "path_str": "Create / Character / Hierarchy from Guide",
+      "section": "Create",
+      "label": "Hierarchy from Guide",
+      "id": 41200,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Biped Tags",
+        "Center of Gravity"
+      ],
+      "path_str": "Create / Character / Biped Tags / Center of Gravity",
+      "section": "Create",
+      "label": "Center of Gravity",
+      "id": 41201,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Biped Tags",
+        "Left Foot"
+      ],
+      "path_str": "Create / Character / Biped Tags / Left Foot",
+      "section": "Create",
+      "label": "Left Foot",
+      "id": 41202,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Biped Tags",
+        "Right Foot"
+      ],
+      "path_str": "Create / Character / Biped Tags / Right Foot",
+      "section": "Create",
+      "label": "Right Foot",
+      "id": 41203,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Biped - Define Step Marks"
+      ],
+      "path_str": "Create / Character / Biped - Define Step Marks",
+      "section": "Create",
+      "label": "Biped - Define Step Marks",
+      "id": 41204,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Biped - Deform Motion"
+      ],
+      "path_str": "Create / Character / Biped - Deform Motion",
+      "section": "Create",
+      "label": "Biped - Deform Motion",
+      "id": 41205,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Constraints Outside Model Boundaries",
+        "Select"
+      ],
+      "path_str": "Create / Character / Constraints Outside Model Boundaries / Select",
+      "section": "Create",
+      "label": "Select",
+      "id": 41206,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Constraints Outside Model Boundaries",
+        "Activate"
+      ],
+      "path_str": "Create / Character / Constraints Outside Model Boundaries / Activate",
+      "section": "Create",
+      "label": "Activate",
+      "id": 41208,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Constraints Outside Model Boundaries",
+        "Deactivate"
+      ],
+      "path_str": "Create / Character / Constraints Outside Model Boundaries / Deactivate",
+      "section": "Create",
+      "label": "Deactivate",
+      "id": 41207,
+      "accel": null
+    },
+    {
+      "path": [
+        "Create",
+        "Character",
+        "Constraints Outside Model Boundaries",
+        "Remove"
+      ],
+      "path_str": "Create / Character / Constraints Outside Model Boundaries / Remove",
+      "section": "Create",
+      "label": "Remove",
+      "id": 41209,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Shape",
+        "Shape Manager..."
+      ],
+      "path_str": "Deform / Shape / Shape Manager...",
+      "section": "Deform",
+      "label": "Shape Manager...",
+      "id": 41336,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Shape",
+        "Store and Apply Shape Key"
+      ],
+      "path_str": "Deform / Shape / Store and Apply Shape Key",
+      "section": "Deform",
+      "label": "Store and Apply Shape Key",
+      "id": 40773,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Shape",
+        "Store Shape Key"
+      ],
+      "path_str": "Deform / Shape / Store Shape Key",
+      "section": "Deform",
+      "label": "Store Shape Key",
+      "id": 40772,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Shape",
+        "Select Shape Key"
+      ],
+      "path_str": "Deform / Shape / Select Shape Key",
+      "section": "Deform",
+      "label": "Select Shape Key",
+      "id": 40774,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Shape",
+        "Replace Shape Key"
+      ],
+      "path_str": "Deform / Shape / Replace Shape Key",
+      "section": "Deform",
+      "label": "Replace Shape Key",
+      "id": 40775,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Shape",
+        "Apply Shape Key"
+      ],
+      "path_str": "Deform / Shape / Apply Shape Key",
+      "section": "Deform",
+      "label": "Apply Shape Key",
+      "id": 40776,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Shape",
+        "Modulate Shape Key with Weight Map"
+      ],
+      "path_str": "Deform / Shape / Modulate Shape Key with Weight Map",
+      "section": "Deform",
+      "label": "Modulate Shape Key with Weight Map",
+      "id": 40090,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Shape",
+        "Convert Shape Reference Mode..."
+      ],
+      "path_str": "Deform / Shape / Convert Shape Reference Mode...",
+      "section": "Deform",
+      "label": "Convert Shape Reference Mode...",
+      "id": 41146,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Shape",
+        "Deform Keys",
+        "Link Deform with..."
+      ],
+      "path_str": "Deform / Shape / Deform Keys / Link Deform with...",
+      "section": "Deform",
+      "label": "Link Deform with...",
+      "id": 41112,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Shape",
+        "Deform Keys",
+        "Link Deform with Orientation..."
+      ],
+      "path_str": "Deform / Shape / Deform Keys / Link Deform with Orientation...",
+      "section": "Deform",
+      "label": "Link Deform with Orientation...",
+      "id": 41115,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Shape",
+        "Deform Keys",
+        "Save Deform Key"
+      ],
+      "path_str": "Deform / Shape / Deform Keys / Save Deform Key",
+      "section": "Deform",
+      "label": "Save Deform Key",
+      "id": 41113,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Shape",
+        "Deform Keys",
+        "Apply Deform Key"
+      ],
+      "path_str": "Deform / Shape / Deform Keys / Apply Deform Key",
+      "section": "Deform",
+      "label": "Apply Deform Key",
+      "id": 41114,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Shape",
+        "Preferences..."
+      ],
+      "path_str": "Deform / Shape / Preferences...",
+      "section": "Deform",
+      "label": "Preferences...",
+      "id": 41337,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Set Envelope"
+      ],
+      "path_str": "Deform / Envelope / Set Envelope",
+      "section": "Deform",
+      "label": "Set Envelope",
+      "id": 40101,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Set Reference Poses"
+      ],
+      "path_str": "Deform / Envelope / Set Reference Poses",
+      "section": "Deform",
+      "label": "Set Reference Poses",
+      "id": 40900,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Reset Actor"
+      ],
+      "path_str": "Deform / Envelope / Reset Actor",
+      "section": "Deform",
+      "label": "Reset Actor",
+      "id": 41098,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Reassign Locally"
+      ],
+      "path_str": "Deform / Envelope / Reassign Locally",
+      "section": "Deform",
+      "label": "Reassign Locally",
+      "id": 40754,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Assign to No Deformer"
+      ],
+      "path_str": "Deform / Envelope / Assign to No Deformer",
+      "section": "Deform",
+      "label": "Assign to No Deformer",
+      "id": 40917,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Edit Weights..."
+      ],
+      "path_str": "Deform / Envelope / Edit Weights...",
+      "section": "Deform",
+      "label": "Edit Weights...",
+      "id": 40918,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Smooth Envelope Weights"
+      ],
+      "path_str": "Deform / Envelope / Smooth Envelope Weights",
+      "section": "Deform",
+      "label": "Smooth Envelope Weights",
+      "id": 41079,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Mirror Weights"
+      ],
+      "path_str": "Deform / Envelope / Mirror Weights",
+      "section": "Deform",
+      "label": "Mirror Weights",
+      "id": 41119,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Create Symmetry Mapping Template"
+      ],
+      "path_str": "Deform / Envelope / Create Symmetry Mapping Template",
+      "section": "Deform",
+      "label": "Create Symmetry Mapping Template",
+      "id": 41120,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Lock Weights"
+      ],
+      "path_str": "Deform / Envelope / Lock Weights",
+      "section": "Deform",
+      "label": "Lock Weights",
+      "id": 41329,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Unlock Weights"
+      ],
+      "path_str": "Deform / Envelope / Unlock Weights",
+      "section": "Deform",
+      "label": "Unlock Weights",
+      "id": 41330,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Clear Weight Locks"
+      ],
+      "path_str": "Deform / Envelope / Clear Weight Locks",
+      "section": "Deform",
+      "label": "Clear Weight Locks",
+      "id": 41331,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Remove Deformers"
+      ],
+      "path_str": "Deform / Envelope / Remove Deformers",
+      "section": "Deform",
+      "label": "Remove Deformers",
+      "id": 40920,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Remove Envelope"
+      ],
+      "path_str": "Deform / Envelope / Remove Envelope",
+      "section": "Deform",
+      "label": "Remove Envelope",
+      "id": 40919,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Select Deformer from Envelope"
+      ],
+      "path_str": "Deform / Envelope / Select Deformer from Envelope",
+      "section": "Deform",
+      "label": "Select Deformer from Envelope",
+      "id": 41189,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Create Bounding Volume",
+        "Box"
+      ],
+      "path_str": "Deform / Envelope / Create Bounding Volume / Box",
+      "section": "Deform",
+      "label": "Box",
+      "id": 41194,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Create Bounding Volume",
+        "Sphere"
+      ],
+      "path_str": "Deform / Envelope / Create Bounding Volume / Sphere",
+      "section": "Deform",
+      "label": "Sphere",
+      "id": 41195,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Associate Bounding Volume",
+        "Inclusive"
+      ],
+      "path_str": "Deform / Envelope / Associate Bounding Volume / Inclusive",
+      "section": "Deform",
+      "label": "Inclusive",
+      "id": 41191,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Associate Bounding Volume",
+        "Exclusive"
+      ],
+      "path_str": "Deform / Envelope / Associate Bounding Volume / Exclusive",
+      "section": "Deform",
+      "label": "Exclusive",
+      "id": 41192,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Envelope",
+        "Associate Bounding Volume",
+        "Limit"
+      ],
+      "path_str": "Deform / Envelope / Associate Bounding Volume / Limit",
+      "section": "Deform",
+      "label": "Limit",
+      "id": 41193,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "by Curve"
+      ],
+      "path_str": "Deform / Deform / by Curve",
+      "section": "Deform",
+      "label": "by Curve",
+      "id": 32958,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "by Cage"
+      ],
+      "path_str": "Deform / Deform / by Cage",
+      "section": "Deform",
+      "label": "by Cage",
+      "id": 41080,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "by Lattice"
+      ],
+      "path_str": "Deform / Deform / by Lattice",
+      "section": "Deform",
+      "label": "by Lattice",
+      "id": 32960,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "by Spine"
+      ],
+      "path_str": "Deform / Deform / by Spine",
+      "section": "Deform",
+      "label": "by Spine",
+      "id": 40709,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "by Surface"
+      ],
+      "path_str": "Deform / Deform / by Surface",
+      "section": "Deform",
+      "label": "by Surface",
+      "id": 32959,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "by Volume"
+      ],
+      "path_str": "Deform / Deform / by Volume",
+      "section": "Deform",
+      "label": "by Volume",
+      "id": 41089,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Bend"
+      ],
+      "path_str": "Deform / Deform / Bend",
+      "section": "Deform",
+      "label": "Bend",
+      "id": 32953,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Bulge"
+      ],
+      "path_str": "Deform / Deform / Bulge",
+      "section": "Deform",
+      "label": "Bulge",
+      "id": 40142,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Shear"
+      ],
+      "path_str": "Deform / Deform / Shear",
+      "section": "Deform",
+      "label": "Shear",
+      "id": 40143,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Taper"
+      ],
+      "path_str": "Deform / Deform / Taper",
+      "section": "Deform",
+      "label": "Taper",
+      "id": 32955,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Twist"
+      ],
+      "path_str": "Deform / Deform / Twist",
+      "section": "Deform",
+      "label": "Twist",
+      "id": 32954,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Fold"
+      ],
+      "path_str": "Deform / Deform / Fold",
+      "section": "Deform",
+      "label": "Fold",
+      "id": 41369,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Footprints  (ice)"
+      ],
+      "path_str": "Deform / Deform / Footprints  (ice)",
+      "section": "Deform",
+      "label": "Footprints  (ice)",
+      "id": 41557,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Push"
+      ],
+      "path_str": "Deform / Deform / Push",
+      "section": "Deform",
+      "label": "Push",
+      "id": 40568,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Relax"
+      ],
+      "path_str": "Deform / Deform / Relax",
+      "section": "Deform",
+      "label": "Relax",
+      "id": 41298,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Smooth"
+      ],
+      "path_str": "Deform / Deform / Smooth",
+      "section": "Deform",
+      "label": "Smooth",
+      "id": 41273,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Shrink Wrap"
+      ],
+      "path_str": "Deform / Deform / Shrink Wrap",
+      "section": "Deform",
+      "label": "Shrink Wrap",
+      "id": 40901,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Quick Stretch"
+      ],
+      "path_str": "Deform / Deform / Quick Stretch",
+      "section": "Deform",
+      "label": "Quick Stretch",
+      "id": 32951,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Wave"
+      ],
+      "path_str": "Deform / Deform / Wave",
+      "section": "Deform",
+      "label": "Wave",
+      "id": 32961,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Randomize"
+      ],
+      "path_str": "Deform / Deform / Randomize",
+      "section": "Deform",
+      "label": "Randomize",
+      "id": 32962,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Shape Jitter"
+      ],
+      "path_str": "Deform / Deform / Shape Jitter",
+      "section": "Deform",
+      "label": "Shape Jitter",
+      "id": 32963,
+      "accel": null
+    },
+    {
+      "path": [
+        "Deform",
+        "Deform",
+        "Cluster Center"
+      ],
+      "path_str": "Deform / Deform / Cluster Center",
+      "section": "Deform",
+      "label": "Cluster Center",
+      "id": 40730,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Transformations - Current Values"
+      ],
+      "path_str": "Actions / Store / Transformations - Current Values",
+      "section": "Actions",
+      "label": "Transformations - Current Values",
+      "id": 40760,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Marked Parameters - Current Values"
+      ],
+      "path_str": "Actions / Store / Marked Parameters - Current Values",
+      "section": "Actions",
+      "label": "Marked Parameters - Current Values",
+      "id": 40766,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Keyable Parameters - Current Values"
+      ],
+      "path_str": "Actions / Store / Keyable Parameters - Current Values",
+      "section": "Actions",
+      "label": "Keyable Parameters - Current Values",
+      "id": 41472,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Character Key Set - Current Values"
+      ],
+      "path_str": "Actions / Store / Character Key Set - Current Values",
+      "section": "Actions",
+      "label": "Character Key Set - Current Values",
+      "id": 41525,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Transformations - Fcurves"
+      ],
+      "path_str": "Actions / Store / Transformations - Fcurves",
+      "section": "Actions",
+      "label": "Transformations - Fcurves",
+      "id": 40769,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Marked Parameters - Fcurves"
+      ],
+      "path_str": "Actions / Store / Marked Parameters - Fcurves",
+      "section": "Actions",
+      "label": "Marked Parameters - Fcurves",
+      "id": 40768,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Animated Parameters - Fcurves"
+      ],
+      "path_str": "Actions / Store / Animated Parameters - Fcurves",
+      "section": "Actions",
+      "label": "Animated Parameters - Fcurves",
+      "id": 41008,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Keyable Parameters - Fcurves"
+      ],
+      "path_str": "Actions / Store / Keyable Parameters - Fcurves",
+      "section": "Actions",
+      "label": "Keyable Parameters - Fcurves",
+      "id": 41471,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Character Key Set - Fcurves"
+      ],
+      "path_str": "Actions / Store / Character Key Set - Fcurves",
+      "section": "Actions",
+      "label": "Character Key Set - Fcurves",
+      "id": 41526,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Transformations - All Sources"
+      ],
+      "path_str": "Actions / Store / Transformations - All Sources",
+      "section": "Actions",
+      "label": "Transformations - All Sources",
+      "id": 40767,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Marked Parameters - All Sources"
+      ],
+      "path_str": "Actions / Store / Marked Parameters - All Sources",
+      "section": "Actions",
+      "label": "Marked Parameters - All Sources",
+      "id": 40762,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Animated Parameters - Fcurves  Expressions"
+      ],
+      "path_str": "Actions / Store / Animated Parameters - Fcurves  Expressions",
+      "section": "Actions",
+      "label": "Animated Parameters - Fcurves  Expressions",
+      "id": 41009,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Keyable Parameters - All Sources"
+      ],
+      "path_str": "Actions / Store / Keyable Parameters - All Sources",
+      "section": "Actions",
+      "label": "Keyable Parameters - All Sources",
+      "id": 41528,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Local Transformations - Animation or Current Values"
+      ],
+      "path_str": "Actions / Store / Local Transformations - Animation or Current Values",
+      "section": "Actions",
+      "label": "Local Transformations - Animation or Current Values",
+      "id": 41148,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Marked Parameters - Animation or Current Values"
+      ],
+      "path_str": "Actions / Store / Marked Parameters - Animation or Current Values",
+      "section": "Actions",
+      "label": "Marked Parameters - Animation or Current Values",
+      "id": 41149,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Keyable Parameters - Animation or Current Values"
+      ],
+      "path_str": "Actions / Store / Keyable Parameters - Animation or Current Values",
+      "section": "Actions",
+      "label": "Keyable Parameters - Animation or Current Values",
+      "id": 41524,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Store",
+        "Character Key Set - Animation or Current Values"
+      ],
+      "path_str": "Actions / Store / Character Key Set - Animation or Current Values",
+      "section": "Actions",
+      "label": "Character Key Set - Animation or Current Values",
+      "id": 41527,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Apply",
+        "Action"
+      ],
+      "path_str": "Actions / Apply / Action",
+      "section": "Actions",
+      "label": "Action",
+      "id": 40763,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Apply",
+        "Paste Action..."
+      ],
+      "path_str": "Actions / Apply / Paste Action...",
+      "section": "Actions",
+      "label": "Paste Action...",
+      "id": 41222,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Apply",
+        "Reconnect Animation Mixer"
+      ],
+      "path_str": "Actions / Apply / Reconnect Animation Mixer",
+      "section": "Actions",
+      "label": "Reconnect Animation Mixer",
+      "id": 41240,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Templates",
+        "Create Empty Cnx Template"
+      ],
+      "path_str": "Actions / Templates / Create Empty Cnx Template",
+      "section": "Actions",
+      "label": "Create Empty Cnx Template",
+      "id": 40809,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Templates",
+        "Create Empty Value Template"
+      ],
+      "path_str": "Actions / Templates / Create Empty Value Template",
+      "section": "Actions",
+      "label": "Create Empty Value Template",
+      "id": 40810,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Templates",
+        "Create Connection Template"
+      ],
+      "path_str": "Actions / Templates / Create Connection Template",
+      "section": "Actions",
+      "label": "Create Connection Template",
+      "id": 40798,
+      "accel": null
+    },
+    {
+      "path": [
+        "Actions",
+        "Templates",
+        "Create Value Template"
+      ],
+      "path_str": "Actions / Templates / Create Value Template",
+      "section": "Actions",
+      "label": "Create Value Template",
+      "id": 40799,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Plot",
+        "All Transformations"
+      ],
+      "path_str": "Tools / Plot / All Transformations",
+      "section": "Tools",
+      "label": "All Transformations",
+      "id": 40181,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Plot",
+        "Shearing and SRT"
+      ],
+      "path_str": "Tools / Plot / Shearing and SRT",
+      "section": "Tools",
+      "label": "Shearing and SRT",
+      "id": 41529,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Plot",
+        "Rotations"
+      ],
+      "path_str": "Tools / Plot / Rotations",
+      "section": "Tools",
+      "label": "Rotations",
+      "id": 41166,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Plot",
+        "Positions"
+      ],
+      "path_str": "Tools / Plot / Positions",
+      "section": "Tools",
+      "label": "Positions",
+      "id": 41167,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Plot",
+        "Marked Parameters"
+      ],
+      "path_str": "Tools / Plot / Marked Parameters",
+      "section": "Tools",
+      "label": "Marked Parameters",
+      "id": 40183,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Plot",
+        "Keyable Parameters"
+      ],
+      "path_str": "Tools / Plot / Keyable Parameters",
+      "section": "Tools",
+      "label": "Keyable Parameters",
+      "id": 41521,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Plot",
+        "Constrained Transforms"
+      ],
+      "path_str": "Tools / Plot / Constrained Transforms",
+      "section": "Tools",
+      "label": "Constrained Transforms",
+      "id": 41224,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Plot",
+        "Shape"
+      ],
+      "path_str": "Tools / Plot / Shape",
+      "section": "Tools",
+      "label": "Shape",
+      "id": 40182,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Plot",
+        "Curve"
+      ],
+      "path_str": "Tools / Plot / Curve",
+      "section": "Tools",
+      "label": "Curve",
+      "id": 40180,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Devices",
+        "Manage Device Drivers"
+      ],
+      "path_str": "Tools / Devices / Manage Device Drivers",
+      "section": "Tools",
+      "label": "Manage Device Drivers",
+      "id": 41233,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Devices",
+        "Start Capture"
+      ],
+      "path_str": "Tools / Devices / Start Capture",
+      "section": "Tools",
+      "label": "Start Capture",
+      "id": 41234,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Devices",
+        "Stop Capture"
+      ],
+      "path_str": "Tools / Devices / Stop Capture",
+      "section": "Tools",
+      "label": "Stop Capture",
+      "id": 41235,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Devices",
+        "Enable All Devices"
+      ],
+      "path_str": "Tools / Devices / Enable All Devices",
+      "section": "Tools",
+      "label": "Enable All Devices",
+      "id": 41237,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Devices",
+        "Disable All Devices"
+      ],
+      "path_str": "Tools / Devices / Disable All Devices",
+      "section": "Tools",
+      "label": "Disable All Devices",
+      "id": 41239,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Import/Export",
+        "Import Mixer (replace)"
+      ],
+      "path_str": "Tools / Import/Export / Import Mixer (replace)",
+      "section": "Tools",
+      "label": "Import Mixer (replace)",
+      "id": 41168,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Import/Export",
+        "Import Action"
+      ],
+      "path_str": "Tools / Import/Export / Import Action",
+      "section": "Tools",
+      "label": "Import Action",
+      "id": 40765,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Import/Export",
+        "Import Referenced Action"
+      ],
+      "path_str": "Tools / Import/Export / Import Referenced Action",
+      "section": "Tools",
+      "label": "Import Referenced Action",
+      "id": 41325,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Import/Export",
+        "Export Mixer"
+      ],
+      "path_str": "Tools / Import/Export / Export Mixer",
+      "section": "Tools",
+      "label": "Export Mixer",
+      "id": 41169,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "Import/Export",
+        "Export Action"
+      ],
+      "path_str": "Tools / Import/Export / Export Action",
+      "section": "Tools",
+      "label": "Export Action",
+      "id": 40764,
+      "accel": null
+    },
+    {
+      "path": [
+        "Tools",
+        "MOTOR",
+        "Anchor-to-Delete"
+      ],
+      "path_str": "Tools / MOTOR / Anchor-to-Delete",
+      "section": "Tools",
+      "label": "Anchor-to-Delete",
+      "id": 41522,
+      "accel": null
+    }
+  ]
+}

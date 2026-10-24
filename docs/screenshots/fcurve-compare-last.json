@@ -1,0 +1,70 @@
+{
+  "ok": true,
+  "diffs": [],
+  "got": {
+    "name": "FCurve",
+    "extrap": 1,
+    "key_count": 3,
+    "keys": [
+      {
+        "time": 1,
+        "value": 0,
+        "left": 0,
+        "right": 0,
+        "constr": null,
+        "interp": 3
+      },
+      {
+        "time": 10,
+        "value": 5,
+        "left": 5,
+        "right": 5,
+        "constr": null,
+        "interp": 3
+      },
+      {
+        "time": 20,
+        "value": 0,
+        "left": 0,
+        "right": 0,
+        "constr": null,
+        "interp": 3
+      }
+    ]
+  },
+  "golden": {
+    "name": "FCurve",
+    "extrap": 1,
+    "key_count": 3,
+    "keys": [
+      {
+        "time": 1,
+        "value": 0,
+        "left": 0,
+        "right": 0,
+        "constr": null,
+        "interp": 3
+      },
+      {
+        "time": 10,
+        "value": 5,
+        "left": 5,
+        "right": 5,
+        "constr": null,
+        "interp": 3
+      },
+      {
+        "time": 20,
+        "value": 0,
+        "left": 0,
+        "right": 0,
+        "constr": null,
+        "interp": 3
+      }
+    ]
+  },
+  "mid": {
+    "frame": 5,
+    "value": 2.085048010973937
+  }
+}

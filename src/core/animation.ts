@@ -1,17 +1,31 @@
 // FCurves: keys on a parameter, evaluated per frame. Mirrors Softimage's "fcurve" animation source.
 import { Parameter } from './params';
 
-export interface Key { time: number; value: number; }
+/** Softimage key: time/value plus optional per-key interpolation (siInterpolation*). */
+export interface Key { time: number; value: number; left?: number; right?: number; interp?: number; }
+
+/** Softimage FCurve defaults from PC dump (`si_anim_fcurve_golden.json`): extrap=1, key interp=3 (spline). */
+export const SI_FCURVE_EXTRAP_CONSTANT = 1;
+export const SI_KEY_INTERP_SPLINE = 3;
 
 export class FCurve {
   keys: Key[] = [];
+  /** Softimage FCurve.extrapolation (1 = constant / default in golden dump). */
+  extrap = SI_FCURVE_EXTRAP_CONSTANT;
+  /** Default key interpolation when a key omits `interp` (3 = spline). */
+  interp = SI_KEY_INTERP_SPLINE;
   constructor(readonly param: Parameter) {}
-  addKey(time: number, value: number) {
+  addKey(time: number, value: number, extra?: Partial<Key>) {
     const k = this.keys.find(k => k.time === time);
-    if (k) k.value = value; else { this.keys.push({ time, value }); this.keys.sort((a, b) => a.time - b.time); }
+    if (k) { k.value = value; if (extra) Object.assign(k, extra); }
+    else { this.keys.push({ time, value, left: value, right: value, interp: this.interp, ...extra }); this.keys.sort((a, b) => a.time - b.time); }
   }
   removeKey(time: number) { this.keys = this.keys.filter(k => k.time !== time); }
   hasKey(time: number) { return this.keys.some(k => k.time === time); }
+  /** Softimage-style dump used by compare_fcurves.mjs. */
+  dump() {
+    return { name: 'FCurve', extrap: this.extrap, key_count: this.keys.length, keys: this.keys.map(k => ({ time: k.time, value: k.value, left: k.left ?? k.value, right: k.right ?? k.value, constr: null, interp: k.interp ?? this.interp })) };
+  }
   eval(time: number): number {
     const ks = this.keys;
     if (!ks.length) return this.param.value;
@@ -21,8 +35,12 @@ export class FCurve {
       const a = ks[i], b = ks[i + 1];
       if (time >= a.time && time <= b.time) {
         const t = (time - a.time) / (b.time - a.time);
-        const interp = (this as any).interp ?? 'spline';
-        if (interp === 'step') return a.value; if (interp === 'linear') return a.value + (b.value - a.value) * t;
+        const kind = a.interp ?? this.interp;
+        // Softimage siInterpolation*: 0 constant/step, 1 linear, 3 spline (default golden)
+        if (kind === 0) return a.value;
+        if (kind === 1) return a.value + (b.value - a.value) * t;
+        if ((this as any)._interpName === 'step') return a.value;
+        if ((this as any)._interpName === 'linear') return a.value + (b.value - a.value) * t;
         const s = t * t * (3 - 2 * t); // smoothstep ~ default spline ease
         return a.value + (b.value - a.value) * s;
       }

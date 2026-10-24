@@ -193,7 +193,8 @@ export function registerModelCommands(app: App) {
   app.register({ name: 'DuplicateSymmetry', label: 'Duplicate Symmetry', category: 'Edit', args: [{ name: 'InputObjs', default: '' }], execute(app) { const made = app.run('Duplicate', { InputObjs: app.selectedObjects }) as X3DObject[]; for (const o of made) { const l = o.kinematics.local; app.setParam(l.get('posx')!, -l.val('posx')); app.setParam(l.get('sclx')!, -l.val('sclx')); } } });
   app.register({ name: 'StoreSkeletonPose', label: 'Store Skeleton Pose', category: 'Animation', args: [], execute(app) { const r = rootOf(app); if (!r) throw new Error('Select a chain'); const pose = r.bones.map(b => ['x', 'y', 'z'].map(ax => b.kinematics.local.val('rot' + ax))); if (!r.get('storedpose')) r.add(str('storedpose', '', 'Stored Pose', { readOnly: true })); app.setParam(r.get('storedpose')!, JSON.stringify(pose)); } });
   app.register({ name: 'ApplySkeletonPose', label: 'Apply Skeleton Pose', category: 'Animation', args: [], execute(app) { const r = rootOf(app); const s = r?.val('storedpose'); if (!r || !s) throw new Error('No stored pose on this chain'); const pose = JSON.parse(s) as number[][]; r.bones.forEach((b, i) => { if (pose[i]) ['x', 'y', 'z'].forEach((ax, k) => app.setParam(b.kinematics.local.get('rot' + ax)!, pose[i][k])); }); } });
-  for (const [name, label] of [['CreateSpine', 'Create Spine'], ['MakeTail', 'Create Tail'], ['MakeControlSplines', 'Create Control Splines'], ['GetPresetModel', 'Get Preset Model']]) app.register({ name, label, category: 'Character Rigging', args: [], canRun: () => false, execute() { throw new Error(`${label} needs Softimage's rig preset files (not shipped)`); } });
+  // GetPresetModel is registered by registerPresetModels (presets.ts) — do not stub it here.
+  for (const [name, label] of [['CreateSpine', 'Create Spine'], ['MakeTail', 'Create Tail'], ['MakeControlSplines', 'Create Control Splines']]) app.register({ name, label, category: 'Character Rigging', args: [], canRun: () => false, execute() { throw new Error(`${label} needs Softimage's rig preset files (not shipped)`); } });
 
   // ------------------------------------------------------------ materials
   const SHADERS: Record<string, (n: string) => Shader> = {
@@ -424,8 +425,37 @@ export function registerModelAliases(app: App) {
   app.register({ name: 'CreateForce', label: 'Create Force', category: 'Simulation', description: 'Creates a force control object (used by simulations, which are outside the Model/Animate scope).', args: [{ name: 'PresetObj', default: 'Gravity' }], execute(app, a) { const n = new Null(app.scene.uniqueName(String(a.PresetObj).toLowerCase())); n.add(str('forcetype', String(a.PresetObj), 'Force Type', { readOnly: true })); n.add(num('amplitude', 1, 'Amplitude', { keyable: true })); addObject(app, n); app.select([n]); return n; } });
   app.register({ name: 'CreateLightRigFromImage', label: 'Light Rig from Image', category: 'Primitive', args: [], canRun: () => false, execute() { throw new Error('Needs an HDR image loader (not in this build)'); } });
   // static-pose actions (Store/Apply Skeleton Pose use these)
-  app.register({ name: 'StoreAction', label: 'Store Action', category: 'Animation Mixer', description: 'Stores the current transform values of the selection as an action source on the model.', args: [{ name: 'Model', default: '' }, { name: 'InputObj', default: '' }, { name: 'Mode', default: 4 }, { name: 'Name', default: 'StoredStaticPose' }], execute(app, a) { const objs = app.targets(a.InputObj); const model = objs[0]?.model ?? app.scene.root; const values: Record<string, number> = {}; for (const o of objs) for (const ax of ['x', 'y', 'z']) for (const k of ['pos', 'rot', 'scl']) values[`${o.fullName}.kine.local.${k}${ax}`] = o.kinematics.local.val(k + ax); const src = new Property(app.scene.uniqueName(a.Name || 'Action'), 'actionsource', [str('data', JSON.stringify(values), 'Values', { readOnly: true }), int('items', Object.keys(values).length, 'Items', { readOnly: true })]); app.record('Store action', () => model.addProperty(src), () => model.removeProperty(src)); app.select([src]); return src; } });
-  app.register({ name: 'ApplyAction', label: 'Apply Action', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }], execute(app, a) { const src = (app.selection.find(n => n.type === 'actionsource') as Property | undefined) ?? (app.selectedObjects[0]?.model ?? app.scene.root).properties.filter(p => p.type === 'actionsource').pop(); if (!src) throw new Error('No action source to apply (store one first)'); const values = JSON.parse(src.val('data')); for (const [path, v] of Object.entries(values)) { const p = findParamPath(app, path); if (p) app.setParam(p, v as number); } void a; } });
+  app.register({ name: 'StoreAction', label: 'Store Action', category: 'Animation Mixer', description: 'Stores current values and/or fcurves of the selection as an action source on the model (Softimage StoreAction modes).', args: [{ name: 'Model', default: '' }, { name: 'InputObj', default: '' }, { name: 'Mode', default: 4 }, { name: 'Name', default: 'StoredStaticPose' }], execute(app, a) {
+    const objs = app.targets(a.InputObj); const model = (a.Model ? app.scene.find(a.Model) : null) ?? objs[0]?.model ?? app.scene.root;
+    const mode = Number(a.Mode ?? 4); const wantFcurves = mode === 1 || mode === 3 || mode === 9 || /Fcv|Fcurve/i.test(String(a.Name || ''));
+    const wantExpr = mode === 3 || /Expression/i.test(String(a.Name || ''));
+    const marked = [...app.anim.marked]; const keySet: any[] = (app as any).currentKeySet ?? [];
+    const pickParams = () => {
+      if (keySet.length && /Character|KeySet|Key Set/i.test(String(a.Name || ''))) return keySet as import('../core/params').Parameter[];
+      if (marked.length && /Marked|Params/i.test(String(a.Name || ''))) return marked;
+      if (/Keyable/i.test(String(a.Name || ''))) { const out: import('../core/params').Parameter[] = []; for (const o of (objs.length ? objs : app.selectedObjects)) out.push(...o.kinematics.local.params.filter(p => p.keyable)); return out; }
+      if (/Animated/i.test(String(a.Name || '')) || wantFcurves) { const out: import('../core/params').Parameter[] = []; for (const [p, fc] of app.anim.fcurves) if (fc.keys.length) out.push(p); if (out.length) return out; }
+      const out: import('../core/params').Parameter[] = []; for (const o of (objs.length ? objs : app.selectedObjects)) for (const ax of ['x', 'y', 'z']) for (const k of ['pos', 'rot', 'scl']) { const p = o.kinematics.local.get(k + ax); if (p) out.push(p); } return out;
+    };
+    const params = pickParams(); const values: Record<string, number> = {}; const fcurves: Record<string, { time: number; value: number; interp?: number }[]> = {}; const exprs: Record<string, string> = {};
+    for (const p of params) {
+      values[p.fullName] = Number(p.value);
+      const fc = app.anim.fcurve(p); if (wantFcurves && fc?.keys.length) fcurves[p.fullName] = fc.keys.map(k => ({ time: k.time, value: k.value, interp: k.interp }));
+      const ex = wantExpr ? app.anim.expression(p) : undefined; if (ex) exprs[p.fullName] = ex;
+    }
+    if (!Object.keys(values).length) for (const o of (objs.length ? objs : app.selectedObjects)) for (const ax of ['x', 'y', 'z']) for (const k of ['pos', 'rot', 'scl']) values[`${o.fullName}.kine.local.${k}${ax}`] = o.kinematics.local.val(k + ax);
+    const src = new Property(app.scene.uniqueName(a.Name || 'Action'), 'actionsource', [str('data', JSON.stringify(values), 'Values', { readOnly: true }), str('fcurves', JSON.stringify(fcurves), 'FCurves', { readOnly: true }), str('expressions', JSON.stringify(exprs), 'Expressions', { readOnly: true }), int('items', Object.keys(values).length, 'Items', { readOnly: true }), int('mode', mode, 'Mode', { readOnly: true })]);
+    app.record('Store action', () => model.addProperty(src), () => model.removeProperty(src)); app.select([src]); return src;
+  } });
+  app.register({ name: 'ApplyAction', label: 'Apply Action', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }], execute(app, a) {
+    const src = (app.selection.find(n => n.type === 'actionsource') as Property | undefined) ?? (app.selectedObjects[0]?.model ?? app.scene.root).properties.filter(p => p.type === 'actionsource').pop();
+    if (!src) throw new Error('No action source to apply (store one first)');
+    const values = JSON.parse(src.val('data') || '{}') as Record<string, number>;
+    let fcurves: Record<string, { time: number; value: number; interp?: number }[]> = {}; try { fcurves = JSON.parse(src.val('fcurves') || '{}'); } catch { /* */ }
+    for (const [path, v] of Object.entries(values)) { const p = findParamPath(app, path) ?? findParam(app, path); if (p) app.setParam(p, v as number); }
+    for (const [path, keys] of Object.entries(fcurves)) { const p = findParamPath(app, path) ?? findParam(app, path); if (!p || !keys?.length) continue; const fc = app.anim.fcurve(p, true)!; fc.keys = keys.map(k => ({ time: k.time, value: k.value, left: k.value, right: k.value, interp: k.interp ?? fc.interp })); }
+    app.events.emit('params'); app.events.emit('frame'); void a;
+  } });
   app.commands.get('StoreSkeletonPose')!.execute = (app) => app.run('StoreAction', { Name: 'StoredStaticPose' });
   app.commands.get('ApplySkeletonPose')!.execute = (app) => app.run('ApplyAction');
   // chain up-vector / preferred axis
@@ -442,4 +472,14 @@ export function registerModelAliases(app: App) {
   topo.canRun = (a) => tc(a) || /Dissolve & Clean|Dissolve and Clean/.test(a.PresetObj) || a.Preset === 'MeshDissolveAndClean' || /Extrude Component Along Curve/.test(a.PresetObj);
   topo.execute = (app, a) => { if (/Dissolve/.test(a.PresetObj) && /Clean/.test(a.PresetObj)) return te(app, { ...a, PresetObj: 'Dissolve Component', Preset: 'Dissolve Component' }); if (/Extrude Component Along Curve/.test(a.PresetObj)) { const cs = app.componentSel(); const curve = app.selectedObjects.find(o => o.primitive?.curve()); if (!cs || cs.sel.kind !== 'polygon') throw new Error('Select polygons (Y) and Shift-select a curve'); const len = curve ? C.curveLength(curve.primitive!.curve()!) : 2; const op = makeTopologyOperator('Extrude Along Normal', cs.sel)!; op.set('length', len); const prim = cs.obj.primitive!; app.record('Extrude Along Curve', () => prim.addOperator(op), () => prim.removeOperator(op)); app.compSel = null; app.select([op]); return op; } return te(app, a); };
 }
-function findParamPath(app: App, path: string) { const parts = path.split('.'); const obj = [...app.scene.allObjects()].find(o => path.startsWith(o.fullName + '.')); if (!obj) return undefined; const name = parts[parts.length - 1]; return path.includes('.kine.local.') ? obj.kinematics.local.get(name) : undefined; }
+function findParamPath(app: App, path: string) {
+  const obj = [...app.scene.allObjects()].find(o => path === o.fullName || path.startsWith(o.fullName + '.'));
+  if (!obj) return undefined;
+  const rest = path.slice(obj.fullName.length + 1); // e.g. kine.local.posx
+  if (rest.startsWith('kine.local.')) return obj.kinematics.local.get(rest.slice('kine.local.'.length));
+  if (rest.startsWith('kine.global.')) return obj.kinematics.global.get(rest.slice('kine.global.'.length));
+  const name = rest.split('.').pop()!;
+  for (const pr of obj.properties) if (rest.startsWith(pr.name + '.') || rest.startsWith(pr.type + '.')) { const p = pr.get(name); if (p) return p; }
+  return obj.kinematics.local.get(name);
+}
+function findParam(app: App, path: string) { return findParamPath(app, path); }
