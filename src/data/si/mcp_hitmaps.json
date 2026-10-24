@@ -1,0 +1,784 @@
+{
+  "source": "mcp.dll RT_BITMAP U\u2194HU absdiff + pe_resources.json dialogs 9200/9400",
+  "generator": "tools/build_mcp_hitmaps.py",
+  "panels": {
+    "Select": {
+      "skin": "SELEC1U.png",
+      "skinDown": "SELEC1D.png",
+      "skinHover": "SELEC1HU.png",
+      "w": 130,
+      "h": 324,
+      "hits": [
+        {
+          "id": "header",
+          "rect": [
+            2,
+            2,
+            126,
+            18
+          ],
+          "kind": "header"
+        },
+        {
+          "id": "selectTool",
+          "rect": [
+            10,
+            22,
+            52,
+            60
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "group",
+          "rect": [
+            68,
+            28,
+            60,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "center",
+          "rect": [
+            68,
+            57,
+            60,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "object",
+          "rect": [
+            5,
+            86,
+            60,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "point",
+          "rect": [
+            68,
+            86,
+            60,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "edge",
+          "rect": [
+            5,
+            115,
+            60,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "polygon",
+          "rect": [
+            68,
+            115,
+            60,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "sample",
+          "rect": [
+            4,
+            145,
+            104,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "filter",
+          "rect": [
+            6,
+            175,
+            118,
+            18
+          ],
+          "kind": "field"
+        },
+        {
+          "id": "name",
+          "rect": [
+            6,
+            199,
+            99,
+            18
+          ],
+          "kind": "field"
+        },
+        {
+          "id": "nameNav",
+          "rect": [
+            106,
+            199,
+            24,
+            22
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "explore",
+          "rect": [
+            4,
+            224,
+            61,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "scene",
+          "rect": [
+            68,
+            224,
+            60,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "selection",
+          "rect": [
+            5,
+            253,
+            60,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "clusters",
+          "rect": [
+            68,
+            253,
+            60,
+            25
+          ],
+          "kind": "button"
+        }
+      ]
+    },
+    "Transform": {
+      "skin": "SRTU.png",
+      "skinDown": "SRTD.png",
+      "skinHover": "SRTHU.png",
+      "w": 130,
+      "h": 350,
+      "hits": [
+        {
+          "id": "header",
+          "rect": [
+            2,
+            2,
+            126,
+            18
+          ],
+          "kind": "header"
+        },
+        {
+          "id": "scaleX",
+          "rect": [
+            4,
+            28,
+            97,
+            20
+          ],
+          "kind": "field",
+          "peDialog": "9400"
+        },
+        {
+          "id": "scaleY",
+          "rect": [
+            4,
+            50,
+            97,
+            20
+          ],
+          "kind": "field",
+          "peDialog": "9400"
+        },
+        {
+          "id": "scaleZ",
+          "rect": [
+            4,
+            72,
+            97,
+            20
+          ],
+          "kind": "field",
+          "peDialog": "9400"
+        },
+        {
+          "id": "scale",
+          "rect": [
+            110,
+            31,
+            20,
+            22
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "scaleOpt",
+          "rect": [
+            108,
+            68,
+            19,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "rotateX",
+          "rect": [
+            4,
+            99,
+            97,
+            20
+          ],
+          "kind": "field",
+          "peDialog": "9400"
+        },
+        {
+          "id": "rotateY",
+          "rect": [
+            4,
+            121,
+            97,
+            20
+          ],
+          "kind": "field",
+          "peDialog": "9400"
+        },
+        {
+          "id": "rotateZ",
+          "rect": [
+            4,
+            143,
+            97,
+            20
+          ],
+          "kind": "field",
+          "peDialog": "9400"
+        },
+        {
+          "id": "rotate",
+          "rect": [
+            110,
+            102,
+            20,
+            22
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "rotateOpt",
+          "rect": [
+            108,
+            139,
+            19,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "translateX",
+          "rect": [
+            4,
+            170,
+            97,
+            20
+          ],
+          "kind": "field",
+          "peDialog": "9400"
+        },
+        {
+          "id": "translateY",
+          "rect": [
+            4,
+            192,
+            97,
+            20
+          ],
+          "kind": "field",
+          "peDialog": "9400"
+        },
+        {
+          "id": "translateZ",
+          "rect": [
+            4,
+            214,
+            97,
+            20
+          ],
+          "kind": "field",
+          "peDialog": "9400"
+        },
+        {
+          "id": "translate",
+          "rect": [
+            110,
+            174,
+            20,
+            22
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "translateOpt",
+          "rect": [
+            108,
+            210,
+            19,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "refGlobal",
+          "rect": [
+            4,
+            240,
+            39,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "refLocal",
+          "rect": [
+            46,
+            240,
+            39,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "refView",
+          "rect": [
+            88,
+            240,
+            39,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "refPar",
+          "rect": [
+            4,
+            269,
+            39,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "refRef",
+          "rect": [
+            46,
+            269,
+            39,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "refPlane",
+          "rect": [
+            88,
+            269,
+            39,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "cog",
+          "rect": [
+            4,
+            303,
+            39,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "prop",
+          "rect": [
+            46,
+            303,
+            39,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "sym",
+          "rect": [
+            88,
+            303,
+            39,
+            25
+          ],
+          "kind": "button"
+        }
+      ]
+    },
+    "Snap": {
+      "skin": "SNAPU.png",
+      "skinDown": "SNAPD.png",
+      "skinHover": "SNAPHU.png",
+      "w": 130,
+      "h": 57,
+      "hits": [
+        {
+          "id": "header",
+          "rect": [
+            2,
+            2,
+            126,
+            18
+          ],
+          "kind": "header"
+        },
+        {
+          "id": "snapOn",
+          "rect": [
+            5,
+            27,
+            22,
+            22
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "snapPoint",
+          "rect": [
+            30,
+            27,
+            22,
+            22
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "snapCurve",
+          "rect": [
+            55,
+            27,
+            22,
+            22
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "snapMidpoint",
+          "rect": [
+            80,
+            27,
+            22,
+            22
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "snapGrid",
+          "rect": [
+            105,
+            27,
+            22,
+            22
+          ],
+          "kind": "button"
+        }
+      ]
+    },
+    "Constrain": {
+      "skin": "CONSTU.png",
+      "skinDown": "CONSTD.png",
+      "skinHover": "CONSTHU.png",
+      "w": 130,
+      "h": 96,
+      "hits": [
+        {
+          "id": "header",
+          "rect": [
+            2,
+            2,
+            126,
+            18
+          ],
+          "kind": "header"
+        },
+        {
+          "id": "parent",
+          "rect": [
+            6,
+            30,
+            60,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "cut",
+          "rect": [
+            69,
+            30,
+            60,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "cnsComp",
+          "rect": [
+            6,
+            59,
+            60,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "childComp",
+          "rect": [
+            69,
+            59,
+            60,
+            25
+          ],
+          "kind": "button"
+        }
+      ]
+    },
+    "Edit": {
+      "skin": "EDITU.png",
+      "skinDown": "EDITD.png",
+      "skinHover": "EDITHU.png",
+      "w": 130,
+      "h": 96,
+      "hits": [
+        {
+          "id": "header",
+          "rect": [
+            2,
+            2,
+            126,
+            18
+          ],
+          "kind": "header"
+        },
+        {
+          "id": "freeze",
+          "rect": [
+            6,
+            30,
+            60,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "group",
+          "rect": [
+            69,
+            30,
+            45,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "freezeM",
+          "rect": [
+            6,
+            59,
+            60,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "immed",
+          "rect": [
+            69,
+            59,
+            45,
+            25
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "stackPlus",
+          "rect": [
+            116,
+            30,
+            12,
+            12
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "stackMinus",
+          "rect": [
+            116,
+            44,
+            12,
+            12
+          ],
+          "kind": "button"
+        }
+      ]
+    },
+    "MiniTransform": {
+      "skin": "MINITRANSFORMMCP_U.png",
+      "w": 200,
+      "h": 120,
+      "hits": [
+        {
+          "id": "miniMarked",
+          "rect": [
+            3,
+            2,
+            86,
+            21
+          ],
+          "kind": "field"
+        },
+        {
+          "id": "miniFilter",
+          "rect": [
+            94,
+            2,
+            67,
+            21
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "miniMenu",
+          "rect": [
+            166,
+            4,
+            25,
+            18
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "miniScale",
+          "rect": [
+            170,
+            27,
+            17,
+            19
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "miniRotate",
+          "rect": [
+            170,
+            51,
+            17,
+            19
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "miniTranslate",
+          "rect": [
+            170,
+            74,
+            17,
+            19
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "miniRef0",
+          "rect": [
+            7,
+            99,
+            33,
+            19
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "miniRef1",
+          "rect": [
+            42,
+            99,
+            33,
+            19
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "miniRef2",
+          "rect": [
+            79,
+            99,
+            33,
+            19
+          ],
+          "kind": "button"
+        },
+        {
+          "id": "miniAxes",
+          "rect": [
+            114,
+            99,
+            80,
+            19
+          ],
+          "kind": "button"
+        }
+      ]
+    },
+    "Layer": {
+      "skin": "LAYERU.png",
+      "w": 130,
+      "h": 61,
+      "hits": [
+        {
+          "id": "header",
+          "rect": [
+            2,
+            2,
+            126,
+            18
+          ],
+          "kind": "header"
+        },
+        {
+          "id": "layerMenu",
+          "rect": [
+            4,
+            24,
+            122,
+            32
+          ],
+          "kind": "button"
+        }
+      ]
+    }
+  }
+}
