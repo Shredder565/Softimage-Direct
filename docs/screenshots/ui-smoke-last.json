@@ -1,5 +1,5 @@
 {
-  "ok": 30,
+  "ok": 31,
   "fail": 0,
   "note": 1,
   "okItems": [
@@ -26,9 +26,10 @@
     "module switch → Animate (18 groups)",
     "module switch → Model (15 groups)",
     "module switch → Render (18 groups)",
-    "module switch → Simulate (16 groups)",
+    "module switch → Simulate (11 groups)",
     "module switch → ICE (16 groups)",
     "module switch → Hair (21 groups)",
+    "Simulate≠ICE (205 Rigid/Soft/Cloth vs 303 Particles/CrowdFX)",
     "layout Default",
     "layout Dual",
     "layout 1024 x 768",
