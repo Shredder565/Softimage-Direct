@@ -58,7 +58,7 @@ export function openMenu(app: App, items: MenuItem[], x: number, y: number, path
     const row = document.createElement('div'); row.className = 'menu-item'; row.textContent = it.label ?? '';
     const bound = it.id !== undefined ? CMDS[String(it.id)] : undefined;
     const def = bound ? app.commands.get(bound.cmd) : undefined;
-    const implemented = !!def && (!def.canRun || def.canRun(buildArgs(it, bound!, [...path, it.label ?? ''])));
+    const implemented = !!def && (!def.canRun || def.canRun(buildArgs(it, bound!, [...path, it.label ?? ''], app.module)));
     if (it.items) {
       row.classList.add('has-sub');
       row.onpointerenter = () => { const r = row.getBoundingClientRect(); openMenu(app, it.items!, r.right - 2, r.top - 2, [...path, it.label!], level + 1); };
@@ -77,7 +77,7 @@ export function openMenu(app: App, items: MenuItem[], x: number, y: number, path
   openMenus[level] = m;
 }
 
-function buildArgs(it: MenuItem, bound: { cmd: string; name: string; args: [string, any][] }, path: string[]) {
+function buildArgs(it: MenuItem, bound: { cmd: string; name: string; args: [string, any][] }, path: string[], module?: string) {
   const args: Record<string, any> = {};
   for (const [k, v] of bound.args) if (v !== null && v !== '') args[k] = v;
   // Mesh/surface/curve primitives: the preset is the leaf label, the geometry type comes from the submenu.
@@ -93,12 +93,14 @@ function buildArgs(it: MenuItem, bound: { cmd: string; name: string; args: [stri
   if (bound.cmd === 'SIApplyShader' || bound.cmd === 'ApplyShader') args.PresetObj = it.label;
   if (bound.cmd === 'GetPrimLight' && it.label === 'More...') args.PresetObj = 'Point';
   if (bound.cmd === 'AddProp' && !args.PresetObj) args.PresetObj = it.label;
+  // Softimage toolbar enable can be module-context; commands may read `_module` from args.
+  if (module) args._module = module;
   return args;
 }
 
 function runMenuItem(app: App, it: MenuItem, bound: { cmd: string; name: string; args: [string, any][] } | undefined, path: string[]) {
   if (!bound) { app.logMsg('info', `Menu ${path.join(' > ')}: no command mapped`); return; }
-  const args = buildArgs(it, bound, path);
+  const args = buildArgs(it, bound, path, app.module);
   if (!app.commands.has(bound.cmd)) { app.logMsg('error', `${path.join(' > ')} → ${bound.cmd}: not implemented yet`); return; }
   try { app.run(bound.cmd, args); } catch { /* logged */ }
 }
@@ -106,8 +108,38 @@ function runMenuItem(app: App, it: MenuItem, bound: { cmd: string; name: string;
 /** For testing/status: every leaf of a module's menu with its command and whether it can run. */
 export function menuStatus(app: App, module = 'Model') {
   const out: { path: string; label: string; id: number; cmd: string | null; implemented: boolean }[] = [];
-  const walk = (items: MenuItem[], path: string[]) => { for (const it of items) { if (it.separator) continue; if (it.items) { walk(it.items, [...path, it.label!]); continue; } const bound = it.id !== undefined ? CMDS[String(it.id)] : undefined; const def = bound ? app.commands.get(bound.cmd) : undefined; const impl = !!def && (!def.canRun || def.canRun(buildArgs(it, bound!, [...path, it.label ?? '']))); out.push({ path: path.join(' > '), label: it.label ?? '', id: it.id ?? -1, cmd: bound?.cmd ?? null, implemented: impl }); } };
+  const walk = (items: MenuItem[], path: string[]) => { for (const it of items) { if (it.separator) continue; if (it.items) { walk(it.items, [...path, it.label!]); continue; } const bound = it.id !== undefined ? CMDS[String(it.id)] : undefined; const def = bound ? app.commands.get(bound.cmd) : undefined; const impl = !!def && (!def.canRun || def.canRun(buildArgs(it, bound!, [...path, it.label ?? ''], module))); out.push({ path: path.join(' > '), label: it.label ?? '', id: it.id ?? -1, cmd: bound?.cmd ?? null, implemented: impl }); } };
   walk(MENUS[module] ?? [], []); return out;
+}
+
+/**
+ * Softimage Model vs Animate Get is a shared PE surface (170 common leaves; Model-only Toric).
+ * Direct enable rules are module-aware via `_module` but GetPrim/CreatePrim stay module-independent —
+ * so shared Get leaves must enable identically under both modules. Softimage interactive Enabled
+ * deltas (if any) remain observation-blocked.
+ */
+export function getEnableParity(app: App) {
+  const model = menuStatus(app, 'Model').filter(x => x.path === 'Get' || x.path.startsWith('Get >'));
+  const animate = menuStatus(app, 'Animate').filter(x => x.path === 'Get' || x.path.startsWith('Get >'));
+  const byId = new Map(model.map(x => [x.id, x]));
+  const shared: { id: number; path: string; label: string; cmd: string | null; model: boolean; animate: boolean }[] = [];
+  const mismatches: typeof shared = [];
+  for (const a of animate) {
+    const m = byId.get(a.id);
+    if (!m) continue;
+    const row = { id: a.id, path: a.path, label: a.label, cmd: a.cmd, model: m.implemented, animate: a.implemented };
+    shared.push(row);
+    if (m.implemented !== a.implemented) mismatches.push(row);
+  }
+  const modelOnly = model.filter(m => !animate.some(a => a.id === m.id)).map(m => ({ id: m.id, path: m.path, label: m.label }));
+  return {
+    modelGet: model.length,
+    animateGet: animate.length,
+    shared: shared.length,
+    mismatches,
+    modelOnly,
+    ok: mismatches.length === 0 && shared.length === Math.min(model.length, animate.length),
+  };
 }
 export function runMenuPath(app: App, module: string, path: string, label: string) {
   const walk = (items: MenuItem[], p: string[]): MenuItem | null => { for (const it of items) { if (it.separator) continue; if (it.items) { const r = walk(it.items, [...p, it.label!]); if (r) return r; continue; } if (p.join(' > ') === path && it.label === label) { runMenuItem(app, it, it.id !== undefined ? CMDS[String(it.id)] : undefined, [...p, label]); return it; } } return null; };

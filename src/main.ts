@@ -18,7 +18,7 @@ import { LayoutEngine, layoutByName, currentLayoutName, layoutNames, dockInto } 
 import { currentKeymap, keymapNames } from './ui/keymap';
 import menusData from './data/menus.json';
 import { installLayoutEditing } from './ui/layoutEdit';
-import { toolbarPanel, menuStatus, runMenuPath } from './ui/toolbarPanel';
+import { toolbarPanel, menuStatus, runMenuPath, getEnableParity } from './ui/toolbarPanel';
 import { explorerView } from './ui/explorer';
 import { mcpPanel } from './ui/mcp';
 import { installKeymap } from './ui/keymap';
@@ -46,7 +46,7 @@ registerAnimCommands(app);
 registerRenderCommands(app);
 registerModuleToolbarCommands(app);
 registerToolbarCommands(app);
-(window as any).__siMessage = siMessage; (window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
+(window as any).__siMessage = siMessage; (window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); (window as any).__getEnableParity = () => getEnableParity(app); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
 
 const appEl = document.getElementById('app')!;
 menubar(app, appEl);
@@ -178,6 +178,7 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     menubarLeaves: mb.length,
     prefsPages: [...prefs.keys()],
     prefsPageCount: prefs.size,
+    getEnableParity: getEnableParity(app),
   };
 };
 (window as any).__menubarStatus = () => menubarStatus();
