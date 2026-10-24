@@ -1,0 +1,93 @@
+{
+  "ok": 7,
+  "fail": 0,
+  "okItems": [
+    "keymaps: Softimage Key Map, Maya Compatible Key Map, 3ds Max Compatible Key Map, SI|3D Key Map",
+    "3ds Max Compatible Key Map: 239 bindings / 9 contexts",
+    "Maya Compatible Key Map: 236 bindings / 9 contexts",
+    "SI|3D Key Map: 275 bindings / 9 contexts",
+    "Softimage Key Map: 278 bindings / 9 contexts",
+    "prefs pages: 49",
+    "menubar wired 102 / silent 46 (silent = documented gap)"
+  ],
+  "failItems": [],
+  "soft": {
+    "keymapsExpectedOk": true,
+    "keymapStats": [
+      {
+        "name": "3ds Max Compatible Key Map",
+        "contexts": 9,
+        "bindings": 239
+      },
+      {
+        "name": "Maya Compatible Key Map",
+        "contexts": 9,
+        "bindings": 236
+      },
+      {
+        "name": "SI|3D Key Map",
+        "contexts": 9,
+        "bindings": 275
+      },
+      {
+        "name": "Softimage Key Map",
+        "contexts": 9,
+        "bindings": 278
+      }
+    ],
+    "prefsPageCount": 49,
+    "prefsPages": [
+      "C3DPrefsAnimation",
+      "C3DPrefsAnimationEditor",
+      "C3DPrefsAnimationMixer",
+      "C3DPrefsBrowser",
+      "C3DPrefsCamera",
+      "C3DPrefsCameraSequencer",
+      "C3DPrefsCompositing",
+      "C3DPrefsDataManagement",
+      "C3DPrefsDisplay",
+      "C3DPrefsDopeSheet",
+      "C3DPrefsSceneExplorer",
+      "C3DPrefsXSIExplorer",
+      "C3DPrefsFCurveEditor",
+      "C3DPrefsGeneral",
+      "C3DPrefsICETree",
+      "C3DPrefsInteraction",
+      "C3DPrefsKeyingPanel",
+      "C3DPrefsLayerControl",
+      "C3DPrefsMaterialManager",
+      "C3DPrefsMaterialPanel",
+      "C3DPrefsModeling",
+      "C3DPrefsNetView",
+      "C3DPrefsObjectView",
+      "C3DPrefsOutputFormat",
+      "C3DPrefsPerformanceMonitor",
+      "C3DPrefsPluginMgr",
+      "C3DPrefsPolygon",
+      "C3DPrefsPresetManager",
+      "C3DPrefsRenderTree",
+      "C3DPrefsRendering",
+      "C3DPrefsSceneSearch",
+      "C3DPrefsSchematicView",
+      "C3DPrefsScriptEditor",
+      "C3DPrefsScripting",
+      "C3DPrefsSelect",
+      "C3DPrefsShaderball",
+      "C3DPrefsShapeAnim",
+      "C3DPrefsSimulation",
+      "C3DPrefsTextureEditor",
+      "C3DPrefsTextureLayerEditor",
+      "C3DPrefsTime",
+      "C3DPrefsTools",
+      "C3DPrefsTransformGroup",
+      "C3DPrefsTweak",
+      "C3DPrefsTweakNormals",
+      "C3DPrefsUnitsSetting",
+      "C3DPrefsViewCube",
+      "C3DPrefsWeightEditor",
+      "C3DSceneColors"
+    ],
+    "menubarWired": 102,
+    "menubarSilent": 46
+  }
+}
