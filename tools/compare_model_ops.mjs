@@ -1,6 +1,6 @@
 // Softimage Direct Model ops beyond compare_topology:
-// Extrude Along Axis, CapHole, Boolean (Direct CSG + SI count doc), OT-* locks from
-// data/dump/si_model_ops_counts.json, headless ExportDelta/ImportDelta.
+// Extrude Along Axis (SI topo_extra golden), CapHole, Boolean (Direct CSG + SI count doc),
+// OT-* locks from data/dump/si_model_ops_counts.json, headless ExportDelta/ImportDelta.
 // Needs vite preview on :4173. Usage: node tools/compare_model_ops.mjs
 import { chromium } from 'playwright';
 import fs from 'fs';
@@ -8,7 +8,12 @@ import fs from 'fs';
 const countsPath = process.argv[2] ?? 'data/dump/si_model_ops_counts.json';
 const counts = JSON.parse(fs.readFileSync(countsPath, 'utf8'));
 const topoRef = JSON.parse(fs.readFileSync('data/dump/si_topo_ref.json', 'utf8'));
+const topoExtraPath = 'data/dump/si_model_topo_extra.json';
+const topoExtra = fs.existsSync(topoExtraPath)
+  ? JSON.parse(fs.readFileSync(topoExtraPath, 'utf8'))
+  : { cases: {} };
 counts._topoBase = topoRef.base;
+counts._topoExtra = topoExtra.cases ?? {};
 
 const chrome =
   ['/opt/pw-browsers/chromium', '/usr/local/bin/google-chrome', '/opt/google/chrome/chrome']
@@ -49,7 +54,49 @@ const rows = await page.evaluate(async (siCounts) => {
     return keys;
   };
 
-  // --- Extrude Along Axis (object Y) vs Extrude Along Normal on a side face ---
+  const R = (v) => Math.round(v * 1000) / 1000;
+  const ptKey = (p) => p.map(R).join(',');
+  const mapPolys = (m, siPolys, base) => {
+    const key = (i) => [m.positions[i * 3], m.positions[i * 3 + 1], m.positions[i * 3 + 2]].map(R).join(',');
+    const want = siPolys.map(f => f.map(j => base.pts[j].map(R).join(',')).sort().join('|'));
+    return m.polygons.map((f, i) => [f.map(key).sort().join('|'), i]).filter(([k]) => want.includes(k)).map(([, i]) => i);
+  };
+  const mapEdges = (m, siEdges, base) => {
+    const key = (i) => [m.positions[i * 3], m.positions[i * 3 + 1], m.positions[i * 3 + 2]].map(R).join(',');
+    const want = new Set(siEdges.map(e => e.map(j => base.pts[j].map(R).join(',')).sort().join('|')));
+    const seen = new Set(), outE = [];
+    for (const f of m.polygons) {
+      for (let i = 0; i < f.length; i++) {
+        const a = f[i], b = f[(i + 1) % f.length];
+        const pk = [key(a), key(b)].sort().join('|');
+        if (!want.has(pk)) continue;
+        const ek = Math.min(a, b) + '-' + Math.max(a, b);
+        if (seen.has(ek)) continue;
+        seen.add(ek); outE.push(ek);
+      }
+    }
+    return outE;
+  };
+  const mapPnts = (m, siPnts, base) => {
+    const want = new Set(siPnts.map(i => base.pts[i].map(R).join(',')));
+    const outP = [];
+    for (let i = 0; i < m.positions.length / 3; i++) {
+      const k = [m.positions[i * 3], m.positions[i * 3 + 1], m.positions[i * 3 + 2]].map(R).join(',');
+      if (want.has(k)) outP.push(i);
+    }
+    return outP;
+  };
+  const ptsMultisetMatch = (oursMesh, siPts) => {
+    const ours = [];
+    for (let i = 0; i < oursMesh.positions.length; i += 3) ours.push(ptKey([oursMesh.positions[i], oursMesh.positions[i + 1], oursMesh.positions[i + 2]]));
+    const si = siPts.map(ptKey);
+    const cnt = (arr) => { const m = new Map(); for (const k of arr) m.set(k, (m.get(k) || 0) + 1); return m; };
+    const a = cnt(si), b = cnt(ours); let common = 0;
+    for (const [k, n] of a) common += Math.min(n, b.get(k) || 0);
+    return { common, siN: si.length, ourN: ours.length, ok: common === si.length && si.length === ours.length };
+  };
+
+  // --- Extrude Along Axis vs Extrude Along Normal on a side face (object Y ≠ side normal) ---
   {
     const o = cube333();
     const m0 = o.primitive.mesh();
@@ -94,23 +141,114 @@ const rows = await page.evaluate(async (siCounts) => {
     });
   }
 
-  // --- CapHole after deleting one polygon ---
+  // --- Extrude Along Axis vs softimage-pc si_model_topo_extra extrude_axis_poly0 ---
+  // SI dump mesh matches Extrude Along Normal defaults (length=1, inset=0) on Softimage poly[0]
+  // (component-frame Y ≡ face normal). SPDL defaults length=0/inset=0.2 are overridden to match golden.
   {
-    const o = cube333();
-    const before = meshStats(o);
-    A.selectComponents(o, 'polygon', [0]);
-    A.run('ApplyTopoOp', { PresetObj: 'Delete Component' });
-    o.primitive.dirty = true;
-    const hole = meshStats(o);
-    A.select([o]);
-    A.run('CapHole');
-    o.primitive.dirty = true;
-    const capped = meshStats(o);
-    out.push({
-      name: 'CapHole_after_Delete',
-      ok: hole.npolys === before.npolys - 1 && capped.npolys >= hole.npolys + 1,
-      detail: `before ${before.npolys} hole ${hole.npolys} capped ${capped.npolys}`,
-    });
+    const gold = siCounts._topoExtra?.extrude_axis_poly0;
+    const base = siCounts._topoBase;
+    if (!gold?.pts || gold.error) {
+      out.push({ name: 'ExtrudeAxis_SI_poly0', ok: false, detail: `no SI golden (${gold?.error || 'missing'})` });
+    } else {
+      const o = cube333();
+      const m = o.primitive.mesh();
+      const items = mapPolys(m, [base.polys[0]], base);
+      A.selectComponents(o, 'polygon', items.length ? items : [0]);
+      A.run('ApplyTopoOp', { PresetObj: 'ExtrudeComponentAxis' });
+      const op = A.selection[0];
+      if (op?.set) {
+        op.set('length', 1); op.set('inset', 0);
+        op.set('x', false); op.set('y', true); op.set('z', false); op.set('frame', 1);
+      }
+      o.primitive.dirty = true;
+      const st = meshStats(o);
+      const match = ptsMultisetMatch(o.primitive.mesh(), gold.pts);
+      out.push({
+        name: 'ExtrudeAxis_SI_poly0',
+        ok: match.ok && st.npolys === gold.npolys,
+        detail: `Direct ${st.npts}/${st.npolys} SI ${gold.npts}/${gold.npolys} shared ${match.common}/${match.siN} mappedSel=${items.length}`,
+      });
+    }
+  }
+
+  // --- Dissolve edge[0] / Weld pnt[0,1] from PC topo_extra (usable goldens) ---
+  {
+    const gold = siCounts._topoExtra?.dissolve_edge0;
+    const base = siCounts._topoBase;
+    if (!gold?.pts || gold.error) {
+      out.push({ name: 'DissolveEdge0_SI', ok: false, detail: `no SI golden (${gold?.error || 'missing'})` });
+    } else {
+      const o = cube333();
+      const m = o.primitive.mesh();
+      const edges = mapEdges(m, [base.edges[0]], base);
+      A.selectComponents(o, 'edge', edges.length ? edges : edgeKeysOf(m, 1));
+      let err = null;
+      try { A.run('ApplyTopoOp', { PresetObj: 'Dissolve Component' }); } catch (e) { err = e.message; }
+      o.primitive.dirty = true;
+      const st = meshStats(o);
+      out.push({
+        name: 'DissolveEdge0_SI',
+        ok: !err && st.npts === gold.npts && st.npolys === gold.npolys,
+        detail: err || `Direct ${st.npts}/${st.npolys} SI ${gold.npts}/${gold.npolys} edges=${edges.length}`,
+      });
+    }
+  }
+  {
+    const gold = siCounts._topoExtra?.weld_pnt01;
+    const base = siCounts._topoBase;
+    if (!gold?.pts || gold.error) {
+      out.push({ name: 'WeldPnt01_SI', ok: false, detail: `no SI golden (${gold?.error || 'missing'})` });
+    } else {
+      const o = cube333();
+      const m = o.primitive.mesh();
+      const pnts = mapPnts(m, [0, 1], base);
+      A.selectComponents(o, 'point', pnts.length ? pnts : [0, 1]);
+      let err = null;
+      try { A.run('ApplyTopoOp', { PresetObj: 'Weld Points' }); } catch (e) { err = e.message; }
+      o.primitive.dirty = true;
+      const st = meshStats(o);
+      const match = ptsMultisetMatch(o.primitive.mesh(), gold.pts);
+      out.push({
+        name: 'WeldPnt01_SI',
+        ok: !err && match.ok && st.npolys === gold.npolys,
+        detail: err || `Direct ${st.npts}/${st.npolys} SI ${gold.npts}/${gold.npolys} shared ${match.common} pnts=${pnts.length}`,
+      });
+    }
+  }
+
+  // --- CapHole after Delete poly[0]: SI after_delete + final mesh golden (PC Cap_Hole ICETree 56/54) ---
+  {
+    const pcCap = siCounts._topoExtra?.caphole_after_delete_poly0;
+    const base = siCounts._topoBase;
+    if (!pcCap?.pts || pcCap.error) {
+      out.push({ name: 'CapHole_SI_Delete_poly0', ok: false, detail: `no SI golden (${pcCap?.error || 'missing'})` });
+      out.push({ name: 'CapHole_SI_poly0', ok: false, detail: 'no SI golden' });
+    } else {
+      const o = cube333();
+      const m = o.primitive.mesh();
+      const items = mapPolys(m, [base.polys[0]], base);
+      const before = meshStats(o);
+      A.selectComponents(o, 'polygon', items.length ? items : [0]);
+      A.run('ApplyTopoOp', { PresetObj: 'Delete Component' });
+      o.primitive.dirty = true;
+      const hole = meshStats(o);
+      const siDel = pcCap.after_delete;
+      out.push({
+        name: 'CapHole_SI_Delete_poly0',
+        ok: !!siDel && hole.npts === siDel.npts && hole.npolys === siDel.npolys,
+        detail: `Direct hole ${hole.npts}/${hole.npolys} SI after_delete ${siDel?.npts}/${siDel?.npolys} mappedSel=${items.length}`,
+      });
+      A.select([o]);
+      A.run('CapHole');
+      o.primitive.dirty = true;
+      const capped = meshStats(o);
+      const match = ptsMultisetMatch(o.primitive.mesh(), pcCap.pts);
+      out.push({
+        name: 'CapHole_SI_poly0',
+        ok: match.ok && capped.npolys === pcCap.npolys && hole.npolys === before.npolys - 1,
+        detail: `Direct ${capped.npts}/${capped.npolys} SI ${pcCap.npts}/${pcCap.npolys} shared ${match.common}/${match.siN} op=${pcCap.op_name}/${pcCap.op_type}`,
+      });
+    }
   }
 
   // --- Boolean Difference: Direct nontrivial CSG; SI dump1 counts documented (not equal) ---
