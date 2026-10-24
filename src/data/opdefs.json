@@ -23584,6 +23584,22 @@
 "desc": "Invert direction of curve"
 }
 ],
+"layout": [
+{
+"group": "Extract",
+"items": [
+{
+"param": "startpos"
+},
+{
+"param": "endpos"
+},
+{
+"param": "invert"
+}
+]
+}
+],
 "source": "Create/Curve/Extract Segment"
 },
 "extractedgeloop": {
@@ -23672,6 +23688,9 @@
 }
 ],
 "layout": [
+{
+"param": "points"
+},
 {
 "param": "cont"
 },
@@ -23764,6 +23783,9 @@
 }
 ],
 "layout": [
+{
+"param": "intersecttol"
+},
 {
 "param": "fitpostol"
 },
@@ -24853,6 +24875,9 @@
 }
 ],
 "layout": [
+{
+"param": "upoints"
+},
 {
 "param": "vpoints"
 },
@@ -25971,6 +25996,9 @@
 {
 "tab": "Nurbs To Mesh",
 "items": [
+{
+"param": "fromhull"
+},
 {
 "param": "ignoretrims"
 },
@@ -27740,6 +27768,372 @@
 }
 ],
 "source": "Modify/Deform/Quick Stretch"
+},
+"blendcrv": {
+"type": "blendcrv",
+"name": "Blend Curves",
+"spdl": "blendcrvop.spdl",
+"params": [
+{
+"sn": "boundcrv1",
+"label": "Curve 1",
+"type": "enum",
+"default": 1,
+"items": [
+[
+"Min U Boundary (Red)",
+0
+],
+[
+"Max U Boundary",
+1
+]
+],
+"desc": "Blend boundary on curve 1"
+},
+{
+"sn": "boundcrv2",
+"label": "Curve 2",
+"type": "enum",
+"default": 0,
+"items": [
+[
+"Min U Boundary (Red)",
+0
+],
+[
+"Max U Boundary",
+1
+]
+],
+"desc": "Blend boundary on curve 2"
+},
+{
+"sn": "startscl",
+"label": "Curve 1",
+"type": "double",
+"default": 1.0,
+"uimin": 0.0,
+"uimax": 10.0,
+"min": 0.0,
+"max": 10.0,
+"desc": "Tangent scale factor for curve 1"
+},
+{
+"sn": "endscl",
+"label": "Curve 2",
+"type": "double",
+"default": 1.0,
+"uimin": 0.0,
+"uimax": 10.0,
+"min": 0.0,
+"max": 10.0,
+"desc": "Tangent scale factor for curve 2"
+}
+],
+"source": "spdl-seed:blendcrvop.spdl",
+"layout": [
+{
+"param": "startscl"
+},
+{
+"param": "endscl"
+}
+]
+},
+"mergecrv": {
+"type": "mergecrv",
+"name": "Merge Curves",
+"spdl": "mergecrv.spdl",
+"params": [
+{
+"sn": "boundcrv1",
+"label": "Curve 1",
+"type": "enum",
+"default": 0,
+"items": [
+[
+"Min U Boundary (Red)",
+0
+],
+[
+"Max U Boundary",
+1
+]
+],
+"desc": "Boundary for curve 1 (start boundary)"
+},
+{
+"sn": "boundcrv2",
+"label": "Curve 2",
+"type": "enum",
+"default": 0,
+"items": [
+[
+"Min U Boundary (Red)",
+0
+],
+[
+"Max U Boundary",
+1
+]
+],
+"desc": "Boundary for curve 2 (end boundary)"
+},
+{
+"sn": "cont",
+"label": "Continuity",
+"type": "enum",
+"default": 0,
+"items": [
+[
+"Position (C0)",
+0
+],
+[
+"Tangent (C1)",
+1
+],
+[
+"Curvature (C2)",
+2
+]
+],
+"desc": "Continuity  (C0, C1 or C2)"
+},
+{
+"sn": "seam",
+"label": "Seam Mode",
+"type": "enum",
+"default": 2,
+"items": [
+[
+"First Curve",
+0
+],
+[
+"Second Curve",
+1
+],
+[
+"Average",
+2
+]
+],
+"desc": "Seam Mode"
+},
+{
+"sn": "modifytan",
+"label": "Modify Tangent",
+"type": "enum",
+"default": 2,
+"items": [
+[
+"First Curve",
+0
+],
+[
+"Second Curve",
+1
+],
+[
+"Both Curves",
+2
+]
+],
+"desc": "Surface to which the tangent should be modified"
+},
+{
+"sn": "boundfix",
+"label": "Fix Boundary",
+"type": "enum",
+"default": 0,
+"items": [
+[
+"Mode 1",
+0
+],
+[
+"Mode 2",
+1
+],
+[
+"Mode 3",
+2
+],
+[
+"Mode 4",
+3
+]
+],
+"desc": "Fix Boundary"
+},
+{
+"sn": "startrange",
+"label": "Range",
+"type": "double",
+"default": 0.0,
+"uimin": 0.0,
+"uimax": 1.0,
+"min": 0.0,
+"max": 1.0,
+"desc": "Modify range for curve 1"
+},
+{
+"sn": "endrange",
+"label": "Range",
+"type": "double",
+"default": 0.0,
+"uimin": 0.0,
+"uimax": 1.0,
+"min": 0.0,
+"max": 1.0,
+"desc": "Modify range for curve 2"
+},
+{
+"sn": "startscl",
+"label": "Tangent Scale Factor",
+"type": "double",
+"default": 1.0,
+"uimin": 0.001,
+"uimax": 1.0,
+"min": 0.001,
+"max": 10.0,
+"desc": "Tangent scale factor for curve 1"
+},
+{
+"sn": "endscl",
+"label": "Tangent Scale Factor",
+"type": "double",
+"default": 1.0,
+"uimin": 0.001,
+"uimax": 1.0,
+"min": 0.001,
+"max": 10.0,
+"desc": "Tangent scale factor for curve 2"
+},
+{
+"sn": "shpfactor",
+"label": "Shape Factor ",
+"type": "double",
+"default": 0.0,
+"uimin": 0.0,
+"uimax": 1.0,
+"min": 0.0,
+"max": 1.0,
+"desc": "Shape Factor "
+},
+{
+"sn": "tol",
+"label": "Tolerance",
+"type": "double",
+"default": 0.0,
+"uimin": 0.0,
+"uimax": 2.0,
+"min": 0.0,
+"max": 10.0,
+"desc": "Cleaning Tolerance"
+}
+],
+"source": "spdl-seed:mergecrv.spdl",
+"layout": [
+{
+"tab": "Clean",
+"items": [
+{
+"param": "tol"
+}
+]
+},
+{
+"tab": "Shape",
+"items": [
+{
+"group": "",
+"items": [
+{
+"param": "cont"
+},
+{
+"param": "seam"
+},
+{
+"param": "modifytan"
+}
+]
+},
+{
+"group": "Start Curve",
+"items": [
+{
+"param": "startrange"
+},
+{
+"param": "startscl"
+}
+]
+},
+{
+"group": "End Curve",
+"items": [
+{
+"param": "endrange"
+},
+{
+"param": "endscl"
+}
+]
+}
+]
+}
+]
+},
+"mergemesh": {
+"type": "mergemesh",
+"name": "Merge Meshes",
+"spdl": "C3DMergeMeshOp.spdl",
+"params": [
+{
+"sn": "tolerance",
+"label": "Tolerance",
+"type": "double",
+"default": 0,
+"uimin": 0,
+"uimax": 1.0,
+"min": 0,
+"desc": "Tolerance for the coincidence of points on border edges"
+},
+{
+"sn": "blend",
+"label": "Blend",
+"type": "bool",
+"default": false,
+"desc": "Will connect each pair of coincident boundary edges with a new polygon"
+},
+{
+"sn": "NormalizeWeights",
+"label": "Normalize envelopes weights upon transfer",
+"type": "bool",
+"default": false
+}
+],
+"source": "spdl-seed:C3DMergeMeshOp.spdl",
+"layout": [
+{
+"group": "Merge",
+"items": [
+{
+"param": "tolerance"
+},
+{
+"param": "blend"
+},
+{
+"param": "NormalizeWeights"
+}
+]
+}
+]
 }
 },
 "prims": {

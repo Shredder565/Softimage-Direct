@@ -58,7 +58,13 @@ export class CurveEditOperator extends Operator {
       case 'Reparameterize': return C.reparameterize(c);
       case 'Shift U': return C.shiftCurve(c, this.val('shift'));
       case 'Fit on Curve': return C.fitCurve(c, this.val('cvs'), this.val('degree'));
-      case 'Extract Segment': return C.extractSegment(c, this.val('start'), this.val('end'));
+      case 'Extract Segment': {
+        // Softimage extractcrvsegment.spdl: startpos / endpos / invert (legacy start/end kept as fallback).
+        const a = this.get('startpos') ? Number(this.val('startpos')) : Number(this.val('start') ?? 0);
+        const b = this.get('endpos') ? Number(this.val('endpos')) : Number(this.val('end') ?? 0.5);
+        const seg = C.extractSegment(c, a, b);
+        return this.get('invert') && this.val('invert') ? C.reverseCurve(seg) : seg;
+      }
       case 'Remove Knots': { const [u0, u1] = C.curveDomain(c); return C.removeKnot(c, u0 + (u1 - u0) * Number(this.val('position') ?? 0.5)); }
     }
     return c;
@@ -69,7 +75,18 @@ export function makeCurveEditOperator(preset: string) {
     case 'Clean': return new CurveEditOperator(preset, [num('tolerance', 0.01, 'Tolerance', { min: 0, max: 10 })]);
     case 'Shift U': return new CurveEditOperator(preset, [int('shift', 1, 'Shift', { min: -64, max: 64 })]);
     case 'Fit on Curve': return new CurveEditOperator(preset, [int('cvs', 8, 'Nb Control Points', { min: 2, max: 400 }), int('degree', 3, 'Degree', { min: 1, max: 7 })]);
-    case 'Extract Segment': return new CurveEditOperator(preset, [num('start', 0, 'Start', { min: 0, max: 1 }), num('end', 0.5, 'End', { min: 0, max: 1 })]);
+    case 'Extract Segment': {
+      // Dump-backed PPG: extractcrvsegment.spdl → opdefs extractcrvseg (startpos/endpos/invert).
+      const si = siParamDefs('extractcrvseg');
+      const op = new CurveEditOperator(
+        preset,
+        si.length
+          ? si
+          : [num('startpos', 0.25, 'Start Position', { min: 0, max: 1 }), num('endpos', 0.75, 'End Position', { min: 0, max: 1 })],
+      );
+      op.layout = siLayout('extractcrvseg');
+      return op;
+    }
     case 'Insert Knot': case 'Remove Knots': return new CurveEditOperator(preset, [num('position', 0.5, 'Position (U)', { min: 0, max: 1 })]);
     case 'Inverse': case 'Open/Close': case 'Raise Degree': case 'Reparameterize': case 'Bezier Knots': case 'Bezier Corners': case 'Linear Segments': case 'Non-Bezier Knots': return new CurveEditOperator(preset);
   }

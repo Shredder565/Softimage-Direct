@@ -45,7 +45,11 @@
     "birailop.spdl",
     "ExtrusionTwoProfiles.spdl",
     "revolutionAxisOp.spdl",
-    "filletcrv.spdl"
+    "filletcrv.spdl",
+    "extractcrvsegment.spdl",
+    "blendcrvop.spdl",
+    "mergecrv.spdl",
+    "C3DMergeMeshOp.spdl"
   ],
   "wired_opdefs": {
     "C3DBevelComponentOp.spdl": "bevelop",
@@ -69,6 +73,10 @@
     "birailop.spdl": "birail",
     "ExtrusionTwoProfiles.spdl": "extrude2profs",
     "revolutionAxisOp.spdl": "revolution",
-    "filletcrv.spdl": "filletcrv"
+    "filletcrv.spdl": "filletcrv",
+    "extractcrvsegment.spdl": "extractcrvseg",
+    "blendcrvop.spdl": "blendcrv",
+    "mergecrv.spdl": "mergecrv",
+    "C3DMergeMeshOp.spdl": "mergemesh"
   }
 }
