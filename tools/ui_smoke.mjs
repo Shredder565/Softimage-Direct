@@ -88,16 +88,54 @@ else {
       matrix: a.mcpMatrix,
       grayCluster: a.peGrayedClusterWithCenter,
       graySel: a.peGrayedSelectability,
+      graySymLabel: a.peGrayedSymmetryLabelOnly,
+      graySymCmd: a.peGrayedSymmetryWithCmd,
+      grayPoly: a.peGrayedPolynodeWithCmd,
+      translateTool: a.matrixTranslateTool,
     };
   });
-  if (!mx.matrix?.boolAttested?.includes?.('Translate')) fail.push(`mcpMatrix missing Translate attestation: ${JSON.stringify(mx.matrix)}`);
-  else if (mx.mcp?.matrixTranslate !== true || mx.mcp?.translate !== true || mx.mcp?.duplicate !== true) {
+  const needBools = ['Translate', 'Rotate', 'Scale', 'Duplicate', 'Copy', 'Paste', 'Instantiate', 'CopyPaste'];
+  const missingBools = needBools.filter(n => !mx.matrix?.boolAttested?.includes?.(n));
+  if (missingBools.length) fail.push(`mcpMatrix missing bool attestations: ${missingBools.join(',')}`);
+  else if ((mx.matrix?.contexts?.length ?? 0) < 10) {
+    fail.push(`mcpMatrix expected >=10 contexts, got ${JSON.stringify(mx.matrix?.contexts)}`);
+  } else if (mx.mcp?.matrixTranslate !== true || mx.mcp?.translate !== true || mx.mcp?.duplicate !== true) {
     fail.push(`matrix empty-sel Translate/Duplicate expected true, got ${JSON.stringify({ t: mx.mcp?.translate, mt: mx.mcp?.matrixTranslate, d: mx.mcp?.duplicate, ctx: mx.mcp?.context })}`);
+  } else if (mx.mcp?.matrixCopy !== true || mx.mcp?.matrixInstantiate !== true) {
+    fail.push(`matrix empty-sel Copy/Instantiate expected true, got ${JSON.stringify({ c: mx.mcp?.matrixCopy, i: mx.mcp?.matrixInstantiate })}`);
   } else if (mx.mcp?.matrixParentObj !== null && mx.mcp?.matrixParentObj !== undefined) {
     fail.push(`ParentObj matrix cell should be null (fall back canRun), got ${mx.mcp.matrixParentObj}`);
   } else if (!mx.grayCluster || !mx.graySel) {
     fail.push(`PE f_grayed seeds missing cluster=${mx.grayCluster} selectability=${mx.graySel}`);
-  } else ok.push(`MCP matrix Softimage ${mx.matrix.softimage}: empty Translate/Duplicate true; PE grayed ${mx.matrix.peGrayedCount}`);
+  } else if (mx.graySymLabel) {
+    fail.push('PE f_grayed must NOT grey ambiguous "Symmetry" by label alone');
+  } else if (!mx.graySymCmd || !mx.grayPoly) {
+    fail.push(`PE f_grayed cmd seeds missing symmetry=${mx.graySymCmd} polynode=${mx.grayPoly}`);
+  } else if (mx.translateTool !== true) {
+    fail.push(`TranslateTool alias should reuse Translate attested true, got ${mx.translateTool}`);
+  } else if ((mx.matrix.peGrayedCmds ?? 0) < 50) {
+    fail.push(`PE grayed cmds expected >=50, got ${mx.matrix.peGrayedCmds}`);
+  } else ok.push(`MCP matrix Softimage ${mx.matrix.softimage}: ${mx.matrix.contexts.length} ctx, ${mx.matrix.boolAttested.length} bools; PE grayed ${mx.matrix.peGrayedCount} (cmds ${mx.matrix.peGrayedCmds}); Tool alias OK`);
+
+  // Expanded contexts: camera / mixed still expose attested Translate true
+  const mxCtx = await p.evaluate(() => {
+    const A = window.Application;
+    const out = {};
+    const cam = A.run('GetPrim', { PresetObj: 'Camera' });
+    A.select([cam]);
+    out.camera = { ctx: window.__uiAudit?.().mcpEnable?.context, t: window.__uiAudit?.().mcpEnable?.matrixTranslate };
+    const cube = A.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface' });
+    const n = A.run('GetPrim', { PresetObj: 'Null' });
+    A.select([cube, n]);
+    out.mixed = { ctx: window.__uiAudit?.().mcpEnable?.context, t: window.__uiAudit?.().mcpEnable?.matrixTranslate };
+    A.select([]);
+    return out;
+  });
+  if (mxCtx.camera?.ctx !== 'single_camera' || mxCtx.camera?.t !== true) {
+    fail.push(`single_camera matrix expected ctx+Translate true, got ${JSON.stringify(mxCtx.camera)}`);
+  } else if (mxCtx.mixed?.ctx !== 'multi_mixed' || mxCtx.mixed?.t !== true) {
+    fail.push(`multi_mixed matrix expected ctx+Translate true, got ${JSON.stringify(mxCtx.mixed)}`);
+  } else ok.push('MCP matrix expanded contexts single_camera + multi_mixed Translate true');
   const tpe = audit.toolMenusPe;
   if (!tpe) fail.push('toolMenusPe missing from __uiAudit');
   else if (!tpe.ok) fail.push(`PE menus 530-532 mismatch: ${JSON.stringify(tpe.mismatches)}`);

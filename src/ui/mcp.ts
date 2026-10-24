@@ -5,6 +5,7 @@ import { tool } from './viewManager';
 import { siFilterNames, SI_MENUS, SiMenuItem, openSiMenu } from './si';
 import { X3DObject, Model } from '../core/scene';
 import { commandEnabled, mcpSampleEnabled } from './cmdEnable';
+import { hwndButtonEnabled } from './mcpEnableMatrix';
 
 type Section = { el: HTMLElement; body: HTMLElement };
 const button = (label: string, fn: (e: MouseEvent) => void, title = '', cls = '') => { const b = document.createElement('button'); b.className = 'mcp-btn ' + cls; b.textContent = label; b.title = title; b.onclick = fn; return b; };
@@ -190,18 +191,22 @@ export function mcpPanel(app: App, host: HTMLElement, opts: { only?: string[]; c
   // --------------------------------------------------------------- updates
   // Softimage MCP greying: EnableMenuItem/EnableWindow track CommandCore GetEnabled
   // (Ghidra getenabled-callpath). Buttons that map to commands read commandEnabled;
-  // Sample is a filter mode (mcpSampleEnabled). Live Softimage matrix still observation-blocked.
+  // Sample is a filter mode (mcpSampleEnabled). Optional hwnd_buttons overlay from Script Editor paste.
+  const btnEn = (key: string, fallback: boolean) => {
+    const h = hwndButtonEnabled(app, key);
+    return h === null ? fallback : h;
+  };
   const upd = () => {
     modeBtns.forEach(b => { const on = (b as any)._m === app.selMode; b.classList.toggle('on', on); });
     groupB.classList.toggle('on', !!A.groupMode); centerB.classList.toggle('on', !!A.centerMode);
     const sel = app.selectedObjects;
     const o = sel[0];
-    sampleB.disabled = !mcpSampleEnabled(app);
-    parentB.disabled = !commandEnabled(app, 'ParentObj');
-    cutB.disabled = !commandEnabled(app, 'CutObj');
-    freezeB.disabled = !commandEnabled(app, 'FreezeObj');
-    groupEditB.disabled = !commandEnabled(app, 'CreateGroup');
-    freezeMB.disabled = !commandEnabled(app, 'FreezeModeling');
+    sampleB.disabled = !btnEn('sample', mcpSampleEnabled(app));
+    parentB.disabled = !btnEn('parent', commandEnabled(app, 'ParentObj'));
+    cutB.disabled = !btnEn('cut', commandEnabled(app, 'CutObj'));
+    freezeB.disabled = !btnEn('freeze', commandEnabled(app, 'FreezeObj'));
+    groupEditB.disabled = !btnEn('group', commandEnabled(app, 'CreateGroup'));
+    freezeMB.disabled = !btnEn('freezeM', commandEnabled(app, 'FreezeModeling'));
     for (const md of tmodes) fields[md.m].forEach((i, k) => { if (document.activeElement === i) return; i.value = o ? String(Math.round(o.kinematics.local.val(md.prefix + 'xyz'[k]) * 1000) / 1000) : ''; });
     cogB.classList.toggle('on', !!A.cog); propB.classList.toggle('on', !!app.proportional.on); symB.classList.toggle('on', !!A.symmetry);
     snapOn.classList.toggle('on', !!S.on); snapB.forEach(b => b.classList.toggle('on', !!S[(b as any)._k]));

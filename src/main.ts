@@ -191,18 +191,28 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
       group: commandEnabled(app, 'CreateGroup'),
       freezeM: commandEnabled(app, 'FreezeModeling'),
       selCount: app.selectedObjects.length,
-      // Softimage-pc XSIBATCH bools (Translate/Rotate/Scale/Duplicate attested true even empty)
+      // Softimage-pc XSIBATCH bools (attested true even empty across expanded contexts)
       translate: commandEnabled(app, 'Translate'),
       rotate: commandEnabled(app, 'Rotate'),
       scale: commandEnabled(app, 'Scale'),
       duplicate: commandEnabled(app, 'Duplicate'),
+      copy: commandEnabled(app, 'Copy'),
+      paste: commandEnabled(app, 'Paste'),
+      instantiate: commandEnabled(app, 'Instantiate'),
       context: mcpSelectionContext(app),
       matrixTranslate: matrixCommandEnabled(app, 'Translate'),
       matrixParentObj: matrixCommandEnabled(app, 'ParentObj'),
+      matrixCopy: matrixCommandEnabled(app, 'Copy'),
+      matrixInstantiate: matrixCommandEnabled(app, 'Instantiate'),
     },
     mcpMatrix: mcpMatrixMeta(),
+    // PE f_grayed: long unique labels OK without cmd; ambiguous short labels need cmd id
     peGrayedClusterWithCenter: peMenuItemGrayed('Create Cluster with Center'),
     peGrayedSelectability: peMenuItemGrayed('Selectability'),
+    peGrayedSymmetryLabelOnly: peMenuItemGrayed('Symmetry'),
+    peGrayedSymmetryWithCmd: peMenuItemGrayed('Symmetry', 32821),
+    peGrayedPolynodeWithCmd: peMenuItemGrayed('Polynode', 32896),
+    matrixTranslateTool: matrixCommandEnabled(app, 'TranslateTool'),
     // Softimage viewinteraction.dll PE menus 530–532 vs Direct tool* trees
     toolMenusPe: (() => {
       const map: Record<string, string> = { '530': 'toolTranslate', '531': 'toolRotate', '532': 'toolScale' };

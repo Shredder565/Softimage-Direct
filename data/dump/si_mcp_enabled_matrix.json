@@ -1,14 +1,28 @@
 {
   "meta": {
     "softimage_install": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2",
-    "generated_at": "2026-10-24T20:01:09.334449+00:00",
+    "generated_at": "2026-10-24T21:16:31.272901+00:00",
     "mode": "PE static + XSIBATCH Command.Enabled (no GUI)",
     "gaps": [
-      "MCP panel HWND / button Enabled grey (Select/Transform/Snap chrome) requires interactive Softimage Desktop \u2014 BLOCKED by no-desktop-takeover rule.",
+      "MCP panel HWND / button Enabled grey (Select/Transform/Snap chrome) requires interactive Softimage Desktop - BLOCKED by no-desktop-takeover rule.",
       "Component-mode selection contexts incomplete under XSIBATCH (no viewport pick).",
-      "PE f_grayed flags are resource defaults, not runtime selection predicates."
+      "PE f_grayed flags are resource defaults, not runtime selection predicates.",
+      "light_selected / some filter SetValue attempts may fail headless (see setup_error)."
     ],
-    "xsibatch_softimage": "13.2.163.0"
+    "expanded": true,
+    "xsibatch_contexts": [
+      "empty",
+      "single_mesh",
+      "multi_mesh",
+      "single_null",
+      "mesh_points_attempt",
+      "single_camera",
+      "single_light",
+      "parented_child",
+      "group_selected",
+      "multi_mixed"
+    ],
+    "xsibatch_command_count": 71
   },
   "pe_mcp_menus": [
     201,
@@ -448,7 +462,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Translate": {
           "found": true,
@@ -462,7 +476,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Rotate": {
           "found": true,
@@ -476,7 +490,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Scale": {
           "found": true,
@@ -490,273 +504,273 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleProportional": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleSymmetry": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Parent": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ParentObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ParentTool": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CutRelation": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CutObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CreateGroup": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Ungroup": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeModeling": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetKey": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "RemoveKey": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ClearAllKeys": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PlayForward": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PlayBackward": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FirstFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "LastFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "NextFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PreviousFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleCOG": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleProp": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateObjectSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePointSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateEdgeSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePolygonSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateObject": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateVertex": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateEdge": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePolygon": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "siToggleSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SnapToggle": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CenterGeometry": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ResetTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeTransformations": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Duplicate": {
           "found": true,
@@ -770,28 +784,175 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "InspectObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetLocalTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetGlobalTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DuplicateMultiple": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
           "error": null
+        },
+        "Clone": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeleteAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateCluster": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateClusterWithCenter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSelectability": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeLocal": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeUnique": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ApplyNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        },
+        "MatchTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetAllTransforms": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SelectAllUsingFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeselectAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleVisibility": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "HideObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "UnhideAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
         }
       }
     },
@@ -813,7 +974,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Translate": {
           "found": true,
@@ -827,7 +988,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Rotate": {
           "found": true,
@@ -841,7 +1002,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Scale": {
           "found": true,
@@ -855,273 +1016,273 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleProportional": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleSymmetry": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Parent": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ParentObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ParentTool": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CutRelation": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CutObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CreateGroup": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Ungroup": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeModeling": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetKey": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "RemoveKey": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ClearAllKeys": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PlayForward": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PlayBackward": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FirstFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "LastFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "NextFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PreviousFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleCOG": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleProp": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateObjectSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePointSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateEdgeSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePolygonSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateObject": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateVertex": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateEdge": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePolygon": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "siToggleSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SnapToggle": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CenterGeometry": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ResetTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeTransformations": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Duplicate": {
           "found": true,
@@ -1135,28 +1296,175 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "InspectObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetLocalTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetGlobalTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DuplicateMultiple": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
           "error": null
+        },
+        "Clone": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeleteAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateCluster": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateClusterWithCenter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSelectability": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeLocal": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeUnique": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ApplyNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        },
+        "MatchTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetAllTransforms": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SelectAllUsingFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeselectAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleVisibility": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "HideObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "UnhideAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
         }
       }
     },
@@ -1180,7 +1488,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Translate": {
           "found": true,
@@ -1194,7 +1502,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Rotate": {
           "found": true,
@@ -1208,7 +1516,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Scale": {
           "found": true,
@@ -1222,273 +1530,273 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleProportional": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleSymmetry": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Parent": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ParentObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ParentTool": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CutRelation": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CutObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CreateGroup": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Ungroup": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeModeling": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetKey": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "RemoveKey": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ClearAllKeys": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PlayForward": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PlayBackward": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FirstFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "LastFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "NextFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PreviousFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleCOG": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleProp": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateObjectSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePointSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateEdgeSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePolygonSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateObject": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateVertex": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateEdge": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePolygon": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "siToggleSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SnapToggle": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CenterGeometry": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ResetTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeTransformations": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Duplicate": {
           "found": true,
@@ -1502,28 +1810,175 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "InspectObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetLocalTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetGlobalTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DuplicateMultiple": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
           "error": null
+        },
+        "Clone": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeleteAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateCluster": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateClusterWithCenter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSelectability": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeLocal": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeUnique": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ApplyNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        },
+        "MatchTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetAllTransforms": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SelectAllUsingFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeselectAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleVisibility": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "HideObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "UnhideAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
         }
       }
     },
@@ -1545,7 +2000,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Translate": {
           "found": true,
@@ -1559,7 +2014,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Rotate": {
           "found": true,
@@ -1573,7 +2028,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Scale": {
           "found": true,
@@ -1587,273 +2042,273 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleProportional": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleSymmetry": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Parent": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ParentObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ParentTool": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CutRelation": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CutObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CreateGroup": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Ungroup": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeModeling": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetKey": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "RemoveKey": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ClearAllKeys": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PlayForward": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PlayBackward": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FirstFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "LastFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "NextFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PreviousFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleCOG": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleProp": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateObjectSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePointSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateEdgeSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePolygonSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateObject": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateVertex": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateEdge": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePolygon": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "siToggleSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SnapToggle": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CenterGeometry": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ResetTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeTransformations": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Duplicate": {
           "found": true,
@@ -1867,28 +2322,175 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "InspectObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetLocalTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetGlobalTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DuplicateMultiple": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
           "error": null
+        },
+        "Clone": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeleteAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateCluster": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateClusterWithCenter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSelectability": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeLocal": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeUnique": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ApplyNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        },
+        "MatchTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetAllTransforms": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SelectAllUsingFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeselectAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleVisibility": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "HideObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "UnhideAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
         }
       }
     },
@@ -1910,7 +2512,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Translate": {
           "found": true,
@@ -1924,7 +2526,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Rotate": {
           "found": true,
@@ -1938,7 +2540,7 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Scale": {
           "found": true,
@@ -1952,273 +2554,273 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleProportional": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleSymmetry": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Parent": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ParentObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ParentTool": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CutRelation": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CutObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CreateGroup": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Ungroup": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeModeling": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetKey": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "RemoveKey": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ClearAllKeys": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PlayForward": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PlayBackward": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FirstFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "LastFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "NextFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "PreviousFrame": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleCOG": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ToggleProp": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateObjectSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePointSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateEdgeSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePolygonSelFilter": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateObject": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateVertex": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateEdge": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivatePolygon": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "siToggleSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SnapToggle": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ActivateSnap": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "CenterGeometry": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "ResetTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "FreezeTransformations": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "Duplicate": {
           "found": true,
@@ -2232,28 +2834,2737 @@
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "InspectObj": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetLocalTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
-          "error": null
+          "error": "hollow_command_stub"
         },
         "SetGlobalTransform": {
           "found": true,
           "enabled": null,
           "scripting": null,
           "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DuplicateMultiple": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
           "error": null
+        },
+        "Clone": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeleteAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateCluster": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateClusterWithCenter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSelectability": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeLocal": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeUnique": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ApplyNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        },
+        "MatchTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetAllTransforms": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SelectAllUsingFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeselectAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleVisibility": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "HideObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "UnhideAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        }
+      }
+    },
+    "single_camera": {
+      "selection": {
+        "count": 1,
+        "names": [
+          "camera1"
+        ],
+        "types": [
+          "camera"
+        ]
+      },
+      "setup_ok": true,
+      "setup_error": null,
+      "enabled": {
+        "SelectTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "TranslateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "RotateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "ScaleTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleProportional": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSymmetry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Parent": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ParentObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ParentTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CutRelation": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CutObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateGroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Ungroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeModeling": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "RemoveKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ClearAllKeys": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PlayForward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PlayBackward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FirstFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "LastFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "NextFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PreviousFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleCOG": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleProp": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateObjectSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePointSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateEdgeSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePolygonSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateObject": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateVertex": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateEdge": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePolygon": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "siToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SnapToggle": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CenterGeometry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeTransformations": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "DeleteObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "InspectObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetLocalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetGlobalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DuplicateMultiple": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "Clone": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeleteAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateCluster": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateClusterWithCenter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSelectability": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeLocal": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeUnique": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ApplyNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        },
+        "MatchTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetAllTransforms": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SelectAllUsingFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeselectAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleVisibility": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "HideObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "UnhideAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        }
+      }
+    },
+    "single_light": {
+      "selection": {
+        "count": 1,
+        "names": [
+          "Point"
+        ],
+        "types": [
+          "light"
+        ]
+      },
+      "setup_ok": true,
+      "setup_error": null,
+      "enabled": {
+        "SelectTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "TranslateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "RotateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "ScaleTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleProportional": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSymmetry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Parent": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ParentObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ParentTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CutRelation": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CutObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateGroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Ungroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeModeling": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "RemoveKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ClearAllKeys": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PlayForward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PlayBackward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FirstFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "LastFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "NextFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PreviousFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleCOG": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleProp": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateObjectSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePointSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateEdgeSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePolygonSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateObject": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateVertex": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateEdge": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePolygon": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "siToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SnapToggle": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CenterGeometry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeTransformations": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "DeleteObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "InspectObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetLocalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetGlobalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DuplicateMultiple": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "Clone": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeleteAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateCluster": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateClusterWithCenter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSelectability": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeLocal": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeUnique": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ApplyNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        },
+        "MatchTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetAllTransforms": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SelectAllUsingFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeselectAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleVisibility": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "HideObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "UnhideAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        }
+      }
+    },
+    "parented_child": {
+      "selection": {
+        "count": 1,
+        "names": [
+          "null1"
+        ],
+        "types": [
+          "null"
+        ]
+      },
+      "setup_ok": true,
+      "setup_error": null,
+      "enabled": {
+        "SelectTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "TranslateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "RotateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "ScaleTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleProportional": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSymmetry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Parent": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ParentObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ParentTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CutRelation": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CutObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateGroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Ungroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeModeling": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "RemoveKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ClearAllKeys": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PlayForward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PlayBackward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FirstFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "LastFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "NextFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PreviousFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleCOG": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleProp": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateObjectSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePointSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateEdgeSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePolygonSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateObject": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateVertex": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateEdge": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePolygon": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "siToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SnapToggle": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CenterGeometry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeTransformations": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "DeleteObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "InspectObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetLocalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetGlobalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DuplicateMultiple": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "Clone": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeleteAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateCluster": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateClusterWithCenter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSelectability": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeLocal": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeUnique": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ApplyNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        },
+        "MatchTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetAllTransforms": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SelectAllUsingFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeselectAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleVisibility": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "HideObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "UnhideAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        }
+      }
+    },
+    "group_selected": {
+      "selection": {
+        "count": 1,
+        "names": [
+          "Group"
+        ],
+        "types": [
+          "#Group"
+        ]
+      },
+      "setup_ok": true,
+      "setup_error": null,
+      "enabled": {
+        "SelectTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "TranslateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "RotateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "ScaleTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleProportional": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSymmetry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Parent": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ParentObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ParentTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CutRelation": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CutObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateGroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Ungroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeModeling": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "RemoveKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ClearAllKeys": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PlayForward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PlayBackward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FirstFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "LastFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "NextFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PreviousFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleCOG": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleProp": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateObjectSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePointSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateEdgeSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePolygonSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateObject": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateVertex": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateEdge": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePolygon": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "siToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SnapToggle": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CenterGeometry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeTransformations": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "DeleteObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "InspectObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetLocalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetGlobalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DuplicateMultiple": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "Clone": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeleteAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateCluster": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateClusterWithCenter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSelectability": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeLocal": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeUnique": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ApplyNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        },
+        "MatchTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetAllTransforms": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SelectAllUsingFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeselectAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleVisibility": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "HideObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "UnhideAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        }
+      }
+    },
+    "multi_mixed": {
+      "selection": {
+        "count": 2,
+        "names": [
+          "cube",
+          "null"
+        ],
+        "types": [
+          "polymsh",
+          "null"
+        ]
+      },
+      "setup_ok": true,
+      "setup_error": null,
+      "enabled": {
+        "SelectTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "TranslateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "RotateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "ScaleTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleProportional": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSymmetry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Parent": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ParentObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ParentTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CutRelation": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CutObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateGroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Ungroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeModeling": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "RemoveKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ClearAllKeys": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PlayForward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PlayBackward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FirstFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "LastFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "NextFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "PreviousFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleCOG": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleProp": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateObjectSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePointSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateEdgeSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePolygonSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateObject": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateVertex": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateEdge": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivatePolygon": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "siToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SnapToggle": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ActivateSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CenterGeometry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "FreezeTransformations": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "DeleteObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "InspectObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetLocalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetGlobalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DuplicateMultiple": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "Clone": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeleteAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateCluster": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CreateClusterWithCenter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleSelectability": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeLocal": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "MakeUnique": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SetNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ApplyNeutralPose": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        },
+        "MatchTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ResetAllTransforms": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "SelectAllUsingFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "DeselectAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "ToggleVisibility": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "HideObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
+        },
+        "UnhideAll": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": "hollow_command_stub"
         }
       }
     }
@@ -2308,13 +5619,34 @@
     "DeleteObj": true,
     "InspectObj": true,
     "SetLocalTransform": true,
-    "SetGlobalTransform": true
+    "SetGlobalTransform": true,
+    "DuplicateMultiple": true,
+    "Instantiate": true,
+    "Clone": true,
+    "DeleteAll": true,
+    "CreateCluster": true,
+    "CreateClusterWithCenter": true,
+    "ToggleSelectability": true,
+    "MakeLocal": true,
+    "MakeUnique": true,
+    "SetNeutralPose": true,
+    "ApplyNeutralPose": true,
+    "CopyPaste": true,
+    "Copy": true,
+    "Paste": true,
+    "MatchTransform": true,
+    "ResetAllTransforms": true,
+    "SelectAllUsingFilter": true,
+    "DeselectAll": true,
+    "ToggleVisibility": true,
+    "HideObj": true,
+    "UnhideAll": true
   },
   "xsibatch_meta": {
     "softimage": "13.2.163.0",
     "script": "si_mcp_enabled_matrix_dump.js",
     "mode": "XSIBATCH -processing",
-    "note": "Command.Enabled per selection context. MCP panel HWND enable/grey requires interactive Desktop - blocked by no-GUI rule.",
+    "note": "Command.Enabled per selection context (expanded). MCP panel HWND enable/grey requires interactive Desktop or Script Editor paste - blocked by no-GUI rule for agents.",
     "command_list": [
       "SelectTool",
       "Translate",
@@ -2365,29 +5697,51 @@
       "DeleteObj",
       "InspectObj",
       "SetLocalTransform",
-      "SetGlobalTransform"
+      "SetGlobalTransform",
+      "DuplicateMultiple",
+      "Instantiate",
+      "Clone",
+      "DeleteAll",
+      "CreateCluster",
+      "CreateClusterWithCenter",
+      "ToggleSelectability",
+      "MakeLocal",
+      "MakeUnique",
+      "SetNeutralPose",
+      "ApplyNeutralPose",
+      "CopyPaste",
+      "Copy",
+      "Paste",
+      "MatchTransform",
+      "ResetAllTransforms",
+      "SelectAllUsingFilter",
+      "DeselectAll",
+      "ToggleVisibility",
+      "HideObj",
+      "UnhideAll"
+    ],
+    "context_ids": [
+      "empty",
+      "single_mesh",
+      "multi_mesh",
+      "single_null",
+      "mesh_points_attempt",
+      "single_camera",
+      "single_light",
+      "parented_child",
+      "group_selected",
+      "multi_mixed"
     ]
   },
   "sources": {
     "pe_menus_mcp": "C:\\Users\\neil\\AppData\\Local\\Cursor\\AgentStores\\cursor_agent_stores\\bc-0bd1d332-4e49-4056-9894-1b21507c9f95\\files\\internal\\softimage-pc-dumps\\pe-menus-mcp.json",
-    "mcp_dict_labels": "C:\\Users\\neil\\AppData\\Local\\Cursor\\AgentStores\\cursor_agent_stores\\bc-0bd1d332-4e49-4056-9894-1b21507c9f95\\files\\internal\\softimage-pc-dumps\\mcp-dict-labels.json",
-    "xsibatch": "C:\\Users\\neil\\Documents\\softimage_dump_factory\\si_mcp_enabled_matrix_xsibatch.json",
+    "dict_labels": "C:\\Users\\neil\\AppData\\Local\\Cursor\\AgentStores\\cursor_agent_stores\\bc-0bd1d332-4e49-4056-9894-1b21507c9f95\\files\\internal\\softimage-pc-dumps\\mcp-dict-labels.json",
+    "xsibatch": "C:\\Users\\neil\\AppData\\Local\\Cursor\\AgentStores\\cursor_agent_stores\\bc-0bd1d332-4e49-4056-9894-1b21507c9f95\\files\\internal\\softimage-pc-dumps\\ui\\si_mcp_enabled_matrix_xsibatch.json",
     "enable_string_candidates": "C:\\Users\\neil\\AppData\\Local\\Cursor\\AgentStores\\cursor_agent_stores\\bc-0bd1d332-4e49-4056-9894-1b21507c9f95\\files\\internal\\softimage-pc-dumps\\mcp-dll-enable-grey-string-candidates.json"
-  },
-  "enable_string_candidates_summary": {
-    "source": "C:\\Users\\neil\\AppData\\Local\\Cursor\\AgentStores\\cursor_agent_stores\\bc-0bd1d332-4e49-4056-9894-1b21507c9f95\\files\\internal\\softimage-pc-dumps\\mcp-dll-enable-grey-string-candidates.json",
-    "top_keys": [
-      "path",
-      "candidate_count",
-      "candidates",
-      "note"
-    ],
-    "raw_type": "dict",
-    "approx_entries": 116
   },
   "xsibatch_bool_enabled_summary": {
     "empty": {
-      "commands_with_bool_enabled": 4,
+      "commands_with_bool_enabled": 8,
       "sample": {
         "Translate": {
           "found": true,
@@ -2414,13 +5768,99 @@
           "found": true,
           "enabled": true,
           "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      },
+      "all_bool": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
           "category": "Edit",
           "error": null
         }
       }
     },
     "single_mesh": {
-      "commands_with_bool_enabled": 4,
+      "commands_with_bool_enabled": 8,
       "sample": {
         "Translate": {
           "found": true,
@@ -2447,13 +5887,99 @@
           "found": true,
           "enabled": true,
           "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      },
+      "all_bool": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
           "category": "Edit",
           "error": null
         }
       }
     },
     "multi_mesh": {
-      "commands_with_bool_enabled": 4,
+      "commands_with_bool_enabled": 8,
       "sample": {
         "Translate": {
           "found": true,
@@ -2480,13 +6006,99 @@
           "found": true,
           "enabled": true,
           "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      },
+      "all_bool": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
           "category": "Edit",
           "error": null
         }
       }
     },
     "single_null": {
-      "commands_with_bool_enabled": 4,
+      "commands_with_bool_enabled": 8,
       "sample": {
         "Translate": {
           "found": true,
@@ -2515,11 +6127,97 @@
           "scripting": "Duplicate",
           "category": "Edit",
           "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      },
+      "all_bool": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
         }
       }
     },
     "mesh_points_attempt": {
-      "commands_with_bool_enabled": 4,
+      "commands_with_bool_enabled": 8,
       "sample": {
         "Translate": {
           "found": true,
@@ -2546,6 +6244,687 @@
           "found": true,
           "enabled": true,
           "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      },
+      "all_bool": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      }
+    },
+    "single_camera": {
+      "commands_with_bool_enabled": 8,
+      "sample": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      },
+      "all_bool": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      }
+    },
+    "single_light": {
+      "commands_with_bool_enabled": 8,
+      "sample": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      },
+      "all_bool": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      }
+    },
+    "parented_child": {
+      "commands_with_bool_enabled": 8,
+      "sample": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      },
+      "all_bool": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      }
+    },
+    "group_selected": {
+      "commands_with_bool_enabled": 8,
+      "sample": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      },
+      "all_bool": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      }
+    },
+    "multi_mixed": {
+      "commands_with_bool_enabled": 8,
+      "sample": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
+          "category": "Edit",
+          "error": null
+        }
+      },
+      "all_bool": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "Instantiate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Instantiate",
+          "category": "Edit",
+          "error": null
+        },
+        "CopyPaste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "CopyPaste",
+          "category": "Edit",
+          "error": null
+        },
+        "Copy": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Copy",
+          "category": "Edit",
+          "error": null
+        },
+        "Paste": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Paste",
           "category": "Edit",
           "error": null
         }

@@ -118,7 +118,8 @@
 "items": [
 {
 "label": "View insertion point",
-"id": 32920
+"id": 32920,
+"grayed": true
 },
 {
 "separator": true
@@ -197,13 +198,15 @@
 "items": [
 {
 "label": "None",
-"id": 32892
+"id": 32892,
+"grayed": true
 }
 ]
 },
 {
 "label": "Edit Current Layout",
-"id": 32841
+"id": 32841,
+"grayed": true
 },
 {
 "label": "Exit Layout Editing",
@@ -360,7 +363,8 @@
 },
 {
 "label": "Softimage Home Page",
-"id": 32855
+"id": 32855,
+"grayed": true
 },
 {
 "label": "Try Other Autodesk Products",
@@ -450,7 +454,8 @@
 },
 {
 "label": "IGES File...",
-"id": 32961
+"id": 32961,
+"grayed": true
 },
 {
 "label": "EPS File...",
@@ -633,7 +638,8 @@
 },
 {
 "label": "Preferences...",
-"id": 32839
+"id": 32839,
+"grayed": true
 },
 {
 "label": "Keyboard Mapping...",
@@ -701,7 +707,8 @@
 "items": [
 {
 "label": "Small",
-"id": 32880
+"id": 32880,
+"grayed": true
 },
 {
 "label": "Normal",
@@ -1914,11 +1921,13 @@
 },
 {
 "label": "Select Branch",
-"id": 32820
+"id": 32820,
+"grayed": true
 },
 {
 "label": "Select Tree",
-"id": 32821
+"id": 32821,
+"grayed": true
 },
 {
 "label": "Select Model",
@@ -1952,7 +1961,8 @@
 },
 {
 "label": "Deselect All",
-"id": 32866
+"id": 32866,
+"grayed": true
 },
 {
 "label": "Deselect All Using Filter",
@@ -2294,7 +2304,8 @@
 "items": [
 {
 "label": "from Marked Parameters",
-"id": 32779
+"id": 32779,
+"grayed": true
 },
 {
 "separator": true
@@ -2537,7 +2548,8 @@
 },
 {
 "label": "Duplicate Multiple",
-"id": 32844
+"id": 32844,
+"grayed": true
 },
 {
 "separator": true
@@ -2552,7 +2564,8 @@
 },
 {
 "label": "Clone Multiple",
-"id": 32870
+"id": 32870,
+"grayed": true
 },
 {
 "separator": true
@@ -2636,7 +2649,8 @@
 },
 {
 "label": "Create Cluster with Center",
-"id": 33122
+"id": 33122,
+"grayed": true
 },
 {
 "label": "Create Non-Overlapping Cluster",
@@ -2881,7 +2895,8 @@
 "mcpTransform": [
 {
 "label": "Reset All Transforms",
-"id": 32851
+"id": 32851,
+"grayed": true
 },
 {
 "label": "Reset Scaling",
@@ -2897,14 +2912,16 @@
 },
 {
 "label": "Reset Active Transform",
-"id": 32850
+"id": 32850,
+"grayed": true
 },
 {
 "separator": true
 },
 {
 "label": "Freeze All Transforms",
-"id": 32861
+"id": 32861,
+"grayed": true
 },
 {
 "label": "Freeze Scaling",
@@ -3082,7 +3099,8 @@
 "mcpPlayback": [
 {
 "label": "Play All Frames",
-"id": 32853
+"id": 32853,
+"grayed": true
 },
 {
 "label": "Real-Time Playback",
@@ -3190,7 +3208,8 @@
 },
 {
 "label": "First Frame",
-"id": 32857
+"id": 32857,
+"grayed": true
 },
 {
 "label": "Last Frame",
@@ -3202,7 +3221,8 @@
 },
 {
 "label": "Next Frame",
-"id": 32819
+"id": 32819,
+"grayed": true
 },
 {
 "separator": true
@@ -3268,7 +3288,8 @@
 },
 {
 "label": "3 Points",
-"id": 32827
+"id": 32827,
+"grayed": true
 },
 {
 "label": "N Points",
@@ -3308,11 +3329,13 @@
 },
 {
 "label": "Bounding Volume",
-"id": 32837
+"id": 32837,
+"grayed": true
 },
 {
 "label": "Bounding Plane",
-"id": 32835
+"id": 32835,
+"grayed": true
 },
 {
 "separator": true
@@ -3363,7 +3386,8 @@
 },
 {
 "label": "Infinite Light",
-"id": 32814
+"id": 32814,
+"grayed": true
 },
 {
 "label": "Camera",
@@ -3403,7 +3427,8 @@
 },
 {
 "label": "Selectability",
-"id": 32892
+"id": 32892,
+"grayed": true
 },
 {
 "label": "Ghosting",
@@ -3533,7 +3558,8 @@
 },
 {
 "label": "Polynode",
-"id": 32896
+"id": 32896,
+"grayed": true
 },
 {
 "label": "Domainpoint",
@@ -4323,7 +4349,8 @@
 },
 {
 "label": "Alphabetical",
-"id": 32896
+"id": 32896,
+"grayed": true
 },
 {
 "label": "Type + Alphabetical",
@@ -4432,7 +4459,8 @@
 },
 {
 "label": "Track Selection",
-"id": 32779
+"id": 32779,
+"grayed": true
 },
 {
 "label": "Find Next Selected Node",
@@ -4462,7 +4490,8 @@
 },
 {
 "label": "Animated Parameters Only",
-"id": 32845
+"id": 32845,
+"grayed": true
 },
 {
 "label": "Keyable Parameters Only",
@@ -4473,11 +4502,13 @@
 },
 {
 "label": "All Nodes",
-"id": 32847
+"id": 32847,
+"grayed": true
 },
 {
 "label": "Custom Properties",
-"id": 32857
+"id": 32857,
+"grayed": true
 },
 {
 "label": "More...",
@@ -4485,19 +4516,23 @@
 "items": [
 {
 "label": "General Properties",
-"id": 32848
+"id": 32848,
+"grayed": true
 },
 {
 "label": "Modeling Properties",
-"id": 32849
+"id": 32849,
+"grayed": true
 },
 {
 "label": "Animation Properties",
-"id": 32850
+"id": 32850,
+"grayed": true
 },
 {
 "label": "Kinematics",
-"id": 32851
+"id": 32851,
+"grayed": true
 },
 {
 "label": "Local Transform",
@@ -4509,11 +4544,13 @@
 "items": [
 {
 "label": "All",
-"id": 32852
+"id": 32852,
+"grayed": true
 },
 {
 "label": "X",
-"id": 32880
+"id": 32880,
+"grayed": true
 },
 {
 "label": "Y",
@@ -4521,7 +4558,8 @@
 },
 {
 "label": "Z",
-"id": 32882
+"id": 32882,
+"grayed": true
 }
 ]
 },
@@ -4531,7 +4569,8 @@
 "items": [
 {
 "label": "All",
-"id": 32853
+"id": 32853,
+"grayed": true
 },
 {
 "label": "X",
@@ -4553,7 +4592,8 @@
 "items": [
 {
 "label": "All",
-"id": 32854
+"id": 32854,
+"grayed": true
 },
 {
 "label": "X",
@@ -4571,15 +4611,18 @@
 },
 {
 "label": "Color Only",
-"id": 32858
+"id": 32858,
+"grayed": true
 },
 {
 "label": "Rendering Properties",
-"id": 32855
+"id": 32855,
+"grayed": true
 },
 {
 "label": "Viewing Properties",
-"id": 32856
+"id": 32856,
+"grayed": true
 }
 ]
 },
@@ -4652,11 +4695,13 @@
 },
 {
 "label": "Activation Parameters Only",
-"id": 32846
+"id": 32846,
+"grayed": true
 },
 {
 "label": "Marked Parameters Only",
-"id": 32892
+"id": 32892,
+"grayed": true
 },
 {
 "label": "Selected Parameters Only",
@@ -4818,7 +4863,8 @@
 "items": [
 {
 "label": "Temporary Separator",
-"id": 32859
+"id": 32859,
+"grayed": true
 },
 {
 "label": "All Parameters",
@@ -4859,7 +4905,8 @@
 "items": [
 {
 "label": "Temporary Separator",
-"id": 32859
+"id": 32859,
+"grayed": true
 },
 {
 "label": "Objects",
@@ -4867,7 +4914,8 @@
 },
 {
 "label": "Models",
-"id": 32870
+"id": 32870,
+"grayed": true
 },
 {
 "label": "Groups",
@@ -4943,7 +4991,8 @@
 "items": [
 {
 "label": "Temporary Separator",
-"id": 32859
+"id": 32859,
+"grayed": true
 },
 {
 "label": "All Parameters",
@@ -4984,7 +5033,8 @@
 "items": [
 {
 "label": "Temporary Separator",
-"id": 32859
+"id": 32859,
+"grayed": true
 },
 {
 "label": "All Parameters",
@@ -5025,7 +5075,8 @@
 "items": [
 {
 "label": "Temporary Separator",
-"id": 32859
+"id": 32859,
+"grayed": true
 },
 {
 "label": "All Nodes",
@@ -5040,15 +5091,18 @@
 },
 {
 "label": "User",
-"id": 32921
+"id": 32921,
+"grayed": true
 },
 {
 "label": "Workgroup",
-"id": 32920
+"id": 32920,
+"grayed": true
 },
 {
 "label": "Add-on",
-"id": 32922
+"id": 32922,
+"grayed": true
 },
 {
 "label": "User Add-on",
@@ -5066,7 +5120,8 @@
 "items": [
 {
 "label": "Temporary Separator",
-"id": 32859
+"id": 32859,
+"grayed": true
 }
 ]
 },
@@ -5076,7 +5131,8 @@
 "items": [
 {
 "label": "Temporary Separator",
-"id": 32859
+"id": 32859,
+"grayed": true
 },
 {
 "label": "All Parameters",
@@ -6015,7 +6071,8 @@
 },
 {
 "label": "Link with Multi...",
-"id": 32793
+"id": 32793,
+"grayed": true
 },
 {
 "label": "Link with Orientation...",
@@ -6034,7 +6091,8 @@
 "items": [
 {
 "label": "First Key",
-"id": 32779
+"id": 32779,
+"grayed": true
 },
 {
 "label": "Last Key",
@@ -6074,7 +6132,8 @@
 },
 {
 "label": "Edit Parameter Definition...",
-"id": 32961
+"id": 32961,
+"grayed": true
 },
 {
 "separator": true

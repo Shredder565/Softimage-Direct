@@ -69,7 +69,7 @@ function splitArgs(s: string): any[] {
 /** Softimage PE f_grayed / opts.enabled — grey seed from dump when no caller predicate. */
 function menuItemEnabled(it: SiMenuItem, path: string[] | undefined, opts: { enabled?: (it: SiMenuItem, path?: string[]) => boolean }): boolean {
   if (opts.enabled) return !!opts.enabled(it, path);
-  if (it.grayed || peMenuItemGrayed(it.label)) return false;
+  if (it.grayed || peMenuItemGrayed(it.label, it.id)) return false;
   return true;
 }
 
