@@ -13,7 +13,9 @@ import { registerRenderCommands } from './commands/render';
 import { iceTree, renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
 import { registerToolbarCommands, palettesView, toolbarView, newToolbar, customizeToolbars, openToolbarWindow, userToolbars } from './ui/toolbars';
 import { playbackPanel, animationPanel, timerange, layerManager, xsiExplorer, scriptHistory } from './ui/views';
-import { LayoutEngine, layoutByName, currentLayoutName, dockInto } from './ui/layout';
+import { LayoutEngine, layoutByName, currentLayoutName, layoutNames, dockInto } from './ui/layout';
+import { currentKeymap, keymapNames } from './ui/keymap';
+import menusData from './data/menus.json';
 import { installLayoutEditing } from './ui/layoutEdit';
 import { toolbarPanel, menuStatus, runMenuPath } from './ui/toolbarPanel';
 import { explorerView } from './ui/explorer';
@@ -54,6 +56,9 @@ layout.iconFactory = (name) => hasIcon(name) ? siIcon(name) : Object.assign(docu
 layout.registerView('Toolbar Panel', h => toolbarPanel(app, h));
 layout.registerView('Explorer', h => { explorerView(app, h); });
 layout.registerView('Script Log', h => scriptLog(app, h));
+// Softimage layout *.xsily names these "Script Editor" / "Script History View" — alias so Dual/Default frames aren't empty placeholders.
+layout.registerView('Script Editor', h => scriptLog(app, h));
+layout.registerView('Script History View', h => scriptHistory(app, h));
 let vm: ReturnType<typeof viewManager> | null = null;
 layout.registerView('View Manager', h => { vm = viewManager(app, h); });
 layout.registerView('Timeline', h => timeline(app, h));
@@ -71,9 +76,39 @@ layout.registerView('Main Shelf', h => mainShelf(app, h));
 for (const n of ['Selection Panel', 'Transformation Panel', 'Snap Panel', 'Constraint Panel', 'Edit Panel', 'Mini Transform Panel'] as const) layout.registerView(n, h => { mcpPanel(app, h, n === 'Selection Panel' ? { only: ['Select'] } : n === 'Transformation Panel' ? { only: ['Transform'] } : n === 'Snap Panel' ? { only: ['Snap'] } : n === 'Constraint Panel' ? { only: ['Constrain'] } : n === 'Edit Panel' ? { only: ['Edit'] } : { only: ['Transform'], cls: 'mini' }); });
 layout.registerView('Palettes', h => palettesView(app, h)); layout.registerView('Scripts', h => toolbarView(app, h, 'Scripts'));
 window.addEventListener('toolbarmenu', (e: any) => { const l = e.detail?.label; if (l === 'New Custom Toolbar...') newToolbar(app, 'toolbar'); else if (l === 'New Custom Shelf...') newToolbar(app, 'shelf'); else if (l === 'Customize Toolbars...') customizeToolbars(app); else if (l === 'New Custom Relational View') app.logMsg('info', 'Custom relational views: use View > Layouts > New Blank Layout'); else openToolbarWindow(app, l); });
-const SHELL: Record<string, (h: HTMLElement) => void> = { 'Render Tree': h => renderTree(app, h), 'Texture Editor': h => textureEditor(app, h), 'Schematic': h => schematic(app, h), 'Animation Editor': h => animationEditor(app, h, 'fcurve'), 'DopeSheet': h => animationEditor(app, h, 'dopesheet'), 'Spreadsheet': h => spreadsheet(app, h), 'Plugin Manager': h => pluginManager(app, h), 'Netview': h => netview(app, h), 'Image Clips': h => imageClips(app, h), 'Sources': h => imageClips(app, h), 'Render Manager': h => renderManager(app, h), 'Material Manager': h => materialManager(app, h), 'Material Panel': h => materialPanel(app, h), 'Weight Paint Panel': h => weightPaintPanel(app, h), 'Preset Manager': h => presetManager(app, h), 'Animation Mixer': h => animationMixer(app, h), 'Expression Editor': h => { animationEditor(app, h, 'fcurve'); }, 'ICE Tree': h => iceTree(app, h) };
+/** Softimage FX / compositing views — shell chrome only until Render/FX DoD; Dual layout embeds these frame types. */
+const deferredView = (title: string, note: string) => (h: HTMLElement) => {
+  const d = document.createElement('div'); d.className = 'view-placeholder deferred';
+  d.innerHTML = `<div class="view-placeholder-title">${title}</div><p>${note}</p>`;
+  h.appendChild(d);
+};
+const SHELL: Record<string, (h: HTMLElement) => void> = {
+  'Render Tree': h => renderTree(app, h), 'Texture Editor': h => textureEditor(app, h), 'Schematic': h => schematic(app, h),
+  'Animation Editor': h => animationEditor(app, h, 'fcurve'), 'Fcurve Editor': h => animationEditor(app, h, 'fcurve'),
+  'DopeSheet': h => animationEditor(app, h, 'dopesheet'), 'Standalone Dopesheet': h => animationEditor(app, h, 'dopesheet'),
+  'Spreadsheet': h => spreadsheet(app, h), 'Plugin Manager': h => pluginManager(app, h), 'Netview': h => netview(app, h),
+  'Image Clips': h => imageClips(app, h), 'Sources': h => imageClips(app, h), 'Render Manager': h => renderManager(app, h),
+  'Material Manager': h => materialManager(app, h), 'Material Panel': h => materialPanel(app, h),
+  'Weight Paint Panel': h => weightPaintPanel(app, h), 'Preset Manager': h => presetManager(app, h),
+  'Animation Mixer': h => animationMixer(app, h), 'Expression Editor': h => { animationEditor(app, h, 'fcurve'); },
+  'ICE Tree': h => iceTree(app, h),
+  'FX Tree': deferredView('FX Tree', 'Softimage Fx Tree (compositing) — UI frame wired; Render/FX evaluation deferred past UI+Model+Animation DoD.'),
+  'Fx Viewer': deferredView('Fx Viewer', 'Softimage Fx Viewer — UI frame wired; compositing deferred.'),
+  'Fx Paint Brush List': deferredView('Fx Paint Brush List', 'Softimage Fx brushes list — UI frame wired; compositing deferred.'),
+  'Fx Operator Selector': deferredView('Fx Operator Selector', 'Softimage Fx operators — UI frame wired; compositing deferred.'),
+};
 for (const [k, f] of Object.entries(SHELL)) layout.registerView(k, f);
-layout.registerView('Scene Layer Manager', h => layerManager(app, h)); layout.registerView('Script History', h => scriptHistory(app, h)); layout.registerView('XSI Explorer', h => xsiExplorer(app, h));
+layout.registerView('Scene Layer Manager', h => layerManager(app, h));
+layout.registerView('Script History', h => scriptHistory(app, h));
+layout.registerView('XSI Explorer', h => xsiExplorer(app, h));
+layout.registerView('SDK Explorer', h => xsiExplorer(app, h));
+// Softimage Dual/Default layouts include Animation Layer Manager; host a dedicated panel (scene layers ≠ anim layers).
+layout.registerView('Animation Layer Manager', h => {
+  const d = document.createElement('div'); d.className = 'view-placeholder';
+  d.innerHTML = '<div class="view-placeholder-title">Animation Layer Manager</div><p>Animation layers / mixer clips: open <b>Animation Mixer</b> for sources. Full Softimage anim-layer chrome lands with Animation fidelity (Phase A).</p>';
+  const b = document.createElement('button'); b.textContent = 'Open Animation Mixer'; b.onclick = () => window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'Animation Mixer' } }));
+  d.appendChild(b); h.appendChild(d);
+});
 layout.build(layoutByName(currentLayoutName()) ?? layoutByName('Default')!, root);
 installLayoutEditing(app, layout, root);
 setDockHook((win, frame) => { const body = win.body; const title = win.title; return dockInto(frame, title, body, (b) => { openFloating(title, (nb, w) => { nb.replaceWith(b); b.classList.remove('docked-body'); b.className = 'ppg-float-body'; (w as any).body = b; }, { w: 480, h: 400 }); }); });
@@ -93,17 +128,47 @@ const openView = (name: string) => {
   const key = 'view:' + name; const size = SI_VIEWS.find(v => v.name === name)?.defaultsize?.split(',').map(Number);
   const w = name === 'Mini Transform Panel' ? 200 : Math.max(320, size ? Math.min(900, size[2] - size[0]) : 420), h = size ? Math.min(600, size[3] - size[1]) : 400;
   const builders: Record<string, (host: HTMLElement) => void> = {
-    'Explorer': h => explorerView(app, h), 'Property Editor': h => propertyEditor(app, h), 'Script Editor': h => scriptLog(app, h), 'Script History View': h => scriptLog(app, h),
+    'Explorer': h => explorerView(app, h), 'Property Editor': h => propertyEditor(app, h), 'Script Editor': h => scriptLog(app, h), 'Script History View': h => scriptHistory(app, h),
     'Keying Panel': h => keyingPanel(app, h), 'Layer Control': h => layerControl(app, h), 'Main Shelf': h => mainShelf(app, h), 'Toolbar Panel': h => toolbarPanel(app, h), 'Command Line': h => commandLine(app, h),
     'Script History': h => scriptHistory(app, h), 'Palettes': h => palettesView(app, h), 'Scripts': h => toolbarView(app, h, 'Scripts'), 'Scene Layer Manager': h => layerManager(app, h), 'XSI Explorer': h => xsiExplorer(app, h),
+    'SDK Explorer': h => xsiExplorer(app, h),
     'Animation Panel': h => animationPanel(app, h), 'Playback Panel': h => playbackPanel(app, h), 'Timeline': h => timeline(app, h), 'Timerange': h => timerange(app, h),
     'Selection Panel': h => mcpPanel(app, h, { only: ['Select'] }), 'Transformation Panel': h => mcpPanel(app, h, { only: ['Transform'] }), 'Snap Panel': h => mcpPanel(app, h, { only: ['Snap'] }), 'Edit Panel': h => mcpPanel(app, h, { only: ['Constrain', 'Edit'] }), 'Mini Transform Panel': h => mcpPanel(app, h, { only: ['Transform'], cls: 'mini' }),
   };
-  const b = builders[name] ?? SHELL[name]; if (!b) { app.logMsg('info', `View "${name}": not implemented`); return; }
+  const b = builders[name] ?? SHELL[name] ?? layout.views.get(name); if (!b) { app.logMsg('info', `View "${name}": not implemented`); return; }
   openFloating(name, (body) => b(body), { w, h, key });
 };
 window.addEventListener('openview', (e: any) => openView(e.detail?.name));
 window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail?.page));
+
+/** Playwright / Script Editor hook: inventory UI wiring without Softimage install access. */
+(window as any).__uiAudit = () => {
+  const MENUS = menusData as Record<string, unknown>;
+  const registered = [...layout.views.keys()].sort();
+  const mcpHost = document.querySelector('.mcp');
+  const mcpSections = mcpHost ? Array.from(mcpHost.querySelectorAll('.mcp-section-title, .mcp-sec-title, .section-title')).map(e => e.textContent?.trim() || '') : [];
+  const mcpBtns = mcpHost ? Array.from(mcpHost.querySelectorAll('.mcp-btn')).map(b => b.textContent?.trim() || '') : [];
+  const placeholders = Array.from(document.querySelectorAll('.view-placeholder')).map(e => (e.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 120));
+  const moduleSel = document.querySelector<HTMLSelectElement>('.module-select');
+  return {
+    layout: currentLayoutName(),
+    layouts: layoutNames(),
+    keymap: currentKeymap,
+    keymaps: keymapNames(),
+    modulesExtracted: Object.keys(MENUS),
+    moduleSelect: moduleSel ? Array.from(moduleSel.options).map(o => o.textContent) : [],
+    registeredViews: registered,
+    registeredCount: registered.length,
+    mcpPresent: !!mcpHost,
+    mcpSections,
+    mcpButtonCount: mcpBtns.length,
+    mcpButtons: mcpBtns,
+    placeholderFrames: placeholders,
+    menubar: !!document.getElementById('menubar'),
+  };
+};
+(window as any).__openView = (name: string) => openView(name);
+(window as any).__switchModule = (m: string) => { app.module = m as any; app.events.emit('module'); };
 
 // Auto-inspect (Interaction pref "Popup Property Editors on Node Creation"): a new node opens a floating property
 // editor, like Softimage's "Scene_Root : sphere (General)" window, rather than switching the MCP tray.
