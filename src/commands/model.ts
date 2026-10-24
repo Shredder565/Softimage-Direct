@@ -9,6 +9,8 @@ import { siName } from '../core/opdefs';
 import * as S2 from '../core/scene2';
 import * as T2 from '../core/topology2';
 import { makeSymmetryMap, symmetryMapOf, mirrorComponent, buildPointMap } from '../core/symmetry';
+import { mapCluster } from './clusters';
+import { sampleUVs, relaxUVs } from '../core/texturing';
 import { num, int, bool, str, enumP, color } from '../core/params';
 import type { V3 } from '../core/curves';
 import * as C from '../core/curves';
@@ -220,13 +222,35 @@ export function registerModelCommands(app: App) {
   };
   propBase.canRun = (a) => propCan(a) || !!(PROPS[a.PresetObj] ?? PROPS[a.Preset]) || String(a.PresetObj).startsWith('Texture') || !!a.Type;
   propBase.execute = (app, a) => { if (a.Type && !PROPS[a.PresetObj] && !PROPS[a.Preset]) return projection(app, a.Type, app.targets(a.InputObjs)); const mk = PROPS[a.PresetObj] ?? PROPS[a.Preset]; if (mk) { for (const o of app.targets(a.InputObjs)) { const p = mk(); if (a.PresetObj === 'Static Kine State Property') { p.set('posx', o.kinematics.local.val('posx')); p.set('posy', o.kinematics.local.val('posy')); p.set('posz', o.kinematics.local.val('posz')); } app.record('Add property', () => o.addProperty(p), () => o.removeProperty(p)); app.select([p]); } return null; } return propExec(app, a); };
-  const projection = (app: App, kind: string, objs: X3DObject[]) => { let last: Property | null = null; for (const o of objs) { if (!o.primitive?.mesh()) continue; const p = new Property('Texture_Projection', 'uvprojection', [enumP('kind', kind, ['UV', 'Planar XY', 'Planar YZ', 'Planar XZ', 'Cylindrical', 'Spherical', 'Cubic', 'Spatial', 'Camera Projection', 'Unique UVs'].map(k => ({ label: k, value: k })), 'Projection'), num('urepeat', 1, 'U Repeat', { min: 0.01 }), num('vrepeat', 1, 'V Repeat', { min: 0.01 }), num('uoffset', 0, 'U Offset'), num('voffset', 0, 'V Offset')]); app.record('Projection', () => o.addProperty(p), () => o.removeProperty(p)); last = p; } if (!last) throw new Error('Select a polygon mesh'); app.select([last]); return last; };
+  /** Texture projection: a Texture_Projection property on the object's sample cluster, plus (for spatial projections) a
+   *  Texture_Support control object the user can move/rotate/scale to place the projection, like Softimage. */
+  const projection = (app: App, kind: string, objs: X3DObject[], withSupport = true) => {
+    let last: Property | null = null; const spatial = !['UV', 'Unique UVs'].includes(kind);
+    for (const o of objs) {
+      if (!o.primitive?.mesh()) continue;
+      let support: X3DObject | null = null;
+      if (withSupport && spatial) {
+        const shape = kind === 'Cylindrical' ? 'Cylinder' : kind === 'Spherical' ? 'Sphere' : kind === 'Cubic' || kind === 'Spatial' ? 'Cube' : 'Square';
+        support = S2.makeImplicit(app.scene.uniqueName(o.name + '_Texture_Support'), shape); (support as any).type = 'texturesupport'; (support as any).projectionKind = kind;
+        // size the support to the object's bounding box (in the object's space) and place it at the object's centre
+        const m = o.primitive.mesh()!; const mn = [Infinity, Infinity, Infinity], mx = [-Infinity, -Infinity, -Infinity]; for (let i = 0; i < m.positions.length; i += 3) for (let k = 0; k < 3; k++) { mn[k] = Math.min(mn[k], m.positions[i + k]); mx[k] = Math.max(mx[k], m.positions[i + k]); }
+        const ctr = [0, 1, 2].map(k => (mn[k] + mx[k]) / 2), half = [0, 1, 2].map(k => Math.max(1e-3, (mx[k] - mn[k]) / 2)); const l = support.kinematics.local;
+        l.set('posx', ctr[0]); l.set('posy', ctr[1]); l.set('posz', ctr[2]); l.set('sclx', half[0]); l.set('scly', half[1]); l.set('sclz', half[2]); support.primitive?.set('size', 2);
+        if (kind === 'Planar YZ') l.set('roty', 90); if (kind === 'Planar XZ') l.set('rotx', 90);
+        const sup = support; app.record('Texture Support', () => o.addChild(sup), () => o.removeChild(sup));
+      }
+      const p = new Property('Texture_Projection', 'uvprojection', [enumP('kind', kind, ['UV', 'Planar XY', 'Planar YZ', 'Planar XZ', 'Cylindrical', 'Spherical', 'Cubic', 'Spatial', 'Camera Projection', 'Unique UVs'].map(k => ({ label: k, value: k })), 'Projection'), str('support', support?.name ?? '', 'Texture Support', { readOnly: true }), num('urepeat', 1, 'U Repeat', { min: 0.01 }), num('vrepeat', 1, 'V Repeat', { min: 0.01 }), num('uoffset', 0, 'U Offset'), num('voffset', 0, 'V Offset'), bool('swapuv', false, 'Swap UV')]);
+      const cl = mapCluster(app, o, 'sample'); app.record('Projection', () => cl.addProperty(p), () => cl.removeProperty(p)); last = p;
+    }
+    if (!last) throw new Error('Select a polygon mesh'); app.select([last]); return last;
+  };
   app.register({ name: 'CreateProjection', label: 'Create Texture Projection', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }, { name: 'Type', default: 'Planar XY' }], execute: (app, a) => projection(app, a.Type, app.targets(a.InputObjs)) });
-  app.register({ name: 'CreateTextureSupport', label: 'Create Texture Support', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }, { name: 'Type', default: 'Planar XY' }], execute: (app, a) => projection(app, a.Type, app.targets(a.InputObjs)) });
+  app.register({ name: 'CreateTextureSupport', label: 'Create Texture Support', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }, { name: 'Type', default: 'Planar XY' }], execute: (app, a) => projection(app, a.Type, app.targets(a.InputObjs), true) });
   app.register({ name: 'Create2DMapWithProjection', label: 'Create Texture Map', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }, { name: 'Type', default: 'Planar XY' }], execute: (app, a) => projection(app, a.Type, app.targets(a.InputObjs)) });
-  app.register({ name: 'GenerateUniqueUVs', label: 'Unique UVs', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }], execute: (app, a) => projection(app, 'Unique UVs', app.targets(a.InputObjs)) });
-  app.register({ name: 'GenerateUVSetByContourStretching', label: 'Contour Stretch UVs', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }], execute: (app, a) => projection(app, 'Unique UVs', app.targets(a.InputObjs)) });
+  app.register({ name: 'GenerateUniqueUVs', label: 'Unique UVs', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }], execute: (app, a) => projection(app, 'Unique UVs', app.targets(a.InputObjs), false) });
+  app.register({ name: 'GenerateUVSetByContourStretching', label: 'Contour Stretch UVs', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }], execute(app, a) { const objs = app.targets(a.InputObjs); const p = projection(app, 'Planar XZ', objs, false); for (const o of objs) { const pp = o.property('uvprojection'); const m = o.primitive?.mesh(); if (pp && m) (pp as any).uvs = relaxUVs(m, sampleUVs(o)!, 40); } return p; } });
   app.register({ name: 'ConnectToProjection', label: 'Connect to Projection', category: 'Texturing', args: [], execute(app) { app.logMsg('info', 'Image textures use the object\'s latest Texture_Projection automatically in this build'); } });
+  app.register({ name: 'RemoveTextureSupport', label: 'Remove Texture Support', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }], execute(app, a) { for (const o of app.targets(a.InputObjs)) for (const c of o.children.filter(c => (c as any).type === 'texturesupport')) app.run('DeleteObj', { InputObjs: [c] }); return null; } });
   app.register({ name: 'ConnectToSupport', label: 'Connect to Support', category: 'Texturing', args: [], execute(app) { app.logMsg('info', 'Projection supports are implicit in this build'); } });
   app.register({ name: 'AddImageClip', label: 'Add Image Clip', category: 'Texturing', description: 'Loads an image file and connects it to the selected objects\' surface shader colour.', args: [{ name: 'InputObjs', default: '' }], undoable: false, execute(app, a) {
     const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';

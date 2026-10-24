@@ -386,7 +386,9 @@ export class X3DObject extends Node {
   }
   addProperty(p: Property) { p.parent = this; this.properties.push(p); return p; }
   removeProperty(p: Property) { const i = this.properties.indexOf(p); if (i >= 0) { this.properties.splice(i, 1); p.parent = null; } }
-  property(type: string) { return this.properties.find(p => p.type === type); }
+  property(type: string) { return this.properties.find(p => p.type === type) ?? this.clusters.flatMap(c => c.properties).find(p => p.type === type); }
+  /** Every property on the object and on its clusters. */
+  allProperties(): Property[] { return [...this.properties, ...this.clusters.flatMap(c => c.properties)]; }
   setPrimitive(p: Primitive | null) { if (this.primitive) this.primitive.parent = null; this.primitive = p; if (p) p.parent = this; }
   setMaterial(m: Material | null) { if (this.material) this.material.parent = null; this.material = m; if (m) m.parent = this; }
   addChild(c: X3DObject) { if (c.parentObj) c.parentObj.removeChild(c); c.parentObj = this; c.parent = this; this.children.push(c); }

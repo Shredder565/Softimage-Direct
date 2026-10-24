@@ -7,7 +7,8 @@ import { App } from '../core/commands';
 import { X3DObject, MoveComponentOperator, geomPoints, Model, threeOrder } from '../core/scene';
 import { ChainRoot, Bone } from '../core/scene2';
 import { meshEdges, edgeKey } from '../core/topology';
-import { catmullClark, dooSabin, loopSubdivide, meshUVProjection } from '../core/topology2';
+import { catmullClark, dooSabin, loopSubdivide } from '../core/topology2';
+import { sampleUVs, sampleOffsets } from '../core/texturing';
 import { symmetryMapOf, mirrorComponent, PLANE_AXIS } from '../core/symmetry';
 import { tessellateCurve } from '../core/curves';
 import type { MeshData } from '../core/geometry';
@@ -32,7 +33,7 @@ export const tool = { mode: 'select' as ToolMode, axes: { x: true, y: true, z: t
 /** Per-viewport state: the camdisp display mode and the camvis "eye" menu toggles (C3DCameraVisibilityProp). */
 interface Viewport { name: string; kind: 'ortho' | 'persp'; camera: THREE.Camera; el: HTMLElement; display: string; flags: Record<string, boolean>; head: { view: HTMLElement; disp: HTMLElement; labels: HTMLElement }; x?: any }
 export const DISPLAY_MODES = ['Bounding Box', 'Wireframe', 'Hidden Line', 'Constant', 'Shaded', 'Textured', 'Texture Decal', 'Realtime Shaders'];
-const VIS_DEFAULT: Record<string, boolean> = { 'Grid': true, 'Lights': true, 'Cameras': true, '3D Geometry': true, 'Implicit Geometry': true, 'Curves': true, 'Point Clouds': true, 'Nulls': true, 'Chains': true, 'Lattices': true, 'Control Objects': true, 'Name': false, 'Points': false, 'Centers': false, 'Normals': false, 'Polygon Normals': false, 'XRay Surfaces': false, 'Selection Info': false, 'PolyMesh Boundaries and Hard Edges': false, 'Subdivision Surfaces': true };
+const VIS_DEFAULT: Record<string, boolean> = { 'Grid': true, 'Lights': true, 'Cameras': true, '3D Geometry': true, 'Implicit Geometry': true, 'Curves': true, 'Point Clouds': true, 'Nulls': true, 'Chains': true, 'Lattices': true, 'Control Objects': true, 'Texture Supports': true, 'Name': false, 'Points': false, 'Centers': false, 'Normals': false, 'Polygon Normals': false, 'XRay Surfaces': false, 'Selection Info': false, 'PolyMesh Boundaries and Hard Edges': false, 'Subdivision Surfaces': true };
 type V3 = [number, number, number];
 
 export function viewManager(app: App, host: HTMLElement) {
@@ -185,9 +186,15 @@ export function viewManager(app: App, host: HTMLElement) {
       if (o.primitive && (o.primitive.type === 'polymsh' || o.primitive.type === 'surfmsh') && payload?.positions) {
         const mesh = displayMesh(o)!;
         let m = child(g, 'mesh') as THREE.Mesh | undefined, w = child(g, 'wire') as THREE.LineSegments | undefined;
-        if (!m || (m.geometry as any)._src !== mesh) {
-          const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(mesh.positions, 3)); geo.setIndex(new THREE.BufferAttribute(mesh.indices, 1)); geo.computeVertexNormals(); (geo as any)._src = mesh;
-          const proj = o.property('uvprojection'); if (proj) { const edited = (proj as any).uvs as Float32Array | undefined; const uv = edited && edited.length === mesh.positions.length / 3 * 2 ? new Float32Array(edited) : meshUVProjection(mesh, String(proj.val('kind'))); const ur = Number(proj.val('urepeat')), vr = Number(proj.val('vrepeat')), uo = Number(proj.val('uoffset')), vo = Number(proj.val('voffset')); if (!edited) for (let i = 0; i < uv.length; i += 2) { uv[i] = uv[i] * ur + uo; uv[i + 1] = uv[i + 1] * vr + vo; } geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); }
+        const suv = o.primitive.type === 'polymsh' || o.primitive.type === 'surfmsh' ? sampleUVs(o) : null; // per-sample UVs (projection through its support, or Texture Editor edits)
+        if (!m || (m.geometry as any)._src !== mesh || (m.geometry as any)._uv !== suv) {
+          let geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(mesh.positions, 3)); geo.setIndex(new THREE.BufferAttribute(mesh.indices, 1)); geo.computeVertexNormals();
+          if (suv) { // de-index so every triangle corner carries its own sample UV (seams and cube faces stay crisp)
+            geo = geo.toNonIndexed(); const { start } = sampleOffsets(mesh); const uv = new Float32Array(mesh.indices.length * 2);
+            for (let t = 0; t < mesh.triPoly.length; t++) { const pi = mesh.triPoly[t]; const f = mesh.polygons[pi]; for (let k = 0; k < 3; k++) { const v = mesh.indices[t * 3 + k]; const ci = f.indexOf(v); const si = start[pi] + (ci < 0 ? 0 : ci); uv[(t * 3 + k) * 2] = suv[si * 2]; uv[(t * 3 + k) * 2 + 1] = suv[si * 2 + 1]; } }
+            geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+          }
+          (geo as any)._src = mesh; (geo as any)._uv = suv;
           if (m) { m.geometry.dispose(); m.geometry = geo; } else { m = new THREE.Mesh(geo, new THREE.MeshPhongMaterial()); (m as any)._kind = 'mesh'; g.add(m); }
           const wgeo = polygonWire(mesh); if (w) { w.geometry.dispose(); w.geometry = wgeo; } else { w = new THREE.LineSegments(wgeo, new THREE.LineBasicMaterial({ color: 0xffffff })); (w as any)._kind = 'wire'; g.add(w); }
         }
@@ -214,7 +221,7 @@ export function viewManager(app: App, host: HTMLElement) {
         removeChild(g, 'mesh'); removeChild(g, 'wire');
         let mkr = child(g, 'marker') as THREE.Object3D | undefined; const tag = kindTag + '|' + (o.primitive?.name ?? '') + '|' + (o.val?.('length') ?? '') + '|' + (o.primitive?.val('size') ?? '') + '|' + (o.type === 'light' ? o.primitive?.val('LightCone') ?? '' : '') + '|' + (o.type === 'standin' ? o.primitive!.params.map(p => p.value).join(',') : '');
         if (!mkr || (mkr as any)._tag !== tag) { if (mkr) g.remove(mkr); mkr = marker(o); (mkr as any)._kind = 'marker'; (mkr as any)._tag = tag; g.add(mkr); }
-        const colr = selected ? SI.selected : o.kind === 'model' ? SI.nullcol : o.type === 'bone' || o.type === 'root' ? 0xe0c060 : o.type === 'eff' ? 0xff6060 : o.type === 'light' ? SI.light : o.type === 'camera' ? SI.camera : o.type === 'implicit' ? SI.ctrl : SI.nullcol;
+        const colr = selected ? SI.selected : o.kind === 'model' ? SI.nullcol : o.type === 'bone' || o.type === 'root' ? 0xe0c060 : o.type === 'eff' ? 0xff6060 : o.type === 'light' ? SI.light : o.type === 'camera' ? SI.camera : o.type === 'implicit' ? SI.ctrl : o.type === 'texturesupport' ? 0xc040c0 : SI.nullcol;
         mkr.traverse(c => { if ((c as any).material && (c as any)._kind !== 'light' && (c as any)._kind !== 'aimline') ((c as any).material as THREE.LineBasicMaterial).color.set(colr); });
         if (o.type === 'light') { userLights++; let L = child(g, 'light') as THREE.Light | undefined; const kind = o.primitive?.val('type'); if (!L) { L = kind === 'spot' ? new THREE.SpotLight(0xffffff, 60, 0, 0.6, 0.4) : kind === 'infinite' ? new THREE.DirectionalLight(0xffffff, 1) : new THREE.PointLight(0xffffff, 80); (L as any)._kind = 'light'; g.add(L); if ((L as any).target) { (L as any).target.position.set(0, 0, -1); g.add((L as any).target); } } const c = o.primitive?.val('soft_light.color') as number[] | undefined; if (c) L.color.setRGB(c[0], c[1], c[2]); const inten = Number(o.primitive?.val('soft_light.intensity') ?? 0.75); L.intensity = kind === 'infinite' ? inten * 1.5 : inten * 100;
           // spot / infinite lights with a direction constraint show the interest line (Softimage draws it light → interest)
@@ -234,16 +241,17 @@ export function viewManager(app: App, host: HTMLElement) {
     const stamp = map ? [...map.entries()].map(([k, v]) => k + ':' + v.map(x => x.toFixed(2)).join(',')).join(';') : '';
     if ((geo as any)._unStamp === stamp) return; (geo as any)._unStamp = stamp;
     geo.computeVertexNormals(); if (!map?.size || p?.val('show') === false) return;
-    const n = geo.attributes.normal as THREE.BufferAttribute; for (const [i, v] of map) if (i * 3 + 2 < n.array.length) { n.setXYZ(i, v[0], v[1], v[2]); } n.needsUpdate = true;
-    void mesh;
+    const n = geo.attributes.normal as THREE.BufferAttribute; if (geo.index) { for (const [i, v] of map) if (i < n.count) n.setXYZ(i, v[0], v[1], v[2]); } else { for (let c = 0; c < mesh.indices.length && c < n.count; c++) { const v = map.get(mesh.indices[c]); if (v) n.setXYZ(c, v[0], v[1], v[2]); } } n.needsUpdate = true;
   };
   /** Weight maps / vertex colours show as vertex colours while their property is selected or a paint tool is active on the object. */
   const applyPaintDisplay = (o: X3DObject, m: THREE.Mesh, mesh: MeshData) => {
-    const sel = app.selection[app.selection.length - 1]; const tool: any = app.activeTool; const prop = (sel && (sel.type === 'weightmap' || sel.type === 'vertexcolor') && sel.parent === o) ? sel : (tool?.paintObj === o ? (o.property('weightmap') ?? o.property('vertexcolor')) : null);
+    const sel = app.selection[app.selection.length - 1]; const tool: any = app.activeTool; const ownerOfProp = (n: any): X3DObject | null => { let x = n?.parent; while (x && !(x instanceof X3DObject)) x = x.parent; return x ?? null; };
+    const prop = (sel && (sel.type === 'weightmap' || sel.type === 'vertexcolor' || sel.type === 'envelope') && ownerOfProp(sel) === o) ? sel : (tool?.paintObj === o ? (o.property('weightmap') ?? o.property('vertexcolor') ?? o.property('envelope')) : null);
     const geo = m.geometry;
     if (!prop) { if ((geo as any)._painted) { geo.deleteAttribute('color'); (geo as any)._painted = false; } return; }
-    const values: Map<number, any> = (prop as any).values ?? new Map(); const n = mesh.positions.length / 3; const col = new Float32Array(n * 3);
-    for (let i = 0; i < n; i++) { if (prop.type === 'weightmap') { const w = Number(values.get(i) ?? 0); col[i * 3] = w; col[i * 3 + 1] = 0.15 + 0.3 * w; col[i * 3 + 2] = 1 - w; } else { const c = values.get(i) ?? [0.5, 0.5, 0.5]; col[i * 3] = c[0]; col[i * 3 + 1] = c[1]; col[i * 3 + 2] = c[2]; } }
+    const values: Map<number, any> = (prop as any).values ?? new Map(); const rows = (geo.attributes.position as THREE.BufferAttribute).count; const col = new Float32Array(rows * 3);
+    const envW = prop.type === 'envelope' ? ((prop as any).weightsFor?.(app) as Map<number, number> | undefined) : undefined;
+    for (let r = 0; r < rows; r++) { const i = geo.index ? r : mesh.indices[r]; if (prop.type === 'weightmap' || prop.type === 'envelope') { const w = prop.type === 'envelope' ? Number(envW?.get(i) ?? 0) : Number(values.get(i) ?? 0); col[r * 3] = w; col[r * 3 + 1] = 0.15 + 0.3 * w; col[r * 3 + 2] = 1 - w; } else { const c = values.get(i) ?? [0.5, 0.5, 0.5]; col[r * 3] = c[0]; col[r * 3 + 1] = c[1]; col[r * 3 + 2] = c[2]; } }
     geo.setAttribute('color', new THREE.BufferAttribute(col, 3)); (geo as any)._painted = true;
     // a private vertex-coloured material (the cached ones are shared between objects)
     let pm = (m as any)._paintMat as THREE.Material | undefined; if (!pm) { pm = new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1.5, polygonOffsetUnits: 2 }); (m as any)._paintMat = pm; }
@@ -355,7 +363,7 @@ export function viewManager(app: App, host: HTMLElement) {
   const constantMats = new Map<THREE.Material, THREE.Material>();
   const decalMats = new Map<THREE.Material, THREE.Material>();
   const decalFor = (base: THREE.Material) => { let m = decalMats.get(base); if (!m) { m = new THREE.MeshBasicMaterial({ color: (base as any).color ?? 0xb3b3b3, map: (base as any).map ?? null, polygonOffset: true, polygonOffsetFactor: 1.5, polygonOffsetUnits: 2, side: THREE.DoubleSide }); decalMats.set(base, m); } return m; };
-  const TYPE_FLAG: Record<string, string> = { light: 'Lights', camera: 'Cameras', null: 'Nulls', implicit: 'Implicit Geometry', lattice: 'Lattices', root: 'Chains', bone: 'Chains', eff: 'Chains' };
+  const TYPE_FLAG: Record<string, string> = { light: 'Lights', camera: 'Cameras', null: 'Nulls', implicit: 'Implicit Geometry', lattice: 'Lattices', root: 'Chains', bone: 'Chains', eff: 'Chains', texturesupport: 'Texture Supports', standin: '3D Geometry' };
   const prepCam = (vp: Viewport, r: { w: number; h: number }) => { const c = vp.camera as any; if (vp.kind === 'persp') c.aspect = r.w / r.h; else { const z = c._zoom ?? 20, a = r.w / r.h; c.left = -z * a; c.right = z * a; c.top = z; c.bottom = -z; } c.updateProjectionMatrix(); c.updateMatrixWorld(); };
   const normalsObj = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: SI.vertex })); scene.add(normalsObj);
   const centersObj = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: SI.ctrl, size: 6, sizeAttenuation: false, depthTest: false })); scene.add(centersObj);
@@ -710,7 +718,7 @@ function marker(o: X3DObject): THREE.Object3D {
   else if (t === 'bone') { const L = Number(o.val('length') ?? 2), w = Math.min(0.5, L * 0.12); const b = [[0, 0, 0], [L * 0.15, w, 0], [L, 0, 0], [L * 0.15, -w, 0], [0, 0, 0], [L * 0.15, 0, w], [L, 0, 0], [L * 0.15, 0, -w], [0, 0, 0]]; g.add(line(b)); g.add(line([[L * 0.15, w, 0], [L * 0.15, 0, w], [L * 0.15, -w, 0], [L * 0.15, 0, -w]], true)); }
   else if (t === 'root') { g.add(line([[-0.7, 0, 0], [0.7, 0, 0]])); g.add(line([[0, -0.7, 0], [0, 0.7, 0]])); g.add(line([[0, 0, -0.7], [0, 0, 0.7]])); g.add(circle(0.7, 'y', 12)); }
   else if (t === 'eff') { g.add(line([[0.6, 0, 0], [0, 0.6, 0], [-0.6, 0, 0], [0, -0.6, 0]], true)); g.add(line([[0, 0, 0.6], [0, 0.6, 0], [0, 0, -0.6], [0, -0.6, 0]], true)); }
-  else if (t === 'implicit') { const s = Number(o.primitive?.val('size') ?? 4) / 2; const shape = String(o.primitive?.val('shape')); const sq = (y: number) => line([[-s, y, -s], [s, y, -s], [s, y, s], [-s, y, s]], true);
+  else if (t === 'implicit' || t === 'texturesupport') { const s = Number(o.primitive?.val('size') ?? 4) / 2; const shape = String(o.primitive?.val('shape')); const sq = (y: number) => line([[-s, y, -s], [s, y, -s], [s, y, s], [-s, y, s]], true);
     if (shape === 'Cube') { g.add(sq(-s), sq(s)); for (const [x, z] of [[-s, -s], [s, -s], [s, s], [-s, s]]) g.add(line([[x, -s, z], [x, s, z]])); }
     else if (shape === 'Sphere') { g.add(circle(s, 'x'), circle(s, 'y'), circle(s, 'z')); }
     else if (shape === 'Cylinder') { g.add(circle(s, 'y').translateY(-s), circle(s, 'y').translateY(s)); for (const [x, z] of [[-s, 0], [s, 0], [0, -s], [0, s]]) g.add(line([[x, -s, z], [x, s, z]])); }
