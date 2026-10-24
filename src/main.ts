@@ -10,6 +10,7 @@ import { registerRiggingCommands } from './commands/rigging';
 import { registerConstraintCommands } from './commands/constraints';
 import { registerAnimCommands } from './commands/anim';
 import { registerRenderCommands } from './commands/render';
+import { registerModuleToolbarCommands } from './commands/moduleToolbar';
 import { iceTree, renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
 import { registerToolbarCommands, palettesView, toolbarView, newToolbar, customizeToolbars, openToolbarWindow, userToolbars } from './ui/toolbars';
 import { playbackPanel, animationPanel, timerange, layerManager, xsiExplorer, scriptHistory } from './ui/views';
@@ -43,6 +44,7 @@ registerRiggingCommands(app);
 registerConstraintCommands(app);
 registerAnimCommands(app);
 registerRenderCommands(app);
+registerModuleToolbarCommands(app);
 registerToolbarCommands(app);
 (window as any).__siMessage = siMessage; (window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
 

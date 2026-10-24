@@ -1,0 +1,362 @@
+// High-traffic Render / Simulate / Hair module-toolbar commands.
+// Scripting names and args follow Softimage's registry (data/commands_full.json);
+// menu id → command wiring lives in src/data/menu_commands.json (PC dump / command-map derived).
+import { App } from '../core/commands';
+import { Null, Property, X3DObject } from '../core/scene';
+import { bool, num, str } from '../core/params';
+
+const addObject = (app: App, obj: X3DObject, parent?: X3DObject | null) => {
+  const p = parent ?? app.scene.root;
+  app.record('Add ' + obj.name, () => p.addChild(obj), () => p.removeChild(obj));
+  return obj;
+};
+
+const addNamedProp = (app: App, objs: X3DObject[], preset: string, type: string, extra: Parameters<typeof Property.prototype.add>[0][] = []) => {
+  const out: Property[] = [];
+  for (const o of objs) {
+    const p = new Property(preset, type, [bool('enabled', true, 'Enabled'), ...extra]);
+    app.record('Add ' + preset, () => o.addProperty(p), () => o.removeProperty(p));
+    out.push(p);
+  }
+  if (out.length) app.select(out);
+  return out[0] ?? null;
+};
+
+const openView = (name: string) => window.dispatchEvent(new CustomEvent('openview', { detail: { name } }));
+
+const stubTool = (app: App, label: string) => {
+  app.logMsg('info', `${label}: tool armed (viewport interaction stub)`);
+  return null;
+};
+
+/** Softimage Render / Simulate / Hair leaves that were unmapped after PE menu import. */
+export function registerModuleToolbarCommands(app: App) {
+  // ——— Render: cameras / clips / UV / editors ———
+  app.register({
+    name: 'CreateUserMotion', label: 'Create User Motion', category: 'Rendering',
+    args: [{ name: 'InputObjs', default: '' }, { name: 'PropertyName', default: 'UserMotion' }, { name: 'PropPresetObj', default: 'User Motion Property' }],
+    execute: (app, a) => addNamedProp(app, app.targets(a.InputObjs), String(a.PropPresetObj || 'User Motion Property'), 'usermotion', [str('name', a.PropertyName || 'UserMotion', 'Name')]),
+  });
+  app.register({
+    name: 'CreateImageClip', label: 'Create Image Clip from File', category: 'Rendering',
+    args: [{ name: 'FileName', default: '' }, { name: 'Name', default: '' }],
+    execute(app, a) {
+      const name = app.scene.uniqueName(a.Name || 'ImageClip');
+      const p = new Property(name, 'imageclip', [str('filename', a.FileName || '', 'File Name'), bool('enabled', true, 'Enabled')]);
+      app.record('Image clip', () => app.scene.root.addProperty(p), () => app.scene.root.removeProperty(p));
+      app.select([p]);
+      app.logMsg('info', a.FileName ? `Image clip: ${a.FileName}` : 'Image clip created (set File Name in PPG)');
+      return p;
+    },
+  });
+  for (const [name, label] of [['SwimUVW', 'Swim UV'], ['StickUVW', 'Stick UV'], ['ReprojectUVW', 'Reproject UV']] as const) {
+    app.register({
+      name, label, category: 'Texturing',
+      args: [{ name: 'InputObjs', default: '' }],
+      execute(app, a) {
+        const objs = app.targets(a.InputObjs);
+        if (!objs.length) throw new Error('Select an object with UVs');
+        for (const o of objs) addNamedProp(app, [o], label, name.toLowerCase());
+        app.logMsg('info', `${label} on ${objs.map(o => o.name).join(', ')}`);
+        return null;
+      },
+    });
+  }
+  app.register({
+    name: 'InspectCurrentUV', label: 'Inspect Current UV', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }],
+    undoable: false, execute(app) { openView('Texture Editor'); app.logMsg('info', 'Inspect Current UV → Texture Editor'); },
+  });
+  app.register({
+    name: 'InspectAllUVs', label: 'Inspect All UVs', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }],
+    undoable: false, execute(app) { openView('Texture Editor'); app.logMsg('info', 'Inspect All UVs → Texture Editor'); },
+  });
+  app.register({
+    name: 'EditUVProjectionTool', label: 'Edit Projection Tool', category: 'Texturing', args: [],
+    undoable: false, execute: (app) => stubTool(app, 'Edit Projection Tool'),
+  });
+  app.register({
+    name: 'OpenRenderTree', label: 'Open Render Tree', category: 'Rendering', args: [],
+    undoable: false, execute() { openView('Render Tree'); },
+  });
+  app.register({
+    name: 'OpenTextureEditor', label: 'Open Texture Editor', category: 'Texturing', args: [],
+    undoable: false, execute() { openView('Texture Editor'); },
+  });
+
+  // ——— Render region ———
+  const rr = (window as any).__siRenderRegion ?? ((window as any).__siRenderRegion = { visible: true, track: false, refresh: 'Interactive', display: 'RGBA' });
+  app.register({ name: 'RenderRegionTool', label: 'Render Region Tool', category: 'Rendering', args: [{ name: 'Clsid', default: '' }], undoable: false, execute: (app) => stubTool(app, 'Render Region Tool') });
+  app.register({ name: 'RenderRegionSave', label: 'Save Render Region To File', category: 'Rendering', args: [{ name: 'FileName', default: null }], undoable: false, execute(app, a) { app.logMsg('info', `Render region save${a.FileName ? ': ' + a.FileName : ' (pick a path in Softimage)'}`); } });
+  app.register({ name: 'RenderRegionRefresh', label: 'Refresh Render Region', category: 'Rendering', args: [], undoable: false, execute(app) { app.logMsg('info', 'Render region refreshed'); app.events.emit('frame'); } });
+  app.register({ name: 'RenderRegionToggleVisibility', label: 'Show/Hide Render Region', category: 'Rendering', args: [], undoable: false, execute(app) { rr.visible = !rr.visible; app.logMsg('info', `Render region ${rr.visible ? 'shown' : 'hidden'}`); } });
+  app.register({ name: 'RenderRegionToggleSelectionTracking', label: 'Toggle Selection Tracking for Render Region', category: 'Rendering', args: [], undoable: false, execute(app) { rr.track = !rr.track; app.logMsg('info', `Render region track selection ${rr.track ? 'ON' : 'OFF'}`); } });
+  app.register({
+    name: 'RenderRegionSetRefreshMode', label: 'Set Refresh Mode for Render Region', category: 'Rendering',
+    args: [{ name: 'Viewport', default: '' }, { name: 'RefreshMode', default: '' }], undoable: false,
+    execute(app, a) {
+      const m = String(a.RefreshMode || '');
+      rr.refresh = m.includes('Manual') ? 'Manual' : m.includes('CTRS') ? 'Camera/Time/Region' : 'Interactive';
+      app.logMsg('info', `Render region refresh: ${rr.refresh}`);
+    },
+  });
+  app.register({
+    name: 'RenderRegionSetDisplayType', label: 'Set Render Region Display Type', category: 'Rendering',
+    args: [{ name: 'Viewport', default: '' }, { name: 'Type', default: '' }], undoable: false,
+    execute(app, a) {
+      const t = String(a.Type || '');
+      rr.display = t.includes('Alpha') && !t.includes('RGBA') && !t.includes('RGB') ? 'Alpha'
+        : t.includes('Red') ? 'Red' : t.includes('Green') ? 'Green' : t.includes('Blue') ? 'Blue'
+          : t.includes('RGB') && !t.includes('RGBA') ? 'RGB' : 'RGBA';
+      app.logMsg('info', `Render region display: ${rr.display}`);
+    },
+  });
+  app.register({ name: 'InspectViewportRenderRegionOptions', label: 'Inspect Viewport Render Region Options', category: 'Rendering', args: [], undoable: false, execute(app) { app.logMsg('info', `Render region options: visible=${rr.visible} track=${rr.track} refresh=${rr.refresh} display=${rr.display}`); } });
+
+  // ——— Passes / render ———
+  const passName = (a: any) => a.Name || String(a.PresetObj || 'Pass').replace(/_Pass$/i, '').replace(/_/g, ' ') || 'Pass';
+  const createPass = app.commands.get('CreatePass')!;
+  createPass.args = [{ name: 'Name', default: 'Pass' }, { name: 'PresetObj', default: 'Pass' }, { name: 'Value', default: null }];
+  createPass.execute = (app, a) => {
+    const p = app.scene.addPass(passName(a));
+    app.select([]);
+    app.logMsg('info', `Pass created: ${p.name}`);
+    app.events.emit('scene');
+    return p;
+  };
+
+  app.register({ name: 'CreatePassFromLayers', label: 'New Pass Based on Layers', category: 'Rendering', args: [{ name: 'Name', default: '' }], execute: (app, a) => app.run('CreatePass', { Name: a.Name || 'LayerPass', PresetObj: 'Pass' }) });
+  app.register({ name: 'CreateImageBasedLightingPass', label: 'Create Image Based Lighting Pass', category: 'Rendering', args: [{ name: 'Filename', default: '' }], execute: (app) => app.run('CreatePass', { Name: 'IBL', PresetObj: 'IBL_Pass' }) });
+  app.register({
+    name: 'DuplicateCurrentPass', label: 'Duplicate Current Pass', category: 'Rendering', args: [],
+    execute(app) {
+      const cur = app.scene.passes[app.scene.passes.length - 1];
+      if (!cur) throw new Error('No pass to duplicate');
+      return app.run('CreatePass', { Name: cur.name + '_Copy', PresetObj: 'Pass' });
+    },
+  });
+  app.register({
+    name: 'DeleteCurrentPass', label: 'Delete Current Pass', category: 'Rendering', args: [],
+    execute(app) {
+      const passes = app.scene.passes;
+      if (passes.length <= 1) throw new Error('Cannot delete the last pass');
+      const p = passes.pop()!;
+      app.record('Delete pass', () => { /* already popped */ }, () => { passes.push(p); });
+      app.events.emit('scene');
+      return p;
+    },
+  });
+  app.register({
+    name: 'CreatePartition', label: 'New Partition', category: 'Rendering',
+    args: [{ name: 'Target', default: '' }, { name: 'Name', default: 'Partition' }, { name: 'InputObjs', default: '' }],
+    execute(app, a) {
+      const pass = app.scene.passes[app.scene.passes.length - 1];
+      if (!pass) throw new Error('No current pass');
+      const host = app.scene.root;
+      const p = new Property(app.scene.uniqueName(a.Name || 'Partition'), 'partition', [
+        bool('enabled', true, 'Enabled'),
+        str('pass', pass.name, 'Pass', { readOnly: true }),
+      ]);
+      app.record('Partition', () => host.addProperty(p), () => host.removeProperty(p));
+      app.select([p]);
+      return p;
+    },
+  });
+  app.register({ name: 'AddToPartition', label: 'Add Object to Partition', category: 'Rendering', args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], execute(app) { app.logMsg('info', `Add to partition: ${app.selectedObjects.map(o => o.name).join(', ') || '(nothing selected)'}`); } });
+  app.register({ name: 'RemoveFromPartition', label: 'Remove Object from Partition', category: 'Rendering', args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], execute(app) { app.logMsg('info', `Remove from partition: ${app.selectedObjects.map(o => o.name).join(', ') || '(nothing selected)'}`); } });
+
+  const renderLog = (app: App, what: string) => { app.logMsg('info', `${what} (offline render stub — use Softimage for frames)`); };
+  app.register({ name: 'RenderPass', label: 'Render Pass', category: 'Rendering', args: [{ name: 'Passes', default: 'Passes.Current' }], undoable: false, execute: (app) => renderLog(app, 'Render Pass') });
+  app.register({ name: 'RenderPasses', label: 'Render Passes', category: 'Rendering', args: [{ name: 'Passes', default: 'Passes.Current' }], undoable: false, execute: (app, a) => renderLog(app, a.Passes === 'Passes.Current' ? 'Render Current Pass' : 'Render Passes') });
+  app.register({ name: 'RenderSelectedPasses', label: 'Render Selected Passes', category: 'Rendering', args: [], undoable: false, execute: (app) => renderLog(app, 'Render Selected Passes') });
+  app.register({ name: 'RenderAllPasses', label: 'Render All Passes', category: 'Rendering', args: [], undoable: false, execute: (app) => renderLog(app, 'Render All Passes') });
+  app.register({ name: 'RenderCurrentFrame', label: 'Render Current Frame', category: 'Rendering', args: [], undoable: false, execute: (app) => renderLog(app, 'Render Current Frame') });
+  app.register({ name: 'RenderCurrentFrameAllPasses', label: 'Render Current Frame All Passes', category: 'Rendering', args: [], undoable: false, execute: (app) => renderLog(app, 'Render Current Frame (All Passes)') });
+  app.register({ name: 'RenderPreview', label: 'Render Preview', category: 'Rendering', args: [], undoable: false, execute() { openView('Render Manager'); } });
+  app.register({ name: 'OpenRenderingPreferences', label: 'Open Rendering Preferences', category: 'Rendering', args: [], undoable: false, execute() { window.dispatchEvent(new CustomEvent('openprefs', { detail: { page: 'Rendering' } })); } });
+  app.register({ name: 'InspectCurrentPass', label: 'Inspect Current Pass', category: 'Rendering', args: [], undoable: false, execute(app) { const p = app.scene.passes[app.scene.passes.length - 1]; if (p) app.logMsg('info', `Current pass: ${p.name}`); openView('Render Manager'); } });
+  app.register({ name: 'InspectRendererOptions', label: 'Inspect Renderer Options', category: 'Rendering', args: [], undoable: false, execute() { window.dispatchEvent(new CustomEvent('openprefs', { detail: { page: 'Rendering' } })); } });
+  app.register({ name: 'ExportRenderArchive', label: 'Export Passes to Render Archive', category: 'Rendering', args: [], undoable: false, execute: (app) => app.logMsg('info', 'Export render archive: stub') });
+  app.register({ name: 'ExportRenderArchiveAllPasses', label: 'Export All Passes to Render Archives', category: 'Rendering', args: [], undoable: false, execute: (app) => app.logMsg('info', 'Export all passes archive: stub') });
+  app.register({ name: 'ExportObjectRenderArchive', label: 'Export an Object to a Render Archive', category: 'Rendering', args: [], undoable: false, execute: (app) => app.logMsg('info', 'Export object render archive: stub') });
+
+  // ——— Simulate: rigid / soft / cloth ———
+  const rbProp = (app: App, passive: boolean) => {
+    const objs = app.selectedObjects;
+    if (!objs.length) throw new Error('Select one or more objects');
+    for (const o of objs) {
+      let p = o.properties.find(x => x.type === 'rigidbodyprop');
+      if (!p) {
+        p = new Property('Rigid Body', 'rigidbodyprop', [bool('passive', passive, 'Passive'), num('mass', 1, 'Mass', { min: 0 })]);
+        app.record('Rigid body', () => o.addProperty(p!), () => o.removeProperty(p!));
+      } else app.setParam(p.get('passive')!, passive);
+    }
+    app.logMsg('info', `${passive ? 'Passive' : 'Active'} rigid body on ${objs.map(o => o.name).join(', ')}`);
+    return objs[0];
+  };
+  app.register({ name: 'CreateActiveRigidBody', label: 'Active Rigid Body', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }], execute: (app) => rbProp(app, false) });
+  app.register({ name: 'CreatePassiveRigidBody', label: 'Passive Rigid Body', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }], execute: (app) => rbProp(app, true) });
+  app.register({
+    name: 'CreateCompoundRigidBody', label: 'Compound Rigid Body', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }],
+    execute(app) {
+      const objs = app.selectedObjects;
+      if (objs.length < 2) throw new Error('Select multiple objects for a compound rigid body');
+      rbProp(app, false);
+      const host = objs[0];
+      host.add(str('compound_children', objs.slice(1).map(o => o.name).join(','), 'Compound Children', { readOnly: true }));
+      return host;
+    },
+  });
+  app.register({
+    name: 'AttachRigidBodies', label: 'Attach Rigid Bodies', category: 'Simulation',
+    args: [{ name: 'Name', default: 'BallSocket' }, { name: 'Bodies', default: null }, { name: 'Px', default: 0 }, { name: 'Py', default: 0 }],
+    execute(app, a) {
+      const objs = app.selectedObjects;
+      if (objs.length < 1) throw new Error('Select rigid bodies to constrain');
+      const n = new Null(app.scene.uniqueName(String(a.Name || 'BallSocket') + '_cns'));
+      n.add(str('cnstype', String(a.Name || 'BallSocket'), 'Constraint Type', { readOnly: true }));
+      n.add(str('bodies', objs.map(o => o.name).join(','), 'Bodies', { readOnly: true }));
+      addObject(app, n);
+      app.select([n]);
+      return n;
+    },
+  });
+  app.register({
+    name: 'MultiAttachRigidBodiesTool', label: 'Multi Attach Rigid Bodies Tool', category: 'Simulation',
+    args: [{ name: 'Name', default: 'Hinge' }, { name: 'Bodies', default: null }],
+    undoable: false,
+    execute: (app, a) => stubTool(app, `Multi Constraint Tool (${a.Name || 'Hinge'})`),
+  });
+  app.register({
+    name: 'CreateEnvironment', label: 'Create Environment', category: 'Simulation',
+    args: [{ name: 'Name', default: 'Environment' }],
+    execute(app, a) {
+      const n = new Null(app.scene.uniqueName(a.Name || 'Environment'));
+      n.add(str('simenv', '1', 'Simulation Environment', { readOnly: true }));
+      addObject(app, n);
+      app.select([n]);
+      return n;
+    },
+  });
+  app.register({
+    name: 'ApplySoftBody', label: 'Apply SoftBody', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }],
+    execute: (app, a) => addNamedProp(app, app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects, 'Soft Body', 'softbody', [num('stiffness', 0.5, 'Stiffness')]),
+  });
+  app.register({
+    name: 'ApplyCloth', label: 'Apply Cloth', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }],
+    execute: (app, a) => addNamedProp(app, app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects, 'Cloth', 'cloth', [num('stiffness', 0.2, 'Stiffness')]),
+  });
+  app.register({
+    name: 'AddClothClusters', label: 'Add Cloth Clusters', category: 'Simulation', args: [{ name: 'InputObj', default: '' }],
+    execute(app) {
+      const o = app.selectedObjects[0];
+      if (!o) throw new Error('Select a cloth object');
+      return addNamedProp(app, [o], 'Cloth Cluster', 'clothcluster');
+    },
+  });
+  app.register({ name: 'InspectRigidBody', label: 'Edit Rigid Body', category: 'Simulation', args: [], undoable: false, execute(app) { const o = app.selectedObjects[0]; const p = o?.properties.find(x => x.type === 'rigidbodyprop'); if (p) app.select([p]); else app.logMsg('info', 'No Rigid Body property on selection'); } });
+  app.register({ name: 'InspectRigidBodySimulationProperties', label: 'Inspect Rigid Body Simulation Properties', category: 'Simulation', args: [], undoable: false, execute(app) { app.logMsg('info', 'Rigid body simulation properties'); } });
+  app.register({ name: 'AddCompoundShapeToRigidBody', label: 'Add Compound Shape', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }], execute(app) { app.logMsg('info', 'Add compound shape: select child shapes then re-run Create Compound Rigid Body'); } });
+  app.register({ name: 'SetRigidBodyInitState', label: 'Set Rigid Body Initial State', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }], execute(app) { for (const o of app.selectedObjects) addNamedProp(app, [o], 'RB Initial State', 'rbinit'); } });
+  app.register({ name: 'GetRigidBodyInitStateFromAnim', label: 'Use Animation as Initial State', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }], execute(app) { app.logMsg('info', 'RB initial state from animation (current transforms captured)'); for (const o of app.selectedObjects) addNamedProp(app, [o], 'RB Initial State From Anim', 'rbinitanim'); } });
+  app.register({
+    name: 'RemoveRigidBody', label: 'Remove Rigid Body', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }],
+    execute(app) {
+      for (const o of app.selectedObjects) {
+        const p = o.properties.find(x => x.type === 'rigidbodyprop');
+        if (p) app.record('Remove RB', () => o.removeProperty(p), () => o.addProperty(p));
+      }
+    },
+  });
+  app.register({
+    name: 'ApplyParticleShader', label: 'Apply Particle Shader', category: 'Simulation',
+    args: [{ name: 'PresetObj', default: '' }, { name: 'InputObjs', default: '' }],
+    execute: (app, a) => app.run('SIApplyShader', { PresetObj: a.PresetObj || 'Phong', InputObjs: a.InputObjs }),
+  });
+  app.register({
+    name: 'CreateObstacle', label: 'Set Obstacle', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }],
+    execute: (app, a) => addNamedProp(app, app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects, 'Obstacle', 'obstacle'),
+  });
+  app.register({
+    name: 'DisconnectFromSimulation', label: 'Disconnect Obstacle/Force/Emitter', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }],
+    execute(app) {
+      for (const o of app.selectedObjects) {
+        for (const t of ['obstacle', 'softbody', 'cloth']) {
+          const p = o.properties.find(x => x.type === t);
+          if (p) app.record('Disconnect sim', () => o.removeProperty(p), () => o.addProperty(p));
+        }
+      }
+      app.logMsg('info', 'Disconnected simulation links on selection');
+    },
+  });
+
+  // CreateForce menu maps use Name=; accept either Name or PresetObj
+  const cf = app.commands.get('CreateForce');
+  if (cf) {
+    cf.args = [{ name: 'PresetObj', default: 'Gravity' }, { name: 'Name', default: '' }, { name: 'InputObjs', default: '' }];
+    const prev = cf.execute;
+    cf.execute = (app, a) => prev(app, { ...a, PresetObj: a.PresetObj || a.Name || 'Gravity' });
+  }
+
+  // ——— Hair ———
+  const hairOn = (app: App, preset: string) => {
+    const objs = app.selectedObjects;
+    if (!objs.length) throw new Error('Select a mesh or curves');
+    return addNamedProp(app, objs, preset, 'hair', [str('preset', preset, 'Preset', { readOnly: true })]);
+  };
+  app.register({ name: 'ApplyHairOp', label: 'Hair Generator', category: 'Modeling|Generator', args: [{ name: 'in_Objs', default: null }, { name: 'PresetObj', default: 'Hair-Default' }], execute: (app, a) => hairOn(app, String(a.PresetObj || 'Hair-Default')) });
+  app.register({ name: 'ApplyHairSplineGenOp', label: 'Hair Spline Generator', category: 'Generator', args: [{ name: 'in_Objs', default: null }, { name: 'PresetObj', default: 'Hair-Spline' }], execute: (app, a) => hairOn(app, String(a.PresetObj || 'Hair-Spline')) });
+  app.register({ name: 'ApplyHairDynamicsOp', label: 'Hair Dynamics Simulator', category: 'Simulation', args: [{ name: 'in_Objs', default: null }], execute: (app) => hairOn(app, 'Hair Dynamics') });
+  app.register({ name: 'ApplyHairShader', label: 'Hair Shader', category: 'Rendering', args: [], execute: (app) => app.run('SIApplyShader', { PresetObj: 'Phong', InputObjs: app.selectedObjects }) });
+
+  const hairTools: [string, string][] = [
+    ['HairScalingTool', 'Hair Scaling Tool'], ['HairBrushTool', 'Hair Brush'],
+    ['HairRotateRootTool', 'Hair Rotate Root Tool'], ['HairRotateTipTool', 'Hair Rotate Tip Tool'], ['HairRotateCursorTool', 'Hair Rotate Cursor Tool'],
+    ['HairStandOnEndTool', 'Hair Stand On End Tool'], ['HairPuffRootsTool', 'Hair Puff Roots'], ['HairClumpTool', 'Hair Clump Tool'],
+  ];
+  for (const [name, label] of hairTools) {
+    app.register({ name, label, category: 'Manipulation', args: [{ name: 'Clsid', default: '' }], undoable: false, execute: (app) => stubTool(app, label) });
+  }
+
+  const hairOps: [string, string][] = [
+    ['ApplyHairCombNormalOp', 'Hair Comb Along Normal'], ['ApplyHairRecombOp', 'Hair Recomb'],
+    ['ApplyHairCutOp', 'Hair Cut'], ['ApplyHairAttenuateOp', 'Hair Attenuate'],
+    ['ApplyHairPopOp', 'Hair Pop'], ['ApplyHairPopSelectedOp', 'Hair Pop Selected'],
+    ['ApplyHairResampleOp', 'Hair Resample'], ['ApplyHairSplitOp', 'Hair Split'],
+    ['ApplyHairShatterOp', 'Hair Shatter'], ['ApplyHairMergeOp', 'Hair Merge'],
+    ['ApplyHairLockOp', 'Hair Lock'], ['ApplyHairUnlockOp', 'Hair Unlock'],
+  ];
+  for (const [name, label] of hairOps) {
+    app.register({
+      name, label, category: 'Modeling', args: [{ name: 'InputObjs', default: '' }],
+      execute(app) {
+        const o = app.selectedObjects[0];
+        if (!o) throw new Error('Select a hair object');
+        addNamedProp(app, [o], label, name.toLowerCase());
+        return null;
+      },
+    });
+  }
+  app.register({
+    name: 'ApplyHairCombOp', label: 'Hair Comb Operator', category: 'Modeling',
+    args: [{ name: 'InputObjs', default: '' }, { name: 'X', default: 0 }, { name: 'Y', default: 0 }, { name: 'Z', default: 0 }],
+    execute(app, a) {
+      const o = app.selectedObjects[0];
+      if (!o) throw new Error('Select a hair object');
+      addNamedProp(app, [o], 'Hair Comb', 'haircomb', [num('x', Number(a.X) || 0, 'X'), num('y', Number(a.Y) || 0, 'Y'), num('z', Number(a.Z) || 0, 'Z')]);
+      return null;
+    },
+  });
+  app.register({ name: 'HairTransferMap', label: 'Hair Transfer Map', category: 'Modeling', args: [], execute: (app) => stubTool(app, 'Hair Transfer Map') });
+  app.register({ name: 'HairCopyStyle', label: 'Hair Copy Style', category: 'Modeling', args: [], execute: (app) => stubTool(app, 'Hair Copy Style') });
+  app.register({ name: 'HairDisplayStyle', label: 'Hair Display Style', category: 'Viewing', args: [], undoable: false, execute: (app) => app.logMsg('info', 'Hair display style toggled') });
+  app.register({
+    name: 'HairShowRenderHairs', label: 'Show Render Hairs', category: 'Viewing',
+    args: [{ name: 'Percent', default: 100 }], undoable: false,
+    execute(app, a) {
+      const pct = Number(a.Percent);
+      app.logMsg('info', pct < 0 ? 'Show Render Hairs' : `Render hairs display: ${pct}%`);
+    },
+  });
+  app.register({ name: 'HairStretchy', label: 'Hair Stretchy', category: 'Viewing', args: [], undoable: false, execute: (app) => app.logMsg('info', 'Hair stretchy display') });
+  app.register({ name: 'HairFix', label: 'Hair Fix', category: 'Viewing', args: [], undoable: false, execute: (app) => app.logMsg('info', 'Hair fix display') });
+}
