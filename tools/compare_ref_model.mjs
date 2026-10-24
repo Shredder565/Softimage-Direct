@@ -1,6 +1,6 @@
 // Softimage Direct Modify/Create Model (referenced models + deltas) functional harness.
-// PC goldens for .emdl/.delta binary semantics are still open; this locks Direct's
-// localStorage-backed Softimage-shaped OM (model2.ts) so menu leaves stay green.
+// Accepted exit lock: Direct's localStorage-backed Softimage-shaped JSON OM (model2.ts).
+// Softimage binary .emdl/.delta bytes are an accepted headless gap (not in PC dump pack).
 // Needs vite preview on :4173. Usage: node tools/compare_ref_model.mjs
 import { chromium } from 'playwright';
 import fs from 'fs';

@@ -202,10 +202,12 @@ export function registerBuiltins(app: App) {
     'Extrude Component Along Axis': 'Extrude Along Axis', 'ExtrudeComponentAxis': 'Extrude Along Axis', 'Extrude Along Axis': 'Extrude Along Axis',
     'Inset Polygons': 'Inset Polygons', 'InsetPolygons': 'Inset Polygons', 'Offset Polygons': 'Offset Polygons', 'Local Subdivision': 'Local Subdivision', 'Delete Component': 'Delete Components',
     'Duplicate Polygons Along Curve': 'Duplicate Polygons', 'Duplicate Polygons': 'Duplicate Polygons', 'Subdivide Polygon': 'Subdivide Polygons',
-    'Collapse': 'Collapse Components', 'Weld Points': 'Weld Points', 'Weld Edges': 'Weld Points', 'Invert Polygons': 'Invert Polygons', 'Triangulate': 'Triangulate',
-    'Filter Points': 'Filter Points', 'Symmetrize Polygons': 'Symmetrize Polygons', 'Apply Thickness': 'Apply Thickness', 'Split Edge': 'Split Edges',
+    'Collapse': 'Collapse Components', 'Weld Points': 'Weld Points', 'Weld Edges': 'Weld Boundary', WeldEdges: 'Weld Boundary',
+    'Invert Polygons': 'Invert Polygons', 'Triangulate': 'Triangulate',
+    'Filter Points': 'Filter Points', FilterEdge: 'Filter Points', 'Filter Edges': 'Filter Points', 'Filter Polygons': 'Filter Points',
+    'Symmetrize Polygons': 'Symmetrize Polygons', 'Apply Thickness': 'Apply Thickness', 'Split Edge': 'Split Edges',
   };
-  const needsSel = (preset: string) => !['Apply Thickness', 'Triangulate', 'Invert Polygons', 'Filter Points', 'Symmetrize Polygons'].includes(preset);
+  const needsSel = (preset: string) => !['Apply Thickness', 'Triangulate', 'Invert Polygons', 'Filter Points', 'Symmetrize Polygons', 'Weld Boundary'].includes(preset);
   const topoSupported = (a: Record<string, any>) => !!(TOPO[a.PresetObj] ?? TOPO[a.Preset]);
   app.register({
     name: 'ApplyTopoOp', label: 'Apply Topology Operator', category: 'Modeling|Topology|Operator', description: 'Applies a topology operator to the selected components (polygons, edges or points).',

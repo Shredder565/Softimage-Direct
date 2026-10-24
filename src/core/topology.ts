@@ -249,6 +249,39 @@ export function weldPoints(m: MeshData, sel: CompSel): MeshData {
   const target = pts[0]; verts[target] = c; const set = new Set(pts);
   return compact(verts, remapFaces(faces, v => set.has(v) ? target : v));
 }
+/** Weld Boundary Points/Edges (weldedgesop): merges mesh-boundary vertices within `distance`.
+ *  Softimage default on a closed cube333 leaves counts unchanged (dump1 56/54). */
+export function weldBoundaryEdges(m: MeshData, sel: CompSel, distance = 0.001): MeshData {
+  const { verts, faces } = toPolys(m);
+  const use = new Map<string, number>();
+  for (const f of faces) for (let i = 0; i < f.length; i++) {
+    const k = edgeKey(f[i], f[(i + 1) % f.length]); use.set(k, (use.get(k) ?? 0) + 1);
+  }
+  let bndKeys = [...use].filter(([, c]) => c === 1).map(([k]) => k);
+  if (sel.kind === 'edge' && (sel.edges?.length ?? 0)) {
+    const want = new Set((sel.edges ?? []).map(e => edgeKey(e[0], e[1])));
+    bndKeys = bndKeys.filter(k => want.has(k));
+  }
+  if (!bndKeys.length) return m;
+  const pts = new Set<number>();
+  for (const k of bndKeys) { const [a, b] = k.split('-').map(Number); pts.add(a); pts.add(b); }
+  const list = [...pts];
+  const parent = list.map((_, i) => i);
+  const find = (i: number): number => { while (parent[i] !== i) { parent[i] = parent[parent[i]]; i = parent[i]; } return i; };
+  const unite = (i: number, j: number) => { const a = find(i), b = find(j); if (a !== b) parent[a] = b; };
+  const idx = new Map(list.map((v, i) => [v, i]));
+  for (let i = 0; i < list.length; i++) for (let j = i + 1; j < list.length; j++) {
+    const d = Math.hypot(...sub(verts[list[i]], verts[list[j]]));
+    if (d <= distance) unite(i, j);
+  }
+  const remap = new Map<number, number>();
+  for (let i = 0; i < list.length; i++) {
+    const root = list[find(i)];
+    if (list[i] !== root) remap.set(list[i], root);
+  }
+  if (!remap.size) return m;
+  return compact(verts, remapFaces(faces, v => remap.get(v) ?? v));
+}
 /** Collapse: selected components shrink to one point at the centre of their bounding box (as Softimage does for polygon islands). */
 export function collapseComponents(m: MeshData, sel: CompSel): MeshData {
   const { verts, faces } = toPolys(m);
