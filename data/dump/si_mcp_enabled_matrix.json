@@ -1,0 +1,2555 @@
+{
+  "meta": {
+    "softimage_install": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2",
+    "generated_at": "2026-10-24T20:01:09.334449+00:00",
+    "mode": "PE static + XSIBATCH Command.Enabled (no GUI)",
+    "gaps": [
+      "MCP panel HWND / button Enabled grey (Select/Transform/Snap chrome) requires interactive Softimage Desktop \u2014 BLOCKED by no-desktop-takeover rule.",
+      "Component-mode selection contexts incomplete under XSIBATCH (no viewport pick).",
+      "PE f_grayed flags are resource defaults, not runtime selection predicates."
+    ],
+    "xsibatch_softimage": "13.2.163.0"
+  },
+  "pe_mcp_menus": [
+    201,
+    202,
+    203,
+    204,
+    219,
+    293,
+    294,
+    325,
+    350,
+    353,
+    354,
+    356,
+    470,
+    482,
+    483,
+    487,
+    10002,
+    10004,
+    10005,
+    10006
+  ],
+  "pe_static_grayed_defaults": [
+    {
+      "menu": 203,
+      "label": "Create Cluster &with Center",
+      "cmd": 33122,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 350,
+      "label": "&Selectability",
+      "cmd": 32892,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "&Front Face Only",
+      "cmd": 32920,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Bac&k Face Only",
+      "cmd": 32921,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Bo&th",
+      "cmd": 32922,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Select &Ungrouped Components",
+      "cmd": 32927,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "n-Points",
+      "cmd": 33111,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "S&ymmetry",
+      "cmd": 32821,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Direction-&Interest",
+      "cmd": 32829,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Bounding Pla&ne",
+      "cmd": 32835,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Bounding &Box",
+      "cmd": 32836,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "D&ynamic",
+      "cmd": null,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Inertia",
+      "cmd": 32838,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Nail",
+      "cmd": 32841,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Pendulum",
+      "cmd": 32839,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Spring",
+      "cmd": 32840,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "&Collision",
+      "cmd": null,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Any in Project",
+      "cmd": 32844,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Any in Scene",
+      "cmd": 32845,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Any in Volume",
+      "cmd": 32846,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "One to One",
+      "cmd": 32847,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "One to Many",
+      "cmd": 32848,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Multi-lateral in Group",
+      "cmd": 32849,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "&Substitute Input",
+      "cmd": 32834,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Attac&h Control Object",
+      "cmd": 32814,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Joint IK Manip.",
+      "cmd": 32852,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Hierarchy IK Manip.",
+      "cmd": 32853,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Curve IK Manip.",
+      "cmd": 32854,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Uniform Scaling",
+      "cmd": 32827,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Interactive Update",
+      "cmd": 32858,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Snap Setup...",
+      "cmd": 32859,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "A&lign",
+      "cmd": 32819,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "&Distribute",
+      "cmd": 32820,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "&Store Static Pose",
+      "cmd": 32830,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "&Apply Static Pose",
+      "cmd": 32831,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "&Hierarchy Compensation",
+      "cmd": 32855,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Hierarchy &Manipulation",
+      "cmd": 32856,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Classic &Scaling",
+      "cmd": 32862,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Contin&uous Rotation",
+      "cmd": 32857,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Operators...",
+      "cmd": 33107,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Add &Input",
+      "cmd": 32850,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Remo&ve Input",
+      "cmd": 32851,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Su&bstitute Input",
+      "cmd": 32861,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Remove &Last Operator",
+      "cmd": 32866,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Make Property &Local",
+      "cmd": 32837,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Make Object Uni&que",
+      "cmd": 32793,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Fas&t Playback",
+      "cmd": 32860,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Flip Flop Play",
+      "cmd": 32779,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "&Clear",
+      "cmd": 32880,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "Capture Setting ...",
+      "cmd": 32882,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "&Clear",
+      "cmd": 32870,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 354,
+      "label": "&Reset to Default",
+      "cmd": 32961,
+      "f_grayed": true,
+      "f_disabled": false
+    },
+    {
+      "menu": 356,
+      "label": "Polynode",
+      "cmd": 32896,
+      "f_grayed": true,
+      "f_disabled": false
+    }
+  ],
+  "pe_static_grayed_count": 53,
+  "dict_panel_hints": [
+    "\u0300Selection Panel",
+    "\u0400Edit Panel",
+    "\u0500Transformation Panel",
+    "\u0600Constraint Panel",
+    "\u0700Animation Panel",
+    "\u0800Playback Panel",
+    "\u0900Render Pass Panel",
+    "\u0a00Layer Panel",
+    "\u0b00Data Panel",
+    "\u8c13Create Hierarchical Link (Parent Tool)",
+    "\u9413Object Selection Filter",
+    "\u9513Point Selection Filter",
+    "\u9913Scale Tool",
+    "\u9a13Scale Tool with the X-axis",
+    "\u9b13Scale Tool with the Y-axis",
+    "\u9c13Scale Tool with the Z-axis",
+    "\u9d13Rotate Tool",
+    "\u9e13Rotate Tool with the X-axis",
+    "\u9f13Rotate Tool with the Y-axis",
+    "\ua013Rotate Tool with the Z-axis",
+    "\ua113Translate Tool",
+    "\ua213Translate Tool with the X-axis",
+    "\ua313Translate Tool with the Y-axis",
+    "\ua413Translate Tool with the Z-axis",
+    "\u1327Snap Panel"
+  ],
+  "xsibatch_command_enabled_matrix": {
+    "empty": {
+      "selection": {
+        "count": 0,
+        "names": [],
+        "types": []
+      },
+      "setup_ok": true,
+      "setup_error": null,
+      "enabled": {
+        "SelectTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "TranslateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "RotateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "ScaleTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleProportional": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleSymmetry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Parent": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ParentObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ParentTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CutRelation": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CutObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CreateGroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Ungroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeModeling": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "RemoveKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ClearAllKeys": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PlayForward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PlayBackward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FirstFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "LastFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "NextFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PreviousFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleCOG": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleProp": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateObjectSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePointSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateEdgeSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePolygonSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateObject": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateVertex": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateEdge": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePolygon": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "siToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SnapToggle": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CenterGeometry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ResetTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeTransformations": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "DeleteObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "InspectObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetLocalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetGlobalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        }
+      }
+    },
+    "single_mesh": {
+      "selection": {
+        "count": 1,
+        "names": [
+          "cube"
+        ],
+        "types": [
+          "polymsh"
+        ]
+      },
+      "setup_ok": true,
+      "setup_error": null,
+      "enabled": {
+        "SelectTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "TranslateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "RotateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "ScaleTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleProportional": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleSymmetry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Parent": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ParentObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ParentTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CutRelation": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CutObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CreateGroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Ungroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeModeling": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "RemoveKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ClearAllKeys": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PlayForward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PlayBackward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FirstFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "LastFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "NextFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PreviousFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleCOG": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleProp": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateObjectSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePointSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateEdgeSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePolygonSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateObject": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateVertex": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateEdge": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePolygon": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "siToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SnapToggle": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CenterGeometry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ResetTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeTransformations": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "DeleteObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "InspectObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetLocalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetGlobalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        }
+      }
+    },
+    "multi_mesh": {
+      "selection": {
+        "count": 2,
+        "names": [
+          "cube",
+          "sphere"
+        ],
+        "types": [
+          "polymsh",
+          "polymsh"
+        ]
+      },
+      "setup_ok": true,
+      "setup_error": null,
+      "enabled": {
+        "SelectTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "TranslateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "RotateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "ScaleTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleProportional": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleSymmetry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Parent": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ParentObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ParentTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CutRelation": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CutObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CreateGroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Ungroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeModeling": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "RemoveKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ClearAllKeys": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PlayForward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PlayBackward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FirstFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "LastFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "NextFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PreviousFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleCOG": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleProp": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateObjectSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePointSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateEdgeSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePolygonSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateObject": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateVertex": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateEdge": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePolygon": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "siToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SnapToggle": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CenterGeometry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ResetTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeTransformations": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "DeleteObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "InspectObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetLocalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetGlobalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        }
+      }
+    },
+    "single_null": {
+      "selection": {
+        "count": 1,
+        "names": [
+          "null"
+        ],
+        "types": [
+          "null"
+        ]
+      },
+      "setup_ok": true,
+      "setup_error": null,
+      "enabled": {
+        "SelectTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "TranslateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "RotateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "ScaleTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleProportional": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleSymmetry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Parent": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ParentObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ParentTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CutRelation": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CutObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CreateGroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Ungroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeModeling": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "RemoveKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ClearAllKeys": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PlayForward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PlayBackward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FirstFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "LastFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "NextFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PreviousFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleCOG": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleProp": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateObjectSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePointSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateEdgeSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePolygonSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateObject": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateVertex": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateEdge": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePolygon": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "siToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SnapToggle": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CenterGeometry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ResetTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeTransformations": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "DeleteObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "InspectObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetLocalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetGlobalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        }
+      }
+    },
+    "mesh_points_attempt": {
+      "selection": {
+        "count": 1,
+        "names": [
+          "cube"
+        ],
+        "types": [
+          "polymsh"
+        ]
+      },
+      "setup_ok": true,
+      "setup_error": null,
+      "enabled": {
+        "SelectTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "TranslateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "RotateTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "ScaleTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleProportional": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleSymmetry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Parent": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ParentObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ParentTool": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CutRelation": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CutObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CreateGroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Ungroup": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeModeling": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "RemoveKey": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ClearAllKeys": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PlayForward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PlayBackward": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FirstFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "LastFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "NextFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "PreviousFrame": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleCOG": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ToggleProp": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateObjectSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePointSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateEdgeSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePolygonSelFilter": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateObject": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateVertex": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateEdge": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivatePolygon": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "siToggleSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SnapToggle": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ActivateSnap": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "CenterGeometry": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "ResetTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "FreezeTransformations": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        },
+        "DeleteObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "InspectObj": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetLocalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        },
+        "SetGlobalTransform": {
+          "found": true,
+          "enabled": null,
+          "scripting": null,
+          "category": null,
+          "error": null
+        }
+      }
+    }
+  },
+  "commands_found_any_context": {
+    "SelectTool": true,
+    "Translate": true,
+    "TranslateTool": true,
+    "Rotate": true,
+    "RotateTool": true,
+    "Scale": true,
+    "ScaleTool": true,
+    "SetSelFilter": true,
+    "ToggleSnap": true,
+    "ToggleProportional": true,
+    "ToggleSymmetry": true,
+    "Parent": true,
+    "ParentObj": true,
+    "ParentTool": true,
+    "CutRelation": true,
+    "CutObj": true,
+    "CreateGroup": true,
+    "Ungroup": true,
+    "FreezeObj": true,
+    "FreezeModeling": true,
+    "SetKey": true,
+    "RemoveKey": true,
+    "ClearAllKeys": true,
+    "PlayForward": true,
+    "PlayBackward": true,
+    "FirstFrame": true,
+    "LastFrame": true,
+    "NextFrame": true,
+    "PreviousFrame": true,
+    "ToggleCOG": true,
+    "ToggleProp": true,
+    "ActivateObjectSelFilter": true,
+    "ActivatePointSelFilter": true,
+    "ActivateEdgeSelFilter": true,
+    "ActivatePolygonSelFilter": true,
+    "ActivateObject": true,
+    "ActivateVertex": true,
+    "ActivateEdge": true,
+    "ActivatePolygon": true,
+    "siToggleSnap": true,
+    "SnapToggle": true,
+    "ActivateSnap": true,
+    "CenterGeometry": true,
+    "ResetTransform": true,
+    "FreezeTransformations": true,
+    "Duplicate": true,
+    "DeleteObj": true,
+    "InspectObj": true,
+    "SetLocalTransform": true,
+    "SetGlobalTransform": true
+  },
+  "xsibatch_meta": {
+    "softimage": "13.2.163.0",
+    "script": "si_mcp_enabled_matrix_dump.js",
+    "mode": "XSIBATCH -processing",
+    "note": "Command.Enabled per selection context. MCP panel HWND enable/grey requires interactive Desktop - blocked by no-GUI rule.",
+    "command_list": [
+      "SelectTool",
+      "Translate",
+      "TranslateTool",
+      "Rotate",
+      "RotateTool",
+      "Scale",
+      "ScaleTool",
+      "SetSelFilter",
+      "ToggleSnap",
+      "ToggleProportional",
+      "ToggleSymmetry",
+      "Parent",
+      "ParentObj",
+      "ParentTool",
+      "CutRelation",
+      "CutObj",
+      "CreateGroup",
+      "Ungroup",
+      "FreezeObj",
+      "FreezeModeling",
+      "SetKey",
+      "RemoveKey",
+      "ClearAllKeys",
+      "PlayForward",
+      "PlayBackward",
+      "FirstFrame",
+      "LastFrame",
+      "NextFrame",
+      "PreviousFrame",
+      "ToggleCOG",
+      "ToggleProp",
+      "ActivateObjectSelFilter",
+      "ActivatePointSelFilter",
+      "ActivateEdgeSelFilter",
+      "ActivatePolygonSelFilter",
+      "ActivateObject",
+      "ActivateVertex",
+      "ActivateEdge",
+      "ActivatePolygon",
+      "siToggleSnap",
+      "SnapToggle",
+      "ActivateSnap",
+      "CenterGeometry",
+      "ResetTransform",
+      "FreezeTransformations",
+      "Duplicate",
+      "DeleteObj",
+      "InspectObj",
+      "SetLocalTransform",
+      "SetGlobalTransform"
+    ]
+  },
+  "sources": {
+    "pe_menus_mcp": "C:\\Users\\neil\\AppData\\Local\\Cursor\\AgentStores\\cursor_agent_stores\\bc-0bd1d332-4e49-4056-9894-1b21507c9f95\\files\\internal\\softimage-pc-dumps\\pe-menus-mcp.json",
+    "mcp_dict_labels": "C:\\Users\\neil\\AppData\\Local\\Cursor\\AgentStores\\cursor_agent_stores\\bc-0bd1d332-4e49-4056-9894-1b21507c9f95\\files\\internal\\softimage-pc-dumps\\mcp-dict-labels.json",
+    "xsibatch": "C:\\Users\\neil\\Documents\\softimage_dump_factory\\si_mcp_enabled_matrix_xsibatch.json",
+    "enable_string_candidates": "C:\\Users\\neil\\AppData\\Local\\Cursor\\AgentStores\\cursor_agent_stores\\bc-0bd1d332-4e49-4056-9894-1b21507c9f95\\files\\internal\\softimage-pc-dumps\\mcp-dll-enable-grey-string-candidates.json"
+  },
+  "enable_string_candidates_summary": {
+    "source": "C:\\Users\\neil\\AppData\\Local\\Cursor\\AgentStores\\cursor_agent_stores\\bc-0bd1d332-4e49-4056-9894-1b21507c9f95\\files\\internal\\softimage-pc-dumps\\mcp-dll-enable-grey-string-candidates.json",
+    "top_keys": [
+      "path",
+      "candidate_count",
+      "candidates",
+      "note"
+    ],
+    "raw_type": "dict",
+    "approx_entries": 116
+  },
+  "xsibatch_bool_enabled_summary": {
+    "empty": {
+      "commands_with_bool_enabled": 4,
+      "sample": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        }
+      }
+    },
+    "single_mesh": {
+      "commands_with_bool_enabled": 4,
+      "sample": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        }
+      }
+    },
+    "multi_mesh": {
+      "commands_with_bool_enabled": 4,
+      "sample": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        }
+      }
+    },
+    "single_null": {
+      "commands_with_bool_enabled": 4,
+      "sample": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        }
+      }
+    },
+    "mesh_points_attempt": {
+      "commands_with_bool_enabled": 4,
+      "sample": {
+        "Translate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Translate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Rotate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Rotate",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Scale": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Scale",
+          "category": "Manipulation|Transform",
+          "error": null
+        },
+        "Duplicate": {
+          "found": true,
+          "enabled": true,
+          "scripting": "Duplicate",
+          "category": "Edit",
+          "error": null
+        }
+      }
+    }
+  }
+}

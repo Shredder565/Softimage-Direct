@@ -1,5 +1,5 @@
 {
-  "ok": 33,
+  "ok": 38,
   "fail": 0,
   "note": 1,
   "okItems": [
@@ -15,6 +15,7 @@
     "all 43 Softimage layout frame types registered",
     "Get enable parity Model=171 Animate=170 shared=170",
     "MCP enable empty-sel greys Parent/Cut/Freeze/Group/FreezeM/Sample",
+    "MCP matrix Softimage 13.2.163.0: empty Translate/Duplicate true; PE grayed 53",
     "openview Explorer",
     "openview Property Editor",
     "openview Script Editor",
@@ -34,6 +35,10 @@
     "Simulate≠ICE (205 Rigid/Soft/Cloth vs 303 Particles/CrowdFX)",
     "layout Default",
     "layout Dual",
+    "Dual 50%/50% shell split",
+    "Dual Screen1Tray labels",
+    "Dual MCP bottom_inv tabs",
+    "Dual module_menu buttonsize ~26x26 (26x26)",
     "layout 1024 x 768",
     "layout Autohide"
   ],

@@ -78,6 +78,26 @@ else {
   else if (me.parent || me.cut || me.freeze || me.group || me.freezeM || me.sample) {
     fail.push(`MCP empty-sel enable expected all false, got ${JSON.stringify(me)}`);
   } else ok.push('MCP enable empty-sel greys Parent/Cut/Freeze/Group/FreezeM/Sample');
+  // Softimage-pc matrix: XSIBATCH bools (Translate/Rotate/Scale/Duplicate true empty) + PE f_grayed seeds
+  const mx = await p.evaluate(() => {
+    const A = window.Application;
+    A.select([]);
+    const a = window.__uiAudit?.() ?? {};
+    return {
+      mcp: a.mcpEnable,
+      matrix: a.mcpMatrix,
+      grayCluster: a.peGrayedClusterWithCenter,
+      graySel: a.peGrayedSelectability,
+    };
+  });
+  if (!mx.matrix?.boolAttested?.includes?.('Translate')) fail.push(`mcpMatrix missing Translate attestation: ${JSON.stringify(mx.matrix)}`);
+  else if (mx.mcp?.matrixTranslate !== true || mx.mcp?.translate !== true || mx.mcp?.duplicate !== true) {
+    fail.push(`matrix empty-sel Translate/Duplicate expected true, got ${JSON.stringify({ t: mx.mcp?.translate, mt: mx.mcp?.matrixTranslate, d: mx.mcp?.duplicate, ctx: mx.mcp?.context })}`);
+  } else if (mx.mcp?.matrixParentObj !== null && mx.mcp?.matrixParentObj !== undefined) {
+    fail.push(`ParentObj matrix cell should be null (fall back canRun), got ${mx.mcp.matrixParentObj}`);
+  } else if (!mx.grayCluster || !mx.graySel) {
+    fail.push(`PE f_grayed seeds missing cluster=${mx.grayCluster} selectability=${mx.graySel}`);
+  } else ok.push(`MCP matrix Softimage ${mx.matrix.softimage}: empty Translate/Duplicate true; PE grayed ${mx.matrix.peGrayedCount}`);
 }
 
 // Open floating views

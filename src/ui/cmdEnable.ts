@@ -9,6 +9,7 @@
 // "in this build"). No Softimage binary code is copied.
 
 import type { App } from '../core/commands';
+import { matrixCommandEnabled } from './mcpEnableMatrix';
 
 /** Static availability: command exists and preset/build supports it (menu "wired"). */
 export function commandSupported(app: App, name: string, args: Record<string, any> = {}): boolean {
@@ -22,11 +23,15 @@ export function commandSupported(app: App, name: string, args: Record<string, an
 /**
  * Softimage GetEnabled analogue: supported and canRun (if any) both pass.
  * When `supported` is set, `canRun` is the dynamic enable flag (selection / context).
+ * Softimage-pc matrix (XSIBATCH Command.Enabled) overrides when the dump has a bool;
+ * null dump cells keep the Ghidra/canRun model from #18.
  */
 export function commandEnabled(app: App, name: string, args: Record<string, any> = {}): boolean {
   const def = app.commands.get(name);
   if (!def) return false;
   if (def.supported && !def.supported(args)) return false;
+  const attested = matrixCommandEnabled(app, name);
+  if (attested !== null) return attested;
   return !def.canRun || !!def.canRun(args);
 }
 
