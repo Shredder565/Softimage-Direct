@@ -11,7 +11,12 @@ const CMDS = menuCommands as unknown as Record<string, { cmd: string; name: stri
 export function toolbarPanel(app: App, host: HTMLElement) {
   const root = document.createElement('div'); root.className = 'toolbar-panel ' + app.module;
   const sel = document.createElement('select'); sel.className = 'module-select ' + app.module;
-  for (const m of ['Model', 'Animate', 'Render', 'Simulate', 'ICE', 'Hair']) { const o = document.createElement('option'); o.value = m; o.textContent = m + (MENUS[m] ? '' : ' (not extracted)'); sel.appendChild(o); }
+  // Softimage module heads. Model + Animate PE menus are in-tree (`src/data/menus.json`); others await extraction.
+  for (const m of ['Model', 'Animate', 'Render', 'Simulate', 'ICE', 'Hair']) {
+    const o = document.createElement('option'); o.value = m;
+    o.textContent = MENUS[m] ? m : `${m} (menu not in install data yet)`;
+    sel.appendChild(o);
+  }
   sel.value = app.module;
   sel.onchange = () => { app.module = sel.value as any; app.events.emit('module'); };
   const scroll = document.createElement('div'); scroll.className = 'tb-scroll';
@@ -21,7 +26,10 @@ export function toolbarPanel(app: App, host: HTMLElement) {
     root.className = 'toolbar-panel ' + app.module; sel.className = 'module-select ' + app.module; sel.value = app.module;
     scroll.innerHTML = '';
     const tree = MENUS[app.module];
-    if (!tree) { scroll.innerHTML = '<div class="view-placeholder">Menu tree for this module not extracted yet.</div>'; return; }
+    if (!tree) {
+      scroll.innerHTML = `<div class="view-placeholder">Softimage <b>${app.module}</b> toolbar menu is not in the in-tree PE extract yet (only Model + Animate). UI shell still switches modules; menu leaves land when install data is scraped or a local Softimage dump is uploaded.</div>`;
+      return;
+    }
     for (const top of tree) {
       const g = document.createElement('div'); g.className = 'tb-group'; g.textContent = top.label ?? ''; scroll.appendChild(g);
       for (const sub of top.items ?? []) {
