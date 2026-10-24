@@ -22,6 +22,7 @@ export const SI = {
   inherited: 0xc6c6c6, knot: 0x000000, normal: 0x00ffff, curveIso: 0x000000, curveBoundary: 0x000000, cluster: 0x000000, clusterSelected: 0xff0000, unselectable: 0x606060, tagged: 0xff0000, filmGate: 0x000000, inspected: 0xffd200, sample: 0xff00ff,
   pointSize: 5, pickTol: 15, boundaryPickTol: 200, normalPickTol: 15, movePointTol: 15, normalDisplaySize: 1, normalScale: 1, clickToDeselect: false, surroundPolygons: false, surroundEdges: false, singleObject: false, raycastBackfacing: true, rectRaycast: false, extendedComponentSel: false,
   // C3DTransformProps: Size % 30 → 70 px handle length (pre-wiring Direct default at factory Size %)
+  // manipAxisMode: 0 Axes Only · 1 Axes+Planes (factory) · 2 Extended Axes+Planes · 3 Axes+Plane Handles (C3DTransformProps.spdl)
   transformSize: 30, useManipulators: true, transformVisuals: true, arcballRotate: true, manipAxisMode: 1,
   translateSnap: 1, rotateSnap: 15, scaleSnap: 0.5,
   headlightDefault: false, font: '10px Tahoma, Verdana, sans-serif', planarity: true, connectRule: 0,
@@ -31,9 +32,22 @@ export const SI = {
 };
 /** Softimage Transform Size % → pixel handle length; 30% maps to Direct's prior 70 px default. */
 export const transformSizeToPx = (pct: number) => Math.max(20, Math.min(300, Math.round(Number(pct) * (70 / 30))));
+/** Softimage default Camera world pose (install observation / PROJECT_HISTORY) — interest at origin. */
+export const DEFAULT_CAMERA_POS: [number, number, number] = [9.5, 7.3, 12.3];
+export const DEFAULT_CAMERA_INTEREST: [number, number, number] = [0, 0, 0];
+export const DEFAULT_CAMERA_FOV = 53.6;
+/** Plane-handle colours (clean-room Softimage RGB-axis convention: XY yellow / YZ cyan / ZX magenta). */
+const PLANE_COLS = { xy: 0xffff00, yz: 0x00ffff, zx: 0xff00ff } as const;
 export type ToolMode = 'select' | 'translate' | 'rotate' | 'scale';
+export type ManipHandle = 'x' | 'y' | 'z' | 'xy' | 'yz' | 'zx' | 'centre';
 export const tool = { mode: 'select' as ToolMode, axes: { x: true, y: true, z: true }, setMode: (_m: ToolMode) => { } };
 (window as any).__tool = tool;
+/** Softimage manipaxismode: plane widgets on for Translate/Scale when not Axes Only. */
+const showPlaneHandles = () => SI.manipAxisMode !== 0 && (tool.mode === 'translate' || tool.mode === 'scale');
+/** Extended Axes (mode 2) stretch axis length; Plane Handles (mode 3) enlarge plane quads. */
+const axisExtent = () => (SI.manipAxisMode === 2 ? 1.25 : 1);
+const planeExtent = () => (SI.manipAxisMode === 3 ? 0.42 : SI.manipAxisMode === 2 ? 0.38 : 0.32);
+const planeOpacity = () => (SI.manipAxisMode === 3 ? 0.55 : 0.35);
 
 /** Per-viewport state: the camdisp display mode and the camvis "eye" menu toggles (C3DCameraVisibilityProp). */
 interface Viewport { name: string; kind: 'ortho' | 'persp'; camera: THREE.Camera; el: HTMLElement; display: string; flags: Record<string, boolean>; head: { view: HTMLElement; disp: HTMLElement; labels: HTMLElement }; x?: any }
@@ -69,8 +83,8 @@ export function viewManager(app: App, host: HTMLElement) {
   (window as any).__three = { scene, needs: () => { needs = true; } };
 
   const mk = (name: string, kind: 'ortho' | 'persp', pos: THREE.Vector3, up: THREE.Vector3): Viewport => {
-    const cam: THREE.Camera = kind === 'ortho' ? new THREE.OrthographicCamera(-20, 20, 20, -20, -1000, 1000) : new THREE.PerspectiveCamera(53.6, 1, 0.1, 5000);
-    cam.position.copy(pos); cam.up.copy(up); cam.lookAt(0, 0, 0);
+    const cam: THREE.Camera = kind === 'ortho' ? new THREE.OrthographicCamera(-20, 20, 20, -20, -1000, 1000) : new THREE.PerspectiveCamera(DEFAULT_CAMERA_FOV, 1, 0.1, 5000);
+    cam.position.copy(pos); cam.up.copy(up); cam.lookAt(...DEFAULT_CAMERA_INTEREST);
     const el = document.createElement('div'); el.className = 'vp-label';
     const head = document.createElement('div'); head.className = 'vp-head';
     const b = document.createElement('b'); b.textContent = 'ABCD'[vps.length]; b.title = 'Viewport ' + 'ABCD'[vps.length];
@@ -93,7 +107,7 @@ export function viewManager(app: App, host: HTMLElement) {
   };
   const vps: Viewport[] = [];
   vps.push(mk('Top', 'ortho', new THREE.Vector3(0, 100, 0), new THREE.Vector3(0, 0, -1)));
-  vps.push(mk('Camera', 'persp', new THREE.Vector3(9.5, 7.3, 12.3), new THREE.Vector3(0, 1, 0)));
+  vps.push(mk('Camera', 'persp', new THREE.Vector3(...DEFAULT_CAMERA_POS), new THREE.Vector3(0, 1, 0)));
   vps.push(mk('Front', 'ortho', new THREE.Vector3(0, 0, 100), new THREE.Vector3(0, 1, 0)));
   vps.push(mk('Right', 'ortho', new THREE.Vector3(100, 0, 0), new THREE.Vector3(0, 1, 0)));
   const setDisplay = (vp: Viewport, mode: string) => { vp.display = mode.toLowerCase().replace('textured decal', 'texture decal').replace('hidden line removal', 'hidden line'); vp.head.disp.textContent = DISPLAY_MODES.find(m => m.toLowerCase() === vp.display) ?? mode; needs = true; };
@@ -115,6 +129,34 @@ export function viewManager(app: App, host: HTMLElement) {
     manipSize: (f: number) => { gizmoPx = Math.max(20, Math.min(300, gizmoPx * f)); SI.transformSize = Math.round(gizmoPx * 30 / 70); needs = true; }, display: (mode: string) => { setDisplay(vps[active], mode); needs = true; }, displayOf: () => vps[active].display,
     cameraMenu: (label: string) => cameraMenu(vps[active], label), visibility: (label: string) => visibilityMenu(vps[active], label), flags: () => vps[active].flags, wireOnShaded: () => { const vp = vps[active]; vp.flags['Wire on Shaded'] = !vp.flags['Wire on Shaded']; needs = true; },
     center: (all = false) => { const c = selectionCenter(); if (!c) return; for (const vp of all ? vps : [vps[active]]) { camSnap(vp); const d = vp.camera.position.clone().sub(orbit.target); orbit.target.copy(c); vp.camera.position.copy(c).add(d); vp.camera.lookAt(orbit.target); } needs = true; },
+    /** Desktop polish track #2 — Softimage-attested manip / camera / shaded-pick snapshot for ui_smoke. */
+    viewportPolish: () => {
+      const cam = vps.find(v => v.name === 'Camera') ?? vps[1];
+      const p = cam.camera.position;
+      return {
+        attestedDefaultCamera: { pos: [...DEFAULT_CAMERA_POS], interest: [...DEFAULT_CAMERA_INTEREST], fov: DEFAULT_CAMERA_FOV },
+        defaultCameraPos: [...DEFAULT_CAMERA_POS],
+        defaultCameraInterest: [...DEFAULT_CAMERA_INTEREST],
+        defaultCameraFov: DEFAULT_CAMERA_FOV,
+        cameraPos: [p.x, p.y, p.z],
+        cameraInterest: [orbit.target.x, orbit.target.y, orbit.target.z],
+        cameraFov: (cam.camera as any).fov ?? DEFAULT_CAMERA_FOV,
+        manipAxisMode: SI.manipAxisMode,
+        siManipAxisMode: SI.manipAxisMode,
+        useManipulators: SI.useManipulators,
+        siUseManipulators: SI.useManipulators,
+        transformSize: SI.transformSize,
+        siTransformSize: SI.transformSize,
+        planeHandlesActive: SI.manipAxisMode !== 0,
+        rectRaycast: SI.rectRaycast,
+        siRectRaycast: SI.rectRaycast,
+        raycastBackfacing: SI.raycastBackfacing,
+        pickTol: SI.pickTol,
+        toolMode: tool.mode,
+        gizmoOn,
+        gizmoChildKinds: gizmo.children.map(ch => (ch as any)._manipPlane ? 'plane:' + (ch as any)._manipPlane : ch.type),
+      };
+    },
   };
   const cameraMenu = (vp: Viewport, label: string) => {
     switch (label) {
@@ -132,10 +174,10 @@ export function viewManager(app: App, host: HTMLElement) {
     if (label === 'Visibility Options...') { window.dispatchEvent(new CustomEvent('openvisibility', { detail: { vp: vp.name } })); return; }
     if (!XT.visibilityMenu(vp, label)) app.logMsg('info', `Visibility menu: ${label} not implemented`);
   };
-  const orbit = { target: new THREE.Vector3(0, 0, 0) };
+  const orbit = { target: new THREE.Vector3(...DEFAULT_CAMERA_INTEREST) };
   const switchView = (vp: Viewport, name: string) => {
     const c = vp.camera;
-    if (name === 'Top') { c.position.set(0, 100, 0); c.up.set(0, 0, -1); } else if (name === 'Front') { c.position.set(0, 0, 100); c.up.set(0, 1, 0); } else if (name === 'Right') { c.position.set(100, 0, 0); c.up.set(0, 1, 0); } else { c.position.set(9.5, 7.3, 12.3); c.up.set(0, 1, 0); }
+    if (name === 'Top') { c.position.set(0, 100, 0); c.up.set(0, 0, -1); } else if (name === 'Front') { c.position.set(0, 0, 100); c.up.set(0, 1, 0); } else if (name === 'Right') { c.position.set(100, 0, 0); c.up.set(0, 1, 0); } else { c.position.set(...DEFAULT_CAMERA_POS); c.up.set(0, 1, 0); }
     vp.name = name; vp.head.view.textContent = name; c.lookAt(orbit.target); (c as any)._zoom = 20;
   };
   let active = 1; vps[active].el.classList.add('active');
@@ -293,7 +335,7 @@ export function viewManager(app: App, host: HTMLElement) {
     for (const pl of t.preview()) { if (pl.length < 1) continue; const geo = new THREE.BufferGeometry().setFromPoints(pl.map(p => new THREE.Vector3(...p))); toolPreview.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xffd34d, depthTest: false }))); toolPreview.add(new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xffd34d, size: 6, sizeAttenuation: false, depthTest: false }))); }
   };
 
-  // ---- SRT manipulator (Softimage: red X / green Y / blue Z handles, yellow centre square = view-plane / uniform)
+  // ---- SRT manipulator (Softimage: red X / green Y / blue Z, plane quads when manipaxismode≠0, yellow centre = view-plane / uniform)
   const gizmoCenter = new THREE.Vector3(); let gizmoOn = false;
   const selectionCenter = (): THREE.Vector3 | null => {
     const cs = app.compSel;
@@ -315,6 +357,14 @@ export function viewManager(app: App, host: HTMLElement) {
     return new THREE.Quaternion();
   };
   const axisVec = (ax: 'x' | 'y' | 'z', o?: X3DObject | null) => baseAxis(ax).applyQuaternion(frameQ(o));
+  const planeAxes = (pl: 'xy' | 'yz' | 'zx'): ['x' | 'y' | 'z', 'x' | 'y' | 'z'] => pl === 'xy' ? ['x', 'y'] : pl === 'yz' ? ['y', 'z'] : ['z', 'x'];
+  /** Softimage plane-handle corner quad in unit gizmo space (along the two frame axes). */
+  const planeQuadLocal = (pl: 'xy' | 'yz' | 'zx', pe: number, fq: THREE.Quaternion) => {
+    const [a, b] = planeAxes(pl);
+    const A = baseAxis(a).applyQuaternion(fq), B = baseAxis(b).applyQuaternion(fq);
+    const o = 0.12, s = pe;
+    return [A.clone().multiplyScalar(o).add(B.clone().multiplyScalar(o)), A.clone().multiplyScalar(o + s).add(B.clone().multiplyScalar(o)), A.clone().multiplyScalar(o + s).add(B.clone().multiplyScalar(o + s)), A.clone().multiplyScalar(o).add(B.clone().multiplyScalar(o + s))];
+  };
   const syncGizmo = () => {
     gizmo.clear(); gizmoOn = false;
     // Softimage TransformProperties.transformmanipulators + Tweak "Toggle Manipulator" (A.hideManip)
@@ -323,35 +373,73 @@ export function viewManager(app: App, host: HTMLElement) {
     const mat = (col: number) => new THREE.LineBasicMaterial({ color: col, depthTest: false });
     const seg = (pts: number[][], col: number) => { const g = new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(...p))); const l = new THREE.Line(g, mat(col)); l.renderOrder = 20; return l; };
     const cols = { x: 0xff0000, y: 0x00ff00, z: 0x0000ff };
+    const ext = axisExtent();
+    const fq = frameQ();
+    // C3DTransformProps.manipaxismode — Axes+Planes / Extended / Plane Handles (Translate+Scale only; Rotate stays rings)
+    if (showPlaneHandles()) {
+      const pe = planeExtent(), op = planeOpacity();
+      for (const pl of ['xy', 'yz', 'zx'] as const) {
+        const [a0, a1] = planeAxes(pl);
+        if (!tool.axes[a0] && !tool.axes[a1]) continue;
+        const quad = planeQuadLocal(pl, pe, fq);
+        const geo = new THREE.BufferGeometry().setFromPoints(quad);
+        geo.setIndex([0, 1, 2, 0, 2, 3]);
+        const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: PLANE_COLS[pl], transparent: true, opacity: op, depthTest: false, side: THREE.DoubleSide }));
+        mesh.renderOrder = 19; (mesh as any)._manipPlane = pl; gizmo.add(mesh);
+        gizmo.add(seg(quad.concat([quad[0]]).map(v => v.toArray()), PLANE_COLS[pl]));
+      }
+    }
     for (const ax of ['x', 'y', 'z'] as const) {
-      const on = tool.axes[ax]; const col = on ? cols[ax] : 0x808080; const a = axisVec(ax).toArray();
-      if (tool.mode === 'rotate') { const fq = frameQ(); const pts: number[][] = []; for (let i = 0; i <= 48; i++) { const t = i / 48 * Math.PI * 2; const u = ax === 'x' ? [0, Math.cos(t), Math.sin(t)] : ax === 'y' ? [Math.cos(t), 0, Math.sin(t)] : [Math.cos(t), Math.sin(t), 0]; pts.push(new THREE.Vector3(...u).applyQuaternion(fq).toArray()); } gizmo.add(seg(pts, col)); }
+      const on = tool.axes[ax]; const col = on ? cols[ax] : 0x808080; const a = axisVec(ax).multiplyScalar(ext).toArray();
+      if (tool.mode === 'rotate') { const pts: number[][] = []; for (let i = 0; i <= 48; i++) { const t = i / 48 * Math.PI * 2; const u = ax === 'x' ? [0, Math.cos(t), Math.sin(t)] : ax === 'y' ? [Math.cos(t), 0, Math.sin(t)] : [Math.cos(t), Math.sin(t), 0]; pts.push(new THREE.Vector3(...u).applyQuaternion(fq).toArray()); } gizmo.add(seg(pts, col)); }
       else {
         gizmo.add(seg([[0, 0, 0], a], col));
         if (tool.mode === 'translate') { const cone = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.22, 10), new THREE.MeshBasicMaterial({ color: col, depthTest: false })); cone.renderOrder = 21; cone.position.set(a[0], a[1], a[2]); cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), axisVec(ax)); gizmo.add(cone); }
         else { const box = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1), new THREE.MeshBasicMaterial({ color: col, depthTest: false })); box.renderOrder = 21; box.position.set(a[0], a[1], a[2]); gizmo.add(box); }
       }
     }
-    const centre = new THREE.Points(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3()]), new THREE.PointsMaterial({ color: 0xffd200, size: 9, sizeAttenuation: false, depthTest: false })); centre.renderOrder = 22; gizmo.add(centre);
+    // Softimage yellow centre square (view-plane translate / uniform scale) — Active colour 0xffd200
+    const cs = 0.09;
+    const square = new THREE.Mesh(new THREE.PlaneGeometry(cs * 2, cs * 2), new THREE.MeshBasicMaterial({ color: SI.active, depthTest: false, side: THREE.DoubleSide }));
+    square.renderOrder = 22; square.quaternion.copy(vps[active].camera.quaternion); gizmo.add(square);
   };
   // Softimage TransformProperties.transformsize (Size %) → px; Increase/Decrease Manipulator Size scales live
   let gizmoPx = transformSizeToPx(SI.transformSize);
-  window.addEventListener('prefschanged', (e: any) => { if (e.detail?.key === 'C3DTransformProps') { gizmoPx = transformSizeToPx(SI.transformSize); needs = true; } });
+  window.addEventListener('prefschanged', (e: any) => {
+    if (e.detail?.key === 'C3DTransformProps') { gizmoPx = transformSizeToPx(SI.transformSize); needs = true; }
+    if (e.detail?.key === 'C3DPrefsSelect' || e.detail?.key === 'C3DTransformProps') needs = true;
+  });
   const pxScaleOf = (vp: Viewport, r: { w: number; h: number }) => { const cam = vp.camera as any; return vp.kind === 'ortho' ? (cam._zoom ?? 20) * 2 / r.h : gizmoCenter.distanceTo(cam.position) * Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * 2 / r.h; };
   const scaleGizmo = (vp: Viewport, r: { w: number; h: number }) => { gizmo.visible = gizmoOn; if (!gizmoOn) return; const s = pxScaleOf(vp, r) * gizmoPx; gizmo.scale.set(s, s, s); };
-  /** Which manipulator handle is under the cursor: an axis, the centre square, or none. */
-  const pickHandle = (vp: Viewport, at: { x: number; y: number; r: any }): 'x' | 'y' | 'z' | 'centre' | null => {
+  /** Softimage: centre > plane handles > axes (Translate/Scale Interaction Style). */
+  const pickHandle = (vp: Viewport, at: { x: number; y: number; r: any }): ManipHandle | null => {
     if (!gizmoOn) return null; prepCam(vp, at.r);
     const P = (v: THREE.Vector3) => { const q = v.clone().project(vp.camera); return { x: at.r.x + ((q.x + 1) / 2) * at.r.w, y: at.r.y + ((1 - q.y) / 2) * at.r.h }; };
-    const c = P(gizmoCenter); if (Math.hypot(c.x - at.x, c.y - at.y) < 8) return 'centre';
-    const s = pxScaleOf(vp, at.r) * gizmoPx; let best: 'x' | 'y' | 'z' | null = null, bd = 7;
-    const fq = frameQ();
+    const c = P(gizmoCenter); if (Math.hypot(c.x - at.x, c.y - at.y) < 10) return 'centre';
+    const s = pxScaleOf(vp, at.r) * gizmoPx; const fq = frameQ(); const ext = axisExtent();
+    if (showPlaneHandles()) {
+      let bestPl: 'xy' | 'yz' | 'zx' | null = null, bd = 9;
+      for (const pl of ['xy', 'yz', 'zx'] as const) {
+        const [a0, a1] = planeAxes(pl); if (!tool.axes[a0] && !tool.axes[a1]) continue;
+        const quad = planeQuadLocal(pl, planeExtent(), fq).map(v => P(gizmoCenter.clone().add(v.multiplyScalar(s))));
+        // point-in-quad (same winding as drawn) or near any edge
+        const inside = (() => {
+          let wn = 0; for (let i = 0; i < 4; i++) { const a = quad[i], b = quad[(i + 1) % 4]; if (a.y <= at.y) { if (b.y > at.y && (b.x - a.x) * (at.y - a.y) - (at.x - a.x) * (b.y - a.y) > 0) wn++; } else if (b.y <= at.y && (b.x - a.x) * (at.y - a.y) - (at.x - a.x) * (b.y - a.y) < 0) wn--; }
+          return wn !== 0;
+        })();
+        let d = inside ? 0 : Infinity;
+        for (let i = 0; i < 4; i++) d = Math.min(d, distToSeg(at.x, at.y, quad[i], quad[(i + 1) % 4]));
+        if (d < bd) { bd = d; bestPl = pl; }
+      }
+      if (bestPl) return bestPl;
+    }
+    let best: 'x' | 'y' | 'z' | null = null, bd = 7;
     for (const ax of ['x', 'y', 'z'] as const) {
       let d: number;
       if (tool.mode === 'rotate') { // nearest point on the ring that lies in the plane perpendicular to this frame axis (front half only, like the drawn ring)
         d = Infinity; const camDir = vp.camera.getWorldDirection(new THREE.Vector3());
         for (let i = 0; i < 64; i++) { const t = i / 64 * Math.PI * 2; const u = ax === 'x' ? [0, Math.cos(t), Math.sin(t)] : ax === 'y' ? [Math.cos(t), 0, Math.sin(t)] : [Math.cos(t), Math.sin(t), 0]; const w = new THREE.Vector3(...u).applyQuaternion(fq); if (vp.kind === 'persp' && w.dot(camDir) > 0.35) continue; const q = P(gizmoCenter.clone().add(w.multiplyScalar(s))); d = Math.min(d, Math.hypot(q.x - at.x, q.y - at.y)); }
-      } else { const tip = P(gizmoCenter.clone().add(axisVec(ax).multiplyScalar(s))); d = distToSeg(at.x, at.y, c, tip); }
+      } else { const tip = P(gizmoCenter.clone().add(axisVec(ax).multiplyScalar(s * ext))); d = distToSeg(at.x, at.y, c, tip); }
       if (d < bd) { bd = d; best = ax; }
     }
     return best;
@@ -446,6 +534,23 @@ export function viewManager(app: App, host: HTMLElement) {
     const v = new THREE.Vector3(pts[i * 3], pts[i * 3 + 1], pts[i * 3 + 2]).applyMatrix4(M).project(vp.camera);
     return { x: r.x + ((v.x + 1) / 2) * r.w, y: r.y + ((1 - v.y) / 2) * r.h, z: v.z };
   };
+  /** Softimage shaded views: surfaces occlude back points/edges (PROJECT_HISTORY). Wireframe / Bounding Box do not. */
+  const isShadedDisplay = (vp: Viewport) => { const d = vp.display; return d !== 'wireframe' && d !== 'bounding box' && d !== 'hidden line'; };
+  /** True when a world point is occluded by a closer mesh hit along the camera ray (shaded pick). */
+  const pointOccluded = (vp: Viewport, world: THREE.Vector3, ignore?: X3DObject) => {
+    if (!isShadedDisplay(vp)) return false;
+    const dir = world.clone().sub(vp.camera.position); const dist = dir.length(); if (dist < 1e-6) return false;
+    ray.set(vp.camera.position, dir.normalize());
+    const hits = ray.intersectObjects([...nodes.values()], true).filter(h => (h.object as any)._kind === 'mesh');
+    for (const h of hits) {
+      if (h.distance + 1e-3 < dist) {
+        let o: THREE.Object3D | null = h.object; while (o && !(o as any)._obj) o = o.parent;
+        if (o && (o as any)._obj !== ignore) return true;
+        if (o && (o as any)._obj === ignore && h.distance + 0.02 < dist) return true; // same mesh front face hides back points
+      }
+    }
+    return false;
+  };
   const pickComponent = (vp: Viewport, at: { x: number; y: number; r: any }, obj: X3DObject | undefined, hit: THREE.Intersection | undefined, kindOverride?: 'point' | 'edge' | 'polygon') => {
     const kind = kindOverride ?? (app.selMode as 'point' | 'edge' | 'polygon');
     const target = (kindOverride && obj) ? obj : (obj && obj === compTarget() ? obj : compTarget() ?? obj); const pts = target?.primitive ? geomPoints(target.primitive.geom()) : null; if (!target || !pts) return null;
@@ -455,10 +560,24 @@ export function viewManager(app: App, host: HTMLElement) {
     const M = target.globalMatrix(); prepCam(vp, at.r);
     const n = pts.length / 3; const pp = new Array(n); for (let i = 0; i < n; i++) pp[i] = project(vp, at.r, M, pts, i);
     // Select uses Tweak.picktol; Move Point / component transform uses TransformProperties.movepointtol (both factory 15)
-    if (kind === 'point') { const tol = (tool.mode !== 'select' && !app.activeTool) ? SI.movePointTol : SI.pickTol; let best = -1, bd = tol; for (let i = 0; i < n; i++) { const d = Math.hypot(pp[i].x - at.x, pp[i].y - at.y); if (d < bd) { bd = d; best = i; } } return best >= 0 ? { obj: target, kind, item: best, worldPoint: wp(best) } : null; }
+    if (kind === 'point') {
+      const tol = (tool.mode !== 'select' && !app.activeTool) ? SI.movePointTol : SI.pickTol; let best = -1, bd = tol;
+      for (let i = 0; i < n; i++) {
+        const d = Math.hypot(pp[i].x - at.x, pp[i].y - at.y); if (d >= bd) continue;
+        const w3 = new THREE.Vector3(pts[i * 3], pts[i * 3 + 1], pts[i * 3 + 2]).applyMatrix4(M);
+        if (pointOccluded(vp, w3, target)) continue;
+        bd = d; best = i;
+      }
+      return best >= 0 ? { obj: target, kind, item: best, worldPoint: wp(best) } : null;
+    }
     if (!mesh) return null;
     let bestE: [number, number] | null = null, bd = SI.pickTol / 2;
-    for (const [a, b] of meshEdges(mesh)) { const d = distToSeg(at.x, at.y, pp[a], pp[b]); if (d < bd) { bd = d; bestE = [a, b]; } }
+    for (const [a, b] of meshEdges(mesh)) {
+      const d = distToSeg(at.x, at.y, pp[a], pp[b]); if (d >= bd) continue;
+      const mid = new THREE.Vector3((pts[a * 3] + pts[b * 3]) / 2, (pts[a * 3 + 1] + pts[b * 3 + 1]) / 2, (pts[a * 3 + 2] + pts[b * 3 + 2]) / 2).applyMatrix4(M);
+      if (pointOccluded(vp, mid, target)) continue;
+      bd = d; bestE = [a, b];
+    }
     if (!bestE) return null; const A = wp(bestE[0]), B = wp(bestE[1]); const w: V3 = hit ? [hit.point.x, hit.point.y, hit.point.z] : [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2, (A[2] + B[2]) / 2];
     return { obj: target, kind, item: edgeKey(bestE[0], bestE[1]), worldPoint: w };
   };
@@ -471,7 +590,7 @@ export function viewManager(app: App, host: HTMLElement) {
   };
 
   // ---- interaction
-  interface Drag { vp: Viewport; at: any; sx: number; sy: number; button: number; start: Map<string, number>; objs: X3DObject[]; camPos: THREE.Vector3; tgt: THREE.Vector3; moved: boolean; handle?: 'x' | 'y' | 'z' | 'centre' | null; tweak?: { op: MoveComponentOperator; obj: X3DObject; pts: number[]; weights: Map<number, number>; startDeltas: Map<number, V3>; fresh: boolean } }
+  interface Drag { vp: Viewport; at: any; sx: number; sy: number; button: number; start: Map<string, number>; objs: X3DObject[]; camPos: THREE.Vector3; tgt: THREE.Vector3; moved: boolean; handle?: ManipHandle | null; tweak?: { op: MoveComponentOperator; obj: X3DObject; pts: number[]; weights: Map<number, number>; startDeltas: Map<number, V3>; fresh: boolean } }
   let drag: Drag | null = null;
   renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
   renderer.domElement.addEventListener('pointerdown', (e) => {
@@ -530,7 +649,7 @@ export function viewManager(app: App, host: HTMLElement) {
       rubber.style.display = 'block'; rubber.style.left = x0 + 'px'; rubber.style.top = y0 + 'px'; rubber.style.width = Math.abs(dx) + 'px'; rubber.style.height = Math.abs(dy) + 'px';
       return;
     }
-    const pxScale = vp.kind === 'ortho' ? (cam._zoom ?? 20) * 2 / drag.at.r.h : (gizmoOn ? gizmoCenter : drag.tgt).distanceTo(drag.camPos) * Math.tan(THREE.MathUtils.degToRad((cam.fov ?? 53.6) / 2)) * 2 / drag.at.r.h;
+    const pxScale = vp.kind === 'ortho' ? (cam._zoom ?? 20) * 2 / drag.at.r.h : (gizmoOn ? gizmoCenter : drag.tgt).distanceTo(drag.camPos) * Math.tan(THREE.MathUtils.degToRad((cam.fov ?? DEFAULT_CAMERA_FOV) / 2)) * 2 / drag.at.r.h;
     const right = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 0), up = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 1);
     let delta = right.multiplyScalar(dx * pxScale).add(up.multiplyScalar(-dy * pxScale));
     const h = drag.handle; const axisMask = { x: tool.axes.x, y: tool.axes.y, z: tool.axes.z };
@@ -538,6 +657,11 @@ export function viewManager(app: App, host: HTMLElement) {
       prepCam(vp, drag.at.r); const rr = drag.at.r; const P = (v: THREE.Vector3) => { const q = v.clone().project(vp.camera); return new THREE.Vector2(((q.x + 1) / 2) * rr.w, ((1 - q.y) / 2) * rr.h); };
       const c = P(gizmoCenter), t = P(gizmoCenter.clone().add(axisVec(h))); const dir = t.clone().sub(c); const l2 = dir.lengthSq() || 1;
       const k = (dx * dir.x + dy * dir.y) / l2; delta = axisVec(h).multiplyScalar(k); axisMask.x = h === 'x'; axisMask.y = h === 'y'; axisMask.z = h === 'z';
+    } else if (h === 'xy' || h === 'yz' || h === 'zx') { // Softimage plane handle: constrain to the two-axis plane
+      const [a0, a1] = planeAxes(h);
+      const keep = new THREE.Vector3();
+      for (const ax of [a0, a1]) { const v = axisVec(ax); keep.add(v.multiplyScalar(delta.dot(v))); }
+      delta = keep; axisMask.x = a0 === 'x' || a1 === 'x'; axisMask.y = a0 === 'y' || a1 === 'y'; axisMask.z = a0 === 'z' || a1 === 'z';
     }
     (drag as any).axisMask = axisMask; (drag as any).delta = delta;
     if (drag.tweak) {
@@ -688,12 +812,40 @@ export function viewManager(app: App, host: HTMLElement) {
       const target = compTarget(); const pts = target?.primitive ? geomPoints(target.primitive.geom()) : null; if (!target || !pts) return;
       const M = target.globalMatrix(); const n = pts.length / 3; const pp = new Array(n); for (let i = 0; i < n; i++) pp[i] = project(vp, r, M, pts, i);
       const kind = app.selMode as 'point' | 'edge' | 'polygon'; const mesh = target.primitive!.mesh();
-      if (kind === 'point') app.selectComponents(target, 'point', pp.map((p, i) => inside(p) ? i : -1).filter(i => i >= 0), mode);
+      // C3DPrefsSelect.rectraycast: when TRUE in shaded views, marquee only keeps front/unoccluded components (Softimage "Raycast in Shaded Mode"). Default FALSE = through-object.
+      const raycastShaded = SI.rectRaycast && isShadedDisplay(vp);
+      const frontOk = (i: number) => {
+        if (!raycastShaded) return true;
+        const w3 = new THREE.Vector3(pts[i * 3], pts[i * 3 + 1], pts[i * 3 + 2]).applyMatrix4(M);
+        return !pointOccluded(vp, w3, target);
+      };
+      if (kind === 'point') app.selectComponents(target, 'point', pp.map((p, i) => inside(p) && frontOk(i) ? i : -1).filter(i => i >= 0), mode);
       else if (!mesh) return;
       // Softimage rectangle selection: an edge is picked when the rectangle touches it (Surround Edges off) and a
-      // polygon when any part of it overlaps the rectangle (Surround Polygons off); hidden components are included.
-      else if (kind === 'edge') app.selectComponents(target, 'edge', meshEdges(mesh).filter(([a, b]) => SI.surroundEdges ? inside(pp[a]) && inside(pp[b]) : segRect(pp[a], pp[b], x0, y0, x1, y1)).map(([a, b]) => edgeKey(a, b)), mode);
-      else { const ids = mesh.polygons.map((f, i) => (SI.surroundPolygons ? f.every(v => inside(pp[v])) : polyRect(f.map(v => pp[v]), x0, y0, x1, y1)) ? i : -1).filter(i => i >= 0); app.selectComponents(target, 'polygon', ids, mode); }
+      // polygon when any part of it overlaps the rectangle (Surround Polygons off); hidden components are included unless rectraycast.
+      else if (kind === 'edge') app.selectComponents(target, 'edge', meshEdges(mesh).filter(([a, b]) => {
+        if (!(SI.surroundEdges ? inside(pp[a]) && inside(pp[b]) : segRect(pp[a], pp[b], x0, y0, x1, y1))) return false;
+        if (!raycastShaded) return true;
+        const mid = new THREE.Vector3((pts[a * 3] + pts[b * 3]) / 2, (pts[a * 3 + 1] + pts[b * 3 + 1]) / 2, (pts[a * 3 + 2] + pts[b * 3 + 2]) / 2).applyMatrix4(M);
+        return !pointOccluded(vp, mid, target);
+      }).map(([a, b]) => edgeKey(a, b)), mode);
+      else {
+        const ids = mesh.polygons.map((f, i) => {
+          if (!(SI.surroundPolygons ? f.every(v => inside(pp[v])) : polyRect(f.map(v => pp[v]), x0, y0, x1, y1))) return -1;
+          if (raycastShaded) {
+            // Front-facing + unoccluded centroid (Softimage shaded raycast marquee)
+            const ctr = new THREE.Vector3(); for (const v of f) ctr.add(new THREE.Vector3(pts[v * 3], pts[v * 3 + 1], pts[v * 3 + 2])); ctr.divideScalar(f.length).applyMatrix4(M);
+            if (pointOccluded(vp, ctr, target)) return -1;
+            const a = new THREE.Vector3(pts[f[0] * 3], pts[f[0] * 3 + 1], pts[f[0] * 3 + 2]);
+            const b = new THREE.Vector3(pts[f[1] * 3], pts[f[1] * 3 + 1], pts[f[1] * 3 + 2]);
+            const c = new THREE.Vector3(pts[f[2] * 3], pts[f[2] * 3 + 1], pts[f[2] * 3 + 2]);
+            const nrm = b.clone().sub(a).cross(c.clone().sub(a)).transformDirection(M).normalize();
+            if (nrm.dot(vp.camera.getWorldDirection(new THREE.Vector3())) > 0 && !SI.raycastBackfacing) return -1;
+          }
+          return i;
+        }).filter(i => i >= 0);
+        app.selectComponents(target, 'polygon', ids, mode);
+      }
       return;
     }
     if (d.moved && d.button === 0 && !e.altKey && tool.mode !== 'select' && d.objs.length) {

@@ -1,5 +1,5 @@
 {
-  "ok": 44,
+  "ok": 50,
   "fail": 0,
   "note": 1,
   "okItems": [
@@ -18,6 +18,12 @@
     "MCP matrix Softimage 13.2.163.0: empty Translate/Duplicate true; PE grayed 53",
     "PE tool menus 530-532 match Direct toolTranslate/Rotate/Scale",
     "PE ≡ Lock Pivot / Volume / Edit Pivot wired (no not-implemented)",
+    "default Camera pose (9.5,7.3,12.3)",
+    "default Camera FOV 53.6",
+    "manipAxisMode=1 Axes+Planes (C3DTransformProps)",
+    "rectRaycast=false shaded through-pick (C3DPrefsSelect)",
+    "useManipulators=true",
+    "plane handles drawn (plane:xy,plane:yz,plane:zx)",
     "openview Explorer",
     "openview Property Editor",
     "openview Script Editor",

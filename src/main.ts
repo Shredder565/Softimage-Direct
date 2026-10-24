@@ -26,7 +26,7 @@ import { explorerView } from './ui/explorer';
 import { mcpPanel } from './ui/mcp';
 import { installKeymap } from './ui/keymap';
 import { propertyEditor } from './ui/ppg';
-import { viewManager } from './ui/viewManager';
+import { viewManager, SI as ViewportSI, DEFAULT_CAMERA_POS, DEFAULT_CAMERA_INTEREST, DEFAULT_CAMERA_FOV } from './ui/viewManager';
 import { keyingPanel, layerControl, timeline, commandLine, scriptLog } from './ui/panels';
 import { mainShelf, panelSwitcher } from './ui/shelf';
 import { menubar, menubarStatus } from './ui/menubar';
@@ -216,6 +216,15 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
       }
       return { ok: mismatches.length === 0, mismatches, menus: Object.keys(map) };
     })(),
+    // Desktop polish #2 — manip / viewport prefs + default Camera pose (softimage-pc attested)
+    viewportPolish: {
+      ...(typeof (window as any).__vm?.viewportPolish === 'function' ? (window as any).__vm.viewportPolish() : {}),
+      siManipAxisMode: ViewportSI.manipAxisMode,
+      siRectRaycast: ViewportSI.rectRaycast,
+      siUseManipulators: ViewportSI.useManipulators,
+      siTransformSize: ViewportSI.transformSize,
+      attestedDefaultCamera: { pos: DEFAULT_CAMERA_POS, interest: DEFAULT_CAMERA_INTEREST, fov: DEFAULT_CAMERA_FOV },
+    },
   };
 };
 (window as any).__menubarStatus = () => menubarStatus();
