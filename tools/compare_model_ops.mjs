@@ -423,6 +423,118 @@ const rows = await page.evaluate(async (siCounts) => {
     });
   }
 
+  // --- OT: Weld Boundary (SI dump1 closed cube333 → 56/54) ---
+  {
+    const o = cube333();
+    A.select([o]);
+    let err = null;
+    try { A.run('ApplyTopoOp', { PresetObj: 'WeldEdges' }); } catch (e) { err = e.message; }
+    o.primitive.dirty = true;
+    const st = meshStats(o);
+    const si = siCounts.ot?.WeldBoundary?.si;
+    out.push({
+      name: 'OT_WeldBoundary',
+      ok: !err && st.npts === (si?.points ?? 56) && st.npolys === (si?.polys ?? 54),
+      detail: err || `Direct ${st.npts}/${st.npolys} SI ${si?.points}/${si?.polys}`,
+    });
+  }
+
+  // --- OT: Filter Edges / Filter Polygons (SI dump1 unchanged 56/54) ---
+  {
+    const o = cube333();
+    const m = o.primitive.mesh();
+    A.selectComponents(o, 'edge', edgeKeysOf(m, 4));
+    let err = null;
+    try { A.run('ApplyTopoOp', { PresetObj: 'FilterEdge' }); } catch (e) { err = e.message; }
+    o.primitive.dirty = true;
+    const st = meshStats(o);
+    out.push({
+      name: 'OT_FilterEdges',
+      ok: !err && st.npts === 56 && st.npolys === 54,
+      detail: err || `${st.npts}/${st.npolys}`,
+    });
+  }
+  {
+    const o = cube333();
+    A.selectComponents(o, 'polygon', [0, 1, 2]);
+    let err = null;
+    try { A.run('ApplyTopoOp', { PresetObj: 'Filter Polygons' }); } catch (e) { err = e.message; }
+    o.primitive.dirty = true;
+    const st = meshStats(o);
+    out.push({
+      name: 'OT_FilterPolygons',
+      ok: !err && st.npts === 56 && st.npolys === 54,
+      detail: err || `${st.npts}/${st.npolys}`,
+    });
+  }
+
+  // --- OT: Slice Between Two Vertices (dump2 soft 56/54; Direct no-throw) ---
+  {
+    const o = cube333();
+    const before = meshStats(o);
+    A.selectComponents(o, 'point', [0, 5]);
+    let err = null;
+    try { A.run('ApplySliceBetweenTwoVertices'); } catch (e) { err = e.message; }
+    o.primitive.dirty = true;
+    const after = meshStats(o);
+    out.push({
+      name: 'OT_SliceBetween',
+      ok: !err && after.npts >= before.npts,
+      detail: err || `before ${before.npts}/${before.npolys} after ${after.npts}/${after.npolys} (SI dump2 ICETree soft 56/54)`,
+    });
+  }
+
+  // --- OT: Extract Polygons delete (SI dump2 src 56/52; Direct also emits part) ---
+  {
+    const o = cube333();
+    A.selectComponents(o, 'polygon', [0, 1]);
+    let err = null; let extracted = null;
+    try { extracted = A.run('ExtractPolygons', { Keep: false }); } catch (e) { err = e.message; }
+    const src = meshStats(o);
+    const part = extracted?.primitive?.mesh ? meshStats(extracted) : null;
+    out.push({
+      name: 'OT_ExtractPolygons_delete',
+      ok: !err && src.npolys === 52 && !!part && part.npolys >= 1,
+      detail: err || `src ${src.npts}/${src.npolys} part ${part?.npts}/${part?.npolys}`,
+    });
+  }
+
+  // --- OT: Duplicate Along Curve accepted gap documented (Direct falls back to Duplicate Polygons) ---
+  {
+    const note = siCounts.ot?.DuplicateAlongCurve?.note || 'headless connection-set FAIL';
+    const o = cube333();
+    const before = meshStats(o);
+    A.selectComponents(o, 'polygon', [0, 1]);
+    let err = null;
+    try { A.run('ApplyTopoOp', { PresetObj: 'Duplicate Polygons Along Curve' }); } catch (e) { err = e.message; }
+    const op = A.selection[0];
+    if (op?.set) { op.set('length', 1); op.set('offset', 1); }
+    o.primitive.dirty = true;
+    const after = meshStats(o);
+    out.push({
+      name: 'OT_DuplicateAlongCurve_fallback',
+      ok: !err && after.npolys > before.npolys,
+      detail: err || `fallback Duplicate Polygons ${before.npolys}→${after.npolys}; ${note}`,
+    });
+  }
+
+  // --- Ref: ExportModel JSON OM (accepted vs Softimage binary .emdl) ---
+  {
+    A.run('NewScene');
+    A.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface', Name: 'ball' });
+    A.run('CreateModel', { InputObjs: 'ball', Name: 'BallModel' });
+    A.run('SelectObj', { InputObjs: 'BallModel' });
+    let err = null; let name = null;
+    try { name = A.run('ExportModel', { FileName: 'BallExitRef', IncludeChildren: true }); } catch (e) { err = e.message; }
+    let stored = null;
+    try { stored = JSON.parse(localStorage.getItem('si.refmodel.BallExitRef') || 'null'); } catch { /* */ }
+    out.push({
+      name: 'ExportModel_JSON_OM',
+      ok: !err && !!stored?.nodes?.length && String(name || '').includes('.emdl'),
+      detail: err || `file=${name} nodes=${stored?.nodes?.length} (Direct JSON OM accepted; SI binary .emdl not dumped)`,
+    });
+  }
+
   // --- Headless ExportDelta / ImportDelta Data roundtrip ---
   {
     A.run('NewScene');

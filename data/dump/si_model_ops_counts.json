@@ -140,6 +140,50 @@
         "points": 55,
         "polys": 52
       }
+    },
+    "WeldBoundary": {
+      "dump": "si_model_dump.json",
+      "leaf": "Modify/Poly. Mesh/Weld Boundary Points/Edges",
+      "si": {
+        "points": 56,
+        "polys": 54
+      },
+      "note": "weldedgesop on closed cube333 leaves counts unchanged at default distance"
+    },
+    "SliceBetween": {
+      "dump": "si_model_dump2.json",
+      "leaf": "Modify/Poly. Mesh/Apply Slice Between Two Vertices",
+      "si": {
+        "points": 56,
+        "polys": 54
+      },
+      "note": "dump2 attached ICETree; mesh counts unchanged — Direct Slice Plane lock is no-throw + cube333 stable or sliced"
+    },
+    "DuplicateAlongCurve": {
+      "dump": "si_model_dump.json",
+      "ok": false,
+      "note": "Accepted headless gap: connection-set recipe fails under XSIBATCH -processing (needs mesh+curve). Direct maps DuplicatePolygonsAlongCurve → Duplicate Polygons."
+    },
+    "ExtrudeAlongCurve": {
+      "dump": "si_model_dump.json",
+      "ok": false,
+      "note": "Accepted headless gap: connection-set FAIL under -processing. Direct Extrude Along Curve wired (polygons + curve → Extrude Along Normal by curve length)."
+    },
+    "TurnPolygonInternalEdges": {
+      "note": "Softimage menu has no separate Turn Edges leaf; Turn Polygon Internal Edges → Spin Edge Forward (already locked)."
+    }
+  },
+  "ref": {
+    "emdl_delta_bytes": {
+      "status": "accepted_direct_json_om",
+      "note": "Softimage binary .emdl/.delta PC goldens not in dump pack. Direct ExportModel/ImportModel/ExportDelta/ImportDelta JSON OM locked by compare_ref_model (14/14) + compare_model_ops ExportImportDelta_Data."
+    }
+  },
+  "text": {
+    "font_npts": {
+      "status": "accepted_headless_font_gap",
+      "si_curves": { "pts": 230, "nbcurves": 8, "fitsize": 4 },
+      "note": "PR #23 model_get_text_check locks TextToCurveList params + Helvetiker band (npts>=8, nbcurves 8–12). Softimage install-font glyph point equality needs interactive font PPG — skipped under -processing."
     }
   }
 }

@@ -231,6 +231,7 @@ export const TOPO_TYPES: Record<string, string> = {
   'Quadrangulate': 'quadrangulateop', 'Dissolve': 'dissolvecompop', 'Disconnect': 'disconnectcompop', 'Spin Edges': 'spinedgeop', 'Slice': 'slicepolygonsop',
   'Slice Plane': 'slicepolygonsop', 'Dice': 'dicepolygonsop', 'Polygon Reduction': 'polygonreductionop', 'Apply Thickness': 'thicknessop', 'Duplicate Polygons': 'extrudecompaxisop',
   'Cap Hole': 'capholeop', 'Connect Points': 'addedgeop', 'Local Subdivision': 'meshlocalsubdivisionop', 'Offset Polygons': 'offsetpolygonsop',
+  'Weld Boundary': 'weldedgesop',
 };
 const TOPO_NAMES: Record<string, string> = { 'Triangulate': 'Triangulate', 'Duplicate Polygons': 'Duplicate Op' };
 /** Build the parameter list for a topology preset: Softimage definitions first, then any legacy defs not covered. */
@@ -266,6 +267,7 @@ export class TopologyOperator extends Operator {
       case 'Subdivide Polygons': return topo.subdividePolygons(input, this.sel, this.p('subdivtype'), Math.max(1, this.p('subdivisions', undefined, 1)));
       case 'Split Edges': { const r = this.p('ratioedge', 'ratio', 0.5); return topo.splitEdges(input, this.sel, r > 1 ? r / 100 : r, this.get('connect') ? !!this.val('connect') : true); }
       case 'Weld Points': return topo.weldPoints(input, this.sel);
+      case 'Weld Boundary': return topo.weldBoundaryEdges(input, this.sel, this.p('distance', undefined, 0.001));
       case 'Collapse Components': return topo.collapseComponents(input, this.sel);
       case 'Invert Polygons': return topo.invertPolygons(input, this.sel);
       case 'Triangulate': return topo.triangulate(input, this.sel);
@@ -286,6 +288,7 @@ export function makeTopologyOperator(preset: string, sel: CompSel): TopologyOper
     case 'Apply Thickness': return new TopologyOperator(preset, sel, [num('amount', 0.5, 'Thickness', { min: -50, max: 50 })]);
     case 'Filter Points': return new TopologyOperator(preset, sel, [num('strength', 0.5, 'Strength', { min: 0, max: 1 })]);
     case 'Symmetrize Polygons': return new TopologyOperator(preset, sel, [enumP('axis', 0, [{ label: 'X', value: 0 }, { label: 'Y', value: 1 }, { label: 'Z', value: 2 }], 'Mirror Axis')]);
+    case 'Weld Boundary': return new TopologyOperator(preset, sel, [num('distance', 0.001, 'Distance', { min: 0, max: 10 })]);
     case 'Delete Components': case 'Subdivide Polygons': case 'Weld Points': case 'Collapse Components': case 'Invert Polygons': case 'Triangulate': case 'Offset Polygons': case 'Local Subdivision': return new TopologyOperator(preset, sel, []);
   }
   return null;
