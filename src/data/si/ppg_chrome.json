@@ -499,7 +499,124 @@
     "ppgTitleGradient": [
       "#8f9bb0",
       "#6f7d96"
-    ]
+    ],
+    "dialogBtnWDlu": 50,
+    "dialogBtnHDlu": 14
+  },
+  "explorer": {
+    "renameDialog": {
+      "id": "725",
+      "dll": "sceneexplorer.dll",
+      "font": [
+        8,
+        "MS Sans Serif"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        186,
+        95
+      ],
+      "edit": {
+        "rect_dlu": [
+          15,
+          14,
+          156,
+          19
+        ]
+      }
+    },
+    "tokens": {
+      "fontFamily": "Arial, \"MS Sans Serif\", Tahoma, sans-serif",
+      "fontPx": 11,
+      "rowHeightPx": 16,
+      "headBtnFontPx": 10,
+      "searchBg": "#f4f2f0"
+    }
+  },
+  "preferences": {
+    "hostDialog": {
+      "id": "264",
+      "dll": "props.dll",
+      "font": [
+        10,
+        "Arial"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        251,
+        263
+      ],
+      "controls": [
+        {
+          "text": "load",
+          "cls": "button",
+          "rect_dlu": [
+            204,
+            3,
+            21,
+            11
+          ]
+        },
+        {
+          "text": "save",
+          "cls": "button",
+          "rect_dlu": [
+            225,
+            3,
+            21,
+            11
+          ]
+        },
+        {
+          "text": ";states=rvrt;file=s:/ds/bin/dsservud.dll",
+          "cls": "button",
+          "rect_dlu": [
+            201,
+            244,
+            21,
+            12
+          ]
+        },
+        {
+          "text": ";states=help;file=s:/ds/bin/dsservud.dll",
+          "cls": "button",
+          "rect_dlu": [
+            222,
+            244,
+            21,
+            12
+          ]
+        },
+        {
+          "text": "Child Property Frame rectangle",
+          "cls": "static",
+          "rect_dlu": [
+            0,
+            0,
+            200,
+            256
+          ]
+        },
+        {
+          "text": "THUMBNAIL",
+          "cls": "button",
+          "rect_dlu": [
+            204,
+            13,
+            42,
+            34
+          ]
+        }
+      ]
+    },
+    "tokens": {
+      "treeWidthPx": 170,
+      "labelWidthPx": 260,
+      "fontFamily": "Arial, \"MS Sans Serif\", Tahoma, sans-serif",
+      "fontPx": 11
+    }
   },
   "layoutOpts": {
     "alignRightCommon": true,
@@ -569,6 +686,7 @@
   "notes": [
     "PPG host chrome is owner-draw (uiut InspNavCtrl / LoadSaveCtrl); DLU rects place controls, RT_BITMAP sizes paint them.",
     "Dialog 147 is the fullest Softimage PPG toolbar (animation + reset all/group + nav + load/save).",
+    "Explorer rename = sceneexplorer.dll 725; Preferences host frame = props.dll 264.",
     "Shared PPG shell only \u2014 Model-specific opdef layouts owned by Model PPG worker.",
     "No Softimage Desktop takeover \u2014 PE/SPDL file scrape only."
   ]

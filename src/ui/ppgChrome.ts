@@ -40,6 +40,21 @@ export function applyPpgChrome(host?: HTMLElement | null): PpgChrome {
     set(el, '--ppg-title-bot', t.ppgTitleGradient[1]);
     set(el, '--ppg-nav-w', `${PPG_CHROME.bitmaps.inspNav.peSize?.[0] ?? 71}px`);
     set(el, '--ppg-tools-w', `${PPG_CHROME.bitmaps.tools.peSize?.[0] ?? 66}px`);
+    const xp = (PPG_CHROME as any).explorer?.tokens;
+    if (xp) {
+      set(el, '--xp-font', xp.fontFamily);
+      set(el, '--xp-font-px', `${xp.fontPx}px`);
+      set(el, '--xp-row-h', `${xp.rowHeightPx}px`);
+      set(el, '--xp-btn-font', `${xp.headBtnFontPx}px`);
+      set(el, '--xp-search-bg', xp.searchBg);
+    }
+    const pr = (PPG_CHROME as any).preferences?.tokens;
+    if (pr) {
+      set(el, '--prefs-font', pr.fontFamily);
+      set(el, '--prefs-font-px', `${pr.fontPx}px`);
+      set(el, '--prefs-tree-w', `${pr.treeWidthPx}px`);
+      set(el, '--prefs-label-w', `${pr.labelWidthPx}px`);
+    }
   };
   apply(root);
   if (host) apply(host);
@@ -70,5 +85,18 @@ export function ppgChromeAudit(root?: ParentNode | Document): Record<string, unk
     fontHost: PPG_CHROME.tokens.fontPtHost,
     fontFamily: PPG_CHROME.tokens.fontFamily,
     hosts: Object.keys(PPG_CHROME.hosts),
+    explorer: {
+      renameId: (PPG_CHROME as any).explorer?.renameDialog?.id,
+      rowH: (PPG_CHROME as any).explorer?.tokens?.rowHeightPx,
+      fontPx: (PPG_CHROME as any).explorer?.tokens?.fontPx,
+      tokensApplied: cs.getPropertyValue('--xp-row-h').trim() === `${(PPG_CHROME as any).explorer?.tokens?.rowHeightPx ?? 16}px`,
+      liveRowH: (document.querySelector('.explorer .tree-row') as HTMLElement | null)?.getBoundingClientRect().height ?? null,
+    },
+    preferences: {
+      hostId: (PPG_CHROME as any).preferences?.hostDialog?.id,
+      labelW: (PPG_CHROME as any).preferences?.tokens?.labelWidthPx,
+      treeW: (PPG_CHROME as any).preferences?.tokens?.treeWidthPx,
+      tokensApplied: cs.getPropertyValue('--prefs-label-w').trim() === `${(PPG_CHROME as any).preferences?.tokens?.labelWidthPx ?? 260}px`,
+    },
   };
 }

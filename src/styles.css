@@ -34,6 +34,15 @@
   --ppg-title-bot: #6f7d96;
   --ppg-nav-w: 71px;
   --ppg-tools-w: 66px;
+  --xp-font: Arial, "MS Sans Serif", Tahoma, sans-serif;
+  --xp-font-px: 11px;
+  --xp-row-h: 16px;
+  --xp-btn-font: 10px;
+  --xp-search-bg: #f4f2f0;
+  --prefs-font: Arial, "MS Sans Serif", Tahoma, sans-serif;
+  --prefs-font-px: 11px;
+  --prefs-tree-w: 170px;
+  --prefs-label-w: 260px;
   font-family: Tahoma, "Segoe UI", Arial, sans-serif; font-size: 11px; color: var(--text);
 }
 * { box-sizing: border-box; }
@@ -85,22 +94,22 @@ button, select, input { font-family: inherit; }
 .menu-item.disabled { color: #9a9a9a; } .menu-item.disabled:hover { background: #f4f2f0; color: #9a9a9a; }
 .menu-sep { border-top: 1px solid #b8b8b8; margin: 3px 2px; }
 
-/* explorer — Softimage Explorer: scope / View / filter buttons, classic +/- tree with dotted guides, type-coloured names */
-.explorer { display: flex; flex-direction: column; height: 100%; font-size: 11px; }
+/* explorer — Softimage Explorer chrome (sceneexplorer PE + shared PPG shell font) */
+.explorer { display: flex; flex-direction: column; height: 100%; font-family: var(--xp-font); font-size: var(--xp-font-px); }
 .explorer-head { display: flex; gap: 2px; padding: 2px 3px; background: var(--bg2); border-bottom: 1px solid var(--line); align-items: center; }
-.xp-btn { background: linear-gradient(var(--btn-top), var(--btn-bot)); color: var(--text); border: 1px solid var(--line); border-radius: 2px; padding: 1px 4px 1px 5px; font-size: 10px; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: flex-end; gap: 3px; }
+.xp-btn { background: linear-gradient(var(--btn-top), var(--btn-bot)); color: var(--text); border: 1px solid var(--line); border-radius: 2px; padding: 1px 4px 1px 5px; font-size: var(--xp-btn-font); cursor: pointer; white-space: nowrap; display: inline-flex; align-items: flex-end; gap: 3px; }
 .xp-arrow { font-size: 7px; color: #333; }
 .xp-icons { display: inline-flex; gap: 2px; margin-left: 2px; }
 .xp-ico { display: inline-block; width: 15px; height: 14px; text-align: center; font-size: 9px; line-height: 13px; border: 1px solid var(--line); border-radius: 2px; background: linear-gradient(var(--btn-top), var(--btn-bot)); color: #333; cursor: pointer; }
 .xp-ico.on { background: var(--sel); }
-.xp-search { flex: 1; min-width: 24px; background: #f4f2f0; color: var(--text); border: 1px solid var(--line); font-size: 10px; padding: 1px 3px; }
-.xp-edit { font-size: 11px; padding: 0 2px; border: 1px solid #333; background: #fff; color: #000; width: 110px; }
+.xp-search { flex: 1; min-width: 24px; background: var(--xp-search-bg); color: var(--text); border: 1px solid var(--line); font-size: var(--xp-btn-font); padding: 1px 3px; }
+.xp-edit { font-size: var(--xp-font-px); padding: 0 2px; border: 1px solid #333; background: #fff; color: #000; width: 110px; }
 .explorer-body { flex: 1; overflow: auto; padding: 2px; background: var(--bg); outline: none; }
 .tree-node { white-space: nowrap; position: relative; }
 .tree-children { position: relative; }
 .tree-children::before { content: ''; position: absolute; left: 0; top: 0; bottom: 8px; border-left: 1px dotted #6a6663; }
 .tree-children .tree-row::before { content: ''; position: absolute; width: 10px; border-top: 1px dotted #6a6663; margin-left: -12px; top: 8px; }
-.tree-row { display: flex; align-items: center; gap: 3px; padding: 0 2px; cursor: default; height: 16px; position: relative; }
+.tree-row { display: flex; align-items: center; gap: 3px; padding: 0 2px; cursor: default; height: var(--xp-row-h); position: relative; }
 .tree-row:hover { background: #bcb8b5; }
 .tree-row.selected .tree-name { background: #fff; color: #000; border: 1px solid #333; padding: 0 2px; margin: -1px 0; font-style: normal; }
 .tree-row.drop { outline: 1px dashed #333; }
@@ -301,13 +310,14 @@ button, select, input { font-family: inherit; }
 .ppg-float.minimized .ppg-float-body, .ppg-float.minimized .prefs-foot { display: none; }
 .ppg-float.minimized { height: auto !important; width: 220px; }
 .prefs { display: grid; grid-template-rows: 1fr auto; height: 100%; }
-.ppg-float-body.prefs { display: grid; grid-template-columns: 170px 1fr; grid-template-rows: 1fr; }
+.ppg-float-body.prefs { display: grid; grid-template-columns: var(--prefs-tree-w) 1fr; grid-template-rows: 1fr; font-family: var(--prefs-font); font-size: var(--prefs-font-px); }
 .prefs-tree { overflow: auto; border-right: 1px solid var(--line); background: #f4f2f0; }
 .prefs-item { padding: 2px 6px; font-size: 10px; cursor: pointer; white-space: nowrap; }
 .prefs-item:hover { background: #dcd8d4; } .prefs-item.active { background: #3875d7; color: #fff; }
 .prefs-page { overflow: auto; min-width: 0; }
 .prefs-foot { grid-column: 1 / -1; padding: 3px; border-top: 1px solid var(--line); }
-.prefs-page .ppg-row { grid-template-columns: 18px 260px 1fr; } .prefs-page .ppg-row.align-right.is-check { grid-template-columns: 18px 260px 16px; }
+.prefs-page .ppg-row { grid-template-columns: 18px var(--prefs-label-w) 1fr; } .prefs-page .ppg-row.align-right.is-check { grid-template-columns: 18px var(--prefs-label-w) 16px; }
+.prefs-tree, .prefs-item { font-family: var(--prefs-font); font-size: var(--prefs-font-px); }
 
 /* ---- panels painted with Softimage's own mcp.dll bitmaps (PLAYU / 465 / LAYERU) */
 .bmp-panel { position: relative; flex: none; image-rendering: pixelated; }
