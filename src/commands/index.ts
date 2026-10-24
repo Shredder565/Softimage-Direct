@@ -120,8 +120,22 @@ export function registerBuiltins(app: App) {
     execute(app, a) { for (const o of app.targets(a.InputObj)) ['x', 'y', 'z'].forEach((ax, i) => { const p = o.kinematics.local.get('scl' + ax)!; const v = [a.X, a.Y, a.Z][i]; app.setParam(p, a.Mode === 'siAbsolute' ? v : p.value * v, 'Scale'); }); },
   });
   app.register({ name: 'ResetTransform', label: 'Reset Transform', category: 'Manipulation', args: [{ name: 'InputObj', default: '' }], execute(app, a) { for (const o of app.targets(a.InputObj)) { const l = o.kinematics.local; for (const n of ['posx', 'posy', 'posz', 'rotx', 'roty', 'rotz']) app.setParam(l.get(n)!, 0, 'Reset'); for (const n of ['sclx', 'scly', 'sclz']) app.setParam(l.get(n)!, 1, 'Reset'); } } });
-  app.register({ name: 'ParentObj', label: 'Parent', category: 'Edit', args: [{ name: 'Parent' }, { name: 'Children', default: '' }], execute(app, a) { const p = app.scene.find(a.Parent) ?? app.scene.root; for (const c of app.targets(a.Children)) { if (c === p) continue; const old = c.parentObj!; app.record('Parent', () => p.addChild(c), () => old.addChild(c)); } } });
-  app.register({ name: 'CutObj', label: 'Cut Hierarchical Link', category: 'Edit', args: [{ name: 'Children', default: '' }], execute(app, a) { for (const c of app.targets(a.Children)) { const old = c.parentObj!; if (old === app.scene.root) continue; app.record('Cut', () => app.scene.root.addChild(c), () => old.addChild(c)); } } });
+  // MCP Constrain/Edit enable: Softimage PutEnabled on these commands from selection context
+  // (Ghidra: CommandCore flag bit; MenuItem/MCP chrome read GetEnabled). Clean-room predicates.
+  app.register({
+    name: 'ParentObj', label: 'Parent', category: 'Edit',
+    args: [{ name: 'Parent' }, { name: 'Children', default: '' }],
+    supported: () => true,
+    canRun: () => app.selectedObjects.length >= 2,
+    execute(app, a) { const p = app.scene.find(a.Parent) ?? app.scene.root; for (const c of app.targets(a.Children)) { if (c === p) continue; const old = c.parentObj!; app.record('Parent', () => p.addChild(c), () => old.addChild(c)); } },
+  });
+  app.register({
+    name: 'CutObj', label: 'Cut Hierarchical Link', category: 'Edit',
+    args: [{ name: 'Children', default: '' }],
+    supported: () => true,
+    canRun: () => app.selectedObjects.some(o => o.parentObj && o.parentObj !== app.scene.root),
+    execute(app, a) { for (const c of app.targets(a.Children)) { const old = c.parentObj!; if (old === app.scene.root) continue; app.record('Cut', () => app.scene.root.addChild(c), () => old.addChild(c)); } },
+  });
   app.register({ name: 'Rename', label: 'Rename', category: 'Edit', args: [{ name: 'InputObj' }, { name: 'Name' }], execute(app, a) { for (const o of app.targets(a.InputObj)) { const old = o.name; const nn = app.scene.uniqueName(a.Name); app.record('Rename', () => { o.name = nn; }, () => { o.name = old; }); } } });
 
   // ------------------------------------------------------------- operators
@@ -141,28 +155,46 @@ export function registerBuiltins(app: App) {
     },
   });
   app.register({ name: 'DeleteOp', label: 'Delete Operator', category: 'Operator', args: [{ name: 'Operator' }], execute(app, a) { for (const n of app.selection) if (n.kind === 'operator' && n.type !== 'geom') { const prim = n.parent as Primitive; const idx = prim.operators.indexOf(n as any); app.record('Delete op', () => prim.removeOperator(n as any), () => { prim.addOperator(n as any); prim.operators.splice(prim.operators.indexOf(n as any), 1); prim.operators.splice(idx, 0, n as any); prim.dirty = true; }); } app.select([]); } });
-  app.register({ name: 'CreateGroup', label: 'Create Group', category: 'Edit', description: 'Groups the selected objects (MCP Edit > Group).', args: [{ name: 'Name', default: 'Group' }, { name: 'InputObjs', default: '' }], execute(app, a) {
-    const objs = app.targets(a.InputObjs); if (!objs.length) throw new Error(siMessage(41));
-    const g = new Group(app.scene.uniqueName(a.Name || 'Group')); g.members.push(...objs); g.parent = app.scene.root;
-    app.record('Group', () => { app.scene.groupList.push(g); }, () => { const i = app.scene.groupList.indexOf(g); if (i >= 0) app.scene.groupList.splice(i, 1); });
-    app.select([g]); return g;
-  } });
-  app.register({ name: 'FreezeModeling', label: 'Freeze Modeling', category: 'Modeling', description: 'Freezes the modeling region of the construction history (MCP Edit > Freeze M); shape/animation/secondary operators stay live.', args: [{ name: 'InputObjs', default: '' }], execute(app, a) {
-    for (const o of app.targets(a.InputObjs)) {
-      const prim = o.primitive; if (!prim || prim.operators.length < 2) continue; const old = [...prim.operators]; const keep = old.filter((op, i) => i > 0 && (op.region ?? 'modeling') !== 'modeling'); if (keep.length === old.length - 1) continue;
-      const mesh = prim.geomUpTo('modeling'); const frozen = new FrozenOperator(mesh); frozen.region = 'modeling';
-      app.record('Freeze Modeling', () => { prim.operators.splice(0, prim.operators.length, frozen, ...keep); frozen.parent = prim; prim.dirty = true; }, () => { prim.operators.splice(0, prim.operators.length, ...old); prim.dirty = true; });
-    }
-  } });
+  app.register({
+    name: 'CreateGroup', label: 'Create Group', category: 'Edit', description: 'Groups the selected objects (MCP Edit > Group).',
+    args: [{ name: 'Name', default: 'Group' }, { name: 'InputObjs', default: '' }],
+    supported: () => true,
+    canRun: () => app.selectedObjects.length > 0,
+    execute(app, a) {
+      const objs = app.targets(a.InputObjs); if (!objs.length) throw new Error(siMessage(41));
+      const g = new Group(app.scene.uniqueName(a.Name || 'Group')); g.members.push(...objs); g.parent = app.scene.root;
+      app.record('Group', () => { app.scene.groupList.push(g); }, () => { const i = app.scene.groupList.indexOf(g); if (i >= 0) app.scene.groupList.splice(i, 1); });
+      app.select([g]); return g;
+    },
+  });
+  app.register({
+    name: 'FreezeModeling', label: 'Freeze Modeling', category: 'Modeling', description: 'Freezes the modeling region of the construction history (MCP Edit > Freeze M); shape/animation/secondary operators stay live.',
+    args: [{ name: 'InputObjs', default: '' }],
+    supported: () => true,
+    canRun: () => app.selectedObjects.some(o => !!o.primitive?.mesh()),
+    execute(app, a) {
+      for (const o of app.targets(a.InputObjs)) {
+        const prim = o.primitive; if (!prim || prim.operators.length < 2) continue; const old = [...prim.operators]; const keep = old.filter((op, i) => i > 0 && (op.region ?? 'modeling') !== 'modeling'); if (keep.length === old.length - 1) continue;
+        const mesh = prim.geomUpTo('modeling'); const frozen = new FrozenOperator(mesh); frozen.region = 'modeling';
+        app.record('Freeze Modeling', () => { prim.operators.splice(0, prim.operators.length, frozen, ...keep); frozen.parent = prim; prim.dirty = true; }, () => { prim.operators.splice(0, prim.operators.length, ...old); prim.dirty = true; });
+      }
+    },
+  });
   app.register({ name: 'SetConstructionMode', label: 'Set Construction Mode', category: 'Modeling', args: [{ name: 'Mode', default: 'modeling' }], undoable: false, execute(app, a) { const m = String(a.Mode).toLowerCase().replace(/[^a-z]/g, '') as any; const map: Record<string, string> = { modeling: 'modeling', shapemodeling: 'shape', shape: 'shape', animation: 'animation', secondaryshapemodeling: 'secondaryshape', secondaryshape: 'secondaryshape', secondary: 'secondaryshape' }; if (!map[m]) throw new Error('Mode: Modeling, Shape Modeling, Animation or Secondary Shape Modeling'); construction.mode = map[m] as any; app.events.emit('module'); app.logMsg('info', `Construction mode: ${map[m]}`); return construction.mode; } });
-  app.register({ name: 'FreezeObj', label: 'Freeze', category: 'Modeling', description: 'Collapses the construction history into the geometry.', args: [{ name: 'InputObjs', default: '' }], execute(app, a) {
-    for (const o of app.targets(a.InputObjs)) {
-      const prim = o.primitive; if (!prim || prim.operators.length < 2) continue;
-      const mesh = prim.mesh(); const old = [...prim.operators];
-      const frozen = new FrozenOperator(mesh);
-      app.record('Freeze', () => { prim.operators.splice(0, prim.operators.length, frozen); frozen.parent = prim; prim.dirty = true; }, () => { prim.operators.splice(0, prim.operators.length, ...old); prim.dirty = true; });
-    }
-  } });
+  app.register({
+    name: 'FreezeObj', label: 'Freeze', category: 'Modeling', description: 'Collapses the construction history into the geometry.',
+    args: [{ name: 'InputObjs', default: '' }],
+    supported: () => true,
+    canRun: () => app.selectedObjects.some(o => !!o.primitive),
+    execute(app, a) {
+      for (const o of app.targets(a.InputObjs)) {
+        const prim = o.primitive; if (!prim || prim.operators.length < 2) continue;
+        const mesh = prim.mesh(); const old = [...prim.operators];
+        const frozen = new FrozenOperator(mesh);
+        app.record('Freeze', () => { prim.operators.splice(0, prim.operators.length, frozen); frozen.parent = prim; prim.dirty = true; }, () => { prim.operators.splice(0, prim.operators.length, ...old); prim.dirty = true; });
+      }
+    },
+  });
 
   // -------------------------------------------------------------- topology
   const TOPO: Record<string, string> = {  // Softimage ApplyTopoOp preset display name -> our operator
@@ -172,10 +204,20 @@ export function registerBuiltins(app: App) {
     'Filter Points': 'Filter Points', 'Symmetrize Polygons': 'Symmetrize Polygons', 'Apply Thickness': 'Apply Thickness', 'Split Edge': 'Split Edges',
   };
   const needsSel = (preset: string) => !['Apply Thickness', 'Triangulate', 'Invert Polygons', 'Filter Points', 'Symmetrize Polygons'].includes(preset);
+  const topoSupported = (a: Record<string, any>) => !!(TOPO[a.PresetObj] ?? TOPO[a.Preset]);
   app.register({
     name: 'ApplyTopoOp', label: 'Apply Topology Operator', category: 'Modeling|Topology|Operator', description: 'Applies a topology operator to the selected components (polygons, edges or points).',
     args: [{ name: 'PresetObj', default: 'Extrude Component Along Normal' }, { name: 'ConnectionSet', default: '' }, { name: 'ConnectType', default: 3 }, { name: 'ImmediateMode', default: 0 }],
-    canRun: (a) => !!(TOPO[a.PresetObj] ?? TOPO[a.Preset]),
+    // supported = wired for walks; canRun = Softimage GetEnabled (mesh + components when required)
+    supported: topoSupported,
+    canRun: (a) => {
+      if (!topoSupported(a)) return false;
+      const preset = TOPO[a.PresetObj] ?? TOPO[a.Preset]!;
+      const meshObj = app.compSel?.obj ?? app.selectedObjects.find(o => o.primitive?.type === 'polymsh');
+      if (!meshObj || meshObj.primitive?.type !== 'polymsh') return false;
+      if (needsSel(preset) && !app.componentSel()) return false;
+      return true;
+    },
     execute(app, a) {
       const preset = TOPO[a.PresetObj] ?? TOPO[a.Preset]; if (!preset) throw new Error(`Topology operator ${a.PresetObj} not available yet`);
       const cs = app.componentSel();

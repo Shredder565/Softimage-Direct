@@ -68,6 +68,16 @@ else {
   if (!gep) note.push('getEnableParity missing from __uiAudit');
   else if (!gep.ok) fail.push(`Get enable Model↔Animate mismatches: ${JSON.stringify(gep.mismatches?.slice?.(0, 5) ?? gep.mismatches)}`);
   else ok.push(`Get enable parity Model=${gep.modelGet} Animate=${gep.animateGet} shared=${gep.shared}`);
+  // MCP enable: Softimage-style empty selection greys command-linked buttons
+  const me = await p.evaluate(() => {
+    const A = window.Application;
+    A.select([]);
+    return window.__uiAudit?.().mcpEnable ?? null;
+  });
+  if (!me) fail.push('mcpEnable missing from __uiAudit');
+  else if (me.parent || me.cut || me.freeze || me.group || me.freezeM || me.sample) {
+    fail.push(`MCP empty-sel enable expected all false, got ${JSON.stringify(me)}`);
+  } else ok.push('MCP enable empty-sel greys Parent/Cut/Freeze/Group/FreezeM/Sample');
 }
 
 // Open floating views

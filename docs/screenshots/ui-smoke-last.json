@@ -1,5 +1,5 @@
 {
-  "ok": 32,
+  "ok": 33,
   "fail": 0,
   "note": 1,
   "okItems": [
@@ -14,6 +14,7 @@
     "module extracted: Hair",
     "all 43 Softimage layout frame types registered",
     "Get enable parity Model=171 Animate=170 shared=170",
+    "MCP enable empty-sel greys Parent/Cut/Freeze/Group/FreezeM/Sample",
     "openview Explorer",
     "openview Property Editor",
     "openview Script Editor",

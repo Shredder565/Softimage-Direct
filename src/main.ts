@@ -19,6 +19,7 @@ import { currentKeymap, keymapNames } from './ui/keymap';
 import menusData from './data/menus.json';
 import { installLayoutEditing } from './ui/layoutEdit';
 import { toolbarPanel, menuStatus, runMenuPath, getEnableParity } from './ui/toolbarPanel';
+import { commandEnabled, mcpSampleEnabled } from './ui/cmdEnable';
 import { explorerView } from './ui/explorer';
 import { mcpPanel } from './ui/mcp';
 import { installKeymap } from './ui/keymap';
@@ -179,6 +180,16 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     prefsPages: [...prefs.keys()],
     prefsPageCount: prefs.size,
     getEnableParity: getEnableParity(app),
+    // Softimage GetEnabled-driven MCP button state (Ghidra command-flag model)
+    mcpEnable: {
+      sample: mcpSampleEnabled(app),
+      parent: commandEnabled(app, 'ParentObj'),
+      cut: commandEnabled(app, 'CutObj'),
+      freeze: commandEnabled(app, 'FreezeObj'),
+      group: commandEnabled(app, 'CreateGroup'),
+      freezeM: commandEnabled(app, 'FreezeModeling'),
+      selCount: app.selectedObjects.length,
+    },
   };
 };
 (window as any).__menubarStatus = () => menubarStatus();
