@@ -1,5 +1,5 @@
 // Command registry + undo stack + script log + selection: the bus every UI element talks through.
-import { Scene, X3DObject, Node } from './scene';
+import { Scene, X3DObject, Node, Operator } from './scene';
 import { AnimationManager } from './animation';
 import { Parameter } from './params';
 import type { CompKind } from './topology';
@@ -79,6 +79,9 @@ export class App {
     let result: any;
     try {
       result = def.execute(this, full);
+      if (!nested && (this as any).immediate && result && (result as any).kind === 'operator' && (result as any).parent?.kind === 'primitive' && (result as any).type !== 'geom') { // Immediate mode: apply and freeze right away (no operator left in the stack)
+        const op: any = result; const prim: any = op.parent; const idx = prim.operators.indexOf(op); if (idx > 0) { const above = prim.operators.slice(idx + 1); let g: any = null; for (const x of prim.operators.slice(0, idx + 1)) { try { g = x.apply(g); } catch { /* ignore */ } } const frozen = new Operator('Frozen Geometry', 'geom', []); (frozen as any).apply = () => g; (frozen as any).region = 'modeling'; const old = [...prim.operators]; this.record('Immediate', () => { prim.operators.splice(0, prim.operators.length, frozen, ...above); frozen.parent = prim; prim.dirty = true; }, () => { prim.operators.splice(0, prim.operators.length, ...old); prim.dirty = true; }); const owner = prim.parent; if (owner) this.select([owner]); }
+      }
       if (!nested && (this as any).cmdLog !== false) this.logMsg('cmd', fmtCall(name, def.args.map(a => full[a.name]), (this as any).scriptLang));
     } catch (e: any) {
       this.logMsg('error', `${name}: ${e?.message ?? e}`);

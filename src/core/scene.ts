@@ -115,14 +115,19 @@ export class Material extends Node {
 
 // -------------------------------------------------------------- operators
 export class Operator extends Node {
-  constructor(name: string, type: string, defs: any[]) { super(name, type, 'operator', defs); }
+  constructor(name: string, type: string, defs: any[]) { super(name, type, 'operator', defs); this.region = construction.mode; }
   /** Transforms the geometry payload (MeshData for meshes/surfaces, CurveData for curves, LatticeData for lattices). */
   apply(input: any): any { return input; }
   /** Operators that read other scene objects (deformers, generator inputs, references) return a stamp of what they
    *  depend on; when it changes the primitive re-evaluates, so moving a bone or a lattice updates the mesh. */
   depStamp?(): string;
   _lastStamp?: string;
+  /** Construction-history region (Softimage construction modes): modeling < shape < animation < secondaryshape. */
+  region: 'modeling' | 'shape' | 'animation' | 'secondaryshape' = 'modeling';
 }
+export const REGIONS = ['modeling', 'shape', 'animation', 'secondaryshape'] as const;
+/** The construction mode new operators go into (set by the construction-mode combo). */
+export const construction = { mode: 'modeling' as typeof REGIONS[number] };
 /** Stamp helper: global matrices (+ geometry versions) of a set of objects. */
 export function stampOf(objs: (X3DObject | null | undefined)[]): string { let s = ''; for (const o of objs) { if (!o) continue; const e = o.globalMatrix().elements; for (let i = 0; i < 16; i++) s += (Math.round(e[i] * 1e4)) + ','; s += (o.primitive?.version ?? 0) + '|'; } return s; }
 
@@ -274,7 +279,16 @@ export class Primitive extends Node {
     super(name, type, 'primitive', type === 'polymsh' ? (siParamDefs('prim:Polygon Mesh/Cube').length ? siParamDefs('prim:Polygon Mesh/Cube') : [enumP('subdrule', 0, [{ label: 'Catmull-Clark', value: 0 }, { label: 'XSI-Doo-Sabin', value: 2 }, { label: 'Linear', value: 3 }], 'Rule')]) : []);
     if (type === 'polymsh') this.layout = siLayout('prim:Polygon Mesh/Cube');
   }
-  addOperator(op: Operator) { op.parent = this; this.operators.push(op); this.dirty = true; }
+  /** Insert at the top of the operator's region (the generator always stays first), so a deform added in Animation mode
+   *  evaluates after every modeling/shape operator even if those are added later. */
+  addOperator(op: Operator) {
+    op.parent = this; if (!this.operators.length || op.type === 'geom' || this.operators.length === 0) { this.operators.push(op); this.dirty = true; return; }
+    if (!op.region) op.region = construction.mode; const r = REGIONS.indexOf(op.region); let at = this.operators.length;
+    for (let i = 1; i < this.operators.length; i++) { const ri = REGIONS.indexOf(this.operators[i].region ?? 'modeling'); if (ri > r) { at = i; break; } }
+    this.operators.splice(at, 0, op); this.dirty = true;
+  }
+  /** Geometry at the end of a region (e.g. the result of the modeling region), used by Freeze Modeling. */
+  geomUpTo(region: typeof REGIONS[number]): any { const r = REGIONS.indexOf(region); let m: any = null; for (const op of this.operators) { if (op !== this.operators[0] && REGIONS.indexOf(op.region ?? 'modeling') > r) break; try { m = op.apply(m); } catch { /* ignore */ } } return m; }
   removeOperator(op: Operator) { const i = this.operators.indexOf(op); if (i >= 0) { this.operators.splice(i, 1); op.parent = null; this.dirty = true; } }
   /** Evaluate the construction history. */
   geom(): any {
@@ -293,7 +307,10 @@ export class Primitive extends Node {
   explorerChildren(): Node[] {
     if (!this.markers) { this.markers = [new MarkerNode('Secondary Shape Modeling', 'secondaryshapemarker', 'secondaryshape'), new MarkerNode('Animation', 'animationmarker', 'animation'), new MarkerNode('Shape Modeling', 'shapemarker', 'shape'), new MarkerNode('Modeling', 'modelingmarker', 'modeling')]; for (const m of this.markers) m.parent = this; }
     if (!this.clustersFolder) { this.clustersFolder = new ClusterFolder(); this.clustersFolder.parent = this; }
-    return [...this.markers, ...[...this.operators].reverse(), this.clustersFolder];
+    // each region marker is followed by its operators (newest first); the generator sits at the bottom of the modeling region
+    const out: Node[] = []; const byRegion = (r: string) => this.operators.filter((op, i) => i > 0 && (op.region ?? 'modeling') === r).reverse();
+    for (const mk of this.markers) { out.push(mk); out.push(...byRegion(mk.mode)); if (mk.mode === 'modeling' && this.operators[0]) out.push(this.operators[0]); }
+    return [...out, this.clustersFolder];
   }
   notify(p: any, old: any) { this.dirty = true; super.notify(p, old); }
 }

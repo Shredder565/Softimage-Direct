@@ -6,6 +6,7 @@ const userToolbarNames = () => userToolbars().map(t => t.name);
 import { App } from '../core/commands';
 import { SI_MENUS, SI_VIEWS, SiMenuItem, openSiMenu } from './si';
 import { minimizeAll, restoreAll, closeAll, floatingWindows } from './floating';
+import { construction } from '../core/scene';
 import { keymapNames, setKeymap, currentKeymap, bindingFor } from './keymap';
 
 const ev = (name: string, detail?: any) => window.dispatchEvent(new CustomEvent(name, { detail }));
@@ -18,7 +19,7 @@ export function menubar(app: App, host: HTMLElement) {
   const tops: SiMenuItem[] = [file ?? main[0], ...main.slice(1)];
   const clipboard: { objs: any[]; cut: boolean } = { objs: [], cut: false };
 
-  const EXTRA_VIEWS = ['Render Tree', 'Texture Editor', 'Schematic', 'Animation Editor', 'DopeSheet', 'Animation Mixer', 'Spreadsheet', 'Plugin Manager', 'Netview', 'Image Clips', 'Render Manager', 'Material Manager', 'Weight Paint Panel', 'Preset Manager', 'Scene Layer Manager', 'XSI Explorer', 'Script History'];
+  const EXTRA_VIEWS = ['ICE Tree', 'Render Tree', 'Texture Editor', 'Schematic', 'Animation Editor', 'DopeSheet', 'Animation Mixer', 'Spreadsheet', 'Plugin Manager', 'Netview', 'Image Clips', 'Render Manager', 'Material Manager', 'Weight Paint Panel', 'Preset Manager', 'Scene Layer Manager', 'XSI Explorer', 'Script History'];
   const viewsSubmenu = (): SiMenuItem[] => [...SI_VIEWS.map(v => ({ label: v.name, id: -1 })), { separator: true }, ...EXTRA_VIEWS.filter(n => !SI_VIEWS.some(v => v.name === n)).map(n => ({ label: n, id: -1 }))];
   const layoutsSubmenu = (): SiMenuItem[] => layoutNames().map(n => ({ label: n, id: -2 }));
   const displaySubmenu = (): SiMenuItem[] => ['Bounding Box', 'Wireframe', 'Hidden Line', 'Constant', 'Shaded', 'Textured', 'Texture Decal', 'Realtime Shaders'].map(l => ({ label: l, id: -3 }));
@@ -81,6 +82,10 @@ export function menubar(app: App, host: HTMLElement) {
     const m = document.createElement('span'); m.className = 'm'; m.textContent = top.label ?? ''; bar.appendChild(m);
     m.onclick = (e) => { e.stopPropagation(); const r = m.getBoundingClientRect(); openSiMenu(expand(top.items ?? []).map(accel), r.left, r.bottom, pick, { enabled, checked: it => it.id === -2 ? it.label === currentLayoutName() : undefined }, [top.label ?? '']); };
   }
+  // construction-mode combo (Softimage shows it at the right of the main toolbar): operators go into the chosen region
+  const cm = document.createElement('select'); cm.className = 'cmode'; cm.title = 'Construction mode: which region of the construction history new operators go into';
+  for (const [v, l] of [['modeling', 'Modeling'], ['shape', 'Shape Modeling'], ['animation', 'Animation'], ['secondaryshape', 'Secondary Shape Modeling']]) { const o = document.createElement('option'); o.value = v; o.textContent = l; cm.appendChild(o); }
+  cm.value = construction.mode; cm.onchange = () => app.run('SetConstructionMode', { Mode: cm.value }); app.events.on('module', () => { cm.value = construction.mode; }); bar.appendChild(cm);
   const right = document.createElement('span'); right.className = 'right'; right.textContent = 'Softimage-Direct · Autodesk Softimage 2015 SP2 clone'; bar.appendChild(right);
   host.appendChild(bar);
 }

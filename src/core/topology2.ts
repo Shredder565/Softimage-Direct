@@ -432,3 +432,55 @@ function loopOnce(m: MeshData): MeshData {
   for (const [a, b, c] of faces) { const ab = eIdx.get(edgeKey(a, b))!, bc = eIdx.get(edgeKey(b, c))!, ca = eIdx.get(edgeKey(c, a))!; nf.push([a, ab, ca], [ab, b, bc], [ca, bc, c], [ab, bc, ca]); }
   return fromPolys(out, nf);
 }
+
+// ----------------------------------------------------------- Deform by Curve (crvdeform parameters), Spine, Cage
+/** Softimage crvdeform: the mesh's `axis` extent maps onto the curve by arc length; poscurve/posnormal/posbinormal
+ *  slide the mesh along the curve / across it, scl* scale the three directions, roll twists around the tangent. */
+export function curveDeformFull(m: MeshData, curvePts: V[], o: { axis: number; poscurve: number; posnormal: number; posbinormal: number; sclcurve: number; sclnormal: number; sclbinormal: number; roll: number }): MeshData {
+  const { verts, faces } = toPolys(m); const axis = o.axis; const mn = Math.min(...verts.map(v => v[axis])), mx = Math.max(...verts.map(v => v[axis])); const h = mx - mn || 1;
+  // arc-length table of the curve
+  const cum = [0]; for (let i = 1; i < curvePts.length; i++) cum.push(cum[i - 1] + Math.hypot(...sub(curvePts[i], curvePts[i - 1]))); const total = cum[cum.length - 1] || 1;
+  let up: V = [0, 1, 0]; const n = curvePts.length - 1;
+  const frames = curvePts.map((p, i) => { const t = norm(sub(curvePts[Math.min(n, i + 1)], curvePts[Math.max(0, i - 1)])); if (Math.abs(dot(t, up)) > 0.99) up = [1, 0, 0]; const x = norm(cross(up, t)), y = cross(t, x); up = y; return { p, x, y, t }; });
+  const at = (s: number) => { // frame at arc length s (clamped, extrapolated at the ends)
+    const sc = Math.max(0, Math.min(total, s)); let i = 0; while (i < n - 1 && cum[i + 1] < sc) i++; const f = (sc - cum[i]) / ((cum[i + 1] - cum[i]) || 1); const A = frames[i], B = frames[Math.min(n, i + 1)];
+    const p = add(mul(A.p, 1 - f), mul(B.p, f)); const x = norm(add(mul(A.x, 1 - f), mul(B.x, f))), y = norm(add(mul(A.y, 1 - f), mul(B.y, f))), t = norm(add(mul(A.t, 1 - f), mul(B.t, f)));
+    const over = s - sc; return { p: over ? add(p, mul(t, over)) : p, x, y, t };
+  };
+  const o1 = (axis + 1) % 3, o2 = (axis + 2) % 3;
+  const nv = verts.map(v => {
+    const s = ((v[axis] - mn) / h) * total * o.sclcurve + o.poscurve * total; const F = at(s);
+    const a = v[o1] * o.sclnormal + o.posnormal, b = v[o2] * o.sclbinormal + o.posbinormal; const r = (o.roll * Math.PI / 180) * ((v[axis] - mn) / h);
+    const ca = Math.cos(r), sa = Math.sin(r); const u = a * ca - b * sa, w = a * sa + b * ca;
+    return add(F.p, add(mul(F.x, u), mul(F.y, w)));
+  });
+  return fromPolys(nv, faces);
+}
+/** Deform by Spine: points within `radius` of the rest spine follow the displacement of their closest spine point, with falloff. */
+export function spineDeform(m: MeshData, restPts: V[], curPts: V[], radius: number, falloff = 1): MeshData {
+  const { verts, faces } = toPolys(m); const n = Math.min(restPts.length, curPts.length);
+  const closest = (p: V) => { let bi = 0, bt = 0, bd = Infinity; for (let i = 0; i + 1 < n; i++) { const a = restPts[i], b = restPts[i + 1]; const ab = sub(b, a); const l2 = dot(ab, ab) || 1e-12; const t = Math.max(0, Math.min(1, dot(sub(p, a), ab) / l2)); const q = add(a, mul(ab, t)); const d = Math.hypot(...sub(p, q)); if (d < bd) { bd = d; bi = i; bt = t; } } return { i: bi, t: bt, d: bd }; };
+  const nv = verts.map(v => { const c = closest(v); if (c.d > radius) return v; const w = Math.pow(1 - c.d / radius, falloff); const r0 = add(restPts[c.i], mul(sub(restPts[c.i + 1], restPts[c.i]), c.t)), c0 = add(curPts[c.i], mul(sub(curPts[c.i + 1], curPts[c.i]), c.t)); return add(v, mul(sub(c0, r0), w)); });
+  return fromPolys(nv, faces);
+}
+/** Deform by Cage: mean-value coordinates of each point with respect to the (triangulated) cage at rest, re-evaluated with the deformed cage. */
+export function cageWeights(m: MeshData, cage: MeshData): Float32Array[] {
+  const { verts } = toPolys(m); const { verts: cv, faces: cf } = toPolys(cage); const tris: number[][] = []; for (const f of cf) for (let i = 1; i + 1 < f.length; i++) tris.push([f[0], f[i], f[i + 1]]);
+  return verts.map(p => { // Ju/Schaefer/Warren mean value coordinates
+    const w = new Float32Array(cv.length); const u = cv.map(c => { const d = sub(c, p); const l = Math.hypot(...d); if (l < 1e-9) return null; return { d: mul(d, 1 / l), l }; });
+    for (const [a, b, c] of tris) {
+      const ua = u[a], ub = u[b], uc = u[c]; if (!ua || !ub || !uc) { if (!ua) w[a] = 1; if (!ub) w[b] = 1; if (!uc) w[c] = 1; return w; }
+      const l0 = Math.hypot(...sub(ub.d, uc.d)), l1 = Math.hypot(...sub(uc.d, ua.d)), l2 = Math.hypot(...sub(ua.d, ub.d)); const t0 = 2 * Math.asin(Math.min(1, l0 / 2)), t1 = 2 * Math.asin(Math.min(1, l1 / 2)), t2 = 2 * Math.asin(Math.min(1, l2 / 2)); const hh = (t0 + t1 + t2) / 2;
+      if (Math.PI - hh < 1e-6) { const s = Math.sin(t0) * l1 * l2, s1 = Math.sin(t1) * l0 * l2, s2 = Math.sin(t2) * l0 * l1; const tot = s + s1 + s2 || 1; w.fill(0); w[a] = s / tot; w[b] = s1 / tot; w[c] = s2 / tot; return w; }
+      const c0 = (2 * Math.sin(hh) * Math.sin(hh - t0)) / (Math.sin(t1) * Math.sin(t2)) - 1, c1 = (2 * Math.sin(hh) * Math.sin(hh - t1)) / (Math.sin(t2) * Math.sin(t0)) - 1, c2 = (2 * Math.sin(hh) * Math.sin(hh - t2)) / (Math.sin(t0) * Math.sin(t1)) - 1;
+      const det = ua.d[0] * (ub.d[1] * uc.d[2] - ub.d[2] * uc.d[1]) - ua.d[1] * (ub.d[0] * uc.d[2] - ub.d[2] * uc.d[0]) + ua.d[2] * (ub.d[0] * uc.d[1] - ub.d[1] * uc.d[0]); const sg = det < 0 ? -1 : 1;
+      const s0 = sg * Math.sqrt(Math.max(0, 1 - c0 * c0)), s1 = sg * Math.sqrt(Math.max(0, 1 - c1 * c1)), s2 = sg * Math.sqrt(Math.max(0, 1 - c2 * c2)); if (Math.abs(s0) < 1e-9 || Math.abs(s1) < 1e-9 || Math.abs(s2) < 1e-9) continue;
+      w[a] += (t0 - c1 * t2 - c2 * t1) / (ua.l * Math.sin(t1) * s2); w[b] += (t1 - c2 * t0 - c0 * t2) / (ub.l * Math.sin(t2) * s0); w[c] += (t2 - c0 * t1 - c1 * t0) / (uc.l * Math.sin(t0) * s1);
+    }
+    let s = 0; for (const x of w) s += x; if (Math.abs(s) > 1e-12) for (let k = 0; k < w.length; k++) w[k] /= s; return w;
+  });
+}
+export function cageDeform(m: MeshData, weights: Float32Array[], cageNow: MeshData): MeshData {
+  const { faces } = toPolys(m); const { verts: cv } = toPolys(cageNow); const nv = weights.map((w, i) => { let p: V = [0, 0, 0]; let s = 0; for (let k = 0; k < w.length && k < cv.length; k++) { if (!w[k]) continue; p = add(p, mul(cv[k], w[k])); s += w[k]; } if (!s) { const P = m.positions; return [P[i * 3], P[i * 3 + 1], P[i * 3 + 2]] as V; } return p; });
+  return fromPolys(nv, faces);
+}

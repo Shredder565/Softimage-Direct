@@ -384,3 +384,9 @@ body.dock-picking, body.dock-picking * { cursor: crosshair !important; }
 .frame { position: relative; }
 .docked-head { display: flex; gap: 4px; align-items: center; background: #3a5a8c; color: #fff; font-size: 11px; padding: 1px 4px; } .docked-head span:first-child { flex: 1; }
 .docked-body { flex: 1; min-height: 0; overflow: auto; position: relative; }
+
+#menubar .cmode { margin-left: auto; margin-right: 8px; font: 11px Tahoma, Verdana, sans-serif; background: #f2f0ee; border: 1px solid #777; height: 17px; }
+#menubar .right { margin-left: 0 !important; }
+
+.rt-node.ice { width: 170px; } .rt-node.ice.selected { outline: 2px solid #ffd200; } .rt-port-row.right { justify-content: flex-end; margin-left: 0; margin-right: -5px; }
+.rt-port.scalar { background: #e0c060; } .rt-port.vector { background: #60b0e0; } .rt-port.bool { background: #e06060; } .rt-port.any { background: #bbb; } .rt-port.outp { cursor: pointer; } .rt-port.outp.pending { background: #ff5a5a; } .rt-link.ice { stroke: #9ad24a; }

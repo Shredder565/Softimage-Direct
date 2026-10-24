@@ -8,7 +8,7 @@ import { makeAimRig } from './constraints';
 import { siMessage } from '../ui/si';
 import { extractPolygons, meshEdges } from '../core/topology';
 import { color, num, bool } from '../core/params';
-import { Operator } from '../core/scene';
+import { Operator, construction } from '../core/scene';
 import type { MeshData } from '../core/geometry';
 
 class FrozenOperator extends Operator {
@@ -147,7 +147,14 @@ export function registerBuiltins(app: App) {
     app.record('Group', () => { app.scene.groupList.push(g); }, () => { const i = app.scene.groupList.indexOf(g); if (i >= 0) app.scene.groupList.splice(i, 1); });
     app.select([g]); return g;
   } });
-  app.register({ name: 'FreezeModeling', label: 'Freeze Modeling', category: 'Modeling', description: 'Freezes the modeling region of the construction history (MCP Edit > Freeze M).', args: [{ name: 'InputObjs', default: '' }], execute(app, a) { return app.run('FreezeObj', { InputObjs: a.InputObjs }); } });
+  app.register({ name: 'FreezeModeling', label: 'Freeze Modeling', category: 'Modeling', description: 'Freezes the modeling region of the construction history (MCP Edit > Freeze M); shape/animation/secondary operators stay live.', args: [{ name: 'InputObjs', default: '' }], execute(app, a) {
+    for (const o of app.targets(a.InputObjs)) {
+      const prim = o.primitive; if (!prim || prim.operators.length < 2) continue; const old = [...prim.operators]; const keep = old.filter((op, i) => i > 0 && (op.region ?? 'modeling') !== 'modeling'); if (keep.length === old.length - 1) continue;
+      const mesh = prim.geomUpTo('modeling'); const frozen = new FrozenOperator(mesh); frozen.region = 'modeling';
+      app.record('Freeze Modeling', () => { prim.operators.splice(0, prim.operators.length, frozen, ...keep); frozen.parent = prim; prim.dirty = true; }, () => { prim.operators.splice(0, prim.operators.length, ...old); prim.dirty = true; });
+    }
+  } });
+  app.register({ name: 'SetConstructionMode', label: 'Set Construction Mode', category: 'Modeling', args: [{ name: 'Mode', default: 'modeling' }], undoable: false, execute(app, a) { const m = String(a.Mode).toLowerCase().replace(/[^a-z]/g, '') as any; const map: Record<string, string> = { modeling: 'modeling', shapemodeling: 'shape', shape: 'shape', animation: 'animation', secondaryshapemodeling: 'secondaryshape', secondaryshape: 'secondaryshape', secondary: 'secondaryshape' }; if (!map[m]) throw new Error('Mode: Modeling, Shape Modeling, Animation or Secondary Shape Modeling'); construction.mode = map[m] as any; app.events.emit('module'); app.logMsg('info', `Construction mode: ${map[m]}`); return construction.mode; } });
   app.register({ name: 'FreezeObj', label: 'Freeze', category: 'Modeling', description: 'Collapses the construction history into the geometry.', args: [{ name: 'InputObjs', default: '' }], execute(app, a) {
     for (const o of app.targets(a.InputObjs)) {
       const prim = o.primitive; if (!prim || prim.operators.length < 2) continue;
@@ -179,7 +186,7 @@ export function registerBuiltins(app: App) {
       const op = makeTopologyOperator(preset, sel)!;
       const prim = obj.primitive!;
       app.record(preset, () => prim.addOperator(op), () => prim.removeOperator(op));
-      if ((app as any).immediate) app.run('FreezeObj', { InputObjs: [obj] });
+      // immediate mode is handled generically in App.run (bakes only up to the new operator)
       app.compSel = null; app.select([op]);
       return op;
     },

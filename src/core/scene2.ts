@@ -185,14 +185,16 @@ function require_topology() { return topoMod; }
 // --------------------------------------------------------------- deformers (referencing objects)
 export class RefDeformOperator extends Operator {
   constructor(readonly preset: string, readonly refs: X3DObject[], readonly owner: () => X3DObject | null, readonly sel: CompSel | null, defs: any[]) { super(preset, 'refdeform', [...defs, bool('mute', false, 'Mute')]); this.rest = refs[0] ? refs[0].globalMatrix().clone() : null; }
-  rest: THREE.Matrix4 | null;
+  rest: THREE.Matrix4 | null; restPts: V3[] | null = null; restCage: MeshData | null = null; cageWeights: Float32Array[] | null = null;
   depStamp() { return stampOf([...this.refs, this.owner()]); }
   apply(m: MeshData | null): MeshData | null {
     if (!m || this.val('mute')) return m; const me = this.owner(); const ref = this.refs[0]; if (!me || !ref) return m;
     const meG = me.globalMatrix(), refG = ref.globalMatrix();
     switch (this.preset) {
       case 'by Lattice': { const lat = ref.primitive?.lattice(); if (!lat) return m; const toLat = refG.clone().invert().multiply(meG); const fromLat = meG.clone().invert().multiply(refG); return T2.latticeDeform(m, lat, toLat.elements as any, fromLat.elements as any); }
-      case 'by Curve': { const c = ref.primitive?.curve(); if (!c) return m; const M = meG.clone().invert().multiply(refG); const pts = C.sampleCurve(c, 64).map(p => { const q = new THREE.Vector3(...p).applyMatrix4(M); return [q.x, q.y, q.z] as V3; }); return T2.curveDeform(m, pts, this.val('axis')); }
+      case 'by Curve': { const c = ref.primitive?.curve(); if (!c) return m; const M = meG.clone().invert().multiply(refG); const pts = C.sampleCurve(c, 96).map(p => { const q = new THREE.Vector3(...p).applyMatrix4(M); return [q.x, q.y, q.z] as V3; }); const v = (n: string, d: number) => { const p = this.get(n); return p ? Number(p.value) : d; }; return T2.curveDeformFull(m, pts, { axis: v('axis', 1), poscurve: v('poscurve', 0), posnormal: v('posnormal', 0), posbinormal: v('posbinormal', 0), sclcurve: v('sclcurve', 1), sclnormal: v('sclnormal', 1), sclbinormal: v('sclbinormal', 1), roll: v('roll', 0) }); }
+      case 'by Spine': { const c = ref.primitive?.curve(); if (!c) return m; const M = meG.clone().invert().multiply(refG); const cur = C.sampleCurve(c, 64).map(p => { const q = new THREE.Vector3(...p).applyMatrix4(M); return [q.x, q.y, q.z] as V3; }); if (!this.restPts) this.restPts = cur; return T2.spineDeform(m, this.restPts, cur, Number(this.val('radius') ?? 4), Number(this.val('falloff') ?? 1)); }
+      case 'by Cage': { const cage = ref.primitive?.mesh(); if (!cage) return m; const M = meG.clone().invert().multiply(refG); const cageNow = T2.mergeMeshes([{ mesh: cage, matrix: M.elements as any }]); if (!this.cageWeights || this.cageWeights.length !== m.positions.length / 3) { const restCage = this.restCage ?? cageNow; this.restCage = restCage; this.cageWeights = T2.cageWeights(m, restCage); } return T2.cageDeform(m, this.cageWeights, cageNow); }
       case 'Shrink Wrap': { const t = ref.primitive?.mesh(); if (!t) return m; return T2.shrinkWrap(m, t, refG.clone().invert().multiply(meG).elements as any, meG.clone().invert().multiply(refG).elements as any, this.val('amount')); }
       case 'Cluster Center': { const restC = new THREE.Vector3().setFromMatrixPosition(this.rest ?? refG).applyMatrix4(meG.clone().invert()); const nowC = new THREE.Vector3().setFromMatrixPosition(refG).applyMatrix4(meG.clone().invert()); return T2.clusterCenter(m, this.sel ?? { kind: 'point', indices: [] }, [nowC.x, nowC.y, nowC.z], [restC.x, restC.y, restC.z]); }
       case 'by Volume': { // points inside the control object's sphere follow its displacement from rest, with falloff
@@ -207,7 +209,9 @@ export class RefDeformOperator extends Operator {
 export function makeRefDeformOperator(preset: string, refs: X3DObject[], owner: () => X3DObject | null, sel: CompSel | null) {
   switch (preset) {
     case 'by Lattice': case 'Cluster Center': return new RefDeformOperator(preset, refs, owner, sel, []);
-    case 'by Curve': return new RefDeformOperator(preset, refs, owner, sel, [enumP('axis', 1, [{ label: 'X', value: 0 }, { label: 'Y', value: 1 }, { label: 'Z', value: 2 }], 'Axis')]);
+    case 'by Curve': { const si = siParamDefs('crvdeform'); return new RefDeformOperator(preset, refs, owner, sel, si.length ? si : [enumP('axis', 1, [{ label: 'X', value: 0 }, { label: 'Y', value: 1 }, { label: 'Z', value: 2 }], 'Axis'), num('poscurve', 0, 'Position along Curve'), num('posnormal', 0, 'Position along Normal'), num('posbinormal', 0, 'Position along Binormal'), num('sclcurve', 1, 'Scale along Curve'), num('sclnormal', 1, 'Scale along Normal'), num('sclbinormal', 1, 'Scale along Binormal'), num('roll', 0, 'Roll')]); }
+    case 'by Spine': return new RefDeformOperator(preset, refs, owner, sel, [num('radius', 4, 'Radius', { min: 0.01, max: 100 }), num('falloff', 1, 'Falloff', { min: 0.1, max: 8 })]);
+    case 'by Cage': return new RefDeformOperator(preset, refs, owner, sel, []);
     case 'Shrink Wrap': return new RefDeformOperator(preset, refs, owner, sel, [num('amount', 1, 'Amount', { min: 0, max: 1 })]);
     case 'by Volume': return new RefDeformOperator(preset, refs, owner, sel, [num('radius', 6, 'Radius', { min: 0.01, max: 100 })]);
   }
@@ -272,12 +276,16 @@ export function loadFont() {
 }
 export class TextGeomOperator extends Operator {
   font: any = null;
-  constructor(readonly mode: 'curves' | 'planar' | 'solid', text: string) { super('Text', 'textgeom', [str('text', text, 'Text'), num('size', 5, 'Size', { min: 0.1 }), num('depth', 1, 'Extrusion Depth', { min: 0.01 }), int('segments', 4, 'Curve Segments', { min: 1, max: 12 })]); loadFont().then(f => { this.font = f; this.parent && ((this.parent as any).dirty = true); }); }
+  constructor(readonly mode: 'curves' | 'planar' | 'solid', text: string) { super('Text', 'textgeom', [str('text', text, 'Text'), num('size', 5, 'Size', { min: 0.1 }), enumP('align', 0, [{ label: 'Left', value: 0 }, { label: 'Center', value: 1 }, { label: 'Right', value: 2 }], 'Alignment'), num('spacing', 0, 'Character Spacing'), num('linespacing', 1.2, 'Line Spacing', { min: 0.5, max: 4 }), num('depth', 1, 'Extrusion Depth', { min: 0.01 }), bool('bevel', false, 'Bevel'), num('bevelsize', 0.2, 'Bevel Size', { min: 0.01 }), int('bevelsegments', 2, 'Bevel Segments', { min: 1, max: 8 }), int('segments', 4, 'Curve Segments', { min: 1, max: 12 })]); loadFont().then(f => { this.font = f; this.parent && ((this.parent as any).dirty = true); }); }
   apply(): any {
     if (!this.font) return null;
-    const shapes: THREE.Shape[] = this.font.generateShapes(String(this.val('text')), Number(this.val('size')));
+    const size = Number(this.val('size')); const align = Number(this.val('align') ?? 0), spacing = Number(this.val('spacing') ?? 0), lsp = Number(this.val('linespacing') ?? 1.2);
+    // per line / per character so alignment and spacing work (three's generateShapes has neither)
+    const lines = String(this.val('text')).split(/\r?\n/); const shapes: THREE.Shape[] = [];
+    lines.forEach((ln, li) => { const glyphs: { s: THREE.Shape[]; w: number }[] = []; let total = 0; for (const ch of ln) { const sh: THREE.Shape[] = this.font.generateShapes(ch, size); const w = ch === ' ' ? size * 0.3 : (() => { let mx = 0; for (const q of sh) for (const pt of q.getPoints(2)) mx = Math.max(mx, pt.x); return mx; })(); glyphs.push({ s: sh, w }); total += w + spacing; }
+      let x = align === 1 ? -total / 2 : align === 2 ? -total : 0; const y = -li * size * lsp; for (const g of glyphs) { for (const q of g.s) { const m = new THREE.Matrix3().set(1, 0, x, 0, 1, y, 0, 0, 1); const sh2 = new THREE.Shape(q.getPoints(this.val('segments')).map(pt => pt.clone().applyMatrix3(m))); sh2.holes = q.holes.map(h => new THREE.Path(h.getPoints(this.val('segments')).map(pt => pt.clone().applyMatrix3(m)))); shapes.push(sh2); } x += g.w + spacing; } });
     if (this.mode === 'curves') { const pts = shapes[0]?.getPoints(this.val('segments')) ?? []; return C.makeCurve(pts.map(p => [p.x, p.y, 0] as V3), 1, true); }
-    const geo = this.mode === 'planar' ? new THREE.ShapeGeometry(shapes, this.val('segments')) : new THREE.ExtrudeGeometry(shapes, { depth: Number(this.val('depth')), bevelEnabled: false, curveSegments: this.val('segments') });
+    const geo = this.mode === 'planar' ? new THREE.ShapeGeometry(shapes, this.val('segments')) : new THREE.ExtrudeGeometry(shapes, { depth: Number(this.val('depth')), bevelEnabled: !!this.val('bevel'), bevelThickness: Number(this.val('bevelsize') ?? 0.2), bevelSize: Number(this.val('bevelsize') ?? 0.2), bevelSegments: Number(this.val('bevelsegments') ?? 2), curveSegments: this.val('segments') });
     const pos = geo.getAttribute('position'); const ix = geo.index; const verts: V3[] = []; const key = new Map<string, number>();
     const id = (i: number) => { const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i); const k = `${x.toFixed(4)},${y.toFixed(4)},${z.toFixed(4)}`; if (!key.has(k)) { key.set(k, verts.length); verts.push([x, y, z]); } return key.get(k)!; };
     const faces: number[][] = []; const n = ix ? ix.count : pos.count; for (let i = 0; i + 2 < n; i += 3) { const t = [id(ix ? ix.getX(i) : i), id(ix ? ix.getX(i + 1) : i + 1), id(ix ? ix.getX(i + 2) : i + 2)]; if (new Set(t).size === 3) faces.push(t); }
