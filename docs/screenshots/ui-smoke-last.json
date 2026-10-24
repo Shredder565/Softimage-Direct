@@ -1,5 +1,5 @@
 {
-  "ok": 38,
+  "ok": 44,
   "fail": 0,
   "note": 1,
   "okItems": [
@@ -16,6 +16,8 @@
     "Get enable parity Model=171 Animate=170 shared=170",
     "MCP enable empty-sel greys Parent/Cut/Freeze/Group/FreezeM/Sample",
     "MCP matrix Softimage 13.2.163.0: empty Translate/Duplicate true; PE grayed 53",
+    "PE tool menus 530-532 match Direct toolTranslate/Rotate/Scale",
+    "PE ≡ Lock Pivot / Volume / Edit Pivot wired (no not-implemented)",
     "openview Explorer",
     "openview Property Editor",
     "openview Script Editor",
@@ -34,6 +36,10 @@
     "module switch → Hair (21 groups)",
     "Simulate≠ICE (205 Rigid/Soft/Cloth vs 303 Particles/CrowdFX)",
     "layout Default",
+    "Default Playback Panel PE bitmap (PLAYU)",
+    "Default Timeline present",
+    "Default Explorer present",
+    "Default View Manager canvas present",
     "layout Dual",
     "Dual 50%/50% shell split",
     "Dual Screen1Tray labels",

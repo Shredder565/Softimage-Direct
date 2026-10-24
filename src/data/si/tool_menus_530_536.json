@@ -1,0 +1,446 @@
+{
+  "meta": {
+    "source": "viewinteraction.dll PE menus 530-536",
+    "softimage": "2015 SP2"
+  },
+  "menus": {
+    "530": {
+      "title": "TRANSLATE",
+      "leaves": [
+        {
+          "label": "View",
+          "id": 541
+        },
+        {
+          "label": "Global",
+          "id": 542
+        },
+        {
+          "label": "Local",
+          "id": 543
+        },
+        {
+          "label": "Parent",
+          "id": 544
+        },
+        {
+          "label": "Ref",
+          "id": 545
+        },
+        {
+          "label": "Plane",
+          "id": 546
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "COG",
+          "id": 548
+        },
+        {
+          "label": "Prop",
+          "id": 547
+        },
+        {
+          "label": "Sym",
+          "id": 549
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Edit Pivot",
+          "id": 557
+        },
+        {
+          "label": "Lock Pivot",
+          "id": 558
+        },
+        {
+          "label": "Reset Pivot",
+          "id": 559
+        }
+      ]
+    },
+    "531": {
+      "title": "ROTATE",
+      "leaves": [
+        {
+          "label": "View",
+          "id": 541
+        },
+        {
+          "label": "Global",
+          "id": 542
+        },
+        {
+          "label": "Local",
+          "id": 543
+        },
+        {
+          "label": "Parent",
+          "id": 544
+        },
+        {
+          "label": "Add",
+          "id": 552
+        },
+        {
+          "label": "Ref",
+          "id": 545
+        },
+        {
+          "label": "Plane",
+          "id": 546
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "COG",
+          "id": 548
+        },
+        {
+          "label": "Prop",
+          "id": 547
+        },
+        {
+          "label": "Sym",
+          "id": 549
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Edit Pivot",
+          "id": 557
+        },
+        {
+          "label": "Lock Pivot",
+          "id": 558
+        },
+        {
+          "label": "Reset Pivot",
+          "id": 559
+        }
+      ]
+    },
+    "532": {
+      "title": "SCALE",
+      "leaves": [
+        {
+          "label": "Global",
+          "id": 542
+        },
+        {
+          "label": "Local",
+          "id": 543
+        },
+        {
+          "label": "Parent",
+          "id": 544
+        },
+        {
+          "label": "Ref",
+          "id": 545
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Uniform",
+          "id": 550
+        },
+        {
+          "label": "Volume",
+          "id": 551
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "COG",
+          "id": 548
+        },
+        {
+          "label": "Prop",
+          "id": 547
+        },
+        {
+          "label": "Sym",
+          "id": 549
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Edit Pivot",
+          "id": 557
+        },
+        {
+          "label": "Lock Pivot",
+          "id": 558
+        },
+        {
+          "label": "Reset Pivot",
+          "id": 559
+        }
+      ]
+    },
+    "533": {
+      "title": "PIVOT",
+      "leaves": [
+        {
+          "label": "Lock",
+          "id": 553
+        },
+        {
+          "label": "Reset",
+          "id": 554
+        }
+      ]
+    },
+    "534": {
+      "title": "CURVE",
+      "leaves": [
+        {
+          "label": "Exit Tool",
+          "id": 40010
+        },
+        {
+          "label": "Open/Close",
+          "id": 40005
+        },
+        {
+          "label": "Invert",
+          "id": 40006
+        },
+        {
+          "label": "LMB = Add At Start",
+          "id": 40007
+        },
+        {
+          "label": "LMB = Add At End",
+          "id": 40011
+        },
+        {
+          "label": "Start New Curve",
+          "id": 40008
+        }
+      ]
+    },
+    "535": {
+      "title": "TWEAK",
+      "leaves": [
+        {
+          "label": "Toggle Manipulator",
+          "id": 639
+        },
+        {
+          "label": "Slide Components",
+          "id": 641
+        },
+        {
+          "label": "Weld Points",
+          "id": 642
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Translate",
+          "id": 634
+        },
+        {
+          "label": "Rotate",
+          "id": 635
+        },
+        {
+          "label": "Scale",
+          "id": 636
+        },
+        {
+          "label": "Next Manipulator",
+          "id": 637
+        },
+        {
+          "label": "Prev Manipulator",
+          "id": 638
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Tweak All",
+          "id": 630
+        },
+        {
+          "label": "Points",
+          "id": 631
+        },
+        {
+          "label": "Edges",
+          "id": 632
+        },
+        {
+          "label": "Polygons",
+          "id": 633
+        },
+        {
+          "label": "Points + Edges",
+          "id": 640
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "View",
+          "id": 541
+        },
+        {
+          "label": "Global",
+          "id": 542
+        },
+        {
+          "label": "Local",
+          "id": 543
+        },
+        {
+          "label": "Object",
+          "id": 544
+        },
+        {
+          "label": "Ref",
+          "id": 545
+        },
+        {
+          "label": "Plane",
+          "id": 546
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "COG",
+          "id": 548
+        },
+        {
+          "label": "Prop",
+          "id": 547
+        },
+        {
+          "label": "Sym",
+          "id": 549
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Last Proportional Operator...",
+          "id": 555
+        },
+        {
+          "label": "Proportional Settings...",
+          "id": 556
+        }
+      ]
+    },
+    "536": {
+      "title": "TWEAK NORMALS",
+      "leaves": [
+        {
+          "label": "Average",
+          "id": 653
+        },
+        {
+          "label": "Vertex",
+          "id": 654
+        },
+        {
+          "label": "Polygon",
+          "id": 655
+        },
+        {
+          "label": "Invert",
+          "id": 656
+        },
+        {
+          "label": "Normalize",
+          "id": 657
+        },
+        {
+          "label": "Set Value...",
+          "id": 658
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Copy",
+          "id": 659
+        },
+        {
+          "label": "Paste",
+          "id": 660
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Reset",
+          "id": 650
+        },
+        {
+          "label": "User",
+          "id": 651
+        },
+        {
+          "label": "Auto",
+          "id": 652
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Toggle Manipulator",
+          "id": 639
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Tweak All",
+          "id": 630
+        },
+        {
+          "label": "Samples",
+          "id": 643
+        },
+        {
+          "label": "Points",
+          "id": 631
+        },
+        {
+          "label": "Edges",
+          "id": 632
+        },
+        {
+          "label": "Polygons",
+          "id": 633
+        },
+        {
+          "label": "Points + Samples",
+          "id": 644
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Settings...",
+          "id": 661
+        }
+      ]
+    }
+  }
+}

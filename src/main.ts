@@ -17,6 +17,7 @@ import { playbackPanel, animationPanel, timerange, layerManager, xsiExplorer, sc
 import { LayoutEngine, layoutByName, currentLayoutName, layoutNames, dockInto } from './ui/layout';
 import { currentKeymap, keymapNames } from './ui/keymap';
 import menusData from './data/menus.json';
+import toolMenusPe from './data/si/tool_menus_530_536.json';
 import { installLayoutEditing } from './ui/layoutEdit';
 import { toolbarPanel, menuStatus, runMenuPath, getEnableParity } from './ui/toolbarPanel';
 import { commandEnabled, mcpSampleEnabled } from './ui/cmdEnable';
@@ -31,7 +32,7 @@ import { mainShelf, panelSwitcher } from './ui/shelf';
 import { menubar, menubarStatus } from './ui/menubar';
 import { statusBar } from './ui/statusbar';
 import { openFloating, floatingWindows, setDockHook } from './ui/floating';
-import { siIcon, hasIcon, runScriptLine, siMessage, SI_VIEWS, SI_KEYMAPS } from './ui/si';
+import { siIcon, hasIcon, runScriptLine, siMessage, SI_VIEWS, SI_KEYMAPS, SI_MENUS } from './ui/si';
 import { preferencesWindow, preferenceSets } from './ui/prefs';
 
 const app = new App();
@@ -202,6 +203,19 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     mcpMatrix: mcpMatrixMeta(),
     peGrayedClusterWithCenter: peMenuItemGrayed('Create Cluster with Center'),
     peGrayedSelectability: peMenuItemGrayed('Selectability'),
+    // Softimage viewinteraction.dll PE menus 530–532 vs Direct tool* trees
+    toolMenusPe: (() => {
+      const map: Record<string, string> = { '530': 'toolTranslate', '531': 'toolRotate', '532': 'toolScale' };
+      const leaf = (items: { label?: string; separator?: boolean }[] | undefined) =>
+        (items ?? []).map(it => it.separator ? '---' : (it.label ?? ''));
+      const mismatches: string[] = [];
+      for (const [mid, key] of Object.entries(map)) {
+        const pe = leaf((toolMenusPe as any).menus?.[mid]?.leaves);
+        const di = leaf(SI_MENUS[key] as any);
+        if (JSON.stringify(pe) !== JSON.stringify(di)) mismatches.push(`${mid}/${key}`);
+      }
+      return { ok: mismatches.length === 0, mismatches, menus: Object.keys(map) };
+    })(),
   };
 };
 (window as any).__menubarStatus = () => menubarStatus();

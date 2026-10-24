@@ -317,8 +317,8 @@ export function viewManager(app: App, host: HTMLElement) {
   const axisVec = (ax: 'x' | 'y' | 'z', o?: X3DObject | null) => baseAxis(ax).applyQuaternion(frameQ(o));
   const syncGizmo = () => {
     gizmo.clear(); gizmoOn = false;
-    // Softimage TransformProperties.transformmanipulators — when off, no 3D manip (free drag still works)
-    if (!SI.useManipulators || tool.mode === 'select' || app.activeTool) return;
+    // Softimage TransformProperties.transformmanipulators + Tweak "Toggle Manipulator" (A.hideManip)
+    if (!SI.useManipulators || (app as any).hideManip || tool.mode === 'select' || app.activeTool) return;
     const c = selectionCenter(); if (!c) return; gizmoCenter.copy(c); gizmoOn = true; gizmo.position.copy(c);
     const mat = (col: number) => new THREE.LineBasicMaterial({ color: col, depthTest: false });
     const seg = (pts: number[][], col: number) => { const g = new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(...p))); const l = new THREE.Line(g, mat(col)); l.renderOrder = 20; return l; };
@@ -571,7 +571,14 @@ export function viewManager(app: App, host: HTMLElement) {
     const snapV = (v: number[]): number[] => { const S = (tool as any).snap; if (!S?.on) return v; if (S.grid) return v.map(x => Math.round(x)); if (S.point || S.midpoint) { let best: number[] | null = null, bd = 0.75; for (const other of app.scene.allObjects()) { if (drag!.objs.includes(other)) continue; const m = other.primitive?.mesh(); if (!m) continue; const M = other.globalMatrix(); for (let i = 0; i < m.positions.length; i += 3) { const q = new THREE.Vector3(m.positions[i], m.positions[i + 1], m.positions[i + 2]).applyMatrix4(M); const d = Math.hypot(q.x - v[0], q.y - v[1], q.z - v[2]); if (d < bd) { bd = d; best = [q.x, q.y, q.z]; } } } if (best) return best; } return v; };
     for (const o of drag.objs) {
       const l = o.kinematics.local;
-      if (tool.mode === 'translate' && (app as any).centerMode) { if (axisMask.x) l.get('pposx')!.value = (drag.start.get(o.id + '.pposx') ?? 0) + delta.x; if (axisMask.y) l.get('pposy')!.value = (drag.start.get(o.id + '.pposy') ?? 0) + delta.y; if (axisMask.z) l.get('pposz')!.value = (drag.start.get(o.id + '.pposz') ?? 0) + delta.z; continue; }
+      // Softimage Edit Pivot / Center mode → move pivot (ppos*); Lock Pivot blocks edits
+      if (tool.mode === 'translate' && ((app as any).centerMode || (app as any).editPivot)) {
+        if ((app as any).pivotLocked) continue;
+        if (axisMask.x) l.get('pposx')!.value = (drag.start.get(o.id + '.pposx') ?? 0) + delta.x;
+        if (axisMask.y) l.get('pposy')!.value = (drag.start.get(o.id + '.pposy') ?? 0) + delta.y;
+        if (axisMask.z) l.get('pposz')!.value = (drag.start.get(o.id + '.pposz') ?? 0) + delta.z;
+        continue;
+      }
       const parentInv = globalQ(o.parentObj).invert();
       if (tool.mode === 'translate') {
         // world-space delta → keep only the enabled axes of the reference frame (an axis handle already is one) → parent space
@@ -593,7 +600,29 @@ export function viewManager(app: App, host: HTMLElement) {
         const axisW = ref === 'Local' ? baseAxis(ax).applyQuaternion(startGlobal!) : axisVec(ax, o); const axisP = axisW.applyQuaternion(parentInv).normalize();
         const nq = new THREE.Quaternion().setFromAxisAngle(axisP, a * d).multiply(startQ); const eul = new THREE.Euler().setFromQuaternion(nq, order);
         l.get('rotx')!.value = eul.x / d; l.get('roty')!.value = eul.y / d; l.get('rotz')!.value = eul.z / d; }
-      else if (tool.mode === 'scale') { let f = Math.max(0.01, 1 + dx * 0.01); if (e.ctrlKey && SI.scaleSnap > 0) { const snapped = Math.round(f / SI.scaleSnap) * SI.scaleSnap; f = Math.max(0.01, snapped || SI.scaleSnap); } const m = h === 'x' || h === 'y' || h === 'z' ? { x: h === 'x', y: h === 'y', z: h === 'z' } : axisMask; for (const ax of ['x', 'y', 'z']) if ((m as any)[ax]) l.get('scl' + ax)!.value = drag.start.get(o.id + '.scl' + ax)! * f; }
+      else if (tool.mode === 'scale') {
+        let f = Math.max(0.01, 1 + dx * 0.01);
+        if (e.ctrlKey && SI.scaleSnap > 0) { const snapped = Math.round(f / SI.scaleSnap) * SI.scaleSnap; f = Math.max(0.01, snapped || SI.scaleSnap); }
+        const m = h === 'x' || h === 'y' || h === 'z' ? { x: h === 'x', y: h === 'y', z: h === 'z' } : axisMask;
+        // Softimage Constant Volume Scaling (menu 532 Volume): clean-room product lock on local scale
+        if ((tool as any).volume) {
+          const primary = ((['x', 'y', 'z'] as const).find(ax => (m as any)[ax]) ?? 'x');
+          const sx0 = drag.start.get(o.id + '.sclx')!, sy0 = drag.start.get(o.id + '.scly')!, sz0 = drag.start.get(o.id + '.sclz')!;
+          const vol0 = Math.max(1e-8, sx0 * sy0 * sz0);
+          const p0 = primary === 'x' ? sx0 : primary === 'y' ? sy0 : sz0;
+          const p1 = Math.max(1e-8, p0 * f);
+          l.get('scl' + primary)!.value = p1;
+          const others = (['x', 'y', 'z'] as const).filter(ax => ax !== primary);
+          const a0 = drag.start.get(o.id + '.scl' + others[0])!, b0 = drag.start.get(o.id + '.scl' + others[1])!;
+          const r = Math.sqrt(Math.max(1e-8, (vol0 / p1) / Math.max(1e-8, a0 * b0)));
+          l.get('scl' + others[0])!.value = a0 * r;
+          l.get('scl' + others[1])!.value = b0 * r;
+        } else if ((tool as any).uniform) {
+          for (const ax of ['x', 'y', 'z']) l.get('scl' + ax)!.value = drag.start.get(o.id + '.scl' + ax)! * f;
+        } else {
+          for (const ax of ['x', 'y', 'z']) if ((m as any)[ax]) l.get('scl' + ax)!.value = drag.start.get(o.id + '.scl' + ax)! * f;
+        }
+      }
     }
     sync(); app.events.emit('params');
   });

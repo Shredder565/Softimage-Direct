@@ -98,6 +98,24 @@ else {
   } else if (!mx.grayCluster || !mx.graySel) {
     fail.push(`PE f_grayed seeds missing cluster=${mx.grayCluster} selectability=${mx.graySel}`);
   } else ok.push(`MCP matrix Softimage ${mx.matrix.softimage}: empty Translate/Duplicate true; PE grayed ${mx.matrix.peGrayedCount}`);
+  const tpe = audit.toolMenusPe;
+  if (!tpe) fail.push('toolMenusPe missing from __uiAudit');
+  else if (!tpe.ok) fail.push(`PE menus 530-532 mismatch: ${JSON.stringify(tpe.mismatches)}`);
+  else ok.push('PE tool menus 530-532 match Direct toolTranslate/Rotate/Scale');
+  // Softimage ≡ leaves: Lock Pivot / Volume / Edit Pivot must not fall through as "not implemented"
+  const pePick = await p.evaluate(() => {
+    const logs = [];
+    const A = window.Application;
+    const prev = A.logMsg.bind(A);
+    A.logMsg = (k, t) => { logs.push(String(t)); return prev(k, t); };
+    window.__mcp?.('lockpivot');
+    window.__mcp?.('vol');
+    window.__mcp?.('pivot');
+    A.logMsg = prev;
+    return { logs, bad: logs.some(t => /not implemented/i.test(t)) };
+  });
+  if (pePick.bad) fail.push(`PE pickOption still unimplemented: ${JSON.stringify(pePick.logs)}`);
+  else ok.push('PE ≡ Lock Pivot / Volume / Edit Pivot wired (no not-implemented)');
 }
 
 // Open floating views
@@ -166,6 +184,33 @@ for (const layout of LAYOUTS) {
       else ok.push(`layout ${layout} loaded (reported ${a.layout})`);
     } else ok.push(`layout ${layout}`);
     if (pageErrors.length) { fail.push(`layout ${layout} pageerrors: ${pageErrors.slice(0, 3).join(' | ')}`); pageErrors.length = 0; }
+    // Default key panels from Softimage layouts.json frame types (Explorer / VM / Timeline / Playback)
+    if (layout === 'Default') {
+      const keys = await p.evaluate(() => {
+        const types = [...document.querySelectorAll('.view[data-type], .frame[data-type], [data-view-type]')]
+          .map(el => el.getAttribute('data-type') || el.getAttribute('data-view-type') || '');
+        const titles = [...document.querySelectorAll('.view-title, .frame-title, .switcher-btn')]
+          .map(el => (el.textContent || '').trim());
+        const has = (name) =>
+          types.includes(name)
+          || !!document.querySelector(`.bmp-panel.playback, .timeline, .mcp`)
+          || titles.some(t => t === name || t.startsWith(name));
+        // Softimage PE Playback bitmap chrome already wired (views.ts PLAYU)
+        const playbackBmp = !!document.querySelector('.bmp-panel.playback');
+        const timeline = !!document.querySelector('.timeline');
+        const explorer = !!document.querySelector('.explorer, .xsi-explorer') || titles.includes('Explorer');
+        const vm = !!document.querySelector('.view-manager, .vm') || titles.includes('A') || !!document.querySelector('canvas');
+        return { playbackBmp, timeline, explorer, vm };
+      });
+      if (keys.playbackBmp) ok.push('Default Playback Panel PE bitmap (PLAYU)');
+      else fail.push('Default Playback Panel missing Softimage PLAYU bitmap chrome');
+      if (keys.timeline) ok.push('Default Timeline present');
+      else note.push('Default Timeline DOM not found (may be titled differently)');
+      if (keys.explorer) ok.push('Default Explorer present');
+      else note.push('Default Explorer DOM not found');
+      if (keys.vm) ok.push('Default View Manager canvas present');
+      else fail.push('Default View Manager missing');
+    }
     // Dual shell chrome from layouts.json / Dual.xsily (50|50 + Screen1Tray + MCP bottom_inv)
     if (layout === 'Dual') {
       const dual = await p.evaluate(() => {
