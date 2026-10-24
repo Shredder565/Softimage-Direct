@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { ParamSet, num, int, bool, str, enumP, color } from './params';
 import { siShaderDefs, type SiShaderDef } from './shaders';
-import { siParamDefs, siLayout, siName, menuDefaults, siPropDefs, siPropLayout } from './opdefs';
+import { siParamDefs, siLayout, siName, menuDefaults, siPropDefs, siPropLayout, withOp } from './opdefs';
 import type { ParamDef } from './params';
 /** Merge our parameter definitions with the full SPDL property set so the Property Editor shows Softimage's complete page. */
 function withSi(key: string, ours: ParamDef[]): ParamDef[] { const si = siPropDefs(key); const mine = new Map(ours.map(d => [d.name, d])); const out = si.map(d => mine.get(d.name) ? { ...d, ...mine.get(d.name)! } : { ...d, group: d.group }); for (const d of ours) if (!si.some(x => x.name === d.name)) out.push(d); return out; }
@@ -78,21 +78,46 @@ export function makeVisibility() {
     bool('refrcast', true, 'Caster in Refractions', { group: 'Rendering' }), bool('trnscast', true, 'Caster in Transparency', { group: 'Rendering' }),
   ])); p.layout = siPropLayout('C3DVisibilityAndDisplay') as any; return p;
 }
+const DISPLAY_MODE_ITEMS = [
+  { label: 'Bounding Box', value: 0 }, { label: 'Wireframe', value: 1 }, { label: 'Shaded', value: 7 }, { label: 'Default', value: 8 },
+];
 export function makeDisplay(shared = true) {
-  const p = new Property('Display', 'display', [
-    enumP('staticsel', 8, [{ label: 'Bounding Box', value: 0 }, { label: 'Wireframe', value: 1 }, { label: 'Shaded', value: 7 }, { label: 'Default', value: 8 }], 'Static (selected)'),
-    enumP('intsel', 8, [{ label: 'Bounding Box', value: 0 }, { label: 'Wireframe', value: 1 }, { label: 'Shaded', value: 7 }, { label: 'Default', value: 8 }], 'Interactive (selected)'),
-    bool('wirecol', false, 'Use Wireframe Color'), color('wirecolorrgb', [0.7, 0.7, 0.7], 'Wireframe Color'),
-    num('xray', 1.0, 'X-Ray Opacity', { min: 0, max: 1 }), num('neardist', 100, 'Near Distance'),
-  ]); p.shared = shared; p.layout = siPropLayout('C3DDisplayProp') as any; return p;
+  // Softimage C3DDisplayProp / prop:display defaults (staticsel=8 Default, wirecol=0, xray=1, neardist=100).
+  // Keep wirecol as bool for palette/viewport callers; Softimage stores it as 0/1.
+  const p = new Property('Display', 'display', withOp('prop:display', [
+    enumP('staticsel', 8, DISPLAY_MODE_ITEMS, 'Static (selected)'),
+    enumP('intsel', 8, DISPLAY_MODE_ITEMS, 'Interactive (selected)'),
+    enumP('playbacksel', 8, DISPLAY_MODE_ITEMS, 'Playback (selected)'),
+    enumP('staticunselnear', 8, DISPLAY_MODE_ITEMS, 'Static (unselected near)'),
+    enumP('intunselnear', 8, DISPLAY_MODE_ITEMS, 'Interactive (unselected near)'),
+    enumP('playbackunselnear', 8, DISPLAY_MODE_ITEMS, 'Playback (unselected near)'),
+    enumP('staticunselfar', 8, DISPLAY_MODE_ITEMS, 'Static (unselected far)'),
+    enumP('intunselfar', 8, DISPLAY_MODE_ITEMS, 'Interactive (unselected far)'),
+    enumP('playbackunselfar', 8, DISPLAY_MODE_ITEMS, 'Playback (unselected far)'),
+    bool('wirecol', false, 'Use Wireframe Color'),
+    color('wirecolorrgb', [0.7, 0.7, 0.7], 'Wireframe Color'),
+    num('xray', 1.0, 'X-Ray Opacity', { min: 0, max: 1 }),
+    num('neardist', 100, 'Near Distance'),
+  ]));
+  p.shared = shared; p.layout = (siPropLayout('C3DDisplayProp') ?? siLayout('prop:display')) as any; return p;
 }
 export function makeGeomApprox(shared = true) {
-  const p = new Property('Geometry Approximation', 'geomapprox', [
+  // Softimage prop:geomapprox: Auto Discontinuity ON (gapproxmoad=true), disc angle 60, subdiv level 0.
+  const p = new Property('Geometry Approximation', 'geomapprox', withOp('prop:geomapprox', [
     int('gapproxmordrsl', 0, 'Subdivision Level', { min: 0, max: 5, animatable: false, group: 'Polygon Mesh' }),
     enumP('gapproxmosr', 0, [{ label: 'Catmull-Clark', value: 0 }, { label: 'Loop', value: 1 }, { label: 'XSI-Doo-Sabin', value: 2 }, { label: 'Linear', value: 3 }], 'Subdivision Rule', { group: 'Polygon Mesh' }),
-    bool('gapproxmoad', false, 'Adaptive', { group: 'Polygon Mesh' }),
-    num('gapproxmoan', 60, 'Discontinuity Angle', { min: 0, max: 180, group: 'Polygon Mesh' }),
-  ]); p.shared = shared; return p;
+    bool('gapproxmoad', true, 'Auto Discontinuity', { group: 'Polygon Mesh' }),
+    num('gapproxmoan', 60, 'Disc Angle', { min: 0, max: 180, group: 'Polygon Mesh' }),
+  ]));
+  p.shared = shared; p.layout = siLayout('prop:geomapprox') as any; return p;
+}
+
+/** Softimage Get > Property preset from opdefs (AttributeDisplay, RenderMap, Transform Setup, …). */
+export function makeSiOpProperty(opKey: string, name: string, type: string, overrides: Record<string, any> = {}): Property {
+  const defs = withOp(opKey, []);
+  for (const [k, v] of Object.entries(overrides)) { const d = defs.find(x => x.name === k); if (d) d.value = v; }
+  const p = new Property(name, type, defs.length ? defs : [bool('enabled', true, 'Enabled')]);
+  p.layout = siLayout(opKey) as any; return p;
 }
 
 // ---------------------------------------------------------------- material

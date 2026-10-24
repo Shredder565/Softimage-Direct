@@ -3,9 +3,14 @@
 import { chromium } from 'playwright';
 import fs from 'fs';
 const ref = JSON.parse(fs.readFileSync(process.argv[2] ?? 'data/dump/si_topo_ref.json', 'utf8'));
-const chromeBin = ['/opt/pw-browsers/chromium', '/usr/local/bin/google-chrome', '/opt/google/chrome/chrome'].find(p => fs.existsSync(p));
+const CHROME = [
+  '/opt/pw-browsers/chromium',
+  '/home/ubuntu/.cache/ms-playwright/chromium-1140/chrome-linux/chrome',
+  '/usr/local/bin/google-chrome',
+  '/opt/google/chrome/chrome',
+].find(p => fs.existsSync(p));
 const b = await chromium.launch({
-  ...(chromeBin ? { executablePath: chromeBin } : {}),
+  executablePath: CHROME,
   args: ['--headless=new', '--use-gl=swiftshader', '--enable-unsafe-swiftshader'],
 });
 const p = await b.newPage({ viewport: { width: 1200, height: 800 } });

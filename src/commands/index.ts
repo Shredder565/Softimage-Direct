@@ -1,7 +1,7 @@
 // Built-in commands. Scripting names and argument lists follow Softimage's registry (commands_full.json)
 // so a Softimage script like  CreatePrim "Cube", "MeshSurface"  maps 1:1.
 import { App } from '../core/commands';
-import { X3DObject, Model, Null, Primitive, Light, Camera, Group, makeGeomOperator, makeDeformOperator, makePhong, makeLambert, Material, Property, makeDisplay, makeGeomApprox, Node, Shader, makeTopologyOperator, TopologyOperator, makeVisibility } from '../core/scene';
+import { X3DObject, Model, Null, Primitive, Light, Camera, Group, makeGeomOperator, makeDeformOperator, makePhong, makeLambert, Material, Property, makeDisplay, makeGeomApprox, makeSiOpProperty, Node, Shader, makeTopologyOperator, TopologyOperator, makeVisibility } from '../core/scene';
 import { Cluster, threeOrder } from '../core/scene';
 import * as THREE from 'three';
 import { makeAimRig } from './constraints';
@@ -29,7 +29,7 @@ export function registerBuiltins(app: App) {
   app.register({
     name: 'CreatePrim', label: 'Create primitive', category: 'Primitive',
     description: 'Creates an explicit primitive (polygon mesh / curve / surface) of the given preset, selects it and inspects it.',
-    args: [{ name: 'PresetObj', default: 'Cube' }, { name: 'GeometryType', default: 'MeshSurface' }, { name: 'Name', default: '' }, { name: 'Parent', default: '' }],
+    args: [{ name: 'PresetObj', default: 'Cube' }, { name: 'GeometryType', default: 'MeshSurface' }, { name: 'Name', default: '' }, { name: 'Parent', default: '' }, { name: 'Text', default: '' }],
     canRun: (a) => MESH_PRESETS.includes(a.PresetObj) && (a.GeometryType === 'MeshSurface' || a.GeometryType === 'PointCloud'),
     execute(app, a) {
       if (!MESH_PRESETS.includes(a.PresetObj)) throw new Error(`Preset ${a.PresetObj} not available yet (geometry type ${a.GeometryType})`);
@@ -274,15 +274,17 @@ export function registerBuiltins(app: App) {
   app.register({ name: 'UnAssignMaterial', label: 'UnAssign Material', category: 'Rendering', args: [{ name: 'InputObjs', default: '' }], execute(app, a) { for (const o of app.targets(a.InputObjs)) { const old = o.material; if (!old) continue; app.record('Unassign', () => o.setMaterial(null), () => o.setMaterial(old)); } } });
   app.register({
     name: 'AddProp', label: 'Add Property', category: 'Property', args: [{ name: 'PresetObj', default: 'Display' }, { name: 'InputObjs', default: '' }],
-    canRun: (a) => ['Display', 'Geometry Approximation', 'Annotation', 'CustomProperty', 'Custom Parameter Set', 'Static KineState', 'Synoptic', 'Visibility'].includes(a.PresetObj),
+    canRun: (a) => ['Display', 'Geometry Approximation', 'GeomApprox', 'Annotation', 'CustomProperty', 'Custom Parameter Set', 'Static KineState', 'Static Kinematic State Property', 'Synoptic', 'Synoptic Property', 'Visibility'].includes(a.PresetObj),
     execute(app, a) {
       for (const o of app.targets(a.InputObjs)) {
         let p: Property;
-        if (a.PresetObj === 'Display') p = makeDisplay(false); else if (a.PresetObj === 'Geometry Approximation') p = makeGeomApprox(false);
-        else if (a.PresetObj === 'Annotation') p = new Property('Annotation', 'annotation', [{ name: 'text', label: 'Text', type: 'string', value: 'Note' }]);
-        else if (a.PresetObj === 'CustomProperty' || a.PresetObj === 'Custom Parameter Set') p = new Property(app.scene.uniqueName('CustomPSet'), 'customparamset', [num('value', 0, 'Value', { keyable: true })]);
-        else if (a.PresetObj === 'Synoptic') p = new Property('Synoptic', 'synoptic', [{ name: 'file', label: 'Synoptic File', type: 'string', value: '' }]);
-        else if (a.PresetObj === 'Visibility') p = makeVisibility();
+        const preset = String(a.PresetObj);
+        if (preset === 'Display') p = makeDisplay(false);
+        else if (preset === 'Geometry Approximation' || preset === 'GeomApprox') p = makeGeomApprox(false);
+        else if (preset === 'Annotation') p = new Property('Annotation', 'annotation', [{ name: 'text', label: 'Text', type: 'string', value: 'Note' }]);
+        else if (preset === 'CustomProperty' || preset === 'Custom Parameter Set') p = new Property(app.scene.uniqueName('CustomPSet'), 'customparamset', [num('value', 0, 'Value', { keyable: true })]);
+        else if (preset === 'Synoptic' || preset === 'Synoptic Property') p = makeSiOpProperty('prop:synoptic', 'Synoptic_Property', 'synoptic');
+        else if (preset === 'Visibility') p = makeVisibility();
         else throw new Error(`Property ${a.PresetObj} not available yet`);
         app.record('Add property', () => o.addProperty(p), () => o.removeProperty(p)); app.select([p]);
       }

@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { makeAimRig } from './constraints';
 import { App, InteractiveTool } from '../core/commands';
-import { X3DObject, Model, Primitive, Property, makeDisplay, makeGeomApprox, makePhong, makeLambert, makeSiShader, Shader, Null, Camera, Light, Operator, makeTopologyOperator, TopologyOperator, MoveComponentOperator, mixerOf, syncMixer } from '../core/scene';
+import { X3DObject, Model, Primitive, Property, makeDisplay, makeGeomApprox, makeSiOpProperty, makePhong, makeLambert, makeSiShader, Shader, Null, Camera, Light, Operator, makeTopologyOperator, TopologyOperator, MoveComponentOperator, mixerOf, syncMixer } from '../core/scene';
 import { topoDefs } from '../core/scene';
 import { siName } from '../core/opdefs';
 import * as S2 from '../core/scene2';
@@ -37,8 +37,13 @@ export function registerModelCommands(app: App) {
   basePrim.canRun = (a) => baseCanRun(a) || (a.GeometryType === 'NurbsCurve' && (CURVE_PRESETS.includes(a.PresetObj) || a.PresetObj === 'Text')) || (a.GeometryType === 'NurbsSurface' && SURF_PRESETS.includes(a.PresetObj));
   basePrim.execute = (app, a) => {
     if (a.GeometryType === 'NurbsCurve') {
-      const gen = a.PresetObj === 'Text' ? new S2.TextGeomOperator('curves', prompt('Text', 'Softimage') ?? 'Softimage') : S2.makeCurveGeomOperator(a.PresetObj);
-      const obj = newGeomObject(app, a.Name || a.PresetObj.toLowerCase(), 'crvlist', gen); addObject(app, obj, a.Parent ? app.scene.find(a.Parent) : null); app.select([obj]); return obj;
+      // Softimage Create/Text/Curves → CreatePrim Text (probe_text_args); optional Text avoids PPG prompt in harness.
+      // Prefer explicit Text arg (harness / script); only prompt when Softimage PPG would.
+      const text = (a.Text != null && String(a.Text) !== '') ? String(a.Text) : (a.Caption != null && String(a.Caption) !== '' ? String(a.Caption) : (a.PresetObj === 'Text' ? (typeof prompt === 'function' ? (prompt('Text', 'Softimage') ?? 'Softimage') : 'Softimage') : 'Softimage'));
+      const gen = a.PresetObj === 'Text' ? new S2.TextGeomOperator('curves', String(text)) : S2.makeCurveGeomOperator(a.PresetObj);
+      const obj = newGeomObject(app, a.Name || (a.PresetObj === 'Text' ? 'text' : a.PresetObj.toLowerCase()), 'crvlist', gen); addObject(app, obj, a.Parent ? app.scene.find(a.Parent) : null); app.select([obj]);
+      if (a.PresetObj === 'Text') S2.loadFont().then(() => { obj.primitive!.dirty = true; app.events.emit('scene'); });
+      return obj;
     }
     if (a.GeometryType === 'NurbsSurface') {
       const gen = S2.makeSurfaceGeomOperator(a.PresetObj); if (!gen) throw new Error(`Surface ${a.PresetObj} not available`);
@@ -74,9 +79,13 @@ export function registerModelCommands(app: App) {
   app.register({ name: 'CreateMeshText', label: 'Create Mesh Text', category: 'Primitive', args: [{ name: 'PresetObj', default: 'CurveListToPlanarMeshForText' }, { name: 'Text', default: '' }], execute(app, a) { const solid = String(a.PresetObj).includes('Solid'); const text = a.Text || prompt('Text', 'Softimage') || 'Softimage'; const obj = newGeomObject(app, 'text', 'polymsh', new S2.TextGeomOperator(solid ? 'solid' : 'planar', text)); addObject(app, obj); app.select([obj]); S2.loadFont().then(() => { obj.primitive!.dirty = true; app.events.emit('scene'); }); return obj; } });
 
   // ------------------------------------------------------------ generators
+  // Softimage PC si_generators_golden.json presets: ExtrusionAlongAxis, Extrusion, RevolutionAlongAxis, Loft…
   const GEN: Record<string, { preset: string; out: 'polymsh' | 'surfmsh' | 'crvlist'; min: number }> = {
-    ExtrusionAlongAxis: { preset: 'Extrusion Along Axis', out: 'polymsh', min: 1 }, RevolutionAroundAxis: { preset: 'Revolution Around Axis', out: 'polymsh', min: 1 }, Loft: { preset: 'Loft', out: 'polymsh', min: 2 },
-    ExtrusionAlongCurve: { preset: 'Extrusion Along Curve', out: 'polymsh', min: 2 }, ExtrusionTwoProfiles: { preset: 'Loft', out: 'polymsh', min: 2 }, Birail: { preset: 'Birail', out: 'polymsh', min: 3 }, FourSided: { preset: 'Four-Sided', out: 'polymsh', min: 4 }, CrvNet: { preset: 'Curve Net', out: 'polymsh', min: 2 },
+    ExtrusionAlongAxis: { preset: 'Extrusion Along Axis', out: 'polymsh', min: 1 }, 'Extrusion Along Axis': { preset: 'Extrusion Along Axis', out: 'polymsh', min: 1 },
+    RevolutionAroundAxis: { preset: 'Revolution Around Axis', out: 'polymsh', min: 1 }, RevolutionAlongAxis: { preset: 'Revolution Around Axis', out: 'polymsh', min: 1 }, 'Revolution Around Axis': { preset: 'Revolution Around Axis', out: 'polymsh', min: 1 }, Revolution: { preset: 'Revolution Around Axis', out: 'polymsh', min: 1 },
+    Loft: { preset: 'Loft', out: 'polymsh', min: 2 },
+    ExtrusionAlongCurve: { preset: 'Extrusion Along Curve', out: 'polymsh', min: 2 }, Extrusion: { preset: 'Extrusion Along Curve', out: 'polymsh', min: 2 }, 'Extrusion Along Curve': { preset: 'Extrusion Along Curve', out: 'polymsh', min: 2 },
+    ExtrusionTwoProfiles: { preset: 'Loft', out: 'polymsh', min: 2 }, Birail: { preset: 'Birail', out: 'polymsh', min: 3 }, FourSided: { preset: 'Four-Sided', out: 'polymsh', min: 4 }, CrvNet: { preset: 'Curve Net', out: 'polymsh', min: 2 },
     CurveListToMesh: { preset: 'Curves To Mesh', out: 'polymsh', min: 1 }, NurbsToMesh: { preset: 'Nurbs To Mesh', out: 'polymsh', min: 1 }, MeshMerge: { preset: 'Merge Meshes', out: 'polymsh', min: 1 }, MeshBlend: { preset: 'Merge Meshes', out: 'polymsh', min: 2 },
     BlendCrv: { preset: 'Blend', out: 'crvlist', min: 2 }, CrvMerge: { preset: 'Merge Curves', out: 'crvlist', min: 2 }, CrvFit: { preset: 'Fit', out: 'crvlist', min: 1 }, CrvExtractSeg: { preset: 'Extract Segment', out: 'crvlist', min: 1 }, ExtractEdgeLoopOp: { preset: 'Extract Edge Loop', out: 'crvlist', min: 1 }, CrvExtractFromSrf: { preset: 'Extract Curve From Surface', out: 'crvlist', min: 1 },
     'Bool Gen Difference': { preset: 'Boolean', out: 'polymsh', min: 2 }, 'Bool Gen Union': { preset: 'Boolean', out: 'polymsh', min: 2 }, 'Bool Gen Intersection': { preset: 'Boolean', out: 'polymsh', min: 2 }, SrfIntersect: { preset: 'Boolean', out: 'polymsh', min: 2 },
@@ -225,20 +234,36 @@ export function registerModelCommands(app: App) {
   app.register({ name: 'OpenMaterialLibrary', label: 'More materials...', category: 'Rendering', args: [], undoable: false, execute(app) { const sw = document.querySelector<HTMLElement>('.switcher[data-name=module_menu] .switcher-bar'); (sw?.children[1] as HTMLElement)?.click(); app.logMsg('info', 'Open the Explorer in the Materials scope to browse the material library'); } });
 
   // ------------------------------------------------------------ properties
+  // Softimage menu PresetObj names (GeomApprox, AttributeDisplay, …) map to opdefs/SPDL defaults.
   const propBase = app.commands.get('AddProp')!; const propCan = propBase.canRun!, propExec = propBase.execute;
+  const staticKine = () => makeSiOpProperty('prop:StaticKineState', 'Static_KineState', 'statickinestate');
   const PROPS: Record<string, () => Property> = {
     // Types match paint/GATOR lookups (`weightmap` / `vertexcolor`); Softimage hangs these on the Point cluster.
     'Weight Map': () => { const p = new Property('WeightMap', 'weightmap', [num('weight', 1, 'Default Weight', { min: 0, max: 1 }), bool('paintable', true, 'Paintable')]); (p as any).values = new Map<number, number>(); return p; },
     'Color At Vertices Map': () => { const p = new Property('Vertex Color', 'vertexcolor', [color('color', [1, 1, 1], 'Default Color')]); (p as any).values = new Map<number, V3>(); return p; },
-    RenderMap: () => new Property('RenderMap', 'rendermap', [int('width', 512, 'Width'), int('height', 512, 'Height'), str('file', 'rendermap.png', 'Output')]),
+    RenderMap: () => makeSiOpProperty('prop:rendermap', 'RenderMap', 'rendermap', { imagefile: 'RenderMap.pic', imagefilepath: '' }),
     'Symmetry Map': () => makeSymmetryMap(((window as any).Application?.symPlane as any) ?? 'YZ'),
-    'Static Kine State Property': () => new Property('Static KineState', 'statickinestate', [num('posx', 0, 'Pos X', { readOnly: true }), num('posy', 0, 'Pos Y', { readOnly: true }), num('posz', 0, 'Pos Z', { readOnly: true })]),
-    'Transform Setup': () => new Property('Transform Setup', 'transformsetup', [enumP('tool', 2, [{ label: 'Scale', value: 0 }, { label: 'Rotate', value: 1 }, { label: 'Translate', value: 2 }], 'Default Tool')]),
-    'Attribute Display': () => new Property('Attribute Display', 'attributedisplay', [str('attribute', 'PointPosition', 'Attribute'), bool('show', true, 'Show')]),
+    'Static Kine State Property': staticKine,
+    'Static Kinematic State Property': staticKine,
+    'Transform Setup': () => makeSiOpProperty('prop:transformsetup', 'Transform Setup', 'transformsetup'),
+    'Attribute Display': () => makeSiOpProperty('prop:attributedisplay', 'AttributeDisplay', 'attributedisplay'),
+    AttributeDisplay: () => makeSiOpProperty('prop:attributedisplay', 'AttributeDisplay', 'attributedisplay'),
+    GeomApprox: () => makeGeomApprox(false),
+    'Geometry Approximation': () => makeGeomApprox(false),
+    Display: () => makeDisplay(false),
+    // Softimage PC dump si_model_property_commands.json: Object Display / Annotation Property
+    'Object Display Property': () => makeDisplay(false),
+    'Object Annotation Property': () => new Property('Annotation', 'annotation', [str('text', 'Note', 'Text')]),
+    Annotation: () => new Property('Annotation', 'annotation', [str('text', 'Note', 'Text')]),
+    Synoptic: () => makeSiOpProperty('prop:synoptic', 'Synoptic_Property', 'synoptic'),
+    'Synoptic Property': () => makeSiOpProperty('prop:synoptic', 'Synoptic_Property', 'synoptic'),
     'Polygon Cluster Visibility': () => new Property('Cluster Visibility', 'clustervis', [bool('viewvis', true, 'View Visibility')]),
+    'Polygon Cluster Visibility Property': () => new Property('Cluster Visibility', 'clustervis', [bool('viewvis', true, 'View Visibility')]),
     Override: () => new Property('Override', 'override', [bool('enable', true, 'Enabled')]),
     'New Custom Data Map Template': () => new Property('UserDataMap', 'userdatamap', [str('template', 'Template', 'Template')]),
+    'New Custom Parameter Set': () => new Property('CustomPSet', 'customparamset', [num('value', 0, 'Value', { keyable: true })]),
   };
+  const STATIC_KINE = new Set(['Static Kine State Property', 'Static Kinematic State Property']);
   propBase.canRun = (a) => propCan(a) || !!(PROPS[a.PresetObj] ?? PROPS[a.Preset]) || String(a.PresetObj).startsWith('Texture') || !!a.Type;
   propBase.execute = (app, a) => { if (a.Type && !PROPS[a.PresetObj] && !PROPS[a.Preset]) return projection(app, a.Type, app.targets(a.InputObjs)); const mk = PROPS[a.PresetObj] ?? PROPS[a.Preset]; if (mk) {
     // Softimage keeps weight / CAV / symmetry maps on the complete Point cluster (not the object root).
@@ -246,7 +271,11 @@ export function registerModelCommands(app: App) {
     const preset = a.PresetObj || a.Preset;
     let last: Property | null = null;
     for (const o of app.targets(a.InputObjs)) {
-      const p = mk(); if (preset === 'Static Kine State Property') { p.set('posx', o.kinematics.local.val('posx')); p.set('posy', o.kinematics.local.val('posy')); p.set('posz', o.kinematics.local.val('posz')); }
+      const p = mk();
+      if (STATIC_KINE.has(preset)) {
+        p.set('posx', o.kinematics.local.val('posx')); p.set('posy', o.kinematics.local.val('posy')); p.set('posz', o.kinematics.local.val('posz'));
+        p.set('sclx', o.kinematics.local.val('sclx')); p.set('scly', o.kinematics.local.val('scly')); p.set('sclz', o.kinematics.local.val('sclz'));
+      }
       if (ON_POINT_CLUSTER.has(preset) && o.primitive?.mesh()) {
         const cl = mapCluster(app, o, 'pnt'); app.record('Add property', () => cl.addProperty(p), () => cl.removeProperty(p));
       } else {

@@ -215,7 +215,15 @@ export function viewManager(app: App, host: HTMLElement) {
       } else if (o.primitive?.type === 'crvlist' && payload?.cvs) {
         removeChild(g, 'mesh'); removeChild(g, 'wire');
         let ln = child(g, 'marker') as THREE.Line | undefined;
-        if (!ln || (ln as any)._src !== payload) { const pts = tessellateCurve(payload, 8).map(p => new THREE.Vector3(...p)); const geo = new THREE.BufferGeometry().setFromPoints(pts); if (ln) { ln.geometry.dispose(); ln.geometry = geo; } else { ln = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xffffff })); (ln as any)._kind = 'marker'; g.add(ln); } (ln as any)._src = payload; }
+        if (!ln || (ln as any)._src !== payload) {
+          // Softimage Curve List / Text: draw primary + optional subcurves (glyph outlines).
+          const subs: any[] = [payload, ...((payload as any).subcurves ?? [])];
+          const pts: THREE.Vector3[] = [];
+          for (const c of subs) { const s = tessellateCurve(c, 8).map((p: [number, number, number]) => new THREE.Vector3(...p)); if (pts.length && s.length) pts.push(pts[pts.length - 1], s[0]); pts.push(...s); }
+          const geo = new THREE.BufferGeometry().setFromPoints(pts);
+          if (ln) { ln.geometry.dispose(); ln.geometry = geo; } else { ln = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xffffff })); (ln as any)._kind = 'marker'; g.add(ln); }
+          (ln as any)._src = payload;
+        }
         (ln.material as THREE.LineBasicMaterial).color.set(selected ? SI.selected : SI.geometry);
       } else if (o.primitive?.type === 'lattice' && payload?.points) {
         removeChild(g, 'mesh'); removeChild(g, 'wire');
