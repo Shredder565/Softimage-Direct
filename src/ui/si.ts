@@ -66,7 +66,7 @@ function splitArgs(s: string): any[] {
 }
 
 /** Generic popup for a menu tree copied from a Softimage menu resource. `onPick(label, item)` handles leaves. */
-export function openSiMenu(items: SiMenuItem[], x: number, y: number, onPick: (it: SiMenuItem, path: string[]) => void, opts: { checked?: (it: SiMenuItem) => boolean | undefined; enabled?: (it: SiMenuItem) => boolean } = {}, path: string[] = [], level = 0) {
+export function openSiMenu(items: SiMenuItem[], x: number, y: number, onPick: (it: SiMenuItem, path: string[]) => void, opts: { checked?: (it: SiMenuItem) => boolean | undefined; enabled?: (it: SiMenuItem, path?: string[]) => boolean } = {}, path: string[] = [], level = 0) {
   closeSiMenus(level);
   const m = document.createElement('div'); m.className = 'menu si-menu';
   for (const it of items) {
@@ -74,8 +74,9 @@ export function openSiMenu(items: SiMenuItem[], x: number, y: number, onPick: (i
     const row = document.createElement('div'); row.className = 'menu-item';
     const chk = opts.checked?.(it); const lab = document.createElement('span'); lab.textContent = (chk === undefined ? '' : chk ? '✓ ' : '   ') + (it.label ?? ''); row.appendChild(lab);
     if (it.accel) { const a = document.createElement('span'); a.className = 'menu-accel'; a.textContent = it.accel; row.appendChild(a); }
-    if (it.items) { row.classList.add('has-sub'); row.onpointerenter = () => { const r = row.getBoundingClientRect(); openSiMenu(it.items!, r.right - 2, r.top - 2, onPick, opts, [...path, it.label ?? ''], level + 1); }; }
-    else { if (opts.enabled && !opts.enabled(it)) row.classList.add('disabled'); row.onpointerenter = () => closeSiMenus(level + 1); row.onclick = () => { closeSiMenus(); onPick(it, [...path, it.label ?? '']); }; }
+    const nextPath = [...path, it.label ?? ''];
+    if (it.items) { row.classList.add('has-sub'); row.onpointerenter = () => { const r = row.getBoundingClientRect(); openSiMenu(it.items!, r.right - 2, r.top - 2, onPick, opts, nextPath, level + 1); }; }
+    else { if (opts.enabled && !opts.enabled(it, path)) row.classList.add('disabled'); row.onpointerenter = () => closeSiMenus(level + 1); row.onclick = () => { closeSiMenus(); onPick(it, nextPath); }; }
     m.appendChild(row);
   }
   document.body.appendChild(m);

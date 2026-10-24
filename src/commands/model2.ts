@@ -280,6 +280,38 @@ export function registerModelCommands2(app: App) {
   } });
   // Stand-in proxy: load an .obj (or exported-mesh JSON) as the stand-in's display geometry and bounding box
   const parseOBJ = (text: string): MeshData => { const verts: V3[] = [], faces: number[][] = []; for (const line of text.split(/\r?\n/)) { const t = line.trim().split(/\s+/); if (t[0] === 'v') verts.push([+t[1], +t[2], +t[3]]); else if (t[0] === 'f') { const f = t.slice(1).map(x => { const i = parseInt(x.split('/')[0], 10); return i < 0 ? verts.length + i : i - 1; }).filter(i => i >= 0 && i < verts.length); if (f.length >= 3) faces.push(f); } } return fromPolys(verts, faces); };
+  const meshToOBJ = (o: X3DObject) => {
+    const m = o.primitive?.mesh(); if (!m) return null;
+    const lines = [`# Softimage-Direct OBJ — ${o.name}`, `o ${o.name}`];
+    for (let i = 0; i < m.positions.length; i += 3) lines.push(`v ${m.positions[i]} ${m.positions[i + 1]} ${m.positions[i + 2]}`);
+    for (const f of m.polygons) lines.push('f ' + f.map(i => i + 1).join(' '));
+    return lines.join('\n');
+  };
+  app.register({
+    name: 'ImportObjFile', label: 'Import Obj File', category: 'File', args: [{ name: 'FileName', default: '' }], undoable: false,
+    execute(app, a) {
+      const go = (text: string, name: string) => {
+        const mesh = parseOBJ(text); if (!mesh.positions.length) throw new Error('No vertices in OBJ');
+        const obj = newObj(app, name.replace(/\.[^.]+$/, '') || 'obj', 'polymsh', new Frozen(mesh, 'Imported OBJ'));
+        addObject(app, obj); app.select([obj]); app.events.emit('scene'); app.logMsg('info', `Imported OBJ "${name}" (${mesh.positions.length / 3} points)`); return obj;
+      };
+      if (a.FileName) return fetch(String(a.FileName)).then(r => r.text()).then(t => go(t, String(a.FileName).split(/[\\/]/).pop()!)).catch(e => app.logMsg('error', 'Import Obj: ' + (e?.message ?? e)));
+      const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.obj,text/plain'; inp.onchange = () => { const f = inp.files?.[0]; if (f) f.text().then(t => go(t, f.name)).catch(e => app.logMsg('error', 'Import Obj: ' + e.message)); }; inp.click(); return null;
+    },
+  });
+  app.register({
+    name: 'ExportObjFile', label: 'Export Obj File', category: 'File', args: [{ name: 'InputObjs', default: '' }, { name: 'FileName', default: '' }], undoable: false,
+    execute(app, a) {
+      const objs = (a.InputObjs ? app.targets(a.InputObjs) : app.selectedObjects).filter(o => o.primitive?.mesh());
+      if (!objs.length) throw new Error('Select a polygon mesh to export');
+      const parts = objs.map(o => meshToOBJ(o)!).filter(Boolean);
+      const name = (a.FileName || objs[0].name) + (/\.obj$/i.test(a.FileName || '') ? '' : '.obj');
+      const blob = new Blob([parts.join('\n\n')], { type: 'text/plain' });
+      const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = name; link.click();
+      app.logMsg('info', `Exported OBJ "${name}" (${objs.length} object${objs.length === 1 ? '' : 's'})`);
+      return name;
+    },
+  });
   app.register({ name: 'LoadStandinProxy', label: 'Load Stand-in Proxy', category: 'Primitive', args: [{ name: 'InputObjs', default: '' }, { name: 'FileName', default: '' }], undoable: false, execute(app, a) {
     const o = app.targets(a.InputObjs).find(x => x.type === 'standin'); if (!o) throw new Error('Select a Stand-in'); const apply = (mesh: MeshData, name: string) => { const p = o.primitive!; (p as any).proxy = mesh; p.set('filename', name); const P = mesh.positions; const mn = [Infinity, Infinity, Infinity], mx = [-Infinity, -Infinity, -Infinity]; for (let i = 0; i < P.length; i += 3) for (let k = 0; k < 3; k++) { mn[k] = Math.min(mn[k], P[i + k]); mx[k] = Math.max(mx[k], P[i + k]); } p.set('bboxminx', mn[0]); p.set('bboxminy', mn[1]); p.set('bboxminz', mn[2]); p.set('bboxmaxx', mx[0]); p.set('bboxmaxy', mx[1]); p.set('bboxmaxz', mx[2]); p.set('display', 2); app.events.emit('scene'); app.logMsg('info', `${o.name}: proxy ${name} (${P.length / 3} points)`); };
     const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.obj,.json'; inp.onchange = () => { const f = inp.files?.[0]; if (!f) return; f.text().then(t => { if (/\.obj$/i.test(f.name)) apply(parseOBJ(t), f.name); else { const d = JSON.parse(t); const node = d.nodes?.find((n: any) => n.mesh) ?? d; const pts = node.mesh?.points ?? node.points; const polys = node.mesh?.polys ?? node.polys; if (!pts || !polys) throw new Error('No mesh in file'); const verts: V3[] = []; for (let i = 0; i < pts.length; i += 3) verts.push([pts[i], pts[i + 1], pts[i + 2]]); apply(fromPolys(verts, polys), f.name); } }).catch(e => app.logMsg('error', 'Stand-in proxy: ' + e.message)); }; inp.click(); return null;

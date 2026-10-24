@@ -15,10 +15,20 @@ const KEY_OF: Record<string, string> = { 'New Scene': 'New Scene', 'Open...': 'O
 /** Softimage PE leaves with id≥0 that the clone actually handles (others are grey / silent — see ui-documented-gaps). */
 const WIRED_LABELS = new Set([
   'New Scene', 'Open...', 'Save', 'Save As...', 'Save Backup', 'Preferences...', 'Keyboard Mapping...', 'Exit',
+  'Merge...', 'New Project...', 'Project Manager...', 'External Files...', 'Plug-in Manager...', 'Interaction Mode...', 'Migrate Preferences...',
   'Undo', 'Redo', 'Repeat', 'Cut', 'Copy', 'Paste', 'Delete Selected', 'Select All',
   'Minimize All', 'Restore All', 'Close All', 'Restore Default', 'Show All', 'Hide All',
   'About Softimage', 'Softimage Help', 'Softimage SDK Help', "What's New",
+  'Softimage Learning Channel', '1-Minute Startup Movies', 'Learning Path', 'Softimage Wiki', 'Services and Support',
+  'Softimage Home Page', 'Try Other Autodesk Products',
   'Manage...', 'New Custom Relational View', 'New Custom Shelf...', 'New Custom Toolbar...', 'Customize Toolbars...',
+]);
+
+const IMPORT_EXPORT_WIRED = new Set([
+  'Model...', 'Referenced Model...', 'Delta...',
+  'Obj File...', 'dotXSI...', 'IGES File...', 'EPS File...',
+  'Biovision File...', 'Acclaim File...',
+  'Import Alembic...', 'Export Alembic...',
 ]);
 
 const EXTRA_VIEWS = ['ICE Tree', 'Render Tree', 'Texture Editor', 'Schematic', 'Animation Editor', 'DopeSheet', 'Animation Mixer', 'Spreadsheet', 'Plugin Manager', 'Netview', 'Image Clips', 'Render Manager', 'Material Manager', 'Weight Paint Panel', 'Preset Manager', 'Scene Layer Manager', 'XSI Explorer', 'Script History'];
@@ -26,6 +36,8 @@ const viewsSubmenu = (): SiMenuItem[] => [...SI_VIEWS.map(v => ({ label: v.name,
 const layoutsSubmenu = (): SiMenuItem[] => layoutNames().map(n => ({ label: n, id: -2 }));
 const displaySubmenu = (): SiMenuItem[] => ['Bounding Box', 'Wireframe', 'Hidden Line', 'Constant', 'Shaded', 'Textured', 'Texture Decal', 'Realtime Shaders'].map(l => ({ label: l, id: -3 }));
 const recentScenes = (): string[] => { try { return JSON.parse(localStorage.getItem('si.recent') ?? '[]'); } catch { return []; } };
+const projectName = () => { try { return localStorage.getItem('si.project') || 'Softimage-Direct'; } catch { return 'Softimage-Direct'; } };
+const setProject = (name: string) => { try { localStorage.setItem('si.project', name); } catch { /* */ } };
 
 /** Expand Softimage insertion points the way the running menubar does (shared by UI + harness). */
 export function expandMenubarItems(items: SiMenuItem[]): SiMenuItem[] {
@@ -54,8 +66,8 @@ export function menubarIsWired(it: SiMenuItem, path: string[] = []): boolean {
   if (id !== undefined && id !== null && id < 0) return true;
   if (WIRED_LABELS.has(l)) return true;
   if (path.includes('Layouts')) return true;
-  // Softimage PE lists Import/Export Model under File with positive ids; pick() routes by label too.
-  if ((path.includes('Import') || path.includes('Export')) && (l === 'Model...' || l === 'Referenced Model...' || l === 'Delta...')) return true;
+  if ((path.includes('Import') || path.includes('Export') || path.includes('Alembic')) && IMPORT_EXPORT_WIRED.has(l)) return true;
+  if (path.includes('Communities') || path.includes('Resources and Tools')) return true;
   return false;
 }
 
@@ -74,6 +86,52 @@ export function menubarStatus(): { path: string; label: string; id: number | nul
   };
   for (const top of tops) walk(top.items ?? [], [top.label ?? '']);
   return out;
+}
+
+const HELP_URLS: Record<string, string> = {
+  'Softimage Help': 'https://help.autodesk.com/view/SI/2015/ENU/',
+  'Softimage SDK Help': 'https://help.autodesk.com/view/SI/2015/ENU/',
+  "What's New": 'https://help.autodesk.com/view/SI/2015/ENU/',
+  'Softimage Learning Channel': 'https://www.youtube.com/user/AutodeskSoftimage',
+  '1-Minute Startup Movies': 'https://help.autodesk.com/view/SI/2015/ENU/',
+  'Learning Path': 'https://help.autodesk.com/view/SI/2015/ENU/',
+  'Softimage Wiki': 'https://en.wikipedia.org/wiki/Autodesk_Softimage',
+  'Services and Support': 'https://www.autodesk.com/support',
+  'Softimage Home Page': 'https://www.autodesk.com/',
+  'Try Other Autodesk Products': 'https://www.autodesk.com/products',
+  'AREA Product Community': 'https://www.autodesk.com/community',
+  'AREA Discussion Forums': 'https://forums.autodesk.com/',
+  'Facebook': 'https://www.facebook.com/autodesk',
+  'Mental Ray Help': 'https://help.autodesk.com/view/SI/2015/ENU/',
+  'Syflex Help': 'https://help.autodesk.com/view/SI/2015/ENU/',
+};
+
+function pickImportExport(app: App, path: string[], l: string): boolean {
+  if (path.includes('Import')) {
+    if (l === 'Model...' || l === 'Referenced Model...' || l === 'Delta...') {
+      app.run(l.startsWith('Model') ? 'ImportModel' : l.startsWith('Referenced') ? 'ImportRefModels' : 'ImportDelta'); return true;
+    }
+    if (l === 'Obj File...') { app.run('ImportObjFile'); return true; }
+    if (l === 'dotXSI...' || l === 'IGES File...' || l === 'EPS File...' || l === 'Biovision File...' || l === 'Acclaim File...') {
+      // Scene-script merge / open for formats we don't parse yet (Softimage-compatible fallback: .scn.txt)
+      ev('mergescene', { format: l.replace(/\.\.\.$/, ''), accept: '.txt,.scn.txt,.xsi,.iges,.eps,.bvh,.asf,.amc' });
+      return true;
+    }
+    if (l === 'Import Alembic...') { app.logMsg('info', 'Alembic import: pick a .abc when a loader is bundled; use Import > Obj File... for meshes today'); ev('mergescene', { format: 'Alembic', accept: '.abc,.obj' }); return true; }
+  }
+  if (path.includes('Export')) {
+    if (l === 'Model...' || l === 'Delta...') { app.run(l.startsWith('Model') ? 'ExportModel' : 'ExportDelta'); return true; }
+    if (l === 'Obj File...') { app.run('ExportObjFile'); return true; }
+    if (l === 'dotXSI...' || l === 'IGES File...') {
+      ev('savescene', { as: true, format: l.replace(/\.\.\.$/, '') }); return true;
+    }
+    if (l === 'Export Alembic...') { app.logMsg('info', 'Alembic export stub — use Export > Obj File... for mesh interchange'); app.run('ExportObjFile'); return true; }
+  }
+  if (path.includes('Alembic')) {
+    if (l === 'Import Alembic...') { ev('mergescene', { format: 'Alembic', accept: '.abc,.obj' }); return true; }
+    if (l === 'Export Alembic...') { app.run('ExportObjFile'); return true; }
+  }
+  return false;
 }
 
 export function menubar(app: App, host: HTMLElement) {
@@ -97,17 +155,34 @@ export function menubar(app: App, host: HTMLElement) {
       case -13: app.run(l.startsWith('Model') ? 'ImportModel' : l.startsWith('Referenced') ? 'ImportRefModels' : 'ImportDelta'); return;
       case -14: app.run(l.startsWith('Model') ? 'ExportModel' : 'ExportDelta'); return;
     }
-    if (path.includes('Import') && (l === 'Model...' || l === 'Referenced Model...' || l === 'Delta...')) {
-      app.run(l.startsWith('Model') ? 'ImportModel' : l.startsWith('Referenced') ? 'ImportRefModels' : 'ImportDelta'); return;
-    }
-    if (path.includes('Export') && (l === 'Model...' || l === 'Delta...')) {
-      app.run(l.startsWith('Model') ? 'ExportModel' : 'ExportDelta'); return;
-    }
+    if (pickImportExport(app, path, l)) return;
     if (path.includes('Layouts') || l === 'Manage...') { ev('layoutmenu', { label: l, path }); return; }
     if (['New Custom Relational View', 'New Custom Shelf...', 'New Custom Toolbar...', 'Customize Toolbars...'].includes(l) || it.id === -9) { ev('toolbarmenu', { label: l }); return; }
+    if (HELP_URLS[l]) { window.open(HELP_URLS[l], '_blank'); return; }
     switch (l) {
       case 'New Scene': if (confirm('New scene? (unsaved work is lost)')) app.run('NewScene'); return;
       case 'Open...': ev('openscene'); return; case 'Save': ev('savescene'); return; case 'Save As...': ev('savescene', { as: true }); return; case 'Save Backup': ev('savescene', { backup: true }); return;
+      case 'Merge...': ev('mergescene'); return;
+      case 'New Project...': {
+        const n = prompt('New project name', projectName());
+        if (n) { setProject(n); app.logMsg('info', `Project: ${n}`); const r = document.querySelector('#menubar .right'); if (r) r.textContent = `Project: ${n}    Scene: …`; }
+        return;
+      }
+      case 'Project Manager...': {
+        const cur = projectName();
+        const n = prompt(`Project Manager\nCurrent: ${cur}\nEnter project name to switch/create:`, cur);
+        if (n) { setProject(n); app.logMsg('info', `Project Manager → ${n}`); }
+        return;
+      }
+      case 'External Files...': ev('openview', { name: 'Image Clips' }); app.logMsg('info', 'External Files → Image Clips'); return;
+      case 'Plug-in Manager...': ev('openview', { name: 'Plugin Manager' }); return;
+      case 'Interaction Mode...': {
+        const names = keymapNames();
+        const n = prompt('Interaction mode (key map):\n' + names.map((k, i) => `${i + 1}. ${k}${k === currentKeymap ? ' (current)' : ''}`).join('\n'), String(names.indexOf(currentKeymap) + 1));
+        const k = names[Number(n) - 1]; if (k) { setKeymap(k); app.logMsg('info', `Interaction mode: ${k}`); }
+        return;
+      }
+      case 'Migrate Preferences...': ev('openprefs'); app.logMsg('info', 'Migrate Preferences → Preferences (import Softimage prefs manually)'); return;
       case 'Preferences...': ev('openprefs'); return;
       case 'Keyboard Mapping...': { const names = keymapNames(); const n = prompt('Keyboard map:\n' + names.map((k, i) => `${i + 1}. ${k}${k === currentKeymap ? ' (current)' : ''}`).join('\n'), String(names.indexOf(currentKeymap) + 1)); const k = names[Number(n) - 1]; if (k) { setKeymap(k); app.logMsg('info', `Key map: ${k}`); } return; }
       case 'Exit': return;
@@ -121,11 +196,11 @@ export function menubar(app: App, host: HTMLElement) {
       default: if (it.id === -12) { const w = floatingWindows()[Number(l.split(' ')[0]) - 1]; w?.focus(); return; }
       case 'Restore Default': ev('togglepanel', { name: '*restore' }); return; case 'Show All': ev('togglepanel', { name: '*all', show: true }); return; case 'Hide All': ev('togglepanel', { name: '*all', show: false }); return;
       case 'About Softimage': alert('Softimage-Direct — a web reimplementation of Autodesk Softimage 2015 SP2\'s modeling toolset.\nUI data (menus, key maps, bitmaps, strings) are read from the original installation files.'); return;
-      case 'Softimage Help': case 'Softimage SDK Help': case "What's New": window.open('https://help.autodesk.com/view/SI/2015/ENU/', '_blank'); return;
+      case 'Softimage Help': case 'Softimage SDK Help': case "What's New": window.open(HELP_URLS[l] ?? 'https://help.autodesk.com/view/SI/2015/ENU/', '_blank'); return;
     }
     app.logMsg('info', `${path.join(' > ')}: not implemented`);
   };
-  const enabled = (it: SiMenuItem) => menubarIsWired(it);
+  const enabled = (it: SiMenuItem, path: string[] = []) => menubarIsWired(it, path);
   const accel = (it: SiMenuItem) => { const k = KEY_OF[it.label ?? '']; const b = k ? bindingFor(k) : null; return b ? { ...it, accel: b } : it; };
   for (const top of tops) {
     const m = document.createElement('span'); m.className = 'm'; m.textContent = top.label ?? ''; bar.appendChild(m);
@@ -135,6 +210,6 @@ export function menubar(app: App, host: HTMLElement) {
   const cm = document.createElement('select'); cm.className = 'cmode'; cm.title = 'Construction mode: which region of the construction history new operators go into';
   for (const [v, l] of [['modeling', 'Modeling'], ['shape', 'Shape Modeling'], ['animation', 'Animation'], ['secondaryshape', 'Secondary Shape Modeling']]) { const o = document.createElement('option'); o.value = v; o.textContent = l; cm.appendChild(o); }
   cm.value = construction.mode; cm.onchange = () => app.run('SetConstructionMode', { Mode: cm.value }); app.events.on('module', () => { cm.value = construction.mode; }); bar.appendChild(cm);
-  const right = document.createElement('span'); right.className = 'right'; right.textContent = 'Softimage-Direct · Autodesk Softimage 2015 SP2 clone'; bar.appendChild(right);
+  const right = document.createElement('span'); right.className = 'right'; right.textContent = `Project: ${projectName()} · Softimage-Direct`; bar.appendChild(right);
   host.appendChild(bar);
 }

@@ -1,11 +1,11 @@
 {
   "leaves": 148,
-  "wired": 102,
-  "silent": 46,
+  "wired": 132,
+  "silent": 16,
   "byTop": {
     "File": {
-      "wired": 12,
-      "silent": 32
+      "wired": 30,
+      "silent": 14
     },
     "Edit": {
       "wired": 8,
@@ -24,26 +24,11 @@
       "silent": 0
     },
     "Help": {
-      "wired": 4,
-      "silent": 14
+      "wired": 16,
+      "silent": 2
     }
   },
   "silentSample": [
-    "File > Merge...",
-    "File > New Project...",
-    "File > Project Manager...",
-    "File > External Files...",
-    "File > Import > dotXSI...",
-    "File > Import > IGES File...",
-    "File > Import > EPS File...",
-    "File > Import > Obj File...",
-    "File > Import > Biovision File...",
-    "File > Import > Acclaim File...",
-    "File > Export > dotXSI...",
-    "File > Export > IGES File...",
-    "File > Export > Obj File...",
-    "File > Alembic > Import Alembic...",
-    "File > Alembic > Export Alembic...",
     "File > Send to 3ds Max > Update current 3ds Max scene",
     "File > Send to Maya > Send as new Maya scene",
     "File > Send to Maya > Update current Maya scene",
@@ -58,35 +43,11 @@
     "File > Add-On > Package Location...",
     "File > Add-On > Package...",
     "File > Add-On > Edit...",
-    "File > Plug-in Manager...",
-    "File > Interaction Mode...",
-    "File > Migrate Preferences...",
-    "Help > Softimage Learning Channel",
-    "Help > 1-Minute Startup Movies",
-    "Help > Learning Path",
-    "Help > Softimage Wiki",
-    "Help > Services and Support",
-    "Help > Communities > AREA Product Community",
-    "Help > Communities > AREA Discussion Forums",
-    "Help > Communities > Facebook"
+    "Help > Customer Involvement Program...",
+    "Help > Desktop Analytics..."
   ],
   "pageErrors": [],
   "silentAll": [
-    "File > Merge...",
-    "File > New Project...",
-    "File > Project Manager...",
-    "File > External Files...",
-    "File > Import > dotXSI...",
-    "File > Import > IGES File...",
-    "File > Import > EPS File...",
-    "File > Import > Obj File...",
-    "File > Import > Biovision File...",
-    "File > Import > Acclaim File...",
-    "File > Export > dotXSI...",
-    "File > Export > IGES File...",
-    "File > Export > Obj File...",
-    "File > Alembic > Import Alembic...",
-    "File > Alembic > Export Alembic...",
     "File > Send to 3ds Max > Update current 3ds Max scene",
     "File > Send to Maya > Send as new Maya scene",
     "File > Send to Maya > Update current Maya scene",
@@ -101,22 +62,7 @@
     "File > Add-On > Package Location...",
     "File > Add-On > Package...",
     "File > Add-On > Edit...",
-    "File > Plug-in Manager...",
-    "File > Interaction Mode...",
-    "File > Migrate Preferences...",
-    "Help > Softimage Learning Channel",
-    "Help > 1-Minute Startup Movies",
-    "Help > Learning Path",
-    "Help > Softimage Wiki",
-    "Help > Services and Support",
-    "Help > Communities > AREA Product Community",
-    "Help > Communities > AREA Discussion Forums",
-    "Help > Communities > Facebook",
     "Help > Customer Involvement Program...",
-    "Help > Desktop Analytics...",
-    "Help > Resources and Tools > Mental Ray Help",
-    "Help > Resources and Tools > Syflex Help",
-    "Help > Softimage Home Page",
-    "Help > Try Other Autodesk Products"
+    "Help > Desktop Analytics..."
   ]
 }
