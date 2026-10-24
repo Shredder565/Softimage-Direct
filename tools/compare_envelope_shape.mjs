@@ -17,6 +17,7 @@ if (!CHROME) { console.error('No Chromium; set PW_CHROME'); process.exit(2); }
 
 const PC_DUMP = [
   path.resolve(__dirname, '../data/dump/si_anim_envelope_shape.json'),
+  '/cursor/stores/self/internal/softimage-pc-dumps/anim/si_anim_envelope_shape.json',
   '/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/anim/si_anim_envelope_shape.json',
 ].find(p => fs.existsSync(p));
 const FIXTURE = path.resolve(__dirname, '../data/dump/si_anim_envelope_shape_fixture.json');
@@ -95,16 +96,22 @@ if (!(r.removed >= 1)) diffs.push(`RemoveFlexEnvDeformer removed=${r.removed}`);
 if (!(r.deformersAfter === 1)) diffs.push(`deformers after remove ${r.deformersAfter}`);
 
 let pcNote = 'no PC dump yet — Direct fixture only';
+let expectedGaps = [];
 if (PC_DUMP) {
   const pc = JSON.parse(fs.readFileSync(PC_DUMP, 'utf8'));
   pcNote = `PC dump ${PC_DUMP}`;
-  // Soft schema checks only until numeric goldens land
-  if (pc.envelope && pc.envelope.deformers && Array.isArray(pc.envelope.deformers) && pc.envelope.deformers.length && r.envDeformers < 1) {
+  const flex = pc.steps?.find?.(s => s.name === 'ApplyFlexEnv');
+  if (flex && flex.ok === false) {
+    expectedGaps.push('PC ApplyFlexEnv failed headless (Direct still exercises envelope)');
+  }
+  // Only DIFF when PC succeeded and Direct is empty
+  if (pc.envelope && Array.isArray(pc.envelope.deformers) && pc.envelope.deformers.length && r.envDeformers < 1) {
     diffs.push('PC dump has deformers but Direct envelope empty');
   }
   if (pc.shape && pc.steps?.some?.(s => s.name === 'StoreShapeKey' && s.ok) && !r.shapeKeys?.length) {
     diffs.push('PC StoreShapeKey ok but Direct has no shape keys');
   }
+  if (expectedGaps.length) pcNote += `; expected gaps: ${expectedGaps.join('; ')}`;
 } else if (fs.existsSync(FIXTURE)) {
   pcNote = `fixture ${FIXTURE}`;
 }

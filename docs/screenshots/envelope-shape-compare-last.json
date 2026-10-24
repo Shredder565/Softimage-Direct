@@ -22,5 +22,5 @@
     "removed": 1,
     "deformersAfter": 1
   },
-  "pcNote": "fixture /workspace/data/dump/si_anim_envelope_shape_fixture.json"
+  "pcNote": "PC dump /cursor/stores/self/internal/softimage-pc-dumps/anim/si_anim_envelope_shape.json; expected gaps: PC ApplyFlexEnv failed headless (Direct still exercises envelope)"
 }

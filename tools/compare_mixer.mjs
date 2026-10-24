@@ -84,18 +84,31 @@ if (!(r.evalWeighted?.weights?.some(w => w.clip?.weight === 0.25 || Math.abs((w.
 }
 if (!r.evalWeighted?.weights?.length) diffs.push('SetClipWeight eval empty');
 
-// Prefer Softimage PC deep dump when present (softimage-pc currently disconnected).
+// Softimage PC deep dump (known gaps: StoreAction null handles; AddBridgeTransition missing under XSIBATCH;
+// mixer_collections null without clip selection). Direct still asserts nested OM + eval.
 const deepPaths = [
   path.resolve(__dirname, '../data/dump/si_anim_mixer_deep.json'),
+  '/cursor/stores/self/internal/softimage-pc-dumps/anim/si_anim_mixer_deep.json',
   '/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/anim/si_anim_mixer_deep.json',
 ].filter(p => fs.existsSync(p));
 let deepNote = 'no PC deep dump yet';
+let expectedGaps = [];
 if (deepPaths[0]) {
   const deep = JSON.parse(fs.readFileSync(deepPaths[0], 'utf8'));
   deepNote = `loaded ${deepPaths[0]}`;
-  if (deep.transitions && Array.isArray(deep.transitions) && deep.transitions.length && !r.transitions.length) {
+  const steps = deep.steps || [];
+  const storeNull = steps.filter(s => /^StoreAction/.test(s.name || '') && (s.result === 'null' || s.result == null));
+  if (storeNull.length) expectedGaps.push(`PC StoreAction null handles (${storeNull.length})`);
+  const bridge = steps.find(s => /Bridge/i.test(s.name || ''));
+  if (bridge && bridge.ok === false) expectedGaps.push(`PC ${bridge.name}: ${bridge.error || 'failed'}`);
+  const cols = deep.mixer_collections || {};
+  if (cols && Object.values(cols).every(v => v == null)) expectedGaps.push('PC mixer_collections null (needs clip sel)');
+  // Only DIFF if PC claims transitions/compounds populated but Direct empty
+  const pcTrans = deep.transitions || cols.Transitions;
+  if (Array.isArray(pcTrans) && pcTrans.length && !r.transitions.length) {
     diffs.push('PC dump has transitions but Direct dump empty');
   }
+  deepNote += expectedGaps.length ? `; expected gaps: ${expectedGaps.join('; ')}` : '';
 }
 
 console.log(diffs.length ? 'DIFF' : 'OK', 'mixer nested + EvaluateMixer crossfade');

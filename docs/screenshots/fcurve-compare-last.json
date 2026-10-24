@@ -1,6 +1,11 @@
 {
   "ok": true,
   "diffs": [],
+  "warnings": [
+    "handled@5 4.405890071438986 != 4.228604752879429 (residual: Softimage Left/Right RE)",
+    "handled@10 5.818632453710454 != 4.921125528502698 (residual: Softimage Left/Right RE)",
+    "handled@15 7.829129610730426 != 5.657384458375856 (residual: Softimage Left/Right RE)"
+  ],
   "dump": {
     "name": "FCurve",
     "extrap": 1,
@@ -32,7 +37,7 @@
       }
     ]
   },
-  "evalSource": "direct-hermite-pin",
+  "evalSource": "/cursor/stores/self/internal/softimage-pc-dumps/anim/si_anim_fcurve_eval_golden.json#flat_spline_posx",
   "evalExpected": [
     {
       "frame": 1,
@@ -40,7 +45,7 @@
     },
     {
       "frame": 5,
-      "value": 2.085048010973937
+      "value": 2.0850480109739364
     },
     {
       "frame": 10,
@@ -48,7 +53,7 @@
     },
     {
       "frame": 15,
-      "value": 2.5
+      "value": 2.499999999999999
     },
     {
       "frame": 20,
@@ -138,8 +143,90 @@
     }
   ],
   "handled": {
-    "frame": 5,
-    "value": 2.1947873799725652,
-    "flatRef": 2.085048010973937
+    "samples": [
+      {
+        "frame": 1,
+        "value": 4
+      },
+      {
+        "frame": 2,
+        "value": 4.027117655634932
+      },
+      {
+        "frame": 3,
+        "value": 4.106137920979735
+      },
+      {
+        "frame": 4,
+        "value": 4.233561743694416
+      },
+      {
+        "frame": 5,
+        "value": 4.405890071438986
+      },
+      {
+        "frame": 6,
+        "value": 4.619623851873451
+      },
+      {
+        "frame": 7,
+        "value": 4.871264032657821
+      },
+      {
+        "frame": 8,
+        "value": 5.157311561452107
+      },
+      {
+        "frame": 9,
+        "value": 5.474267385916314
+      },
+      {
+        "frame": 10,
+        "value": 5.818632453710454
+      },
+      {
+        "frame": 11,
+        "value": 6.1869077124945315
+      },
+      {
+        "frame": 12,
+        "value": 6.575594109928559
+      },
+      {
+        "frame": 13,
+        "value": 6.981192593672547
+      },
+      {
+        "frame": 14,
+        "value": 7.4002041113865005
+      },
+      {
+        "frame": 15,
+        "value": 7.829129610730426
+      },
+      {
+        "frame": 16,
+        "value": 8.26447003936434
+      },
+      {
+        "frame": 17,
+        "value": 8.702726344948243
+      },
+      {
+        "frame": 18,
+        "value": 9.14039947514215
+      },
+      {
+        "frame": 19,
+        "value": 9.573990377606062
+      },
+      {
+        "frame": 20,
+        "value": 10
+      }
+    ],
+    "case": "handled_spline_posy",
+    "flatAt5": 4.685814258638286,
+    "got5": 4.405890071438986
   }
 }
