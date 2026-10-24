@@ -29,6 +29,12 @@ if exist "%HERE%si_model_ref_dump.js" (
   call %XSI% -processing -script "%HERE%si_model_ref_dump.js" -lang JScript
 )
 
+REM Model extras (Desktop polish track #4): per-curve text, Boolean mesh, emdl/delta bytes
+if exist "%HERE%Run-ModelExtras.bat" (
+  echo === Run-ModelExtras.bat ===
+  call "%HERE%Run-ModelExtras.bat"
+)
+
 if exist "%HERE%pack_model_dumps.py" (
   echo === pack into Project store ===
   python "%HERE%pack_model_dumps.py"
