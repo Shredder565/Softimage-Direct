@@ -36,6 +36,10 @@ const KEYS = [
   ['ops', 'extrude2profs'],
   ['ops', 'revolution'],
   ['ops', 'filletcrv'],
+  ['ops', 'extractcrvseg'],
+  ['ops', 'blendcrv'],
+  ['ops', 'mergecrv'],
+  ['ops', 'mergemesh'],
   ['ops', 'loft'],
   ['ops', 'extrusion'],
   ['ops', 'birail'],
@@ -51,6 +55,10 @@ const SPDL_EXPECT = {
   extrude2profs: 'ExtrusionTwoProfiles.spdl',
   revolution: 'revolutionAxisOp.spdl',
   filletcrv: 'filletcrv.spdl',
+  extractcrvseg: 'extractcrvsegment.spdl',
+  blendcrv: 'blendcrvop.spdl',
+  mergecrv: 'mergecrv.spdl',
+  mergemesh: 'C3DMergeMeshOp.spdl',
 };
 
 function walk(ns, fn) {
@@ -106,6 +114,24 @@ for (const key of ['shearop', 'taperop', 'bulgeop']) {
   });
   if (!found?.some((o) => /^LabelWidth\(.+\)$/i.test(o))) fail.push(`bevelop: LabelWidth not healed (${JSON.stringify(found)})`);
   else ok.push(`bevelop: LabelWidth healed ${found.find((o) => /LabelWidth/i.test(o))}`);
+}
+
+// Extract Segment synth (GenOp-inline dump → startpos/endpos/invert group)
+{
+  const d = opdefs.ops.extractcrvseg;
+  const ps = collectParams(d.layout);
+  for (const need of ['startpos', 'endpos', 'invert']) {
+    if (!ps.includes(need)) fail.push(`extractcrvseg: missing ${need} in layout (${ps})`);
+  }
+  if (ps.includes('startpos') && ps.includes('endpos') && ps.includes('invert')) ok.push('extractcrvseg: Extract synth params');
+}
+
+// Merge Curves dump tabs Clean/Shape
+{
+  const d = opdefs.ops.mergecrv;
+  const tabs = (d.layout || []).map((n) => n.tab).filter(Boolean);
+  if (!tabs.includes('Clean') || !tabs.includes('Shape')) fail.push(`mergecrv: expected Clean/Shape tabs got ${JSON.stringify(tabs)}`);
+  else ok.push('mergecrv: Clean/Shape tabs');
 }
 
 // Token map: wired_opdefs → opdef key (null = dump inventory only, e.g. generic ExtrudeComponent)

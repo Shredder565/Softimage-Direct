@@ -17,10 +17,21 @@ SPDL_FORCE = {
     'revolution': 'revolutionAxisOp.spdl',
     'filletcrv': 'filletcrv.spdl',
 }
+# Model generators whose Softimage runtime dump missed the op (ApplyGenOp ok:false) but SPDL
+# Layout/params exist in the dialogs pack — seed opdefs so GeneratorOperator PPG can bind.
+SPDL_SEED = {
+    'blendcrv': 'blendcrvop.spdl',
+    'mergecrv': 'mergecrv.spdl',
+    'mergemesh': 'C3DMergeMeshOp.spdl',
+}
 # When SPDL Layout is only `inline GenOp…` / empty after prune, synthesize Softimage-like groups.
 SYNTH_LAYOUT = {
     'filletcrv': [{'group': 'Fillet', 'items': [{'param': 'rad'}, {'param': 'tol'}]}],
     'booleansrftopoop': [{'group': 'Boolean', 'items': [{'param': 'booleanmode'}]}],
+    # extractcrvsegment Layout is GenOp-inline + invert stuck; Softimage page shows these params.
+    'extractcrvseg': [{'group': 'Extract', 'items': [{'param': 'startpos'}, {'param': 'endpos'}, {'param': 'invert'}]}],
+    'blendcrv': [{'group': 'Blend', 'items': [{'param': 'startscl'}, {'param': 'endscl'}]}],
+    'mergemesh': [{'group': 'Merge', 'items': [{'param': 'tolerance'}, {'param': 'blend'}, {'param': 'NormalizeWeights'}]}],
 }
 
 def spdl_params_index():
@@ -77,6 +88,20 @@ def conv(p, sp):
         elif subs == ['x', 'y', 'z']: d['type'] = 'vector'; d['default'] = [s['v'] for s in p['sub']]
     return d
 
+def inline_trailing_param(param: str):
+    """Recover `invert` / `booleanmode` stuck after GenOp `inline \"…\"\\n\\tname` dump artifacts."""
+    s = str(param)
+    if not s.lower().lstrip().startswith('inline'):
+        return None
+    if '\n' not in s:
+        return None
+    tail = s.split('\n')[-1].strip()
+    if not tail:
+        return None
+    # last token; strip optional leading tabs
+    name = tail.split()[-1].strip().strip('"').strip("'")
+    return name or None
+
 def layout_for_nodes(lay, sns):
     if not lay: return None
     sns = set(s.lower() for s in sns)
@@ -84,9 +109,15 @@ def layout_for_nodes(lay, sns):
         out = []
         for n in nodes:
             if 'param' in n:
-                # Skip Softimage inline GenOp button includes (not Layout grammar)
-                if str(n['param']).lower().startswith('inline'): continue
-                if n['param'].lower() in sns: out.append(n)
+                raw = str(n['param'])
+                # Skip Softimage inline GenOp button includes (not Layout grammar), but keep
+                # a trailing param name when the dump stuck it onto the inline line.
+                if raw.lower().lstrip().startswith('inline'):
+                    tail = inline_trailing_param(raw)
+                    if tail and tail.lower() in sns:
+                        out.append({**n, 'param': tail})
+                    continue
+                if raw.lower() in sns: out.append(n)
             else:
                 k = 'group' if 'group' in n else 'row' if 'row' in n else 'tab'
                 items = prune(n.get('items') or [])
@@ -97,6 +128,61 @@ def layout_for_nodes(lay, sns):
 
 def layout_for(f, sns):
     return layout_for_nodes(spdl.get(f, {}).get('layout'), sns)
+
+VT_NAME = {
+    'VT_I2': 'int', 'VT_I4': 'int', 'VT_INT': 'int', 'VT_UI1': 'int', 'VT_UI2': 'int', 'VT_UI4': 'int',
+    'VT_R4': 'double', 'VT_R8': 'double', 'VT_BOOL': 'bool', 'VT_BSTR': 'string', 'VT_EMPTY': None,
+}
+
+def conv_spdl_param(p):
+    """Map parsed SPDL param → opdefs param (no runtime dump). Skip empty title stubs."""
+    sn = p.get('sn')
+    if not sn or sn.lower() in SKIP_SN: return None
+    tname = VT_NAME.get((p.get('type') or '').upper())
+    if tname is None and (p.get('type') or '').upper() == 'VT_EMPTY':
+        return None
+    if p.get('items'):
+        tname = 'enum'
+    elif (p.get('uitype') or '') == 'Check':
+        tname = 'bool'
+    elif tname is None:
+        tname = 'double'
+    d = {'sn': sn, 'label': p.get('label') or sn, 'type': tname, 'default': p.get('value')}
+    if d['default'] is None:
+        d['default'] = 0 if tname in ('double', 'int', 'enum') else False if tname == 'bool' else ''
+    if tname in ('double', 'int') and p.get('uirange') and all(isinstance(x, (int, float)) for x in (p['uirange'] or [])[:2]):
+        d['uimin'], d['uimax'] = p['uirange'][0], p['uirange'][1]
+    if tname in ('double', 'int') and p.get('range'):
+        mn, mx = (p['range'] + [None, None])[:2]
+        if isinstance(mn, (int, float)) and mn > -BIG: d['min'] = mn
+        if isinstance(mx, (int, float)) and mx < BIG: d['max'] = mx
+    if p.get('items'):
+        d['items'] = p['items']
+    if p.get('description'):
+        d['desc'] = p['description']
+    return d
+
+def seed_from_spdl(op_type, fname):
+    entry = spdl.get(fname)
+    if not entry: return None
+    params = []
+    for p in entry.get('params') or []:
+        c = conv_spdl_param(p)
+        if c: params.append(c)
+    if not params: return None
+    sns = [p['sn'] for p in params]
+    d = {
+        'type': op_type,
+        'name': entry.get('propset') or op_type,
+        'spdl': fname,
+        'params': params,
+        'source': f'spdl-seed:{fname}',
+    }
+    lay = layout_for(fname, sns)
+    if not lay and op_type in SYNTH_LAYOUT:
+        lay = layout_for_nodes(SYNTH_LAYOUT[op_type], sns)
+    if lay: d['layout'] = lay
+    return d
 
 defs = {}; by_menu = {}; prims = {}
 for item in dumps:
@@ -172,11 +258,42 @@ for t, f in SPDL_FORCE.items():
         lay = layout_for_nodes(SYNTH_LAYOUT[t], sns)
     if lay: d['layout'] = lay
     elif 'layout' in d: del d['layout']
+def layout_param_sns(nodes):
+    out = []
+    for n in nodes or []:
+        if 'param' in n: out.append(str(n['param']).lower())
+        else: out.extend(layout_param_sns(n.get('items')))
+    return out
+
 for t, nodes in SYNTH_LAYOUT.items():
     if t not in defs: continue
     d = defs[t]
-    if d.get('layout'): continue
-    lay = layout_for_nodes(nodes, [p['sn'] for p in d['params']])
+    sns = [p['sn'] for p in d['params']]
+    want = layout_param_sns(nodes)
+    have = layout_param_sns(d.get('layout'))
+    # Keep existing layout only when it already covers the synth param set (e.g. Boolean).
+    # GenOp-residue pages that recovered only a trailing param (invert / rad) get replaced.
+    if d.get('layout') and want and all(w in have for w in want):
+        continue
+    lay = layout_for_nodes(nodes, sns)
+    if lay: d['layout'] = lay
+
+# Seed Model generators present in SPDL dump pack but missing from runtime dump objects.
+for t, fname in SPDL_SEED.items():
+    if t in defs: continue
+    seeded = seed_from_spdl(t, fname)
+    if seeded: defs[t] = seeded
+
+# Re-apply SYNTH after seeds (seed layout_for may leave GenOp-residue pages incomplete).
+for t, nodes in SYNTH_LAYOUT.items():
+    if t not in defs: continue
+    d = defs[t]
+    sns = [p['sn'] for p in d['params']]
+    want = layout_param_sns(nodes)
+    have = layout_param_sns(d.get('layout'))
+    if d.get('layout') and want and all(w in have for w in want):
+        continue
+    lay = layout_for_nodes(nodes, sns)
     if lay: d['layout'] = lay
 
 # mesh statistics of primitives (for verification)
