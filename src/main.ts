@@ -226,6 +226,27 @@ window.addEventListener('openscene', (e: any) => {
   if (name) { const t = localStorage.getItem('si.scene.' + name); if (t !== null) load(t, name); else app.logMsg('error', `Scene "${name}" not found`); return; }
   const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.txt,.scn.txt'; inp.onchange = () => { const f = inp.files?.[0]; if (!f) return; f.text().then(t => load(t, f.name.replace(/\.scn\.txt$|\.txt$/, ''))); }; inp.click();
 });
+// File > Merge… (and interchange formats without a dedicated parser): append a scene script, or import .obj meshes.
+window.addEventListener('mergescene', (e: any) => {
+  const accept = e.detail?.accept ?? '.txt,.scn.txt';
+  const format = e.detail?.format ? String(e.detail.format) : 'scene';
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = accept;
+  inp.onchange = () => {
+    const f = inp.files?.[0]; if (!f) return;
+    if (/\.obj$/i.test(f.name)) {
+      const url = URL.createObjectURL(f);
+      Promise.resolve(app.run('ImportObjFile', { FileName: url })).finally(() => URL.revokeObjectURL(url));
+      return;
+    }
+    f.text().then(text => {
+      let n = 0; app.autoInspect = false;
+      for (const line of text.split(/\r?\n/)) { if (line.trim()) { try { runScriptLine(app, line); n++; } catch { /* logged */ } } }
+      app.autoInspect = true; app.events.emit('scene');
+      app.logMsg('info', `Merged ${format} "${f.name}" (${n} commands)`);
+    });
+  };
+  inp.click();
+});
 app.events.on('newscene', () => { sceneName = 'Untitled'; sceneStart = app.log.length; updateTitle(); });
 updateTitle();
 
