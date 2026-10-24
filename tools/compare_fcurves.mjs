@@ -30,7 +30,11 @@ function smoothstepHermite(t0, v0, t1, v1, frame) {
   return v0 + (v1 - v0) * s;
 }
 const EVAL_FRAMES = [1, 5, 10, 15, 20];
-const EVAL_EXPECTED = EVAL_FRAMES.map(f => {
+const EVAL_GOLDEN_PATHS = [
+  path.resolve(__dirname, '../data/dump/si_anim_fcurve_eval_golden.json'),
+  '/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/anim/si_anim_fcurve_eval_golden.json',
+].filter(p => fs.existsSync(p));
+let EVAL_EXPECTED = EVAL_FRAMES.map(f => {
   let v;
   if (f <= 1) v = 0;
   else if (f <= 10) v = smoothstepHermite(1, 0, 10, 5, f);
@@ -38,6 +42,20 @@ const EVAL_EXPECTED = EVAL_FRAMES.map(f => {
   else v = 0;
   return { frame: f, value: v };
 });
+let evalSource = 'direct-hermite-pin';
+if (EVAL_GOLDEN_PATHS[0]) {
+  try {
+    const eg = JSON.parse(fs.readFileSync(EVAL_GOLDEN_PATHS[0], 'utf8'));
+    const samples = eg.samples || eg.eval || eg.flat_samples || [];
+    if (Array.isArray(samples) && samples.length) {
+      EVAL_EXPECTED = EVAL_FRAMES.map(f => {
+        const row = samples.find(s => s.frame === f || s.time === f);
+        return row ? { frame: f, value: Number(row.value) } : EVAL_EXPECTED.find(e => e.frame === f);
+      }).filter(Boolean);
+      evalSource = EVAL_GOLDEN_PATHS[0];
+    }
+  } catch { /* keep hermite pin */ }
+}
 
 const b = await chromium.launch({ executablePath: CHROME, args: ['--headless=new', '--use-gl=swiftshader', '--enable-unsafe-swiftshader'] });
 const page = await b.newPage({ viewport: { width: 1280, height: 800 } });
@@ -92,6 +110,7 @@ const handled = await page.evaluate(() => {
 if (!(Math.abs(handled.value - handled.flatRef) > 1e-6)) diffs.push(`tangent handles did not change mid eval (${handled.value})`);
 
 console.log(diffs.length ? 'DIFF' : 'OK', 'fcurve vs Softimage golden + hermite eval');
+console.log(' evalSource', evalSource);
 console.log(' dump', JSON.stringify(dump));
 console.log(' eval', JSON.stringify(EVAL_EXPECTED.map(e => ({ ...e, got: got.samples.find(s => s.frame === e.frame)?.value }))));
 console.log(' handled', handled);
@@ -99,6 +118,6 @@ for (const d of diffs) console.log(' ', d);
 
 const outPath = path.resolve(__dirname, '../docs/screenshots/fcurve-compare-last.json');
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
-fs.writeFileSync(outPath, JSON.stringify({ ok: diffs.length === 0, diffs, dump, evalExpected: EVAL_EXPECTED, samples: got.samples, handled }, null, 2));
+fs.writeFileSync(outPath, JSON.stringify({ ok: diffs.length === 0, diffs, dump, evalSource, evalExpected: EVAL_EXPECTED, samples: got.samples, handled }, null, 2));
 await b.close();
 process.exit(diffs.length ? 1 : 0);

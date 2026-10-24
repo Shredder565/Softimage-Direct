@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "diffs": [],
+  "r": {
+    "envOk": true,
+    "envDeformers": 2,
+    "weightSum": 1,
+    "shapeKeys": [
+      "Smile"
+    ],
+    "hasBase": true,
+    "shapeDelta": 2,
+    "weight": 0.5,
+    "y0": -3,
+    "expectedY": -3,
+    "baseY": -4
+  },
+  "pcNote": "fixture /workspace/data/dump/si_anim_envelope_shape_fixture.json"
+}

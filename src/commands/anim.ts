@@ -4,6 +4,8 @@
 import { App } from '../core/commands';
 import { X3DObject, Property, Model, mixerOf, syncMixer, type MixerClip, type MixerTransition, type MixerCompound } from '../core/scene';
 import { Parameter, num, str, int } from '../core/params';
+import { evaluateMixer, installMixerEval, mixerDump, clipWeightsAt } from '../core/mixer';
+import { ensureShapeBase, ensureShapeOperator, evaluateShapes } from '../core/shape';
 import { findParam } from './index';
 
 type Group = 'Transforms' | 'Scaling' | 'Rotation' | 'Translation' | 'All' | 'Marked';
@@ -191,14 +193,32 @@ export function registerAnimCommands(app: App) {
   // ---- shape keys (Deform > Shape)
   app.register({ name: 'StoreShapeKey', label: 'Store Shape Key', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'Name', default: '' }, { name: 'Frame', default: null }], execute(app, a) {
     const o = app.targets(a.InputObj)[0] ?? app.selectedObjects[0]; if (!o?.primitive?.mesh()) throw new Error('Select a polygon mesh'); const mesh = o.primitive.mesh()!; const name = a.Name || app.scene.uniqueName('ShapeKey');
-    const sk = new Property(name, 'shapekey', [str('data', JSON.stringify(Array.from(mesh.positions)), 'Positions', { readOnly: true }), int('points', mesh.positions.length / 3, 'Points', { readOnly: true }), num('weight', 1, 'Weight', { min: 0, max: 1, keyable: true })]);
+    ensureShapeBase(o, mesh.positions);
+    ensureShapeOperator(o);
+    const sk = new Property(name, 'shapekey', [str('data', JSON.stringify(Array.from(mesh.positions)), 'Positions', { readOnly: true }), int('points', mesh.positions.length / 3, 'Points', { readOnly: true }), num('weight', 0, 'Weight', { min: 0, max: 1, keyable: true })]);
     app.record('Store Shape Key', () => o.addProperty(sk), () => o.removeProperty(sk)); app.select([sk]); return sk;
   } });
-  app.register({ name: 'ApplyShapeKey', label: 'Apply Shape Key', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'Name', default: '' }], execute(app, a) {
-    const sk = (app.selection.find(n => (n as any).type === 'shapekey') as any) ?? app.selectedObjects[0]?.properties.find(p => p.type === 'shapekey'); if (!sk) throw new Error('Select a shape key'); app.setParam(sk.get('weight')!, 1); emit(); return sk;
+  app.register({ name: 'ApplyShapeKey', label: 'Apply Shape Key', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'Name', default: '' }, { name: 'Weight', default: 1 }], execute(app, a) {
+    const sk = (app.selection.find(n => (n as any).type === 'shapekey') as any)
+      ?? app.selectedObjects.flatMap(o => o.properties.filter(p => p.type === 'shapekey' && (!a.Name || p.name === a.Name)))[0]
+      ?? app.selectedObjects[0]?.properties.find(p => p.type === 'shapekey');
+    if (!sk) throw new Error('Select a shape key');
+    const o = (sk.parent as X3DObject | undefined) ?? app.selectedObjects.find(x => x.properties.some(p => p.type === 'shapekey')) ?? app.selectedObjects[0];
+    app.setParam(sk.get('weight')!, Number(a.Weight ?? 1));
+    if (o) evaluateShapes(o, true);
+    emit(); return sk;
+  } });
+  app.register({ name: 'EvaluateShapes', label: 'Evaluate Shapes', category: 'Animation', args: [{ name: 'InputObj', default: '' }], execute(app, a) {
+    const objs = app.targets(a.InputObj).length ? app.targets(a.InputObj) : app.selectedObjects;
+    let n = 0; for (const o of objs) n += evaluateShapes(o, true); emit(); return n;
   } });
   app.register({ name: 'SelectShapeKey', label: 'Select Shape Key', category: 'Animation', args: [{ name: 'InputObj', default: '' }], execute(app) { const sk = app.selectedObjects.flatMap(o => o.properties.filter(p => p.type === 'shapekey')); if (sk.length) app.select(sk); return sk; } });
-  app.register({ name: 'ReplaceShapeKey', label: 'Replace Shape Key', category: 'Animation', args: [], execute(app) { const sk = app.selection.find(n => (n as any).type === 'shapekey') as any; const o = app.selectedObjects.find(x => x.primitive?.mesh()); if (!sk || !o) throw new Error('Select a mesh and a shape key'); sk.set('data', JSON.stringify(Array.from(o.primitive!.mesh()!.positions))); return sk; } });
+  app.register({ name: 'ReplaceShapeKey', label: 'Replace Shape Key', category: 'Animation', args: [], execute(app) {
+    const sk = (app.selection.find(n => (n as any).type === 'shapekey') as any) ?? app.selectedObjects.flatMap(o => o.properties.filter(p => p.type === 'shapekey'))[0];
+    const o = (sk?.parent as X3DObject | undefined) ?? app.selectedObjects.find(x => x.primitive?.mesh());
+    if (!sk || !o?.primitive?.mesh()) throw new Error('Select a mesh and a shape key');
+    sk.set('data', JSON.stringify(Array.from(o.primitive.mesh()!.positions))); return sk;
+  } });
   app.register({ name: 'ConvertShapeReferenceMode', label: 'Convert Shape Reference Mode', category: 'Animation', args: [], execute(app) { app.logMsg('info', 'ConvertShapeReferenceMode: shape keys kept in object reference mode'); return null; } });
   app.register({ name: 'OpenShapeEditor', label: 'Open Shape Manager', category: 'Animation', args: [], undoable: false, execute() { window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'Animation Mixer' } })); } });
   app.register({ name: 'SaveDeformKey', label: 'Save Deform Key', category: 'Animation', args: [], execute: (app) => app.run('StoreShapeKey') });
@@ -355,6 +375,25 @@ export function registerAnimCommands(app: App) {
   }
 
   app.register({ name: 'Flipbook', label: 'Flipbook', category: 'Playback', args: [], undoable: false, execute(app) { window.dispatchEvent(new CustomEvent('flipbook')); } });
+
+  // ---- Mixer evaluation (clip weights + transition crossfade → blended action values)
+  app.register({ name: 'EvaluateMixer', label: 'Evaluate Mixer', category: 'Animation Mixer', args: [{ name: 'Frame', default: null }, { name: 'Apply', default: true }], execute(app, a) {
+    const frame = a.Frame != null ? Number(a.Frame) : app.anim.frame;
+    return evaluateMixer(app, frame, a.Apply !== false);
+  } });
+  app.register({ name: 'ToggleMixerEval', label: 'Toggle Mixer Live Eval', category: 'Animation Mixer', args: [], undoable: false, execute(app) {
+    (app as any).mixerLive = !(app as any).mixerLive;
+    app.logMsg('info', `Mixer live eval ${(app as any).mixerLive ? 'ON' : 'OFF'}`);
+    return (app as any).mixerLive;
+  } });
+  app.register({ name: 'DumpMixer', label: 'Dump Mixer', category: 'Animation Mixer', args: [], undoable: false, execute(app) {
+    const { mix, clips, transitions } = mixState(app);
+    const dump = mixerDump(mix);
+    const weights = clipWeightsAt(app.anim.frame, clips, transitions);
+    return { ...dump, frame: app.anim.frame, weights };
+  } });
+
+  installMixerEval(app);
 }
 
 function resolve(app: App, arg: any): Parameter[] {
