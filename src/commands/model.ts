@@ -209,8 +209,9 @@ export function registerModelCommands(app: App) {
   // ------------------------------------------------------------ properties
   const propBase = app.commands.get('AddProp')!; const propCan = propBase.canRun!, propExec = propBase.execute;
   const PROPS: Record<string, () => Property> = {
-    'Weight Map': () => new Property('WeightMap', 'wtmap', [num('weight', 1, 'Default Weight', { min: 0, max: 1 }), bool('paintable', true, 'Paintable')]),
-    'Color At Vertices Map': () => new Property('Vertex Color', 'vertexcolor', [color('color', [1, 1, 1], 'Default Color')]),
+    // Types match paint/GATOR lookups (`weightmap` / `vertexcolor`); Softimage hangs these on the Point cluster.
+    'Weight Map': () => { const p = new Property('WeightMap', 'weightmap', [num('weight', 1, 'Default Weight', { min: 0, max: 1 }), bool('paintable', true, 'Paintable')]); (p as any).values = new Map<number, number>(); return p; },
+    'Color At Vertices Map': () => { const p = new Property('Vertex Color', 'vertexcolor', [color('color', [1, 1, 1], 'Default Color')]); (p as any).values = new Map<number, V3>(); return p; },
     RenderMap: () => new Property('RenderMap', 'rendermap', [int('width', 512, 'Width'), int('height', 512, 'Height'), str('file', 'rendermap.png', 'Output')]),
     'Symmetry Map': () => makeSymmetryMap(((window as any).Application?.symPlane as any) ?? 'YZ'),
     'Static Kine State Property': () => new Property('Static KineState', 'statickinestate', [num('posx', 0, 'Pos X', { readOnly: true }), num('posy', 0, 'Pos Y', { readOnly: true }), num('posz', 0, 'Pos Z', { readOnly: true })]),
@@ -221,7 +222,22 @@ export function registerModelCommands(app: App) {
     'New Custom Data Map Template': () => new Property('UserDataMap', 'userdatamap', [str('template', 'Template', 'Template')]),
   };
   propBase.canRun = (a) => propCan(a) || !!(PROPS[a.PresetObj] ?? PROPS[a.Preset]) || String(a.PresetObj).startsWith('Texture') || !!a.Type;
-  propBase.execute = (app, a) => { if (a.Type && !PROPS[a.PresetObj] && !PROPS[a.Preset]) return projection(app, a.Type, app.targets(a.InputObjs)); const mk = PROPS[a.PresetObj] ?? PROPS[a.Preset]; if (mk) { for (const o of app.targets(a.InputObjs)) { const p = mk(); if (a.PresetObj === 'Static Kine State Property') { p.set('posx', o.kinematics.local.val('posx')); p.set('posy', o.kinematics.local.val('posy')); p.set('posz', o.kinematics.local.val('posz')); } app.record('Add property', () => o.addProperty(p), () => o.removeProperty(p)); app.select([p]); } return null; } return propExec(app, a); };
+  propBase.execute = (app, a) => { if (a.Type && !PROPS[a.PresetObj] && !PROPS[a.Preset]) return projection(app, a.Type, app.targets(a.InputObjs)); const mk = PROPS[a.PresetObj] ?? PROPS[a.Preset]; if (mk) {
+    // Softimage keeps weight / CAV / symmetry maps on the complete Point cluster (not the object root).
+    const ON_POINT_CLUSTER = new Set(['Weight Map', 'Color At Vertices Map', 'Symmetry Map']);
+    const preset = a.PresetObj || a.Preset;
+    let last: Property | null = null;
+    for (const o of app.targets(a.InputObjs)) {
+      const p = mk(); if (preset === 'Static Kine State Property') { p.set('posx', o.kinematics.local.val('posx')); p.set('posy', o.kinematics.local.val('posy')); p.set('posz', o.kinematics.local.val('posz')); }
+      if (ON_POINT_CLUSTER.has(preset) && o.primitive?.mesh()) {
+        const cl = mapCluster(app, o, 'pnt'); app.record('Add property', () => cl.addProperty(p), () => cl.removeProperty(p));
+      } else {
+        app.record('Add property', () => o.addProperty(p), () => o.removeProperty(p));
+      }
+      last = p; app.select([p]);
+    }
+    return last;
+  } return propExec(app, a); };
   /** Texture projection: a Texture_Projection property on the object's sample cluster, plus (for spatial projections) a
    *  Texture_Support control object the user can move/rotate/scale to place the projection, like Softimage. */
   const projection = (app: App, kind: string, objs: X3DObject[], withSupport = true) => {

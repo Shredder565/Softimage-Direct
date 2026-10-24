@@ -68,8 +68,37 @@ const len = (a: V3) => Math.hypot(a[0], a[1], a[2]); const dist = (a: V3, b: V3)
 const cross = (a: V3, b: V3): V3 => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 export type Boundary = 'umin' | 'umax' | 'vmin' | 'vmax';
 export function boundaryIndices(s: NurbsSurface, b: Boundary): [number, number][] { const out: [number, number][] = []; if (b === 'umin' || b === 'umax') { const i = b === 'umin' ? 0 : s.nu - 1; for (let j = 0; j < s.nv; j++) out.push([i, j]); } else { const j = b === 'vmin' ? 0 : s.nv - 1; for (let i = 0; i < s.nu; i++) out.push([i, j]); } return out; }
-export function closestPointOnSurf(s: NurbsSurface, p: V3, steps = 24): { u: number; v: number; p: V3 } { let best = { u: 0, v: 0, p: evalSurf(s, 0, 0) }, bd = Infinity; for (let j = 0; j <= steps; j++) for (let i = 0; i <= steps; i++) { const q = evalSurf(s, i / steps, j / steps); const d = dist(q, p); if (d < bd) { bd = d; best = { u: i / steps, v: j / steps, p: q }; } } return best; }
-export function surfNormal(s: NurbsSurface, u: number, v: number): V3 { const e = 1e-3; const du = sub(evalSurf(s, Math.min(1, u + e), v), evalSurf(s, Math.max(0, u - e), v)), dv = sub(evalSurf(s, u, Math.min(1, v + e)), evalSurf(s, u, Math.max(0, v - e))); return norm(cross(du, dv)); }
+/** Finite-difference partials ∂S/∂u, ∂S/∂v at (u,v) ∈ [0,1]. */
+export function surfPartials(s: NurbsSurface, u: number, v: number, e = 1e-4): { Su: V3; Sv: V3; p: V3 } {
+  const clamp = (t: number) => Math.min(1, Math.max(0, t));
+  const p = evalSurf(s, clamp(u), clamp(v));
+  const Su = mul(sub(evalSurf(s, clamp(u + e), clamp(v)), evalSurf(s, clamp(u - e), clamp(v))), 1 / (2 * e));
+  const Sv = mul(sub(evalSurf(s, clamp(u), clamp(v + e)), evalSurf(s, clamp(u), clamp(v - e))), 1 / (2 * e));
+  return { Su, Sv, p };
+}
+/** Closest surface point: coarse UV grid, then Newton on |S(u,v)−p|² (Softimage Snap/Stitch/Fillet all depend on this). */
+export function closestPointOnSurf(s: NurbsSurface, p: V3, steps = 24): { u: number; v: number; p: V3 } {
+  let best = { u: 0, v: 0, p: evalSurf(s, 0, 0) }, bd = Infinity;
+  for (let j = 0; j <= steps; j++) for (let i = 0; i <= steps; i++) {
+    const q = evalSurf(s, i / steps, j / steps); const d = dist(q, p);
+    if (d < bd) { bd = d; best = { u: i / steps, v: j / steps, p: q }; }
+  }
+  let u = best.u, v = best.v;
+  for (let iter = 0; iter < 12; iter++) {
+    const { Su, Sv, p: q } = surfPartials(s, u, v); const r = sub(q, p);
+    const a = Su[0] * Su[0] + Su[1] * Su[1] + Su[2] * Su[2];
+    const b = Su[0] * Sv[0] + Su[1] * Sv[1] + Su[2] * Sv[2];
+    const c = Sv[0] * Sv[0] + Sv[1] * Sv[1] + Sv[2] * Sv[2];
+    const d1 = Su[0] * r[0] + Su[1] * r[1] + Su[2] * r[2];
+    const d2 = Sv[0] * r[0] + Sv[1] * r[1] + Sv[2] * r[2];
+    const det = a * c - b * b; if (Math.abs(det) < 1e-14) break;
+    const du = (b * d2 - c * d1) / det, dv = (b * d1 - a * d2) / det;
+    u = Math.min(1, Math.max(0, u + du)); v = Math.min(1, Math.max(0, v + dv));
+    if (du * du + dv * dv < 1e-12) break;
+  }
+  const q = evalSurf(s, u, v); return { u, v, p: q };
+}
+export function surfNormal(s: NurbsSurface, u: number, v: number): V3 { const { Su, Sv } = surfPartials(s, u, v); return norm(cross(Su, Sv)); }
 /** The boundary of `s` closest to the other surface/point set. */
 export function nearestBoundary(s: NurbsSurface, target: (p: V3) => V3): Boundary { let best: Boundary = 'umin', bd = Infinity; for (const b of ['umin', 'umax', 'vmin', 'vmax'] as Boundary[]) { let d = 0; for (const [i, j] of boundaryIndices(s, b)) { const p = cpAt(s, i, j); d += dist(p, target(p)); } if (d < bd) { bd = d; best = b; } } return best; }
 

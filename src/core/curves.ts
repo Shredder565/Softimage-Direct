@@ -115,11 +115,146 @@ export function linearizeSegments(c: CurveData): CurveData {
 }
 /** Collapse repeated interior knots back to single knots (non-Bezier): refit through the current shape. */
 export function unbezier(c: CurveData): CurveData { const K = c.knots; const uniq = new Set(K.slice(c.degree + 1, K.length - c.degree - 1).map(k => Math.round(k * 1e6))); const n = Math.max(c.degree + 1, uniq.size + c.degree); return makeCurve(sampleCurve(c, n, !c.closed), c.degree, c.closed); }
-/** Remove the knot nearest `u` (approximate inverse of insertion: least-squares refit keeps the shape where possible). */
-export function removeKnot(c: CurveData, u: number): CurveData {
-  if (c.cvs.length <= c.degree + 1) return c; const K = c.knots; const [u0, u1] = curveDomain(c);
-  let best = -1, bd = Infinity; for (let i = c.degree + 1; i < K.length - c.degree - 1; i++) { const d = Math.abs(K[i] - u); if (d < bd) { bd = d; best = i; } }
-  if (best < 0) return c; const pts = sampleCurve(c, Math.max(c.degree + 1, c.cvs.length - 1) * 2); const fit = makeCurve(pts.filter((_, i) => i % 2 === 0), c.degree, c.closed); void u0; void u1; return fit;
+/** Unit tangent dC/du at parameter u (finite difference on the curve domain). */
+export function curveTangent(c: CurveData, u: number): V3 {
+  const [u0, u1] = curveDomain(c); const e = Math.max(1e-5, (u1 - u0) * 1e-4);
+  const a = evalCurve(c, Math.max(u0, u - e)), b = evalCurve(c, Math.min(u1 - 1e-12, u + e));
+  const t: V3 = [b[0] - a[0], b[1] - a[1], b[2] - a[2]]; const L = Math.hypot(...t) || 1; return [t[0] / L, t[1] / L, t[2] / L];
+}
+/** Closest parameters between two curves: coarse sample grid, then coordinate descent. */
+export function closestParamsOnCurves(a: CurveData, b: CurveData, steps = 48): { ua: number; ub: number; pa: V3; pb: V3; dist: number } {
+  const [a0, a1] = curveDomain(a), [b0, b1] = curveDomain(b);
+  let best = { ua: a0, ub: b0, pa: evalCurve(a, a0), pb: evalCurve(b, b0), dist: Infinity };
+  for (let i = 0; i <= steps; i++) {
+    const ua = a0 + (a1 - a0) * i / steps; const pa = evalCurve(a, ua);
+    for (let j = 0; j <= steps; j++) {
+      const ub = b0 + (b1 - b0) * j / steps; const pb = evalCurve(b, ub);
+      const d = Math.hypot(pa[0] - pb[0], pa[1] - pb[1], pa[2] - pb[2]);
+      if (d < best.dist) best = { ua, ub, pa, pb, dist: d };
+    }
+  }
+  let { ua, ub } = best;
+  for (let iter = 0; iter < 24; iter++) {
+    const eA = Math.max(1e-5, (a1 - a0) * 1e-3), eB = Math.max(1e-5, (b1 - b0) * 1e-3);
+    const pa = evalCurve(a, ua), pb = evalCurve(b, ub);
+    const dUa = Math.hypot(...[0, 1, 2].map(k => evalCurve(a, Math.min(a1 - 1e-12, ua + eA))[k] - evalCurve(a, Math.max(a0, ua - eA))[k]) as unknown as [number, number, number]) || 1;
+    void dUa;
+    const Ta = curveTangent(a, ua), Tb = curveTangent(b, ub);
+    const r: V3 = [pa[0] - pb[0], pa[1] - pb[1], pa[2] - pb[2]];
+    const dua = -(r[0] * Ta[0] + r[1] * Ta[1] + r[2] * Ta[2]) * eA * 8;
+    const dub = (r[0] * Tb[0] + r[1] * Tb[1] + r[2] * Tb[2]) * eB * 8;
+    ua = Math.min(a1 - 1e-12, Math.max(a0, ua + dua)); ub = Math.min(b1 - 1e-12, Math.max(b0, ub + dub));
+    if (dua * dua + dub * dub < 1e-14) break;
+  }
+  const pa = evalCurve(a, ua), pb = evalCurve(b, ub);
+  return { ua, ub, pa, pb, dist: Math.hypot(pa[0] - pb[0], pa[1] - pb[1], pa[2] - pb[2]) };
+}
+const curveSpeed = (c: CurveData, u: number) => {
+  const [u0, u1] = curveDomain(c); const e = Math.max(1e-5, (u1 - u0) * 1e-4);
+  const a = evalCurve(c, Math.max(u0, u - e)), b = evalCurve(c, Math.min(u1 - 1e-12, u + e));
+  return Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]) / (2 * e) || 1;
+};
+/** Build a circular arc through contacts `pa`→`pb` about an implied rolling-ball centre. */
+function circularFilletArc(pa: V3, pb: V3, Ta: V3, Tb: V3, r: number, subdiv: number): CurveData {
+  let N: V3 = [Ta[1] * Tb[2] - Ta[2] * Tb[1], Ta[2] * Tb[0] - Ta[0] * Tb[2], Ta[0] * Tb[1] - Ta[1] * Tb[0]];
+  let nL = Math.hypot(...N);
+  if (nL < 1e-8) {
+    const ab: V3 = [pb[0] - pa[0], pb[1] - pa[1], pb[2] - pa[2]];
+    const up: V3 = Math.abs(Ta[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+    N = Math.hypot(...ab) > 1e-8
+      ? [Ta[1] * ab[2] - Ta[2] * ab[1], Ta[2] * ab[0] - Ta[0] * ab[2], Ta[0] * ab[1] - Ta[1] * ab[0]]
+      : [Ta[1] * up[2] - Ta[2] * up[1], Ta[2] * up[0] - Ta[0] * up[2], Ta[0] * up[1] - Ta[1] * up[0]];
+    nL = Math.hypot(...N) || 1;
+  }
+  N = [N[0] / nL, N[1] / nL, N[2] / nL];
+  let Na: V3 = [N[1] * Ta[2] - N[2] * Ta[1], N[2] * Ta[0] - N[0] * Ta[2], N[0] * Ta[1] - N[1] * Ta[0]];
+  let Nb: V3 = [N[1] * Tb[2] - N[2] * Tb[1], N[2] * Tb[0] - N[0] * Tb[2], N[0] * Tb[1] - N[1] * Tb[0]];
+  const mid: V3 = [(pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2, (pa[2] + pb[2]) / 2];
+  const toward = (P: V3, n: V3): V3 => ((mid[0] - P[0]) * n[0] + (mid[1] - P[1]) * n[1] + (mid[2] - P[2]) * n[2] >= 0 ? n : [-n[0], -n[1], -n[2]]);
+  Na = toward(pa, Na); Nb = toward(pb, Nb);
+  const Ca: V3 = [pa[0] + Na[0] * r, pa[1] + Na[1] * r, pa[2] + Na[2] * r];
+  const Cb: V3 = [pb[0] + Nb[0] * r, pb[1] + Nb[1] * r, pb[2] + Nb[2] * r];
+  const C: V3 = [(Ca[0] + Cb[0]) / 2, (Ca[1] + Cb[1]) / 2, (Ca[2] + Cb[2]) / 2];
+  const norm3 = (v: V3): V3 => { const L = Math.hypot(...v) || 1; return [v[0] / L, v[1] / L, v[2] / L]; };
+  const da = norm3([pa[0] - C[0], pa[1] - C[1], pa[2] - C[2]]);
+  const db = norm3([pb[0] - C[0], pb[1] - C[1], pb[2] - C[2]]);
+  const cos = Math.max(-1, Math.min(1, da[0] * db[0] + da[1] * db[1] + da[2] * db[2]));
+  const ang = Math.acos(cos);
+  const w = Math.cos(ang / 2);
+  const bis = norm3([da[0] + db[0], da[1] + db[1], da[2] + db[2]]);
+  const midCV: V3 = [C[0] + bis[0] * (r / Math.max(w, 0.05)), C[1] + bis[1] * (r / Math.max(w, 0.05)), C[2] + bis[2] * (r / Math.max(w, 0.05))];
+  const n = Math.max(2, subdiv | 0); const pts: V3[] = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, omt = 1 - t;
+    const bw0 = omt * omt, bw1 = 2 * omt * t * w, bw2 = t * t; const den = bw0 + bw1 + bw2 || 1;
+    pts.push([(bw0 * pa[0] + bw1 * midCV[0] + bw2 * pb[0]) / den, (bw0 * pa[1] + bw1 * midCV[1] + bw2 * pb[1]) / den, (bw0 * pa[2] + bw1 * midCV[2] + bw2 * pb[2]) / den]);
+  }
+  return makeCurve(pts, Math.min(3, pts.length - 1), false);
+}
+/** Circular fillet between two curves (Softimage Fillet Curves / filletcrv): rolling-ball arc of `radius`.
+ *  Intersecting curves step away from the junction by r/tan(θ/2); non-intersecting use closest approach. */
+export function filletCurves(a: CurveData, b: CurveData, radius: number, subdiv = 8): CurveData {
+  const r = Math.max(0, radius); let { pa, pb, ua, ub, dist } = closestParamsOnCurves(a, b);
+  if (r < 1e-9) return makeCurve([pa, pb], 1, false);
+  const [a0, a1] = curveDomain(a), [b0, b1] = curveDomain(b);
+  // Softimage filletcrv handles intersecting curves: contacts lie along each curve, not at the junction.
+  if (dist < Math.max(1e-4, r * 0.05)) {
+    const Ta0 = curveTangent(a, ua), Tb0 = curveTangent(b, ub);
+    const cosT = Math.max(-1, Math.min(1, Ta0[0] * Tb0[0] + Ta0[1] * Tb0[1] + Ta0[2] * Tb0[2]));
+    const turn = Math.acos(Math.max(-1, Math.min(1, -cosT))); // exterior turning ≈ π − |angle|
+    const along = r / Math.max(0.2, Math.tan(Math.max(0.2, turn) / 2));
+    let best: { ua: number; ub: number; pa: V3; pb: V3; score: number } | null = null;
+    for (const sa of [-1, 1] as const) for (const sb of [-1, 1] as const) {
+      const ua2 = Math.min(a1 - 1e-12, Math.max(a0, ua + sa * along / curveSpeed(a, ua)));
+      const ub2 = Math.min(b1 - 1e-12, Math.max(b0, ub + sb * along / curveSpeed(b, ub)));
+      if (Math.abs(ua2 - ua) < 1e-9 || Math.abs(ub2 - ub) < 1e-9) continue;
+      const pa2 = evalCurve(a, ua2), pb2 = evalCurve(b, ub2);
+      const gap = Math.hypot(pa2[0] - pb2[0], pa2[1] - pb2[1], pa2[2] - pb2[2]);
+      // Prefer contacts whose chord is ~ 2 r sin(θ/2) for a circular fillet of radius r
+      const score = Math.abs(gap - 2 * r * Math.sin(Math.max(0.2, turn) / 2));
+      if (!best || score < best.score) best = { ua: ua2, ub: ub2, pa: pa2, pb: pb2, score };
+    }
+    if (best) { ua = best.ua; ub = best.ub; pa = best.pa; pb = best.pb; dist = Math.hypot(pa[0] - pb[0], pa[1] - pb[1], pa[2] - pb[2]); }
+  }
+  let Ta = curveTangent(a, ua), Tb = curveTangent(b, ub);
+  const ab: V3 = [pb[0] - pa[0], pb[1] - pa[1], pb[2] - pa[2]];
+  if (Math.hypot(...ab) > 1e-8) {
+    if (Ta[0] * ab[0] + Ta[1] * ab[1] + Ta[2] * ab[2] < 0) Ta = [-Ta[0], -Ta[1], -Ta[2]];
+    if (Tb[0] * ab[0] + Tb[1] * ab[1] + Tb[2] * ab[2] > 0) Tb = [-Tb[0], -Tb[1], -Tb[2]];
+  }
+  return circularFilletArc(pa, pb, Ta, Tb, r, subdiv);
+}
+/** Remove the knot nearest `u`. Prefers exact undo of a prior Boehm insertion (round-trip); else dense refit with one fewer CV. */
+export function removeKnot(c: CurveData, u: number, tol = 1e-4): CurveData {
+  if (c.cvs.length <= c.degree + 1) return c;
+  const cur = c.closed ? unrollClosed(c) : c;
+  const K = cur.knots, p = cur.degree;
+  let best = -1, bd = Infinity; for (let i = p + 1; i < K.length - p - 1; i++) { const d = Math.abs(K[i] - u); if (d < bd) { bd = d; best = i; } }
+  if (best < 0) return c;
+  const uRem = K[best];
+  // Exact path: drop the CV that Boehm insertion would have added at uRem (valid when that knot has multiplicity 1
+  // and neighbouring alphas reconstruct the original polygon within tol — Softimage Remove Knots).
+  let mult = 0; for (const k of K) if (Math.abs(k - uRem) < 1e-12) mult++;
+  if (mult === 1 && cur.cvs.length > p + 1) {
+    const k = best; // span index of the unique knot
+    const drop = k - p; // CV index introduced by insertion at this span
+    if (drop > 0 && drop < cur.cvs.length - 1) {
+      const knots = [...K.slice(0, k), ...K.slice(k + 1)];
+      const cvs = [...cur.cvs.slice(0, drop), ...cur.cvs.slice(drop + 1)];
+      if (knots.length === cvs.length + p + 1) {
+        const cand: CurveData = { degree: p, closed: false, cvs, knots };
+        const [u0, u1] = curveDomain(cur); let maxErr = 0;
+        for (let s = 0; s <= 32; s++) {
+          const t = u0 + (u1 - u0) * s / 32; const A = evalCurve(cur, t), B = evalCurve(cand, t);
+          maxErr = Math.max(maxErr, Math.hypot(A[0] - B[0], A[1] - B[1], A[2] - B[2]));
+        }
+        if (maxErr <= tol) return cand;
+      }
+    }
+  }
+  // Fallback: refit through the current shape with one fewer CV (shape-preserving approximation).
+  const n = Math.max(p + 1, cur.cvs.length - 1);
+  return makeCurve(sampleCurve(cur, Math.max(n * 2, 8)), p, false);
 }
 /** Degree elevation (exact for degree 1→2/3 via Bezier-segment elevation; higher degrees refit). */
 export function raiseDegree(c: CurveData): CurveData {
