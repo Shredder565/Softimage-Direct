@@ -2,7 +2,7 @@
 // other objects, lattices, implicit primitives, skeleton chains, text, and the richer deformers.
 import { siParamDefs, siLayout, siName } from './opdefs';
 import * as THREE from 'three';
-import { X3DObject, Primitive, Operator, Node, makeDisplay, makeGeomApprox, threeOrder } from './scene';
+import { X3DObject, Primitive, Operator, Node, makeDisplay, makeGeomApprox, threeOrder, stampOf } from './scene';
 import { num, int, bool, enumP, str } from './params';
 import { MeshData } from './geometry';
 import * as C from './curves';
@@ -115,6 +115,7 @@ export class GeneratorOperator extends Operator {
   /** Read a Softimage parameter, falling back to a legacy name. */
   p(si: string, legacy?: string, dflt = 0): number { const a = this.get(si); if (a) return Number(a.value); const b = legacy ? this.get(legacy) : undefined; return b ? Number(b.value) : dflt; }
   inputsChanged() { const vs = this.inputs.map(o => o.primitive?.version ?? -1); const ch = vs.some((v, i) => v !== this.inputVersions[i]); this.inputVersions = vs; return ch; }
+  depStamp() { return stampOf([...this.inputs, this.owner()]); }
   apply(): any {
     const v = (n: string) => Number(this.val(n));
     const me = this.owner(); const invMe = me ? me.globalMatrix().invert() : new THREE.Matrix4();
@@ -185,6 +186,7 @@ function require_topology() { return topoMod; }
 export class RefDeformOperator extends Operator {
   constructor(readonly preset: string, readonly refs: X3DObject[], readonly owner: () => X3DObject | null, readonly sel: CompSel | null, defs: any[]) { super(preset, 'refdeform', [...defs, bool('mute', false, 'Mute')]); this.rest = refs[0] ? refs[0].globalMatrix().clone() : null; }
   rest: THREE.Matrix4 | null;
+  depStamp() { return stampOf([...this.refs, this.owner()]); }
   apply(m: MeshData | null): MeshData | null {
     if (!m || this.val('mute')) return m; const me = this.owner(); const ref = this.refs[0]; if (!me || !ref) return m;
     const meG = me.globalMatrix(), refG = ref.globalMatrix();

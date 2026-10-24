@@ -118,7 +118,13 @@ export class Operator extends Node {
   constructor(name: string, type: string, defs: any[]) { super(name, type, 'operator', defs); }
   /** Transforms the geometry payload (MeshData for meshes/surfaces, CurveData for curves, LatticeData for lattices). */
   apply(input: any): any { return input; }
+  /** Operators that read other scene objects (deformers, generator inputs, references) return a stamp of what they
+   *  depend on; when it changes the primitive re-evaluates, so moving a bone or a lattice updates the mesh. */
+  depStamp?(): string;
+  _lastStamp?: string;
 }
+/** Stamp helper: global matrices (+ geometry versions) of a set of objects. */
+export function stampOf(objs: (X3DObject | null | undefined)[]): string { let s = ''; for (const o of objs) { if (!o) continue; const e = o.globalMatrix().elements; for (let i = 0; i < 16; i++) s += (Math.round(e[i] * 1e4)) + ','; s += (o.primitive?.version ?? 0) + '|'; } return s; }
 
 /** The generator at the bottom of the stack that makes the primitive geometry. Like Softimage, it carries the shape
  *  parameters of the implicit input primitive (cube.cube: length…) and the Geometry converter parameters (subdivisions). */
@@ -272,7 +278,9 @@ export class Primitive extends Node {
   removeOperator(op: Operator) { const i = this.operators.indexOf(op); if (i >= 0) { this.operators.splice(i, 1); op.parent = null; this.dirty = true; } }
   /** Evaluate the construction history. */
   geom(): any {
+    if (!this.dirty && this.cache !== null) { for (const op of this.operators) if (op.depStamp) { const st = op.depStamp(); if (st !== op._lastStamp) { op._lastStamp = st; this.dirty = true; } } }
     if (!this.dirty && this.cache !== null) return this.cache;
+    for (const op of this.operators) if (op.depStamp) op._lastStamp = op.depStamp();
     let m: any = null;
     for (const op of this.operators) { try { m = op.apply(m); } catch (e) { console.warn(op.name, e); } }
     this.cache = m; this.dirty = false; this.version++; return m;
