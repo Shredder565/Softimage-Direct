@@ -12,19 +12,24 @@ import { keymapNames, setKeymap, currentKeymap, bindingFor } from './keymap';
 const ev = (name: string, detail?: any) => window.dispatchEvent(new CustomEvent(name, { detail }));
 const KEY_OF: Record<string, string> = { 'New Scene': 'New Scene', 'Open...': 'Open Scene', 'Save': 'Save Scene', 'Undo': 'Undo', 'Redo': 'Redo', 'Repeat': 'Repeat', 'Cut': 'Cut', 'Copy': 'Copy', 'Paste': 'Paste', 'Delete Selected': 'Delete', 'Select All': 'Select All', 'Exit': 'Quit', 'Softimage Help': 'Users Guide' };
 
-export function menubar(app: App, host: HTMLElement) {
-  const bar = document.createElement('div'); bar.id = 'menubar';
-  const logo = document.createElement('span'); logo.className = 'logo'; logo.textContent = 'SOFT'; bar.appendChild(logo);
-  const file = SI_MENUS.fileMenu?.[0]; const main = SI_MENUS.mainMenu ?? [];
-  const tops: SiMenuItem[] = [file ?? main[0], ...main.slice(1)];
-  const clipboard: { objs: any[]; cut: boolean } = { objs: [], cut: false };
+/** Softimage PE leaves with id≥0 that the clone actually handles (others are grey / silent — see ui-documented-gaps). */
+const WIRED_LABELS = new Set([
+  'New Scene', 'Open...', 'Save', 'Save As...', 'Save Backup', 'Preferences...', 'Keyboard Mapping...', 'Exit',
+  'Undo', 'Redo', 'Repeat', 'Cut', 'Copy', 'Paste', 'Delete Selected', 'Select All',
+  'Minimize All', 'Restore All', 'Close All', 'Restore Default', 'Show All', 'Hide All',
+  'About Softimage', 'Softimage Help', 'Softimage SDK Help', "What's New",
+  'Manage...', 'New Custom Relational View', 'New Custom Shelf...', 'New Custom Toolbar...', 'Customize Toolbars...',
+]);
 
-  const EXTRA_VIEWS = ['ICE Tree', 'Render Tree', 'Texture Editor', 'Schematic', 'Animation Editor', 'DopeSheet', 'Animation Mixer', 'Spreadsheet', 'Plugin Manager', 'Netview', 'Image Clips', 'Render Manager', 'Material Manager', 'Weight Paint Panel', 'Preset Manager', 'Scene Layer Manager', 'XSI Explorer', 'Script History'];
-  const viewsSubmenu = (): SiMenuItem[] => [...SI_VIEWS.map(v => ({ label: v.name, id: -1 })), { separator: true }, ...EXTRA_VIEWS.filter(n => !SI_VIEWS.some(v => v.name === n)).map(n => ({ label: n, id: -1 }))];
-  const layoutsSubmenu = (): SiMenuItem[] => layoutNames().map(n => ({ label: n, id: -2 }));
-  const displaySubmenu = (): SiMenuItem[] => ['Bounding Box', 'Wireframe', 'Hidden Line', 'Constant', 'Shaded', 'Textured', 'Texture Decal', 'Realtime Shaders'].map(l => ({ label: l, id: -3 }));
-  /** Expand Softimage's insertion points the way the running app does. */
-  const expand = (items: SiMenuItem[]): SiMenuItem[] => items.flatMap(it => {
+const EXTRA_VIEWS = ['ICE Tree', 'Render Tree', 'Texture Editor', 'Schematic', 'Animation Editor', 'DopeSheet', 'Animation Mixer', 'Spreadsheet', 'Plugin Manager', 'Netview', 'Image Clips', 'Render Manager', 'Material Manager', 'Weight Paint Panel', 'Preset Manager', 'Scene Layer Manager', 'XSI Explorer', 'Script History'];
+const viewsSubmenu = (): SiMenuItem[] => [...SI_VIEWS.map(v => ({ label: v.name, id: -1 })), { separator: true }, ...EXTRA_VIEWS.filter(n => !SI_VIEWS.some(v => v.name === n)).map(n => ({ label: n, id: -1 }))];
+const layoutsSubmenu = (): SiMenuItem[] => layoutNames().map(n => ({ label: n, id: -2 }));
+const displaySubmenu = (): SiMenuItem[] => ['Bounding Box', 'Wireframe', 'Hidden Line', 'Constant', 'Shaded', 'Textured', 'Texture Decal', 'Realtime Shaders'].map(l => ({ label: l, id: -3 }));
+const recentScenes = (): string[] => { try { return JSON.parse(localStorage.getItem('si.recent') ?? '[]'); } catch { return []; } };
+
+/** Expand Softimage insertion points the way the running menubar does (shared by UI + harness). */
+export function expandMenubarItems(items: SiMenuItem[]): SiMenuItem[] {
+  return items.flatMap(it => {
     if (it.label === 'View insertion point') return [{ label: 'Views', items: viewsSubmenu() }, { label: 'Toolbars', items: [...userToolbarNames().map(n => ({ label: n, id: -9 })), { label: 'Palettes', id: -1 }, { label: 'Scripts', id: -1 }] }, { label: 'Optional Panels', items: [{ label: 'Main Shelf', id: -4 }, { label: 'Module Menu', id: -4 }, { label: 'MCP', id: -4 }, { label: 'Timeline', id: -4 }, { label: 'Timerange', id: -4 }, { label: 'Playback', id: -4 }] }];
     if (it.label === 'Layout Insertion Point') return layoutsSubmenu();
     if (it.label === 'New Layout From') return [{ label: 'New Layout From', items: layoutNames().map(n => ({ label: n, id: -8 })) }];
@@ -32,13 +37,51 @@ export function menubar(app: App, host: HTMLElement) {
     if (it.label === 'Import Insertion Point') return [{ label: 'Model...', id: -13 }, { label: 'Referenced Model...', id: -13 }, { label: 'Delta...', id: -13 }];
     if (it.label === 'Export Insertion Point') return [{ label: 'Model...', id: -14 }, { label: 'Delta...', id: -14 }];
     if (it.label === 'Edit Insertion Point' || it.label === 'Crosswalk Insertion Point') return [];
-    if (it.label === 'Recent Scenes') return [{ label: 'Recent Scenes', items: recent().map(n => ({ label: n, id: -7 })) }];
+    if (it.label === 'Recent Scenes') return [{ label: 'Recent Scenes', items: recentScenes().map(n => ({ label: n, id: -7 })) }];
     if (it.label === 'Recent Models') return [];
-    if (it.label === 'Window' && it.items) { const wins = floatingWindows(); return [{ ...it, items: [...expand(it.items), ...(wins.length ? [{ separator: true } as SiMenuItem, ...wins.map((w, i) => ({ label: `${i + 1} ${w.title}`, id: -12 }))] : [])] }]; }
-    if (it.items) return [{ ...it, items: expand(it.items) }];
+    if (it.label === 'Window' && it.items) {
+      const wins = floatingWindows();
+      return [{ ...it, items: [...expandMenubarItems(it.items), ...(wins.length ? [{ separator: true } as SiMenuItem, ...wins.map((w, i) => ({ label: `${i + 1} ${w.title}`, id: -12 }))] : [])] }];
+    }
+    if (it.items) return [{ ...it, items: expandMenubarItems(it.items) }];
     return [it];
   });
-  const recent = (): string[] => { try { return JSON.parse(localStorage.getItem('si.recent') ?? '[]'); } catch { return []; } };
+}
+
+export function menubarIsWired(it: SiMenuItem, path: string[] = []): boolean {
+  const l = it.label ?? '';
+  const id = it.id;
+  if (id !== undefined && id !== null && id < 0) return true;
+  if (WIRED_LABELS.has(l)) return true;
+  if (path.includes('Layouts')) return true;
+  // Softimage PE lists Import/Export Model under File with positive ids; pick() routes by label too.
+  if ((path.includes('Import') || path.includes('Export')) && (l === 'Model...' || l === 'Referenced Model...' || l === 'Delta...')) return true;
+  return false;
+}
+
+/** Inventory Softimage File/Edit/View/… leaves: wired vs silent (grey / would log not implemented). */
+export function menubarStatus(): { path: string; label: string; id: number | null; wired: boolean }[] {
+  const file = SI_MENUS.fileMenu?.[0]; const main = SI_MENUS.mainMenu ?? [];
+  const tops: SiMenuItem[] = [file ?? main[0], ...main.slice(1)].filter(Boolean);
+  const out: { path: string; label: string; id: number | null; wired: boolean }[] = [];
+  const walk = (items: SiMenuItem[], path: string[]) => {
+    for (const it of expandMenubarItems(items)) {
+      if (it.separator) continue;
+      if (it.items) { walk(it.items, [...path, it.label ?? '']); continue; }
+      const label = it.label ?? '';
+      out.push({ path: path.join(' > '), label, id: it.id ?? null, wired: menubarIsWired(it, path) });
+    }
+  };
+  for (const top of tops) walk(top.items ?? [], [top.label ?? '']);
+  return out;
+}
+
+export function menubar(app: App, host: HTMLElement) {
+  const bar = document.createElement('div'); bar.id = 'menubar';
+  const logo = document.createElement('span'); logo.className = 'logo'; logo.textContent = 'SOFT'; bar.appendChild(logo);
+  const file = SI_MENUS.fileMenu?.[0]; const main = SI_MENUS.mainMenu ?? [];
+  const tops: SiMenuItem[] = [file ?? main[0], ...main.slice(1)];
+  const clipboard: { objs: any[]; cut: boolean } = { objs: [], cut: false };
 
   const pick = (it: SiMenuItem, path: string[]) => {
     const l = it.label ?? '';
@@ -53,6 +96,12 @@ export function menubar(app: App, host: HTMLElement) {
       case -8: ev('layoutmenu', { label: l, path: [...path, 'New Layout From'] }); return;
       case -13: app.run(l.startsWith('Model') ? 'ImportModel' : l.startsWith('Referenced') ? 'ImportRefModels' : 'ImportDelta'); return;
       case -14: app.run(l.startsWith('Model') ? 'ExportModel' : 'ExportDelta'); return;
+    }
+    if (path.includes('Import') && (l === 'Model...' || l === 'Referenced Model...' || l === 'Delta...')) {
+      app.run(l.startsWith('Model') ? 'ImportModel' : l.startsWith('Referenced') ? 'ImportRefModels' : 'ImportDelta'); return;
+    }
+    if (path.includes('Export') && (l === 'Model...' || l === 'Delta...')) {
+      app.run(l.startsWith('Model') ? 'ExportModel' : 'ExportDelta'); return;
     }
     if (path.includes('Layouts') || l === 'Manage...') { ev('layoutmenu', { label: l, path }); return; }
     if (['New Custom Relational View', 'New Custom Shelf...', 'New Custom Toolbar...', 'Customize Toolbars...'].includes(l) || it.id === -9) { ev('toolbarmenu', { label: l }); return; }
@@ -76,11 +125,11 @@ export function menubar(app: App, host: HTMLElement) {
     }
     app.logMsg('info', `${path.join(' > ')}: not implemented`);
   };
-  const enabled = (it: SiMenuItem) => { const l = it.label ?? ''; return it.id! < 0 || ['New Scene', 'Open...', 'Save', 'Save As...', 'Save Backup', 'Preferences...', 'Keyboard Mapping...', 'Exit', 'Undo', 'Redo', 'Repeat', 'Cut', 'Copy', 'Paste', 'Delete Selected', 'Select All', 'Minimize All', 'Restore All', 'Close All', 'Restore Default', 'Show All', 'Hide All', 'About Softimage', 'Softimage Help', 'Softimage SDK Help', "What's New"].includes(l); };
+  const enabled = (it: SiMenuItem) => menubarIsWired(it);
   const accel = (it: SiMenuItem) => { const k = KEY_OF[it.label ?? '']; const b = k ? bindingFor(k) : null; return b ? { ...it, accel: b } : it; };
   for (const top of tops) {
     const m = document.createElement('span'); m.className = 'm'; m.textContent = top.label ?? ''; bar.appendChild(m);
-    m.onclick = (e) => { e.stopPropagation(); const r = m.getBoundingClientRect(); openSiMenu(expand(top.items ?? []).map(accel), r.left, r.bottom, pick, { enabled, checked: it => it.id === -2 ? it.label === currentLayoutName() : undefined }, [top.label ?? '']); };
+    m.onclick = (e) => { e.stopPropagation(); const r = m.getBoundingClientRect(); openSiMenu(expandMenubarItems(top.items ?? []).map(accel), r.left, r.bottom, pick, { enabled, checked: it => it.id === -2 ? it.label === currentLayoutName() : undefined }, [top.label ?? '']); };
   }
   // construction-mode combo (Softimage shows it at the right of the main toolbar): operators go into the chosen region
   const cm = document.createElement('select'); cm.className = 'cmode'; cm.title = 'Construction mode: which region of the construction history new operators go into';

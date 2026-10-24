@@ -25,10 +25,10 @@ import { propertyEditor } from './ui/ppg';
 import { viewManager } from './ui/viewManager';
 import { keyingPanel, layerControl, timeline, commandLine, scriptLog } from './ui/panels';
 import { mainShelf, panelSwitcher } from './ui/shelf';
-import { menubar } from './ui/menubar';
+import { menubar, menubarStatus } from './ui/menubar';
 import { statusBar } from './ui/statusbar';
 import { openFloating, floatingWindows, setDockHook } from './ui/floating';
-import { siIcon, hasIcon, runScriptLine, siMessage, SI_VIEWS } from './ui/si';
+import { siIcon, hasIcon, runScriptLine, siMessage, SI_VIEWS, SI_KEYMAPS } from './ui/si';
 import { preferencesWindow, preferenceSets } from './ui/prefs';
 
 const app = new App();
@@ -150,11 +150,17 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
   const mcpBtns = mcpHost ? Array.from(mcpHost.querySelectorAll('.mcp-btn')).map(b => b.textContent?.trim() || '') : [];
   const placeholders = Array.from(document.querySelectorAll('.view-placeholder')).map(e => (e.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 120));
   const moduleSel = document.querySelector<HTMLSelectElement>('.module-select');
+  const mb = menubarStatus();
+  const prefs = preferenceSets(app);
+  const EXPECTED_KEYMAPS = ['Softimage Key Map', 'Maya Compatible Key Map', '3ds Max Compatible Key Map', 'SI|3D Key Map'];
+  const keymapStats = keymapNames().map(n => ({ name: n, contexts: Object.keys(SI_KEYMAPS[n] ?? {}).length, bindings: Object.values(SI_KEYMAPS[n] ?? {}).reduce((a, b) => a + (b?.length ?? 0), 0) }));
   return {
     layout: currentLayoutName(),
     layouts: layoutNames(),
     keymap: currentKeymap,
     keymaps: keymapNames(),
+    keymapStats,
+    keymapsExpectedOk: EXPECTED_KEYMAPS.every(n => keymapNames().includes(n)),
     modulesExtracted: Object.keys(MENUS),
     moduleSelect: moduleSel ? Array.from(moduleSel.options).map(o => o.textContent) : [],
     registeredViews: registered,
@@ -165,6 +171,23 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     mcpButtons: mcpBtns,
     placeholderFrames: placeholders,
     menubar: !!document.getElementById('menubar'),
+    menubarWired: mb.filter(x => x.wired).length,
+    menubarSilent: mb.filter(x => !x.wired).length,
+    menubarLeaves: mb.length,
+    prefsPages: [...prefs.keys()],
+    prefsPageCount: prefs.size,
+  };
+};
+(window as any).__menubarStatus = () => menubarStatus();
+(window as any).__softUiChecks = () => {
+  const a = (window as any).__uiAudit();
+  return {
+    keymapsExpectedOk: a.keymapsExpectedOk,
+    keymapStats: a.keymapStats,
+    prefsPageCount: a.prefsPageCount,
+    prefsPages: a.prefsPages,
+    menubarWired: a.menubarWired,
+    menubarSilent: a.menubarSilent,
   };
 };
 (window as any).__openView = (name: string) => openView(name);
