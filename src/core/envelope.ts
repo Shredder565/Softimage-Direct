@@ -54,6 +54,43 @@ export class EnvelopeOperator extends Operator {
     for (let i = 0; i < n; i++) { const w = this.weights[i]; if (!w) continue; p.set(m.positions[i * 3], m.positions[i * 3 + 1], m.positions[i * 3 + 2]); acc.set(0, 0, 0); let sum = 0; for (let k = 0; k < w.length; k++) { if (!w[k]) continue; q.copy(p).applyMatrix4(mats[k]); acc.addScaledVector(q, w[k]); sum += w[k]; } if (sum > 0) { acc.multiplyScalar(1 / sum); out.positions[i * 3] = acc.x; out.positions[i * 3 + 1] = acc.y; out.positions[i * 3 + 2] = acc.z; } }
     return out;
   }
+
+  /** Re-normalize every point's weights to sum 1 (Softimage Normalize Weights). */
+  normalizeAll(points?: Iterable<number>) {
+    const idx = points ? [...points] : this.weights.map((_, i) => i);
+    for (const i of idx) if (this.weights[i] && !this.locked.has(i)) normalize(this.weights[i]);
+  }
+
+  /**
+   * Mirror envelope weights across X (YZ plane) using nearest opposite vertex.
+   * When `pairs` is provided (symmetry map), use those index pairs instead of spatial search.
+   */
+  mirrorWeights(m: MeshData, pairs?: [number, number][], axis = 0) {
+    const n = m.positions.length / 3;
+    if (!this.weights.length) return;
+    const src = this.weights.map(w => Float32Array.from(w));
+    let map: [number, number][] = pairs?.length ? pairs : [];
+    if (!map.length) {
+      for (let i = 0; i < n; i++) {
+        if (this.locked.has(i)) continue;
+        const tx = axis === 0 ? -m.positions[i * 3] : m.positions[i * 3];
+        const ty = axis === 1 ? -m.positions[i * 3 + 1] : m.positions[i * 3 + 1];
+        const tz = axis === 2 ? -m.positions[i * 3 + 2] : m.positions[i * 3 + 2];
+        let best = i, bestD = Infinity;
+        for (let j = 0; j < n; j++) {
+          const d = Math.hypot(m.positions[j * 3] - tx, m.positions[j * 3 + 1] - ty, m.positions[j * 3 + 2] - tz);
+          if (d < bestD) { bestD = d; best = j; }
+        }
+        if (best !== i) map.push([i, best]);
+      }
+    }
+    for (const [a, b] of map) {
+      if (a < 0 || b < 0 || a >= n || b >= n) continue;
+      if (this.locked.has(a) || this.locked.has(b)) continue;
+      this.weights[a] = normalize(Float32Array.from(src[b] ?? src[a]));
+      this.weights[b] = normalize(Float32Array.from(src[a] ?? src[b]));
+    }
+  }
 }
 const normalize = (w: Float32Array) => { let s = 0; for (const x of w) s += x; if (s > 0) for (let k = 0; k < w.length; k++) w[k] /= s; return w; };
 

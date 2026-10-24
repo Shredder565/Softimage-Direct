@@ -13,7 +13,7 @@ import { siCube, siSphere, siCylinder, siCone, siTorus, siGrid, siDisc } from '.
 import { MeshData, platonic, rhombicosidodecahedron, soccerBall, emptyMesh } from './geometry';
 import * as topo from './topology';
 import type { CompSel } from './topology';
-import type { CurveData } from './curves';
+import { evalCurve, curveDomain, type CurveData } from './curves';
 import type { LatticeData } from './topology2';
 
 export type NodeKind = 'scene' | 'model' | 'object' | 'property' | 'primitive' | 'operator' | 'material' | 'shader' | 'cluster' | 'kinematics' | 'layer' | 'pass' | 'folder';
@@ -385,7 +385,21 @@ export function applyConstraints(o: X3DObject, g: THREE.Matrix4): THREE.Matrix4 
         const roll = Number(c.val('roll') ?? 0) * Math.PI / 180; const nq = new THREE.Quaternion().setFromRotationMatrix(m); if (roll) nq.multiply(new THREE.Quaternion().setFromAxisAngle(axis.z ? new THREE.Vector3(0, 0, 1) : new THREE.Vector3(1, 0, 0), roll));
         g = new THREE.Matrix4().compose(p, blend < 1 ? q.clone().slerp(nq, blend) : nq, s);
       } else if (c.type === 'poscns') {
-        const off = new THREE.Vector3(Number(c.val('offsetx') ?? 0), Number(c.val('offsety') ?? 0), Number(c.val('offsetz') ?? 0)); const np = tc.clone().add(off); g = new THREE.Matrix4().compose(blend < 1 ? p.clone().lerp(np, blend) : np, q, s);
+        const off = new THREE.Vector3(Number(c.val('offsetx') ?? 0), Number(c.val('offsety') ?? 0), Number(c.val('offsetz') ?? 0));
+        let np = tc.clone().add(off);
+        // Softimage Path / Curve (Path): perc 0–100 samples the constraining curve.
+        const percP = c.get('perc');
+        const pathCurve = alive[0]?.primitive?.curve?.();
+        if (percP && pathCurve) {
+          const [u0, u1] = curveDomain(pathCurve);
+          const u = u0 + (u1 - u0) * (Number(percP.value) / 100);
+          const lp = evalCurve(pathCurve, u);
+          np = new THREE.Vector3(lp[0], lp[1], lp[2]).applyMatrix4(alive[0].globalMatrix()).add(off);
+        } else if (c.name.startsWith('Symmetry') || (c as any)._symmetry) {
+          // Symmetry Cns: mirror constraining position across YZ (Softimage default plane).
+          np = new THREE.Vector3(-tc.x, tc.y, tc.z).add(off);
+        }
+        g = new THREE.Matrix4().compose(blend < 1 ? p.clone().lerp(np, blend) : np, q, s);
       } else if (c.type === 'oricns') {
         const tq = new THREE.Quaternion(); tg[0].decompose(new THREE.Vector3(), tq, new THREE.Vector3()); const off = new THREE.Euler(Number(c.val('offsetx') ?? 0) * Math.PI / 180, Number(c.val('offsety') ?? 0) * Math.PI / 180, Number(c.val('offsetz') ?? 0) * Math.PI / 180, 'ZYX'); tq.multiply(new THREE.Quaternion().setFromEuler(off)); g = new THREE.Matrix4().compose(p, blend < 1 ? q.clone().slerp(tq, blend) : tq, s);
       } else if (c.type === 'posecns') {

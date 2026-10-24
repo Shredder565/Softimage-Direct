@@ -58,6 +58,37 @@ export function registerRiggingCommands(app: App) {
   app.register({ name: 'SelectDeformersFromEnvelope', label: 'Select Deformers from Envelope', category: 'Deformation|Envelope', args: [{ name: 'InputObjs', default: '' }], undoable: false, execute(app, a) { const defs = app.targets(a.InputObjs).flatMap(o => envelopeOf(o)?.deformers ?? []); if (defs.length) app.select(defs); return defs; } });
   app.register({ name: 'InspectEnvelopeWeights', label: 'Inspect Envelope Weights', category: 'Deformation|Envelope', args: [], undoable: false, execute(app) { const o = app.selectedObjects.find(x => envelopeOf(x)) ?? app.compSel?.obj; const p = o?.property('envelope'); if (!p) throw new Error('Select an enveloped mesh'); app.events.emit('inspect', p); window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'Weight Paint Panel' } })); return p; } });
   app.register({ name: 'AssociateEnvelopeBoundingVolume', label: 'Associate Envelope Bounding Volume', category: 'Deformation|Envelope', args: [{ name: 'InputObjs', default: '' }, { name: 'BndVolType', default: 'Inclusive' }], execute(app, a) { const vol = app.selectedObjects.find(o => o.type === 'implicit'); const def = app.selectedObjects.find(o => ['bone', 'null'].includes(o.type)); if (!vol || !def) throw new Error('Select a deformer and an implicit sphere/cube'); (def as any).envVolume = { obj: vol, type: a.BndVolType }; app.logMsg('info', `${def.name}: ${a.BndVolType} bounding volume ${vol.name}`); return null; } });
+  app.register({ name: 'NormalizeEnvelopeWeights', label: 'Normalize Envelope Weights', category: 'Deformation|Envelope', args: [{ name: 'InputObjs', default: '' }], execute(app, a) {
+    let n = 0;
+    for (const o of app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects) {
+      const op = envelopeOf(o); if (!op) continue;
+      const pts = selPoints(app, o); op.normalizeAll(pts ?? undefined); o.primitive!.dirty = true; n++;
+    }
+    if (!n) throw new Error('Select an enveloped mesh'); app.events.emit('scene'); return n;
+  } });
+  app.register({ name: 'MirrorEnvelopeWeights', label: 'Mirror Envelope Weights', category: 'Deformation|Envelope', args: [{ name: 'InputObjs', default: '' }, { name: 'Axis', default: 0 }], execute(app, a) {
+    const o = (app.targets(a.InputObjs)[0] ?? app.selectedObjects.find(x => envelopeOf(x)))!;
+    const op = envelopeOf(o); if (!op) throw new Error('Select an enveloped mesh');
+    const mesh = o.primitive!.mesh()!;
+    const tmpl = o.properties.find(p => p.type === 'symmetrytemplate') ?? o.model?.properties.find(p => p.type === 'symmetrytemplate');
+    const pairs = (tmpl as any)?.pairs as [number, number][] | undefined;
+    op.mirrorWeights(mesh, pairs, Number(a.Axis ?? 0)); o.primitive!.dirty = true; app.events.emit('scene');
+    app.logMsg('info', `MirrorEnvelopeWeights: ${pairs?.length ?? 'spatial'} pair(s) on ${o.name}`); return op.weights.length;
+  } });
+  app.register({ name: 'RemoveFlexEnvDeformer', label: 'Remove Envelope Deformer', category: 'Deformation|Envelope', args: [{ name: 'ConnectionSet', default: '' }, { name: 'Interactive', default: true }], execute(app, a) {
+    const meshes = app.selectedObjects.filter(o => envelopeOf(o));
+    const defs = deformersOf(app.selectedObjects.filter(o => !envelopeOf(o)));
+    const hosts = meshes.length ? meshes : [...app.scene.allObjects()].filter(o => envelopeOf(o));
+    if (!hosts.length) throw new Error('RemoveFlexEnvDeformer: select an enveloped mesh (and deformers to remove)');
+    let n = 0;
+    for (const o of hosts) {
+      const op = envelopeOf(o)!;
+      const remove = defs.length ? defs.filter(d => op.deformers.includes(d)) : op.deformers.slice(-1);
+      if (!remove.length) continue;
+      op.removeDeformers(remove); o.primitive!.dirty = true; (o.property('envelope') as any)?.refreshDeformers?.(); n += remove.length;
+    }
+    app.events.emit('scene'); app.logMsg('info', `RemoveFlexEnvDeformer: removed ${n} deformer(s)`); void a; return n;
+  } });
 
   // ------------------------------------------------------------ guides and rigs
   type GuideDef = { name: string; pos: V3; parent?: string }; const L = 'L_', R = 'R_';

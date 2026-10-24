@@ -57,10 +57,20 @@ const r = await page.evaluate(() => {
   sk.set('data', JSON.stringify(target));
   A.select([sk]);
   A.run('ApplyShapeKey', { Weight: 0.5 });
-  // Read back without forcing a geo rebuild that would drop blended positions.
   const after = Array.from(mesh.primitive.mesh().positions);
   const y0 = after[1];
   const expectedY = basePts[1] + 1; // relative blend weight 0.5 * delta 2
+
+  // Envelope normalize + mirror + remove deformer
+  A.select([mesh]);
+  const op = mesh.primitive.operators.find(o => o.type === 'envelopop');
+  if (op?.weights?.[0]) { op.weights[0][0] = 2; op.weights[0][1] = 2; }
+  A.run('NormalizeEnvelopeWeights');
+  const normSum = op?.weights?.[0] ? [...op.weights[0]].reduce((s, x) => s + x, 0) : null;
+  const beforeMirror = op?.weights?.[0] ? Array.from(op.weights[0]) : null;
+  A.run('MirrorEnvelopeWeights');
+  A.select([mesh, boneB]);
+  const removed = A.run('RemoveFlexEnvDeformer');
   return {
     envOk, envDeformers, weightSum,
     shapeKeys: mesh.properties.filter(p => p.type === 'shapekey').map(p => p.name),
@@ -68,6 +78,7 @@ const r = await page.evaluate(() => {
     shapeDelta: JSON.parse(sk.val('data'))[1] - basePts[1],
     weight: sk.val('weight'),
     y0, expectedY, baseY: basePts[1],
+    normSum, beforeMirror, removed, deformersAfter: op?.deformers?.length,
   };
 });
 
@@ -79,6 +90,9 @@ if (r.weightSum != null && Math.abs(r.weightSum - 1) > 1e-4) diffs.push(`weight 
 if (!r.hasBase) diffs.push('missing ShapeBase');
 if (!r.shapeKeys?.length) diffs.push('no shape keys');
 if (Math.abs((r.y0 ?? 0) - (r.expectedY ?? 0)) > 1e-6) diffs.push(`shape blend Y ${r.y0} != ${r.expectedY}`);
+if (r.normSum != null && Math.abs(r.normSum - 1) > 1e-4) diffs.push(`normalize sum ${r.normSum}`);
+if (!(r.removed >= 1)) diffs.push(`RemoveFlexEnvDeformer removed=${r.removed}`);
+if (!(r.deformersAfter === 1)) diffs.push(`deformers after remove ${r.deformersAfter}`);
 
 let pcNote = 'no PC dump yet — Direct fixture only';
 if (PC_DUMP) {
