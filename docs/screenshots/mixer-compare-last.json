@@ -224,5 +224,5 @@
     },
     "posxMid": 0.09272488700976816
   },
-  "deepNote": "no PC deep dump yet"
+  "deepNote": "loaded /cursor/stores/self/internal/softimage-pc-dumps/anim/si_anim_mixer_deep.json; expected gaps: PC StoreAction null handles (2); PC AddBridgeTransition: no command; PC mixer_collections null (needs clip sel)"
 }
