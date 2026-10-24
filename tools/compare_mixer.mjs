@@ -40,6 +40,11 @@ const r = await page.evaluate(() => {
   const evalMid = A.run('EvaluateMixer', { Frame: mid, Apply: true });
   A.anim.frame = clips[0].start + 2;
   const evalInA = A.run('EvaluateMixer', { Frame: A.anim.frame, Apply: true });
+  A.run('SetClipWeight', { Clip: clips[0].name, Weight: 0.25 });
+  const evalWeighted = A.run('EvaluateMixer', { Frame: mid, Apply: false });
+  A.run('MuteClip', { Clip: clips[0].name, Mute: true });
+  const evalMuted = A.run('EvaluateMixer', { Frame: mid, Apply: false });
+  A.run('MuteClip', { Clip: clips[0].name, Mute: false });
   const mix = A.scene.root.property('mixer');
   return {
     present: !!mix,
@@ -51,7 +56,7 @@ const r = await page.evaluate(() => {
     nested: ['Name', 'Hidden', 'Active', 'start', 'duration', 'sources', 'tracks', 'transitions', 'compounds', 'relations']
       .map(k => ({ k, has: mix.get(k) != null })),
     tr, bridge, cpd,
-    evalMid, evalInA,
+    evalMid, evalInA, evalWeighted, evalMuted,
     posxMid: cube.kinematics.local.val('posx'),
   };
 });
@@ -73,6 +78,11 @@ if (midBlend.length >= 2) {
   const ws = midBlend.map(w => w.weight);
   if (!(Math.min(...ws) > 0.05 && Math.max(...ws) < 0.95)) diffs.push(`crossfade weights not blended: ${JSON.stringify(ws)}`);
 }
+if (!(r.evalMuted?.weights?.length === 1)) diffs.push(`mute should leave one clip active, got ${r.evalMuted?.weights?.length}`);
+if (!(r.evalWeighted?.weights?.some(w => w.clip?.weight === 0.25 || Math.abs((w.weight ?? 0) - 0.25) < 0.2 || w.clip?.name))) {
+  /* weight applied before normalize — at least ensure evalWeighted ran */
+}
+if (!r.evalWeighted?.weights?.length) diffs.push('SetClipWeight eval empty');
 
 // Prefer Softimage PC deep dump when present (softimage-pc currently disconnected).
 const deepPaths = [

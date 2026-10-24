@@ -14,7 +14,9 @@
         "source": "A",
         "start": 1,
         "duration": 99,
-        "track": 0
+        "track": 0,
+        "weight": 0.25,
+        "mute": false
       },
       {
         "name": "B",
@@ -127,7 +129,9 @@
             "source": "A",
             "start": 1,
             "duration": 99,
-            "track": 0
+            "track": 0,
+            "weight": 0.25,
+            "mute": false
           },
           "weight": 0.6153846153846154,
           "localTime": 95
@@ -145,7 +149,7 @@
         }
       ],
       "values": {
-        "Scene.Scene_Root.cube.Kinematics.Local.posx": 1.8461538461538463
+        "Scene.Scene_Root.cube.Kinematics.Local.posx": 3
       }
     },
     "evalInA": {
@@ -157,7 +161,9 @@
             "source": "A",
             "start": 1,
             "duration": 99,
-            "track": 0
+            "track": 0,
+            "weight": 0.25,
+            "mute": false
           },
           "weight": 1,
           "localTime": 2
@@ -166,6 +172,55 @@
       "values": {
         "Scene.Scene_Root.cube.Kinematics.Local.posx": 0.09272488700976816
       }
+    },
+    "evalWeighted": {
+      "frame": 96,
+      "weights": [
+        {
+          "clip": {
+            "name": "A",
+            "source": "A",
+            "start": 1,
+            "duration": 99,
+            "track": 0,
+            "weight": 0.25,
+            "mute": false
+          },
+          "weight": 0.28571428571428575,
+          "localTime": 95
+        },
+        {
+          "clip": {
+            "name": "B",
+            "source": "B",
+            "start": 100,
+            "duration": 99,
+            "track": 0
+          },
+          "weight": 0.7142857142857143,
+          "localTime": 0
+        }
+      ],
+      "values": {
+        "Scene.Scene_Root.cube.Kinematics.Local.posx": 3
+      }
+    },
+    "evalMuted": {
+      "frame": 96,
+      "weights": [
+        {
+          "clip": {
+            "name": "B",
+            "source": "B",
+            "start": 100,
+            "duration": 99,
+            "track": 0
+          },
+          "weight": 1,
+          "localTime": 0
+        }
+      ],
+      "values": {}
     },
     "posxMid": 0.09272488700976816
   },

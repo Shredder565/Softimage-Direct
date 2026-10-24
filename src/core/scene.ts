@@ -389,7 +389,7 @@ export function applyConstraints(o: X3DObject, g: THREE.Matrix4): THREE.Matrix4 
         let np = tc.clone().add(off);
         // Softimage Path / Curve (Path): perc 0–100 samples the constraining curve.
         const percP = c.get('perc');
-        const pathCurve = alive[0]?.primitive?.curve?.();
+        const pathCurve = alive[0]?.primitive?.curve?.() ?? null;
         if (percP && pathCurve) {
           const [u0, u1] = curveDomain(pathCurve);
           const u = u0 + (u1 - u0) * (Number(percP.value) / 100);
@@ -398,6 +398,45 @@ export function applyConstraints(o: X3DObject, g: THREE.Matrix4): THREE.Matrix4 
         } else if (c.name.startsWith('Symmetry') || (c as any)._symmetry) {
           // Symmetry Cns: mirror constraining position across YZ (Softimage default plane).
           np = new THREE.Vector3(-tc.x, tc.y, tc.z).add(off);
+        } else if ((c as any)._cluster) {
+          // Object to Cluster: average selected cluster point positions in world.
+          const cl = (c as any)._cluster as { obj: X3DObject; indices: number[] };
+          const mesh = cl.obj.primitive?.mesh();
+          if (mesh && cl.indices?.length) {
+            const acc = new THREE.Vector3(); const M = cl.obj.globalMatrix();
+            for (const i of cl.indices) {
+              acc.add(new THREE.Vector3(mesh.positions[i * 3], mesh.positions[i * 3 + 1], mesh.positions[i * 3 + 2]).applyMatrix4(M));
+            }
+            np = acc.multiplyScalar(1 / cl.indices.length).add(off);
+          }
+        } else if ((c as any)._bndPlane) {
+          // Bounding Plane: project onto plane through target with normal from enum (default Y).
+          const axis = Number(c.val('axis') ?? 1);
+          const nrm = new THREE.Vector3(axis === 0 ? 1 : 0, axis === 1 ? 1 : 0, axis === 2 ? 1 : 0);
+          const toPoint = p.clone().sub(tc); const d = toPoint.dot(nrm); np = p.clone().sub(nrm.multiplyScalar(d)).add(off);
+        } else if ((c as any)._bndVolume) {
+          // Bounding Volume: clamp inside axis-aligned box of target's size (implicit/null).
+          const size = Number(alive[0].get('size')?.value ?? alive[0].primitive?.val?.('size') ?? 2);
+          const half = size / 2;
+          np = new THREE.Vector3(
+            Math.max(tc.x - half, Math.min(tc.x + half, p.x)),
+            Math.max(tc.y - half, Math.min(tc.y + half, p.y)),
+            Math.max(tc.z - half, Math.min(tc.z + half, p.z)),
+          ).add(off);
+        }
+        // Path tangent: optionally aim local -Z along curve (Direction-on-path).
+        if (percP && pathCurve && c.val('tangent')) {
+          const [u0, u1] = curveDomain(pathCurve);
+          const u = u0 + (u1 - u0) * (Number(percP.value) / 100);
+          const du = (u1 - u0) * 0.01;
+          const a = evalCurve(pathCurve, u); const b = evalCurve(pathCurve, Math.min(u1 - 1e-6, u + du));
+          const dir = new THREE.Vector3(b[0] - a[0], b[1] - a[1], b[2] - a[2]).transformDirection(alive[0].globalMatrix()).normalize();
+          if (dir.lengthSq() > 1e-8) {
+            const z = dir.clone().negate(); const up = new THREE.Vector3(0, 1, 0);
+            const x = new THREE.Vector3().crossVectors(up, z).normalize(); if (x.lengthSq() < 1e-8) x.set(1, 0, 0);
+            const y = new THREE.Vector3().crossVectors(z, x); const m = new THREE.Matrix4().makeBasis(x, y, z);
+            q.copy(new THREE.Quaternion().setFromRotationMatrix(m));
+          }
         }
         g = new THREE.Matrix4().compose(blend < 1 ? p.clone().lerp(np, blend) : np, q, s);
       } else if (c.type === 'oricns') {
@@ -525,7 +564,7 @@ export class Pass extends Node { constructor(name: string) { super(name, 'pass',
 
 // ---------------------------------------------------------------- scene
 /** Softimage Mixer clip on a track (PC dump nested Sources/Tracks). */
-export type MixerClip = { name: string; source: string; start: number; duration: number; track?: number };
+export type MixerClip = { name: string; source: string; start: number; duration: number; track?: number; weight?: number; mute?: boolean; additive?: boolean };
 /** Softimage mixer transition between two clips (AddTransition / AddBridgeTransition / AddTWTransition). */
 export type MixerTransition = { name: string; kind: 'standard' | 'bridge' | 'timewarp'; from: string; to: string; length: number; weight?: number };
 /** Softimage mixer compound (CreateCompound / ExplodeCompound). */

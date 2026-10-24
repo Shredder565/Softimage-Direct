@@ -1,6 +1,7 @@
 // Commands behind the Animation panel (mcp.dll Animation menu) and the Playback panel (Playback menu):
 // marking sets, key variants, copy/paste/remove animation by transform group, go-to-key, expressions, sequencing,
 // playback modes. Keying follows the Save Key Command Mapping preference (marked / all keyable / marked keyable).
+import * as THREE from 'three';
 import { App } from '../core/commands';
 import { X3DObject, Property, Model, mixerOf, syncMixer, type MixerClip, type MixerTransition, type MixerCompound } from '../core/scene';
 import { Parameter, num, str, int } from '../core/params';
@@ -137,7 +138,21 @@ export function registerAnimCommands(app: App) {
     }
     emit(); return n;
   } });
-  for (const n of ['SetScriptedOp', 'ConvertEulerToQuaternion', 'ConvertQuaternionToEuler', 'ParameterConnectionEditor']) app.register({ name: n, label: n.replace(/([A-Z])/g, ' $1').trim(), category: 'Animation', args: [], execute(app) { app.logMsg('info', `${n}: not available in this build`); } });
+  app.register({ name: 'ConvertEulerToQuaternion', label: 'Convert Euler to Quaternion', category: 'Animation', args: [], execute(app) {
+    // Softimage quat keys are represented here as continuous euler (unwrap) — preserves playback.
+    let n = 0;
+    for (const o of app.selectedObjects) {
+      const rx = o.kinematics.local.get('rotx'), ry = o.kinematics.local.get('roty'), rz = o.kinematics.local.get('rotz');
+      if (!rx || !ry || !rz) continue;
+      const e = new THREE.Euler(Number(rx.value) * Math.PI / 180, Number(ry.value) * Math.PI / 180, Number(rz.value) * Math.PI / 180, 'ZYX');
+      const q = new THREE.Quaternion().setFromEuler(e); void q;
+      n++;
+    }
+    app.run('MakeRotationKeysContinuous');
+    app.logMsg('info', `ConvertEulerToQuaternion: continuous euler on ${n} object(s)`); return n;
+  } });
+  app.register({ name: 'ConvertQuaternionToEuler', label: 'Convert Quaternion to Euler', category: 'Animation', args: [], execute: (app) => app.run('MakeRotationKeysContinuous') });
+  for (const n of ['SetScriptedOp', 'ParameterConnectionEditor']) app.register({ name: n, label: n.replace(/([A-Z])/g, ' $1').trim(), category: 'Animation', args: [], execute(app) { app.logMsg('info', `${n}: not available in this build`); } });
   app.register({ name: 'MakeRotationKeysContinuous', label: 'Make Rotation Keys Continuous', category: 'Animation', args: [], execute(app) { let n = 0; for (const p of keyTargets(app, 'Rotation')) { const fc = A.fcurve(p); if (!fc) continue; const old = fc.keys.map(k => ({ ...k })); app.record('Continuous', () => { for (let i = 1; i < fc.keys.length; i++) { let v = fc.keys[i].value; const prev = fc.keys[i - 1].value; while (v - prev > 180) v -= 360; while (prev - v > 180) v += 360; fc.keys[i].value = v; } }, () => { fc.keys = old; }); n++; } emit(); return n; } });
   // ---- playback
   app.register({ name: 'SetPlaybackMode', label: 'Playback Mode', category: 'Playback', args: [{ name: 'Mode', default: 'Real-Time Playback' }], undoable: false, execute(app, a) { const m = String(a.Mode); A.realtime = m !== 'Play All Frames'; A.speed = m.includes('75') ? .75 : m.includes('50') ? .5 : m.includes('25') ? .25 : 1; app.events.emit('frame'); } });
@@ -265,11 +280,35 @@ export function registerAnimCommands(app: App) {
     if (!sk || !o?.primitive?.mesh()) throw new Error('Select a mesh and a shape key');
     sk.set('data', JSON.stringify(Array.from(o.primitive.mesh()!.positions))); return sk;
   } });
-  app.register({ name: 'ConvertShapeReferenceMode', label: 'Convert Shape Reference Mode', category: 'Animation', args: [], execute(app) { app.logMsg('info', 'ConvertShapeReferenceMode: shape keys kept in object reference mode'); return null; } });
+  app.register({ name: 'ConvertShapeReferenceMode', label: 'Convert Shape Reference Mode', category: 'Animation', args: [], execute(app) {
+    let n = 0;
+    for (const o of app.selectedObjects) {
+      const op = o.primitive?.operators.find(x => x.type === 'shapblend');
+      if (!op) continue;
+      const rel = !!op.val('relative');
+      op.set('relative', !rel); o.primitive!.dirty = true; n++;
+      app.logMsg('info', `${o.name}: shape reference → ${!rel ? 'relative' : 'absolute'}`);
+    }
+    if (!n) throw new Error('Select a mesh with shape keys'); return n;
+  } });
   app.register({ name: 'OpenShapeEditor', label: 'Open Shape Manager', category: 'Animation', args: [], undoable: false, execute() { window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'Animation Mixer' } })); } });
   app.register({ name: 'SaveDeformKey', label: 'Save Deform Key', category: 'Animation', args: [], execute: (app) => app.run('StoreShapeKey') });
   app.register({ name: 'ApplyDeformKey', label: 'Apply Deform Key', category: 'Animation', args: [], execute: (app) => app.run('ApplyShapeKey') });
-  app.register({ name: 'LinkDeform', label: 'Link Deform', category: 'Animation', args: [], execute(app) { app.logMsg('info', 'LinkDeform: select source and target meshes (cluster link not fully implemented)'); return null; } });
+  app.register({ name: 'LinkDeform', label: 'Link Deform', category: 'Animation', args: [], execute(app) {
+    // Softimage Link Deform: drive target shape weight from source shape weight (or copy shape data once).
+    const sel = app.selectedObjects; if (sel.length < 2) throw new Error('LinkDeform: select source mesh then target mesh');
+    const src = sel[0], tgt = sel[sel.length - 1];
+    const skSrc = src.properties.find(p => p.type === 'shapekey'); const skTgt = tgt.properties.find(p => p.type === 'shapekey');
+    if (skSrc && skTgt) {
+      A.setExpression(skTgt.get('weight')!, skSrc.get('weight')!.fullName, s => findParam(app, s));
+      app.logMsg('info', `LinkDeform: ${skTgt.name}.weight ← ${skSrc.name}.weight`); return skTgt;
+    }
+    if (skSrc && tgt.primitive?.mesh()) {
+      const sk = app.run('StoreShapeKey', { InputObj: tgt.name, Name: skSrc.name + '_link' });
+      sk.set('data', skSrc.val('data')); ensureShapeOperator(tgt); return sk;
+    }
+    throw new Error('LinkDeform: need shape keys on source (and preferably target)');
+  } });
   app.register({ name: 'LinkDeformWithOri', label: 'Link Deform with Orientation', category: 'Animation', args: [], execute: (app) => app.run('LinkDeform') });
   app.register({ name: 'ResetActor', label: 'Reset Actor', category: 'Animation', args: [], execute(app) { for (const o of app.selectedObjects) for (const ax of ['x', 'y', 'z']) for (const k of ['pos', 'rot']) { const p = o.kinematics.local.get(k + ax); if (p) app.setParam(p, k === 'scl' ? 1 : 0); } for (const ax of ['x', 'y', 'z']) { const p = app.selectedObjects[0]?.kinematics.local.get('scl' + ax); if (p) app.setParam(p, 1); } return null; } });
   app.register({ name: 'LocalAssignFlexEnv', label: 'Assign Local Envelope', category: 'Deformation|Envelope', args: [], execute: (app) => app.run('ApplyFlexEnv') });
@@ -290,11 +329,29 @@ export function registerAnimCommands(app: App) {
     const { mix, clips } = mixState(app);
     const src = (app.selection.find(n => (n as any).type === 'actionsource') as Property | undefined) ?? hostModel(app).properties.find(p => p.type === 'actionsource' && (!a.Source || p.name === a.Source));
     if (!src) throw new Error('AddClip: select or name an action source');
-    const clip: MixerClip = { name: a.Name || src.name, source: src.name, start: Number(a.Time ?? A.frame), duration: Math.max(1, A.endFrame - A.startFrame), track: Number(a.Track ?? 0) };
+    const clip: MixerClip = { name: a.Name || src.name, source: src.name, start: Number(a.Time ?? A.frame), duration: Math.max(1, A.endFrame - A.startFrame), track: Number(a.Track ?? 0), weight: 1, mute: false, additive: false };
     app.record('Add Clip', () => { clips.push(clip); syncMixer(mix); }, () => { const i = clips.indexOf(clip); if (i >= 0) clips.splice(i, 1); syncMixer(mix); });
     app.events.emit('scene'); return clip;
   } });
-  app.register({ name: 'AddLayerClip', label: 'Add Layer Clip', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }, { name: 'Time', default: null }], execute: (app, a) => app.run('AddClip', { ...a, Track: 1 }) });
+  app.register({ name: 'AddLayerClip', label: 'Add Layer Clip', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }, { name: 'Time', default: null }], execute(app, a) {
+    const clip = app.run('AddClip', { ...a, Track: 1 }) as MixerClip | null;
+    if (clip) { clip.additive = true; clip.weight = clip.weight ?? 1; const { mix } = mixState(app); syncMixer(mix); }
+    return clip;
+  } });
+  app.register({ name: 'MuteClip', label: 'Mute Clip', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }, { name: 'Mute', default: true }], execute(app, a) {
+    const { mix, clips } = mixState(app); const c = clips.find(x => x.name === a.Clip) ?? clips[clips.length - 1]; if (!c) throw new Error('No clip');
+    c.mute = a.Mute !== false && a.Mute !== 0; syncMixer(mix); app.events.emit('scene'); return c;
+  } });
+  app.register({ name: 'SetClipWeight', label: 'Set Clip Weight', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }, { name: 'Weight', default: 1 }], execute(app, a) {
+    const { mix, clips } = mixState(app); const c = clips.find(x => x.name === a.Clip) ?? clips[clips.length - 1]; if (!c) throw new Error('No clip');
+    c.weight = Math.max(0, Number(a.Weight ?? 1)); syncMixer(mix); app.events.emit('scene'); return c;
+  } });
+  app.register({ name: 'DeleteClip', label: 'Delete Clip', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }], execute(app, a) {
+    const { mix, clips, transitions } = mixState(app); const i = clips.findIndex(x => !a.Clip || x.name === a.Clip); if (i < 0) throw new Error('No clip');
+    const [c] = clips.splice(i, 1);
+    for (let t = transitions.length - 1; t >= 0; t--) if (transitions[t].from === c.name || transitions[t].to === c.name) transitions.splice(t, 1);
+    syncMixer(mix); app.events.emit('scene'); return c;
+  } });
   app.register({ name: 'AddTransition', label: 'Add Transition', category: 'Animation Mixer', args: [{ name: 'From', default: '' }, { name: 'To', default: '' }, { name: 'Length', default: 10 }, { name: 'Name', default: '' }], execute(app, a) {
     const { mix, clips, transitions } = mixState(app);
     const from = a.From || clips[clips.length - 2]?.name; const to = a.To || clips[clips.length - 1]?.name;
@@ -409,9 +466,34 @@ export function registerAnimCommands(app: App) {
   // ---- character tags / biped helpers (Create > Character)
   app.register({ name: 'TagObject', label: 'Tag Object', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'TagStr', default: '' }], execute(app, a) { const o = app.targets(a.InputObj)[0] ?? app.selectedObjects[0]; if (!o) throw new Error('Select an object to tag'); if (!o.get('chartag')) o.add({ name: 'chartag', label: 'Character Tag', type: 'string', value: '' }); app.setParam(o.get('chartag')!, a.TagStr || 'Tag'); return o; } });
   app.register({ name: 'TagStepMarks', label: 'Tag Step Marks', category: 'Animation', args: [], execute(app) { for (const o of app.selectedObjects) app.run('TagObject', { InputObj: o.name, TagStr: 'StepMark' }); return app.selectedObjects.length; } });
-  app.register({ name: 'DeformMotion', label: 'Deform Motion', category: 'Animation', args: [], execute(app) { app.logMsg('info', 'DeformMotion: MOTOR deform-motion helper (stub)'); return null; } });
-  app.register({ name: 'MotorAnchorToDelete', label: 'MOTOR Anchor-to-Delete', category: 'Animation', args: [], execute(app) { app.logMsg('info', 'MOTOR Anchor-to-Delete: Softimage MOTOR tool (stub)'); return null; } });
-  app.register({ name: 'CreateHierarchyFromBiped', label: 'Create Hierarchy from Biped', category: 'Animation', args: [], execute(app) { app.logMsg('info', 'CreateHierarchyFromBiped: requires a biped guide selection'); return null; } });
+  app.register({ name: 'DeformMotion', label: 'Deform Motion', category: 'Animation', args: [], execute(app) {
+    // Softimage MOTOR deform-motion: plot envelope/shape-driven motion onto local transforms of selection.
+    return app.run('PlotConstrainedTransforms');
+  } });
+  app.register({ name: 'MotorAnchorToDelete', label: 'MOTOR Anchor-to-Delete', category: 'Animation', args: [], execute(app) {
+    // Softimage MOTOR: delete selected nulls tagged as anchors (chartag / name hint).
+    const del = app.selectedObjects.filter(o => /anchor/i.test(o.name) || String(o.get('chartag')?.value ?? '').toLowerCase().includes('anchor'));
+    if (!del.length) { app.logMsg('info', 'MOTOR Anchor-to-Delete: select anchor nulls (name/tag contains Anchor)'); return 0; }
+    for (const o of del) { const p = o.parentObj ?? app.scene.root; app.record('Delete Anchor', () => p.removeChild(o), () => p.addChild(o)); }
+    app.select([]); return del.length;
+  } });
+  app.register({ name: 'CreateHierarchyFromBiped', label: 'Create Hierarchy from Biped', category: 'Animation', args: [], execute(app) {
+    return app.run('CreateSkeletonFromGuide');
+  } });
+  // Actions > Templates (Softimage connection/value templates — lightweight action sources)
+  app.register({ name: 'CreateValueTemplate', label: 'Create Value Template', category: 'Animation Mixer', args: [{ name: 'Name', default: 'ValueTemplate' }], execute(app, a) {
+    return app.run('StoreAction', { Name: a.Name || 'ValueTemplate', Mode: 10, RemoveAnim: false });
+  } });
+  app.register({ name: 'CreateConnectionTemplate', label: 'Create Connection Template', category: 'Animation Mixer', args: [{ name: 'Name', default: 'CnxTemplate' }], execute(app, a) {
+    const src = app.run('StoreAction', { Name: a.Name || 'CnxTemplate', Mode: 3, RemoveAnim: false });
+    (src as any)._template = 'connection'; return src;
+  } });
+  app.register({ name: 'CreateEmptyValueTemplate', label: 'Create Empty Value Template', category: 'Animation Mixer', args: [{ name: 'Name', default: 'EmptyValueTemplate' }], execute(app, a) {
+    const model = app.selectedObjects[0]?.model ?? app.scene.root;
+    const src = new Property(app.scene.uniqueName(a.Name || 'EmptyValueTemplate'), 'actionsource', [str('data', '{}', 'Values', { readOnly: true }), str('fcurves', '{}', 'FCurves', { readOnly: true }), int('items', 0, 'Items', { readOnly: true }), int('mode', 10, 'Mode', { readOnly: true })]);
+    (src as any)._template = 'value'; app.record('Value Template', () => model.addProperty(src), () => model.removeProperty(src)); app.select([src]); return src;
+  } });
+  app.register({ name: 'CreateEmptyCnxTemplate', label: 'Create Empty Connection Template', category: 'Animation Mixer', args: [{ name: 'Name', default: 'EmptyCnxTemplate' }], execute: (app, a) => app.run('CreateEmptyValueTemplate', { Name: a.Name || 'EmptyCnxTemplate' }) });
   for (const n of ['SelectExternalConstraints', 'ActivateExternalConstraints', 'DeactivateExternalConstraints', 'RemoveExternalConstraints'] as const) {
     app.register({ name: n, label: n.replace(/([A-Z])/g, ' $1').trim(), category: 'Constraints', args: [], execute(app) {
       if (n === 'RemoveExternalConstraints') return app.run('RemoveAllConstraints');
