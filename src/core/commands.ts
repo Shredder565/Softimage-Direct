@@ -24,7 +24,13 @@ export interface CommandDef {
   description?: string;
   args: ArgDef[];
   undoable?: boolean;         // default true
-  canRun?(args: Record<string, any>): boolean;   // menu greys the item when false
+  /** Softimage GetEnabled analogue (dynamic flag bit). Menu/MCP grey when false. */
+  canRun?(args: Record<string, any>): boolean;
+  /**
+   * Static "in this build" / preset known. When set, menu walks use this for wired vs grey;
+   * canRun stays the Softimage-style dynamic enable (selection/context).
+   */
+  supported?(args: Record<string, any>): boolean;
   execute(app: App, args: Record<string, any>): any;
 }
 

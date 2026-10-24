@@ -4,6 +4,7 @@ import { App } from '../core/commands';
 import { tool } from './viewManager';
 import { siFilterNames, SI_MENUS, SiMenuItem, openSiMenu } from './si';
 import { X3DObject, Model } from '../core/scene';
+import { commandEnabled, mcpSampleEnabled } from './cmdEnable';
 
 type Section = { el: HTMLElement; body: HTMLElement };
 const button = (label: string, fn: (e: MouseEvent) => void, title = '', cls = '') => { const b = document.createElement('button'); b.className = 'mcp-btn ' + cls; b.textContent = label; b.title = title; b.onclick = fn; return b; };
@@ -51,7 +52,11 @@ export function mcpPanel(app: App, host: HTMLElement, opts: { only?: string[]; c
   // filter combo (dark) — Softimage's selection filter list
   const FILTERS = ['Object', 'Point', 'Edge', 'Polygon', 'Knot', 'Isopoint', 'Sample', 'Subcurve', 'Boundary', 'Hull', 'Polynode', 'Domainpoint', 'Surfacecurve', 'Trimboundary', ...siFilterNames().filter(f => !['Objects'].includes(f)), 'Model', 'Chain Element', 'Effector', 'Root', 'Cluster', 'Property', 'Operator'].filter((f, i, a) => a.indexOf(f) === i);
   const filterSel = document.createElement('select'); filterSel.className = 'mcp-combo'; for (const f of FILTERS) { const o = document.createElement('option'); o.textContent = f; filterSel.appendChild(o); }
-  filterSel.onchange = () => { const f = filterSel.value; if (['Object', 'Point', 'Edge', 'Polygon'].includes(f)) app.setSelMode(f.toLowerCase() as any); else { app.setSelMode('object'); A.selFilter = f; app.logMsg('info', `Selection filter: ${f}`); } };
+  filterSel.onchange = () => {
+    const f = filterSel.value;
+    if (['Object', 'Point', 'Edge', 'Polygon'].includes(f)) { A.selFilter = f; app.setSelMode(f.toLowerCase() as any); }
+    else { A.selFilter = f; app.setSelMode('object'); app.logMsg('info', `Selection filter: ${f}`); app.events.emit('selection'); }
+  };
   sel.body.appendChild(grid(1, filterSel));
   const openFilterMenu = (x: number, y: number) => { const m = document.createElement('div'); m.className = 'menu'; m.style.left = x + 'px'; m.style.top = y + 'px'; for (const f of FILTERS) { const it = document.createElement('div'); it.className = 'menu-item'; it.textContent = f; it.onclick = () => { filterSel.value = f; filterSel.onchange!(new Event('change')); m.remove(); }; m.appendChild(it); } document.body.appendChild(m); const close = (e: PointerEvent) => { if (!m.contains(e.target as any)) { m.remove(); document.removeEventListener('pointerdown', close); } }; setTimeout(() => document.addEventListener('pointerdown', close)); };
   // select-by-name field with up/down cycling
@@ -127,22 +132,20 @@ export function mcpPanel(app: App, host: HTMLElement, opts: { only?: string[]; c
   add('Edit', ed.el);
 
   // --------------------------------------------------------------- updates
+  // Softimage MCP greying: EnableMenuItem/EnableWindow track CommandCore GetEnabled
+  // (Ghidra getenabled-callpath). Buttons that map to commands read commandEnabled;
+  // Sample is a filter mode (mcpSampleEnabled). Live Softimage matrix still observation-blocked.
   const upd = () => {
     modeBtns.forEach(b => { const on = (b as any)._m === app.selMode; b.classList.toggle('on', on); });
     groupB.classList.toggle('on', !!A.groupMode); centerB.classList.toggle('on', !!A.centerMode);
     const sel = app.selectedObjects;
     const o = sel[0];
-    const hasMesh = sel.some(x => !!x.primitive?.mesh());
-    const hasCloud = sel.some(x => x.type === 'pointcloud');
-    const hasParentLink = sel.some(x => x.parentObj && x.parentObj !== app.scene.root);
-    // Heuristic greying from selection context. PC dumps (si_mcp_state.json, mcp-dll string candidates)
-    // do not encode Softimage's live MCP Enabled map — that still needs observation / Ghidra.
-    sampleB.disabled = !hasCloud;
-    parentB.disabled = sel.length < 2;
-    cutB.disabled = !hasParentLink;
-    freezeB.disabled = sel.length === 0;
-    groupEditB.disabled = sel.length === 0;
-    freezeMB.disabled = sel.length === 0 || !hasMesh;
+    sampleB.disabled = !mcpSampleEnabled(app);
+    parentB.disabled = !commandEnabled(app, 'ParentObj');
+    cutB.disabled = !commandEnabled(app, 'CutObj');
+    freezeB.disabled = !commandEnabled(app, 'FreezeObj');
+    groupEditB.disabled = !commandEnabled(app, 'CreateGroup');
+    freezeMB.disabled = !commandEnabled(app, 'FreezeModeling');
     for (const md of tmodes) fields[md.m].forEach((i, k) => { if (document.activeElement === i) return; i.value = o ? String(Math.round(o.kinematics.local.val(md.prefix + 'xyz'[k]) * 1000) / 1000) : ''; });
     cogB.classList.toggle('on', !!A.cog); propB.classList.toggle('on', !!app.proportional.on); symB.classList.toggle('on', !!A.symmetry);
     snapOn.classList.toggle('on', !!S.on); snapB.forEach(b => b.classList.toggle('on', !!S[(b as any)._k]));

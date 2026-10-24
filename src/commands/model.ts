@@ -109,9 +109,25 @@ export function registerModelCommands(app: App) {
 
   // ------------------------------------------------------------ topology extensions (curve + mesh)
   const topoBase = app.commands.get('ApplyTopoOp')!; const topoCan = topoBase.canRun!, topoExec = topoBase.execute;
+  const topoSup = topoBase.supported ?? (() => false);
   const CURVE_OPS: Record<string, string> = { CrvInverse: 'Inverse', CrvOpenClose: 'Open/Close', CrvShift: 'Shift U', CrvClean: 'Clean', RaiseNurbsCrvDegree: 'Raise Degree', CrvReparam: 'Reparameterize', InsertNurbsCrvKnot: 'Insert Knot', RemoveNurbsCrvKnot: 'Remove Knots', 'Curve Inverse': 'Inverse', 'Curve Open/Close': 'Open/Close', 'Curve Shift': 'Shift U', 'Curve Clean': 'Clean', 'Raise Nurbs Curve Degree': 'Raise Degree', 'Curve Reparameterize': 'Reparameterize', 'Insert Curve Knot': 'Insert Knot', 'Curve Remove Knot': 'Remove Knots', 'Make Knots Bezier': 'Bezier Knots', 'Make Bezier Knots Corners': 'Bezier Corners', 'Make Knot Segments Linear': 'Linear Segments', 'Make Knots Non-Bezier': 'Non-Bezier Knots', 'Curve Stitch': 'Clean' };
   const MESH_OPS2: Record<string, string> = { Bevel: 'Bevel', 'Bridge Polygon': 'Bridge Polygons', 'Bridge Edges': 'Bridge Polygons', Quadrangulate: 'Quadrangulate', 'Dissolve Component': 'Dissolve', 'Disconnect Component': 'Disconnect', 'Slice Polygons': 'Slice', 'Dice Polygons': 'Dice', 'Polygon Reduction': 'Polygon Reduction', MeshLocalSubdivision: 'Local Subdivision', 'Filter Edges': 'Filter Points', 'Filter Polygons': 'Filter Points', 'Weld Points to Target': 'Weld Points', 'Symmetrize Polygons': 'Symmetrize Polygons', 'Spin Edge Forward': 'Spin Edges', 'Invert All Normals': 'Invert Polygons', Inverse: 'Invert Polygons', 'Boolean Difference': 'BOOL0', 'Boolean Union': 'BOOL2', 'Boolean Intersection': 'BOOL1', 'Surface Clean': 'Noop', 'Surface Reparameterize': 'Noop', 'Insert Surface Knot': 'SURF+', 'Remove Surface Knot': 'SURF-', 'Surface Swap': 'Noop', 'Surface Shift': 'Noop' };
-  topoBase.canRun = (a) => topoCan(a) || !!(CURVE_OPS[a.PresetObj] ?? CURVE_OPS[a.Preset]) || !!(MESH_OPS2[a.PresetObj] ?? MESH_OPS2[a.Preset]);
+  const mesh2NoComp = new Set(['Polygon Reduction', 'Dice', 'Quadrangulate', 'Filter Points']);
+  topoBase.supported = (a) => topoSup(a) || !!(CURVE_OPS[a.PresetObj] ?? CURVE_OPS[a.Preset]) || !!(MESH_OPS2[a.PresetObj] ?? MESH_OPS2[a.Preset]);
+  // Softimage GetEnabled: extend presets stay selection-aware (do not OR raw "preset known")
+  topoBase.canRun = (a) => {
+    if (topoSup(a)) return topoCan(a);
+    const cv = CURVE_OPS[a.PresetObj] ?? CURVE_OPS[a.Preset];
+    if (cv) return !!app.selectedObjects.find(o => o.primitive?.curve());
+    const m2 = MESH_OPS2[a.PresetObj] ?? MESH_OPS2[a.Preset];
+    if (!m2) return false;
+    if (m2.startsWith('SURF') || m2 === 'Noop') return !!app.selectedObjects.find(x => x.primitive?.type === 'surfmsh');
+    if (m2.startsWith('BOOL')) return app.selectedObjects.some(o => !!o.primitive?.mesh());
+    const hasMesh = !!app.compSel?.obj?.primitive?.mesh() || app.selectedObjects.some(o => !!o.primitive?.mesh());
+    if (!hasMesh) return false;
+    if (!mesh2NoComp.has(m2) && !app.componentSel()) return false;
+    return true;
+  };
   topoBase.execute = (app, a) => {
     const cv = CURVE_OPS[a.PresetObj] ?? CURVE_OPS[a.Preset];
     if (cv) { const obj = app.selectedObjects.find(o => o.primitive?.curve()); if (!obj) throw new Error('Select a curve'); const op = S2.makeCurveEditOperator(cv)!; const prim = obj.primitive!; app.record(cv, () => prim.addOperator(op), () => prim.removeOperator(op)); app.select([op]); return op; }
@@ -510,7 +526,18 @@ export function registerModelAliases(app: App) {
   app.register({ name: 'AutoInspect', label: 'Auto Inspect', category: 'Preferences', args: [], undoable: false, execute(app) { app.autoInspect = !app.autoInspect; app.logMsg('info', 'Auto inspect ' + (app.autoInspect ? 'ON' : 'OFF')); } });
   // dissolve & clean, extrude along curve
   const topo = app.commands.get('ApplyTopoOp')!; const tc = topo.canRun!, te = topo.execute;
-  topo.canRun = (a) => tc(a) || /Dissolve & Clean|Dissolve and Clean/.test(a.PresetObj) || a.Preset === 'MeshDissolveAndClean' || /Extrude Component Along Curve/.test(a.PresetObj);
+  const ts = topo.supported ?? (() => false);
+  const isDissolveClean = (a: Record<string, any>) => /Dissolve & Clean|Dissolve and Clean/.test(a.PresetObj) || a.Preset === 'MeshDissolveAndClean';
+  const isExtrudeAlongCurve = (a: Record<string, any>) => /Extrude Component Along Curve/.test(a.PresetObj);
+  topo.supported = (a) => ts(a) || isDissolveClean(a) || isExtrudeAlongCurve(a);
+  topo.canRun = (a) => {
+    if (isDissolveClean(a)) return !!app.componentSel() || app.selectedObjects.some(o => !!o.primitive?.mesh());
+    if (isExtrudeAlongCurve(a)) {
+      const cs = app.componentSel();
+      return !!cs && cs.sel.kind === 'polygon' && cs.sel.indices.length > 0;
+    }
+    return tc(a);
+  };
   topo.execute = (app, a) => { if (/Dissolve/.test(a.PresetObj) && /Clean/.test(a.PresetObj)) return te(app, { ...a, PresetObj: 'Dissolve Component', Preset: 'Dissolve Component' }); if (/Extrude Component Along Curve/.test(a.PresetObj)) { const cs = app.componentSel(); const curve = app.selectedObjects.find(o => o.primitive?.curve()); if (!cs || cs.sel.kind !== 'polygon') throw new Error('Select polygons (Y) and Shift-select a curve'); const len = curve ? C.curveLength(curve.primitive!.curve()!) : 2; const op = makeTopologyOperator('Extrude Along Normal', cs.sel)!; op.set('length', len); const prim = cs.obj.primitive!; app.record('Extrude Along Curve', () => prim.addOperator(op), () => prim.removeOperator(op)); app.compSel = null; app.select([op]); return op; } return te(app, a); };
 }
 function findParamPath(app: App, path: string) {

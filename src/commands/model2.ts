@@ -39,10 +39,16 @@ const wrap = (app: App, name: string, patch: (def: any) => void) => { const d = 
 export function registerModelCommands2(app: App) {
   // ---- ApplyTopoOp: Surf. Mesh presets + Make Bezier-Knots Corners
   wrap(app, 'ApplyTopoOp', (def) => {
-    const prevCan = def.canRun, prevExec = def.execute;
+    const prevCan = def.canRun, prevExec = def.execute, prevSup = def.supported;
     const mine = ['SrfOpenClose', 'Snip', 'CrvExtendTo', 'SrfStitch', 'TrimByProjection', 'DeleteTrim', 'Make Bezier-Knots Corners', 'SrfInverse', 'Invert Normals', 'InsertNurbsSrfKnot', 'SrfInsertKnot', 'InsertSrfKnot', 'Insert Surface Knot', 'RemoveNurbsSrfKnot', 'RemoveSrfKnot', 'Remove Surface Knot', 'SrfSwap', 'Surface Swap', 'SrfShift', 'Surface Shift', 'SrfClean', 'Surface Clean', 'SrfReparam', 'Surface Reparameterize'];
     const key = (a: any) => mine.includes(a.PresetObj) ? a.PresetObj : mine.includes(a.Preset) ? a.Preset : null;
-    def.canRun = (a: any) => !!key(a) || prevCan(a);
+    def.supported = (a: any) => !!key(a) || (prevSup ? prevSup(a) : false);
+    def.canRun = (a: any) => {
+      const k = key(a);
+      if (k === 'Make Bezier-Knots Corners' || k === 'CrvExtendTo') return app.selectedObjects.some(x => x.primitive?.type === 'crvlist' || !!x.primitive?.curve());
+      if (k) return app.selectedObjects.some(x => x.primitive?.type === 'surfmsh');
+      return prevCan ? prevCan(a) : true;
+    };
     def.execute = (app: App, a: any) => {
       const k = key(a); if (!k) return prevExec(app, a);
       const sel = app.selectedObjects.length ? app.selectedObjects : app.selection.map(ownerOf).filter((x): x is X3DObject => !!x);

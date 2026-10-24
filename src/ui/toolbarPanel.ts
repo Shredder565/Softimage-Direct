@@ -3,6 +3,7 @@
 import { App } from '../core/commands';
 import menus from '../data/menus.json';
 import menuCommands from '../data/menu_commands.json';
+import { commandEnabled, commandSupported } from './cmdEnable';
 
 type MenuItem = { label?: string; id?: number; items?: MenuItem[]; separator?: boolean };
 const MENUS = menus as Record<string, MenuItem[]>;
@@ -57,16 +58,20 @@ export function openMenu(app: App, items: MenuItem[], x: number, y: number, path
     if (it.separator) { const s = document.createElement('div'); s.className = 'menu-sep'; m.appendChild(s); continue; }
     const row = document.createElement('div'); row.className = 'menu-item'; row.textContent = it.label ?? '';
     const bound = it.id !== undefined ? CMDS[String(it.id)] : undefined;
-    const def = bound ? app.commands.get(bound.cmd) : undefined;
-    const implemented = !!def && (!def.canRun || def.canRun(buildArgs(it, bound!, [...path, it.label ?? ''], app.module)));
+    const args = bound ? buildArgs(it, bound, [...path, it.label ?? ''], app.module) : {};
+    // Softimage MenuItem.GetEnabled → Command.GetEnabled (Ghidra). Split wired vs context-grey.
+    const supported = bound ? commandSupported(app, bound.cmd, args) : false;
+    const enabled = bound ? commandEnabled(app, bound.cmd, args) : false;
     if (it.items) {
       row.classList.add('has-sub');
       row.onpointerenter = () => { const r = row.getBoundingClientRect(); openMenu(app, it.items!, r.right - 2, r.top - 2, [...path, it.label!], level + 1); };
     } else {
-      if (!implemented) row.classList.add('disabled');
-      row.title = bound ? `${bound.cmd}(${bound.args.map(a => a[0] + (a[1] !== null && a[1] !== '' ? '=' + JSON.stringify(a[1]) : '')).join(', ')})${implemented ? '' : '  — not implemented yet'}` : 'no command mapped (tool/toggle)';
+      if (!enabled) row.classList.add('disabled');
+      row.title = bound
+        ? `${bound.cmd}(${bound.args.map(a => a[0] + (a[1] !== null && a[1] !== '' ? '=' + JSON.stringify(a[1]) : '')).join(', ')})${!supported ? '  — not implemented yet' : enabled ? '' : '  — disabled (selection/context)'}`
+        : 'no command mapped (tool/toggle)';
       row.onpointerenter = () => closeMenus(level + 1);
-      row.onclick = () => { closeMenus(); runMenuItem(app, it, bound, [...path, it.label!]); };
+      row.onclick = () => { if (!enabled) return; closeMenus(); runMenuItem(app, it, bound, [...path, it.label!]); };
     }
     m.appendChild(row);
   }
@@ -105,10 +110,20 @@ function runMenuItem(app: App, it: MenuItem, bound: { cmd: string; name: string;
   try { app.run(bound.cmd, args); } catch { /* logged */ }
 }
 
-/** For testing/status: every leaf of a module's menu with its command and whether it can run. */
+/** For testing/status: every leaf of a module's menu with its command and whether it is wired / enabled. */
 export function menuStatus(app: App, module = 'Model') {
-  const out: { path: string; label: string; id: number; cmd: string | null; implemented: boolean }[] = [];
-  const walk = (items: MenuItem[], path: string[]) => { for (const it of items) { if (it.separator) continue; if (it.items) { walk(it.items, [...path, it.label!]); continue; } const bound = it.id !== undefined ? CMDS[String(it.id)] : undefined; const def = bound ? app.commands.get(bound.cmd) : undefined; const impl = !!def && (!def.canRun || def.canRun(buildArgs(it, bound!, [...path, it.label ?? ''], module))); out.push({ path: path.join(' > '), label: it.label ?? '', id: it.id ?? -1, cmd: bound?.cmd ?? null, implemented: impl }); } };
+  const out: { path: string; label: string; id: number; cmd: string | null; implemented: boolean; enabled: boolean }[] = [];
+  const walk = (items: MenuItem[], path: string[]) => {
+    for (const it of items) {
+      if (it.separator) continue;
+      if (it.items) { walk(it.items, [...path, it.label!]); continue; }
+      const bound = it.id !== undefined ? CMDS[String(it.id)] : undefined;
+      const args = bound ? buildArgs(it, bound, [...path, it.label ?? ''], module) : {};
+      const impl = bound ? commandSupported(app, bound.cmd, args) : false;
+      const en = bound ? commandEnabled(app, bound.cmd, args) : false;
+      out.push({ path: path.join(' > '), label: it.label ?? '', id: it.id ?? -1, cmd: bound?.cmd ?? null, implemented: impl, enabled: en });
+    }
+  };
   walk(MENUS[module] ?? [], []); return out;
 }
 
