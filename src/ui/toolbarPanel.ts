@@ -11,7 +11,8 @@ const CMDS = menuCommands as unknown as Record<string, { cmd: string; name: stri
 export function toolbarPanel(app: App, host: HTMLElement) {
   const root = document.createElement('div'); root.className = 'toolbar-panel ' + app.module;
   const sel = document.createElement('select'); sel.className = 'module-select ' + app.module;
-  // Softimage module heads. Model + Animate PE menus are in-tree (`src/data/menus.json`); others await extraction.
+  // Softimage module heads. PE trees from toolbarobj.dll live in `src/data/menus.json`
+  // (Model 204, Animate 237, Render 234, Hair 297, ICE/Simulate 303 — Simulate aliases ICE; no dedicated Simulate RT_MENU).
   for (const m of ['Model', 'Animate', 'Render', 'Simulate', 'ICE', 'Hair']) {
     const o = document.createElement('option'); o.value = m;
     o.textContent = MENUS[m] ? m : `${m} (menu not in install data yet)`;
@@ -27,7 +28,7 @@ export function toolbarPanel(app: App, host: HTMLElement) {
     scroll.innerHTML = '';
     const tree = MENUS[app.module];
     if (!tree) {
-      scroll.innerHTML = `<div class="view-placeholder">Softimage <b>${app.module}</b> toolbar menu is not in the in-tree PE extract yet (only Model + Animate). UI shell still switches modules; menu leaves land when install data is scraped or a local Softimage dump is uploaded.</div>`;
+      scroll.innerHTML = `<div class="view-placeholder">Softimage <b>${app.module}</b> toolbar menu is not in the in-tree PE extract yet. UI shell still switches modules; menu leaves land when install data is scraped or a local Softimage dump is uploaded.</div>`;
       return;
     }
     for (const top of tree) {

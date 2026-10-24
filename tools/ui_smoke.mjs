@@ -1,7 +1,7 @@
 // Softimage Direct UI smoke harness (Playwright).
 // Needs `npm run build && npm run preview` on :4173 (or set UI_SMOKE_URL).
 // Checks: shell boots, layouts load, MCP present, registered views cover Softimage layout frame types,
-// Model+Animate module menus extracted, floating views open without page errors.
+// all six module menus extracted (Model/Animate/Render/Simulate/ICE/Hair), floating views open without page errors.
 import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
@@ -56,7 +56,7 @@ else {
   ok.push(`layout=${audit.layout} keymap=${audit.keymap}`);
   if (!audit.menubar) fail.push('menubar missing'); else ok.push('menubar');
   if (!audit.mcpPresent) fail.push('MCP missing'); else ok.push(`MCP (${audit.mcpButtonCount} buttons)`);
-  for (const need of ['Model', 'Animate']) {
+  for (const need of ['Model', 'Animate', 'Render', 'Simulate', 'ICE', 'Hair']) {
     if (!audit.modulesExtracted?.includes(need)) fail.push(`module menu not extracted: ${need}`);
     else ok.push(`module extracted: ${need}`);
   }
@@ -82,14 +82,16 @@ for (const name of OPEN_VIEWS) {
   }
 }
 
-// Switch Model ↔ Animate modules
-for (const m of ['Animate', 'Model']) {
+// Switch Softimage module toolbar heads (menus.json trees must render without placeholder)
+for (const m of ['Animate', 'Model', 'Render', 'Simulate', 'ICE', 'Hair']) {
   try {
     await p.evaluate((mod) => window.__switchModule?.(mod), m);
     await p.waitForTimeout(100);
     const label = await p.evaluate(() => document.querySelector('.module-select')?.value);
-    if (label === m) ok.push(`module switch → ${m}`);
-    else fail.push(`module switch → ${m} (got ${label})`);
+    const hasPlaceholder = await p.evaluate(() => !!document.querySelector('.toolbar-panel .view-placeholder'));
+    const btnCount = await p.evaluate(() => document.querySelectorAll('.toolbar-panel .tb-btn').length);
+    if (label === m && !hasPlaceholder && btnCount > 0) ok.push(`module switch → ${m} (${btnCount} groups)`);
+    else fail.push(`module switch → ${m} (got ${label}, placeholder=${hasPlaceholder}, btns=${btnCount})`);
   } catch (e) {
     fail.push(`module switch ${m}: ${e.message || e}`);
   }
