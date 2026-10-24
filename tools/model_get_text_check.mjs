@@ -133,9 +133,9 @@ const crv = await p.evaluate(async () => {
     createdType: created?.primitive?.type ?? created?.type,
   };
 });
-// Softimage PC Curves: fitsize=4, 230 pts, 8 curves (install font). Direct Helvetiker ≈ letter outers; params must match golden.
+// Softimage PC Curves: fitsize=4, 230 pts, 8 curves (install font). Direct Softimage font_source locks npts/nbcurves to golden.
 check('CreatePrim Text Softimage TextToCurveList params', crv && Number(crv.fitsize) === Number(siCurves.fitsize) && crv.use_fitsize === !!siCurves.use_fitsize && Number(crv.ratio) === Number(siCurves.ratio) && Number(crv.char_spacing) === Number(siCurves.char_spacing) && Number(crv.line_spacing) === Number(siCurves.line_spacing) && crv.text === 'Softimage' && crv.type === 'crvlist', JSON.stringify(crv));
-check('CreatePrim Text Curves output', crv && crv.npts >= 8 && crv.nbcurves >= 8 && crv.nbcurves <= 12 && crv.height != null && crv.height > 2 && crv.height < 8, JSON.stringify({ npts: crv?.npts, nbcurves: crv?.nbcurves, height: crv?.height, si: siCurveSummary }));
+check('CreatePrim Text Softimage font npts', crv && crv.npts === Number(siCurveSummary.pts) && crv.nbcurves === Number(siCurveSummary.nbcurves) && crv.height != null && crv.height > 2 && crv.height < 8, JSON.stringify({ npts: crv?.npts, nbcurves: crv?.nbcurves, height: crv?.height, si: siCurveSummary }));
 
 // ---- Generators: Softimage extrusion/loft/revolution defaults from opdefs
 await run('NewScene');
