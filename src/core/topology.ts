@@ -96,16 +96,14 @@ function boundaryInset(verts: V[], faces: number[][], polys: Set<number>, amount
 }
 
 // ------------------------------------------------------------------ ops
-/** Extrude Component Along Normal (extrudenormalop): lifts each island by `length` (orthogonal offset), insets its boundary by `inset`,
- *  with `subdivs` extra rings on the side walls. Interior island vertices move, boundary vertices are duplicated. */
-export function extrudeAlongNormal(m: MeshData, sel: CompSel, length: number, inset = 0, subdivs = 0, duplicate = false): MeshData {
+/** Shared extrude: each selected island vertex moves by `delta(v)`, boundary verts duplicate, side-wall rings for `subdivs`. */
+function extrudeByDelta(m: MeshData, sel: CompSel, delta: (v: number, verts: V[]) => V, inset = 0, subdivs = 0, duplicate = false): MeshData {
   const { verts, faces } = toPolys(m); const polys = selPolygons(m, sel); if (!polys.size) return m;
-  const normalsAt = new Map<number, V[]>();
-  for (const pi of polys) { const n = faceNormal(verts, faces[pi]); for (const v of faces[pi]) normalsAt.set(v, [...(normalsAt.get(v) ?? []), n]); }
+  const island = new Set<number>(); for (const pi of polys) for (const v of faces[pi]) island.add(v);
   const bverts = boundaryVerts(faces, polys), bnd = boundaryEdges(faces, polys), ins = boundaryInset(verts, faces, polys, inset);
   const remap = new Map<number, number>();
-  for (const [v, ns] of normalsAt) {
-    const target = add(miterOffset(verts[v], ns, length), ins.get(v) ?? [0, 0, 0]);
+  for (const v of island) {
+    const target = add(add(verts[v], delta(v, verts)), ins.get(v) ?? [0, 0, 0]);
     if (bverts.has(v) || duplicate) { remap.set(v, verts.length); verts.push(target); } else { verts[v] = target; remap.set(v, v); }
   }
   const outFaces = duplicate ? [...faces] : faces;
@@ -117,6 +115,34 @@ export function extrudeAlongNormal(m: MeshData, sel: CompSel, length: number, in
     for (let r = 1; r <= rings; r++) outFaces.push([at(a, r - 1), at(b, r - 1), at(b, r), at(a, r)]);
   }
   return fromPolys(verts, outFaces);
+}
+/** Extrude Component Along Normal (extrudenormalop): lifts each island by `length` (orthogonal offset), insets its boundary by `inset`,
+ *  with `subdivs` extra rings on the side walls. Interior island vertices move, boundary vertices are duplicated. */
+export function extrudeAlongNormal(m: MeshData, sel: CompSel, length: number, inset = 0, subdivs = 0, duplicate = false): MeshData {
+  const { verts, faces } = toPolys(m); const polys = selPolygons(m, sel); if (!polys.size) return m;
+  const normalsAt = new Map<number, V[]>();
+  for (const pi of polys) { const n = faceNormal(verts, faces[pi]); for (const v of faces[pi]) normalsAt.set(v, [...(normalsAt.get(v) ?? []), n]); }
+  return extrudeByDelta(m, sel, (v) => miterOffset([0, 0, 0] as V, normalsAt.get(v) ?? [[0, 1, 0]], length), inset, subdivs, duplicate);
+}
+/** Extrude Component Along Axis (extrudecompaxisop): same topology as Extrude Along Normal, but every island vertex moves by a
+ *  single axis vector (object or component frame) rather than mitered face normals. Softimage defaults: Y axis, frame=Component. */
+export function extrudeAlongAxis(m: MeshData, sel: CompSel, axis: V, length: number, inset = 0, subdivs = 0, duplicate = false): MeshData {
+  const d = mul(norm(axis), length);
+  return extrudeByDelta(m, sel, () => d, inset, subdivs, duplicate);
+}
+/** Build Softimage Extrude-Along-Axis direction from X/Y/Z flags and Frame (0 Object, 1 Component). Component Y ≈ average face normal. */
+export function extrudeAxisDirection(m: MeshData, sel: CompSel, x: boolean, y: boolean, z: boolean, frame: number): V {
+  let a: V = [x ? 1 : 0, y ? 1 : 0, z ? 1 : 0];
+  if (!a[0] && !a[1] && !a[2]) a = [0, 1, 0];
+  a = norm(a);
+  if (frame !== 1) return a;
+  const { verts, faces } = toPolys(m); const polys = selPolygons(m, sel); if (!polys.size) return a;
+  let nSum: V = [0, 0, 0]; for (const pi of polys) nSum = add(nSum, faceNormal(verts, faces[pi]));
+  const Y = norm(nSum);
+  // orthonormal X/Z in the island plane (pick a stable in-plane axis)
+  const helper: V = Math.abs(Y[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+  const X = norm(cross(helper, Y)); const Z = cross(X, Y);
+  return norm([a[0] * X[0] + a[1] * Y[0] + a[2] * Z[0], a[0] * X[1] + a[1] * Y[1] + a[2] * Z[1], a[0] * X[2] + a[1] * Y[2] + a[2] * Z[2]]);
 }
 /** Inset Polygons (extrudecompaxisop with inset, length 0): shrinks each island's boundary inward by `amount`, bridging with new quads. */
 export function insetPolygons(m: MeshData, sel: CompSel, amount: number): MeshData { return extrudeAlongNormal(m, sel, 0, amount); }
