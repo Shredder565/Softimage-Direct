@@ -618,6 +618,18 @@
       "fontPx": 11
     }
   },
+  "scriptEditor": {
+    "prefsSpdl": "C3DPrefsScriptEditor.spdl",
+    "viewDefaultSize": "50,50,485,550",
+    "tokens": {
+      "fontFamily": "Courier New, Consolas, monospace",
+      "fontPx": 10,
+      "tabSize": 4,
+      "lineNumbers": true,
+      "floatDefaultWidthPx": 485,
+      "floatDefaultHeightPx": 550
+    }
+  },
   "layoutOpts": {
     "alignRightCommon": true,
     "labelWidthPctCommon": [
@@ -687,6 +699,7 @@
     "PPG host chrome is owner-draw (uiut InspNavCtrl / LoadSaveCtrl); DLU rects place controls, RT_BITMAP sizes paint them.",
     "Dialog 147 is the fullest Softimage PPG toolbar (animation + reset all/group + nav + load/save).",
     "Explorer rename = sceneexplorer.dll 725; Preferences host frame = props.dll 264.",
+    "Script Editor factory font/size/tab/linenum from C3DPrefsScriptEditor.spdl; view defaultsize 485\u00d7550.",
     "Shared PPG shell only \u2014 Model-specific opdef layouts owned by Model PPG worker.",
     "No Softimage Desktop takeover \u2014 PE/SPDL file scrape only."
   ]

@@ -221,6 +221,13 @@ else {
   } else if (!pr?.tokensApplied || pr.hostId !== '264' || pr.labelW !== 260 || pr.treeW !== 170) {
     fail.push(`preferences chrome expected host=264 label=260 tree=170, got ${JSON.stringify(pr)}`);
   } else ok.push(`Explorer+Prefs chrome rename=${xp.renameId} row=${xp.rowH} prefsHost=${pr.hostId} labelW=${pr.labelW}`);
+  // Script Editor factory chrome (C3DPrefsScriptEditor.spdl + views defaultsize 485×550)
+  const se = pc.scriptEditor;
+  if (!se?.tokensApplied || se.fontPx !== 10 || se.tabSize !== 4 || se.lineNumbers !== true || se.floatW !== 485 || se.floatH !== 550) {
+    fail.push(`scriptEditor chrome expected Courier 10/tab4/linenum/485x550, got ${JSON.stringify(se)}`);
+  } else if (!se.linenumClass) {
+    fail.push('scriptEditor expected body.script-linenum from Softimage linenum=true factory');
+  } else ok.push(`Script Editor chrome font=${se.fontPx}px tab=${se.tabSize} linenum float=${se.floatW}x${se.floatH}`);
 }
 
 // Open floating views

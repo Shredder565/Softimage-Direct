@@ -1,5 +1,5 @@
 {
-  "ok": 54,
+  "ok": 55,
   "fail": 0,
   "note": 1,
   "okItems": [
@@ -28,6 +28,7 @@
     "MCP PE bitmap hit-maps (48 hits, sections Select+Transform+Snap+Constrain+Edit)",
     "PPG shell chrome host=147 nav=71x25 tools=66x25 font=11pt",
     "Explorer+Prefs chrome rename=725 row=16 prefsHost=264 labelW=260",
+    "Script Editor chrome font=10px tab=4 linenum float=485x550",
     "openview Explorer",
     "openview Property Editor",
     "openview Script Editor",

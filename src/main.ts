@@ -26,7 +26,7 @@ import { explorerView } from './ui/explorer';
 import { mcpPanel } from './ui/mcp';
 import { installKeymap } from './ui/keymap';
 import { propertyEditor } from './ui/ppg';
-import { applyPpgChrome, ppgChromeAudit } from './ui/ppgChrome';
+import { applyPpgChrome, ppgChromeAudit, PPG_CHROME } from './ui/ppgChrome';
 import { viewManager, SI as ViewportSI, DEFAULT_CAMERA_POS, DEFAULT_CAMERA_INTEREST, DEFAULT_CAMERA_FOV } from './ui/viewManager';
 applyPpgChrome();
 import { keyingPanel, layerControl, timeline, commandLine, scriptLog } from './ui/panels';
@@ -133,7 +133,11 @@ window.addEventListener('togglepanel', (e: any) => {
 // ---- Floating views (View > Views, shelf/explorer buttons, Enter on a selection)
 const openView = (name: string) => {
   const key = 'view:' + name; const size = SI_VIEWS.find(v => v.name === name)?.defaultsize?.split(',').map(Number);
-  const w = name === 'Mini Transform Panel' ? 200 : Math.max(320, size ? Math.min(900, size[2] - size[0]) : 420), h = size ? Math.min(600, size[3] - size[1]) : 400;
+  // Softimage .xsivw defaultsize is left,top,width,height. Script Editor uses C3DPrefsScriptEditor chrome tokens when present.
+  const seTok = (PPG_CHROME as any).scriptEditor?.tokens;
+  let w = name === 'Mini Transform Panel' ? 200 : Math.max(320, size ? Math.min(900, size[2]) : 420);
+  let h = size ? Math.min(700, size[3]) : 400;
+  if (name === 'Script Editor' && seTok) { w = seTok.floatDefaultWidthPx ?? w; h = seTok.floatDefaultHeightPx ?? h; }
   const builders: Record<string, (host: HTMLElement) => void> = {
     'Explorer': h => explorerView(app, h), 'Property Editor': h => propertyEditor(app, h), 'Script Editor': h => scriptLog(app, h), 'Script History View': h => scriptHistory(app, h),
     'Keying Panel': h => keyingPanel(app, h), 'Layer Control': h => layerControl(app, h), 'Main Shelf': h => mainShelf(app, h), 'Toolbar Panel': h => toolbarPanel(app, h), 'Command Line': h => commandLine(app, h),
