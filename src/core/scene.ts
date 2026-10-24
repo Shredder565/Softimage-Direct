@@ -37,7 +37,17 @@ export class Cluster extends Node {
   readonly properties: Property[] = [];
   constructor(name: string, public compKind: 'pnt' | 'edge' | 'poly' | 'sample', public elements: Set<number | string>) { super(name, compKind, 'cluster', [{ name: 'alwayscomplete', type: 'bool', default: false, label: 'Always Complete', readOnly: true }]); }
   get obj(): X3DObject | null { let n: Node | null = this.parent as any; while (n && !(n instanceof X3DObject)) n = (n as any).parent ?? null; return n as X3DObject | null; }
-  get isComplete(): boolean { const o = this.obj; const m = o?.primitive?.mesh(); if (!m) return false; const n = this.compKind === 'pnt' ? m.positions.length / 3 : this.compKind === 'poly' ? m.polygons.length : 0; return n > 0 && this.elements.size >= n; }
+  get isComplete(): boolean {
+    // Softimage "Always Complete" clusters stay complete as topology grows; honour the flag first.
+    if (this.val('alwayscomplete')) return true;
+    const o = this.obj; const m = o?.primitive?.mesh(); if (!m) return false;
+    let n = 0;
+    if (this.compKind === 'pnt') n = m.positions.length / 3;
+    else if (this.compKind === 'poly') n = m.polygons.length;
+    else if (this.compKind === 'edge') { const seen = new Set<string>(); for (const f of m.polygons) for (let i = 0; i < f.length; i++) { const a = f[i], b = f[(i + 1) % f.length]; seen.add(a < b ? `${a}-${b}` : `${b}-${a}`); } n = seen.size; }
+    else if (this.compKind === 'sample') n = m.polygons.reduce((s, f) => s + f.length, 0); // Softimage polynodes
+    return n > 0 && this.elements.size >= n;
+  }
   addProperty(p: Property) { p.parent = this as any; this.properties.push(p); return p; }
   removeProperty(p: Property) { const i = this.properties.indexOf(p); if (i >= 0) { this.properties.splice(i, 1); p.parent = null; } }
   property(type: string) { return this.properties.find(p => p.type === type); }

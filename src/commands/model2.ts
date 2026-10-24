@@ -8,7 +8,7 @@ import { num, int, bool, str, enumP, color } from '../core/params';
 import { ChainRoot, makeChain, makeImplicit, CurveGeomOperator } from '../core/scene2';
 import { MeshData } from '../core/geometry';
 import { fromPolys } from '../core/topology';
-import { makeCurve, evalCurve, curveDomain, tessellateCurve, CurveData, V3 } from '../core/curves';
+import { makeCurve, evalCurve, curveDomain, tessellateCurve, filletCurves, CurveData, V3 } from '../core/curves';
 import * as N from '../core/nurbs';
 import { buildPresetModel, PRESET_MODELS, fetchMaybeGzip } from './presets';
 import { mapCluster } from './clusters';
@@ -109,9 +109,14 @@ export function registerModelCommands2(app: App) {
       const inputs = app.targets(a.ConnectionSet).filter(o => o.primitive && (o.primitive.mesh() || o.primitive.curve()));
       if (k === 'SrfFit') { const src = inputs[0]; if (!src?.primitive?.mesh()) throw new Error('Fit: select a surface or polygon mesh'); const gen = new (class extends Operator { constructor() { super('Fit', 'srffit', [int('subdivu', 8, 'Subdivisions U', { min: 2, max: 64 }), int('subdivv', 8, 'Subdivisions V', { min: 2, max: 64 })]); } apply() { return N.tessellateNurbs(N.fitSurface(src.primitive!.mesh() as N.NMesh, Number(this.val('subdivu')) + 1, Number(this.val('subdivv')) + 1)); } })(); const obj = newObj(app, src.name + '_fit', 'surfmsh', gen); for (const p of src.kinematics.local.params) obj.kinematics.local.get(p.name)!.value = p.value; addObject(app, obj); app.select([gen]); return obj; }
       if (k === 'SrfFillet') { const s = inputs.filter(o => o.primitive!.type === 'surfmsh'); if (s.length < 2) throw new Error('Fillet Intersection: select two NURBS surfaces'); const [A, B] = s; const gen = new (class extends Operator { constructor() { super('Fillet Intersection', 'srffillet', [num('radius', 1, 'Radius', { min: 0.01 }), int('sections', 12, 'Sections', { min: 2, max: 64 })]); } apply() { const f = N.filletSurfaces(N.surfOf(A.primitive!.mesh())!, N.surfOf(B.primitive!.mesh())!, Number(this.val('radius')), Number(this.val('sections'))); return f ? N.tessellateNurbs(f) : null; } })(); const obj = newObj(app, 'fillet', 'surfmsh', gen); addObject(app, obj); app.select([gen]); if (!obj.primitive!.mesh()) app.logMsg('info', 'Fillet Intersection: the surfaces do not come within the fillet radius of each other'); return obj; }
-      if (k === 'CrvFillet') { const c = inputs.filter(o => o.primitive!.curve()); if (c.length < 2) throw new Error('Fillet Intersection: select two curves'); const [A, B] = c; const gen = new (class extends Operator { constructor() { super('Curve Fillet', 'crvfillet', [num('radius', 1, 'Radius', { min: 0 }), int('subdiv', 8, 'Subdivisions', { min: 2, max: 32 })]); } apply() {
-        const pa = tessellateCurve(A.primitive!.curve()!, 10), pb = tessellateCurve(B.primitive!.curve()!, 10); let best: [V3, V3] = [pa[0], pb[0]], bd = Infinity; for (const p of pa) for (const q of pb) { const d = Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]); if (d < bd) { bd = d; best = [p, q]; } }
-        const [p, q] = best; const r = Number(this.val('radius')); const mid: V3 = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2 + r, (p[2] + q[2]) / 2]; const n = Number(this.val('subdiv')); const pts: V3[] = []; for (let i = 0; i <= n; i++) { const t = i / n; pts.push([(1 - t) ** 2 * p[0] + 2 * (1 - t) * t * mid[0] + t * t * q[0], (1 - t) ** 2 * p[1] + 2 * (1 - t) * t * mid[1] + t * t * q[1], (1 - t) ** 2 * p[2] + 2 * (1 - t) * t * mid[2] + t * t * q[2]]); } return makeCurve(pts, 3, false); } })(); const obj = newObj(app, 'fillet', 'crvlist', gen); addObject(app, obj); app.select([gen]); return obj; }
+      if (k === 'CrvFillet') { const c = inputs.filter(o => o.primitive!.curve()); if (c.length < 2) throw new Error('Fillet Intersection: select two curves'); const [A, B] = c; const gen = new (class extends Operator { constructor() { super('Curve Fillet', 'crvfillet', [num('radius', 0.5, 'Radius', { min: 0 }), int('subdiv', 8, 'Subdivisions', { min: 2, max: 32 })]); } apply() {
+        // Softimage filletcrv (rad default 0.5): fillet in world space so object transforms are honoured
+        const worldCurve = (o: X3DObject): CurveData => {
+          const src = o.primitive!.curve()!; const M = o.globalMatrix();
+          return { ...src, cvs: src.cvs.map(q => { const v = new THREE.Vector3(q[0], q[1], q[2]).applyMatrix4(M); return [v.x, v.y, v.z, q[3] || 1] as [number, number, number, number]; }) };
+        };
+        return filletCurves(worldCurve(A), worldCurve(B), Number(this.val('radius')), Number(this.val('subdiv')));
+      } })(); const obj = newObj(app, 'fillet', 'crvlist', gen); addObject(app, obj); app.select([gen]); return obj; }
       // GATOR: transfer material / texture projection / weight maps from the other selected objects to the first
       const [target, ...sources] = app.selectedObjects; if (!target || !sources.length) throw new Error('GATOR: select the target object, then the source object(s)');
       const src = sources[0]; const oldMat = target.material; const addedProps: [Cluster, Property][] = [];
