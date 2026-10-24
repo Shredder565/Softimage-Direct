@@ -169,6 +169,9 @@ export function stampOf(objs: (X3DObject | null | undefined)[]): string { let s 
 /** The generator at the bottom of the stack that makes the primitive geometry. Like Softimage, it carries the shape
  *  parameters of the implicit input primitive (cube.cube: length…) and the Geometry converter parameters (subdivisions). */
 export class GeomOperator extends Operator {
+  /** Softimage SPDL layout for the shape tab (e.g. Torus Radius group) and Geometry converter tab. */
+  shapeLayout?: ReturnType<typeof siLayout>;
+  geomLayout?: ReturnType<typeof siLayout>;
   constructor(readonly preset: string, readonly geomKind: 'Polygon Mesh' | 'Surface' | 'Point Cloud' | 'Curve', defs: any[]) { super('Geometry', 'geom', defs); }
   /** Shape parameters (first PPG tab, named after the primitive) vs converter parameters (the "Geometry" tab). */
   get shapeParams() { return this.params.filter(p => p.def.group === this.preset); }
@@ -199,6 +202,8 @@ export function makeGeomOperator(preset: string, kind: 'Polygon Mesh' | 'Surface
   let geom = siParamDefs(geomKey, {}, { group: 'Geometry' });
   if (!geom.length) geom = siParamDefs('geom:' + preset, {}, { group: 'Geometry' });
   const op = new GeomOperator(preset, kind, [...shape, ...geom]);
+  op.shapeLayout = siLayout(shapeKey) ?? siLayout('shape:Polygon Mesh/' + preset);
+  op.geomLayout = siLayout(geomKey) ?? siLayout('geom:' + preset);
   return op;
 }
 

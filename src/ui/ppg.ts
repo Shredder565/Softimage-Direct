@@ -52,7 +52,11 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
     const out: Page[] = [];
     if (n instanceof X3DObject) {
       for (const op of n.primitive ? [...n.primitive.operators].reverse() : []) {
-        if (op instanceof GeomOperator) { if (op.shapeParams.length) out.push({ key: op.preset, set: op, kind: 'geom-shape' }); if (n.primitive!.params.length) out.push(...tabbed(n.primitive!.name, n.primitive!)); if (op.geometryParams.length) out.push({ key: 'Geometry', set: op, kind: 'geom-geometry' }); }
+        if (op instanceof GeomOperator) {
+          if (op.shapeParams.length) out.push({ key: op.preset, set: op, kind: 'geom-shape', layout: op.shapeLayout });
+          if (n.primitive!.params.length) out.push(...tabbed(n.primitive!.name, n.primitive!));
+          if (op.geometryParams.length) out.push({ key: 'Geometry', set: op, kind: 'geom-geometry', layout: op.geomLayout });
+        }
         else out.push({ key: op.name, set: op, layout: op.layout });
       }
       if (n.primitive && n.primitive.params.length && !n.primitive.operators.some(o => o instanceof GeomOperator)) out.push(...tabbed(n.primitive.name, n.primitive));
@@ -99,7 +103,10 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
     const nameRow = document.createElement('div'); nameRow.className = 'ppg-name'; nameRow.innerHTML = `<label>Name</label>`; const ni = document.createElement('input'); ni.type = 'text'; ni.value = set instanceof Shader ? set.name : n.name; ni.readOnly = !(n instanceof X3DObject || set instanceof Shader); ni.onchange = () => { if (n instanceof X3DObject) app.run('Rename', { InputObj: [n], Name: ni.value }); else if (set instanceof Shader) { const old = set.name; const nn = ni.value; app.record('Rename', () => { set.name = nn; }, () => { set.name = old; }); render(); } }; ni.onkeydown = e => e.stopPropagation(); nameRow.appendChild(ni); body.appendChild(nameRow);
     if (page.kind === 'animation') { renderAnimation(n); return; }
     if (page.kind === 'geom-shape' || page.kind === 'geom-geometry') {
-      const g = set as GeomOperator; const ps = page.kind === 'geom-geometry' ? g.geometryParams : g.shapeParams; const box = group(page.kind === 'geom-geometry' ? 'Subdivisions' : k, k); for (const p of ps) box.body.appendChild(row(app, p, [], multiSet)); body.appendChild(box.el);
+      const g = set as GeomOperator; const ps = page.kind === 'geom-geometry' ? g.geometryParams : g.shapeParams;
+      const allow = new Set(ps.map(p => p.name.toLowerCase()));
+      if (page.layout && page.layout.length) renderLayout(page.layout, set, body, k, allow);
+      else { const box = group(page.kind === 'geom-geometry' ? 'Subdivisions' : k, k); for (const p of ps) box.body.appendChild(row(app, p, [], multiSet)); body.appendChild(box.el); }
     } else if (page.layout && page.layout.length) renderLayout(page.layout, set, body, k);
     else {
       const params = n instanceof X3DObject || set.layout || set !== n ? set.params : (set.groups().get(k) ?? set.params);
@@ -142,21 +149,25 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
     head.onclick = () => { if (collapsed.has(key)) collapsed.delete(key); else collapsed.add(key); render(); };
     el.append(head, bodyEl); return { el, body: bodyEl };
   };
-  const renderLayout = (nodes: LayoutNode[], set: ParamSet, into: HTMLElement, pageKey: string) => {
-    const mute = set.get('mute'); if (mute && into === body) into.appendChild(muteRow(app, mute));
+  const renderLayout = (nodes: LayoutNode[], set: ParamSet, into: HTMLElement, pageKey: string, allow?: Set<string>) => {
+    const mute = set.get('mute'); if (mute && into === body && !allow) into.appendChild(muteRow(app, mute));
     const seen = new Set<string>();
     const walk = (ns: LayoutNode[], host: HTMLElement) => {
       for (const nd of ns) {
-        if (nd.param) { if (nd.param === '__name' || nd.param === 'Name') continue; const p = set.params.find(x => x.name.toLowerCase() === nd.param!.toLowerCase()); if (p && p.name !== 'mute') { seen.add(p.name); host.appendChild(row(app, p, nd.opts, multiSet)); } }
-        else if (nd.row) { const r = document.createElement('div'); r.className = 'ppg-hrow'; walk(nd.items ?? [], r); host.appendChild(r); }
+        if (nd.param) {
+          if (nd.param === '__name' || nd.param === 'Name') continue;
+          const p = set.params.find(x => x.name.toLowerCase() === nd.param!.toLowerCase());
+          if (p && p.name !== 'mute' && (!allow || allow.has(p.name.toLowerCase()))) { seen.add(p.name); host.appendChild(row(app, p, nd.opts, multiSet)); }
+        }
+        else if (nd.row !== undefined) { const r = document.createElement('div'); r.className = 'ppg-hrow'; walk(nd.items ?? [], r); host.appendChild(r); }
         else { const g = group(nd.group ?? nd.tab ?? '', pageKey); walk(nd.items ?? [], g.body); if (g.body.childElementCount) host.appendChild(g.el); }
       }
     };
     walk(nodes, into);
-    const rest = set.params.filter(p => !seen.has(p.name) && p.name !== 'mute' && !(set.layout as any[])?.some?.(() => false));
-    const inOtherTab = (set.layout as any[] | undefined)?.every(t => t.tab !== undefined) ? new Set((set.layout as any[]).flatMap(t => collect(t.items ?? []))) : new Set<string>();
+    const rest = set.params.filter(p => !seen.has(p.name) && p.name !== 'mute' && (!allow || allow.has(p.name.toLowerCase())));
+    const inOtherTab = !allow && (set.layout as any[] | undefined)?.every(t => t.tab !== undefined) ? new Set((set.layout as any[]).flatMap(t => collect(t.items ?? []))) : new Set<string>();
     const rest2 = rest.filter(p => !inOtherTab.has(p.name.toLowerCase()));
-    if (rest2.length) { const g = group('Other', pageKey); for (const p of rest2) g.body.appendChild(row(app, p, [], multiSet)); into.appendChild(g.el); }
+    if (rest2.length) { const g = group(allow ? (pageKey === 'Geometry' ? 'Subdivisions' : pageKey) : 'Other', pageKey); for (const p of rest2) g.body.appendChild(row(app, p, [], multiSet)); into.appendChild(g.el); }
   };
   let lastKeys = '';
   const refresh = () => {
@@ -191,27 +202,64 @@ function muteRow(app: App, p: Parameter) { const r = document.createElement('div
 function dotState(app: App, p: Parameter) { const fc = app.anim.fcurve(p); if (!fc || !fc.keys.length) return ''; return fc.hasKey(app.anim.frame) ? ' keyed' : ' animated'; }
 function fmtNum(v: any) { return typeof v === 'number' ? String(Math.round(v * 10000) / 10000) : String(v); }
 
+/** Softimage SPDL layout opts → row chrome (Model PPG content; shell chrome stays UI-owned). */
+function parseLayoutOpts(opts: string[] = []) {
+  const o = { noLabel: false, alignRight: false, alignCenter: false, noSlider: false, valueOnly: false, labelWidth: null as string | null, widthPct: null as string | null };
+  for (const raw of opts) {
+    const s = String(raw).trim(); const low = s.toLowerCase();
+    if (low === 'nolabel') o.noLabel = true;
+    else if (low === 'alignright') o.alignRight = true;
+    else if (low === 'aligncenter') o.alignCenter = true;
+    else if (low === 'noslider') o.noSlider = true;
+    else if (low === 'valueonly') { o.valueOnly = true; o.noLabel = true; }
+    else if (/^\d+%$/.test(s)) o.widthPct = s;
+    else {
+      const m = s.match(/^labelwidth\((.+)\)$/i);
+      if (m) o.labelWidth = m[1].trim();
+    }
+  }
+  return o;
+}
+function labelColPx(spec: string | null): number | null {
+  if (!spec) return null;
+  const pct = spec.match(/^(\d+)\s*%/);
+  if (pct) return Math.max(10, Math.round(108 * (Number(pct[1]) / 100)));
+  const px = spec.match(/^(\d+)/);
+  return px ? Number(px[1]) : null;
+}
+
 function row(app: App, p: Parameter, opts: string[] = [], setter?: (p: Parameter, v: any, label?: string) => void): HTMLElement {
+  const lo = parseLayoutOpts(opts);
   const setP = (v: any, label?: string) => setter ? setter(p, v, label) : app.setParam(p, v, label);
   const r = document.createElement('div'); r.className = 'ppg-row'; r.dataset.param = p.name; (r as any)._param = p;
+  if (lo.alignRight) r.classList.add('align-right');
+  if (lo.alignCenter) r.classList.add('align-center');
+  if (lo.noLabel) r.classList.add('no-label');
+  if (lo.widthPct) { r.style.flex = `0 0 ${lo.widthPct}`; r.style.maxWidth = lo.widthPct; }
+  const lw = labelColPx(lo.labelWidth);
+  if (lw != null) r.style.setProperty('--ppg-label-w', lw + 'px');
   const dot = document.createElement('div'); dot.className = 'anim-dot' + dotState(app, p); dot.title = p.animatable ? 'Click: set key · Ctrl-click: remove animation' : '';
   if (!p.animatable) dot.style.visibility = 'hidden';
   dot.onclick = (e) => { if (e.ctrlKey) app.run('RemoveAnimation', { InputObjs: p.fullName }); else if (app.anim.fcurve(p)?.hasKey(app.anim.frame)) app.run('RemoveKey', { InputObjs: p.fullName }); else app.run('SaveKey', { InputObjs: p.fullName }); };
-  const label = document.createElement('label'); label.textContent = p.label; label.title = p.def.desc ? `${p.fullName} — ${p.def.desc}` : p.fullName;
+  const label = document.createElement('label'); label.textContent = lo.noLabel ? '' : p.label; label.title = p.def.desc ? `${p.fullName} — ${p.def.desc}` : p.fullName;
   let ctl: HTMLElement;
   const d = p.def;
   if (d.type === 'double' || d.type === 'int') {
-    const wrap = document.createElement('div'); wrap.className = 'ppg-num';
+    const wrap = document.createElement('div'); wrap.className = 'ppg-num' + (lo.noSlider ? ' no-slider' : '');
     const input = document.createElement('input'); input.type = 'text'; input.className = 'val'; input.value = fmtNum(p.value); input.disabled = !!d.readOnly;
     input.onchange = () => setP(Number(input.value));
     input.onkeydown = (e) => { if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); const step = (d.type === 'int' ? 1 : (e.shiftKey ? 1 : 0.1)) * (e.key === 'ArrowUp' ? 1 : -1); setP(Number(input.value) + step); } };
-    const range = document.createElement('input'); range.type = 'range';
-    const min = d.uimin ?? d.min ?? (d.type === 'int' ? 0 : -100), max = d.uimax ?? d.max ?? (d.type === 'int' ? 64 : 100);
-    range.min = String(min); range.max = String(max); range.step = d.type === 'int' ? '1' : String((max - min) / 1000); range.value = String(p.value); range.disabled = !!d.readOnly;
-    let start: any; range.onpointerdown = () => { start = p.value; };
-    range.oninput = () => { p.value = Number(range.value); input.value = fmtNum(p.value); app.events.emit('scene'); };
-    range.onchange = () => { const v = Number(range.value); p.value = start; setP(v); };
-    wrap.append(input, range); ctl = wrap;
+    wrap.appendChild(input);
+    if (!lo.noSlider) {
+      const range = document.createElement('input'); range.type = 'range';
+      const min = d.uimin ?? d.min ?? (d.type === 'int' ? 0 : -100), max = d.uimax ?? d.max ?? (d.type === 'int' ? 64 : 100);
+      range.min = String(min); range.max = String(max); range.step = d.type === 'int' ? '1' : String((max - min) / 1000); range.value = String(p.value); range.disabled = !!d.readOnly;
+      let start: any; range.onpointerdown = () => { start = p.value; };
+      range.oninput = () => { p.value = Number(range.value); input.value = fmtNum(p.value); app.events.emit('scene'); };
+      range.onchange = () => { const v = Number(range.value); p.value = start; setP(v); };
+      wrap.appendChild(range);
+    }
+    ctl = wrap;
   } else if (d.type === 'bool') {
     const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!p.value; cb.disabled = !!d.readOnly; cb.onchange = () => setP(cb.checked); ctl = cb; r.classList.add('is-check');
   } else if (d.type === 'enum') {
@@ -222,7 +270,6 @@ function row(app: App, p: Parameter, opts: string[] = [], setter?: (p: Parameter
   } else {
     const t = document.createElement('input'); t.type = 'text'; t.value = String(p.value ?? ''); t.disabled = !!d.readOnly; t.onchange = () => setP(t.value); ctl = t;
   }
-  if (opts.includes('AlignRight')) r.classList.add('align-right');
   r.append(dot, label, ctl);
   return r;
 }

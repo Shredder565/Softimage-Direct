@@ -19,13 +19,28 @@ def spdl_params_index():
     return idx
 SP = spdl_params_index()
 
-def best_spdl(sns):
+def best_spdl(sns, hint=None):
+    """Pick SPDL by param overlap; boost filename/propset matches so Shear≠Bulge when params coincide."""
     sns = set(s.lower() for s in sns)
-    best, score = None, 0
+    best, score = None, -1
+    hl = (hint or '').lower().replace(' ', '')
+    stem = hl[:-2] if hl.endswith('op') else hl
     for f, ps in SP.items():
-        s = len(sns & set(ps))
-        if s > score or (s == score and best and len(ps) < len(SP[best])): best, score = f, s
-    return (best, score) if score >= max(1, len(sns) // 2) else (None, 0)
+        overlap = len(sns & set(ps))
+        if overlap == 0 and not hl: continue
+        fl = f.lower(); prop = (spdl.get(f, {}).get('propset') or '').lower().replace(' ', '')
+        boost = 0
+        if hl:
+            if fl == hl + '.spdl' or fl == 'c3d' + hl + '.spdl': boost = 100
+            elif stem and (fl == stem + '.spdl' or fl == 'c3d' + stem + 'op.spdl' or fl.startswith('c3d' + stem)): boost = 80
+            elif hl and hl in fl: boost = 40
+            elif stem and stem in prop: boost = 60
+            elif hl and hl in prop: boost = 50
+        total = overlap * 10 + boost
+        if total > score or (total == score and best and len(ps) < len(SP[best])):
+            best, score = f, total
+    need = max(10, (len(sns) // 2) * 10)
+    return (best, score) if best and score >= need else (None, 0)
 
 def conv(p, sp):
     t = VT.get(p.get('t'), 'double')
@@ -79,7 +94,8 @@ for item in dumps:
             if t != 'geom' and item['cmd'] in ('ApplyOp', 'ApplyTopoOp', 'ApplyGenOp', 'ApplyPropVolumeOp', 'ApplyKinematicOp'):
                 by_menu[item['l']] = {'type': t, 'values': {p['sn']: p.get('v') for p in params}, 'used': item.get('used')}
             if key in defs or not params: continue
-            f, score = best_spdl([p['sn'] for p in params])
+            hint = t if t != 'geom' else key.split(':')[1]
+            f, score = best_spdl([p['sn'] for p in params], hint)
             sp = SP.get(f, {}) if f else {}
             d = {'type': t, 'name': op['name'], 'spdl': f, 'params': [conv(p, sp.get(p['sn'].lower())) for p in params]}
             lay = layout_for(f, [p['sn'] for p in params]) if f else None
@@ -87,8 +103,8 @@ for item in dumps:
             d['source'] = item['l']
             defs[key] = d
         if item['l'].startswith('Get/Primitive/') and o.get('primParams'):
-            f, score = best_spdl([p['sn'] for p in o['primParams']]); sp = SP.get(f, {}) if f else {}
             key = 'prim:' + item['l'][len('Get/Primitive/'):]
+            f, score = best_spdl([p['sn'] for p in o['primParams']], o.get('prim') or key); sp = SP.get(f, {}) if f else {}
             prims[key] = {'type': o.get('prim'), 'spdl': f, 'params': [conv(p, sp.get(p['sn'].lower())) for p in o['primParams']]}
             lay = layout_for(f, [p['sn'] for p in o['primParams']]) if f else None
             if lay: prims[key]['layout'] = lay
@@ -99,7 +115,7 @@ for item in dumps:
                 key = 'shape:' + item['l'][len('Get/Primitive/'):]
                 if key in prims: continue
                 byname = [f for f, v in spdl.items() if (v.get('propset') or '').lower() == pr['type'].lower() and set(x['sn'].lower() for x in v['params']) >= set(x['sn'].lower() for x in pr['params'])]
-                f = byname[0] if byname else best_spdl([p['sn'] for p in pr['params']])[0]; sp = SP.get(f, {}) if f else {}
+                f = byname[0] if byname else best_spdl([p['sn'] for p in pr['params']], pr['type'])[0]; sp = SP.get(f, {}) if f else {}
                 prims[key] = {'type': pr['type'], 'name': pr['name'], 'spdl': f, 'params': [conv(p, sp.get(p['sn'].lower())) for p in pr['params']]}
                 lay = layout_for(f, [p['sn'] for p in pr['params']]) if f else None
                 if lay: prims[key]['layout'] = lay
@@ -107,7 +123,7 @@ for item in dumps:
         for pr in o.get('props', []) or []:
             key = 'prop:' + pr['type']
             if key in defs or not pr.get('params'): continue
-            f, score = best_spdl([p['sn'] for p in pr['params']]); sp = SP.get(f, {}) if f else {}
+            f, score = best_spdl([p['sn'] for p in pr['params']], pr['type']); sp = SP.get(f, {}) if f else {}
             d = {'type': pr['type'], 'name': pr['name'], 'spdl': f, 'params': [conv(p, sp.get(p['sn'].lower())) for p in pr['params'] if p['sn'] not in SKIP_SN]}
             lay = layout_for(f, [p['sn'] for p in pr['params']]) if f else None
             if lay: d['layout'] = lay
@@ -117,7 +133,7 @@ for item in dumps:
             for sh in m.get('shaders', []):
                 key = 'shader:' + sh['progid']
                 if key in defs: continue
-                f, score = best_spdl([p['sn'] for p in sh['params']]); sp = SP.get(f, {}) if f else {}
+                f, score = best_spdl([p['sn'] for p in sh['params']], sh.get('progid')); sp = SP.get(f, {}) if f else {}
                 defs[key] = {'type': sh['progid'], 'name': sh['name'], 'spdl': f, 'params': [conv(p, sp.get(p['sn'].lower())) for p in sh['params']]}
                 lay = layout_for(f, [p['sn'] for p in sh['params']]) if f else None
                 if lay: defs[key]['layout'] = lay
