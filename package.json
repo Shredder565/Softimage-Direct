@@ -1,12 +1,20 @@
 {
-  "name": "softimage-web",
-  "version": "0.1.0",
+  "name": "afterimage",
+  "productName": "AfterImage",
+  "version": "1.0.0",
+  "description": "AfterImage - clean-room Softimage-faithful 3D modeling and animation",
+  "author": "AfterImage",
   "private": true,
   "type": "module",
+  "main": "electron/main.cjs",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "electron:dev": "ELECTRON_DEV=1 electron .",
+    "dist": "npm run build && electron-builder --win nsis",
+    "build:win": "npm run build && electron-builder --win nsis --x64",
+    "pack": "npm run build && electron-builder --dir"
   },
   "dependencies": {
     "three": "0.170.0",
@@ -15,6 +23,8 @@
   },
   "devDependencies": {
     "@types/three": "0.170.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
     "playwright": "^1.48.2",
     "typescript": "5.6.3",
     "vite": "5.4.10"

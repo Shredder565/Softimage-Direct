@@ -12,6 +12,17 @@ npm run dev      # live-reload dev server
 npm run build    # static build in dist/
 ```
 
+## Windows installer (AfterImage)
+
+Desktop packaging brands the app as **AfterImage**. On Windows:
+
+```
+npm ci
+npm run build:win   # → release/AfterImage-1.0.0-setup.exe
+```
+
+Or use GitHub Actions (*Build AfterImage Windows installer*) / push tag `v1.0.0`. See [docs/PACKAGING.md](docs/PACKAGING.md).
+
 ## Layout
 
 - `src/core` — object model (scene, kinematics, primitives, construction history), parameters, command bus, geometry (meshes, NURBS curves/surfaces, subdivision, topology ops, deformers), animation (fcurves).
