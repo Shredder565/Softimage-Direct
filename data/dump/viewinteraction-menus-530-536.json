@@ -1,0 +1,1715 @@
+{
+  "dll": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Application\\bin\\viewinteraction.dll",
+  "menus": {
+    "530": [
+      {
+        "label": "TRANSLATE",
+        "id": null,
+        "flags": 144,
+        "f_popup": true,
+        "f_grayed": false,
+        "f_disabled": false,
+        "f_checked": false,
+        "f_separator": false,
+        "items": [
+          {
+            "label": "View",
+            "id": 541,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Global",
+            "id": 542,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Local",
+            "id": 543,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Parent",
+            "id": 544,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Ref",
+            "id": 545,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Plane",
+            "id": 546,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "COG",
+            "id": 548,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Prop",
+            "id": 547,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Sym",
+            "id": 549,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Edit Pivot",
+            "id": 557,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Lock Pivot",
+            "id": 558,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Reset Pivot",
+            "id": 559,
+            "flags": 128,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          }
+        ]
+      }
+    ],
+    "531": [
+      {
+        "label": "ROTATE",
+        "id": null,
+        "flags": 144,
+        "f_popup": true,
+        "f_grayed": false,
+        "f_disabled": false,
+        "f_checked": false,
+        "f_separator": false,
+        "items": [
+          {
+            "label": "View",
+            "id": 541,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Global",
+            "id": 542,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Local",
+            "id": 543,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Parent",
+            "id": 544,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Add",
+            "id": 552,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Ref",
+            "id": 545,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Plane",
+            "id": 546,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "COG",
+            "id": 548,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Prop",
+            "id": 547,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Sym",
+            "id": 549,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Edit Pivot",
+            "id": 557,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Lock Pivot",
+            "id": 558,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Reset Pivot",
+            "id": 559,
+            "flags": 128,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          }
+        ]
+      }
+    ],
+    "532": [
+      {
+        "label": "SCALE",
+        "id": null,
+        "flags": 144,
+        "f_popup": true,
+        "f_grayed": false,
+        "f_disabled": false,
+        "f_checked": false,
+        "f_separator": false,
+        "items": [
+          {
+            "label": "Global",
+            "id": 542,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Local",
+            "id": 543,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Parent",
+            "id": 544,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Ref",
+            "id": 545,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Uniform",
+            "id": 550,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Volume",
+            "id": 551,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "COG",
+            "id": 548,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Prop",
+            "id": 547,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Sym",
+            "id": 549,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Edit Pivot",
+            "id": 557,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Lock Pivot",
+            "id": 558,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Reset Pivot",
+            "id": 559,
+            "flags": 128,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          }
+        ]
+      }
+    ],
+    "533": [
+      {
+        "label": "PIVOT",
+        "id": null,
+        "flags": 144,
+        "f_popup": true,
+        "f_grayed": false,
+        "f_disabled": false,
+        "f_checked": false,
+        "f_separator": false,
+        "items": [
+          {
+            "label": "Lock",
+            "id": 553,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Reset",
+            "id": 554,
+            "flags": 128,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          }
+        ]
+      }
+    ],
+    "534": [
+      {
+        "label": "CURVE",
+        "id": null,
+        "flags": 144,
+        "f_popup": true,
+        "f_grayed": false,
+        "f_disabled": false,
+        "f_checked": false,
+        "f_separator": false,
+        "items": [
+          {
+            "label": "Exit Tool",
+            "id": 40010,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Open/Close",
+            "id": 40005,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Invert",
+            "id": 40006,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "LMB = Add At Start",
+            "id": 40007,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "LMB = Add At End",
+            "id": 40011,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Start New Curve",
+            "id": 40008,
+            "flags": 128,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          }
+        ]
+      }
+    ],
+    "535": [
+      {
+        "label": "TWEAK",
+        "id": null,
+        "flags": 144,
+        "f_popup": true,
+        "f_grayed": false,
+        "f_disabled": false,
+        "f_checked": false,
+        "f_separator": false,
+        "items": [
+          {
+            "label": "Toggle Manipulator",
+            "id": 639,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Slide Components",
+            "id": 641,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Weld Points",
+            "id": 642,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Translate",
+            "id": 634,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Rotate",
+            "id": 635,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Scale",
+            "id": 636,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Next Manipulator",
+            "id": 637,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Prev Manipulator",
+            "id": 638,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Tweak All",
+            "id": 630,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Points",
+            "id": 631,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Edges",
+            "id": 632,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Polygons",
+            "id": 633,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Points + Edges",
+            "id": 640,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "View",
+            "id": 541,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Global",
+            "id": 542,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Local",
+            "id": 543,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Object",
+            "id": 544,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Ref",
+            "id": 545,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Plane",
+            "id": 546,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "COG",
+            "id": 548,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Prop",
+            "id": 547,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Sym",
+            "id": 549,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Last Proportional Operator...",
+            "id": 555,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Proportional Settings...",
+            "id": 556,
+            "flags": 128,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          }
+        ]
+      }
+    ],
+    "536": [
+      {
+        "label": "TWEAK NORMALS",
+        "id": null,
+        "flags": 144,
+        "f_popup": true,
+        "f_grayed": false,
+        "f_disabled": false,
+        "f_checked": false,
+        "f_separator": false,
+        "items": [
+          {
+            "label": "Average",
+            "id": 653,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Vertex",
+            "id": 654,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Polygon",
+            "id": 655,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Invert",
+            "id": 656,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Normalize",
+            "id": 657,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Set Value...",
+            "id": 658,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Copy",
+            "id": 659,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Paste",
+            "id": 660,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Reset",
+            "id": 650,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "User",
+            "id": 651,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Auto",
+            "id": 652,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Toggle Manipulator",
+            "id": 639,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Tweak All",
+            "id": 630,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Samples",
+            "id": 643,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Points",
+            "id": 631,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Edges",
+            "id": 632,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Polygons",
+            "id": 633,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "label": "Points + Samples",
+            "id": 644,
+            "flags": 0,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          },
+          {
+            "separator": true
+          },
+          {
+            "label": "Settings...",
+            "id": 661,
+            "flags": 128,
+            "f_popup": false,
+            "f_grayed": false,
+            "f_disabled": false,
+            "f_checked": false,
+            "f_separator": false
+          }
+        ]
+      }
+    ]
+  },
+  "labels_flat": {
+    "530": [
+      {
+        "label": "TRANSLATE",
+        "id": null,
+        "depth": 0,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "View",
+        "id": 541,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Global",
+        "id": 542,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Local",
+        "id": 543,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Parent",
+        "id": 544,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Ref",
+        "id": 545,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Plane",
+        "id": 546,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "COG",
+        "id": 548,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Prop",
+        "id": 547,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Sym",
+        "id": 549,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Edit Pivot",
+        "id": 557,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Lock Pivot",
+        "id": 558,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Reset Pivot",
+        "id": 559,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      }
+    ],
+    "531": [
+      {
+        "label": "ROTATE",
+        "id": null,
+        "depth": 0,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "View",
+        "id": 541,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Global",
+        "id": 542,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Local",
+        "id": 543,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Parent",
+        "id": 544,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Add",
+        "id": 552,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Ref",
+        "id": 545,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Plane",
+        "id": 546,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "COG",
+        "id": 548,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Prop",
+        "id": 547,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Sym",
+        "id": 549,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Edit Pivot",
+        "id": 557,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Lock Pivot",
+        "id": 558,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Reset Pivot",
+        "id": 559,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      }
+    ],
+    "532": [
+      {
+        "label": "SCALE",
+        "id": null,
+        "depth": 0,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Global",
+        "id": 542,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Local",
+        "id": 543,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Parent",
+        "id": 544,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Ref",
+        "id": 545,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Uniform",
+        "id": 550,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Volume",
+        "id": 551,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "COG",
+        "id": 548,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Prop",
+        "id": 547,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Sym",
+        "id": 549,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Edit Pivot",
+        "id": 557,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Lock Pivot",
+        "id": 558,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Reset Pivot",
+        "id": 559,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      }
+    ],
+    "533": [
+      {
+        "label": "PIVOT",
+        "id": null,
+        "depth": 0,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Lock",
+        "id": 553,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Reset",
+        "id": 554,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      }
+    ],
+    "534": [
+      {
+        "label": "CURVE",
+        "id": null,
+        "depth": 0,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Exit Tool",
+        "id": 40010,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Open/Close",
+        "id": 40005,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Invert",
+        "id": 40006,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "LMB = Add At Start",
+        "id": 40007,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "LMB = Add At End",
+        "id": 40011,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Start New Curve",
+        "id": 40008,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      }
+    ],
+    "535": [
+      {
+        "label": "TWEAK",
+        "id": null,
+        "depth": 0,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Toggle Manipulator",
+        "id": 639,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Slide Components",
+        "id": 641,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Weld Points",
+        "id": 642,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Translate",
+        "id": 634,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Rotate",
+        "id": 635,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Scale",
+        "id": 636,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Next Manipulator",
+        "id": 637,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Prev Manipulator",
+        "id": 638,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Tweak All",
+        "id": 630,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Points",
+        "id": 631,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Edges",
+        "id": 632,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Polygons",
+        "id": 633,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Points + Edges",
+        "id": 640,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "View",
+        "id": 541,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Global",
+        "id": 542,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Local",
+        "id": 543,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Object",
+        "id": 544,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Ref",
+        "id": 545,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Plane",
+        "id": 546,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "COG",
+        "id": 548,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Prop",
+        "id": 547,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Sym",
+        "id": 549,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Last Proportional Operator...",
+        "id": 555,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Proportional Settings...",
+        "id": 556,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      }
+    ],
+    "536": [
+      {
+        "label": "TWEAK NORMALS",
+        "id": null,
+        "depth": 0,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Average",
+        "id": 653,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Vertex",
+        "id": 654,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Polygon",
+        "id": 655,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Invert",
+        "id": 656,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Normalize",
+        "id": 657,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Set Value...",
+        "id": 658,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Copy",
+        "id": 659,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Paste",
+        "id": 660,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Reset",
+        "id": 650,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "User",
+        "id": 651,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Auto",
+        "id": 652,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Toggle Manipulator",
+        "id": 639,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Tweak All",
+        "id": 630,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Samples",
+        "id": 643,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Points",
+        "id": 631,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Edges",
+        "id": 632,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Polygons",
+        "id": 633,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Points + Samples",
+        "id": 644,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      },
+      {
+        "label": "Settings...",
+        "id": 661,
+        "depth": 1,
+        "f_grayed": false,
+        "f_disabled": false
+      }
+    ]
+  }
+}

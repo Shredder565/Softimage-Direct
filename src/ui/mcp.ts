@@ -83,11 +83,56 @@ export function mcpPanel(app: App, host: HTMLElement, opts: { only?: string[]; c
   const setAxis = (ax: 'x' | 'y' | 'z', on: boolean) => { (tool.axes as any)[ax] = on; for (const k in axisB) axisB[k].forEach(b => { if ((b as any)._ax === ax) b.classList.toggle('on', on); }); };
   // The ≡ option menus are Softimage's own TRANSLATE / ROTATE / SCALE tool menus (viewinteraction.dll resources).
   const OPTIONS: Record<string, SiMenuItem[]> = { scale: SI_MENUS.toolScale ?? [], rotate: SI_MENUS.toolRotate ?? [], translate: SI_MENUS.toolTranslate ?? [] };
-  const pickOption = (m: string, label: string) => { const refs: Record<string, string> = { Global: 'Global', Local: 'Local', View: 'View', Parent: 'Par', Ref: 'Ref', Plane: 'Plane' }; if (refs[label]) { refB.find(b => b.textContent === refs[label])?.click(); return; } if (label === 'COG') cogB.click(); else if (label === 'Prop') propB.click(); else if (label === 'Sym') symB.click(); else if (label === 'Uniform') { (tool as any).uniform = !(tool as any).uniform; } else if (label === 'Reset Pivot') { for (const o of app.selectedObjects) for (const ax of ['x', 'y', 'z']) app.setParam(o.kinematics.local.get('ppos' + ax)!, 0); } else if (label === 'Slide Components') { A.slideMode = !A.slideMode; app.logMsg('info', `Slide components ${A.slideMode ? 'ON' : 'OFF'}`); } else if (label === 'Weld Points') app.run('WeldPoints'); else if (label === 'Translate' || label === 'Rotate' || label === 'Scale') setMode(label.toLowerCase() as any); else if (label === 'Points' || label === 'Edges' || label === 'Polygons') app.setSelMode(label.slice(0, -1).toLowerCase() as any); else if (label === 'Points + Edges' || label === 'Tweak All') { app.setSelMode('point'); A.tweakAll = label === 'Tweak All'; } else if (label === 'Next Manipulator') setMode(tool.mode === 'translate' ? 'rotate' : tool.mode === 'rotate' ? 'scale' : 'translate'); else if (label === 'Prev Manipulator') setMode(tool.mode === 'translate' ? 'scale' : tool.mode === 'scale' ? 'rotate' : 'translate'); else if (label === 'Toggle Manipulator') A.hideManip = !A.hideManip; else if (label === 'Proportional Settings...' || label === 'Last Proportional Operator...') { const o = app.selectedObjects[0]; const op = o?.primitive?.operators.slice().reverse().find(x => x.type === 'movecomponent' || /prop/i.test(x.name)); if (op) app.events.emit('inspect', op); else app.run('SetProportionalRadius', { Radius: app.proportional.radius }); } else if (label === 'Lock') A.pivotLocked = !A.pivotLocked; else if (label === 'Reset') { for (const o of app.selectedObjects) for (const ax of ['x', 'y', 'z']) app.setParam(o.kinematics.local.get('ppos' + ax)!, 0); } else if (label === 'Create Grid And Connect') app.logMsg('info', 'Knife: click two points to cut; tag polygons first to limit the cut'); else if (label === 'Inspect Operator...') { const o = app.selectedObjects[0]; const op = o?.primitive?.operators.slice(-1)[0]; if (op) app.events.emit('inspect', op); } else app.logMsg('info', `${m}: ${label} not implemented`); };
+  // Softimage viewinteraction.dll menus 530–532 leaf handlers (PE-attested labels; no invent plane chrome).
+  const pickOption = (m: string, label: string) => {
+    const refs: Record<string, string> = { Global: 'Global', Local: 'Local', View: 'View', Parent: 'Par', Ref: 'Ref', Plane: 'Plane' };
+    if (refs[label]) { refB.find(b => b.textContent === refs[label])?.click(); return; }
+    if (label === 'COG') cogB.click();
+    else if (label === 'Prop') propB.click();
+    else if (label === 'Sym') symB.click();
+    else if (label === 'Uniform') { (tool as any).uniform = !(tool as any).uniform; (tool as any).volume = false; }
+    else if (label === 'Volume') { (tool as any).volume = !(tool as any).volume; if ((tool as any).volume) (tool as any).uniform = false; }
+    else if (label === 'Add') { (tool as any).addRotate = !(tool as any).addRotate; app.logMsg('info', `Rotate Add ${((tool as any).addRotate ? 'ON' : 'OFF')} (Softimage additive rotate ref)`); }
+    else if (label === 'Edit Pivot') { A.editPivot = !A.editPivot; A.centerMode = !!A.editPivot; app.logMsg('info', `Edit Pivot ${A.editPivot ? 'ON' : 'OFF'}`); app.events.emit('selection'); }
+    else if (label === 'Lock Pivot' || label === 'Lock') { A.pivotLocked = !A.pivotLocked; app.logMsg('info', `Lock Pivot ${A.pivotLocked ? 'ON' : 'OFF'}`); }
+    else if (label === 'Reset Pivot' || label === 'Reset') {
+      if (A.pivotLocked) { app.logMsg('info', 'Reset Pivot: pivot is locked'); return; }
+      for (const o of app.selectedObjects) for (const ax of ['x', 'y', 'z']) app.setParam(o.kinematics.local.get('ppos' + ax)!, 0);
+    }
+    else if (label === 'Slide Components') { A.slideMode = !A.slideMode; app.logMsg('info', `Slide components ${A.slideMode ? 'ON' : 'OFF'}`); }
+    else if (label === 'Weld Points') app.run('WeldPoints');
+    else if (label === 'Translate' || label === 'Rotate' || label === 'Scale') setMode(label.toLowerCase() as any);
+    else if (label === 'Points' || label === 'Edges' || label === 'Polygons') app.setSelMode(label.slice(0, -1).toLowerCase() as any);
+    else if (label === 'Points + Edges' || label === 'Tweak All') { app.setSelMode('point'); A.tweakAll = label === 'Tweak All'; }
+    else if (label === 'Next Manipulator') setMode(tool.mode === 'translate' ? 'rotate' : tool.mode === 'rotate' ? 'scale' : 'translate');
+    else if (label === 'Prev Manipulator') setMode(tool.mode === 'translate' ? 'scale' : tool.mode === 'scale' ? 'rotate' : 'translate');
+    else if (label === 'Toggle Manipulator') { A.hideManip = !A.hideManip; app.events.emit('selection'); }
+    else if (label === 'Proportional Settings...' || label === 'Last Proportional Operator...') {
+      const o = app.selectedObjects[0];
+      const op = o?.primitive?.operators.slice().reverse().find(x => x.type === 'movecomponent' || /prop/i.test(x.name));
+      if (op) app.events.emit('inspect', op); else app.run('SetProportionalRadius', { Radius: app.proportional.radius });
+    }
+    else if (label === 'Create Grid And Connect') app.logMsg('info', 'Knife: click two points to cut; tag polygons first to limit the cut');
+    else if (label === 'Inspect Operator...') { const o = app.selectedObjects[0]; const op = o?.primitive?.operators.slice(-1)[0]; if (op) app.events.emit('inspect', op); }
+    else app.logMsg('info', `${m}: ${label} not implemented`);
+  };
+  const optionChecked = (it: { label?: string }) => {
+    const l = it.label ?? '';
+    if (['Global', 'Local', 'View', 'Parent', 'Ref', 'Plane'].includes(l)) return ((tool as any).ref ?? 'Global') === (l === 'Parent' ? 'Par' : l);
+    if (l === 'COG') return !!A.cog;
+    if (l === 'Prop') return !!app.proportional.on;
+    if (l === 'Sym') return !!A.symmetry;
+    if (l === 'Uniform') return !!(tool as any).uniform;
+    if (l === 'Volume') return !!(tool as any).volume;
+    if (l === 'Add') return !!(tool as any).addRotate;
+    if (l === 'Lock Pivot' || l === 'Lock') return !!A.pivotLocked;
+    if (l === 'Edit Pivot') return !!A.editPivot;
+    return undefined;
+  };
   for (const md of tmodes) {
     const mb = button(md.l, () => setMode(tool.mode === md.m ? 'select' : md.m), `${md.m[0].toUpperCase() + md.m.slice(1)} tool (${md.k})`, 'mode'); (mb as any)._m = md.m; modeB.push(mb);
     axisB[md.m] = (['x', 'y', 'z'] as const).map(ax => { const b = button(ax, () => setAxis(ax, !(tool.axes as any)[ax]), `Manipulate the ${ax.toUpperCase()} axis only — click several to combine`, 'axis on'); (b as any)._ax = ax; return b; });
-    const opt = button('≡', (e) => { e.stopPropagation(); const r = (e.target as HTMLElement).getBoundingClientRect(); openSiMenu(OPTIONS[md.m], r.left, r.bottom, (it) => pickOption(md.m, it.label!), { checked: it => ['Global', 'Local', 'View', 'Parent', 'Ref', 'Plane'].includes(it.label!) ? ((tool as any).ref ?? 'Global') === (it.label === 'Parent' ? 'Par' : it.label) : it.label === 'COG' ? !!A.cog : it.label === 'Prop' ? !!app.proportional.on : it.label === 'Sym' ? !!A.symmetry : it.label === 'Uniform' ? !!(tool as any).uniform : undefined }); }, 'Options', 'tiny');
+    const opt = button('≡', (e) => { e.stopPropagation(); const r = (e.target as HTMLElement).getBoundingClientRect(); openSiMenu(OPTIONS[md.m], r.left, r.bottom, (it) => pickOption(md.m, it.label!), { checked: optionChecked }); }, 'Options', 'tiny');
     tr.body.appendChild(grid(5, mb, ...axisB[md.m], opt));
     fields[md.m] = (['x', 'y', 'z'] as const).map(ax => { const f = field(ax, v => { for (const o of app.selectedObjects) app.setParam(o.kinematics.local.get(md.prefix + ax)!, v, md.m); }); return f; }).map(f => { tr.body.appendChild(f.w); return f.i; });
   }
@@ -99,7 +144,18 @@ export function mcpPanel(app: App, host: HTMLElement, opts: { only?: string[]; c
   const propB = button('Prop', () => { app.proportional.on = !app.proportional.on; upd(); }, 'Proportional modeling (falloff)');
   const symB = button('Sym', () => { A.symmetry = !A.symmetry; upd(); }, 'Symmetry Mode. Right-click to popup menu.');
   symB.oncontextmenu = (e) => { e.preventDefault(); openSiMenu(SI_MENUS.mcpSymmetry ?? [], e.clientX, e.clientY, (it) => { if (['YZ', 'XZ', 'XY'].includes(it.label!)) { A.symPlane = it.label; A.symmetry = true; upd(); } else { const o = app.selectedObjects.find(x => x.primitive?.mesh()); if (o) { const p = o.property('symmetrymap') ?? app.run('CreateSymmetryMap', { InputObj: [o] }); if (p) app.events.emit('inspect', p); } else app.logMsg('info', 'Symmetry Properties: select a polygon mesh'); } }, { checked: it => ['YZ', 'XZ', 'XY'].includes(it.label!) ? (A.symPlane ?? 'YZ') === it.label : undefined }); };
-  (window as any).__mcp = (k: string, v: any) => { if (k === 'ref') refB.find(b => b.textContent === v)?.click(); else if (k === 'axis') { (tool.axes as any)[v] = !(tool.axes as any)[v]; app.events.emit('selection'); } else if (k === 'prop') propB.click(); else if (k === 'cog') cogB.click(); else if (k === 'sym') symB.click(); else if (k === 'snap') { const b = snapB.find(x => (x as any)._k === v); if (b) b.click(); else if (v === 'on') snapOn.click(); } else if (k === 'pivot') app.logMsg('info', 'Pivot editing: use the Pivot Tool (camera menu) or the transform PPG'); else if (k === 'manip') app.logMsg('info', `Manipulators ${v ? 'on' : 'off (transform anywhere in the view)'}`); else if (k === 'selmode') { (window as any).__selShape = v; app.logMsg('info', `${v} select mode`); } else if (k === 'vol') app.logMsg('info', 'Volume scaling modifier toggled'); };
+  (window as any).__mcp = (k: string, v: any) => {
+    if (k === 'ref') refB.find(b => b.textContent === v)?.click();
+    else if (k === 'axis') { (tool.axes as any)[v] = !(tool.axes as any)[v]; app.events.emit('selection'); }
+    else if (k === 'prop') propB.click(); else if (k === 'cog') cogB.click(); else if (k === 'sym') symB.click();
+    else if (k === 'snap') { const b = snapB.find(x => (x as any)._k === v); if (b) b.click(); else if (v === 'on') snapOn.click(); }
+    else if (k === 'pivot') pickOption('translate', 'Edit Pivot');
+    else if (k === 'lockpivot') pickOption('translate', 'Lock Pivot');
+    else if (k === 'manip') { A.hideManip = !v; app.events.emit('selection'); }
+    else if (k === 'selmode') { (window as any).__selShape = v; app.logMsg('info', `${v} select mode`); }
+    else if (k === 'vol') pickOption('scale', 'Volume');
+    else if (k === 'pick') pickOption(String(v?.m ?? 'translate'), String(v?.label ?? ''));
+  };
   tr.body.appendChild(grid(3, cogB, propB, symB));
   add('Transform', tr.el);
 
