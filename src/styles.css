@@ -43,6 +43,12 @@
   --prefs-font-px: 11px;
   --prefs-tree-w: 170px;
   --prefs-label-w: 260px;
+  --dlg-font: "MS Sans Serif", "Segoe UI", Arial, sans-serif;
+  --dlg-font-px: 11px;
+  --dlg-btn-w: 75px;
+  --dlg-btn-h: 22px;
+  --dlg-pad: 8px;
+  --dlg-label-w: 90px;
   font-family: Tahoma, "Segoe UI", Arial, sans-serif; font-size: 11px; color: var(--text);
 }
 * { box-sizing: border-box; }
@@ -418,21 +424,21 @@ button, select, input { font-family: inherit; }
 .pal-swatch { height: 18px; border: 1px solid #333; border-radius: 2px; cursor: pointer; }
 .xp-btn.wide { width: 100%; text-align: center; }
 .tb-items { display: flex; flex-direction: column; gap: 2px; } .tb-foot { display: flex; gap: 3px; margin-top: 4px; }
-/* Soft floating dialogs share PPG shell chrome tokens (uiut / MS Sans Serif dialogs) */
-.dlg { display: flex; flex-direction: column; gap: 3px; padding: 6px; font-family: var(--ppg-font); font-size: var(--ppg-font-pt); }
-.dlg label { color: #222; } .dlg input, .dlg textarea, .dlg select { background: var(--ppg-val-bg); color: var(--ppg-val-fg); border: 1px solid #222; font-family: var(--ppg-font); font-size: var(--ppg-font-pt); padding: 2px; height: var(--ppg-input-h); }
-.dlg .row { display: flex; gap: var(--ppg-row-gap); align-items: center; } .dlg .row label { width: 90px; } .dlg .row input, .dlg .row select { flex: 1; }
-.dlg-btns { display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; } .dlg-btns button { min-width: 60px; }
+/* Soft floating dialogs — PE classic chrome (8pt MS Sans Serif, OK/Cancel 50×14 DLU) */
+.dlg { display: flex; flex-direction: column; gap: 3px; padding: var(--dlg-pad); font-family: var(--dlg-font); font-size: var(--dlg-font-px); }
+.dlg label { color: #222; } .dlg input, .dlg textarea, .dlg select { background: var(--ppg-val-bg); color: var(--ppg-val-fg); border: 1px solid #222; font-family: var(--dlg-font); font-size: var(--dlg-font-px); padding: 2px; height: var(--ppg-input-h); }
+.dlg .row { display: flex; gap: var(--ppg-row-gap); align-items: center; } .dlg .row label { width: var(--dlg-label-w); } .dlg .row input, .dlg .row select { flex: 1; }
+.dlg-btns { display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; } .dlg-btns button { min-width: var(--dlg-btn-w); min-height: var(--dlg-btn-h); font-family: var(--dlg-font); font-size: var(--dlg-font-px); }
 .dlg .hint { color: #444; font-size: 10px; } .dlg .cmds { height: 200px; }
-.soft-dialog { display: flex; flex-direction: column; gap: 6px; padding: 8px; font-family: var(--ppg-font); font-size: var(--ppg-font-pt); height: 100%; box-sizing: border-box; overflow: auto; }
+.soft-dialog { display: flex; flex-direction: column; gap: 6px; padding: var(--dlg-pad); font-family: var(--dlg-font); font-size: var(--dlg-font-px); height: 100%; box-sizing: border-box; overflow: auto; }
 .soft-dialog label { display: flex; flex-direction: column; gap: 2px; color: #222; }
-.soft-dialog input, .soft-dialog textarea { background: var(--ppg-val-bg); color: var(--ppg-val-fg); border: 1px solid #222; font-family: var(--ppg-font); font-size: var(--ppg-font-pt); padding: 3px; }
+.soft-dialog input, .soft-dialog textarea { background: var(--ppg-val-bg); color: var(--ppg-val-fg); border: 1px solid #222; font-family: var(--dlg-font); font-size: var(--dlg-font-px); padding: 3px; }
 .soft-dialog .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .soft-dialog .cnx-list, .soft-dialog .dev-list { flex: 1; overflow: auto; background: #9d9b99; border: 1px solid #555; min-height: 80px; }
 .soft-dialog .cnx-row { display: flex; gap: var(--ppg-row-gap); align-items: center; padding: 3px 4px; border-bottom: 1px solid #8a8886; }
 .soft-dialog .cnx-row code { flex: 0 1 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; }
 .soft-dialog .cnx-row input.cnx-expr { flex: 1; min-width: 80px; }
-.soft-dialog button { font-family: var(--ppg-font); font-size: var(--ppg-font-pt); padding: 2px 8px; }
+.soft-dialog button { font-family: var(--dlg-font); font-size: var(--dlg-font-px); padding: 2px 8px; min-width: var(--dlg-btn-w); min-height: var(--dlg-btn-h); }
 
 /* ---- shell views */
 .fill-canvas { display: block; }
