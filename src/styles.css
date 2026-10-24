@@ -211,7 +211,8 @@ button, select, input { font-family: inherit; }
 .cmdline .hint { color: var(--muted); font-size: 10px; white-space: nowrap; max-width: 45%; overflow: hidden; text-overflow: ellipsis; }
 
 /* script log */
-.log { height: 100%; overflow: auto; padding: 4px; font-family: Consolas, monospace; font-size: 11px; background: #f6f4f2; color: #111; }
+/* Script Editor / log — C3DPrefsScriptEditor factory (Courier New 10, tab 4, linen on) */
+.log { height: 100%; overflow: auto; padding: 4px; font: var(--script-font, 10px Courier New, Consolas, monospace); tab-size: var(--script-tab, 4); background: #f6f4f2; color: #111; }
 .log div { white-space: pre-wrap; } .log .cmd { color: #111; } .log .info { color: #1a4a9a; } .log .error { color: #b02020; }
 
 /* keying panel / layers */
@@ -457,7 +458,7 @@ button, select, input { font-family: inherit; }
 /* preferences: Explorer colour coding off, parameter colours off, script editor font */
 .xp-nocolor .tree-row .tree-icon, .xp-nocolor .tree-row .tree-name { color: inherit !important; }
 .no-param-colors .ppg input.anim, .no-param-colors .ppg .anim, .no-param-colors .sheet-table input.anim { color: inherit !important; }
-.log { font: var(--script-font, 11px Consolas, monospace); counter-reset: ln; } .script-linenum .log > div::before { counter-increment: ln; content: counter(ln); display: inline-block; width: 28px; color: #888; text-align: right; margin-right: 6px; }
+.log { font: var(--script-font, 10px Courier New, Consolas, monospace); counter-reset: ln; } .script-linenum .log > div::before { counter-increment: ln; content: counter(ln); display: inline-block; width: 28px; color: #888; text-align: right; margin-right: 6px; }
 
 /* floating windows: tray, docking, maximize */
 #float-tray { position: absolute; left: 0; bottom: 0; display: flex; gap: 2px; z-index: 400; pointer-events: none; }

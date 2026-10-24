@@ -24,6 +24,7 @@ PE = ROOT / "data" / "si" / "pe_resources.json"
 PC_DIALOGS = Path("/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/dialogs")
 PC_PE = PC_DIALOGS / "pe-dialogs-ui-model.json"
 PC_SPDL_IDX = PC_DIALOGS / "spdl-layout-index.json"
+PC_SPDL_LAYOUTS = PC_DIALOGS / "spdl-layouts-model-ui.json"
 VIEWS = ROOT / "src" / "data" / "si" / "views.json"
 UIUT_BMP = ROOT / "data" / "si" / "pe_bitmaps" / "uiut"
 PUBLIC_MCP = ROOT / "public" / "si" / "mcp"
@@ -209,6 +210,39 @@ def build() -> dict:
         },
     }
 
+    # Script Editor factory prefs from C3DPrefsScriptEditor.spdl (PC dump when present).
+    se_font, se_size, se_tab, se_linenum = "Courier New", 10, 4, True
+    se_default_size = None
+    if PC_SPDL_LAYOUTS.exists():
+        layouts = json.load(open(PC_SPDL_LAYOUTS)).get("spdl") or {}
+        se_spdl = layouts.get("C3DPrefsScriptEditor.spdl") or {}
+        for p in se_spdl.get("params") or []:
+            sn = p.get("sn")
+            if sn == "font" and p.get("value"):
+                se_font = str(p["value"])
+            elif sn == "fontsize" and p.get("value") is not None:
+                se_size = int(p["value"])
+            elif sn == "tabsize" and p.get("value") is not None:
+                se_tab = int(p["value"])
+            elif sn == "linenum" and p.get("value") is not None:
+                se_linenum = bool(p["value"])
+    for v in (views if isinstance(views, list) else []):
+        if v.get("name") == "Script Editor":
+            se_default_size = v.get("defaultsize")
+            break
+    script_editor = {
+        "prefsSpdl": "C3DPrefsScriptEditor.spdl",
+        "viewDefaultSize": se_default_size,
+        "tokens": {
+            "fontFamily": f"{se_font}, Consolas, monospace",
+            "fontPx": se_size,
+            "tabSize": se_tab,
+            "lineNumbers": se_linenum,
+            "floatDefaultWidthPx": 485,
+            "floatDefaultHeightPx": 550,
+        },
+    }
+
     bitmaps = {
         "inspNav": {
             "peId": "137",
@@ -265,6 +299,7 @@ def build() -> dict:
         "tokens": tokens,
         "explorer": explorer,
         "preferences": preferences,
+        "scriptEditor": script_editor,
         "layoutOpts": layout_opts,
         "bitmapMatch": {"inspNav": match_nav, "tools": match_tools},
         "inventory": inventory,
@@ -272,6 +307,7 @@ def build() -> dict:
             "PPG host chrome is owner-draw (uiut InspNavCtrl / LoadSaveCtrl); DLU rects place controls, RT_BITMAP sizes paint them.",
             "Dialog 147 is the fullest Softimage PPG toolbar (animation + reset all/group + nav + load/save).",
             "Explorer rename = sceneexplorer.dll 725; Preferences host frame = props.dll 264.",
+            "Script Editor factory font/size/tab/linenum from C3DPrefsScriptEditor.spdl; view defaultsize 485×550.",
             "Shared PPG shell only — Model-specific opdef layouts owned by Model PPG worker.",
             "No Softimage Desktop takeover — PE/SPDL file scrape only.",
         ],

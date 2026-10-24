@@ -55,6 +55,16 @@ export function applyPpgChrome(host?: HTMLElement | null): PpgChrome {
       set(el, '--prefs-tree-w', `${pr.treeWidthPx}px`);
       set(el, '--prefs-label-w', `${pr.labelWidthPx}px`);
     }
+    const se = (PPG_CHROME as any).scriptEditor?.tokens;
+    if (se) {
+      set(el, '--script-font', `${se.fontPx}px ${se.fontFamily}`);
+      set(el, '--script-font-family', se.fontFamily);
+      set(el, '--script-font-px', `${se.fontPx}px`);
+      set(el, '--script-tab', String(se.tabSize));
+      set(el, '--script-float-w', `${se.floatDefaultWidthPx}px`);
+      set(el, '--script-float-h', `${se.floatDefaultHeightPx}px`);
+      document.body.classList.toggle('script-linenum', !!se.lineNumbers);
+    }
   };
   apply(root);
   if (host) apply(host);
@@ -97,6 +107,16 @@ export function ppgChromeAudit(root?: ParentNode | Document): Record<string, unk
       labelW: (PPG_CHROME as any).preferences?.tokens?.labelWidthPx,
       treeW: (PPG_CHROME as any).preferences?.tokens?.treeWidthPx,
       tokensApplied: cs.getPropertyValue('--prefs-label-w').trim() === `${(PPG_CHROME as any).preferences?.tokens?.labelWidthPx ?? 260}px`,
+    },
+    scriptEditor: {
+      prefsSpdl: (PPG_CHROME as any).scriptEditor?.prefsSpdl,
+      fontPx: (PPG_CHROME as any).scriptEditor?.tokens?.fontPx,
+      tabSize: (PPG_CHROME as any).scriptEditor?.tokens?.tabSize,
+      lineNumbers: (PPG_CHROME as any).scriptEditor?.tokens?.lineNumbers,
+      floatW: (PPG_CHROME as any).scriptEditor?.tokens?.floatDefaultWidthPx,
+      floatH: (PPG_CHROME as any).scriptEditor?.tokens?.floatDefaultHeightPx,
+      tokensApplied: cs.getPropertyValue('--script-font-px').trim() === `${(PPG_CHROME as any).scriptEditor?.tokens?.fontPx ?? 10}px`,
+      linenumClass: document.body.classList.contains('script-linenum'),
     },
   };
 }
