@@ -6,6 +6,8 @@ import { X3DObject, Primitive, Operator, Node, makeDisplay, makeGeomApprox, thre
 import { num, int, bool, enumP, str } from './params';
 import { MeshData } from './geometry';
 import * as C from './curves';
+import * as N from './nurbs';
+const add3 = (a: V3, b: V3): V3 => [a[0] + b[0], a[1] + b[1], a[2] + b[2]]; const sub3 = (a: V3, b: V3): V3 => [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; const mul3 = (a: V3, k: number): V3 => [a[0] * k, a[1] * k, a[2] * k];
 import type { CurveData, V3 } from './curves';
 import * as T2 from './topology2';
 import type { LatticeData } from './topology2';
@@ -118,13 +120,17 @@ export class GeneratorOperator extends Operator {
     const flagAxis = (pre: string): V3 => { if (this.get(pre + 'x')) { const f = [!!this.val(pre + 'x'), !!this.val(pre + 'y'), !!this.val(pre + 'z')]; const i = f.indexOf(true); return [[1, 0, 0], [0, 1, 0], [0, 0, 1]][i < 0 ? 1 : i] as V3; } return [[1, 0, 0], [0, 1, 0], [0, 0, 1]][Number(this.val('axis') ?? 1)] as V3; };
     const U = () => Math.max(1, this.p('subdivu', 'usub', 10)), W = () => Math.max(1, this.p('subdivv', 'vsub', 10));
     switch (this.preset) {
-      case 'Extrusion Along Axis': return curves[0] ? C.extrudeAlongAxis(curves[0], flagAxis('along'), this.p('length', undefined, 10), W(), U()) : null;
-      case 'Revolution Around Axis': return curves[0] ? C.revolve(curves[0], flagAxis('rev'), this.p('ang', 'angle', 360), U(), W()) : null;
-      case 'Loft': return curves.length >= 2 ? C.loft(curves, U(), W()) : null;
-      case 'Extrusion Along Curve': return curves.length >= 2 ? C.extrudeAlongCurve(curves[0], curves[1], U(), W()) : null;
-      case 'Birail': return curves.length >= 3 ? C.birail(curves[0], curves[1], curves[2], U(), W()) : null;
-      case 'Four-Sided': return curves.length >= 4 ? C.fourSided(curves.slice(0, 4), U(), W()) : null;
-      case 'Curve Net': return curves.length >= 2 ? C.curveNet(curves, [], U(), W()) : null;
+      // generators build true NURBS surfaces (knots, weights) and tessellate them; the grid rides on the mesh as `nurbs`
+      case 'Extrusion Along Axis': { if (!curves[0]) return null; let ax = flagAxis('along'); if (this.val('localaxis') && this.inputs[0]) { const q = new THREE.Vector3(...ax).transformDirection(invMe.clone().multiply(this.inputs[0].globalMatrix())); ax = [q.x, q.y, q.z]; }
+        const srf = N.extrudeNurbs(curves[0], ax, this.p('length', undefined, 10), W(), this.p('startpos', undefined, 0), !!this.val('fromcenter')); if (this.val('closev')) srf.closedV = true; return N.tessellateNurbs(srf, U(), W()); }
+      case 'Revolution Around Axis': { if (!curves[0]) return null; let ax = flagAxis('rev'); let org: V3 = [0, 0, 0]; if (this.val('localaxis') && this.inputs[0]) { const M = invMe.clone().multiply(this.inputs[0].globalMatrix()); const q = new THREE.Vector3(...ax).transformDirection(M); ax = [q.x, q.y, q.z]; const o = new THREE.Vector3().applyMatrix4(M); org = [o.x, o.y, o.z]; }
+        const srf = N.revolveNurbs(curves[0], ax, this.p('ang', 'angle', 360), this.p('startang', undefined, 0), org); return N.tessellateNurbs(srf, W(), U()); }
+      case 'Loft': { if (curves.length < 2) return null; const srf = N.loftNurbs(curves, { startScale: this.p('startscl', undefined, 1), endScale: this.p('endscl', undefined, 1), closeV: !!this.val('closev'), degV: this.p('startcont', undefined, 2) === 0 ? 1 : 3 }); if (this.val('closeu')) srf.closedU = true; return N.tessellateNurbs(srf, U(), W()); }
+      case 'Extrusion Along Curve': { if (curves.length < 2) return null; const srf = N.sweepNurbs(curves[0], curves[1], W(), this.get('snapprof') ? !!this.val('snapprof') : true, this.get('align') ? this.p('align', undefined, 2) !== 0 : true); return N.tessellateNurbs(srf, U(), W()); }
+      case 'Birail': { if (curves.length < 3) return null; const srf = N.birailNurbs(curves[0], curves[1], curves[2], W()); return N.tessellateNurbs(srf, U(), W()); }
+      case 'Four-Sided': { if (curves.length < 4) return null; const [A, B, Cc, D] = curves.slice(0, 4).map(x => C.sampleCurve(x, 33)); const at = (pts: V3[], t: number) => pts[Math.round(t * 32)];
+        const srf = N.gridNurbs((u, v) => { const l = add3(mul3(at(A, u), 1 - v), mul3(at(Cc, u), v)), r = add3(mul3(at(D, v), 1 - u), mul3(at(B, v), u)); const b = add3(add3(mul3(A[0], (1 - u) * (1 - v)), mul3(A[32], u * (1 - v))), add3(mul3(Cc[0], (1 - u) * v), mul3(Cc[32], u * v))); return sub3(add3(l, r), b); }, Math.max(4, U() + 1), Math.max(4, W() + 1)); return N.tessellateNurbs(srf, U(), W()); }
+      case 'Curve Net': { if (curves.length < 2) return null; const nbU = Math.max(1, Math.min(curves.length - (this.get('nbvcurves') ? 0 : 1), this.p('nbucurves', undefined, Math.ceil(curves.length / 2)))); const fn = N.curveNetFn(curves.slice(0, nbU), curves.slice(nbU)); const srf = N.gridNurbs(fn, Math.max(4, U() + 1), Math.max(4, W() + 1)); return N.tessellateNurbs(srf, U(), W()); }
       case 'Curves To Mesh': return curves[0] ? C.curveToMesh(curves[0], Math.max(3, this.p('stepcontour', 'segments', 3) * 8)) : null;
       case 'Blend': return curves.length >= 2 ? C.blendCurves(curves[0], curves[1]) : null;
       case 'Merge Curves': return curves.length >= 2 ? C.mergeCurves(curves[0], curves[1]) : null;

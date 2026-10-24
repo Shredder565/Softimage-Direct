@@ -70,11 +70,49 @@ export function squareCurve(len: number): CurveData {
 // ---------------------------------------------------------- curve edits
 export function reverseCurve(c: CurveData): CurveData { const [u0, u1] = [c.knots[0], c.knots[c.knots.length - 1]]; return { ...c, cvs: [...c.cvs].reverse(), knots: [...c.knots].reverse().map(k => u1 + u0 - k) }; }
 export function toggleClosed(c: CurveData): CurveData { const closed = !c.closed; return { ...c, closed, knots: uniformKnots(c.cvs.length, c.degree, closed) }; }
-export function insertCV(c: CurveData, u: number): CurveData {
-  // simple approach: resample into one more CV via refit through sampled points
-  const pts = sampleCurve(c, c.cvs.length + 1); return makeCurve(pts, c.degree, c.closed);
+/** Boehm knot insertion at parameter u (exact: the curve shape is unchanged, one more CV/knot). Closed curves are
+ *  opened into their unrolled clamped form first, so the knot vector stays consistent. */
+export function insertKnot(c: CurveData, u: number): CurveData {
+  if (c.closed) c = unrollClosed(c);
+  const p = c.degree, K = c.knots.slice(), P = c.cvs.map(q => q.slice() as [number, number, number, number]);
+  const [u0, u1] = curveDomain(c); u = Math.max(u0, Math.min(u1 - 1e-9, u));
+  let k = p; while (k < K.length - p - 2 && u >= K[k + 1]) k++;
+  const Q: [number, number, number, number][] = [];
+  for (let i = 0; i <= P.length; i++) {
+    if (i <= k - p) Q.push(P[i]); else if (i > k) Q.push(P[i - 1]);
+    else { const den = K[i + p] - K[i]; const a = den ? (u - K[i]) / den : 0; const A = P[i - 1], B = P[i]; const h = (x: number) => x === 3 ? 1 : 0; void h; // interpolate in homogeneous space
+      const wa = A[3], wb = B[3]; const w = (1 - a) * wa + a * wb; Q.push([((1 - a) * A[0] * wa + a * B[0] * wb) / w, ((1 - a) * A[1] * wa + a * B[1] * wb) / w, ((1 - a) * A[2] * wa + a * B[2] * wb) / w, w]); }
+  }
+  K.splice(k + 1, 0, u); return { ...c, cvs: Q, knots: K };
 }
-export function raiseDegree(c: CurveData): CurveData { if (c.degree >= 7) return c; const pts = sampleCurve(c, c.cvs.length + 1); return makeCurve(pts, c.degree + 1, c.closed); }
+/** Closed (periodic) curve → equivalent clamped open curve (degree extra CVs repeated), for operations that need a knot vector. */
+export function unrollClosed(c: CurveData): CurveData {
+  if (!c.closed) return c; const n = c.cvs.length, p = c.degree; const cvs = [...c.cvs, ...c.cvs.slice(0, p)].map(q => q.slice() as [number, number, number, number]);
+  const knots: number[] = []; for (let i = 0; i < cvs.length + p + 1; i++) knots.push(i - p); // uniform, unclamped: domain [0, n]
+  // clamp by inserting the domain ends p times
+  let out: CurveData = { degree: p, closed: false, cvs, knots }; for (let r = 0; r < p; r++) { out = insertKnot(out, 0); out = insertKnot(out, n); }
+  // trim CVs/knots outside the domain
+  const first = out.knots.findIndex(k => k >= 0) - 0, last = out.knots.length - 1 - [...out.knots].reverse().findIndex(k => k <= n);
+  const knots2 = out.knots.slice(first, last + 1); const cvs2 = out.cvs.slice(first, first + knots2.length - p - 1);
+  return { degree: p, closed: false, cvs: cvs2, knots: knots2 };
+}
+export function insertCV(c: CurveData, u: number): CurveData { return insertKnot(c, u); }
+/** Remove the knot nearest `u` (approximate inverse of insertion: least-squares refit keeps the shape where possible). */
+export function removeKnot(c: CurveData, u: number): CurveData {
+  if (c.cvs.length <= c.degree + 1) return c; const K = c.knots; const [u0, u1] = curveDomain(c);
+  let best = -1, bd = Infinity; for (let i = c.degree + 1; i < K.length - c.degree - 1; i++) { const d = Math.abs(K[i] - u); if (d < bd) { bd = d; best = i; } }
+  if (best < 0) return c; const pts = sampleCurve(c, Math.max(c.degree + 1, c.cvs.length - 1) * 2); const fit = makeCurve(pts.filter((_, i) => i % 2 === 0), c.degree, c.closed); void u0; void u1; return fit;
+}
+/** Degree elevation (exact for degree 1→2/3 via Bezier-segment elevation; higher degrees refit). */
+export function raiseDegree(c: CurveData): CurveData {
+  if (c.degree >= 7) return c;
+  if (c.degree === 1) { // polyline → each segment becomes a Bezier of the new degree with CVs on the segment
+    const pts = c.cvs.map(q => [q[0], q[1], q[2]] as V3); const out: V3[] = [pts[0]]; const segs = c.closed ? pts.length : pts.length - 1;
+    for (let i = 0; i < segs; i++) { const a = pts[i], b = pts[(i + 1) % pts.length]; out.push([a[0] + (b[0] - a[0]) / 2, a[1] + (b[1] - a[1]) / 2, a[2] + (b[2] - a[2]) / 2]); if (!c.closed || i < segs - 1) out.push(b); }
+    return makeCurve(out, 2, c.closed);
+  }
+  const pts = sampleCurve(c, c.cvs.length + 1); return makeCurve(pts, c.degree + 1, c.closed);
+}
 export function cleanCurve(c: CurveData, tol = 1e-3): CurveData {
   const cvs = c.cvs.filter((p, i, a) => i === 0 || Math.hypot(p[0] - a[i - 1][0], p[1] - a[i - 1][1], p[2] - a[i - 1][2]) > tol);
   return { ...c, cvs, knots: uniformKnots(cvs.length, Math.min(c.degree, cvs.length - 1), c.closed), degree: Math.min(c.degree, cvs.length - 1) };

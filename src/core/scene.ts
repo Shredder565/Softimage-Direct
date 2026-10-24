@@ -79,6 +79,7 @@ export function makeDisplay(shared = true) {
 export function makeGeomApprox(shared = true) {
   const p = new Property('Geometry Approximation', 'geomapprox', [
     int('gapproxmordrsl', 0, 'Subdivision Level', { min: 0, max: 5, animatable: false, group: 'Polygon Mesh' }),
+    enumP('gapproxmosr', 0, [{ label: 'Catmull-Clark', value: 0 }, { label: 'Loop', value: 1 }, { label: 'XSI-Doo-Sabin', value: 2 }, { label: 'Linear', value: 3 }], 'Subdivision Rule', { group: 'Polygon Mesh' }),
     bool('gapproxmoad', false, 'Adaptive', { group: 'Polygon Mesh' }),
     num('gapproxmoan', 60, 'Discontinuity Angle', { min: 0, max: 180, group: 'Polygon Mesh' }),
   ]); p.shared = shared; return p;

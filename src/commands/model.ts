@@ -11,7 +11,7 @@ import * as T2 from '../core/topology2';
 import { num, int, bool, str, enumP, color } from '../core/params';
 import type { V3 } from '../core/curves';
 import * as C from '../core/curves';
-import { edgeKey, fromPolys, toPolys, splitEdges, weldPoints, dissolvePolygons, disconnectPolygons, sliceAxis, dicePolygons, reducePolygons } from '../core/topology';
+import { edgeKey, fromPolys, toPolys, splitEdges, weldPoints, dissolvePolygons, disconnectPolygons, sliceAxis, dicePolygons } from '../core/topology';
 
 const CURVE_PRESETS = ['Arc', 'Circle', 'Spiral', 'Square'];
 const SURF_PRESETS = ['Sphere', 'Torus', 'Cylinder', 'Cone', 'Disc', 'Grid', 'Cube'];
@@ -314,7 +314,7 @@ export class TopologyOperator2 extends Operator {
   apply(m: any) {
     if (!m || !m.positions || this.val('mute')) return m; const v = (n: string) => Number(this.val(n));
     switch (this.preset) {
-      case 'Bevel': return T2.bevel(m, this.sel, this.get('ratio') ? Math.min(0.95, Math.max(0.01, this.p('ratio') * 0.5)) : v('amount'));
+      case 'Bevel': { const rel = this.get('units') ? this.p('units', undefined, 1) === 1 : true; const w = this.get('ratio') ? this.p('ratio') * (rel ? 0.125 : 1) : v('amount'); return T2.bevelEdges(m, this.sel, w, Math.max(0, this.p('nbsubdivs', undefined, 0) | 0), !!this.val('miter'), rel); }
       case 'Bridge Polygons': return T2.bridgePolygons(m, this.sel, Math.max(1, this.p('subdivs', 'subdiv', 1)));
       case 'Cap Hole': return T2.capHoles(m, this.sel);
       case 'Quadrangulate': return T2.quadrangulate(m, this.sel);
@@ -323,8 +323,13 @@ export class TopologyOperator2 extends Operator {
       case 'Spin Edges': return T2.spinEdges(m, this.sel, this.get('spin') ? this.p('spin') >= 0 : true);
       case 'Slice': { const sp = Math.min(2, this.p('sliceplane', 'axis', 0)) as 0 | 1 | 2; return sliceAxis(m, this.sel, sp, this.p('planeoffset', 'offset'), this.get('usebbox') ? !!this.val('usebbox') : true, this.p('planeoffsetbboxpercentage', undefined, 50)); }
       case 'Slice Plane': return this.plane ? T2.slicePlane(m, this.sel, this.plane.n, this.plane.d) : m;
-      case 'Dice': return this.get('style') ? dicePolygons(m, this.sel, this.p('style', undefined, 2), [this.p('nbslicesx', undefined, 1), this.p('nbslicesy', undefined, 1), this.p('nbslicesz', undefined, 1)], !!this.val('gridlike'), this.p('gridsize', undefined, 1)) : T2.dice(m, this.sel, v('size'));
-      case 'Polygon Reduction': { const r = this.p('ratio', undefined, 0.5); return reducePolygons(m, r > 1 ? r / 100 : r); }
+      case 'Dice': { if (!this.get('style')) return T2.dice(m, this.sel, v('size'));
+        const slicer = (mm: any, ss: any) => dicePolygons(mm, ss, this.p('style', undefined, 2), [this.p('nbslicesx', undefined, 1), this.p('nbslicesy', undefined, 1), this.p('nbslicesz', undefined, 1)], !!this.val('gridlike'), this.p('gridsize', undefined, 1));
+        const ref = this.p('planeref', undefined, 2); if (ref === 1) return slicer(m, this.sel);
+        if (ref === 2) return T2.diceInFrame(m, this.sel, T2.selectionFrame(m, this.sel), slicer);
+        const owner: any = (this.parent as any)?.parent; const g = owner?.globalMatrix?.(); if (!g) return slicer(m, this.sel); const e = g.elements; const col = (i: number): V3 => { const c: V3 = [e[i], e[i + 1], e[i + 2]]; const l = Math.hypot(...c) || 1; return [c[0] / l, c[1] / l, c[2] / l]; };
+        return T2.diceInFrame(m, this.sel, [col(0), col(4), col(8)], slicer); }
+      case 'Polygon Reduction': { const r = this.p('ratio', undefined, 0.5); return T2.reduceQuadric(m, r > 1 ? r / 100 : r, this.get('preserveboundaries') ? !!this.val('preserveboundaries') : true, this.p('quadlineweight', undefined, 0)); }
       case 'Subdivide Polygons': { const op = makeTopologyOperator('Subdivide Polygons', this.sel)!; op.set('subdivtype', this.p('subdivtype')); op.set('subdivisions', this.p('subdivisions', undefined, 1)); return op.apply(m); }
       case 'Split Edges': { const r = this.p('ratioedge', 'ratio', 0.5); return splitEdges(m, this.sel, r > 1 ? r / 100 : r, this.get('connect') ? !!this.val('connect') : true); }
       case 'Weld Points': return weldPoints(m, this.sel);

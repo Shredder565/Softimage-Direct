@@ -302,3 +302,133 @@ export function meshUVProjection(m: MeshData, kind: string): Float32Array {
   });
   return uv;
 }
+
+// ----------------------------------------------------------- bevel (edge chamfer with rounding), like Softimage's bevelop
+/** Bevel the selection: selected edges (or the border edges of selected polygons, or all edges at selected points) are
+ *  replaced by chamfer strips of width `width`; `subdivs` > 0 rounds the strip (quadratic profile through the old edge);
+ *  corner polygons close the junctions. `miter` keeps chamfer corners sharp (no junction polygon when only 2 edges meet). */
+export function bevelEdges(m: MeshData, sel: CompSel, width: number, subdivs = 0, miter = false, relative = true): MeshData {
+  const { verts, faces } = toPolys(m); const n = verts.length;
+  // 1. which edges are bevelled
+  const selE = new Set<string>();
+  if (sel.kind === 'edge') for (const e of sel.edges ?? []) selE.add(edgeKey(e[0], e[1]));
+  else if (sel.kind === 'polygon') { const ps = selPolygons(m, sel); const cnt = new Map<string, number>(); for (const pi of ps) { const f = faces[pi]; for (let i = 0; i < f.length; i++) { const k = edgeKey(f[i], f[(i + 1) % f.length]); cnt.set(k, (cnt.get(k) ?? 0) + 1); } } for (const [k, c] of cnt) if (c === 1) selE.add(k); }
+  else { const pts = selPoints(m, sel); faces.forEach(f => { for (let i = 0; i < f.length; i++) { const a = f[i], b = f[(i + 1) % f.length]; if (pts.has(a) || pts.has(b)) selE.add(edgeKey(a, b)); } }); }
+  if (!selE.size) return m;
+  const edgeFaces = new Map<string, number[]>(); faces.forEach((f, fi) => { for (let i = 0; i < f.length; i++) { const k = edgeKey(f[i], f[(i + 1) % f.length]); (edgeFaces.get(k) ?? edgeFaces.set(k, []).get(k)!).push(fi); } });
+  let avg = 0; for (const k of selE) { const [a, b] = k.split('-').map(Number); avg += Math.hypot(...sub(verts[a], verts[b])); } avg /= selE.size;
+  const w = relative ? Math.max(1e-4, Math.min(0.49, width)) * avg : width; // relative: `width` is a fraction of the average selected edge length (Softimage ratio 0.5 ≈ L/16 per side)
+  // 2. per face corner: the new corner vertex (offset inside the face away from each bevelled incident edge)
+  const corner = new Map<string, number>(); // "v|fi" -> new vertex index
+  const cornerPos = (f: number[], i: number): V => {
+    const v = f[i], pv = f[(i - 1 + f.length) % f.length], nv = f[(i + 1) % f.length];
+    const u1 = norm(sub(verts[pv], verts[v])), u2 = norm(sub(verts[nv], verts[v])); const s = Math.max(0.05, Math.sqrt(Math.max(0, 1 - dot(u1, u2) ** 2)));
+    const e1 = selE.has(edgeKey(v, pv)), e2 = selE.has(edgeKey(v, nv)); const ww = Math.min(w, 0.49 * Math.min(Math.hypot(...sub(verts[pv], verts[v])), Math.hypot(...sub(verts[nv], verts[v]))) / s * s);
+    if (e1 && e2) return add(verts[v], mul(add(u1, u2), ww / s)); if (e1) return add(verts[v], mul(u2, ww / s)); if (e2) return add(verts[v], mul(u1, ww / s)); return verts[v];
+  };
+  const newFaces: number[][] = faces.map((f, fi) => f.map((v, i) => { if (!f.some((_, j) => selE.has(edgeKey(f[j], f[(j + 1) % f.length])) && (j === i || (j + 1) % f.length === i))) return v; const k = v + '|' + fi; if (!corner.has(k)) { verts.push(cornerPos(f, i)); corner.set(k, verts.length - 1); } return corner.get(k)!; }));
+  // 3. strips along each bevelled edge (between its two faces), optionally rounded through the old edge
+  const strips: number[][] = [];
+  for (const k of selE) {
+    const fs = edgeFaces.get(k) ?? []; if (fs.length !== 2) continue; const [a, b] = k.split('-').map(Number);
+    const cornerOf = (fi: number, v: number) => corner.get(v + '|' + fi)!;
+    // order so the quad winds consistently with face fs[0]: in fs[0] the edge runs a→b or b→a
+    const f0 = faces[fs[0]]; const i0 = f0.indexOf(a); const ab = f0[(i0 + 1) % f0.length] === b; const [p, q] = ab ? [a, b] : [b, a];
+    const l0 = [cornerOf(fs[0], p), cornerOf(fs[0], q)], l1 = [cornerOf(fs[1], p), cornerOf(fs[1], q)];
+    if (subdivs <= 0) { strips.push([l0[1], l0[0], l1[0], l1[1]]); continue; }
+    // rounded: rows interpolate from face0's offset edge to face1's through the control points on the original edge
+    let prev = l0; for (let r = 1; r <= subdivs; r++) { const t = r / (subdivs + 1); const row = [p, q].map((v, j) => { const A = verts[j ? l0[1] : l0[0]], B = verts[v], C = verts[j ? l1[1] : l1[0]]; const pt = add(add(mul(A, (1 - t) ** 2), mul(B, 2 * (1 - t) * t)), mul(C, t * t)); verts.push(pt); return verts.length - 1; }); strips.push([prev[1], prev[0], row[0], row[1]]); prev = row; }
+    strips.push([prev[1], prev[0], l1[0], l1[1]]);
+  }
+  // 4. junction polygons at vertices touched by ≥1 bevelled edge: the ring of that vertex's face corners (plus itself when some face kept it)
+  const vFaces = new Map<number, number[]>(); faces.forEach((f, fi) => f.forEach(v => (vFaces.get(v) ?? vFaces.set(v, []).get(v)!).push(fi)));
+  const junctions: number[][] = [];
+  for (let v = 0; v < n; v++) {
+    const fs = vFaces.get(v) ?? []; const ring = [...new Set(fs.map(fi => corner.get(v + '|' + fi) ?? v))]; if (ring.length < 3) continue;
+    const incident = [...selE].filter(k => k.split('-').map(Number).includes(v)); if (miter && incident.length <= 2 && !ring.includes(v)) { /* sharp corner: keep strips only */ }
+    let nrm: V = [0, 0, 0]; for (const fi of fs) nrm = add(nrm, faceNormal(verts, faces[fi])); nrm = norm(nrm);
+    const c = verts[v]; const x = norm(sub(verts[ring.find(i => i !== v) ?? ring[0]], c)); const y = cross(nrm, x);
+    ring.sort((p, q) => Math.atan2(dot(sub(verts[p], c), y), dot(sub(verts[p], c), x)) - Math.atan2(dot(sub(verts[q], c), y), dot(sub(verts[q], c), x)));
+    if (miter && incident.length === 2 && subdivs === 0) continue;
+    junctions.push(ring.reverse());
+  }
+  return fromPolys(verts, [...newFaces, ...strips, ...junctions]);
+}
+
+// ----------------------------------------------------------- dice in a reference frame
+/** Dice with the slicing planes aligned to a frame: `basis` is three orthonormal axes (rows) in mesh space
+ *  (identity = Local Object; the object's inverse rotation = Global; the selection's average-normal frame = Local Components). */
+export function diceInFrame(m: MeshData, sel: CompSel, basis: [V, V, V], slicer: (m: MeshData, sel: CompSel) => MeshData): MeshData {
+  const { verts, faces } = toPolys(m); const to = (p: V): V => [dot(p, basis[0]), dot(p, basis[1]), dot(p, basis[2])];
+  const from = (p: V): V => add(add(mul(basis[0], p[0]), mul(basis[1], p[1])), mul(basis[2], p[2]));
+  const diced = slicer(fromPolys(verts.map(to), faces), sel); const { verts: v2, faces: f2 } = toPolys(diced);
+  return fromPolys(v2.map(from), f2);
+}
+/** Average-normal frame of the selected polygons (or of the whole mesh): z = normal, x = longest edge projected, y = z × x. */
+export function selectionFrame(m: MeshData, sel: CompSel): [V, V, V] {
+  const { verts, faces } = toPolys(m); const ps = sel.indices.length || sel.edges?.length ? [...selPolygons(m, sel)] : faces.map((_, i) => i);
+  let nz: V = [0, 0, 0]; for (const pi of ps) nz = add(nz, faceNormal(verts, faces[pi])); nz = norm(nz); if (!Math.hypot(...nz)) nz = [0, 1, 0];
+  let best: V = [1, 0, 0], bl = -1; for (const pi of ps) { const f = faces[pi]; for (let i = 0; i < f.length; i++) { const e = sub(verts[f[(i + 1) % f.length]], verts[f[i]]); const l = Math.hypot(...e); if (l > bl) { bl = l; best = e; } } }
+  let x = sub(best, mul(nz, dot(best, nz))); if (Math.hypot(...x) < 1e-6) x = Math.abs(nz[1]) < 0.9 ? cross(nz, [0, 1, 0]) : cross(nz, [1, 0, 0]); x = norm(x); const y = norm(cross(nz, x));
+  return [x, y, nz];
+}
+
+// ----------------------------------------------------------- polygon reduction (quadric error metric)
+type Q = number[]; // symmetric 4x4 as 10 numbers
+const qPlane = (a: number, b: number, c: number, d: number): Q => [a * a, a * b, a * c, a * d, b * b, b * c, b * d, c * c, c * d, d * d];
+const qAdd = (p: Q, q: Q): Q => p.map((x, i) => x + q[i]);
+const qEval = (q: Q, v: V) => { const [x, y, z] = v; return q[0] * x * x + 2 * q[1] * x * y + 2 * q[2] * x * z + 2 * q[3] * x + q[4] * y * y + 2 * q[5] * y * z + 2 * q[6] * y + q[7] * z * z + 2 * q[8] * z + q[9]; };
+/** Polygon Reduction with Garland–Heckbert quadrics: collapses the cheapest edges until `ratio` (0..1) of the polygons remain.
+ *  Boundary edges and vertices are kept when `preserveBoundaries`; `symmetric` keeps collapses mirrored across X. */
+export function reduceQuadric(m: MeshData, ratio: number, preserveBoundaries = true, quadLineWeight = 0): MeshData {
+  let { verts, faces } = toPolys(m); const target = Math.max(2, Math.floor(faces.length * Math.max(0.01, Math.min(1, ratio)))); if (faces.length <= target) return m;
+  const quad = (f: number[]): Q => { const nrm = faceNormal(verts, f); const p0 = verts[f[0]]; return qPlane(nrm[0], nrm[1], nrm[2], -dot(nrm, p0)); };
+  const alive = new Set(faces.map((_, i) => i)); const vFaces: Set<number>[] = verts.map(() => new Set()); faces.forEach((f, fi) => f.forEach(v => vFaces[v].add(fi)));
+  const vQ: Q[] = verts.map(() => qPlane(0, 0, 0, 0)); faces.forEach((f, fi) => { const q = quad(f); f.forEach(v => { vQ[v] = qAdd(vQ[v], q); }); void fi; });
+  const edgeCount = () => { const c = new Map<string, number>(); for (const fi of alive) { const f = faces[fi]; for (let i = 0; i < f.length; i++) { const k = edgeKey(f[i], f[(i + 1) % f.length]); c.set(k, (c.get(k) ?? 0) + 1); } } return c; };
+  let ec = edgeCount(); const boundaryV = new Set<number>(); for (const [k, c] of ec) if (c < 2) k.split('-').map(Number).forEach(v => boundaryV.add(v));
+  const cost = (a: number, b: number): [number, V] => { const q = qAdd(vQ[a], vQ[b]); const cands: V[] = [mul(add(verts[a], verts[b]), 0.5), verts[a], verts[b]]; let best = cands[0], bc = Infinity; for (const c of cands) { const e = qEval(q, c); if (e < bc) { bc = e; best = c; } } return [bc + quadLineWeight * Math.hypot(...sub(verts[a], verts[b])), best]; };
+  let guard = 0;
+  while (alive.size > target && guard++ < 20000) {
+    let best: [number, number, V] | null = null, bc = Infinity;
+    for (const [k, c] of ec) { const [a, b] = k.split('-').map(Number); if (preserveBoundaries && (c < 2 || boundaryV.has(a) || boundaryV.has(b))) continue; const [cc, p] = cost(a, b); if (cc < bc) { bc = cc; best = [a, b, p]; } }
+    if (!best) break; const [a, b, p] = best;
+    verts[a] = p; vQ[a] = qAdd(vQ[a], vQ[b]);
+    for (const fi of vFaces[b]) { const f = faces[fi].map(v => v === b ? a : v).filter((v, i, arr) => v !== arr[(i + 1) % arr.length]); if (new Set(f).size < 3) { alive.delete(fi); f.forEach(v => vFaces[v]?.delete(fi)); } else { faces[fi] = f; vFaces[a].add(fi); } }
+    vFaces[b] = new Set(); ec = edgeCount();
+  }
+  const used = new Map<number, number>(); const outV: V[] = []; const outF: number[][] = [];
+  for (const fi of alive) outF.push(faces[fi].map(v => { if (!used.has(v)) { used.set(v, outV.length); outV.push(verts[v]); } return used.get(v)!; }));
+  return fromPolys(outV, outF);
+}
+
+// ----------------------------------------------------------- Doo-Sabin subdivision (XSI-Doo-Sabin rule)
+export function dooSabin(m: MeshData, levels: number): MeshData { let cur = m; for (let l = 0; l < levels; l++) cur = dsOnce(cur); return cur; }
+function dsOnce(m: MeshData): MeshData {
+  const { verts, faces } = toPolys(m); const out: V[] = []; const faceNew: number[][] = []; const cornerIdx = new Map<string, number>();
+  faces.forEach((f, fi) => { const k = f.length; const c = faceCenter(verts, f); const idx: number[] = [];
+    for (let i = 0; i < k; i++) { // Doo-Sabin corner: average of vertex, face centre and the two adjacent edge midpoints
+      const v = verts[f[i]], ep = mul(add(verts[f[i]], verts[f[(i - 1 + k) % k]]), 0.5), en = mul(add(verts[f[i]], verts[f[(i + 1) % k]]), 0.5);
+      out.push(mul(add(add(v, c), add(ep, en)), 0.25)); idx.push(out.length - 1); cornerIdx.set(f[i] + '|' + fi, out.length - 1); }
+    faceNew.push(idx); });
+  // edge faces (quads) and vertex faces
+  const edgeFaces = new Map<string, number[]>(); faces.forEach((f, fi) => { for (let i = 0; i < f.length; i++) (edgeFaces.get(edgeKey(f[i], f[(i + 1) % f.length])) ?? edgeFaces.set(edgeKey(f[i], f[(i + 1) % f.length]), []).get(edgeKey(f[i], f[(i + 1) % f.length]))!).push(fi); });
+  const extra: number[][] = [];
+  for (const [k, fs] of edgeFaces) { if (fs.length !== 2) continue; const [a, b] = k.split('-').map(Number); const f0 = faces[fs[0]]; const ab = f0[(f0.indexOf(a) + 1) % f0.length] === b; const [p, q] = ab ? [a, b] : [b, a]; extra.push([cornerIdx.get(q + '|' + fs[0])!, cornerIdx.get(p + '|' + fs[0])!, cornerIdx.get(p + '|' + fs[1])!, cornerIdx.get(q + '|' + fs[1])!]); }
+  const vFaces = new Map<number, number[]>(); faces.forEach((f, fi) => f.forEach(v => (vFaces.get(v) ?? vFaces.set(v, []).get(v)!).push(fi)));
+  for (const [v, fs] of vFaces) { if (fs.length < 3) continue; const ring = fs.map(fi => cornerIdx.get(v + '|' + fi)!); let nrm: V = [0, 0, 0]; for (const fi of fs) nrm = add(nrm, faceNormal(verts, faces[fi])); nrm = norm(nrm); const c = verts[v]; const x = norm(sub(out[ring[0]], c)), y = cross(nrm, x); ring.sort((p, q) => Math.atan2(dot(sub(out[p], c), y), dot(sub(out[p], c), x)) - Math.atan2(dot(sub(out[q], c), y), dot(sub(out[q], c), x))); extra.push(ring.reverse()); }
+  return fromPolys(out, [...faceNew, ...extra]);
+}
+/** Loop subdivision for triangle meshes (non-triangles are triangulated first). */
+export function loopSubdivide(m: MeshData, levels: number): MeshData { let cur = m; for (let l = 0; l < levels; l++) cur = loopOnce(cur); return cur; }
+function loopOnce(m: MeshData): MeshData {
+  const { verts, faces: f0 } = toPolys(m); const faces: number[][] = []; for (const f of f0) for (let i = 1; i + 1 < f.length; i++) faces.push([f[0], f[i], f[i + 1]]);
+  const edgeFaces = new Map<string, number[]>(); faces.forEach((f, fi) => { for (let i = 0; i < 3; i++) { const k = edgeKey(f[i], f[(i + 1) % 3]); (edgeFaces.get(k) ?? edgeFaces.set(k, []).get(k)!).push(fi); } });
+  const nbr = new Map<number, Set<number>>(); faces.forEach(f => f.forEach((v, i) => { (nbr.get(v) ?? nbr.set(v, new Set()).get(v)!).add(f[(i + 1) % 3]); nbr.get(v)!.add(f[(i + 2) % 3]); }));
+  const out: V[] = verts.map((p, v) => { const ns = [...(nbr.get(v) ?? [])]; const k = ns.length; if (!k) return p; const beta = k === 3 ? 3 / 16 : 3 / (8 * k); let s: V = [0, 0, 0]; for (const q of ns) s = add(s, verts[q]); return add(mul(p, 1 - k * beta), mul(s, beta)); });
+  const eIdx = new Map<string, number>();
+  for (const [k, fs] of edgeFaces) { const [a, b] = k.split('-').map(Number); let p: V; if (fs.length === 2) { const opp = fs.map(fi => faces[fi].find(v => v !== a && v !== b)!); p = add(mul(add(verts[a], verts[b]), 3 / 8), mul(add(verts[opp[0]], verts[opp[1]]), 1 / 8)); } else p = mul(add(verts[a], verts[b]), 0.5); eIdx.set(k, out.length); out.push(p); }
+  const nf: number[][] = [];
+  for (const [a, b, c] of faces) { const ab = eIdx.get(edgeKey(a, b))!, bc = eIdx.get(edgeKey(b, c))!, ca = eIdx.get(edgeKey(c, a))!; nf.push([a, ab, ca], [ab, b, bc], [ca, bc, c], [ab, bc, ca]); }
+  return fromPolys(out, nf);
+}

@@ -7,7 +7,7 @@ import { App } from '../core/commands';
 import { X3DObject, MoveComponentOperator, geomPoints, Model, threeOrder } from '../core/scene';
 import { ChainRoot, Bone } from '../core/scene2';
 import { meshEdges, edgeKey } from '../core/topology';
-import { catmullClark, meshUVProjection } from '../core/topology2';
+import { catmullClark, dooSabin, loopSubdivide, meshUVProjection } from '../core/topology2';
 import { tessellateCurve } from '../core/curves';
 import type { MeshData } from '../core/geometry';
 import { installViewExtras, DISPLAY_MENU } from './viewExtras';
@@ -161,8 +161,9 @@ export function viewManager(app: App, host: HTMLElement) {
     const m = o.primitive?.mesh(); if (!m) return null;
     const ga = o.property('geomapprox') ?? app.scene.root.property('geomapprox'); const level = Number(ga?.val('gapproxmordrsl') ?? 0);
     if (level <= 0) return m;
-    const cache = (o as any)._subd; if (cache && cache.src === m && cache.level === level) return cache.out;
-    const out = catmullClark(m, Math.min(level, 4), (m as any).creases ?? new Map(), o.primitive!.val('subdrule') === 1); (o as any)._subd = { src: m, level, out }; return out;
+    const rule = Number(ga?.val('gapproxmosr') ?? (o.primitive!.val('subdrule') === 1 ? 3 : 0));
+    const cache = (o as any)._subd; if (cache && cache.src === m && cache.level === level && cache.rule === rule) return cache.out;
+    const lv = Math.min(level, 4); const out = rule === 2 ? dooSabin(m, lv) : rule === 1 ? loopSubdivide(m, Math.min(lv, 3)) : catmullClark(m, lv, (m as any).creases ?? new Map(), rule === 3); (o as any)._subd = { src: m, level, rule, out }; return out;
   };
   const isSelected = (o: X3DObject) => app.selection.includes(o) || app.selection.some(n => { let p = n.parent; for (let i = 0; i < 4 && p; i++, p = p.parent) if (p === o) return true; return false; });
   const sync = () => {

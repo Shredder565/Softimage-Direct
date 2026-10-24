@@ -293,7 +293,7 @@ export function slicePolygonsPlane(m: MeshData, sel: CompSel, normal: V, d: numb
     if (!polys.has(pi)) { out.push(f); return; }
     const s = f.map(side); if (!s.some(x => x > 1e-9) || !s.some(x => x < -1e-9)) { out.push(f); return; }
     const pos: number[] = [], neg: number[] = [];
-    for (let i = 0; i < f.length; i++) { const a = f[i], b = f[(i + 1) % f.length]; (s[i] >= 0 ? pos : neg).push(a); if ((s[i] > 1e-9 && s[(i + 1) % f.length] < -1e-9) || (s[i] < -1e-9 && s[(i + 1) % f.length] > 1e-9)) { const c = cutPoint(a, b); pos.push(c); neg.push(c); } }
+    for (let i = 0; i < f.length; i++) { const a = f[i], b = f[(i + 1) % f.length]; if (Math.abs(s[i]) <= 1e-9) { pos.push(a); neg.push(a); } else (s[i] > 0 ? pos : neg).push(a); if ((s[i] > 1e-9 && s[(i + 1) % f.length] < -1e-9) || (s[i] < -1e-9 && s[(i + 1) % f.length] > 1e-9)) { const c = cutPoint(a, b); pos.push(c); neg.push(c); } }
     if (pos.length >= 3) out.push(pos); if (neg.length >= 3) out.push(neg);
   });
   if (cut.size) for (let i = 0; i < out.length; i++) { const f = out[i]; const nf: number[] = []; for (let j = 0; j < f.length; j++) { nf.push(f[j]); const k = edgeKey(f[j], f[(j + 1) % f.length]); if (cut.has(k) && !f.includes(cut.get(k)!)) nf.push(cut.get(k)!); } out[i] = nf; }
