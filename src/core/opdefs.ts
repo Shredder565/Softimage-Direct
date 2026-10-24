@@ -38,7 +38,9 @@ export function siParamDefs(key: string, overrides: Record<string, any> = {}, ex
     let value = p.sn in overrides ? overrides[p.sn] : p.default;
     if (type === 'enum') value = Number.isFinite(Number(value)) ? Number(value) : value;
     if (type === 'color' && Array.isArray(value)) value = value.slice(0, 3);
-    if (value === null || value === undefined) value = type === 'double' || type === 'int' ? 0 : type === 'bool' ? false : type === 'string' ? '' : value;
+    if (value === null || value === undefined) value = type === 'double' || type === 'int' || type === 'enum' ? 0 : type === 'bool' ? false : type === 'string' ? '' : value;
+    // Softimage dump paths are host-local; keep basename / empty for portable defaults.
+    if (typeof value === 'string' && /^[A-Za-z]:[\\/]/.test(value)) value = value.replace(/^.*[\\/]/, '') || '';
     const def: ParamDef = { name: p.sn, label: p.label, type, value, animatable: p.anim ?? (type === 'double' || type === 'int'), readOnly: p.ro, ...extra };
     if (p.min !== undefined) def.min = p.min; if (p.max !== undefined) def.max = p.max;
     if (p.uimin !== undefined) def.uimin = p.uimin; if (p.uimax !== undefined) def.uimax = p.uimax;
@@ -46,6 +48,14 @@ export function siParamDefs(key: string, overrides: Record<string, any> = {}, ex
     if (p.desc) def.desc = p.desc;
     out.push(def);
   }
+  return out;
+}
+
+/** Merge Softimage opdef params with local overrides (by script name). Softimage values win unless overridden. */
+export function withOp(key: string, ours: ParamDef[] = []): ParamDef[] {
+  const si = siParamDefs(key); const mine = new Map(ours.map(d => [d.name, d]));
+  const out = si.map(d => mine.get(d.name) ? { ...d, ...mine.get(d.name)!, value: mine.get(d.name)!.value !== undefined ? mine.get(d.name)!.value : d.value } : d);
+  for (const d of ours) if (!si.some(x => x.name === d.name)) out.push(d);
   return out;
 }
 

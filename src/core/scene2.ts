@@ -149,12 +149,14 @@ export class GeneratorOperator extends Operator {
   }
 }
 export function makeGeneratorOperator(preset: string, inputs: X3DObject[], owner: () => X3DObject | null) {
-  const uv = (u = 8, v = 8) => [int('usub', u, 'Subdivisions U', { min: 1, max: 200 }), int('vsub', v, 'Subdivisions V', { min: 1, max: 200 })];
-  const axis = enumP('axis', 1, [{ label: 'X', value: 0 }, { label: 'Y', value: 1 }, { label: 'Z', value: 2 }], 'Axis');
+  // Legacy fallbacks match Softimage opdefs (extrusion length=10, subdivu/v=10, Curves To Mesh stepcontour=3 → ~24 segs).
+  // Softimage script names from siParamDefs win when present (alongz, subdivu, booleanmode, …).
+  const uv = (u = 10, v = 10) => [int('usub', u, 'Subdivisions U', { min: 1, max: 200 }), int('vsub', v, 'Subdivisions V', { min: 1, max: 200 })];
+  const axis = enumP('axis', 2, [{ label: 'X', value: 0 }, { label: 'Y', value: 1 }, { label: 'Z', value: 2 }], 'Axis'); // Softimage extrusion alongz
   switch (preset) {
-    case 'Extrusion Along Axis': return new GeneratorOperator(preset, inputs, owner, [axis, num('length', 5, 'Length', { min: -100, max: 100 }), int('subdivs', 1, 'Subdivisions', { min: 1, max: 100 }), int('usub', 16, 'Profile Subdivisions', { min: 2, max: 200 })]);
-    case 'Revolution Around Axis': return new GeneratorOperator(preset, inputs, owner, [axis, num('angle', 360, 'Angle', { min: -360, max: 360 }), ...uv(16, 8)]);
-    case 'Loft': case 'Extrusion Along Curve': case 'Birail': case 'Four-Sided': case 'Curve Net': return new GeneratorOperator(preset, inputs, owner, uv(12, 12));
+    case 'Extrusion Along Axis': return new GeneratorOperator(preset, inputs, owner, [axis, num('length', 10, 'Length', { min: -100, max: 100 }), int('subdivs', 1, 'Subdivisions', { min: 1, max: 100 }), int('usub', 10, 'Profile Subdivisions', { min: 2, max: 200 })]);
+    case 'Revolution Around Axis': return new GeneratorOperator(preset, inputs, owner, [axis, num('angle', 360, 'Angle', { min: -360, max: 360 }), ...uv(10, 10)]);
+    case 'Loft': case 'Extrusion Along Curve': case 'Birail': case 'Four-Sided': case 'Curve Net': return new GeneratorOperator(preset, inputs, owner, uv(10, 10));
     case 'Curves To Mesh': return new GeneratorOperator(preset, inputs, owner, [int('segments', 24, 'Segments', { min: 3, max: 400 })]);
     case 'Boolean': return new GeneratorOperator(preset, inputs, owner, [enumP('operation', 0, [{ label: 'Difference', value: 0 }, { label: 'Intersection', value: 1 }, { label: 'Union', value: 2 }], 'Operation')]);
     case 'Blend': case 'Merge Curves': case 'Merge Meshes': case 'Nurbs To Mesh': case 'Extract Curve From Surface': return new GeneratorOperator(preset, inputs, owner, []);
@@ -276,16 +278,55 @@ export function loadFont() {
 }
 export class TextGeomOperator extends Operator {
   font: any = null;
-  constructor(readonly mode: 'curves' | 'planar' | 'solid', text: string) { super('Text', 'textgeom', [str('text', text, 'Text'), num('size', 5, 'Size', { min: 0.1 }), enumP('align', 0, [{ label: 'Left', value: 0 }, { label: 'Center', value: 1 }, { label: 'Right', value: 2 }], 'Alignment'), num('spacing', 0, 'Character Spacing'), num('linespacing', 1.2, 'Line Spacing', { min: 0.5, max: 4 }), num('depth', 1, 'Extrusion Depth', { min: 0.01 }), bool('bevel', false, 'Bevel'), num('bevelsize', 0.2, 'Bevel Size', { min: 0.01 }), int('bevelsegments', 2, 'Bevel Segments', { min: 1, max: 8 }), int('segments', 4, 'Curve Segments', { min: 1, max: 12 })]); loadFont().then(f => { this.font = f; this.parent && ((this.parent as any).dirty = true); }); }
+  constructor(readonly mode: 'curves' | 'planar' | 'solid', text: string) {
+    // Softimage TextToCurveList (primtextop.spdl): fitsize=4, use_fitsize=true, char/line_spacing=0.
+    const si = siParamDefs('TextToCurveList');
+    const names = new Set(si.map(d => d.name));
+    const local = [
+      str('text', text, 'Text'),
+      num('size', 4, 'Size', { min: 0.1 }), // mirrors fitsize when use_fitsize
+      enumP('align', 0, [{ label: 'Left', value: 0 }, { label: 'Center', value: 1 }, { label: 'Right', value: 2 }], 'Alignment'),
+      num('spacing', 0, 'Character Spacing'),
+      num('linespacing', 1, 'Line Spacing', { min: 0.5, max: 4 }),
+      num('depth', 1, 'Extrusion Depth', { min: 0.01 }),
+      bool('bevel', false, 'Bevel'), num('bevelsize', 0.2, 'Bevel Size', { min: 0.01 }),
+      int('bevelsegments', 2, 'Bevel Segments', { min: 1, max: 8 }), int('segments', 4, 'Curve Segments', { min: 1, max: 12 }),
+    ].filter(d => !names.has(d.name));
+    super(siName('TextToCurveList', 'Text'), 'textgeom', [...si, ...local]);
+    this.layout = siLayout('TextToCurveList');
+    loadFont().then(f => { this.font = f; this.parent && ((this.parent as any).dirty = true); });
+  }
+  /** Softimage fit height (fitsize) when use_fitsize; else size / ratio fallback. */
+  textHeight(): number {
+    if (this.get('use_fitsize') ? this.val('use_fitsize') : true) return Number(this.val('fitsize') ?? this.val('size') ?? 4);
+    const ratio = Number(this.val('ratio') ?? 10); return Math.max(0.01, ratio / 10 * 4);
+  }
   apply(): any {
     if (!this.font) return null;
-    const size = Number(this.val('size')); const align = Number(this.val('align') ?? 0), spacing = Number(this.val('spacing') ?? 0), lsp = Number(this.val('linespacing') ?? 1.2);
+    const size = this.textHeight();
+    const align = Number(this.val('align') ?? 0);
+    // Softimage char_spacing / line_spacing default 0 = no extra; line leading stays 1× font height.
+    const spacing = Number(this.val('char_spacing') ?? this.val('spacing') ?? 0);
+    const lspRaw = Number(this.val('line_spacing') ?? this.val('linespacing') ?? 0);
+    const lsp = lspRaw > 0 ? lspRaw : 1;
+    const segs = Number(this.val('segments') ?? 4);
     // per line / per character so alignment and spacing work (three's generateShapes has neither)
     const lines = String(this.val('text')).split(/\r?\n/); const shapes: THREE.Shape[] = [];
     lines.forEach((ln, li) => { const glyphs: { s: THREE.Shape[]; w: number }[] = []; let total = 0; for (const ch of ln) { const sh: THREE.Shape[] = this.font.generateShapes(ch, size); const w = ch === ' ' ? size * 0.3 : (() => { let mx = 0; for (const q of sh) for (const pt of q.getPoints(2)) mx = Math.max(mx, pt.x); return mx; })(); glyphs.push({ s: sh, w }); total += w + spacing; }
-      let x = align === 1 ? -total / 2 : align === 2 ? -total : 0; const y = -li * size * lsp; for (const g of glyphs) { for (const q of g.s) { const m = new THREE.Matrix3().set(1, 0, x, 0, 1, y, 0, 0, 1); const sh2 = new THREE.Shape(q.getPoints(this.val('segments')).map(pt => pt.clone().applyMatrix3(m))); sh2.holes = q.holes.map(h => new THREE.Path(h.getPoints(this.val('segments')).map(pt => pt.clone().applyMatrix3(m)))); shapes.push(sh2); } x += g.w + spacing; } });
-    if (this.mode === 'curves') { const pts = shapes[0]?.getPoints(this.val('segments')) ?? []; return C.makeCurve(pts.map(p => [p.x, p.y, 0] as V3), 1, true); }
-    const geo = this.mode === 'planar' ? new THREE.ShapeGeometry(shapes, this.val('segments')) : new THREE.ExtrudeGeometry(shapes, { depth: Number(this.val('depth')), bevelEnabled: !!this.val('bevel'), bevelThickness: Number(this.val('bevelsize') ?? 0.2), bevelSize: Number(this.val('bevelsize') ?? 0.2), bevelSegments: Number(this.val('bevelsegments') ?? 2), curveSegments: this.val('segments') });
+      let x = align === 1 ? -total / 2 : align === 2 ? -total : 0; const y = -li * size * lsp; for (const g of glyphs) { for (const q of g.s) { const m = new THREE.Matrix3().set(1, 0, x, 0, 1, y, 0, 0, 1); const sh2 = new THREE.Shape(q.getPoints(segs).map(pt => pt.clone().applyMatrix3(m))); sh2.holes = q.holes.map(h => new THREE.Path(h.getPoints(segs).map(pt => pt.clone().applyMatrix3(m)))); shapes.push(sh2); } x += g.w + spacing; } });
+    if (this.mode === 'curves') {
+      // Softimage Text → Curve List (si_text_golden Curves): one closed subcurve per glyph.
+      // Softimage reports nbcurves == letter count for default "Softimage" (8); holes stay attached on the glyph shape for mesh modes only.
+      const all: CurveData[] = [];
+      for (const sh of shapes) {
+        const pts = sh.getPoints(segs).map(p => [p.x, p.y, 0] as V3);
+        if (pts.length >= 2) all.push(C.makeCurve(pts, 1, true));
+      }
+      if (!all.length) return C.makeCurve([[0, 0, 0], [size, 0, 0]], 1, false);
+      const primary = { ...all[0], subcurves: all.slice(1) } as CurveData & { subcurves: CurveData[] };
+      return primary;
+    }
+    const geo = this.mode === 'planar' ? new THREE.ShapeGeometry(shapes, segs) : new THREE.ExtrudeGeometry(shapes, { depth: Number(this.val('depth')), bevelEnabled: !!this.val('bevel'), bevelThickness: Number(this.val('bevelsize') ?? 0.2), bevelSize: Number(this.val('bevelsize') ?? 0.2), bevelSegments: Number(this.val('bevelsegments') ?? 2), curveSegments: segs });
     const pos = geo.getAttribute('position'); const ix = geo.index; const verts: V3[] = []; const key = new Map<string, number>();
     const id = (i: number) => { const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i); const k = `${x.toFixed(4)},${y.toFixed(4)},${z.toFixed(4)}`; if (!key.has(k)) { key.set(k, verts.length); verts.push([x, y, z]); } return key.get(k)!; };
     const faces: number[][] = []; const n = ix ? ix.count : pos.count; for (let i = 0; i + 2 < n; i += 3) { const t = [id(ix ? ix.getX(i) : i), id(ix ? ix.getX(i + 1) : i + 1), id(ix ? ix.getX(i + 2) : i + 2)]; if (new Set(t).size === 3) faces.push(t); }
