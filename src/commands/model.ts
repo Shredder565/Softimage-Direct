@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { makeAimRig } from './constraints';
 import { App, InteractiveTool } from '../core/commands';
-import { X3DObject, Model, Primitive, Property, makeDisplay, makeGeomApprox, makePhong, makeLambert, makeSiShader, Shader, Null, Camera, Light, Operator, makeTopologyOperator, TopologyOperator, MoveComponentOperator } from '../core/scene';
+import { X3DObject, Model, Primitive, Property, makeDisplay, makeGeomApprox, makePhong, makeLambert, makeSiShader, Shader, Null, Camera, Light, Operator, makeTopologyOperator, TopologyOperator, MoveComponentOperator, mixerOf } from '../core/scene';
 import { topoDefs } from '../core/scene';
 import { siName } from '../core/opdefs';
 import * as S2 from '../core/scene2';
@@ -425,7 +425,7 @@ export function registerModelAliases(app: App) {
   app.register({ name: 'CreateForce', label: 'Create Force', category: 'Simulation', description: 'Creates a force control object (used by simulations, which are outside the Model/Animate scope).', args: [{ name: 'PresetObj', default: 'Gravity' }], execute(app, a) { const n = new Null(app.scene.uniqueName(String(a.PresetObj).toLowerCase())); n.add(str('forcetype', String(a.PresetObj), 'Force Type', { readOnly: true })); n.add(num('amplitude', 1, 'Amplitude', { keyable: true })); addObject(app, n); app.select([n]); return n; } });
   app.register({ name: 'CreateLightRigFromImage', label: 'Light Rig from Image', category: 'Primitive', args: [], canRun: () => false, execute() { throw new Error('Needs an HDR image loader (not in this build)'); } });
   // static-pose actions (Store/Apply Skeleton Pose use these)
-  app.register({ name: 'StoreAction', label: 'Store Action', category: 'Animation Mixer', description: 'Stores current values and/or fcurves of the selection as an action source on the model (Softimage StoreAction modes).', args: [{ name: 'Model', default: '' }, { name: 'InputObj', default: '' }, { name: 'Mode', default: 4 }, { name: 'Name', default: 'StoredStaticPose' }], execute(app, a) {
+  app.register({ name: 'StoreAction', label: 'Store Action', category: 'Animation Mixer', description: 'Stores current values and/or fcurves of the selection as an action source on the model (Softimage StoreAction modes).', args: [{ name: 'Model', default: '' }, { name: 'InputObj', default: '' }, { name: 'Mode', default: 4 }, { name: 'Name', default: 'StoredStaticPose' }, { name: 'RemoveAnim', default: true }, { name: 'StartFrame', default: 0 }, { name: 'EndFrame', default: 0 }, { name: 'Consider Time', default: false }, { name: 'Ripple', default: false }, { name: 'AddClip', default: false }, { name: 'ClipOffset', default: 0 }, { name: 'IncludeAnimLayers', default: false }], execute(app, a) {
     const objs = app.targets(a.InputObj); const model = (a.Model ? app.scene.find(a.Model) : null) ?? objs[0]?.model ?? app.scene.root;
     const mode = Number(a.Mode ?? 4); const wantFcurves = mode === 1 || mode === 3 || mode === 9 || /Fcv|Fcurve/i.test(String(a.Name || ''));
     const wantExpr = mode === 3 || /Expression/i.test(String(a.Name || ''));
@@ -445,7 +445,16 @@ export function registerModelAliases(app: App) {
     }
     if (!Object.keys(values).length) for (const o of (objs.length ? objs : app.selectedObjects)) for (const ax of ['x', 'y', 'z']) for (const k of ['pos', 'rot', 'scl']) values[`${o.fullName}.kine.local.${k}${ax}`] = o.kinematics.local.val(k + ax);
     const src = new Property(app.scene.uniqueName(a.Name || 'Action'), 'actionsource', [str('data', JSON.stringify(values), 'Values', { readOnly: true }), str('fcurves', JSON.stringify(fcurves), 'FCurves', { readOnly: true }), str('expressions', JSON.stringify(exprs), 'Expressions', { readOnly: true }), int('items', Object.keys(values).length, 'Items', { readOnly: true }), int('mode', mode, 'Mode', { readOnly: true })]);
-    app.record('Store action', () => model.addProperty(src), () => model.removeProperty(src)); app.select([src]); return src;
+    app.record('Store action', () => model.addProperty(src), () => model.removeProperty(src));
+    // Softimage StoreAction AddClip: register the source on the model/scene Mixer (PC dump nested Sources/Tracks).
+    if (a.AddClip) {
+      const mix = mixerOf(model instanceof Model ? model : app.scene.root);
+      const clips: any[] = (mix as any).clips ?? ((mix as any).clips = []);
+      const clip = { name: src.name, source: src.name, start: Number(a.ClipOffset ?? app.anim.frame), duration: Math.max(1, app.anim.endFrame - app.anim.startFrame) };
+      clips.push(clip);
+      try { mix.set('sources', JSON.stringify(clips.map(c => c.source))); mix.set('tracks', JSON.stringify(clips)); } catch { /* */ }
+    }
+    app.select([src]); return src;
   } });
   app.register({ name: 'ApplyAction', label: 'Apply Action', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }], execute(app, a) {
     const src = (app.selection.find(n => n.type === 'actionsource') as Property | undefined) ?? (app.selectedObjects[0]?.model ?? app.scene.root).properties.filter(p => p.type === 'actionsource').pop();

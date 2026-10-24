@@ -510,6 +510,24 @@ export class Group extends Node {
 export class Pass extends Node { constructor(name: string) { super(name, 'pass', 'pass', [bool('Active', true, 'Active'), int('FrameStart', 1, 'Start Frame'), int('FrameEnd', 100, 'End Frame')]); } }
 
 // ---------------------------------------------------------------- scene
+/** Softimage scene Mixer (probe from si_anim_fcurve_golden.json): Sources/Tracks/Transitions/…. */
+export function makeMixer(): Property {
+  const m = new Property('Mixer', 'mixer', [
+    str('Name', 'Mixer', 'Name'), bool('Hidden', false, 'Hidden'), bool('Active', true, 'Active'),
+    num('start', 1, 'Start time'), num('duration', 100, 'Duration'),
+    str('markers', '', 'Markers'), str('ui', '', 'UI properties'), str('templates', '', 'Templates'),
+    bool('autotransition', false, 'Auto Transition'),
+    str('sources', '[]', 'Sources', { readOnly: true }), str('tracks', '[]', 'Tracks', { readOnly: true }),
+    str('transitions', '[]', 'Transitions', { readOnly: true }), str('compounds', '[]', 'Compounds', { readOnly: true }),
+    str('relations', '[]', 'Relations', { readOnly: true }),
+  ]);
+  (m as any).clips = [] as { name: string; source: string; start: number; duration: number }[];
+  return m;
+}
+export function mixerOf(host: { property: (t: string) => Property | undefined; addProperty: (p: Property) => Property }): Property {
+  return host.property('mixer') ?? host.addProperty(makeMixer());
+}
+
 export class Scene extends Node {
   readonly root: Model;
   readonly layers: Layer[] = [];
@@ -522,6 +540,7 @@ export class Scene extends Node {
     this.root.parent = this;
     this.root.setMaterial(this.newMaterial('Scene_Material', makePhong()));
     this.root.addProperty(makeDisplay()); this.root.addProperty(makeGeomApprox());
+    this.root.addProperty(makeMixer());
     this.addLayer('Layer_Default'); this.addPass('Default_Pass');
   }
   newMaterial(name: string, surface: Shader) { const m = new Material(this.uniqueName(name)); m.setSurface(surface); this.materials.push(m); return m; }
