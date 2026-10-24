@@ -3,7 +3,7 @@
 // Surfaces are evaluated as uniform B-splines of the stored degree and tessellated to MeshData; the grid rides along on
 // the mesh as `mesh.nurbs` so later operators keep editing control points rather than triangles.
 import { MeshData } from './geometry';
-import { fromPolys } from './topology';
+import { fromPolys, slicePolygonsPlane } from './topology';
 import { CurveData, evalCurve, curveDomain, sampleCurve, makeCurve, unrollClosed, V3 } from './curves';
 
 export interface NurbsSurface {
@@ -103,36 +103,98 @@ export function extendToCurve(s: NurbsSurface, b: Boundary, curve: CurveData): N
 export function snapBoundary(s: NurbsSurface, b: Boundary, target: NurbsSurface, blend = 1): NurbsSurface {
   const o = cloneSurf(s); for (const [i, j] of boundaryIndices(s, b)) { const p = cpAt(s, i, j); const q = closestPointOnSurf(target, p).p; o.cps[j * s.nu + i] = add(p, mul(sub(q, p), blend)); } return o;
 }
-/** Fit a new NURBS grid (nu x nv, cubic) over an existing surface or mesh (Create > Surf. Mesh > Fit). */
+/** Fit a new cubic NURBS grid (nu x nv) over a surface or a polygon mesh by least squares (Create > Surf. Mesh > Fit):
+ *  the data points are parametrised on an initial grid (the source surface, or a height-field over the mesh's bounding
+ *  box) and the control points solve min Σ|S(u_k,v_k) − P_k|². */
 export function fitSurface(src: NMesh, nu: number, nv: number): NurbsSurface {
-  const s = surfOf(src); const cps: V3[] = [];
-  if (s && src.nurbs) { for (let j = 0; j < nv; j++) for (let i = 0; i < nu; i++) cps.push(evalSurf(s, i / (nu - 1), j / (nv - 1))); return { nu, nv, degU: 3, degV: 3, closedU: s.closedU, closedV: s.closedV, cps }; }
-  // polygon mesh: height-field fit over the bounding box in XZ (sampling the nearest vertex)
-  const P = src.positions; let minx = Infinity, maxx = -Infinity, minz = Infinity, maxz = -Infinity; for (let k = 0; k < P.length; k += 3) { minx = Math.min(minx, P[k]); maxx = Math.max(maxx, P[k]); minz = Math.min(minz, P[k + 2]); maxz = Math.max(maxz, P[k + 2]); }
-  for (let j = 0; j < nv; j++) for (let i = 0; i < nu; i++) { const x = minx + (maxx - minx) * i / (nu - 1), z = minz + (maxz - minz) * j / (nv - 1); let by = 0, bd = Infinity; for (let k = 0; k < P.length; k += 3) { const d = (P[k] - x) ** 2 + (P[k + 2] - z) ** 2; if (d < bd) { bd = d; by = P[k + 1]; } } cps.push([x, by, z]); }
-  return { nu, nv, degU: 3, degV: 3, closedU: false, closedV: false, cps };
+  nu = Math.max(4, nu | 0); nv = Math.max(4, nv | 0); const s0 = surfOf(src);
+  const data: { u: number; v: number; p: V3 }[] = [];
+  if (s0 && src.nurbs) { const n = 12; for (let j = 0; j <= n; j++) for (let i = 0; i <= n; i++) data.push({ u: i / n, v: j / n, p: evalSurf(s0, i / n, j / n) }); }
+  else { // parametrise mesh points by their XZ position in the bounding box
+    const P = src.positions; let minx = Infinity, maxx = -Infinity, minz = Infinity, maxz = -Infinity; for (let k = 0; k < P.length; k += 3) { minx = Math.min(minx, P[k]); maxx = Math.max(maxx, P[k]); minz = Math.min(minz, P[k + 2]); maxz = Math.max(maxz, P[k + 2]); }
+    for (let k = 0; k < P.length; k += 3) data.push({ u: (P[k] - minx) / ((maxx - minx) || 1), v: (P[k + 2] - minz) / ((maxz - minz) || 1), p: [P[k], P[k + 1], P[k + 2]] });
+  }
+  const closedU = !!s0?.closedU && !!src.nurbs, closedV = !!s0?.closedV && !!src.nurbs;
+  const out: NurbsSurface = { nu, nv, degU: 3, degV: 3, closedU, closedV, cps: [] }; if (!closedU && !closedV) { out.knotsU = clampedKnots(nu, 3); out.knotsV = clampedKnots(nv, 3); }
+  const U = out.knotsU ?? [], V = out.knotsV ?? []; const N = nu * nv;
+  // basis matrix rows
+  const rows: { idx: number[]; w: number[] }[] = data.map(d => {
+    if (closedU || closedV) { // uniform periodic fallback: nearest-grid blend (bilinear hat on the control grid)
+      const fu = d.u * (closedU ? nu : nu - 1), fv = d.v * (closedV ? nv : nv - 1); const i0 = Math.floor(fu), j0 = Math.floor(fv), a = fu - i0, b = fv - j0; const idx: number[] = [], w: number[] = [];
+      for (const [di, dj, ww] of [[0, 0, (1 - a) * (1 - b)], [1, 0, a * (1 - b)], [0, 1, (1 - a) * b], [1, 1, a * b]] as [number, number, number][]) { const ii = closedU ? (i0 + di) % nu : Math.min(nu - 1, i0 + di), jj = closedV ? (j0 + dj) % nv : Math.min(nv - 1, j0 + dj); idx.push(jj * nu + ii); w.push(ww); } return { idx, w };
+    }
+    const uu = Math.min(1 - 1e-9, d.u), vv = Math.min(1 - 1e-9, d.v); const su = findSpan(nu, 3, uu, U), sv = findSpan(nv, 3, vv, V); const Nu = basisFuns(su, uu, 3, U), Nv = basisFuns(sv, vv, 3, V); const idx: number[] = [], w: number[] = [];
+    for (let l = 0; l <= 3; l++) for (let k = 0; k <= 3; k++) { idx.push((sv - 3 + l) * nu + (su - 3 + k)); w.push(Nu[k] * Nv[l]); } return { idx, w };
+  });
+  // normal equations (A^T A + λI) x = A^T b, small ridge for unsupported control points
+  const A = Array.from({ length: N }, () => new Float64Array(N)); const B = [new Float64Array(N), new Float64Array(N), new Float64Array(N)];
+  data.forEach((d, r) => { const { idx, w } = rows[r]; for (let a = 0; a < idx.length; a++) { for (let b = 0; b < idx.length; b++) A[idx[a]][idx[b]] += w[a] * w[b]; for (let x = 0; x < 3; x++) B[x][idx[a]] += w[a] * d.p[x]; } });
+  // ridge toward the bilinear interpolation of the corner data so empty regions stay sane
+  const corner = (i: number, j: number): V3 => { const u = i / (nu - 1), v = j / (nv - 1); let best = data[0], bd = Infinity; for (const d of data) { const dd = (d.u - u) ** 2 + (d.v - v) ** 2; if (dd < bd) { bd = dd; best = d; } } return best.p; };
+  for (let j = 0; j < nv; j++) for (let i = 0; i < nu; i++) { const k = j * nu + i; const c = corner(i, j); A[k][k] += 1e-3; for (let x = 0; x < 3; x++) B[x][k] += 1e-3 * c[x]; }
+  const X = solveSPD(A, B); for (let k = 0; k < N; k++) out.cps.push([X[0][k], X[1][k], X[2][k]]);
+  return out;
 }
-/** Fillet between two surfaces: a strip of `sections` arcs of the given radius along their approximate intersection. */
+/** Gaussian elimination with partial pivoting for several right-hand sides. */
+function solveSPD(A: Float64Array[], B: Float64Array[]): Float64Array[] {
+  const n = A.length; const M = A.map(r => Float64Array.from(r)); const R = B.map(r => Float64Array.from(r));
+  for (let c = 0; c < n; c++) { let piv = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[piv][c])) piv = r; if (piv !== c) { [M[c], M[piv]] = [M[piv], M[c]]; for (const b of R) { const t = b[c]; b[c] = b[piv]; b[piv] = t; } }
+    const d = M[c][c] || 1e-12; for (let r = c + 1; r < n; r++) { const f = M[r][c] / d; if (!f) continue; for (let k = c; k < n; k++) M[r][k] -= f * M[c][k]; for (const b of R) b[r] -= f * b[c]; } }
+  const X = R.map(() => new Float64Array(n));
+  for (let x = 0; x < R.length; x++) for (let r = n - 1; r >= 0; r--) { let sum = R[x][r]; for (let k = r + 1; k < n; k++) sum -= M[r][k] * X[x][k]; X[x][r] = sum / (M[r][r] || 1e-12); }
+  return X;
+}
+/** Fillet between two surfaces (rolling-ball): along their approximate intersection a ball of `radius` tangent to
+ *  both surfaces sweeps an arc from its contact point on A to its contact point on B, so the strip is G1 to both.
+ *  The arcs are exact rational quadratics (one 3-CV rational Bezier each). */
 export function filletSurfaces(a: NurbsSurface, b: NurbsSurface, radius: number, sections = 12, arcs = 5): NurbsSurface | null {
-  // sample A, keep samples that lie within the radius band of B, order them along the longest axis
-  const samples: { p: V3; q: V3; na: V3; nb: V3 }[] = []; const steps = 20;
+  const samples: { p: V3; q: V3; na: V3; nb: V3 }[] = []; const steps = 24;
   for (let j = 0; j <= steps; j++) for (let i = 0; i <= steps; i++) { const u = i / steps, v = j / steps; const p = evalSurf(a, u, v); const c = closestPointOnSurf(b, p, 16); if (dist(p, c.p) < radius * 1.5) samples.push({ p, q: c.p, na: surfNormal(a, u, v), nb: surfNormal(b, c.u, c.v) }); }
   if (samples.length < 2) return null;
   const axis = [0, 1, 2].map(k => { const vals = samples.map(s => s.p[k]); return Math.max(...vals) - Math.min(...vals); }); const ax = axis.indexOf(Math.max(...axis)); samples.sort((x, y) => x.p[ax] - y.p[ax]);
   const picked: typeof samples = []; for (let k = 0; k < sections; k++) picked.push(samples[Math.min(samples.length - 1, Math.round(k * (samples.length - 1) / Math.max(1, sections - 1)))]);
-  const cps: V3[] = [];
-  for (let k = 0; k < arcs; k++) { const t = k / (arcs - 1); for (const s of picked) { const mid = mul(add(s.p, s.q), 0.5); const bulge = mul(norm(add(s.na, s.nb)), radius * Math.sin(Math.PI * t)); cps.push(add(add(mul(s.p, 1 - t), mul(s.q, t)), bulge)); } }
-  return { nu: picked.length, nv: arcs, degU: 3, degV: 3, closedU: false, closedV: false, cps };
+  // per section: ball centre C with dist r to both tangent planes; contacts Ta = C - r·na, Tb = C - r·nb; arc Ta→Tb about C
+  const rows: V3[][] = Array.from({ length: 3 }, () => []); const rowW = [1, 0, 1];
+  for (const s of picked) {
+    let na = s.na, nb = s.nb; const x = mul(add(s.p, s.q), 0.5); // make both normals point to the same side (the side of the other surface's far point)
+    if (dot(na, nb) < 0) nb = mul(nb, -1); const half = Math.acos(Math.max(-1, Math.min(1, dot(na, nb)))) / 2; const bis = norm(add(na, nb)); const C = add(x, mul(bis, radius / Math.max(0.2, Math.cos(half))));
+    const Ta = sub(C, mul(na, radius)), Tb = sub(C, mul(nb, radius)); const da = norm(sub(Ta, C)), db = norm(sub(Tb, C)); const ang = Math.acos(Math.max(-1, Math.min(1, dot(da, db))));
+    const w = Math.cos(ang / 2); const mid = add(C, mul(norm(add(da, db)), radius / Math.max(w, 0.05))); // rational quadratic middle CV (weight cos(θ/2)) → exact arc
+    rows[0].push(Ta); rows[1].push(mid); rows[2].push(Tb); rowW[1] = w;
+  }
+  const nu = picked.length; const cps: V3[] = [], weights: number[] = []; for (let j = 0; j < 3; j++) for (let i = 0; i < nu; i++) { cps.push(rows[j][i]); weights.push(rowW[j]); }
+  void arcs; return { nu, nv: 3, degU: 3, degV: 2, closedU: false, closedV: false, cps, weights, knotsU: clampedKnots(nu, Math.min(3, nu - 1)), knotsV: [0, 0, 0, 1, 1, 1] };
 }
-/** Hide the polygons whose centre projects inside the trim curve's silhouette along an axis (Trim by Projection). */
+/** Reverse the surface's U or V direction, or swap them (Modify > Surf. Mesh > Inverse). */
+export function inverseSurf(s: NurbsSurface, flipU = true, flipV = false, swap = false): NurbsSurface {
+  const o = cloneSurf(s); const get = (i: number, j: number) => s.cps[j * s.nu + i], w = (i: number, j: number) => s.weights?.[j * s.nu + i] ?? 1;
+  const cps: V3[] = [], ws: number[] = [];
+  if (swap) { o.nu = s.nv; o.nv = s.nu; o.degU = s.degV; o.degV = s.degU; o.closedU = s.closedV; o.closedV = s.closedU; o.knotsU = s.knotsV?.slice(); o.knotsV = s.knotsU?.slice(); for (let j = 0; j < o.nv; j++) for (let i = 0; i < o.nu; i++) { cps.push(get(j, i)); ws.push(w(j, i)); } }
+  else for (let j = 0; j < s.nv; j++) for (let i = 0; i < s.nu; i++) { const ii = flipU ? s.nu - 1 - i : i, jj = flipV ? s.nv - 1 - j : j; cps.push(get(ii, jj)); ws.push(w(ii, jj)); }
+  o.cps = cps; if (s.weights) o.weights = ws; if (!swap) { if (flipU && o.knotsU) { const K = o.knotsU; const lo = K[0], hi = K[K.length - 1]; o.knotsU = K.slice().reverse().map(k => lo + hi - k); } if (flipV && o.knotsV) { const K = o.knotsV; const lo = K[0], hi = K[K.length - 1]; o.knotsV = K.slice().reverse().map(k => lo + hi - k); } }
+  return o;
+}
+/** Trim by Projection: the tessellated surface is cut along the projected trim curve (so the boundary follows the curve
+ *  exactly) and the polygons on the discarded side are removed. */
 export function applyTrims(m: NMesh): NMesh {
-  if (!m.trims?.length) return m; const keep: number[][] = [];
+  if (!m.trims?.length) return m;
   const inside = (x: number, y: number, poly: [number, number][]) => { let ins = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const a = poly[i], b = poly[j]; if ((a[1] > y) !== (b[1] > y) && x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]) ins = !ins; } return ins; };
-  for (const f of m.polygons) { const c = [0, 0, 0]; for (const v of f) for (let k = 0; k < 3; k++) c[k] += m.positions[v * 3 + k] / f.length; let drop = false; for (const t of m.trims) { const [x, y] = t.axis === 0 ? [c[1], c[2]] : t.axis === 1 ? [c[0], c[2]] : [c[0], c[1]]; const ins = inside(x, y, t.poly); if (ins !== t.keepInside) drop = true; } if (!drop) keep.push(f); }
-  const verts: V3[] = []; for (let k = 0; k < m.positions.length; k += 3) verts.push([m.positions[k], m.positions[k + 1], m.positions[k + 2]]);
+  const uv = (axis: number, p: number[]): [number, number] => axis === 0 ? [p[1], p[2]] : axis === 1 ? [p[0], p[2]] : [p[0], p[1]];
+  let cur: MeshData = m;
+  for (const t of m.trims) {
+    for (let k = 0; k < t.poly.length; k++) { // cut along each segment of the projected curve
+      const a = t.poly[k], b = t.poly[(k + 1) % t.poly.length]; const d = [b[0] - a[0], b[1] - a[1]]; const L = Math.hypot(d[0], d[1]); if (L < 1e-9) continue;
+      const n2 = [-d[1] / L, d[0] / L]; const nrm: V3 = t.axis === 0 ? [0, n2[0], n2[1]] : t.axis === 1 ? [n2[0], 0, n2[1]] : [n2[0], n2[1], 0]; const dd = n2[0] * a[0] + n2[1] * a[1];
+      const lo = [Math.min(a[0], b[0]) - 1e-6, Math.min(a[1], b[1]) - 1e-6], hi = [Math.max(a[0], b[0]) + 1e-6, Math.max(a[1], b[1]) + 1e-6];
+      const idx: number[] = []; cur.polygons.forEach((f, pi) => { let bx0 = Infinity, bx1 = -Infinity, by0 = Infinity, by1 = -Infinity; for (const v of f) { const [x, y] = uv(t.axis, [cur.positions[v * 3], cur.positions[v * 3 + 1], cur.positions[v * 3 + 2]]); bx0 = Math.min(bx0, x); bx1 = Math.max(bx1, x); by0 = Math.min(by0, y); by1 = Math.max(by1, y); } if (bx1 >= lo[0] && bx0 <= hi[0] && by1 >= lo[1] && by0 <= hi[1]) idx.push(pi); });
+      if (idx.length) cur = slicePolygonsPlane(cur, { kind: 'polygon', indices: idx }, nrm, dd);
+    }
+  }
+  const keep: number[][] = [];
+  for (const f of cur.polygons) { const c = [0, 0, 0]; for (const v of f) for (let k = 0; k < 3; k++) c[k] += cur.positions[v * 3 + k] / f.length; let drop = false; for (const t of m.trims) { const [x, y] = uv(t.axis, c); if (inside(x, y, t.poly) !== t.keepInside) drop = true; } if (!drop) keep.push(f); }
+  const verts: V3[] = []; for (let k = 0; k < cur.positions.length; k += 3) verts.push([cur.positions[k], cur.positions[k + 1], cur.positions[k + 2]]);
   const out = fromPolys(verts, keep) as NMesh; out.nurbs = m.nurbs; out.trims = m.trims; return out;
 }
-
 
 // ----------------------------------------------------------------- true NURBS editing
 /** Boehm knot insertion along U (or V) at parameter t in [0,1]; shape is unchanged, the grid gains one column (row). */

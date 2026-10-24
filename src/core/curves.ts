@@ -97,6 +97,24 @@ export function unrollClosed(c: CurveData): CurveData {
   return { degree: p, closed: false, cvs: cvs2, knots: knots2 };
 }
 export function insertCV(c: CurveData, u: number): CurveData { return insertKnot(c, u); }
+/** Raise every interior knot to multiplicity `mult` (= degree → Bezier knots, C0 corners stay where the CVs make them). */
+export function setKnotMultiplicity(c: CurveData, mult: number): CurveData {
+  let cur = c.closed ? unrollClosed(c) : c; const p = cur.degree; mult = Math.max(1, Math.min(p, mult));
+  for (let guard = 0; guard < 200; guard++) {
+    const K = cur.knots; let target: number | null = null;
+    for (let i = p + 1; i < K.length - p - 1; i++) { const k = K[i]; let m = 0; for (const x of K) if (Math.abs(x - k) < 1e-9) m++; if (m < mult) { target = k; break; } }
+    if (target === null) break; cur = insertKnot(cur, target);
+  }
+  return cur;
+}
+/** Bezier knots whose interior CVs are moved onto the chord between the segment ends: straight segments. */
+export function linearizeSegments(c: CurveData): CurveData {
+  const b = setKnotMultiplicity(c, c.degree); const p = b.degree; if (p < 2) return b; const cvs = b.cvs.map(q => q.slice() as [number, number, number, number]);
+  for (let s0 = 0; s0 + p < cvs.length; s0 += p) { const A = cvs[s0], B = cvs[s0 + p]; for (let k = 1; k < p; k++) { const t = k / p; cvs[s0 + k] = [A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t, 1]; } }
+  return { ...b, cvs };
+}
+/** Collapse repeated interior knots back to single knots (non-Bezier): refit through the current shape. */
+export function unbezier(c: CurveData): CurveData { const K = c.knots; const uniq = new Set(K.slice(c.degree + 1, K.length - c.degree - 1).map(k => Math.round(k * 1e6))); const n = Math.max(c.degree + 1, uniq.size + c.degree); return makeCurve(sampleCurve(c, n, !c.closed), c.degree, c.closed); }
 /** Remove the knot nearest `u` (approximate inverse of insertion: least-squares refit keeps the shape where possible). */
 export function removeKnot(c: CurveData, u: number): CurveData {
   if (c.cvs.length <= c.degree + 1) return c; const K = c.knots; const [u0, u1] = curveDomain(c);

@@ -47,14 +47,18 @@ export class CurveEditOperator extends Operator {
     switch (this.preset) {
       case 'Inverse': return C.reverseCurve(c);
       case 'Open/Close': return C.toggleClosed(c);
-      case 'Insert Knot': return C.insertCV(c, 0);
+      case 'Insert Knot': { const [u0, u1] = C.curveDomain(c); return C.insertKnot(c, u0 + (u1 - u0) * Number(this.val('position') ?? 0.5)); }
+      case 'Bezier Knots': return C.setKnotMultiplicity(c, c.degree);
+      case 'Bezier Corners': return C.setKnotMultiplicity(c, c.degree);
+      case 'Linear Segments': return C.linearizeSegments(c);
+      case 'Non-Bezier Knots': return C.unbezier(c);
       case 'Raise Degree': return C.raiseDegree(c);
       case 'Clean': return C.cleanCurve(c, this.val('tolerance'));
       case 'Reparameterize': return C.reparameterize(c);
       case 'Shift U': return C.shiftCurve(c, this.val('shift'));
       case 'Fit on Curve': return C.fitCurve(c, this.val('cvs'), this.val('degree'));
       case 'Extract Segment': return C.extractSegment(c, this.val('start'), this.val('end'));
-      case 'Remove Knots': return C.fitCurve(c, Math.max(c.degree + 1, c.cvs.length - 1), c.degree);
+      case 'Remove Knots': { const [u0, u1] = C.curveDomain(c); return C.removeKnot(c, u0 + (u1 - u0) * Number(this.val('position') ?? 0.5)); }
     }
     return c;
   }
@@ -65,7 +69,8 @@ export function makeCurveEditOperator(preset: string) {
     case 'Shift U': return new CurveEditOperator(preset, [int('shift', 1, 'Shift', { min: -64, max: 64 })]);
     case 'Fit on Curve': return new CurveEditOperator(preset, [int('cvs', 8, 'Nb Control Points', { min: 2, max: 400 }), int('degree', 3, 'Degree', { min: 1, max: 7 })]);
     case 'Extract Segment': return new CurveEditOperator(preset, [num('start', 0, 'Start', { min: 0, max: 1 }), num('end', 0.5, 'End', { min: 0, max: 1 })]);
-    case 'Inverse': case 'Open/Close': case 'Insert Knot': case 'Raise Degree': case 'Reparameterize': case 'Remove Knots': return new CurveEditOperator(preset);
+    case 'Insert Knot': case 'Remove Knots': return new CurveEditOperator(preset, [num('position', 0.5, 'Position (U)', { min: 0, max: 1 })]);
+    case 'Inverse': case 'Open/Close': case 'Raise Degree': case 'Reparameterize': case 'Bezier Knots': case 'Bezier Corners': case 'Linear Segments': case 'Non-Bezier Knots': return new CurveEditOperator(preset);
   }
   return null;
 }
