@@ -196,6 +196,13 @@ else {
   const planes = (pol?.gizmoChildKinds ?? []).filter(k => String(k).startsWith('plane:'));
   if (planes.length < 3) fail.push(`plane handles missing on Translate gizmo (kinds=${JSON.stringify(pol?.gizmoChildKinds)})`);
   else ok.push(`plane handles drawn (${planes.join(',')})`);
+  // MCP section skins from mcp.dll RT_BITMAP + hit-maps (desktop polish track #3)
+  const hm = audit.mcpHitmaps;
+  if (!hm?.skinned) fail.push(`MCP not skinned with PE bitmaps: ${JSON.stringify(hm)}`);
+  else if ((hm.hitCount ?? 0) < 40) fail.push(`MCP hit-map count too low: ${hm.hitCount}`);
+  else if (!['Select', 'Transform', 'Snap', 'Constrain', 'Edit'].every(s => hm.sections?.includes(s))) {
+    fail.push(`MCP skin sections missing: ${JSON.stringify(hm.sections)}`);
+  } else ok.push(`MCP PE bitmap hit-maps (${hm.hitCount} hits, sections ${hm.sections.join('+')})`);
 }
 
 // Open floating views

@@ -151,8 +151,13 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
   const MENUS = menusData as Record<string, unknown>;
   const registered = [...layout.views.keys()].sort();
   const mcpHost = document.querySelector('.mcp');
-  const mcpSections = mcpHost ? Array.from(mcpHost.querySelectorAll('.mcp-section-title, .mcp-sec-title, .section-title')).map(e => e.textContent?.trim() || '') : [];
-  const mcpBtns = mcpHost ? Array.from(mcpHost.querySelectorAll('.mcp-btn')).map(b => b.textContent?.trim() || '') : [];
+  const mcpSections = mcpHost ? Array.from(mcpHost.querySelectorAll('.mcp-section-title, .mcp-sec-title, .section-title, .mcp-sec[data-section]')).map(e => (e.getAttribute('data-section') || e.textContent || '').trim()).filter(Boolean) : [];
+  const mcpBtns = mcpHost ? Array.from(mcpHost.querySelectorAll('.mcp-btn')).map(b => (b as HTMLElement).dataset.hit || b.textContent?.trim() || '') : [];
+  const mcpHitmaps = mcpHost ? {
+    skinned: mcpHost.classList.contains('mcp-skinned'),
+    sections: Array.from(mcpHost.querySelectorAll('.mcp-sec.mcp-skin')).map(e => (e as HTMLElement).dataset.section || ''),
+    hitCount: mcpHost.querySelectorAll('.bmp-hit[data-hit]').length,
+  } : null;
   const placeholders = Array.from(document.querySelectorAll('.view-placeholder')).map(e => (e.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 120));
   const moduleSel = document.querySelector<HTMLSelectElement>('.module-select');
   const mb = menubarStatus();
@@ -174,6 +179,7 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     mcpSections,
     mcpButtonCount: mcpBtns.length,
     mcpButtons: mcpBtns,
+    mcpHitmaps,
     placeholderFrames: placeholders,
     menubar: !!document.getElementById('menubar'),
     menubarWired: mb.filter(x => x.wired).length,

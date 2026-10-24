@@ -290,6 +290,28 @@ button, select, input { font-family: inherit; }
 .bmp-hit.text { text-align: left; padding-left: 4px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: #111; }
 .bmp-hit.text.dark { color: #e8e8e8; }
 .bmp-hit:hover.text { background: rgba(255,255,255,.08); }
+.bmp-hit:disabled { opacity: 0.45; cursor: default; pointer-events: none; }
+.bmp-field { position: absolute; background: transparent; border: 0; padding: 0 12px 0 3px; margin: 0; color: #e8e8e8; font: 10px Tahoma, Verdana, sans-serif; outline: none; }
+.bmp-field:focus { background: rgba(0,0,0,.35); }
+.bmp-field.axis-off { color: #8d8986; }
+/* Softimage mcp.dll section skins (SELEC1U / SRTU / …) */
+.mcp.mcp-skinned { background: #a8a4a0; overflow: auto; }
+.mcp-sec.mcp-skin { border-bottom: 0; flex: none; }
+.mcp-sec.mcp-skin .mcp-bmp { margin: 0 auto; }
+.mcp-sec.mcp-skin.collapsed .mcp-bmp { overflow: hidden; }
+/* Softimage draws captions over blank RT_BITMAP wells — show Direct labels in SI chrome */
+.mcp-bmp .bmp-hit.mcp-btn {
+  color: #1a1a1a; font: 600 10px Tahoma, Verdana, sans-serif; line-height: 1;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.mcp-bmp .bmp-hit.mcp-btn[data-hit="header"],
+.mcp-bmp .bmp-hit.mcp-btn[data-hit="selectTool"],
+.mcp-bmp .bmp-hit.mcp-btn[data-hit="nameNav"],
+.mcp-bmp .bmp-hit.mcp-btn[data-hit^="snap"]:not([data-hit="snapOn"]),
+.mcp-bmp .bmp-hit.mcp-btn[data-hit$="Opt"],
+.mcp-bmp .bmp-hit.mcp-btn[data-hit="stackPlus"],
+.mcp-bmp .bmp-hit.mcp-btn[data-hit="stackMinus"] { color: transparent; font-size: 0; }
+.mcp-bmp .bmp-hit.mcp-btn:disabled { color: #6a6663; }
 .bmp-field { position: absolute; background: transparent; border: 0; color: #f0f0f0; font: 11px Tahoma, Verdana, sans-serif; padding: 0 2px; outline: none; }
 .bmp-field.dark { background: #363333; }
 .bottom-row { display: flex; align-items: flex-start; gap: 2px; background: #aaa8a6; }
