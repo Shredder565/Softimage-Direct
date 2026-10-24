@@ -1,5 +1,5 @@
 {
-  "ok": 53,
+  "ok": 54,
   "fail": 0,
   "note": 1,
   "okItems": [
@@ -27,6 +27,7 @@
     "plane handles drawn (plane:xy,plane:yz,plane:zx)",
     "MCP PE bitmap hit-maps (48 hits, sections Select+Transform+Snap+Constrain+Edit)",
     "PPG shell chrome host=147 nav=71x25 tools=66x25 font=11pt",
+    "Explorer+Prefs chrome rename=725 row=16 prefsHost=264 labelW=260",
     "openview Explorer",
     "openview Property Editor",
     "openview Script Editor",

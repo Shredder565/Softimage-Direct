@@ -21,8 +21,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PE = ROOT / "data" / "si" / "pe_resources.json"
 # softimage-pc Phase B dumps (prefer when present)
-PC_PE = Path("/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/dialogs/pe-dialogs-ui-model.json")
-PC_SPDL_IDX = Path("/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/dialogs/spdl-layout-index.json")
+PC_DIALOGS = Path("/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/dialogs")
+PC_PE = PC_DIALOGS / "pe-dialogs-ui-model.json"
+PC_SPDL_IDX = PC_DIALOGS / "spdl-layout-index.json"
 VIEWS = ROOT / "src" / "data" / "si" / "views.json"
 UIUT_BMP = ROOT / "data" / "si" / "pe_bitmaps" / "uiut"
 PUBLIC_MCP = ROOT / "public" / "si" / "mcp"
@@ -36,15 +37,21 @@ def load_uiut_dialogs() -> tuple[dict, str]:
     """Prefer softimage-pc pe-dialogs-ui-model.json; fall back to in-tree pe_resources.json."""
     if PC_PE.exists():
         pe = json.load(open(PC_PE))
-        uiut = (pe.get("files") or {}).get("uiut.dll", {}).get("dialogs") or {}
-        genppg = (pe.get("files") or {}).get("genppg.dll", {}).get("dialogs") or {}
-        xsi = (pe.get("files") or {}).get("XSI.exe", {}).get("dialogs") or {}
-        return {"uiut": uiut, "genppg": genppg, "xsi": xsi}, "internal/softimage-pc-dumps/dialogs/pe-dialogs-ui-model.json"
+        files = pe.get("files") or {}
+        return {
+            "uiut": (files.get("uiut.dll") or {}).get("dialogs") or {},
+            "genppg": (files.get("genppg.dll") or {}).get("dialogs") or {},
+            "xsi": (files.get("XSI.exe") or {}).get("dialogs") or {},
+            "sceneexplorer": (files.get("sceneexplorer.dll") or {}).get("dialogs") or {},
+            "props": (files.get("props.dll") or {}).get("dialogs") or {},
+        }, "internal/softimage-pc-dumps/dialogs/pe-dialogs-ui-model.json"
     pe = json.load(open(PE))
     return {
         "uiut": pe.get("uiut.dll", {}).get("dialogs", {}),
         "genppg": pe.get("genppg.dll", {}).get("dialogs", {}),
         "xsi": pe.get("XSI.exe", {}).get("dialogs", {}),
+        "sceneexplorer": pe.get("sceneexplorer.dll", {}).get("dialogs", {}),
+        "props": pe.get("props.dll", {}).get("dialogs", {}),
     }, "data/si/pe_resources.json"
 
 
@@ -103,6 +110,7 @@ def build() -> dict:
     views = json.load(open(VIEWS))
     bags, pe_source = load_uiut_dialogs()
     uiut, genppg, xsi = bags["uiut"], bags["genppg"], bags["xsi"]
+    sceneexplorer, props = bags.get("sceneexplorer") or {}, bags.get("props") or {}
     spdl_stats = None
     if PC_SPDL_IDX.exists():
         spdl_stats = json.load(open(PC_SPDL_IDX)).get("stats")
@@ -158,6 +166,47 @@ def build() -> dict:
         "floatBorder": "#3a3836",
         "floatTitleGradient": ["#7c7876", "#5a5654"],
         "ppgTitleGradient": ["#8f9bb0", "#6f7d96"],
+        "fontPtDialog": 8,
+        "dialogBtnWDlu": 50,
+        "dialogBtnHDlu": 14,
+    }
+
+    se725 = sceneexplorer.get("725") or {}
+    se_edit = next((c for c in (se725.get("controls") or []) if c.get("cls") == "edit"), None)
+    explorer = {
+        "renameDialog": {
+            "id": "725",
+            "dll": "sceneexplorer.dll",
+            "font": se725.get("font") or [8, "MS Sans Serif"],
+            "rect_dlu": se725.get("rect"),
+            "edit": {"rect_dlu": [se_edit["x"], se_edit["y"], se_edit["w"], se_edit["h"]]} if se_edit else None,
+        },
+        "tokens": {
+            "fontFamily": 'Arial, "MS Sans Serif", Tahoma, sans-serif',
+            "fontPx": 11,
+            "rowHeightPx": 16,
+            "headBtnFontPx": 10,
+            "searchBg": "#f4f2f0",
+        },
+    }
+    p264 = props.get("264") or {}
+    preferences = {
+        "hostDialog": {
+            "id": "264",
+            "dll": "props.dll",
+            "font": p264.get("font") or [10, "Arial"],
+            "rect_dlu": p264.get("rect"),
+            "controls": [
+                {"text": c.get("text"), "cls": c.get("cls"), "rect_dlu": [c["x"], c["y"], c["w"], c["h"]]}
+                for c in (p264.get("controls") or [])
+            ],
+        },
+        "tokens": {
+            "treeWidthPx": 170,
+            "labelWidthPx": 260,
+            "fontFamily": 'Arial, "MS Sans Serif", Tahoma, sans-serif',
+            "fontPx": 11,
+        },
     }
 
     bitmaps = {
@@ -214,12 +263,15 @@ def build() -> dict:
         "hosts": hosts,
         "bitmaps": bitmaps,
         "tokens": tokens,
+        "explorer": explorer,
+        "preferences": preferences,
         "layoutOpts": layout_opts,
         "bitmapMatch": {"inspNav": match_nav, "tools": match_tools},
         "inventory": inventory,
         "notes": [
             "PPG host chrome is owner-draw (uiut InspNavCtrl / LoadSaveCtrl); DLU rects place controls, RT_BITMAP sizes paint them.",
             "Dialog 147 is the fullest Softimage PPG toolbar (animation + reset all/group + nav + load/save).",
+            "Explorer rename = sceneexplorer.dll 725; Preferences host frame = props.dll 264.",
             "Shared PPG shell only — Model-specific opdef layouts owned by Model PPG worker.",
             "No Softimage Desktop takeover — PE/SPDL file scrape only.",
         ],

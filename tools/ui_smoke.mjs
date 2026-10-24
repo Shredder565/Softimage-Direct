@@ -213,6 +213,14 @@ else {
   else if (pc.expectNavW !== 71 || pc.expectToolsW !== 66) fail.push(`ppgChrome bitmap sizes expected 71×66 got nav=${pc.expectNavW} tools=${pc.expectToolsW}`);
   else if (pc.fontHost !== 11) fail.push(`ppgChrome fontHost expected 11 (uiut Arial) got ${pc.fontHost}`);
   else ok.push(`PPG shell chrome host=${pc.hostDialog} nav=${pc.expectNavW}x25 tools=${pc.expectToolsW}x25 font=${pc.fontHost}pt`);
+  // Explorer + Preferences shell chrome (sceneexplorer 725 / props 264)
+  const xp = pc.explorer;
+  const pr = pc.preferences;
+  if (!xp?.tokensApplied || xp.rowH !== 16 || xp.fontPx !== 11 || xp.renameId !== '725') {
+    fail.push(`explorer chrome expected rename=725 row=16 font=11 tokens, got ${JSON.stringify(xp)}`);
+  } else if (!pr?.tokensApplied || pr.hostId !== '264' || pr.labelW !== 260 || pr.treeW !== 170) {
+    fail.push(`preferences chrome expected host=264 label=260 tree=170, got ${JSON.stringify(pr)}`);
+  } else ok.push(`Explorer+Prefs chrome rename=${xp.renameId} row=${xp.rowH} prefsHost=${pr.hostId} labelW=${pr.labelW}`);
 }
 
 // Open floating views
