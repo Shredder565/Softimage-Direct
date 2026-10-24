@@ -1,5 +1,5 @@
 {
-  "ok": 52,
+  "ok": 53,
   "fail": 0,
   "note": 1,
   "okItems": [
@@ -26,6 +26,7 @@
     "useManipulators=true",
     "plane handles drawn (plane:xy,plane:yz,plane:zx)",
     "MCP PE bitmap hit-maps (48 hits, sections Select+Transform+Snap+Constrain+Edit)",
+    "PPG shell chrome host=147 nav=71x25 tools=66x25 font=11pt",
     "openview Explorer",
     "openview Property Editor",
     "openview Script Editor",

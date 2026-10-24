@@ -6,21 +6,30 @@ import { TEXTURE_NODES } from '../core/shaders';
 import type { FCurve } from '../core/animation';
 import { Parameter, ParamSet } from '../core/params';
 import type { LayoutNode } from '../core/opdefs';
+import { applyPpgChrome, PPG_CHROME } from './ppgChrome';
 
 export function propertyEditor(app: App, host: HTMLElement, target?: () => Node | undefined) {
+  applyPpgChrome();
   const state = { locked: null as Node | null, recycle: true, history: [] as Node[], hi: -1 };
   const current = () => state.locked ?? (target ? target() : app.selection[app.selection.length - 1]);
   const root = document.createElement('div'); root.className = 'ppg';
   const title = document.createElement('div'); title.className = 'ppg-title';
-  // The toolbar is Softimage's own: uiut.dll InspNavCtrl (▲ ◀ ▶) and lock / recycle / help bitmaps.
+  // Softimage uiut.dll InspNavCtrl / tools RT_BITMAP chrome (PE dump host dialog 147).
   const bar = document.createElement('div'); bar.className = 'ppg-bar';
-  const nav = document.createElement('div'); nav.className = 'ppg-bmp nav'; nav.style.backgroundImage = 'url(si/mcp/ppgnav.png)'; const tools = document.createElement('div'); tools.className = 'ppg-bmp tools'; tools.style.backgroundImage = 'url(si/mcp/ppgtools.png)';
-  const hit = (host2: HTMLElement, x: number, w: number, t: string, fn: () => void) => { const b = document.createElement('button'); b.className = 'bmp-hit'; b.style.cssText = `left:${x}px;top:2px;width:${w}px;height:21px`; b.title = t; b.onclick = fn; host2.appendChild(b); return b; };
-  hit(nav, 2, 22, 'Up: inspect the parent (owner) of this node', () => { const n = current(); const par = n && ((n as any).parentObj ?? n.parent); if (par && par !== n && par.kind !== 'scene') { if (state.locked) state.locked = par; else app.select([par]); } });
-  hit(nav, 25, 22, 'Previous inspected node', () => go(-1)); hit(nav, 48, 22, 'Next inspected node', () => go(1));
-  const lockB = hit(tools, 2, 20, 'Lock: keep this node in the editor when the selection changes', () => { state.locked = state.locked ? null : (current() ?? null); upd(); });
-  const recB = hit(tools, 23, 20, 'Recycle: reuse this editor for the next inspected node (off: open a new window)', () => { state.recycle = !state.recycle; app.recyclePPG = state.recycle; upd(); });
-  hit(tools, 44, 20, 'Help for this property page', () => { const n = current(); window.open('https://help.autodesk.com/view/SI/2015/ENU/?query=' + encodeURIComponent(n?.type ?? n?.name ?? 'property'), '_blank'); });
+  const nav = document.createElement('div'); nav.className = 'ppg-bmp nav'; nav.style.backgroundImage = `url(${PPG_CHROME.bitmaps.inspNav.public})`;
+  const tools = document.createElement('div'); tools.className = 'ppg-bmp tools'; tools.style.backgroundImage = `url(${PPG_CHROME.bitmaps.tools.public})`;
+  const hit = (host2: HTMLElement, x: number, w: number, h: number, top: number, t: string, fn: () => void, id?: string) => {
+    const b = document.createElement('button'); b.className = 'bmp-hit'; if (id) b.dataset.hit = id;
+    b.style.cssText = `left:${x}px;top:${top}px;width:${w}px;height:${h}px`; b.title = t; b.onclick = fn; host2.appendChild(b); return b;
+  };
+  const nh = Object.fromEntries(PPG_CHROME.bitmaps.inspNav.hit.map(h => [h.id, h]));
+  const th = Object.fromEntries(PPG_CHROME.bitmaps.tools.hit.map(h => [h.id, h]));
+  hit(nav, nh.up.x, nh.up.w, nh.up.h, nh.up.top, 'Up: inspect the parent (owner) of this node', () => { const n = current(); const par = n && ((n as any).parentObj ?? n.parent); if (par && par !== n && par.kind !== 'scene') { if (state.locked) state.locked = par; else app.select([par]); } }, 'up');
+  hit(nav, nh.prev.x, nh.prev.w, nh.prev.h, nh.prev.top, 'Previous inspected node', () => go(-1), 'prev');
+  hit(nav, nh.next.x, nh.next.w, nh.next.h, nh.next.top, 'Next inspected node', () => go(1), 'next');
+  const lockB = hit(tools, th.lock.x, th.lock.w, th.lock.h, th.lock.top, 'Lock: keep this node in the editor when the selection changes', () => { state.locked = state.locked ? null : (current() ?? null); upd(); }, 'lock');
+  const recB = hit(tools, th.recycle.x, th.recycle.w, th.recycle.h, th.recycle.top, 'Recycle: reuse this editor for the next inspected node (off: open a new window)', () => { state.recycle = !state.recycle; app.recyclePPG = state.recycle; upd(); }, 'recycle');
+  hit(tools, th.help.x, th.help.w, th.help.h, th.help.top, 'Help for this property page', () => { const n = current(); window.open('https://help.autodesk.com/view/SI/2015/ENU/?query=' + encodeURIComponent(n?.type ?? n?.name ?? 'property'), '_blank'); }, 'help');
   const keyB = document.createElement('span'); keyB.className = 'ppg-ico'; keyB.textContent = 'K'; keyB.title = 'Key all animatable parameters of this page (right-click: remove keys)';
   keyB.onclick = () => { const ps = pageParams(); if (ps.length) app.run('SaveKey', { InputObjs: ps.map(p => p.fullName).join(',') }); }; keyB.oncontextmenu = (e) => { e.preventDefault(); for (const p of pageParams()) app.run('RemoveKey', { InputObjs: p.fullName }); };
   bar.append(nav, keyB, Object.assign(document.createElement('span'), { className: 'spacer' }), tools);
