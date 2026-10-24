@@ -370,7 +370,13 @@ export class TopologyOperator2 extends Operator {
         if (ref === 2) return T2.diceInFrame(m, this.sel, T2.selectionFrame(m, this.sel), slicer);
         const owner: any = (this.parent as any)?.parent; const g = owner?.globalMatrix?.(); if (!g) return slicer(m, this.sel); const e = g.elements; const col = (i: number): V3 => { const c: V3 = [e[i], e[i + 1], e[i + 2]]; const l = Math.hypot(...c) || 1; return [c[0] / l, c[1] / l, c[2] / l]; };
         return T2.diceInFrame(m, this.sel, [col(0), col(4), col(8)], slicer); }
-      case 'Polygon Reduction': { const r = this.p('ratio', undefined, 0.5); return T2.reduceQuadric(m, r > 1 ? r / 100 : r, this.get('preserveboundaries') ? !!this.val('preserveboundaries') : true, this.p('quadlineweight', undefined, 0)); }
+      case 'Polygon Reduction': {
+        const r = this.p('ratio', undefined, 0.5);
+        const preserveBoundaries = this.get('preserveboundaries') ? !!this.val('preserveboundaries') : true;
+        const enforceSym = this.get('enforcesymmetry') ? !!this.val('enforcesymmetry') : true;
+        const preserveCreases = this.get('preservecreases') ? !!this.val('preservecreases') : (this.get('preservehardedges') ? !!this.val('preservehardedges') : true);
+        return T2.reduceQuadric(m, r > 1 ? r / 100 : r, preserveBoundaries, this.p('quadlineweight', undefined, 0), enforceSym, preserveCreases);
+      }
       case 'Subdivide Polygons': { const op = makeTopologyOperator('Subdivide Polygons', this.sel)!; op.set('subdivtype', this.p('subdivtype')); op.set('subdivisions', this.p('subdivisions', undefined, 1)); return op.apply(m); }
       case 'Split Edges': { const r = this.p('ratioedge', 'ratio', 0.5); return splitEdges(m, this.sel, r > 1 ? r / 100 : r, this.get('connect') ? !!this.val('connect') : true); }
       case 'Weld Points': return weldPoints(m, this.sel);
