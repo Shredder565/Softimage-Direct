@@ -10,6 +10,18 @@ for f in sorted(glob.glob(os.path.join(root, 'data/dump/si_model_dump*.json'))):
 VT = {2: 'int', 3: 'int', 4: 'double', 5: 'double', 11: 'bool', 8: 'string', 31: 'string', 17: 'int', 18: 'int', 19: 'int', 20: 'int', 21: 'int'}
 SKIP_SN = {'mute'}  # handled generically
 BIG = 1e300
+# Dump-backed Model generator SPDL picks (softimage-pc dialogs/spdl-layouts-model-ui.json).
+# Prefer real generator SPDLs over the shared C3DParametricSurfaceGenerator / obsolete stubs.
+SPDL_FORCE = {
+    'extrude2profs': 'ExtrusionTwoProfiles.spdl',
+    'revolution': 'revolutionAxisOp.spdl',
+    'filletcrv': 'filletcrv.spdl',
+}
+# When SPDL Layout is only `inline GenOp…` / empty after prune, synthesize Softimage-like groups.
+SYNTH_LAYOUT = {
+    'filletcrv': [{'group': 'Fillet', 'items': [{'param': 'rad'}, {'param': 'tol'}]}],
+    'booleansrftopoop': [{'group': 'Boolean', 'items': [{'param': 'booleanmode'}]}],
+}
 
 def spdl_params_index():
     idx = {}
@@ -65,21 +77,26 @@ def conv(p, sp):
         elif subs == ['x', 'y', 'z']: d['type'] = 'vector'; d['default'] = [s['v'] for s in p['sub']]
     return d
 
-def layout_for(f, sns):
-    lay = spdl.get(f, {}).get('layout')
+def layout_for_nodes(lay, sns):
     if not lay: return None
     sns = set(s.lower() for s in sns)
     def prune(nodes):
         out = []
         for n in nodes:
             if 'param' in n:
+                # Skip Softimage inline GenOp button includes (not Layout grammar)
+                if str(n['param']).lower().startswith('inline'): continue
                 if n['param'].lower() in sns: out.append(n)
             else:
                 k = 'group' if 'group' in n else 'row' if 'row' in n else 'tab'
-                items = prune(n['items'])
+                items = prune(n.get('items') or [])
                 if items: out.append({k: n[k], 'items': items})
         return out
-    return prune(lay)
+    pruned = prune(lay)
+    return pruned or None
+
+def layout_for(f, sns):
+    return layout_for_nodes(spdl.get(f, {}).get('layout'), sns)
 
 defs = {}; by_menu = {}; prims = {}
 for item in dumps:
@@ -95,10 +112,16 @@ for item in dumps:
                 by_menu[item['l']] = {'type': t, 'values': {p['sn']: p.get('v') for p in params}, 'used': item.get('used')}
             if key in defs or not params: continue
             hint = t if t != 'geom' else key.split(':')[1]
-            f, score = best_spdl([p['sn'] for p in params], hint)
+            sns = [p['sn'] for p in params]
+            f = SPDL_FORCE.get(t) if SPDL_FORCE.get(t) in SP else None
+            score = 0
+            if not f:
+                f, score = best_spdl(sns, hint)
             sp = SP.get(f, {}) if f else {}
             d = {'type': t, 'name': op['name'], 'spdl': f, 'params': [conv(p, sp.get(p['sn'].lower())) for p in params]}
-            lay = layout_for(f, [p['sn'] for p in params]) if f else None
+            lay = layout_for(f, sns) if f else None
+            if not lay and t in SYNTH_LAYOUT:
+                lay = layout_for_nodes(SYNTH_LAYOUT[t], sns)
             if lay: d['layout'] = lay
             d['source'] = item['l']
             defs[key] = d
@@ -137,6 +160,24 @@ for item in dumps:
                 defs[key] = {'type': sh['progid'], 'name': sh['name'], 'spdl': f, 'params': [conv(p, sp.get(p['sn'].lower())) for p in sh['params']]}
                 lay = layout_for(f, [p['sn'] for p in sh['params']]) if f else None
                 if lay: defs[key]['layout'] = lay
+
+# Rematch dump-backed Model generator SPDLs / synth layouts (first dump entry may have locked a weaker SPDL).
+for t, f in SPDL_FORCE.items():
+    if t not in defs or f not in SP: continue
+    d = defs[t]
+    sns = [p['sn'] for p in d['params']]
+    d['spdl'] = f
+    lay = layout_for(f, sns)
+    if not lay and t in SYNTH_LAYOUT:
+        lay = layout_for_nodes(SYNTH_LAYOUT[t], sns)
+    if lay: d['layout'] = lay
+    elif 'layout' in d: del d['layout']
+for t, nodes in SYNTH_LAYOUT.items():
+    if t not in defs: continue
+    d = defs[t]
+    if d.get('layout'): continue
+    lay = layout_for_nodes(nodes, [p['sn'] for p in d['params']])
+    if lay: d['layout'] = lay
 
 # mesh statistics of primitives (for verification)
 stats = {}

@@ -23706,6 +23706,16 @@
 "desc": "Fillet radius"
 }
 ],
+"layout": [
+{
+"group": "Fillet",
+"items": [
+{
+"param": "rad"
+}
+]
+}
+],
 "source": "Create/Curve/Fillet Intersection"
 },
 "intersectsrf": {
@@ -24105,7 +24115,7 @@
 "extrude2profs": {
 "type": "extrude2profs",
 "name": "Extrusion 2 Profiles",
-"spdl": "C3DParametricSurfaceGenerator.spdl",
+"spdl": "ExtrusionTwoProfiles.spdl",
 "params": [
 {
 "sn": "inputreadregion",
@@ -24116,19 +24126,8 @@
 {
 "sn": "subdivtype",
 "label": "Subdivision Type",
-"type": "enum",
-"default": 0,
-"items": [
-[
-"Per Span",
-0
-],
-[
-"Absolute ",
-1
-]
-],
-"desc": "Subdivision Interpretation Type"
+"type": "int",
+"default": 0
 },
 {
 "sn": "subdivu",
@@ -24140,8 +24139,7 @@
 "uimin": 1,
 "uimax": 50,
 "anim": true,
-"ro": true,
-"desc": "Set the absolute number of subdivisions in U "
+"ro": true
 },
 {
 "sn": "subdivv",
@@ -24153,8 +24151,7 @@
 "uimin": 1,
 "uimax": 50,
 "anim": true,
-"ro": true,
-"desc": "Set the absolute number of subdivisions in V "
+"ro": true
 },
 {
 "sn": "subdivuperspan",
@@ -24165,8 +24162,7 @@
 "max": 100,
 "uimin": 1,
 "uimax": 20,
-"anim": true,
-"desc": "Set the per span number of subdivisions in U "
+"anim": true
 },
 {
 "sn": "subdivvperspan",
@@ -24177,36 +24173,82 @@
 "max": 100,
 "uimin": 1,
 "uimax": 20,
-"anim": true,
-"desc": "Set the per span number of subdivisions in V "
+"anim": true
 },
 {
 "sn": "align",
 "label": "GuideCrv Normal To",
-"type": "int",
-"default": 2
+"type": "enum",
+"default": 2,
+"items": [
+[
+"First Profile",
+0
+],
+[
+"Second Profile",
+1
+],
+[
+"None",
+2
+]
+],
+"desc": "Align rail to"
 },
 {
 "sn": "snap",
 "label": "Snap",
-"type": "int",
+"type": "enum",
 "default": 0,
 "min": 0,
 "max": 1,
 "uimin": 0,
-"uimax": 1
+"uimax": 1,
+"items": [
+[
+"To Profiles",
+0
+],
+[
+"To Rail",
+1
+]
+],
+"desc": "Snap Curves' Extremities At Construction"
 },
 {
 "sn": "straightenprof1",
 "label": "Straighten Prof 1",
 "type": "bool",
-"default": false
+"default": false,
+"desc": "\"Rotate Profile 1"
 },
 {
 "sn": "straightenprof2",
 "label": "Straighten Prof 2",
 "type": "bool",
-"default": false
+"default": false,
+"desc": "\"Rotate Profile 2"
+}
+],
+"layout": [
+{
+"group": "Shape",
+"items": [
+{
+"param": "align"
+},
+{
+"param": "snap"
+},
+{
+"param": "straightenprof1"
+},
+{
+"param": "straightenprof2"
+}
+]
 }
 ],
 "source": "Create/Surf. Mesh/Extrusion - 2 Profiles"
@@ -24523,7 +24565,7 @@
 "revolution": {
 "type": "revolution",
 "name": "Revolution",
-"spdl": "revolutionop_obs.spdl",
+"spdl": "revolutionAxisOp.spdl",
 "params": [
 {
 "sn": "inputreadregion",
@@ -24539,7 +24581,7 @@
 },
 {
 "sn": "subdivu",
-"label": " U Subdivision",
+"label": "U abs",
 "type": "int",
 "default": 10,
 "min": 1,
@@ -24547,12 +24589,11 @@
 "uimin": 1,
 "uimax": 50,
 "anim": true,
-"ro": true,
-"desc": "U Subdivision"
+"ro": true
 },
 {
 "sn": "subdivv",
-"label": "V Subdivision",
+"label": "V abs",
 "type": "int",
 "default": 10,
 "min": 1,
@@ -24560,8 +24601,7 @@
 "uimin": 1,
 "uimax": 50,
 "anim": true,
-"ro": true,
-"desc": "V Subdivision"
+"ro": true
 },
 {
 "sn": "subdivuperspan",
@@ -24618,7 +24658,7 @@
 "default": 360,
 "min": 0,
 "max": 360,
-"uimin": -180.0,
+"uimin": 0.0,
 "uimax": 360.0,
 "anim": true,
 "desc": "Revolution Angle"
@@ -24648,29 +24688,26 @@
 "sn": "localaxis",
 "label": "Local Axis",
 "type": "bool",
-"default": false
+"default": false,
+"desc": "Revolve Around Local Axis Instead of Global Axis"
 }
 ],
 "layout": [
 {
-"group": "Subdivisions ",
-"items": [
-{
-"param": "subdivu"
-},
-{
-"param": "subdivv"
-}
-]
-},
-{
 "group": "Open/Close ",
 "items": [
 {
-"param": "closeu"
+"param": "closeu",
+"opts": [
+"AlignRight",
+"continue"
+]
 },
 {
-"param": "closev"
+"param": "closev",
+"opts": [
+"AlignRight"
+]
 }
 ]
 },
@@ -24689,13 +24726,28 @@
 "group": "Revolution Axis",
 "items": [
 {
-"param": "revx"
+"param": "localaxis",
+"opts": [
+"AlignRight"
+]
 },
 {
-"param": "revy"
+"param": "revx",
+"opts": [
+"AlignRight"
+]
 },
 {
-"param": "revz"
+"param": "revy",
+"opts": [
+"AlignRight"
+]
+},
+{
+"param": "revz",
+"opts": [
+"AlignRight"
+]
 }
 ]
 }
