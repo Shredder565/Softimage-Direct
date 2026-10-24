@@ -103,11 +103,17 @@ function meshDump(obj) {
 }
 
 function lastOp(obj) {
+  // ConstructionHistory enumerates top-down: markers, then newest ops, then Geometry.
+  // Skip markers/geom and return the first (most recent) modeling/deform/ICE op.
   var hist = obj.ActivePrimitive.ConstructionHistory;
-  var last = null;
   var e = new Enumerator(hist);
-  for (; !e.atEnd(); e.moveNext()) last = e.item();
-  return last;
+  for (; !e.atEnd(); e.moveNext()) {
+    var op = e.item();
+    var t = String(op.Type || "").toLowerCase();
+    if (t === "geom" || t.indexOf("marker") >= 0) continue;
+    return op;
+  }
+  return null;
 }
 
 function cube333() {
@@ -324,24 +330,39 @@ for (var t = 0; t < topoCases.length; t++) {
   topoExtra[tc[2]] = r;
 }
 
-// CapHole: open a hole then CapHole (headless-friendly recipe)
+// CapHole: ApplyTopoOp DeleteComponent then ApplyICEOp "Cap Hole" (headless-friendly).
+// CapHole / ApplyTopoOp "Cap Hole" fail under -processing; ICE Cap Hole attaches Cap_Hole:ICETree.
 function caseCapHole() {
   NewScene(null, false);
   var obj = cube333();
   var err = null;
+  var before = { npts: null, npolys: null };
+  try { var b = meshDump(obj); before.npts = b.npts; before.npolys = b.npolys; } catch (eB) {}
   try {
-    Application.ExecuteCommand("DeleteComponent", [obj.Name + ".poly[0]"]);
+    applyTopo("DeleteComponent", obj.Name + ".poly[0]");
   } catch (eDel) {
     try { applyTopo("Delete Component", obj.Name + ".poly[0]"); }
     catch (e2) { err = "Delete failed: " + String(eDel.description || eDel); }
   }
+  var afterDel = null;
+  try { afterDel = meshDump(obj); } catch (eD2) {}
   try {
-    Application.ExecuteCommand("CapHole", [obj.Name]);
-  } catch (eCap) {
-    try { Application.ExecuteCommand("CapHole", [obj.Name + ".edge[*]"]); }
-    catch (e3) {
+    var iceTree = Application.ExecuteCommand("ApplyICEOp", ["Cap Hole", obj.Name]);
+    // Softimage CapHoleProc sets Cap Hole.Vertex_Index to a border vertex; default 0 restores a face headless.
+    try {
+      var tree = Dictionary.GetObject(String(iceTree));
+      var node = tree.InputPorts(0).ConnectedNodes(0);
+      node.InputPorts("Vertex_Index").Parameters(0).Value = 0;
+    } catch (eVtx) {
+      try { SetValue(String(iceTree) + ".Cap_Hole.Vertex_Index", 0); } catch (eVtx2) {}
+    }
+  } catch (eIce) {
+    try { Application.ExecuteCommand("CapHole", [obj.Name]); }
+    catch (eCap) {
       try { applyTopo("Cap Hole", obj.Name); }
-      catch (e4) { err = (err ? err + "; " : "") + String(eCap.description || eCap); }
+      catch (e4) {
+        err = (err ? err + "; " : "") + "CapHole failed: " + String(eIce.description || eIce);
+      }
     }
   }
   var op = lastOp(obj);
@@ -349,6 +370,8 @@ function caseCapHole() {
   r.preset = "CapHole";
   r.selection = obj.Name + " after DeleteComponent poly[0]";
   r.note = "caphole_after_delete_poly0";
+  r.before = before;
+  r.after_delete = afterDel ? { npts: afterDel.npts, npolys: afterDel.npolys } : null;
   r.error = err;
   if (op) {
     r.op_name = op.Name;
@@ -367,25 +390,55 @@ topoExtra["caphole_after_delete_poly0"] = caseCapHole();
 writeJson("si_model_topo_extra.json", { meta: meta, cases: topoExtra });
 
 // ---- Deformers (Model Deform) ----
-// Single-input deformers on the cube; multi-input (Lattice/Wave/Curve/Spine) need a helper object.
-function dumpDeformWithHelper(preset, helperKind, helperGeom) {
+// Single-input deformers on the cube; multi-input need helpers via GetPrim / curve + ";" connection.
+function makeHelper(kind) {
+  // Lattice/Wave: CreatePrim fails under -processing; GetPrim / GetPrimLattice / GetPrimWave work.
+  if (kind === "Lattice") {
+    try {
+      var lat = GetPrim("Lattice", null, null, null);
+      return Dictionary.GetObject(lat.Name || String(lat));
+    } catch (e1) {
+      var r = Application.ExecuteCommand("GetPrimLattice", ["Lattice", null, null, null]);
+      return Dictionary.GetObject(String(r));
+    }
+  }
+  if (kind === "Wave") {
+    try {
+      var wav = GetPrim("Wave", null, null, null);
+      return Dictionary.GetObject(wav.Name || String(wav));
+    } catch (e2) {
+      var r2 = Application.ExecuteCommand("GetPrimWave", ["Wave", null, null, null]);
+      return Dictionary.GetObject(String(r2));
+    }
+  }
+  if (kind === "Circle" || kind === "Curve") {
+    var c = CreatePrim("Circle", "NurbsCurve", null, null);
+    return Dictionary.GetObject(c.Name || String(c));
+  }
+  var o = CreatePrim(kind, "MeshSurface", null, null);
+  return Dictionary.GetObject(o.Name || String(o));
+}
+
+function dumpDeformWithHelper(label, applyPreset, helperKind) {
   NewScene(null, false);
   var obj = cube333();
-  var helper = null;
-  var row = { preset: preset, ok: false, error: null, helper: helperKind };
+  var row = { preset: label, apply_preset: applyPreset, ok: false, error: null, helper: helperKind };
   try {
-    helper = CreatePrim(helperKind, helperGeom, null, null);
-    var hName = Dictionary.GetObject(helper.Name || String(helper)).Name;
+    var helper = makeHelper(helperKind);
+    var hName = helper.Name;
     try { Translate(hName, 6, 0, 0, null); } catch (eT) {}
     var conn = obj.Name + ";" + hName;
-    SelectObj(conn);
+    row.connection = conn;
     try {
-      applyOp(preset, conn);
+      if (label === "Deform by Spine" || applyPreset === "ApplyDeformBySpine") {
+        Application.ExecuteCommand("ApplyDeformBySpine", [conn, 0]);
+      } else {
+        applyOp(applyPreset, conn);
+      }
       row.ok = true;
-      row.connection = conn;
     } catch (e) {
       try {
-        applyOp(preset, obj.Name);
+        applyOp(applyPreset, obj.Name);
         row.ok = true;
         row.connection = obj.Name;
         row.note = "fell_back_to_mesh_only";
@@ -410,11 +463,12 @@ function dumpDeformWithHelper(preset, helperKind, helperGeom) {
 var deformPresets = [
   "Twist", "Bend", "Taper", "Bulge", "Shear", "Push", "Smooth", "Relax", "Fold"
 ];
+// label, ApplyOp preset (or ApplyDeformBySpine), helper kind
 var deformHelpers = [
   ["Lattice", "Lattice", "Lattice"],
-  ["Wave", "Wave", "Null"],
-  ["Deform by Curve", "Circle", "NurbsCurve"],
-  ["Deform by Spine", "Circle", "NurbsCurve"]
+  ["Wave", "Wave", "Wave"],
+  ["Deform by Curve", "CrvDeform", "Circle"],
+  ["Deform by Spine", "ApplyDeformBySpine", "Circle"]
 ];
 var deforms = {};
 for (var d = 0; d < deformPresets.length; d++) {
