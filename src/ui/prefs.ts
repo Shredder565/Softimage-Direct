@@ -11,7 +11,11 @@ import { setKeymap, keymapNames } from './keymap';
 import { siPrefTitle } from './si';
 
 const pageLabel = (k: string) => k === 'C3DSceneColors' ? 'Scene Colors' : siPrefTitle(k) ?? siPropLabel(k);
-const PREF_PAGES = Object.keys(SETS).filter(k => k.startsWith('C3DPrefs') && !['C3DPrefsMgr', 'C3DPrefsPrivate', 'C3DPrefsFaceRobot'].includes(k)).sort((a, b) => pageLabel(a).localeCompare(pageLabel(b)));
+// Softimage File > Preferences: every C3DPrefs* page plus Tools > Transform (C3DTransformProps.spdl) and Scene Colors.
+const PREF_PAGES = [
+  ...Object.keys(SETS).filter(k => k.startsWith('C3DPrefs') && !['C3DPrefsMgr', 'C3DPrefsPrivate', 'C3DPrefsFaceRobot'].includes(k)),
+  'C3DTransformProps',
+].sort((a, b) => pageLabel(a).localeCompare(pageLabel(b)));
 let prefs: Map<string, ParamSet> | null = null;
 
 export function preferenceSets(app: App): Map<string, ParamSet> {
@@ -42,8 +46,21 @@ function apply(app: App, key: string, set: ParamSet) {
     case 'C3DSceneColors': for (const [sn, k] of Object.entries(COLOR_KEYS)) if (v(sn) !== undefined) (SI as any)[k] = packedToHex(v(sn)); document.documentElement.style.setProperty('--vp-bg', '#' + SI.background.toString(16).padStart(6, '0')); break;
     case 'C3DPrefsDisplay': SI.pointSize = Number(v('pointsize') ?? 5); SI.normalScale = Number(v('normalscaling') ?? 1); SI.headlightDefault = !!v('headlight'); SI.font = `${v('fontsize') || 10}px ${v('font') || 'Tahoma, Verdana, sans-serif'}`; document.documentElement.style.setProperty('--vp-font', SI.font); A.displayAsFrames = v('display_as_frames') !== false; break;
     case 'C3DPrefsSelect': SI.clickToDeselect = !!v('clicktodeselect'); SI.surroundPolygons = !!v('surroundpolygons'); SI.surroundEdges = !!v('surroundedges'); SI.singleObject = !!v('singleobject'); SI.raycastBackfacing = v('raycastbackfacing') !== false; SI.rectRaycast = !!v('rectraycast'); SI.extendedComponentSel = !!v('extcomponentsel'); break;
-    case 'C3DPrefsTweak': SI.pickTol = Number(v('picktol') ?? 15); SI.boundaryPickTol = Number(v('boundarypicktol') ?? 15); break;
+    case 'C3DPrefsTweak': SI.pickTol = Number(v('picktol') ?? 15); SI.boundaryPickTol = Number(v('boundarypicktol') ?? 200); break;
     case 'C3DPrefsTweakNormals': SI.normalPickTol = Number(v('picktol') ?? 15); SI.normalDisplaySize = Number(v('displaysize') ?? 1); break;
+    case 'C3DTransformProps': {
+      // softimage-pc C3DTransformProps.spdl — Size %, pick tol, arcball, snaps (no invented manipulator chrome)
+      SI.useManipulators = v('transformmanipulators') !== false;
+      SI.transformVisuals = v('transformvisuals') !== false;
+      SI.transformSize = Number(v('transformsize') ?? 30);
+      SI.movePointTol = Number(v('movepointtol') ?? 15);
+      const ar = v('arcballrotate'); SI.arcballRotate = ar !== false && ar !== 0;
+      SI.manipAxisMode = Number(v('manipaxismode') ?? 1);
+      SI.translateSnap = Number(v('translatesnap') ?? 1);
+      SI.rotateSnap = Number(v('rotatesnap') ?? 15);
+      SI.scaleSnap = Number(v('scalesnap') ?? 0.5);
+      break;
+    }
     case 'C3DPrefsInteraction': app.autoInspect = v('autoinspect') !== false; { const km = String(v('defaultkeymap') ?? ''); if (km) { const n = keymapNames().find(k => k === km || k.startsWith(km.replace(' Key Map', ''))); if (n) setKeymap(n); } }
       W.__sticky = { enabled: v('stickykeys') !== false, time: Number(v('stickytime') ?? 300) }; A.hideWindowOnSwitch = !!v('hidewindowonswitch'); A.displayParamColors = v('displayparamcolors') !== false; document.body.classList.toggle('no-param-colors', !A.displayParamColors);
       if (app.anim) { const pm = Number(v('playbackmode') ?? 1); app.anim.realtime = pm !== 0; A.playbackView = v('playbackview'); } break;
@@ -68,7 +85,7 @@ function apply(app: App, key: string, set: ParamSet) {
     case 'C3DPrefsShaderball': A.shaderball = { model: Number(v('def_model_spatial') ?? 0), background: Number(v('def_background_spatial') ?? 0), quality: Number(v('quality') ?? 1) }; break;
   }
   window.dispatchEvent(new CustomEvent('prefschanged', { detail: { key, set } }));
-  if (['C3DSceneColors', 'C3DPrefsDisplay', 'C3DPrefsViewCube'].includes(key)) app.events.emit('scene');
+  if (['C3DSceneColors', 'C3DPrefsDisplay', 'C3DPrefsViewCube', 'C3DTransformProps'].includes(key)) app.events.emit('scene');
 }
 
 export function preferencesWindow(app: App, page?: string) {

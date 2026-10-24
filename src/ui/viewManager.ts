@@ -15,17 +15,22 @@ import type { MeshData } from '../core/geometry';
 import { installViewExtras, DISPLAY_MENU } from './viewExtras';
 import { SI_MENUS, SiMenuItem, openSiMenu, siIcon, hasIcon } from './si';
 
-/** Scene colours and display preferences, decoded from Softimage 2015's C3DSceneColors / C3DPrefsDisplay / C3DPrefsTweak SPDL defaults. */
+/** Scene colours and display preferences, decoded from Softimage 2015's C3DSceneColors / C3DPrefsDisplay / C3DPrefsTweak / C3DTransformProps SPDL defaults (softimage-pc dumps). */
 export const SI = {
   selected: 0xffffff, geometry: 0x000000, active: 0xffd200, component: 0xff0000, vertex: 0x0000ff, highlight: 0xe1ffff, subselection: 0xa0bcbc,
   background: 0x7f7f7f, grid: 0x191919, viewport: 0x666666, light: 0xcd4b00, camera: 0x1428a0, nullcol: 0x006200, ctrl: 0x006200,
   inherited: 0xc6c6c6, knot: 0x000000, normal: 0x00ffff, curveIso: 0x000000, curveBoundary: 0x000000, cluster: 0x000000, clusterSelected: 0xff0000, unselectable: 0x606060, tagged: 0xff0000, filmGate: 0x000000, inspected: 0xffd200, sample: 0xff00ff,
-  pointSize: 5, pickTol: 15, boundaryPickTol: 15, normalPickTol: 15, normalDisplaySize: 1, normalScale: 1, clickToDeselect: false, surroundPolygons: false, surroundEdges: false, singleObject: false, raycastBackfacing: true, rectRaycast: false, extendedComponentSel: false,
+  pointSize: 5, pickTol: 15, boundaryPickTol: 200, normalPickTol: 15, movePointTol: 15, normalDisplaySize: 1, normalScale: 1, clickToDeselect: false, surroundPolygons: false, surroundEdges: false, singleObject: false, raycastBackfacing: true, rectRaycast: false, extendedComponentSel: false,
+  // C3DTransformProps: Size % 30 → 70 px handle length (pre-wiring Direct default at factory Size %)
+  transformSize: 30, useManipulators: true, transformVisuals: true, arcballRotate: true, manipAxisMode: 1,
+  translateSnap: 1, rotateSnap: 15, scaleSnap: 0.5,
   headlightDefault: false, font: '10px Tahoma, Verdana, sans-serif', planarity: true, connectRule: 0,
   units: { length: 2, angle: 2, time: 0, mass: 2 },
   nav: { zoomCursor: false, wheelCursor: false, wheelZoom: true, navZoom: 1, panZoom: 1, animate: false, animateDuration: 0.5, orbit: 0, pan: 0 },
   viewCube: { show: true, position: 0, size: 44, opacity: 0.5, snap: true, fit: true, animate: true, compass: false, north: 0 },
 };
+/** Softimage Transform Size % → pixel handle length; 30% maps to Direct's prior 70 px default. */
+export const transformSizeToPx = (pct: number) => Math.max(20, Math.min(300, Math.round(Number(pct) * (70 / 30))));
 export type ToolMode = 'select' | 'translate' | 'rotate' | 'scale';
 export const tool = { mode: 'select' as ToolMode, axes: { x: true, y: true, z: true }, setMode: (_m: ToolMode) => { } };
 (window as any).__tool = tool;
@@ -107,7 +112,7 @@ export function viewManager(app: App, host: HTMLElement) {
   (window as any).__vm = {
     active: () => vps[active], view: (name: string) => { const vp = vps[active]; camSnap(vp); switchView(vp, name); needs = true; }, zoom: (f: number) => zoomBy(vps[active], f), nudge: (dx: number, dy: number) => nudge(vps[active], dx, dy),
     undoCamera: () => camUndo(vps[active]), redoCamera: () => camRedo(vps[active]), toggleBackground: () => { scene.background = new THREE.Color(black() ? SI.background : 0x000000); needs = true; },
-    manipSize: (f: number) => { gizmoPx = Math.max(20, Math.min(300, gizmoPx * f)); needs = true; }, display: (mode: string) => { setDisplay(vps[active], mode); needs = true; }, displayOf: () => vps[active].display,
+    manipSize: (f: number) => { gizmoPx = Math.max(20, Math.min(300, gizmoPx * f)); SI.transformSize = Math.round(gizmoPx * 30 / 70); needs = true; }, display: (mode: string) => { setDisplay(vps[active], mode); needs = true; }, displayOf: () => vps[active].display,
     cameraMenu: (label: string) => cameraMenu(vps[active], label), visibility: (label: string) => visibilityMenu(vps[active], label), flags: () => vps[active].flags, wireOnShaded: () => { const vp = vps[active]; vp.flags['Wire on Shaded'] = !vp.flags['Wire on Shaded']; needs = true; },
     center: (all = false) => { const c = selectionCenter(); if (!c) return; for (const vp of all ? vps : [vps[active]]) { camSnap(vp); const d = vp.camera.position.clone().sub(orbit.target); orbit.target.copy(c); vp.camera.position.copy(c).add(d); vp.camera.lookAt(orbit.target); } needs = true; },
   };
@@ -304,7 +309,8 @@ export function viewManager(app: App, host: HTMLElement) {
   const axisVec = (ax: 'x' | 'y' | 'z', o?: X3DObject | null) => baseAxis(ax).applyQuaternion(frameQ(o));
   const syncGizmo = () => {
     gizmo.clear(); gizmoOn = false;
-    if (tool.mode === 'select' || app.activeTool) return;
+    // Softimage TransformProperties.transformmanipulators — when off, no 3D manip (free drag still works)
+    if (!SI.useManipulators || tool.mode === 'select' || app.activeTool) return;
     const c = selectionCenter(); if (!c) return; gizmoCenter.copy(c); gizmoOn = true; gizmo.position.copy(c);
     const mat = (col: number) => new THREE.LineBasicMaterial({ color: col, depthTest: false });
     const seg = (pts: number[][], col: number) => { const g = new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(...p))); const l = new THREE.Line(g, mat(col)); l.renderOrder = 20; return l; };
@@ -320,7 +326,9 @@ export function viewManager(app: App, host: HTMLElement) {
     }
     const centre = new THREE.Points(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3()]), new THREE.PointsMaterial({ color: 0xffd200, size: 9, sizeAttenuation: false, depthTest: false })); centre.renderOrder = 22; gizmo.add(centre);
   };
-  let gizmoPx = 70; // handle length in pixels (Increase/Decrease Manipulator Size)
+  // Softimage TransformProperties.transformsize (Size %) → px; Increase/Decrease Manipulator Size scales live
+  let gizmoPx = transformSizeToPx(SI.transformSize);
+  window.addEventListener('prefschanged', (e: any) => { if (e.detail?.key === 'C3DTransformProps') { gizmoPx = transformSizeToPx(SI.transformSize); needs = true; } });
   const pxScaleOf = (vp: Viewport, r: { w: number; h: number }) => { const cam = vp.camera as any; return vp.kind === 'ortho' ? (cam._zoom ?? 20) * 2 / r.h : gizmoCenter.distanceTo(cam.position) * Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * 2 / r.h; };
   const scaleGizmo = (vp: Viewport, r: { w: number; h: number }) => { gizmo.visible = gizmoOn; if (!gizmoOn) return; const s = pxScaleOf(vp, r) * gizmoPx; gizmo.scale.set(s, s, s); };
   /** Which manipulator handle is under the cursor: an axis, the centre square, or none. */
@@ -438,7 +446,8 @@ export function viewManager(app: App, host: HTMLElement) {
     if (kind === 'polygon') { if (!hit || hit.faceIndex === undefined || hit.faceIndex === null || !mesh || (hit.object.parent as any)?._obj !== target) return null; const dm = (hit.object as THREE.Mesh).geometry as any; const src = dm._src as MeshData; const pi = src.triPoly[hit.faceIndex]; if (src !== mesh) return null; return { obj: target, kind, item: pi, worldPoint: [hit.point.x, hit.point.y, hit.point.z] as V3 }; }
     const M = target.globalMatrix(); prepCam(vp, at.r);
     const n = pts.length / 3; const pp = new Array(n); for (let i = 0; i < n; i++) pp[i] = project(vp, at.r, M, pts, i);
-    if (kind === 'point') { let best = -1, bd = SI.pickTol; for (let i = 0; i < n; i++) { const d = Math.hypot(pp[i].x - at.x, pp[i].y - at.y); if (d < bd) { bd = d; best = i; } } return best >= 0 ? { obj: target, kind, item: best, worldPoint: wp(best) } : null; }
+    // Select uses Tweak.picktol; Move Point / component transform uses TransformProperties.movepointtol (both factory 15)
+    if (kind === 'point') { const tol = (tool.mode !== 'select' && !app.activeTool) ? SI.movePointTol : SI.pickTol; let best = -1, bd = tol; for (let i = 0; i < n; i++) { const d = Math.hypot(pp[i].x - at.x, pp[i].y - at.y); if (d < bd) { bd = d; best = i; } } return best >= 0 ? { obj: target, kind, item: best, worldPoint: wp(best) } : null; }
     if (!mesh) return null;
     let bestE: [number, number] | null = null, bd = SI.pickTol / 2;
     for (const [a, b] of meshEdges(mesh)) { const d = distToSeg(at.x, at.y, pp[a], pp[b]); if (d < bd) { bd = d; bestE = [a, b]; } }
@@ -559,20 +568,24 @@ export function viewManager(app: App, host: HTMLElement) {
       if (tool.mode === 'translate') {
         // world-space delta → keep only the enabled axes of the reference frame (an axis handle already is one) → parent space
         let wd = delta.clone(); if (!(h === 'x' || h === 'y' || h === 'z')) { const keep = new THREE.Vector3(); for (const ax of ['x', 'y', 'z'] as const) if (axisMask[ax]) { const v = axisVec(ax, o); keep.add(v.multiplyScalar(wd.dot(v))); } wd = keep; }
-        const pd = wd.applyQuaternion(parentInv); const np = [drag.start.get(o.id + '.posx')! + pd.x, drag.start.get(o.id + '.posy')! + pd.y, drag.start.get(o.id + '.posz')! + pd.z]; const sp = snapV(np); l.get('posx')!.value = sp[0]; l.get('posy')!.value = sp[1]; l.get('posz')!.value = sp[2]; }
+        const pd = wd.applyQuaternion(parentInv); let np = [drag.start.get(o.id + '.posx')! + pd.x, drag.start.get(o.id + '.posy')! + pd.y, drag.start.get(o.id + '.posz')! + pd.z];
+        // TransformProperties.translatesnap — Softimage Shift+drag translate increment
+        if (e.shiftKey && SI.translateSnap > 0) np = np.map(x => Math.round(x / SI.translateSnap) * SI.translateSnap);
+        const sp = snapV(np); l.get('posx')!.value = sp[0]; l.get('posy')!.value = sp[1]; l.get('posz')!.value = sp[2]; }
       else if (tool.mode === 'rotate') {
         // rotate about the frame axis: Local = the object's own axes, Global = world axes, Par = parent's axes, View = camera axes
         const ax = h === 'x' || h === 'y' || h === 'z' ? h : (axisMask.x && !axisMask.y && !axisMask.z) ? 'x' : (axisMask.z && !axisMask.x && !axisMask.y) ? 'z' : 'y';
-        // angle swept by the cursor around the manipulator centre (ring drag), signed by whether the axis faces the camera; a free drag is dx-driven
+        // TransformProperties.arcballrotate: Spherical = angle around manip centre; Linear = dx-driven (Softimage SPDL)
         let a = dx * 0.5;
-        if (h === 'x' || h === 'y' || h === 'z') { prepCam(vp, drag.at.r); const rr = drag.at.r; const q = gizmoCenter.clone().project(vp.camera); const cx = rr.x + ((q.x + 1) / 2) * rr.w, cy = rr.y + ((1 - q.y) / 2) * rr.h; const a0 = Math.atan2(drag.sy - cy, drag.sx - cx), a1 = Math.atan2(ev.clientY - cy, ev.clientX - cx); let sw = a1 - a0; while (sw > Math.PI) sw -= 2 * Math.PI; while (sw < -Math.PI) sw += 2 * Math.PI; const facing = axisVec(ax, o).dot(vp.camera.getWorldDirection(new THREE.Vector3())) < 0 ? 1 : -1; a = -sw * 180 / Math.PI * facing; }
+        if (SI.arcballRotate && (h === 'x' || h === 'y' || h === 'z')) { prepCam(vp, drag.at.r); const rr = drag.at.r; const q = gizmoCenter.clone().project(vp.camera); const cx = rr.x + ((q.x + 1) / 2) * rr.w, cy = rr.y + ((1 - q.y) / 2) * rr.h; const a0 = Math.atan2(drag.sy - cy, drag.sx - cx), a1 = Math.atan2(ev.clientY - cy, ev.clientX - cx); let sw = a1 - a0; while (sw > Math.PI) sw -= 2 * Math.PI; while (sw < -Math.PI) sw += 2 * Math.PI; const facing = axisVec(ax, o).dot(vp.camera.getWorldDirection(new THREE.Vector3())) < 0 ? 1 : -1; a = -sw * 180 / Math.PI * facing; }
+        if (e.shiftKey && SI.rotateSnap > 0) a = Math.round(a / SI.rotateSnap) * SI.rotateSnap;
         const order = threeOrder(drag.start.get(o.id + '.rotorder') ?? l.val('rotorder') ?? 0); const d = Math.PI / 180;
         const startQ = new THREE.Quaternion().setFromEuler(new THREE.Euler(drag.start.get(o.id + '.rotx')! * d, drag.start.get(o.id + '.roty')! * d, drag.start.get(o.id + '.rotz')! * d, order));
         const ref = (tool as any).ref ?? 'Global'; const startGlobal = ref === 'Local' ? globalQ(o.parentObj).multiply(startQ) : null;
         const axisW = ref === 'Local' ? baseAxis(ax).applyQuaternion(startGlobal!) : axisVec(ax, o); const axisP = axisW.applyQuaternion(parentInv).normalize();
-        const nq = new THREE.Quaternion().setFromAxisAngle(axisP, a * d).multiply(startQ); const e = new THREE.Euler().setFromQuaternion(nq, order);
-        l.get('rotx')!.value = e.x / d; l.get('roty')!.value = e.y / d; l.get('rotz')!.value = e.z / d; }
-      else if (tool.mode === 'scale') { const f = Math.max(0.01, 1 + dx * 0.01); const m = h === 'x' || h === 'y' || h === 'z' ? { x: h === 'x', y: h === 'y', z: h === 'z' } : axisMask; for (const ax of ['x', 'y', 'z']) if ((m as any)[ax]) l.get('scl' + ax)!.value = drag.start.get(o.id + '.scl' + ax)! * f; }
+        const nq = new THREE.Quaternion().setFromAxisAngle(axisP, a * d).multiply(startQ); const eul = new THREE.Euler().setFromQuaternion(nq, order);
+        l.get('rotx')!.value = eul.x / d; l.get('roty')!.value = eul.y / d; l.get('rotz')!.value = eul.z / d; }
+      else if (tool.mode === 'scale') { let f = Math.max(0.01, 1 + dx * 0.01); if (e.ctrlKey && SI.scaleSnap > 0) { const snapped = Math.round(f / SI.scaleSnap) * SI.scaleSnap; f = Math.max(0.01, snapped || SI.scaleSnap); } const m = h === 'x' || h === 'y' || h === 'z' ? { x: h === 'x', y: h === 'y', z: h === 'z' } : axisMask; for (const ax of ['x', 'y', 'z']) if ((m as any)[ax]) l.get('scl' + ax)!.value = drag.start.get(o.id + '.scl' + ax)! * f; }
     }
     sync(); app.events.emit('params');
   });
