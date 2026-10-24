@@ -71,6 +71,22 @@ Checks: `tools/model_shot.mjs` (sphere → point/edge/polygon modes → move →
 
 NURBS surface operators (Open/Close, Snip, Extend to Curve, Stitch, Snap Boundary, Fit, Fillet, Trim by Projection, Delete Trim, Continuity Manager, Bezier-knot corners), curve fillet, Gator, Footprints, user normals (reset/average/normalize/copy/paste/settings/Tweak Normals tool), Paint / Push / Vertex Colour tools with Brush Properties, Spine / Tail / Control Splines, referenced models (new / empty / convert / update / reload / resolution / make local / commit / deltas — stored in `localStorage`), Stand-in and GeoShader primitives, Light Rig from Image, ICE Particle Volume shader. `tools/model2_check.mjs` exercises all of them.
 
+### Shell views, preferences, key maps, docking (`src/ui/shell.ts`, `prefs.ts`, `keymap.ts`, `floating.ts`)
+
+Render Tree, Texture Editor (per-sample UVs, relax / heal / islands), Schematic, Animation Editor (F-curves / Dopesheet), Animation Mixer, Spreadsheet, Plugin Manager, Netview, Image Clips, Render Manager, Material Manager / Panel, Weight Paint Panel, Preset Manager and the ICE Tree editor are all View-menu entries and floating windows; windows minimise to a tray, dock into any layout frame (⊡ or Ctrl+drop) and are listed in the Window menu. The Preferences pages (every `C3DPrefs*.spdl`) are wired into the app (scene colours, display, selection, camera / ViewCube, units, time, animation, scripting language and logs, undo depth, layer control, explorer, editor grids, generator input management…), all 358 key-map bindings of the four shipped maps have actions, and the message catalogue / preference titles / selection filter names come from the `.dict` tables.
+
+### Modeling, NURBS, rigging, ICE (`src/core/topology2.ts`, `nurbs.ts`, `symmetry.ts`, `texturing.ts`, `envelope.ts`, `ice.ts`, `src/commands/rigging.ts`)
+
+- **Polygons** — real edge / polygon / point bevel with rounding and junction polygons, Dice in Global / Local Object / Local Components frames, quadric-error Polygon Reduction, Loop / XSI-Doo-Sabin / Linear subdivision rules, clusters (Ctrl+L) hosting weight maps, vertex colours, user normals and envelopes.
+- **NURBS** — knot vectors, weights, tensor de Boor, Boehm knot insertion, exact Snip, degree elevation; Loft / Extrusion / Revolution (exact rational circles) / Sweep / Birail / Four-Sided / Curve Net generate real surfaces; least-squares Fit, rolling-ball G1 Fillet, exact Trim by Projection, Inverse / Swap / Shift / Clean / Reparameterize / knot ops; curve knot insertion / removal, Bezier knots, corners, linear segments.
+- **Interaction** — symmetry maps (symmetric selection and mirrored tweaks across any plane), Slide Components, Knife guide line and constraints, rotation rings picked by the ring under the cursor.
+- **Texturing** — projections on the sample cluster driven by Texture_Support control objects, per-sample UVs with seam unwrapping.
+- **Referenced models** — Export / Import Model (`.emdl` JSON), resolutions, per-parameter deltas.
+- **Rigging** — envelopes (distance / nearest / smoothed weighting, smoothing, Reassign Locally, locks, limits, painting), Biped / Quadruped proportional guides → rigs, deformers re-evaluate live.
+- **Deformers** — Deform by Curve with the `crvdeform` parameters, Deform by Spine (radius falloff), Deform by Cage (mean-value coordinates), median-cut Light Rig from Image (HDR), Stand-in proxies, Text alignment / spacing / bevel.
+- **ICE** — an `ICETree` operator evaluates a node graph per point; Footprints, Turbulize Mesh, Push Points, Randomize Position, Twist and Wave are factory compounds you can open and edit in the ICE Tree view.
+- **Construction modes** — Modeling / Shape / Animation / Secondary Shape regions in the operator stack (combo in the menubar), Freeze M freezes only the modeling region, Immediate mode bakes just the new operator.
+
 ## Keys
 
 Space object · T point · E edge · Y polygon · V translate · C rotate · X scale · K key · Ctrl+Z/Y undo/redo ·
