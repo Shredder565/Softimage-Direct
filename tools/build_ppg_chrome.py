@@ -243,6 +243,31 @@ def build() -> dict:
         },
     }
 
+    # Soft / classic floating dialogs — PE dump majority font + OK/Cancel 50×14 DLU (81 attestations).
+    soft_dialog = {
+        "peAttest": {
+            "fontMostCommon": [8, "MS Sans Serif"],
+            "okCancelDluMostCommon": [50, 14],
+            "samples": [
+                {"dll": "uiut.dll", "id": "157", "note": "Please enter the Name"},
+                {"dll": "uiut.dll", "id": "129", "title": "Parameter Connection List"},
+                {"dll": "XSI.exe", "id": "104", "title": "Save Preset As..."},
+            ],
+        },
+        "tokens": {
+            # DLU→px approx for MS Sans Serif 8 @96dpi (avg char≈6 → ×50/4; height≈ tmHeight)
+            "fontFamily": '"MS Sans Serif", "Segoe UI", Arial, sans-serif',
+            "fontPt": 8,
+            "fontPx": 11,
+            "btnMinWidthPx": 75,
+            "btnMinHeightPx": 22,
+            "btnWDlu": 50,
+            "btnHDlu": 14,
+            "padPx": 8,
+            "labelColPx": 90,
+        },
+    }
+
     bitmaps = {
         "inspNav": {
             "peId": "137",
@@ -274,8 +299,10 @@ def build() -> dict:
     inventory = {
         "uiutHostDialogs": sorted(hosts.keys(), key=lambda x: int(x)),
         "genppgDialogs": sorted(genppg.keys(), key=lambda x: int(x) if str(x).isdigit() else 0),
+        "propertyPage394": xsi.get("394"),
         "propertyPageLarge": xsi.get("IDD_PROPPAGE_LARGE"),
         "propertyEditorView": view_default_size(views if isinstance(views, list) else views.get("views", views)),
+        "note": "XSI.exe Property Page 394 / IDD_PROPPAGE_LARGE are PE stubs; live PPG host chrome is uiut owner-draw (dialog 147).",
     }
 
     # Shared shell layout opts attested across Model/UI SPDL dumps (not per-op wiring).
@@ -300,6 +327,7 @@ def build() -> dict:
         "explorer": explorer,
         "preferences": preferences,
         "scriptEditor": script_editor,
+        "softDialog": soft_dialog,
         "layoutOpts": layout_opts,
         "bitmapMatch": {"inspNav": match_nav, "tools": match_tools},
         "inventory": inventory,
@@ -308,6 +336,7 @@ def build() -> dict:
             "Dialog 147 is the fullest Softimage PPG toolbar (animation + reset all/group + nav + load/save).",
             "Explorer rename = sceneexplorer.dll 725; Preferences host frame = props.dll 264.",
             "Script Editor factory font/size/tab/linenum from C3DPrefsScriptEditor.spdl; view defaultsize 485×550.",
+            "Soft dialogs: PE majority 8pt MS Sans Serif; OK/Cancel 50×14 DLU → ~75×22 px.",
             "Shared PPG shell only — Model-specific opdef layouts owned by Model PPG worker.",
             "No Softimage Desktop takeover — PE/SPDL file scrape only.",
         ],

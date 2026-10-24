@@ -228,6 +228,11 @@ else {
   } else if (!se.linenumClass) {
     fail.push('scriptEditor expected body.script-linenum from Softimage linenum=true factory');
   } else ok.push(`Script Editor chrome font=${se.fontPx}px tab=${se.tabSize} linenum float=${se.floatW}x${se.floatH}`);
+  // Soft / classic floating dialogs (PE: 8pt MS Sans Serif, OK/Cancel 50×14 DLU)
+  const sd = pc.softDialog;
+  if (!sd?.tokensApplied || sd.fontPt !== 8 || sd.btnWDlu !== 50 || sd.btnHDlu !== 14 || sd.btnMinW !== 75 || sd.btnMinH !== 22) {
+    fail.push(`softDialog chrome expected 8pt / 50×14 DLU → 75×22px, got ${JSON.stringify(sd)}`);
+  } else ok.push(`Soft-dialog chrome fontPt=${sd.fontPt} OK/Cancel DLU=${sd.btnWDlu}x${sd.btnHDlu} px=${sd.btnMinW}x${sd.btnMinH}`);
 }
 
 // Open floating views

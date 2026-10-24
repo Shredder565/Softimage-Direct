@@ -65,6 +65,15 @@ export function applyPpgChrome(host?: HTMLElement | null): PpgChrome {
       set(el, '--script-float-h', `${se.floatDefaultHeightPx}px`);
       document.body.classList.toggle('script-linenum', !!se.lineNumbers);
     }
+    const sd = (PPG_CHROME as any).softDialog?.tokens;
+    if (sd) {
+      set(el, '--dlg-font', sd.fontFamily);
+      set(el, '--dlg-font-px', `${sd.fontPx}px`);
+      set(el, '--dlg-btn-w', `${sd.btnMinWidthPx}px`);
+      set(el, '--dlg-btn-h', `${sd.btnMinHeightPx}px`);
+      set(el, '--dlg-pad', `${sd.padPx}px`);
+      set(el, '--dlg-label-w', `${sd.labelColPx}px`);
+    }
   };
   apply(root);
   if (host) apply(host);
@@ -117,6 +126,16 @@ export function ppgChromeAudit(root?: ParentNode | Document): Record<string, unk
       floatH: (PPG_CHROME as any).scriptEditor?.tokens?.floatDefaultHeightPx,
       tokensApplied: cs.getPropertyValue('--script-font-px').trim() === `${(PPG_CHROME as any).scriptEditor?.tokens?.fontPx ?? 10}px`,
       linenumClass: document.body.classList.contains('script-linenum'),
+    },
+    softDialog: {
+      fontPt: (PPG_CHROME as any).softDialog?.tokens?.fontPt,
+      btnWDlu: (PPG_CHROME as any).softDialog?.tokens?.btnWDlu,
+      btnHDlu: (PPG_CHROME as any).softDialog?.tokens?.btnHDlu,
+      btnMinW: (PPG_CHROME as any).softDialog?.tokens?.btnMinWidthPx,
+      btnMinH: (PPG_CHROME as any).softDialog?.tokens?.btnMinHeightPx,
+      tokensApplied: cs.getPropertyValue('--dlg-btn-w').trim() === `${(PPG_CHROME as any).softDialog?.tokens?.btnMinWidthPx ?? 75}px`,
+      peFont: (PPG_CHROME as any).softDialog?.peAttest?.fontMostCommon,
+      peBtnDlu: (PPG_CHROME as any).softDialog?.peAttest?.okCancelDluMostCommon,
     },
   };
 }

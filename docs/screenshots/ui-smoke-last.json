@@ -1,5 +1,5 @@
 {
-  "ok": 55,
+  "ok": 56,
   "fail": 0,
   "note": 1,
   "okItems": [
@@ -29,6 +29,7 @@
     "PPG shell chrome host=147 nav=71x25 tools=66x25 font=11pt",
     "Explorer+Prefs chrome rename=725 row=16 prefsHost=264 labelW=260",
     "Script Editor chrome font=10px tab=4 linenum float=485x550",
+    "Soft-dialog chrome fontPt=8 OK/Cancel DLU=50x14 px=75x22",
     "openview Explorer",
     "openview Property Editor",
     "openview Script Editor",
