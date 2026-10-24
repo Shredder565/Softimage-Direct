@@ -91,7 +91,53 @@ export function registerAnimCommands(app: App) {
   // ---- expressions / links
   app.register({ name: 'SetExpr', label: 'Set Expression', category: 'Animation', args: [{ name: 'Target', default: '' }, { name: 'Expression', default: '' }], execute(app, a) { const ps = a.Target ? resolve(app, a.Target) : keyTargets(app, 'Marked'); if (!ps.length) throw new Error('Mark a parameter (or pass Target) to set an expression'); const text = a.Expression || prompt(`Expression for ${ps[0].fullName}  (Fc = frame, e.g. sin(Fc*0.1)*5)`, A.expression(ps[0]) ?? 'Fc') || ''; if (!text) return null; for (const p of ps) { const old = A.expressions.get(p); const oldFc = A.fcurve(p); app.record('Expression', () => A.setExpression(p, text, s => findParam(app, s)), () => { A.expressions.delete(p); if (old) A.expressions.set(p, old); if (oldFc) A.fcurves.set(p, oldFc); }); } emit(); return text; } });
   app.register({ name: 'LinkWith', label: 'Link With', category: 'Animation', args: [{ name: 'Target', default: '' }, { name: 'Driver', default: '' }], execute(app, a) { const ps = a.Target ? resolve(app, a.Target) : keyTargets(app, 'Marked'); const drv = a.Driver || prompt('Driving parameter (e.g. null.kine.local.posx):', '') || ''; if (!ps.length || !drv) throw new Error('Link With needs a marked parameter and a driving parameter'); const d = findParam(app, drv); if (!d) throw new Error('No parameter ' + drv); for (const p of ps) A.setExpression(p, drv, s => findParam(app, s)); emit(); return ps.length; } });
-  for (const n of ['LinkWithMulti', 'LinkWithOrientation', 'SetRelativeValues', 'SetScriptedOp', 'ConvertEulerToQuaternion', 'ConvertQuaternionToEuler', 'ParameterConnectionEditor']) app.register({ name: n, label: n.replace(/([A-Z])/g, ' $1').trim(), category: 'Animation', args: [], execute(app) { app.logMsg('info', `${n}: not available in this build`); } });
+  app.register({ name: 'LinkWithMulti', label: 'Link With Multi', category: 'Animation', args: [], execute(app) {
+    // Softimage: link each marked param on object A to the same-named param on object B (last selected).
+    const sel = app.selectedObjects; if (sel.length < 2) throw new Error('LinkWithMulti: select driven object(s), then the driver');
+    const driver = sel[sel.length - 1]; const driven = sel.slice(0, -1); let n = 0;
+    for (const o of driven) for (const p of o.kinematics.local.params.filter(x => x.keyable)) {
+      const d = driver.kinematics.local.get(p.def.name); if (!d) continue;
+      A.setExpression(p, d.fullName, s => findParam(app, s)); n++;
+    }
+    emit(); return n;
+  } });
+  app.register({ name: 'LinkWithOrientation', label: 'Link With Orientation', category: 'Animation', args: [], execute(app) {
+    const sel = app.selectedObjects; if (sel.length < 2) throw new Error('LinkWithOrientation: select driven, then driver');
+    const driver = sel[sel.length - 1]; let n = 0;
+    for (const o of sel.slice(0, -1)) for (const ax of ['x', 'y', 'z']) {
+      const p = o.kinematics.local.get('rot' + ax); const d = driver.kinematics.local.get('rot' + ax); if (!p || !d) continue;
+      A.setExpression(p, d.fullName, s => findParam(app, s)); n++;
+    }
+    emit(); return n;
+  } });
+  app.register({ name: 'SetRelativeValues', label: 'Set Relative Values', category: 'Animation', args: [], execute(app) {
+    // Softimage relative mode: remember current values as the relative zero for marked/keyable params.
+    const ps = keyTargets(app, A.marked.size ? 'Marked' : 'Transforms');
+    const rel: Record<string, number> = (app as any).relativeZero ?? ((app as any).relativeZero = {});
+    for (const p of ps) rel[p.fullName] = Number(p.value);
+    app.logMsg('info', `SetRelativeValues: zeroed ${ps.length} parameter(s)`); return ps.length;
+  } });
+  app.register({ name: 'ScaleKeys', label: 'Scale Keys', category: 'Animation', args: [{ name: 'Factor', default: 2 }, { name: 'Pivot', default: null }], execute(app, a) {
+    const fac = Number(a.Factor ?? 2); const pivot = Number(a.Pivot ?? A.frame); let n = 0;
+    for (const p of keyMappingTargets(app)) {
+      const fc = A.fcurve(p); if (!fc?.keys.length) continue;
+      const old = fc.keys.map(k => ({ ...k }));
+      app.record('Scale Keys', () => { for (const k of fc.keys) k.time = pivot + (k.time - pivot) * fac; fc.keys.sort((x, y) => x.time - y.time); }, () => { fc.keys = old; });
+      n++;
+    }
+    emit(); return n;
+  } });
+  app.register({ name: 'OffsetKeys', label: 'Offset Keys', category: 'Animation', args: [{ name: 'Delta', default: 1 }], execute(app, a) {
+    const d = Number(a.Delta ?? 1); let n = 0;
+    for (const p of keyMappingTargets(app)) {
+      const fc = A.fcurve(p); if (!fc?.keys.length) continue;
+      const old = fc.keys.map(k => ({ ...k }));
+      app.record('Offset Keys', () => { for (const k of fc.keys) k.time += d; }, () => { fc.keys = old; });
+      n++;
+    }
+    emit(); return n;
+  } });
+  for (const n of ['SetScriptedOp', 'ConvertEulerToQuaternion', 'ConvertQuaternionToEuler', 'ParameterConnectionEditor']) app.register({ name: n, label: n.replace(/([A-Z])/g, ' $1').trim(), category: 'Animation', args: [], execute(app) { app.logMsg('info', `${n}: not available in this build`); } });
   app.register({ name: 'MakeRotationKeysContinuous', label: 'Make Rotation Keys Continuous', category: 'Animation', args: [], execute(app) { let n = 0; for (const p of keyTargets(app, 'Rotation')) { const fc = A.fcurve(p); if (!fc) continue; const old = fc.keys.map(k => ({ ...k })); app.record('Continuous', () => { for (let i = 1; i < fc.keys.length; i++) { let v = fc.keys[i].value; const prev = fc.keys[i - 1].value; while (v - prev > 180) v -= 360; while (prev - v > 180) v += 360; fc.keys[i].value = v; } }, () => { fc.keys = old; }); n++; } emit(); return n; } });
   // ---- playback
   app.register({ name: 'SetPlaybackMode', label: 'Playback Mode', category: 'Playback', args: [{ name: 'Mode', default: 'Real-Time Playback' }], undoable: false, execute(app, a) { const m = String(a.Mode); A.realtime = m !== 'Play All Frames'; A.speed = m.includes('75') ? .75 : m.includes('50') ? .5 : m.includes('25') ? .25 : 1; app.events.emit('frame'); } });
@@ -227,7 +273,7 @@ export function registerAnimCommands(app: App) {
   app.register({ name: 'LinkDeformWithOri', label: 'Link Deform with Orientation', category: 'Animation', args: [], execute: (app) => app.run('LinkDeform') });
   app.register({ name: 'ResetActor', label: 'Reset Actor', category: 'Animation', args: [], execute(app) { for (const o of app.selectedObjects) for (const ax of ['x', 'y', 'z']) for (const k of ['pos', 'rot']) { const p = o.kinematics.local.get(k + ax); if (p) app.setParam(p, k === 'scl' ? 1 : 0); } for (const ax of ['x', 'y', 'z']) { const p = app.selectedObjects[0]?.kinematics.local.get('scl' + ax); if (p) app.setParam(p, 1); } return null; } });
   app.register({ name: 'LocalAssignFlexEnv', label: 'Assign Local Envelope', category: 'Deformation|Envelope', args: [], execute: (app) => app.run('ApplyFlexEnv') });
-  app.register({ name: 'RemoveFlexEnvDeformer', label: 'Remove Envelope Deformer', category: 'Deformation|Envelope', args: [], execute(app) { app.logMsg('info', 'RemoveFlexEnvDeformer: use Remove Envelope or reassign weights'); return null; } });
+  // RemoveFlexEnvDeformer registered in rigging.ts (real deformer removal)
 
   // ---- actions / mixer I/O + transitions / compounds (Softimage Animation Mixer OM subset)
   const hostModel = (app: App, name?: string) => (name ? app.scene.find(name) : null) ?? (app.selectedObjects[0]?.model ?? app.scene.root);
@@ -369,8 +415,9 @@ export function registerAnimCommands(app: App) {
   for (const n of ['SelectExternalConstraints', 'ActivateExternalConstraints', 'DeactivateExternalConstraints', 'RemoveExternalConstraints'] as const) {
     app.register({ name: n, label: n.replace(/([A-Z])/g, ' $1').trim(), category: 'Constraints', args: [], execute(app) {
       if (n === 'RemoveExternalConstraints') return app.run('RemoveAllConstraints');
-      if (n === 'SelectExternalConstraints') { const out: X3DObject[] = []; for (const o of app.scene.allObjects()) if (o.properties.some(p => String(p.type).includes('cns'))) out.push(o); app.select(out); return out; }
-      app.logMsg('info', `${n}: external constraint active flags updated`); return null;
+      if (n === 'SelectExternalConstraints') { const out: X3DObject[] = []; for (const o of app.scene.allObjects()) if (o.properties.some(p => p.type?.endsWith('cns') || String(p.type).includes('cns'))) out.push(o); app.select(out); return out; }
+      const active = n === 'ActivateExternalConstraints';
+      return app.run('ToggleConstraint', { Active: active });
     } });
   }
 

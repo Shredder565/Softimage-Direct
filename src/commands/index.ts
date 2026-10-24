@@ -253,7 +253,14 @@ export function registerBuiltins(app: App) {
     args: [{ name: 'InputObjs', default: '' }, { name: 'Time', default: null }, { name: 'Value', default: null }],
     execute(app, a) {
       const t = a.Time ?? app.anim.frame;
-      const params = keyableParams(app, a.InputObjs);
+      // Softimage Save Key Command Mapping when no explicit InputObjs.
+      let params = keyableParams(app, a.InputObjs);
+      if (!a.InputObjs) {
+        const mode = (app as any).keyMapping ?? 'Key All Keyable';
+        if (mode === 'Key Marked Parameters') params = [...app.anim.marked];
+        else if (mode === 'Key Marked Keyable') params = [...app.anim.marked].filter(p => p.keyable);
+        else if (mode === 'Key Character Key Set') { const cks = (app as any).currentKeySet as typeof params | undefined; if (cks?.length) params = cks; }
+      }
       for (const p of params) { const fc = app.anim.fcurve(p, true)!; const had = fc.keys.find(k => k.time === t); const v = a.Value ?? p.value; app.record('Key', () => fc.addKey(t, v), () => { if (had) fc.addKey(t, had.value); else fc.removeKey(t); }); }
       app.events.emit('params');
       return params.length;

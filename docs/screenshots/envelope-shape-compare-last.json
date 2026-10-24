@@ -13,7 +13,14 @@
     "weight": 0.5,
     "y0": -3,
     "expectedY": -3,
-    "baseY": -4
+    "baseY": -4,
+    "normSum": 1,
+    "beforeMirror": [
+      0.5,
+      0.5
+    ],
+    "removed": 1,
+    "deformersAfter": 1
   },
   "pcNote": "fixture /workspace/data/dump/si_anim_envelope_shape_fixture.json"
 }

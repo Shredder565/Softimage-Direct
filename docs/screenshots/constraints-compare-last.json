@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "diffs": [],
+  "r": {
+    "posAfter": {
+      "x": 1,
+      "y": 2
+    },
+    "p25": {
+      "x": 0,
+      "z": 4
+    },
+    "p75": {
+      "x": 0,
+      "z": -4
+    },
+    "mirPos": {
+      "x": -3,
+      "y": 1
+    },
+    "nOff": 1,
+    "inactive": false,
+    "pathHasPerc": true
+  }
+}
