@@ -1,0 +1,43 @@
+appId: com.afterimage.app
+productName: AfterImage
+copyright: Copyright © AfterImage
+
+directories:
+  output: release
+  buildResources: build
+
+# Prefer build/icon.ico (Windows); PNG used as fallback / other platforms.
+icon: build/icon.png
+
+files:
+  - dist/**/*
+  - electron/**/*
+  - package.json
+
+extraMetadata:
+  main: electron/main.cjs
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: AfterImage-${version}-setup.${ext}
+  # Unsigned local/CI builds; signing can be added later via CSC_* env vars.
+  forceCodeSigning: false
+  # On native Windows CI this can be true; keep false so Linux agents that only validate config do not require Wine/rcedit.
+  # windows-latest / softimage-pc builds produce a full NSIS installer either way.
+  signAndEditExecutable: false
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: AfterImage
+  installerLanguages:
+    - en_US
+  language: 1033
+
+# Disable auto-publish; releases are attached via GitHub Actions / manual upload.
+publish: null
