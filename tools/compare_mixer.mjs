@@ -32,6 +32,14 @@ const r = await page.evaluate(() => {
   const bridge = A.run('AddBridgeTransition', { Length: 5 });
   const cpd = A.run('CreateCompound', { Name: 'Combo' });
   A.run('EqualizeClips');
+  // Clip A @1–30, clip B @31–60 after equalize; transition length 8 ending at B.start
+  // Mid-crossfade should blend both weights.
+  const clips = (A.scene.root.property('mixer')).clips;
+  const mid = clips[1].start - 4;
+  A.anim.frame = mid;
+  const evalMid = A.run('EvaluateMixer', { Frame: mid, Apply: true });
+  A.anim.frame = clips[0].start + 2;
+  const evalInA = A.run('EvaluateMixer', { Frame: A.anim.frame, Apply: true });
   const mix = A.scene.root.property('mixer');
   return {
     present: !!mix,
@@ -43,6 +51,8 @@ const r = await page.evaluate(() => {
     nested: ['Name', 'Hidden', 'Active', 'start', 'duration', 'sources', 'tracks', 'transitions', 'compounds', 'relations']
       .map(k => ({ k, has: mix.get(k) != null })),
     tr, bridge, cpd,
+    evalMid, evalInA,
+    posxMid: cube.kinematics.local.val('posx'),
   };
 });
 
@@ -56,13 +66,34 @@ if (!r.transitions.some(t => t.kind === 'bridge')) diffs.push('missing bridge tr
 if (!r.compounds.length) diffs.push('no compounds');
 const missing = r.nested.filter(n => !n.has).map(n => n.k);
 if (missing.length) diffs.push(`missing nested ${missing.join(',')}`);
+if (!(r.evalMid?.weights?.length >= 1)) diffs.push('EvaluateMixer mid: no weights');
+if (!(r.evalInA?.weights?.some(w => w.weight > 0.9))) diffs.push('EvaluateMixer in-A: expected dominant clip A');
+const midBlend = r.evalMid?.weights ?? [];
+if (midBlend.length >= 2) {
+  const ws = midBlend.map(w => w.weight);
+  if (!(Math.min(...ws) > 0.05 && Math.max(...ws) < 0.95)) diffs.push(`crossfade weights not blended: ${JSON.stringify(ws)}`);
+}
 
-console.log(diffs.length ? 'DIFF' : 'OK', 'mixer nested Sources/Tracks/Transitions/Compounds');
-console.log(JSON.stringify({ sources: r.sources, tracks: r.tracks.length, transitions: r.transitions, compounds: r.compounds }, null, 2));
+// Prefer Softimage PC deep dump when present (softimage-pc currently disconnected).
+const deepPaths = [
+  path.resolve(__dirname, '../data/dump/si_anim_mixer_deep.json'),
+  '/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/anim/si_anim_mixer_deep.json',
+].filter(p => fs.existsSync(p));
+let deepNote = 'no PC deep dump yet';
+if (deepPaths[0]) {
+  const deep = JSON.parse(fs.readFileSync(deepPaths[0], 'utf8'));
+  deepNote = `loaded ${deepPaths[0]}`;
+  if (deep.transitions && Array.isArray(deep.transitions) && deep.transitions.length && !r.transitions.length) {
+    diffs.push('PC dump has transitions but Direct dump empty');
+  }
+}
+
+console.log(diffs.length ? 'DIFF' : 'OK', 'mixer nested + EvaluateMixer crossfade');
+console.log(JSON.stringify({ sources: r.sources, tracks: r.tracks.length, transitions: r.transitions, compounds: r.compounds, evalMid: r.evalMid, deepNote }, null, 2));
 for (const d of diffs) console.log(' ', d);
 
 const outPath = path.resolve(__dirname, '../docs/screenshots/mixer-compare-last.json');
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
-fs.writeFileSync(outPath, JSON.stringify({ ok: diffs.length === 0, diffs, r }, null, 2));
+fs.writeFileSync(outPath, JSON.stringify({ ok: diffs.length === 0, diffs, r, deepNote }, null, 2));
 await b.close();
 process.exit(diffs.length ? 1 : 0);

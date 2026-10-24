@@ -1,0 +1,9 @@
+{
+  "schema": "si_anim_envelope_shape",
+  "note": "Placeholder until softimage-pc runs tools/dump-factory/si_anim_envelope_shape_dump.js via Run-DumpFactory.bat anim",
+  "expect": {
+    "envelope": { "deformers": "string[]", "weight_samples": "array" },
+    "shape": { "shapes": "array" },
+    "steps": "array"
+  }
+}
