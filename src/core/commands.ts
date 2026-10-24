@@ -133,6 +133,8 @@ export class App {
     if (!this.compSel || this.compSel.obj !== obj || this.compSel.kind !== kind || mode === 'replace') this.compSel = { obj, kind, points: new Set(), edges: new Set(), polygons: new Set() };
     const set: Set<any> = kind === 'point' ? this.compSel.points : kind === 'edge' ? this.compSel.edges : this.compSel.polygons;
     for (const it of items) { if (mode === 'toggle' && set.has(it)) set.delete(it); else set.add(it); }
+    const mir = (this as any).symMirror as ((o: X3DObject, k: CompKind, it: (number | string)[]) => (number | string)[]) | undefined;
+    if ((this as any).symmetry && mir) for (const m of mir(obj, kind, items)) { if (mode === 'toggle' && set.has(m)) set.delete(m); else set.add(m); } // symmetry mode selects the mirrored components too
     this.selection = [obj]; this.events.emit('selection');
   }
   /** The component selection as a CompSel for topology operators (edges decoded to vertex pairs). */

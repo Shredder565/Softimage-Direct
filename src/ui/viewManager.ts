@@ -8,6 +8,7 @@ import { X3DObject, MoveComponentOperator, geomPoints, Model, threeOrder } from 
 import { ChainRoot, Bone } from '../core/scene2';
 import { meshEdges, edgeKey } from '../core/topology';
 import { catmullClark, dooSabin, loopSubdivide, meshUVProjection } from '../core/topology2';
+import { symmetryMapOf, mirrorComponent, PLANE_AXIS } from '../core/symmetry';
 import { tessellateCurve } from '../core/curves';
 import type { MeshData } from '../core/geometry';
 import { installViewExtras, DISPLAY_MENU } from './viewExtras';
@@ -101,6 +102,7 @@ export function viewManager(app: App, host: HTMLElement) {
   const zoomBy = (vp: Viewport, f: number) => { camSnap(vp); const cam = vp.camera as any; if (vp.kind === 'ortho') cam._zoom = Math.max(0.5, (cam._zoom ?? 20) * f); else { const d = cam.position.clone().sub(orbit.target); cam.position.copy(orbit.target).add(d.multiplyScalar(1 / f)); } needs = true; };
   const nudge = (vp: Viewport, dx: number, dy: number) => { camSnap(vp); const cam = vp.camera; const dist = vp.kind === 'ortho' ? 100 / ((cam as any)._zoom ?? 20) : cam.position.distanceTo(orbit.target); const right = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 0), up = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 1); const mv = right.multiplyScalar(dx * dist * 0.1).add(up.multiplyScalar(dy * dist * 0.1)); cam.position.add(mv); orbit.target.add(mv); needs = true; };
   const black = () => scene.background instanceof THREE.Color && (scene.background as THREE.Color).getHex() === 0;
+  (app as any).symMirror = (o: X3DObject, kind: 'point' | 'edge' | 'polygon', items: (number | string)[]) => { const sm = symmetryMapOf(o, ((app as any).symPlane as any) ?? undefined); const mesh = o.primitive?.mesh(); if (!sm || !mesh) return []; return items.map(it => mirrorComponent(mesh, sm.map, kind, it)).filter((x): x is number | string => x !== null); };
   (window as any).__vm = {
     active: () => vps[active], view: (name: string) => { const vp = vps[active]; camSnap(vp); switchView(vp, name); needs = true; }, zoom: (f: number) => zoomBy(vps[active], f), nudge: (dx: number, dy: number) => nudge(vps[active], dx, dy),
     undoCamera: () => camUndo(vps[active]), redoCamera: () => camRedo(vps[active]), toggleBackground: () => { scene.background = new THREE.Color(black() ? SI.background : 0x000000); needs = true; },
@@ -472,7 +474,7 @@ export function viewManager(app: App, host: HTMLElement) {
   });
   renderer.domElement.addEventListener('pointermove', (e) => {
     if (XT.pointerMove(e)) return;
-    if (!drag) { hover(e); return; }
+    if (!drag) { hover(e); const t: any = app.activeTool; if (t?.onHover) { const at = vpAt(e); if (at) { const vp = vps[at.i]; prepCam(vp, at.r); const po = pickObject(vp, at.nx, at.ny); t.onHover(po ? [po.hit.point.x, po.hit.point.y, po.hit.point.z] : planePoint(vp, at.nx, at.ny)); syncToolPreview(); needs = true; } } return; }
     const ev = e; const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
     if (Math.abs(dx) + Math.abs(dy) > 2) drag.moved = true;
     const vp = drag.vp, cam = vp.camera as any;
@@ -517,10 +519,18 @@ export function viewManager(app: App, host: HTMLElement) {
       const t = drag.tweak; const inv = t.obj.globalMatrix().invert(); inv.setPosition(0, 0, 0);
       const ld = delta.clone().applyMatrix4(inv); const d: V3 = [axisMask.x ? ld.x : 0, axisMask.y ? ld.y : 0, axisMask.z ? ld.z : 0];
       const prim = t.obj.primitive!; const base = geomPoints(prim.operators.slice(0, -1).reduce((m: any, op) => op.apply(m), null)) ?? geomPoints(prim.geom())!;
-      if (tool.mode === 'translate') for (const p of t.pts) { const s = t.startDeltas.get(p) ?? [0, 0, 0]; const w = t.weights.get(p) ?? 1; let nd = [s[0] + d[0] * w, s[1] + d[1] * w, s[2] + d[2] * w]; const S = (tool as any).snap; if (S?.on && S.grid && w === 1) { nd = [0, 1, 2].map(k => Math.round(base[p * 3 + k] + nd[k]) - base[p * 3 + k]); } t.op.deltas.set(p, nd as V3); }
-      if ((app as any).symmetry && tool.mode === 'translate') { // mirror the edit across the local X plane onto the matching points
-        const n = base.length / 3; for (const p of t.pts) { const d0 = t.op.deltas.get(p); if (!d0) continue; const mx = -base[p * 3], my = base[p * 3 + 1], mz = base[p * 3 + 2]; for (let q = 0; q < n; q++) { if (q === p || t.pts.includes(q)) continue; if (Math.abs(base[q * 3] - mx) < 1e-4 && Math.abs(base[q * 3 + 1] - my) < 1e-4 && Math.abs(base[q * 3 + 2] - mz) < 1e-4) { t.op.deltas.set(q, [-d0[0], d0[1], d0[2]]); break; } } }
-      }
+      const slide = !!(app as any).slideMode && tool.mode === 'translate'; let nbrs: Map<number, number[]> | null = null;
+      if (slide) { const mesh = prim.mesh(); if (mesh) { nbrs = new Map(); for (const f of mesh.polygons) for (let i = 0; i < f.length; i++) { const a = f[i], b = f[(i + 1) % f.length]; (nbrs.get(a) ?? nbrs.set(a, []).get(a)!).push(b); (nbrs.get(b) ?? nbrs.set(b, []).get(b)!).push(a); } } }
+      const own = new Set(t.pts);
+      if (tool.mode === 'translate') for (const p of t.pts) { const s = t.startDeltas.get(p) ?? [0, 0, 0]; const w = t.weights.get(p) ?? 1; let nd = [s[0] + d[0] * w, s[1] + d[1] * w, s[2] + d[2] * w];
+        if (slide && nbrs && w === 1) { // Slide Components: move along the neighbouring edge best aligned with the drag, clamped to that edge
+          let best: V3 | null = null, bd = 0; for (const q of nbrs.get(p) ?? []) { if (own.has(q)) continue; const e3: V3 = [base[q * 3] - base[p * 3], base[q * 3 + 1] - base[p * 3 + 1], base[q * 3 + 2] - base[p * 3 + 2]]; const L = Math.hypot(...e3) || 1; const u: V3 = [e3[0] / L, e3[1] / L, e3[2] / L]; const k = d[0] * u[0] + d[1] * u[1] + d[2] * u[2]; if (k > bd) { bd = k; best = [u[0] * Math.min(k, L), u[1] * Math.min(k, L), u[2] * Math.min(k, L)]; } }
+          nd = best ? [s[0] + best[0], s[1] + best[1], s[2] + best[2]] : [s[0], s[1], s[2]]; } const S = (tool as any).snap; if (S?.on && S.grid && w === 1) { nd = [0, 1, 2].map(k => Math.round(base[p * 3 + k] + nd[k]) - base[p * 3 + k]); } t.op.deltas.set(p, nd as V3); }
+      const symAfter = () => { // symmetry mode: mirror every edited delta onto the mapped point across the chosen plane (symmetry map property, else a temporary map)
+        if (!(app as any).symmetry) return; const sm = symmetryMapOf(t.obj, ((app as any).symPlane as any) ?? undefined); if (!sm) return; const ax = PLANE_AXIS[sm.plane]; const own = new Set(t.pts);
+        for (const p of t.pts) { const d0 = t.op.deltas.get(p); const q = sm.map.get(p); if (!d0 || q === undefined || q === p) continue; if (own.has(q) && base[p * 3 + ax] < base[q * 3 + ax]) continue; /* both selected: the positive-side point leads */ const md: V3 = [d0[0], d0[1], d0[2]]; md[ax] = -md[ax]; t.op.deltas.set(q, md); }
+      };
+      if (tool.mode === 'translate') symAfter();
       if (tool.mode !== 'translate') {
         const sel = t.pts.filter(p => t.weights.get(p) === 1); const c = [0, 0, 0]; for (const p of sel) for (let k = 0; k < 3; k++) c[k] += base[p * 3 + k] / sel.length;
         const f = tool.mode === 'scale' ? Math.max(0.01, 1 + dx * 0.01) : 1, ang = tool.mode === 'rotate' ? dx * 0.01 : 0;
@@ -529,6 +539,7 @@ export function viewManager(app: App, host: HTMLElement) {
         for (const p of t.pts) { const s = t.startDeltas.get(p) ?? [0, 0, 0]; const w = t.weights.get(p) ?? 1; const v = [base[p * 3] + s[0] - c[0], base[p * 3 + 1] + s[1] - c[1], base[p * 3 + 2] + s[2] - c[2]];
           let nv = v.map((x, k) => (['x', 'y', 'z'][k] && (sm as any)[['x', 'y', 'z'][k]]) ? x * (1 + (f - 1) * w) : x); if (ang) { const a = ang * w, ca = Math.cos(a), sa = Math.sin(a); nv = rotAx === 'y' ? [v[0] * ca - v[2] * sa, v[1], v[0] * sa + v[2] * ca] : rotAx === 'x' ? [v[0], v[1] * ca - v[2] * sa, v[1] * sa + v[2] * ca] : [v[0] * ca - v[1] * sa, v[0] * sa + v[1] * ca, v[2]]; }
           t.op.deltas.set(p, [nv[0] - v[0] + s[0], nv[1] - v[1] + s[1], nv[2] - v[2] + s[2]]); }
+        symAfter();
       }
       prim.dirty = true; sync(); return;
     }
