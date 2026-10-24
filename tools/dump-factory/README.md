@@ -21,6 +21,14 @@ All dumps land under:
 | File | Source script | Purpose |
 |------|---------------|---------|
 | `si_topo_ref_params.json` | `si_topo_params_dump.js` | Base 3×3×3 cube + Bevel / Bevel_edges A–D + PolyReduction ladder + Dice defaults, each with full `params` |
+| `model/si_model_prims.json` | `si_model_goldens_dump.js` | Get primitive default meshes + subdivs (Cube/Sphere/…) |
+| `model/si_model_topo_extra.json` | `si_model_goldens_dump.js` | Extra ApplyTopoOp cases (headless often geom-only — expected gap) |
+| `model/si_model_deform.json` | `si_model_goldens_dump.js` | Deform ApplyOp attempts (Lattice/Wave/Curve/Spine need extra inputs) |
+| `model/si_model_property_commands.json` | `si_model_goldens_dump.js` | Property-related command inventory |
+| `model/si_model_get_prop_golden.json` | `si_model_get_prop_dump.js` | Get > Property preset params + cluster placement (follow-up) |
+| `model/si_model_text_golden.json` | `si_model_text_dump.js` | Create > Text Curves/Planar/Solid (follow-up; Text may gap headless) |
+| `model/si_model_generators_golden.json` | `si_model_generators_dump.js` | Create generators Loft/Boolean/… (follow-up) |
+| `model/si_model_ref_golden.json` | `si_model_ref_dump.js` | Modify/Create Model referenced + delta (follow-up) |
 | `si_module_commands_gap.json` | `si_dump_menus.js` | Commands whose Category starts with Render / Simulate / ICE / Hair |
 | `si_commands_by_category.json` | `si_dump_menus.js` | Full category index |
 | `si_menus_live.json` | `si_dump_menus.js` | Desktop layouts/views + PE-scrape hint |

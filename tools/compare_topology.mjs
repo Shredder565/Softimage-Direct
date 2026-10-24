@@ -3,8 +3,9 @@
 import { chromium } from 'playwright';
 import fs from 'fs';
 const ref = JSON.parse(fs.readFileSync(process.argv[2] ?? 'data/dump/si_topo_ref.json', 'utf8'));
+const chromeBin = ['/opt/pw-browsers/chromium', '/usr/local/bin/google-chrome', '/opt/google/chrome/chrome'].find(p => fs.existsSync(p));
 const b = await chromium.launch({
-  ...(await import('fs')).default.existsSync('/opt/pw-browsers/chromium') ? { executablePath: '/opt/pw-browsers/chromium' } : {},
+  ...(chromeBin ? { executablePath: chromeBin } : {}),
   args: ['--headless=new', '--use-gl=swiftshader', '--enable-unsafe-swiftshader'],
 });
 const p = await b.newPage({ viewport: { width: 1200, height: 800 } });

@@ -67,7 +67,8 @@ export function siCylinder(v: V): MeshData {
 }
 export function siCone(v: V): MeshData {
   const r = N(v, 'radius', 1), h = N(v, 'height', 4), sv = Math.max(1, N(v, 'subdivv', 2) | 0);
-  return revolved(t => [r * (1 - t), -h / 2 + h * t], sv, v, v.closebottom !== false, false, true);
+  // Softimage cone local origin sits 1/3 height above the base (base y=-h/3, apex y=2h/3) — PC si_model_prims golden.
+  return revolved(t => [r * (1 - t), -h / 3 + h * t], sv, v, v.closebottom !== false, false, true);
 }
 
 export function siSphere(v: V): MeshData {
