@@ -658,7 +658,7 @@
 {
 "param": "primray_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -672,7 +672,7 @@
 {
 "param": "scndray_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -694,7 +694,7 @@
 {
 "param": "shdwcast_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -708,7 +708,7 @@
 {
 "param": "shdwrecv_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -727,7 +727,7 @@
 {
 "param": "trnscast_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -741,7 +741,7 @@
 {
 "param": "trnsvis_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -765,7 +765,7 @@
 {
 "param": "reflcast_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -779,7 +779,7 @@
 {
 "param": "reflvis_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -798,7 +798,7 @@
 {
 "param": "refrcast_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -812,7 +812,7 @@
 {
 "param": "refrvis_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -833,7 +833,7 @@
 {
 "param": "fgcast_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -847,7 +847,7 @@
 {
 "param": "fgvis_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -861,7 +861,7 @@
 {
 "param": "fgsamp_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -886,7 +886,7 @@
 {
 "param": "globcast_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -900,7 +900,7 @@
 {
 "param": "globvis_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -914,7 +914,7 @@
 {
 "param": "globrecv_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -933,7 +933,7 @@
 {
 "param": "causcast_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -947,7 +947,7 @@
 {
 "param": "causvis_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -961,7 +961,7 @@
 {
 "param": "causrecv_override",
 "opts": [
-"valueonly"
+"ValueOnly"
 ]
 },
 {
@@ -979,8 +979,7 @@
 {
 "param": "renderface",
 "opts": [
-"labelwidth(100%",
-"100)"
+"labelwidth(100%, 100)"
 ]
 }
 ]
@@ -2576,7 +2575,7 @@
 "geom:Arc:Curve": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim1dop.spdl",
+"spdl": "C3DArc.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -2587,8 +2586,7 @@
 "max": 16384,
 "uimin": 3,
 "uimax": 24,
-"anim": true,
-"desc": "Subdivisions"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Curve/Arc"
@@ -2596,7 +2594,7 @@
 "geom:Circle:Curve": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim1dop.spdl",
+"spdl": "C3DCircle.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -2607,8 +2605,7 @@
 "max": 16384,
 "uimin": 3,
 "uimax": 24,
-"anim": true,
-"desc": "Subdivisions"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Curve/Circle"
@@ -2616,7 +2613,7 @@
 "geom:Spiral:Curve": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim1dop.spdl",
+"spdl": "C3DSpiral.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -2627,8 +2624,7 @@
 "max": 16384,
 "uimin": 3,
 "uimax": 24,
-"anim": true,
-"desc": "Subdivisions"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Curve/Spiral"
@@ -2636,7 +2632,7 @@
 "geom:Square:Curve": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim1dop.spdl",
+"spdl": "C3DSquare.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -2647,8 +2643,7 @@
 "max": 16384,
 "uimin": 3,
 "uimax": 24,
-"anim": true,
-"desc": "Subdivisions"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Curve/Square"
@@ -2656,7 +2651,7 @@
 "geom:Cone": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim3dop.spdl",
+"spdl": "C3DCone.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -2667,8 +2662,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "U Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivv",
@@ -2679,8 +2673,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "V Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivbase",
@@ -2691,8 +2684,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "Base Subdivisions"
+"anim": true
 },
 {
 "sn": "startuangle",
@@ -2728,7 +2720,7 @@
 "geom:Cube": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim3dop.spdl",
+"spdl": "C3DCube.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -2739,8 +2731,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "U Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivv",
@@ -2751,8 +2742,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "V Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivbase",
@@ -2763,8 +2753,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "Base Subdivisions"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Polygon Mesh/Cube"
@@ -2772,7 +2761,7 @@
 "geom:Cylinder": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim3dop.spdl",
+"spdl": "C3DCylinder.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -2783,8 +2772,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "U Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivv",
@@ -2795,8 +2783,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "V Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivbase",
@@ -2807,8 +2794,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "Base Subdivisions"
+"anim": true
 },
 {
 "sn": "startuangle",
@@ -2850,7 +2836,7 @@
 "geom:Disc": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "primrevolve2dop.spdl",
+"spdl": "C3DDisc.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -2883,8 +2869,7 @@
 "max": 360,
 "uimin": 0,
 "uimax": 360,
-"anim": true,
-"desc": "Start Angle in U"
+"anim": true
 },
 {
 "sn": "enduangle",
@@ -2895,8 +2880,7 @@
 "max": 360,
 "uimin": 0,
 "uimax": 360,
-"anim": true,
-"desc": "End Angle in U"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Polygon Mesh/Disc"
@@ -2904,31 +2888,29 @@
 "geom:Grid": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim3dop.spdl",
+"spdl": "C3DGrid.spdl",
 "params": [
 {
 "sn": "subdivu",
-"label": "U Subdivisions",
+"label": "U Subdiv.",
 "type": "int",
 "default": 8,
 "min": 1,
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "U Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivv",
-"label": "V Subdivisions",
+"label": "V Subdiv.",
 "type": "int",
 "default": 8,
 "min": 1,
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "V Subdivisions"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Polygon Mesh/Grid"
@@ -2936,7 +2918,7 @@
 "geom:Sphere": {
 "type": "geom",
 "name": "Geometry",
-"spdl": null,
+"spdl": "C3DSphere.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -3010,7 +2992,7 @@
 "geom:Torus": {
 "type": "geom",
 "name": "Geometry",
-"spdl": null,
+"spdl": "C3DTorus.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -3084,7 +3066,7 @@
 "geom:Icosahedron": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "primicosahedronop.spdl",
+"spdl": "C3DIcosahedron.spdl",
 "params": [
 {
 "sn": "freq",
@@ -3095,26 +3077,14 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 20,
-"anim": true,
-"desc": "Geodesic Frequency"
+"anim": true
 },
 {
 "sn": "method",
 "label": "Subdivision Method",
-"type": "enum",
+"type": "bool",
 "default": false,
-"items": [
-[
-"Linear",
-0
-],
-[
-"Angular",
-1
-]
-],
-"anim": true,
-"desc": "Subdivision Method"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Polygon Mesh/Icosahedron"
@@ -3122,7 +3092,7 @@
 "geom:Octahedron": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "primicosahedronop.spdl",
+"spdl": "C3DOctahedron.spdl",
 "params": [
 {
 "sn": "freq",
@@ -3133,26 +3103,14 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 20,
-"anim": true,
-"desc": "Geodesic Frequency"
+"anim": true
 },
 {
 "sn": "method",
 "label": "Subdivision Method",
-"type": "enum",
+"type": "bool",
 "default": false,
-"items": [
-[
-"Linear",
-0
-],
-[
-"Angular",
-1
-]
-],
-"anim": true,
-"desc": "Subdivision Method"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Polygon Mesh/Octahedron"
@@ -3160,7 +3118,7 @@
 "geom:Tetrahedron": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "primicosahedronop.spdl",
+"spdl": "C3DTetrahedron.spdl",
 "params": [
 {
 "sn": "freq",
@@ -3171,26 +3129,14 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 20,
-"anim": true,
-"desc": "Geodesic Frequency"
+"anim": true
 },
 {
 "sn": "method",
 "label": "Subdivision Method",
-"type": "enum",
+"type": "bool",
 "default": false,
-"items": [
-[
-"Linear",
-0
-],
-[
-"Angular",
-1
-]
-],
-"anim": true,
-"desc": "Subdivision Method"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Polygon Mesh/Tetrahedron"
@@ -3198,7 +3144,7 @@
 "geom:Cone:Surface": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim3dop.spdl",
+"spdl": "C3DCone.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -3209,8 +3155,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "U Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivv",
@@ -3221,8 +3166,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "V Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivbase",
@@ -3233,8 +3177,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "Base Subdivisions"
+"anim": true
 },
 {
 "sn": "startuangle",
@@ -3270,7 +3213,7 @@
 "geom:Cube:Surface": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim3dop.spdl",
+"spdl": "C3DCube.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -3281,8 +3224,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "U Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivv",
@@ -3293,8 +3235,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "V Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivbase",
@@ -3305,8 +3246,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "Base Subdivisions"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Surface/Cube"
@@ -3314,7 +3254,7 @@
 "geom:Cylinder:Surface": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim3dop.spdl",
+"spdl": "C3DCylinder.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -3325,8 +3265,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "U Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivv",
@@ -3337,8 +3276,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "V Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivbase",
@@ -3349,8 +3287,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "Base Subdivisions"
+"anim": true
 },
 {
 "sn": "startuangle",
@@ -3392,7 +3329,7 @@
 "geom:Disc:Surface": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "primrevolve2dop.spdl",
+"spdl": "C3DDisc.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -3425,8 +3362,7 @@
 "max": 360,
 "uimin": 0,
 "uimax": 360,
-"anim": true,
-"desc": "Start Angle in U"
+"anim": true
 },
 {
 "sn": "enduangle",
@@ -3437,8 +3373,7 @@
 "max": 360,
 "uimin": 0,
 "uimax": 360,
-"anim": true,
-"desc": "End Angle in U"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Surface/Disc"
@@ -3446,31 +3381,29 @@
 "geom:Grid:Surface": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim3dop.spdl",
+"spdl": "C3DGrid.spdl",
 "params": [
 {
 "sn": "subdivu",
-"label": "U Subdivisions",
+"label": "U Subdiv.",
 "type": "int",
 "default": 8,
 "min": 1,
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "U Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivv",
-"label": "V Subdivisions",
+"label": "V Subdiv.",
 "type": "int",
 "default": 8,
 "min": 1,
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "V Subdivisions"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Surface/Grid"
@@ -3478,7 +3411,7 @@
 "geom:Sphere:Surface": {
 "type": "geom",
 "name": "Geometry",
-"spdl": null,
+"spdl": "C3DSphere.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -3552,7 +3485,7 @@
 "geom:Torus:Surface": {
 "type": "geom",
 "name": "Geometry",
-"spdl": null,
+"spdl": "C3DTorus.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -3626,7 +3559,7 @@
 "geom:Cone:Point Cloud": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim3dop.spdl",
+"spdl": "C3DCone.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -3637,8 +3570,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "U Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivv",
@@ -3649,8 +3581,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "V Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivbase",
@@ -3661,8 +3592,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "Base Subdivisions"
+"anim": true
 },
 {
 "sn": "startuangle",
@@ -3827,36 +3757,31 @@
 {
 "param": "displaytype",
 "opts": [
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "pointsize",
 "opts": [
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "percentage",
 "opts": [
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "animationdetail",
 "opts": [
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "imagealpha",
 "opts": [
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
@@ -3875,7 +3800,7 @@
 "geom:Cube:Point Cloud": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim3dop.spdl",
+"spdl": "C3DCube.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -3886,8 +3811,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "U Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivv",
@@ -3898,8 +3822,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "V Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivbase",
@@ -3910,8 +3833,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "Base Subdivisions"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Point Cloud/Cube"
@@ -3919,7 +3841,7 @@
 "geom:Cylinder:Point Cloud": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim3dop.spdl",
+"spdl": "C3DCylinder.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -3930,8 +3852,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "U Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivv",
@@ -3942,8 +3863,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "V Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivbase",
@@ -3954,8 +3874,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "Base Subdivisions"
+"anim": true
 },
 {
 "sn": "startuangle",
@@ -3997,7 +3916,7 @@
 "geom:Disc:Point Cloud": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "primrevolve2dop.spdl",
+"spdl": "C3DDisc.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -4030,8 +3949,7 @@
 "max": 360,
 "uimin": 0,
 "uimax": 360,
-"anim": true,
-"desc": "Start Angle in U"
+"anim": true
 },
 {
 "sn": "enduangle",
@@ -4042,8 +3960,7 @@
 "max": 360,
 "uimin": 0,
 "uimax": 360,
-"anim": true,
-"desc": "End Angle in U"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Point Cloud/Disc"
@@ -4051,31 +3968,29 @@
 "geom:Grid:Point Cloud": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim3dop.spdl",
+"spdl": "C3DGrid.spdl",
 "params": [
 {
 "sn": "subdivu",
-"label": "U Subdivisions",
+"label": "U Subdiv.",
 "type": "int",
 "default": 8,
 "min": 1,
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "U Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivv",
-"label": "V Subdivisions",
+"label": "V Subdiv.",
 "type": "int",
 "default": 8,
 "min": 1,
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "V Subdivisions"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Point Cloud/Grid"
@@ -4083,7 +3998,7 @@
 "geom:Sphere:Point Cloud": {
 "type": "geom",
 "name": "Geometry",
-"spdl": null,
+"spdl": "C3DSphere.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -4157,7 +4072,7 @@
 "geom:Torus:Point Cloud": {
 "type": "geom",
 "name": "Geometry",
-"spdl": null,
+"spdl": "C3DTorus.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -4231,7 +4146,7 @@
 "wave": {
 "type": "wave",
 "name": "Wave Op",
-"spdl": "waveop.spdl",
+"spdl": "C3DWave.spdl",
 "params": [
 {
 "sn": "ampl",
@@ -4239,57 +4154,29 @@
 "type": "double",
 "default": 0,
 "uimin": 0,
-"uimax": 1.0,
-"anim": true,
-"desc": "(Decay) Overall scaling factor for the wave amplitude over time"
+"uimax": 1,
+"anim": true
 },
 {
 "sn": "spread",
 "label": "Spread",
 "type": "double",
 "default": 1,
-"uimin": 0.0,
-"uimax": 1.0,
-"anim": true,
-"desc": "Extent of the wave over time"
+"uimin": 0,
+"uimax": 1,
+"anim": true
 },
 {
 "sn": "Startoffset",
 "label": "Start offset",
 "type": "double",
-"default": 0.03333333333333333,
-"desc": "Start offset"
+"default": 0.03333333333333333
 },
 {
 "sn": "End",
 "label": "End",
 "type": "double",
-"default": 3.3333333333333335,
-"desc": "End"
-}
-],
-"layout": [
-{
-"param": "ampl"
-},
-{
-"param": "spread"
-},
-{
-"tab": "Time Control",
-"items": [
-{
-"group": "Time",
-"items": [
-{
-"param": "Startoffset"
-},
-{
-"param": "End"
-}
-]
-}
-]
+"default": 3.3333333333333335
 }
 ],
 "source": "Get/Primitive/Control Object/Wave"
@@ -4297,7 +4184,7 @@
 "geom:Wave:Control Object": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim3dop.spdl",
+"spdl": "C3DWave.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -4308,8 +4195,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "U Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivv",
@@ -4320,8 +4206,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "V Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivbase",
@@ -4332,8 +4217,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "Base Subdivisions"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Control Object/Wave"
@@ -4594,7 +4478,7 @@
 "geom:Lattice:Primitive": {
 "type": "geom",
 "name": "Geometry",
-"spdl": "prim3dop.spdl",
+"spdl": "c3dlattice.spdl",
 "params": [
 {
 "sn": "subdivu",
@@ -4605,8 +4489,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "U Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivv",
@@ -4617,8 +4500,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "V Subdivisions"
+"anim": true
 },
 {
 "sn": "subdivbase",
@@ -4629,8 +4511,7 @@
 "max": 16384,
 "uimin": 1,
 "uimax": 24,
-"anim": true,
-"desc": "Base Subdivisions"
+"anim": true
 }
 ],
 "source": "Get/Primitive/Lattice"
@@ -4638,14 +4519,13 @@
 "prop:kine": {
 "type": "kine",
 "name": "Kinematics",
-"spdl": "C3DDirectionCns.spdl",
+"spdl": "C3DKineInfo.spdl",
 "params": [
 {
 "sn": "dircns",
 "label": "Direction Cns",
 "type": "double",
-"default": null,
-"desc": "Direction Constraint"
+"default": null
 }
 ]
 },
@@ -6527,19 +6407,19 @@
 {
 "param": "compobjunselcenter",
 "opts": [
-"Nolabel"
+"NoLabel"
 ]
 },
 {
 "param": "compobjunselcom",
 "opts": [
-"Nolabel"
+"NoLabel"
 ]
 },
 {
 "param": "compobjunselcenterpivot",
 "opts": [
-"Nolabel"
+"NoLabel"
 ]
 }
 ]
@@ -8648,8 +8528,7 @@
 "param": "wrfrmcoltype",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"90)"
+"LabelWidth(40%, 90)"
 ]
 }
 ]
@@ -8667,8 +8546,7 @@
 "param": "xraytype",
 "opts": [
 "AlignRight",
-"LabelWidth(60%",
-"130)"
+"LabelWidth(60%, 130)"
 ]
 },
 {
@@ -8681,24 +8559,21 @@
 "param": "transpsort",
 "opts": [
 "AlignRight",
-"LabelWidth(60%",
-"130)"
+"LabelWidth(60%, 130)"
 ]
 },
 {
 "param": "hidlincoltype",
 "opts": [
 "AlignRight",
-"LabelWidth(60%",
-"130)"
+"LabelWidth(60%, 130)"
 ]
 },
 {
 "param": "vcdisplay",
 "opts": [
 "AlignRight",
-"LabelWidth(35%",
-"80)"
+"LabelWidth(35%, 80)"
 ]
 },
 {
@@ -8752,8 +8627,7 @@
 "param": "wireframeopacity",
 "opts": [
 "AlignRight",
-"LabelWidth(65%",
-"180)"
+"LabelWidth(65%, 180)"
 ]
 }
 ]
@@ -8765,48 +8639,42 @@
 "param": "fogenable",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "wrfrmdpthcueatten",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "wrfrmdpthcuedensity",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "wrfrmdpthcuerange",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "wirefrmdpthcuestart",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "wirefrmdpthcueend",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 }
 ]
@@ -8835,24 +8703,21 @@
 "param": "headlight_intensity",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "headlight_azimuth",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "headlight_elevation",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 }
 ]
@@ -8879,8 +8744,7 @@
 {
 "param": "multisampling",
 "opts": [
-"LabelWidth(80%",
-"150)"
+"LabelWidth(80%, 150)"
 ]
 }
 ]
@@ -8915,24 +8779,21 @@
 "param": "rtshadowspbufferres",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtshadowtransparency",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtshadowalphatolerance",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 }
 ]
@@ -8956,72 +8817,63 @@
 "param": "rtaoradius",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtaoscale",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtaointensity",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtaobias",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtaoiterations",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtaoblur",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtaoblursamples",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtaoblurtolerance",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtaoblurblend",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 }
 ]
@@ -9039,104 +8891,91 @@
 "param": "rtdofmode",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtdofsamples",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtdofnear",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtdofstart",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtdoffocus",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtdofend",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtdoffar",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtdofnearradius",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtdoffarradius",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtdoffocalplane",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtdoffocallength",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtdoffstop",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 },
 {
 "param": "rtdoffocusregionscale",
 "opts": [
 "AlignRight",
-"LabelWidth(40%",
-"110)"
+"LabelWidth(40%, 110)"
 ]
 }
 ]
@@ -9271,8 +9110,7 @@
 {
 "param": "constrlevelviewing",
 "opts": [
-"LabelWidth(60%",
-"165)"
+"LabelWidth(60%, 165)"
 ]
 }
 ]
@@ -9283,15 +9121,13 @@
 {
 "param": "stereodisplaymode",
 "opts": [
-"LabelWidth(60%",
-"165)"
+"LabelWidth(60%, 165)"
 ]
 },
 {
 "param": "stereoswapinterlace",
 "opts": [
-"LabelWidth(60%",
-"165)"
+"LabelWidth(60%, 165)"
 ]
 }
 ]
@@ -9365,8 +9201,7 @@
 "param": "fastplaycache",
 "opts": [
 "AlignRight",
-"LabelWidth(60%",
-"130)"
+"LabelWidth(60%, 130)"
 ]
 },
 {
@@ -9429,15 +9264,13 @@
 {
 "param": "animghosttrailsamples",
 "opts": [
-"LabelWidth(60%",
-"155)"
+"LabelWidth(60%, 155)"
 ]
 },
 {
 "param": "animghostvelocityscale",
 "opts": [
-"LabelWidth(60%",
-"155)"
+"LabelWidth(60%, 155)"
 ]
 },
 {
@@ -9446,29 +9279,25 @@
 {
 "param": "animghostframesbefore",
 "opts": [
-"LabelWidth(60%",
-"150)"
+"LabelWidth(60%, 150)"
 ]
 },
 {
 "param": "animghostframesafter",
 "opts": [
-"LabelWidth(60%",
-"150)"
+"LabelWidth(60%, 150)"
 ]
 },
 {
 "param": "animghostframestep",
 "opts": [
-"LabelWidth(60%",
-"150)"
+"LabelWidth(60%, 150)"
 ]
 },
 {
 "param": "animghostanchorframes",
 "opts": [
-"LabelWidth(60%",
-"150)"
+"LabelWidth(60%, 150)"
 ]
 }
 ]
@@ -9479,22 +9308,19 @@
 {
 "param": "animghostkeysbefore",
 "opts": [
-"LabelWidth(60%",
-"150)"
+"LabelWidth(60%, 150)"
 ]
 },
 {
 "param": "animghostkeysafter",
 "opts": [
-"LabelWidth(60%",
-"150)"
+"LabelWidth(60%, 150)"
 ]
 },
 {
 "param": "animghostkeystep",
 "opts": [
-"LabelWidth(60%",
-"150)"
+"LabelWidth(60%, 150)"
 ]
 }
 ]
@@ -9505,8 +9331,7 @@
 {
 "param": "animghoststaticframes",
 "opts": [
-"LabelWidth(60%",
-"150)"
+"LabelWidth(60%, 150)"
 ]
 }
 ]
@@ -14427,8 +14252,7 @@
 "param": "UAlternate",
 "opts": [
 "AlignRight",
-"LabelWidth(10%",
-"20)",
+"LabelWidth(10%, 20)",
 "continue"
 ]
 },
@@ -14436,8 +14260,7 @@
 "param": "VAlternate",
 "opts": [
 "AlignRight",
-"LabelWidth(10%",
-"20)"
+"LabelWidth(10%, 20)"
 ]
 }
 ]
@@ -14460,26 +14283,26 @@
 "param": "RemapMinU",
 "opts": [
 "continue",
-"aligncenter"
+"AlignCenter"
 ]
 },
 {
 "param": "RemapMaxU",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 },
 {
 "param": "RemapMinV",
 "opts": [
 "continue",
-"aligncenter"
+"AlignCenter"
 ]
 },
 {
 "param": "RemapMaxV",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -15459,7 +15282,7 @@
 {
 "param": "_spacer_",
 "opts": [
-"nolabel"
+"NoLabel"
 ]
 },
 {
@@ -15468,7 +15291,7 @@
 {
 "param": "_spacer_",
 "opts": [
-"nolabel"
+"NoLabel"
 ]
 },
 {
@@ -15553,7 +15376,7 @@
 {
 "param": "overwritecavalpha",
 "opts": [
-"alignRight"
+"AlignRight"
 ]
 }
 ]
@@ -15614,7 +15437,7 @@
 {
 "param": "_spacer_",
 "opts": [
-"nolabel"
+"NoLabel"
 ]
 },
 {
@@ -15751,7 +15574,7 @@
 {
 "param": "_spacer_",
 "opts": [
-"nolabel"
+"NoLabel"
 ]
 },
 {
@@ -15872,7 +15695,7 @@
 {
 "param": "_spacer_",
 "opts": [
-"nolabel"
+"NoLabel"
 ]
 },
 {
@@ -16878,6 +16701,16 @@
 "desc": "Boolean operations mode"
 }
 ],
+"layout": [
+{
+"group": "Boolean",
+"items": [
+{
+"param": "booleanmode"
+}
+]
+}
+],
 "source": "Create/Poly. Mesh/Boolean/Difference"
 },
 "meshlocalsubdivisionop": {
@@ -17585,15 +17418,13 @@
 {
 "param": "defaultthreshold",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
 "param": "userthreshold",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 }
 ]
@@ -17652,7 +17483,7 @@
 "SpineCurve": {
 "type": "SpineCurve",
 "name": "SpineCurve",
-"spdl": null,
+"spdl": "SpineCurve.spdl",
 "params": [
 {
 "sn": "lScale",
@@ -17682,23 +17513,28 @@
 "prop:customparamset": {
 "type": "customparamset",
 "name": "Spine_Control",
-"spdl": "C3DHairScaleOp.spdl",
+"spdl": "{6561D7B5-1994-11D5-80A8-00A0C9ED67BD}.spdl",
 "params": [
 {
 "sn": "scale",
-"label": "Scale Factor",
+"label": "Scale",
 "type": "double",
 "default": 1,
 "min": 0.01,
 "max": 10000,
-"uimin": 0.0,
-"uimax": 10.0,
+"uimin": 0.01,
+"uimax": 10,
 "anim": true
 }
 ],
 "layout": [
 {
-"param": "scale"
+"group": "Offset and Scale",
+"items": [
+{
+"param": "Scale"
+}
+]
 }
 ]
 },
@@ -18399,8 +18235,7 @@
 {
 "param": "minangleforjunctionhardedges",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 }
 ]
@@ -18425,15 +18260,13 @@
 {
 "param": "minangleforjunctionmitering",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
 "param": "junctionparaterization",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 }
 ]
@@ -18936,16 +18769,17 @@
 "offsetpolygonsop": {
 "type": "offsetpolygonsop",
 "name": "Offset Polygons Op",
-"spdl": "C3DHairCutOp.spdl",
+"spdl": "C3DOffsetPolygonsOp.spdl",
 "params": [
 {
 "sn": "offset",
 "label": "Offset",
 "type": "double",
 "default": 0.2,
-"uimin": -13,
-"uimax": 13,
-"anim": true
+"uimin": -1.0,
+"uimax": 1.0,
+"anim": true,
+"desc": "Offset around the polygon contour"
 }
 ],
 "layout": [
@@ -19606,24 +19440,21 @@
 {
 "param": "planeposx",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
 {
 "param": "planeposy",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
 {
 "param": "planeposz",
 "opts": [
-"LabelWidth(15%",
-"10)"
+"LabelWidth(15%, 10)"
 ]
 }
 ]
@@ -19634,24 +19465,21 @@
 {
 "param": "planerotx",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
 {
 "param": "planeroty",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
 {
 "param": "planerotz",
 "opts": [
-"LabelWidth(15%",
-"10)"
+"LabelWidth(15%, 10)"
 ]
 }
 ]
@@ -19915,24 +19743,21 @@
 {
 "param": "planeposx",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
 {
 "param": "planeposy",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
 {
 "param": "planeposz",
 "opts": [
-"LabelWidth(15%",
-"10)"
+"LabelWidth(15%, 10)"
 ]
 }
 ]
@@ -19943,24 +19768,21 @@
 {
 "param": "planerotx",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
 {
 "param": "planeroty",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
 {
 "param": "planerotz",
 "opts": [
-"LabelWidth(15%",
-"10)"
+"LabelWidth(15%, 10)"
 ]
 }
 ]
@@ -20155,8 +19977,7 @@
 "param": "nbpoints",
 "opts": [
 "AlignRight",
-"LabelWidth(50%",
-"120)"
+"LabelWidth(50%, 120)"
 ]
 },
 {
@@ -20165,8 +19986,7 @@
 {
 "param": "autogrouptype",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
@@ -20186,8 +20006,7 @@
 {
 "param": "usemaxnormalangledifference",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
@@ -20312,16 +20131,14 @@
 "param": "nbpoints",
 "opts": [
 "AlignRight",
-"LabelWidth(50%",
-"120)"
+"LabelWidth(50%, 120)"
 ]
 },
 {
 "param": "nbpolygons",
 "opts": [
 "AlignRight",
-"LabelWidth(50%",
-"120)"
+"LabelWidth(50%, 120)"
 ]
 },
 {
@@ -20763,15 +20580,13 @@
 {
 "param": "sharpnessratio",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
 "param": "preservevolumeamount",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
@@ -20783,8 +20598,7 @@
 {
 "param": "quadlineweight",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 }
 ]
@@ -20803,8 +20617,7 @@
 {
 "param": "symmetrytolerancelevel",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 }
 ]
@@ -20820,8 +20633,7 @@
 {
 "param": "preserveboundaries",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
@@ -20834,8 +20646,7 @@
 {
 "param": "preserveclusterboundaries",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
@@ -20848,8 +20659,7 @@
 {
 "param": "preservevertexcluster",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
@@ -20862,8 +20672,7 @@
 {
 "param": "preservehardedges",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
@@ -20876,8 +20685,7 @@
 {
 "param": "preservecreases",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
@@ -20890,8 +20698,7 @@
 {
 "param": "preservematerialboundaries",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
@@ -20904,8 +20711,7 @@
 {
 "param": "preservescalarattributes",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
@@ -20923,29 +20729,25 @@
 {
 "param": "uvweight",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
 "param": "colorweight",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
 "param": "weightmapweight",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
 "param": "usernormalsweight",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 }
 ]
@@ -20970,15 +20772,13 @@
 {
 "param": "lodratio",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
 "param": "lodminratio",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
@@ -20987,8 +20787,7 @@
 {
 "param": "lodtransitionsize",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 }
 ]
@@ -21177,8 +20976,7 @@
 {
 "param": "usedistance",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
@@ -21805,7 +21603,7 @@
 "shearop": {
 "type": "shearop",
 "name": "Shear Op",
-"spdl": "C3DBulgeOp.spdl",
+"spdl": "C3DShearOp.spdl",
 "params": [
 {
 "sn": "usebboxcentre",
@@ -21842,21 +21640,21 @@
 },
 {
 "sn": "defx",
-"label": "X",
+"label": "Deform along X",
 "type": "bool",
 "default": true,
 "desc": "Deformation along X"
 },
 {
 "sn": "defy",
-"label": "Y",
+"label": "Deform along Y",
 "type": "bool",
 "default": false,
 "desc": "Deformation along Y"
 },
 {
 "sn": "defz",
-"label": "Z",
+"label": "Deform along Z",
 "type": "bool",
 "default": false,
 "desc": "Deformation along Z"
@@ -21897,7 +21695,7 @@
 "label": "Amplitude Modulating Profile",
 "type": "double",
 "default": "FCurve",
-"desc": "Profile used to modulate the bulge amplitude over the length of the object"
+"desc": "Profile used to modulate the shear amplitude over the length of the object"
 }
 ],
 "layout": [
@@ -21987,7 +21785,7 @@
 "taperop": {
 "type": "taperop",
 "name": "Taper Op",
-"spdl": "C3DBulgeOp.spdl",
+"spdl": "taperop.spdl",
 "params": [
 {
 "sn": "usebboxcentre",
@@ -22024,21 +21822,21 @@
 },
 {
 "sn": "defx",
-"label": "X",
+"label": "Deform along X",
 "type": "bool",
 "default": false,
 "desc": "Deformation along X"
 },
 {
 "sn": "defy",
-"label": "Y",
+"label": "Deform along Y",
 "type": "bool",
 "default": true,
 "desc": "Deformation along Y"
 },
 {
 "sn": "defz",
-"label": "Z",
+"label": "Deform along Z",
 "type": "bool",
 "default": true,
 "desc": "Deformation along Z"
@@ -22083,7 +21881,7 @@
 "label": "Amplitude Modulating Profile",
 "type": "double",
 "default": "FCurve",
-"desc": "Profile used to modulate the bulge amplitude over the length of the object"
+"desc": "Profile used to modulate the taper amplitude over the length of the object"
 }
 ],
 "layout": [
@@ -22558,14 +22356,13 @@
 "ICETree": {
 "type": "ICETree",
 "name": "Footprints",
-"spdl": "c3dclusterprop.spdl",
+"spdl": "C3DICETreeComment.spdl",
 "params": [
 {
 "sn": "Name",
 "label": "Name",
 "type": "string",
-"default": "Footprints",
-"desc": "Name"
+"default": "Footprints"
 }
 ],
 "source": "Modify/Deform/Footprints  (ice)"
@@ -22608,27 +22405,17 @@
 "pushop": {
 "type": "pushop",
 "name": "Push Op",
-"spdl": "C3DForceGravity.spdl",
+"spdl": "pushop.spdl",
 "params": [
 {
 "sn": "ampl",
 "label": "Amplitude",
 "type": "double",
 "default": 0,
-"uimin": 0,
-"uimax": 100,
+"uimin": -2.0,
+"uimax": 2.0,
 "anim": true,
 "desc": "Amplitude"
-}
-],
-"layout": [
-{
-"group": "Strength",
-"items": [
-{
-"param": "ampl"
-}
-]
 }
 ],
 "source": "Modify/Deform/Push"
@@ -22894,29 +22681,25 @@
 {
 "param": "restrictcurvaturevalue",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
 "param": "restrictnormalvalue",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
 "param": "restrictdisplacementminvalue",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
 "param": "extrapolation",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
@@ -22928,22 +22711,19 @@
 {
 "param": "restrictdirx",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
 "param": "restrictdiry",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
 "param": "restrictdirz",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 }
 ]
@@ -22982,8 +22762,7 @@
 {
 "param": "customfilterrestricttopospan",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
@@ -22996,8 +22775,7 @@
 {
 "param": "customfilterrestrictnbneighbor",
 "opts": [
-"LabelWidth(15%",
-"10)",
+"LabelWidth(15%, 10)",
 "continue"
 ]
 },
@@ -23133,8 +22911,7 @@
 {
 "param": "axisreference",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
@@ -23366,22 +23143,19 @@
 {
 "param": "seed",
 "opts": [
-"LabelWidth(50%",
-"120)"
+"LabelWidth(50%, 120)"
 ]
 },
 {
 "param": "groupby",
 "opts": [
-"LabelWidth(50%",
-"120)"
+"LabelWidth(50%, 120)"
 ]
 },
 {
 "param": "streams",
 "opts": [
-"LabelWidth(50%",
-"120)"
+"LabelWidth(50%, 120)"
 ]
 }
 ]
@@ -23739,8 +23513,7 @@
 {
 "param": "method",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 }
 ]
@@ -23754,15 +23527,13 @@
 {
 "param": "planeref",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 },
 {
 "param": "planenormal",
 "opts": [
-"LabelWidth(80%",
-"10)"
+"LabelWidth(80%, 10)"
 ]
 }
 ]
@@ -23916,31 +23687,13 @@
 "filletcrv": {
 "type": "filletcrv",
 "name": "Fillet Curves",
-"spdl": "C3DGenerator.spdl",
+"spdl": "filletcrv.spdl",
 "params": [
 {
 "sn": "inputreadregion",
 "label": "Construction Mode",
-"type": "enum",
-"default": 3,
-"items": [
-[
-"Modeling",
-0
-],
-[
-"Shape Modeling",
-1
-],
-[
-"Animation",
-2
-],
-[
-"Secondary Shape (Result)",
-3
-]
-]
+"type": "int",
+"default": 3
 },
 {
 "sn": "rad",
@@ -23948,8 +23701,9 @@
 "type": "double",
 "default": 1,
 "min": 0,
-"uimin": 0,
-"uimax": 5
+"uimin": 0.0,
+"uimax": 5.0,
+"desc": "Fillet radius"
 }
 ],
 "source": "Create/Curve/Fillet Intersection"
@@ -24012,7 +23766,7 @@
 "birail": {
 "type": "birail",
 "name": "Birail",
-"spdl": "C3DParametricSurfaceGenerator.spdl",
+"spdl": "birailop.spdl",
 "params": [
 {
 "sn": "inputreadregion",
@@ -24023,19 +23777,8 @@
 {
 "sn": "subdivtype",
 "label": "Subdivision Type",
-"type": "enum",
-"default": 0,
-"items": [
-[
-"Per Span",
-0
-],
-[
-"Absolute ",
-1
-]
-],
-"desc": "Subdivision Interpretation Type"
+"type": "int",
+"default": 0
 },
 {
 "sn": "subdivu",
@@ -24047,8 +23790,7 @@
 "uimin": 1,
 "uimax": 50,
 "anim": true,
-"ro": true,
-"desc": "Set the absolute number of subdivisions in U "
+"ro": true
 },
 {
 "sn": "subdivv",
@@ -24060,8 +23802,7 @@
 "uimin": 1,
 "uimax": 50,
 "anim": true,
-"ro": true,
-"desc": "Set the absolute number of subdivisions in V "
+"ro": true
 },
 {
 "sn": "subdivuperspan",
@@ -24072,8 +23813,7 @@
 "max": 100,
 "uimin": 1,
 "uimax": 20,
-"anim": true,
-"desc": "Set the per span number of subdivisions in U "
+"anim": true
 },
 {
 "sn": "subdivvperspan",
@@ -24084,24 +23824,62 @@
 "max": 100,
 "uimin": 1,
 "uimax": 20,
-"anim": true,
-"desc": "Set the per span number of subdivisions in V "
+"anim": true
 },
 {
 "sn": "align",
 "label": "Align Profile To",
-"type": "int",
-"default": 2
+"type": "enum",
+"default": 2,
+"items": [
+[
+"First Rail",
+0
+],
+[
+"Second Rail",
+1
+],
+[
+"None",
+2
+]
+],
+"desc": "Profile Starts Perpendicular To"
 },
 {
 "sn": "snap",
 "label": "Snap",
-"type": "int",
+"type": "enum",
 "default": 1,
 "min": 0,
 "max": 1,
 "uimin": 0,
-"uimax": 1
+"uimax": 1,
+"items": [
+[
+"To Profile",
+0
+],
+[
+"To Rails",
+1
+]
+],
+"desc": "Snap Curves' Extremities At Construction"
+}
+],
+"layout": [
+{
+"group": "Options",
+"items": [
+{
+"param": "align"
+},
+{
+"param": "snap"
+}
+]
 }
 ],
 "source": "Create/Surf. Mesh/Birail"
@@ -25050,7 +24828,7 @@
 "filletsrf": {
 "type": "filletsrf",
 "name": "Fillet Surfaces",
-"spdl": "C3DParametricSurfaceGenerator.spdl",
+"spdl": "filletSrfOp.spdl",
 "params": [
 {
 "sn": "inputreadregion",
@@ -25061,19 +24839,8 @@
 {
 "sn": "subdivtype",
 "label": "Subdivision Type",
-"type": "enum",
-"default": 0,
-"items": [
-[
-"Per Span",
-0
-],
-[
-"Absolute ",
-1
-]
-],
-"desc": "Subdivision Interpretation Type"
+"type": "int",
+"default": 0
 },
 {
 "sn": "subdivu",
@@ -25085,8 +24852,7 @@
 "uimin": 1,
 "uimax": 50,
 "anim": true,
-"ro": true,
-"desc": "Set the absolute number of subdivisions in U "
+"ro": true
 },
 {
 "sn": "subdivv",
@@ -25098,8 +24864,7 @@
 "uimin": 1,
 "uimax": 50,
 "anim": true,
-"ro": true,
-"desc": "Set the absolute number of subdivisions in V "
+"ro": true
 },
 {
 "sn": "subdivuperspan",
@@ -25110,8 +24875,7 @@
 "max": 100,
 "uimin": 1,
 "uimax": 20,
-"anim": true,
-"desc": "Set the per span number of subdivisions in U "
+"anim": true
 },
 {
 "sn": "subdivvperspan",
@@ -25122,14 +24886,28 @@
 "max": 100,
 "uimin": 1,
 "uimax": 20,
-"anim": true,
-"desc": "Set the per span number of subdivisions in V "
+"anim": true
 },
 {
 "sn": "radtype",
 "label": "Radius Type",
-"type": "int",
-"default": 0
+"type": "enum",
+"default": 0,
+"items": [
+[
+"Constant",
+0
+],
+[
+"Linear",
+1
+],
+[
+"Cubic",
+2
+]
+],
+"desc": "Radius type"
 },
 {
 "sn": "startrad",
@@ -25138,8 +24916,9 @@
 "default": 0.1,
 "min": 0,
 "max": 5,
-"uimin": 0,
-"uimax": 5
+"uimin": 0.0,
+"uimax": 5.0,
+"desc": "Start radius"
 },
 {
 "sn": "endrad",
@@ -25148,9 +24927,10 @@
 "default": 0.1,
 "min": 0,
 "max": 5,
-"uimin": 0,
-"uimax": 5,
-"ro": true
+"uimin": 0.0,
+"uimax": 5.0,
+"ro": true,
+"desc": "End radius"
 },
 {
 "sn": "tol",
@@ -25160,7 +24940,24 @@
 "min": 0.001,
 "max": 2,
 "uimin": 0.001,
-"uimax": 2
+"uimax": 2.0,
+"desc": "Tolerance"
+}
+],
+"layout": [
+{
+"group": "Shape",
+"items": [
+{
+"param": "radtype"
+},
+{
+"param": "startrad"
+},
+{
+"param": "endrad"
+}
+]
 }
 ],
 "source": "Create/Surf. Mesh/Fillet Intersection"
@@ -28171,22 +27968,19 @@
 {
 "param": "shadow_offsetX",
 "opts": [
-"LabelWidth(10%",
-"20)"
+"LabelWidth(10%, 20)"
 ]
 },
 {
 "param": "shadow_offsetY",
 "opts": [
-"LabelWidth(10%",
-"20)"
+"LabelWidth(10%, 20)"
 ]
 },
 {
 "param": "shadow_offsetZ",
 "opts": [
-"LabelWidth(10%",
-"20)"
+"LabelWidth(10%, 20)"
 ]
 }
 ]
@@ -28197,22 +27991,19 @@
 {
 "param": "shadow_scaleX",
 "opts": [
-"LabelWidth(10%",
-"20)"
+"LabelWidth(10%, 20)"
 ]
 },
 {
 "param": "shadow_scaleY",
 "opts": [
-"LabelWidth(10%",
-"20)"
+"LabelWidth(10%, 20)"
 ]
 },
 {
 "param": "shadow_scaleZ",
 "opts": [
-"LabelWidth(10%",
-"20)"
+"LabelWidth(10%, 20)"
 ]
 },
 {
@@ -28516,22 +28307,19 @@
 {
 "param": "shadow_offsetX",
 "opts": [
-"LabelWidth(10%",
-"20)"
+"LabelWidth(10%, 20)"
 ]
 },
 {
 "param": "shadow_offsetY",
 "opts": [
-"LabelWidth(10%",
-"20)"
+"LabelWidth(10%, 20)"
 ]
 },
 {
 "param": "shadow_offsetZ",
 "opts": [
-"LabelWidth(10%",
-"20)"
+"LabelWidth(10%, 20)"
 ]
 }
 ]
@@ -28542,22 +28330,19 @@
 {
 "param": "shadow_scaleX",
 "opts": [
-"LabelWidth(10%",
-"20)"
+"LabelWidth(10%, 20)"
 ]
 },
 {
 "param": "shadow_scaleY",
 "opts": [
-"LabelWidth(10%",
-"20)"
+"LabelWidth(10%, 20)"
 ]
 },
 {
 "param": "shadow_scaleZ",
 "opts": [
-"LabelWidth(10%",
-"20)"
+"LabelWidth(10%, 20)"
 ]
 },
 {
@@ -29335,15 +29120,13 @@
 "shape:Polygon Mesh/Dodecahedron": {
 "type": "dodecahedron",
 "name": "Dodecahedron",
-"spdl": "C3DCircle.spdl",
+"spdl": "C3DDodecahedron.spdl",
 "params": [
 {
 "sn": "radius",
 "label": "Radius",
 "type": "double",
 "default": 4,
-"uimin": 0.01,
-"uimax": 50.0,
 "anim": true,
 "desc": "Radius"
 }
@@ -29403,15 +29186,13 @@
 "shape:Polygon Mesh/Icosahedron": {
 "type": "icosahedron",
 "name": "Icosahedron",
-"spdl": "C3DCircle.spdl",
+"spdl": "C3DIcosahedron.spdl",
 "params": [
 {
 "sn": "radius",
 "label": "Radius",
 "type": "double",
 "default": 4,
-"uimin": 0.01,
-"uimax": 50.0,
 "anim": true,
 "desc": "Radius"
 }
@@ -29471,15 +29252,13 @@
 "shape:Polygon Mesh/Octahedron": {
 "type": "octahedron",
 "name": "Octahedron",
-"spdl": "C3DCircle.spdl",
+"spdl": "C3DOctahedron.spdl",
 "params": [
 {
 "sn": "radius",
 "label": "Radius",
 "type": "double",
 "default": 4,
-"uimin": 0.01,
-"uimax": 50.0,
 "anim": true,
 "desc": "Radius"
 }
@@ -29539,15 +29318,13 @@
 "shape:Polygon Mesh/Tetrahedron": {
 "type": "tetrahedron",
 "name": "Tetrahedron",
-"spdl": "C3DCircle.spdl",
+"spdl": "C3DTetrahedron.spdl",
 "params": [
 {
 "sn": "radius",
 "label": "Radius",
 "type": "double",
 "default": 4,
-"uimin": 0.01,
-"uimax": 50.0,
 "anim": true,
 "desc": "Radius"
 }
@@ -30351,7 +30128,7 @@
 },
 "prim:Implicit/Square": {
 "type": "square",
-"spdl": "C3DCube.spdl",
+"spdl": "C3DSquare.spdl",
 "params": [
 {
 "sn": "length",
@@ -30694,22 +30471,19 @@
 {
 "param": "axisx",
 "opts": [
-"LabelWidth(20%",
-"40)"
+"LabelWidth(20%, 40)"
 ]
 },
 {
 "param": "axisy",
 "opts": [
-"LabelWidth(20%",
-"40)"
+"LabelWidth(20%, 40)"
 ]
 },
 {
 "param": "axisz",
 "opts": [
-"LabelWidth(20%",
-"40)"
+"LabelWidth(20%, 40)"
 ]
 }
 ]
@@ -30723,8 +30497,7 @@
 {
 "param": "primary_icon",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
@@ -30736,8 +30509,7 @@
 {
 "param": "shadow_icon",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
@@ -30746,22 +30518,19 @@
 {
 "param": "shadow_offsetX",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
 "param": "shadow_offsetY",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
 "param": "shadow_offsetZ",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
@@ -30773,22 +30542,19 @@
 {
 "param": "shadow_scaleX",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
 "param": "radius",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
 "param": "shadow_scaleZ",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
@@ -31114,22 +30880,19 @@
 {
 "param": "axisx",
 "opts": [
-"LabelWidth(20%",
-"40)"
+"LabelWidth(20%, 40)"
 ]
 },
 {
 "param": "axisy",
 "opts": [
-"LabelWidth(20%",
-"40)"
+"LabelWidth(20%, 40)"
 ]
 },
 {
 "param": "axisz",
 "opts": [
-"LabelWidth(20%",
-"40)"
+"LabelWidth(20%, 40)"
 ]
 }
 ]
@@ -31143,8 +30906,7 @@
 {
 "param": "primary_icon",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
@@ -31156,8 +30918,7 @@
 {
 "param": "shadow_icon",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
@@ -31166,22 +30927,19 @@
 {
 "param": "shadow_offsetX",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
 "param": "shadow_offsetY",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
 "param": "shadow_offsetZ",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
@@ -31193,22 +30951,19 @@
 {
 "param": "shadow_scaleX",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
 "param": "radius",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
 "param": "shadow_scaleZ",
 "opts": [
-"LabelWidth(40%",
-"120)"
+"LabelWidth(40%, 120)"
 ]
 },
 {
@@ -31317,18 +31072,18 @@
 },
 "prim:Implicit/Cylinder": {
 "type": "cylinder",
-"spdl": "C3DCone.spdl",
+"spdl": "C3DCylinder.spdl",
 "params": [
 {
 "sn": "radius",
-"label": "Base Radius",
+"label": "Radius",
 "type": "double",
 "default": 1,
 "min": 0.01,
 "uimin": 0.01,
 "uimax": 50.0,
 "anim": true,
-"desc": "Radius at the base of the cone"
+"desc": "Radius"
 },
 {
 "sn": "height",
@@ -31339,7 +31094,7 @@
 "uimin": 0.0,
 "uimax": 50.0,
 "anim": true,
-"desc": "Height of the cone"
+"desc": "Height"
 }
 ]
 },
@@ -31514,7 +31269,7 @@
 },
 "prim:Implicit/Sphere": {
 "type": "sphere",
-"spdl": "C3DCircle.spdl",
+"spdl": "C3DSphere.spdl",
 "params": [
 {
 "sn": "radius",
@@ -31745,15 +31500,13 @@
 {
 "param": "type",
 "opts": [
-"LabelWidth(50%",
-"120)"
+"LabelWidth(50%, 120)"
 ]
 },
 {
 "param": "dir",
 "opts": [
-"LabelWidth(50%",
-"120)"
+"LabelWidth(50%, 120)"
 ]
 },
 {
@@ -31927,15 +31680,13 @@
 {
 "param": "type",
 "opts": [
-"LabelWidth(50%",
-"120)"
+"LabelWidth(50%, 120)"
 ]
 },
 {
 "param": "dir",
 "opts": [
-"LabelWidth(50%",
-"120)"
+"LabelWidth(50%, 120)"
 ]
 },
 {
@@ -34323,7 +34074,7 @@
 {
 "param": "Path",
 "opts": [
-"nolabel"
+"NoLabel"
 ]
 },
 {
@@ -34398,7 +34149,7 @@
 {
 "param": "Path",
 "opts": [
-"nolabel"
+"NoLabel"
 ]
 },
 {
@@ -35544,7 +35295,7 @@
 {
 "param": "projplanelockaspect",
 "opts": [
-"alignright"
+"AlignRight"
 ]
 }
 ]
@@ -36171,7 +35922,7 @@
 {
 "param": "projplanelockaspect",
 "opts": [
-"alignright"
+"AlignRight"
 ]
 }
 ]
@@ -36797,7 +36548,7 @@
 {
 "param": "projplanelockaspect",
 "opts": [
-"alignright"
+"AlignRight"
 ]
 }
 ]
@@ -37424,7 +37175,7 @@
 {
 "param": "projplanelockaspect",
 "opts": [
-"alignright"
+"AlignRight"
 ]
 }
 ]
@@ -38050,7 +37801,7 @@
 {
 "param": "projplanelockaspect",
 "opts": [
-"alignright"
+"AlignRight"
 ]
 }
 ]
@@ -38677,7 +38428,7 @@
 {
 "param": "projplanelockaspect",
 "opts": [
-"alignright"
+"AlignRight"
 ]
 }
 ]
@@ -39303,7 +39054,7 @@
 {
 "param": "projplanelockaspect",
 "opts": [
-"alignright"
+"AlignRight"
 ]
 }
 ]
@@ -39930,7 +39681,7 @@
 {
 "param": "projplanelockaspect",
 "opts": [
-"alignright"
+"AlignRight"
 ]
 }
 ]
@@ -40556,7 +40307,7 @@
 {
 "param": "projplanelockaspect",
 "opts": [
-"alignright"
+"AlignRight"
 ]
 }
 ]
@@ -41183,7 +40934,7 @@
 {
 "param": "projplanelockaspect",
 "opts": [
-"alignright"
+"AlignRight"
 ]
 }
 ]
@@ -41793,21 +41544,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -41849,8 +41600,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -41939,16 +41689,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -41968,16 +41716,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -41991,24 +41737,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -42018,24 +41761,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -42654,21 +42394,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -42710,8 +42450,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -42800,16 +42539,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -42829,16 +42566,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -42852,24 +42587,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -42879,24 +42611,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -43514,21 +43243,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -43570,8 +43299,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -43660,16 +43388,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -43689,16 +43415,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -43712,24 +43436,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -43739,24 +43460,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -44375,21 +44093,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -44431,8 +44149,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -44521,16 +44238,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -44550,16 +44265,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -44573,24 +44286,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -44600,24 +44310,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -45242,21 +44949,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -45298,8 +45005,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -45388,16 +45094,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -45417,16 +45121,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -45440,24 +45142,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -45467,24 +45166,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -46110,21 +45806,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -46166,8 +45862,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -46256,16 +45951,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -46285,16 +45978,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -46308,24 +45999,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -46335,24 +46023,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -46970,21 +46655,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -47026,8 +46711,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -47116,16 +46800,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -47145,16 +46827,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -47168,24 +46848,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -47195,24 +46872,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -47831,21 +47505,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -47887,8 +47561,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -47977,16 +47650,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -48006,16 +47677,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -48029,24 +47698,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -48056,24 +47722,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -48691,21 +48354,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -48747,8 +48410,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -48837,16 +48499,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -48866,16 +48526,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -48889,24 +48547,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -48916,24 +48571,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -49552,21 +49204,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -49608,8 +49260,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -49698,16 +49349,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -49727,16 +49376,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -49750,24 +49397,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -49777,24 +49421,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -50412,21 +50053,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -50468,8 +50109,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -50558,16 +50198,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -50587,16 +50225,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -50610,24 +50246,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -50637,24 +50270,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -51273,21 +50903,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -51329,8 +50959,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -51419,16 +51048,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -51448,16 +51075,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -51471,24 +51096,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -51498,24 +51120,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -52133,21 +51752,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -52189,8 +51808,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -52279,16 +51897,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -52308,16 +51924,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -52331,24 +51945,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -52358,24 +51969,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -52994,21 +52602,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -53050,8 +52658,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -53140,16 +52747,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -53169,16 +52774,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -53192,24 +52795,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -53219,24 +52819,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -53854,21 +53451,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -53910,8 +53507,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -54000,16 +53596,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -54029,16 +53623,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -54052,24 +53644,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -54079,24 +53668,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -54715,21 +54301,21 @@
 {
 "param": "AmbientContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "DiffuseContribution",
 "opts": [
-"aligncenter",
+"AlignCenter",
 "continue"
 ]
 },
 {
 "param": "SpecularContribution",
 "opts": [
-"aligncenter"
+"AlignCenter"
 ]
 }
 ]
@@ -54771,8 +54357,7 @@
 {
 "param": "SelectiveInclusive",
 "opts": [
-"LabelWidth(40%",
-"100)"
+"LabelWidth(40%, 100)"
 ]
 },
 {
@@ -54861,16 +54446,14 @@
 "param": "LightAreaSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -54890,16 +54473,14 @@
 "param": "LightAreaLowSampU",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaLowSampV",
 "opts": [
 "50%",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]
@@ -54913,24 +54494,21 @@
 "param": "LightAreaXformSX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformSZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
@@ -54940,24 +54518,21 @@
 "param": "LightAreaXformRX",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRY",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 },
 {
 "param": "LightAreaXformRZ",
 "opts": [
 "AlignRight",
-"LabelWidth(15%",
-"20)"
+"LabelWidth(15%, 20)"
 ]
 }
 ]

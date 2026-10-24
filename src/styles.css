@@ -145,11 +145,16 @@ button, select, input { font-family: inherit; }
 .ppg-group-head { display: flex; gap: var(--ppg-row-gap); align-items: center; font-weight: bold; font-size: var(--ppg-font-pt); color: #1f1d1c; border-bottom: 1px solid var(--ppg-group-border); padding: 1px 2px; cursor: pointer; }
 .ppg-group-head .tri { width: 10px; font-size: 9px; } .ppg-group-head .spacer { flex: 1; } .ppg-group-pin { font-size: 9px; color: #666; }
 .ppg-group-body { padding: 2px 0 0 8px; }
-.ppg-hrow { display: flex; gap: 8px; } .ppg-hrow .ppg-row { flex: 1; }
+.ppg-hrow { display: flex; gap: 8px; align-items: center; } .ppg-hrow .ppg-row { flex: 1; min-width: 0; }
 .ppg-row { display: grid; grid-template-columns: 18px var(--ppg-label-w) 1fr; align-items: center; gap: var(--ppg-row-gap); margin: 2px 0; }
 .ppg-row label { color: var(--text); font-size: var(--ppg-font-pt); text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ppg-row.is-check { grid-template-columns: 18px 1fr 16px; } .ppg-row.is-check label { text-align: left; }
 .ppg-row.align-right.is-check { grid-template-columns: 18px var(--ppg-label-w) 16px; }
+/* Model SPDL layout opts (NoLabel / AlignCenter / NoSlider) — content rows; shell tokens stay UI-owned */
+.ppg-row.no-label { grid-template-columns: 18px 0 1fr; }
+.ppg-row.no-label label { display: none; }
+.ppg-row.align-center label { text-align: center; }
+.ppg-num.no-slider { grid-template-columns: 1fr; }
 .ppg-row input.val, .ppg-row input[type=text] { background: var(--ppg-val-bg); color: var(--ppg-val-fg); border: 1px solid #111; border-radius: 2px; padding: 1px 4px; font-size: var(--ppg-font-pt); height: var(--ppg-input-h); }
 .ppg-row input.val { width: 100%; }
 .ppg-row select { width: 100%; background: var(--ppg-val-bg); color: var(--ppg-val-fg); border: 1px solid #111; border-radius: 2px; padding: 1px 3px; font-size: var(--ppg-font-pt); height: 18px; }

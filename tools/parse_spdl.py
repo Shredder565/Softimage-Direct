@@ -59,6 +59,29 @@ def parse_param(name, body):
             p['label' if key == 'Name' else key.lower()] = parse_value(val)
     return p
 
+def split_layout_parts(s):
+    """Comma-split Softimage layout item args without breaking LabelWidth(80%, 10) or quoted strings."""
+    parts, cur, depth, in_q = [], [], 0, None
+    for ch in s:
+        if in_q:
+            cur.append(ch)
+            if ch == in_q: in_q = None
+            continue
+        if ch in ('"', "'"):
+            in_q = ch; cur.append(ch); continue
+        if ch == '(':
+            depth += 1; cur.append(ch); continue
+        if ch == ')':
+            depth = max(0, depth - 1); cur.append(ch); continue
+        if ch == ',' and depth == 0:
+            p = ''.join(cur).strip()
+            if p: parts.append(p)
+            cur = []; continue
+        cur.append(ch)
+    p = ''.join(cur).strip()
+    if p: parts.append(p)
+    return parts
+
 def parse_layout(body):
     """returns list of nodes: {'group':name,'items':[...]} | {'param':name, 'opts':[...]} | {'row':[...]} | {'tab':name,'items':[...]}"""
     out = []; i = 0
@@ -69,8 +92,8 @@ def parse_layout(body):
             out.append({m.group(1).lower(): m.group(2) or '', 'items': parse_layout(inner)}); i = end; continue
         m = re.match(r'\s*([^;{}]+);', body[i:])
         if m:
-            parts = [x.strip() for x in m.group(1).split(',') if x.strip()]
-            if parts and parts[0] not in ('mute',) and not parts[0].startswith('Tab') and not parts[0].startswith('Group'):
+            parts = split_layout_parts(m.group(1))
+            if parts and parts[0] not in ('mute',) and not parts[0].lower().startswith('inline') and not parts[0].startswith('Tab') and not parts[0].startswith('Group'):
                 node = {'param': parts[0].strip('"')}
                 if len(parts) > 1: node['opts'] = parts[1:]
                 out.append(node)
