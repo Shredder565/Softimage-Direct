@@ -116,6 +116,48 @@ else {
   });
   if (pePick.bad) fail.push(`PE pickOption still unimplemented: ${JSON.stringify(pePick.logs)}`);
   else ok.push('PE ≡ Lock Pivot / Volume / Edit Pivot wired (no not-implemented)');
+  // Desktop polish #2: Softimage-attested default Camera + manipaxismode plane handles + shaded pick prefs
+  const vpPol = await p.evaluate(() => {
+    const A = window.Application;
+    const cube = A.scene?.root?.children?.find?.(c => /cube/i.test(c.name)) ?? A.scene?.allObjects?.()?.find?.(o => o.primitive?.type === 'polymsh');
+    if (cube) A.select([cube]);
+    else {
+      try { A.run?.('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface' }); } catch { /* */ }
+      const objs = A.selectedObjects?.length ? A.selectedObjects : [...(A.scene?.allObjects?.() ?? [])].filter(o => o.primitive);
+      if (objs[0]) A.select([objs[0]]);
+    }
+    const tool = window.__tool;
+    if (tool) { tool.mode = 'translate'; tool.setMode?.('translate'); }
+    A.events?.emit?.('selection');
+    A.events?.emit?.('scene');
+    const polish = window.__uiAudit?.().viewportPolish ?? window.__vm?.viewportPolish?.();
+    return polish;
+  });
+  await p.waitForTimeout(200);
+  const vpPol2 = await p.evaluate(() => window.__vm?.viewportPolish?.() ?? window.__uiAudit?.().viewportPolish);
+  const pol = { ...vpPol, ...vpPol2 };
+  const near = (a, b, eps = 0.05) => Math.abs(a - b) <= eps;
+  if (!pol?.attestedDefaultCamera && !pol?.defaultCameraPos) fail.push(`viewportPolish missing: ${JSON.stringify(pol)}`);
+  else {
+    const want = pol.attestedDefaultCamera?.pos ?? pol.defaultCameraPos;
+    const got = pol.cameraPos;
+    const fov = pol.cameraFov ?? pol.attestedDefaultCamera?.fov;
+    if (!want || !got || !near(got[0], want[0]) || !near(got[1], want[1]) || !near(got[2], want[2])) {
+      fail.push(`default Camera pose expected ${JSON.stringify(want)} got ${JSON.stringify(got)}`);
+    } else ok.push(`default Camera pose (${want.join(',')})`);
+    if (fov != null && !near(fov, 53.6, 0.1)) fail.push(`default Camera FOV expected 53.6 got ${fov}`);
+    else ok.push('default Camera FOV 53.6');
+  }
+  const mode = pol?.siManipAxisMode ?? pol?.manipAxisMode;
+  if (mode !== 1) fail.push(`manipAxisMode factory expected 1 (Axes+Planes) got ${mode}`);
+  else ok.push('manipAxisMode=1 Axes+Planes (C3DTransformProps)');
+  if (pol?.siRectRaycast !== false && pol?.rectRaycast !== false) fail.push(`rectRaycast factory expected false got ${JSON.stringify(pol?.siRectRaycast ?? pol?.rectRaycast)}`);
+  else ok.push('rectRaycast=false shaded through-pick (C3DPrefsSelect)');
+  if (pol?.siUseManipulators === false || pol?.useManipulators === false) fail.push('useManipulators expected true');
+  else ok.push('useManipulators=true');
+  const planes = (pol?.gizmoChildKinds ?? []).filter(k => String(k).startsWith('plane:'));
+  if (planes.length < 3) fail.push(`plane handles missing on Translate gizmo (kinds=${JSON.stringify(pol?.gizmoChildKinds)})`);
+  else ok.push(`plane handles drawn (${planes.join(',')})`);
 }
 
 // Open floating views
