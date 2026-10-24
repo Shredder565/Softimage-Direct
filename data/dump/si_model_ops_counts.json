@@ -2,15 +2,19 @@
   "meta": {
     "source": [
       "data/dump/si_model_dump.json",
-      "data/dump/si_model_dump2.json"
+      "data/dump/si_model_dump2.json",
+      "internal/softimage-pc-dumps/model-extras/si_boolean_mesh_golden.json",
+      "internal/softimage-pc-dumps/model-extras/si_text_curves_detail.json",
+      "internal/softimage-pc-dumps/model-extras/si_emdl_delta_bytes.json"
     ],
-    "note": "Softimage count locks for OT-* / Boolean ops outside compare_topology. Direct CSG Boolean meshes differ (three-bvh); SI counts documented for exit checklist, not enforced as Direct equality."
+    "note": "Softimage count locks for OT-* / Boolean ops outside compare_topology. Boolean: Softimage mesh equality is NOT Direct CSG equality \u2014 path is three-bvh-csg (documented in scene2.ts booleanOp). Direct counts are regression-locked; SI counts documented from dump1/extras."
   },
   "boolean": {
     "Difference": {
       "dump": "si_model_dump.json",
       "leaf": "Modify/Poly. Mesh/Boolean/Difference",
       "used": "cube;sphere",
+      "csg_path": "ApplyTopoOp Boolean Difference \u2192 ApplyGenOp Bool Gen Difference \u2192 GeneratorOperator Boolean \u2192 booleanOp(three-bvh-csg SUBTRACTION)",
       "si": {
         "cube": {
           "points": 100,
@@ -21,12 +25,22 @@
           "polys": 64
         }
       },
-      "direct": "nontrivial CSG mesh on boolean object; typical ~134 pts / 191 polys (not SI-equal)"
+      "direct_lock": {
+        "npts": 134,
+        "npolys": 191,
+        "note": "Pinned from compare_model_ops; not Softimage-equal"
+      },
+      "si_extras_default_cube": {
+        "npts": 73,
+        "npolys": 67,
+        "note": "model-extras: default Cube(8)+Sphere; dump1 denser recipe 100/87"
+      }
     },
     "Union": {
       "dump": "si_model_dump.json",
       "leaf": "Modify/Poly. Mesh/Boolean/Union",
       "used": "cube;sphere",
+      "csg_path": "ApplyTopoOp Boolean Union \u2192 ApplyGenOp Bool Gen Union \u2192 booleanOp(ADDITION)",
       "si": {
         "cube": {
           "points": 113,
@@ -36,12 +50,22 @@
           "points": 58,
           "polys": 64
         }
+      },
+      "direct_lock": {
+        "npts": 99,
+        "npolys": 119,
+        "note": "Pinned from compare_model_ops; not Softimage-equal"
+      },
+      "si_extras_default_cube": {
+        "npts": 37,
+        "npolys": 27
       }
     },
     "Intersection": {
       "dump": "si_model_dump2.json",
       "leaf": "Modify/Poly. Mesh/Boolean/Intersect",
       "used": "cube;sphere",
+      "csg_path": "ApplyTopoOp Boolean Intersection \u2192 booleanOp(INTERSECTION)",
       "si": {
         "cube": {
           "points": 58,
@@ -52,7 +76,11 @@
           "polys": 64
         }
       },
-      "note": "dump2 counts look like undeformed inputs \u2014 treat SI intersect golden as weak"
+      "note": "dump2 counts look like undeformed inputs \u2014 treat SI intersect golden as weak",
+      "si_extras_default_cube": {
+        "npts": 63,
+        "npolys": 61
+      }
     }
   },
   "ot": {
@@ -157,33 +185,48 @@
         "points": 56,
         "polys": 54
       },
-      "note": "dump2 attached ICETree; mesh counts unchanged — Direct Slice Plane lock is no-throw + cube333 stable or sliced"
+      "note": "dump2 attached ICETree; mesh counts unchanged \u2014 Direct Slice Plane lock is no-throw + cube333 stable or sliced"
     },
     "DuplicateAlongCurve": {
       "dump": "si_model_dump.json",
       "ok": false,
-      "note": "Accepted headless gap: connection-set recipe fails under XSIBATCH -processing (needs mesh+curve). Direct maps DuplicatePolygonsAlongCurve → Duplicate Polygons."
+      "note": "Accepted headless gap: connection-set recipe fails under XSIBATCH -processing (needs mesh+curve). Direct maps DuplicatePolygonsAlongCurve \u2192 Duplicate Polygons."
     },
     "ExtrudeAlongCurve": {
       "dump": "si_model_dump.json",
       "ok": false,
-      "note": "Accepted headless gap: connection-set FAIL under -processing. Direct Extrude Along Curve wired (polygons + curve → Extrude Along Normal by curve length)."
+      "note": "Accepted headless gap: connection-set FAIL under -processing. Direct Extrude Along Curve wired (polygons + curve \u2192 Extrude Along Normal by curve length)."
     },
     "TurnPolygonInternalEdges": {
-      "note": "Softimage menu has no separate Turn Edges leaf; Turn Polygon Internal Edges → Spin Edge Forward (already locked)."
+      "note": "Softimage menu has no separate Turn Edges leaf; Turn Polygon Internal Edges \u2192 Spin Edge Forward (already locked)."
     }
   },
   "ref": {
     "emdl_delta_bytes": {
-      "status": "accepted_direct_json_om",
-      "note": "Softimage binary .emdl/.delta PC goldens not in dump pack. Direct ExportModel/ImportModel/ExportDelta/ImportDelta JSON OM locked by compare_ref_model (14/14) + compare_model_ops ExportImportDelta_Data."
+      "status": "direct_json_om_v1",
+      "format": "softimage-direct-emdl-json",
+      "delta_format": "softimage-direct-delta-json",
+      "version": 1,
+      "note": "Direct ExportModel/ExportDelta JSON OM with format+version; SI binary .emdl OLE fingerprint documented; ExportDelta headless gap accepted.",
+      "si_binary": {
+        "emdl_size": 32768,
+        "emdl_magic_hex": "D0CF11E0A1B11AE10000000000000000",
+        "emdl_magic": "CFBF/OLE compound (D0CF11E0)",
+        "delta": "accepted_headless_gap \u2014 ExportDelta failed under XSIBATCH -processing",
+        "source": "model-extras/si_emdl_delta_bytes.json"
+      }
     }
   },
   "text": {
     "font_npts": {
-      "status": "accepted_headless_font_gap",
-      "si_curves": { "pts": 230, "nbcurves": 8, "fitsize": 4 },
-      "note": "PR #23 model_get_text_check locks TextToCurveList params + Helvetiker band (npts>=8, nbcurves 8–12). Softimage install-font glyph point equality needs interactive font PPG — skipped under -processing."
+      "status": "softimage_golden_locked",
+      "si_curves": {
+        "pts": 230,
+        "nbcurves": 8,
+        "fitsize": 4
+      },
+      "direct": "TextGeomOperator font_source=Softimage uses src/data/si/text_softimage_curves.json (from si_text_golden Curves pts); model_get_text_check locks npts===230 && nbcurves===8. Per-curve ControlPoints replaced when model-extras/si_text_curves_detail.json lands.",
+      "note": "Install-font PPG interactive-only under -processing; Direct embeds Softimage PC point golden for default Softimage string."
     }
   }
 }

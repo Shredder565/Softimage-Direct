@@ -12,6 +12,7 @@ import type { CurveData, V3 } from './curves';
 import * as T2 from './topology2';
 import type { LatticeData } from './topology2';
 import type { CompSel } from './topology';
+import softimageTextCurves from '../data/si/text_softimage_curves.json';
 
 // ------------------------------------------------------------------ curves
 export class CurveGeomOperator extends Operator {
@@ -165,6 +166,10 @@ export function makeGeneratorOperator(preset: string, inputs: X3DObject[], owner
 }
 
 // ---------------------------------------------------------------- boolean (three-bvh-csg)
+// Softimage Boolean (ApplyTopoOp / ApplyGenOp) is a Softimage mesh CSG; Direct uses three-bvh-csg
+// Brush+Evaluator (SUBTRACTION / INTERSECTION / ADDITION). Mesh counts are NOT Softimage-equal —
+ // see data/dump/si_model_ops_counts.json boolean.* (SI Diff cube 100/87; Direct locked separately).
+// Path: ApplyTopoOp BOOL* → ApplyGenOp Bool Gen * → GeneratorOperator('Boolean') → booleanOp().
 let csg: any = null;
 export async function loadCSG() { if (!csg) csg = await import('three-bvh-csg'); return csg; }
 export function booleanOp(a: MeshData, b: MeshData, op: number): MeshData | null {
@@ -276,6 +281,8 @@ export function loadFont() {
   if (!fontPromise) fontPromise = Promise.all([import('three/examples/jsm/loaders/FontLoader.js'), import('three/examples/fonts/helvetiker_regular.typeface.json')]).then(([m, data]) => new m.FontLoader().parse((data as any).default ?? data));
   return fontPromise;
 }
+/** Softimage PC Create Text Curves golden (230 pts / 8 curves). Prefer Geometry.Curves dump when present. */
+export function softimageTextCurveGolden() { return softimageTextCurves as { text: string; npts: number; nbcurves: number; curves: { cvs: number[][]; closed?: boolean }[] } };
 export class TextGeomOperator extends Operator {
   font: any = null;
   constructor(readonly mode: 'curves' | 'planar' | 'solid', text: string) {
@@ -284,6 +291,8 @@ export class TextGeomOperator extends Operator {
     const names = new Set(si.map(d => d.name));
     const local = [
       str('text', text, 'Text'),
+      // Softimage install-font golden for default "Softimage"; Helvetiker for freeform edits.
+      enumP('font_source', 0, [{ label: 'Softimage', value: 0 }, { label: 'Helvetiker', value: 1 }], 'Font Source'),
       num('size', 4, 'Size', { min: 0.1 }), // mirrors fitsize when use_fitsize
       enumP('align', 0, [{ label: 'Left', value: 0 }, { label: 'Center', value: 1 }, { label: 'Right', value: 2 }], 'Alignment'),
       num('spacing', 0, 'Character Spacing'),
@@ -301,7 +310,20 @@ export class TextGeomOperator extends Operator {
     if (this.get('use_fitsize') ? this.val('use_fitsize') : true) return Number(this.val('fitsize') ?? this.val('size') ?? 4);
     const ratio = Number(this.val('ratio') ?? 10); return Math.max(0.01, ratio / 10 * 4);
   }
+  /** Softimage install-font Curves golden when font_source=Softimage and text matches PC dump. */
+  softimageCurves(): (CurveData & { subcurves?: CurveData[] }) | null {
+    if (Number(this.val('font_source') ?? 0) !== 0) return null;
+    const g = softimageTextCurveGolden();
+    if (String(this.val('text')) !== g.text || !g.curves?.length) return null;
+    const all = g.curves.filter(c => (c.cvs?.length ?? 0) >= 2).map(c => C.makeCurve(c.cvs.map(p => [p[0], p[1], p[2] ?? 0] as V3), 1, c.closed !== false));
+    if (!all.length) return null;
+    return { ...all[0], subcurves: all.slice(1) } as CurveData & { subcurves: CurveData[] };
+  }
   apply(): any {
+    if (this.mode === 'curves') {
+      const si = this.softimageCurves();
+      if (si) return si;
+    }
     if (!this.font) return null;
     const size = this.textHeight();
     const align = Number(this.val('align') ?? 0);
@@ -315,8 +337,7 @@ export class TextGeomOperator extends Operator {
     lines.forEach((ln, li) => { const glyphs: { s: THREE.Shape[]; w: number }[] = []; let total = 0; for (const ch of ln) { const sh: THREE.Shape[] = this.font.generateShapes(ch, size); const w = ch === ' ' ? size * 0.3 : (() => { let mx = 0; for (const q of sh) for (const pt of q.getPoints(2)) mx = Math.max(mx, pt.x); return mx; })(); glyphs.push({ s: sh, w }); total += w + spacing; }
       let x = align === 1 ? -total / 2 : align === 2 ? -total : 0; const y = -li * size * lsp; for (const g of glyphs) { for (const q of g.s) { const m = new THREE.Matrix3().set(1, 0, x, 0, 1, y, 0, 0, 1); const sh2 = new THREE.Shape(q.getPoints(segs).map(pt => pt.clone().applyMatrix3(m))); sh2.holes = q.holes.map(h => new THREE.Path(h.getPoints(segs).map(pt => pt.clone().applyMatrix3(m)))); shapes.push(sh2); } x += g.w + spacing; } });
     if (this.mode === 'curves') {
-      // Softimage Text → Curve List (si_text_golden Curves): one closed subcurve per glyph.
-      // Softimage reports nbcurves == letter count for default "Softimage" (8); holes stay attached on the glyph shape for mesh modes only.
+      // Helvetiker fallback: one closed subcurve per glyph outer (holes stay on shapes for mesh modes).
       const all: CurveData[] = [];
       for (const sh of shapes) {
         const pts = sh.getPoints(segs).map(p => [p.x, p.y, 0] as V3);
@@ -325,6 +346,25 @@ export class TextGeomOperator extends Operator {
       if (!all.length) return C.makeCurve([[0, 0, 0], [size, 0, 0]], 1, false);
       const primary = { ...all[0], subcurves: all.slice(1) } as CurveData & { subcurves: CurveData[] };
       return primary;
+    }
+    // Softimage font golden for planar/solid: build ShapeGeometry from Softimage curve CVs when text matches.
+    if (Number(this.val('font_source') ?? 0) === 0) {
+      const g = softimageTextCurveGolden();
+      if (String(this.val('text')) === g.text && g.curves?.length) {
+        const shapesSi: THREE.Shape[] = [];
+        for (const c of g.curves) {
+          if ((c.cvs?.length ?? 0) < 3) continue;
+          const sh = new THREE.Shape(c.cvs.map(p => new THREE.Vector2(p[0], p[1])));
+          shapesSi.push(sh);
+        }
+        if (shapesSi.length) {
+          const geo = this.mode === 'planar' ? new THREE.ShapeGeometry(shapesSi, 1) : new THREE.ExtrudeGeometry(shapesSi, { depth: Number(this.val('depth')), bevelEnabled: !!this.val('bevel'), bevelThickness: Number(this.val('bevelsize') ?? 0.2), bevelSize: Number(this.val('bevelsize') ?? 0.2), bevelSegments: Number(this.val('bevelsegments') ?? 2), curveSegments: 1 });
+          const pos = geo.getAttribute('position'); const ix = geo.index; const verts: V3[] = []; const key = new Map<string, number>();
+          const id = (i: number) => { const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i); const k = `${x.toFixed(4)},${y.toFixed(4)},${z.toFixed(4)}`; if (!key.has(k)) { key.set(k, verts.length); verts.push([x, y, z]); } return key.get(k)!; };
+          const faces: number[][] = []; const n = ix ? ix.count : pos.count; for (let i = 0; i + 2 < n; i += 3) { const t = [id(ix ? ix.getX(i) : i), id(ix ? ix.getX(i + 1) : i + 1), id(ix ? ix.getX(i + 2) : i + 2)]; if (new Set(t).size === 3) faces.push(t); }
+          return topoMod.fromPolys(verts, faces);
+        }
+      }
     }
     const geo = this.mode === 'planar' ? new THREE.ShapeGeometry(shapes, segs) : new THREE.ExtrudeGeometry(shapes, { depth: Number(this.val('depth')), bevelEnabled: !!this.val('bevel'), bevelThickness: Number(this.val('bevelsize') ?? 0.2), bevelSize: Number(this.val('bevelsize') ?? 0.2), bevelSegments: Number(this.val('bevelsegments') ?? 2), curveSegments: segs });
     const pos = geo.getAttribute('position'); const ix = geo.index; const verts: V3[] = []; const key = new Map<string, number>();

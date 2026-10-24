@@ -40,6 +40,14 @@ const convert = await run('ConvertToRefModel', { FileName: 'BallRef_harness' });
 check('ConvertToRefModel', !String(convert).startsWith('ERR'), convert);
 const isRef = await page.evaluate(() => !!(window.Application.scene.find('BallModel')?.ref));
 check('ref flag set', isRef);
+const emdlOm = await page.evaluate(() => {
+  try {
+    const t = localStorage.getItem('si.refmodel.BallRef_harness');
+    const j = JSON.parse(t || 'null');
+    return { format: j?.format, version: j?.version, nodes: j?.nodes?.length, bytes: t?.length, magicNote: 'SI binary .emdl is OLE/CFBF (D0CF11E0); Direct uses softimage-direct-emdl-json' };
+  } catch (e) { return { error: String(e) }; }
+});
+check('ExportModel JSON OM format', emdlOm?.format === 'softimage-direct-emdl-json' && Number(emdlOm?.version) === 1 && (emdlOm?.nodes ?? 0) >= 1, JSON.stringify(emdlOm));
 
 const res0 = await run('SetResolutionOfRefModels', { resolution: 0 });
 const kids0 = await page.evaluate(() => window.Application.scene.find('BallModel')?.children?.length ?? -1);

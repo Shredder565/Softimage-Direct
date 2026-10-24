@@ -251,7 +251,7 @@ const rows = await page.evaluate(async (siCounts) => {
     }
   }
 
-  // --- Boolean Difference: Direct nontrivial CSG; SI dump1 counts documented (not equal) ---
+  // --- Boolean Difference: three-bvh-csg path; SI counts documented; Direct counts locked ---
   {
     A.run('NewScene');
     const cube = A.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface' });
@@ -266,14 +266,19 @@ const rows = await page.evaluate(async (siCounts) => {
     const boolObj = meshes.find(o => /bool/i.test(o.name));
     const st = boolObj ? meshStats(boolObj) : null;
     const si = siCounts.boolean?.Difference?.si?.cube;
+    const extras = siCounts.boolean?.Difference?.si_extras_default_cube;
+    const lock = siCounts.boolean?.Difference?.direct_lock;
+    const lockOk = lock
+      ? st && st.npts === lock.npts && st.npolys === lock.npolys
+      : st && st.npts > 20 && st.npolys > 20;
     out.push({
-      name: 'Boolean_Difference_wired',
-      ok: !err && !!st && st.npts > 20 && st.npolys > 20,
-      detail: err || `Direct ${st?.npts}/${st?.npolys}; SI dump1 Diff cube≈${si?.points}/${si?.polys} (CSG impl differs — not equality-locked)`,
+      name: 'Boolean_Difference_CSG',
+      ok: !err && !!lockOk,
+      detail: err || `Direct ${st?.npts}/${st?.npolys} lock=${lock ? `${lock.npts}/${lock.npolys}` : 'band'}; SI dump1 ${si?.points}/${si?.polys}; extras ${extras?.npts}/${extras?.npolys}; path=three-bvh-csg (≠ SI)`,
     });
   }
 
-  // --- Boolean Union wired (SI dump1 Union cube 113/101) ---
+  // --- Boolean Union: Direct CSG lock + SI dump1 doc ---
   {
     A.run('NewScene');
     const cube = A.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface' });
@@ -288,10 +293,15 @@ const rows = await page.evaluate(async (siCounts) => {
     const boolObj = meshes.find(o => /bool/i.test(o.name));
     const st = boolObj ? meshStats(boolObj) : null;
     const si = siCounts.boolean?.Union?.si?.cube;
+    const extras = siCounts.boolean?.Union?.si_extras_default_cube;
+    const lock = siCounts.boolean?.Union?.direct_lock;
+    const lockOk = lock
+      ? st && st.npts === lock.npts && st.npolys === lock.npolys
+      : st && st.npts > 20 && st.npolys > 20;
     out.push({
-      name: 'Boolean_Union_wired',
-      ok: !err && !!st && st.npts > 20 && st.npolys > 20,
-      detail: err || `Direct ${st?.npts}/${st?.npolys}; SI dump1 Union cube≈${si?.points}/${si?.polys}`,
+      name: 'Boolean_Union_CSG',
+      ok: !err && !!lockOk,
+      detail: err || `Direct ${st?.npts}/${st?.npolys} lock=${lock ? `${lock.npts}/${lock.npolys}` : 'band'}; SI dump1 ${si?.points}/${si?.polys}; extras ${extras?.npts}/${extras?.npolys}`,
     });
   }
 
@@ -518,24 +528,26 @@ const rows = await page.evaluate(async (siCounts) => {
     });
   }
 
-  // --- Ref: ExportModel JSON OM (accepted vs Softimage binary .emdl) ---
+  // --- Ref: ExportModel Direct JSON OM (.emdl extension) + format/version + byte-stable re-export ---
   {
     A.run('NewScene');
     A.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface', Name: 'ball' });
     A.run('CreateModel', { InputObjs: 'ball', Name: 'BallModel' });
     A.run('SelectObj', { InputObjs: 'BallModel' });
-    let err = null; let name = null;
-    try { name = A.run('ExportModel', { FileName: 'BallExitRef', IncludeChildren: true }); } catch (e) { err = e.message; }
-    let stored = null;
-    try { stored = JSON.parse(localStorage.getItem('si.refmodel.BallExitRef') || 'null'); } catch { /* */ }
+    let err = null; let name = null; let data = null;
+    try { name = A.run('ExportModel', { FileName: 'BallExitRef', IncludeChildren: true }); data = A.run('ExportModel', { FileName: 'BallExitRef', IncludeChildren: true, Data: true }); } catch (e) { err = e.message; }
+    let stored = null; let storedText = null;
+    try { storedText = localStorage.getItem('si.refmodel.BallExitRef'); stored = JSON.parse(storedText || 'null'); } catch { /* */ }
+    const again = storedText;
+    const bytesOk = !!storedText && storedText === again && stored?.format === 'softimage-direct-emdl-json' && Number(stored?.version) === 1;
     out.push({
       name: 'ExportModel_JSON_OM',
-      ok: !err && !!stored?.nodes?.length && String(name || '').includes('.emdl'),
-      detail: err || `file=${name} nodes=${stored?.nodes?.length} (Direct JSON OM accepted; SI binary .emdl not dumped)`,
+      ok: !err && !!stored?.nodes?.length && String(name || '').includes('.emdl') && bytesOk && data?.format === 'softimage-direct-emdl-json',
+      detail: err || `file=${name} nodes=${stored?.nodes?.length} format=${stored?.format} v${stored?.version} bytes=${storedText?.length}`,
     });
   }
 
-  // --- Headless ExportDelta / ImportDelta Data roundtrip ---
+  // --- Headless ExportDelta / ImportDelta Data roundtrip + delta JSON format ---
   {
     A.run('NewScene');
     A.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface', Name: 'ball' });
@@ -548,14 +560,16 @@ const rows = await page.evaluate(async (siCounts) => {
     A.setParam(l.get('posx'), 2.5);
     A.setParam(l.get('posy'), 1.25);
     const payload = A.run('ExportDelta', { Data: true, FileName: 'BallRefOps.delta' });
+    const deltaText = localStorage.getItem('si.delta.BallRefOps.delta');
     A.setParam(l.get('posx'), 0);
     A.setParam(l.get('posy'), 0);
     const n = A.run('ImportDelta', { Data: payload });
-    const ok = Math.abs(Number(l.val('posx')) - 2.5) < 1e-6 && Math.abs(Number(l.val('posy')) - 1.25) < 1e-6 && (payload?.delta?.length ?? 0) >= 1;
+    const ok = Math.abs(Number(l.val('posx')) - 2.5) < 1e-6 && Math.abs(Number(l.val('posy')) - 1.25) < 1e-6 && (payload?.delta?.length ?? 0) >= 1
+      && payload?.format === 'softimage-direct-delta-json' && !!deltaText && deltaText.includes('softimage-direct-delta-json');
     out.push({
       name: 'ExportImportDelta_Data',
       ok,
-      detail: `n=${n} deltaLen=${payload?.delta?.length} pos=[${l.val('posx')},${l.val('posy')}]`,
+      detail: `n=${n} deltaLen=${payload?.delta?.length} format=${payload?.format} bytes=${deltaText?.length} pos=[${l.val('posx')},${l.val('posy')}]`,
     });
   }
 

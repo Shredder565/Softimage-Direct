@@ -163,13 +163,22 @@ export function registerModelCommands2(app: App) {
     const made: X3DObject[] = [curve]; for (const [i, p] of [pts[0], pts[pts.length - 1]].entries()) { const c = makeImplicit(app.scene.uniqueName(r.name + (i ? '_endCtrl' : '_startCtrl')), 'Cube'); c.primitive!.set('size', Number(a.Scale) || 1); const l = c.kinematics.local; l.set('posx', p[0]); l.set('posy', p[1]); l.set('posz', p[2]); addObject(app, c); made.push(c); }
     app.select(made); return curve;
   } });
-  // ---- Referenced models and deltas (model subtrees are stored in the exported-model JSON format)
+  // ---- Referenced models and deltas (Direct JSON OM — Softimage-shaped; binary .emdl is SI-only)
+  const EMDL_FORMAT = 'softimage-direct-emdl-json';
+  const EMDL_VERSION = 1;
   const exportModel = (model: X3DObject) => {
     const nodes: any[] = []; const walk = (o: X3DObject, parent: string | null) => { const l = o.kinematics.local; const n: any = { name: o.name, type: o instanceof Model ? '#model' : o.type, parent, xf: { pos: [l.val('posx'), l.val('posy'), l.val('posz')], rot: [l.val('rotx'), l.val('roty'), l.val('rotz')], scl: [l.val('sclx'), l.val('scly'), l.val('sclz')], rotorder: l.val('rotorder') ?? 0 } };
       const m = o.primitive?.mesh(); if (o.primitive?.type === 'polymsh' && m) { n.mesh = { points: Array.from(m.positions), polys: m.polygons }; const d = o.material?.surface?.val('diffuse'); if (d) n.material = { name: o.material!.name, diffuse: d }; } if (o.type === 'bone') n.length = o.val('length'); const c = o.primitive?.curve(); if (c) n.curve = { degree: c.degree, closed: c.closed, cps: c.cvs.flatMap(v => [v[0], v[1], v[2]]) }; if (o.type === 'implicit') n.type = String(o.primitive?.val('shape') ?? 'Cube').toLowerCase();
       nodes.push(n); for (const ch of o.children) walk(ch, o.name); };
-    walk(model, null); return { preset: model.name, file: model.name + '.emdl', model: model.name, nodes };
+    walk(model, null);
+    return {
+      format: EMDL_FORMAT, version: EMDL_VERSION,
+      softimage_compat: { binary_emdl: false, note: 'Direct JSON OM; Softimage binary .emdl fingerprints live in PC dump pack when available' },
+      preset: model.name, file: model.name + '.emdl', model: model.name, nodes,
+    };
   };
+  /** Canonical JSON bytes for Direct .emdl/.delta roundtrip locks (stable key order via JSON.stringify of built object). */
+  const emdlBytes = (data: any) => JSON.stringify(data);
   const refOf = (o: X3DObject | undefined) => o && (o as any).ref ? (o as any).ref as { file: string; resolution: number; resolutions: string[]; data?: any } : null;
   const modelOf = (app: App) => { let o: any = app.selectedObjects[0] ?? app.selection[0]; while (o && !(o instanceof Model)) o = o.parentObj ?? o.parent; return o as Model | undefined; };
   const loadData = async (file: string): Promise<any> => { const ls = localStorage.getItem('si.refmodel.' + file); if (ls) return JSON.parse(ls); const preset = Object.values(PRESET_MODELS).includes(file) ? file : Object.entries(PRESET_MODELS).find(([k]) => k === file)?.[1]; if (!preset) throw new Error(`Referenced model file "${file}" not found`); return JSON.parse(await fetchMaybeGzip(`si/models/${preset}.json.gz`)); };
@@ -177,7 +186,7 @@ export function registerModelCommands2(app: App) {
   /** .emdl here is the exported-model JSON (the format tools/si_export_models.js writes from the real Softimage); a file picked by the user is cached under its name. */
   const pickFile = (accept: string): Promise<{ name: string; text: string } | null> => new Promise(res => { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = accept; inp.onchange = () => { const f = inp.files?.[0]; if (!f) { res(null); return; } f.text().then(t => res({ name: f.name.replace(/\.(emdl|json)(\.json)?$/i, ''), text: t })); }; inp.click(); setTimeout(() => res(null), 120000); });
   const download = (name: string, text: string) => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' })); a.download = name; a.click(); };
-  app.register({ name: 'ExportModel', label: 'Export Model', category: 'Model', args: [{ name: 'InputObj', default: '' }, { name: 'FileName', default: '' }, { name: 'IncludeChildren', default: true }], undoable: false, execute(app, a) { const m = (a.InputObj ? app.targets(a.InputObj)[0] : undefined) ?? modelOf(app) ?? app.selectedObjects[0]; if (!m) throw new Error('Select a model'); const data = exportModel(m); const name = (a.FileName || m.name) + '.emdl'; localStorage.setItem('si.refmodel.' + (a.FileName || m.name), JSON.stringify(data)); download(name, JSON.stringify(data)); app.logMsg('info', `Exported ${m.name} (${data.nodes.length} nodes) to ${name}`); return name; } });
+  app.register({ name: 'ExportModel', label: 'Export Model', category: 'Model', args: [{ name: 'InputObj', default: '' }, { name: 'FileName', default: '' }, { name: 'IncludeChildren', default: true }, { name: 'Data', default: false }], undoable: false, execute(app, a) { const m = (a.InputObj ? app.targets(a.InputObj)[0] : undefined) ?? modelOf(app) ?? app.selectedObjects[0]; if (!m) throw new Error('Select a model'); const data = exportModel(m); const text = emdlBytes(data); const name = (a.FileName || m.name) + '.emdl'; localStorage.setItem('si.refmodel.' + (a.FileName || m.name), text); if (!a.Data) download(name, text); app.logMsg('info', `Exported ${m.name} (${data.nodes.length} nodes) to ${name} [${EMDL_FORMAT} v${EMDL_VERSION}]`); return a.Data ? data : name; } });
   app.register({ name: 'ImportModel', label: 'Import Model', category: 'Model', args: [{ name: 'FileName', default: '' }, { name: 'Parent', default: '' }], undoable: false, execute(app, a) { const go = (data: any) => { const m = app.run('ImportPresetModelData', { Data: data, Name: data.model }); app.events.emit('scene'); return m; }; if (a.FileName) return loadData(a.FileName).then(go).catch(e => app.logMsg('error', `ImportModel: ${e?.message ?? e}`)); return pickFile('.emdl,.json').then(f => { if (!f) return null; const data = JSON.parse(f.text); localStorage.setItem('si.refmodel.' + f.name, f.text); return go(data); }).catch(e => app.logMsg('error', `ImportModel: ${e?.message ?? e}`)); } });
   app.register({ name: 'AddRefModelResolution', label: 'Add Resolution', category: 'Model', args: [{ name: 'InputObjs', default: '' }, { name: 'FileName', default: '' }], undoable: false, execute(app, a) { const m = modelOf(app); const r = refOf(m); if (!m || !r) throw new Error('Select a referenced model'); const add = (file: string) => { if (!r.resolutions.includes(file)) r.resolutions.push(file); app.logMsg('info', `${m.name}: resolution ${r.resolutions.length} = ${file}`); app.events.emit('scene'); }; if (a.FileName) { add(a.FileName); return null; } return pickFile('.emdl,.json').then(f => { if (!f) return null; localStorage.setItem('si.refmodel.' + f.name, f.text); add(f.name); return null; }); } });
   app.register({ name: 'ImportRefModels', label: 'New Referenced Model', category: 'Model', args: [{ name: 'FileName', default: '' }, { name: 'Parent', default: '' }], undoable: false, execute(app, a) {
@@ -207,7 +216,7 @@ export function registerModelCommands2(app: App) {
     const cur = exportModel(m); const delta: any[] = [];
     for (const n of cur.nodes) { const b = base?.nodes?.find((x: any) => x.name === n.name); if (!b || JSON.stringify(b.xf) !== JSON.stringify(n.xf)) delta.push({ name: n.name, xf: n.xf }); }
     const params = Object.fromEntries([...((m.properties.find(x => x.type === 'delta') as any)?.changes ?? new Map())]);
-    return { model: m.name, file: r.file, delta, params };
+    return { format: 'softimage-direct-delta-json', version: EMDL_VERSION, model: m.name, file: r.file, delta, params };
   };
   const applyDeltaPayload = (app: App, m: Model, d: any) => {
     let n = 0;

@@ -1,1 +1,82 @@
-{"meta":{"softimage":"13.2.163.0","script":"si_emdl_delta_bytes_dump.js","purpose":"ExportModel .emdl + ExportDelta .delta size and first-64-byte hex magic","mode":"XSIBATCH -processing","out":"%USERPROFILE%\\Documents\\softimage_dump_factory\\model\\si_emdl_delta_bytes.json","ref_dir":"C:\\Users\\neil\\Documents\\softimage_dump_factory\\model\\ref"},"cases":{"create_model":{"ok":false,"error":"Invalid argument specified._$S_2028_$E_"},"export_model":{"path":"C:\\Users\\neil\\Documents\\softimage_dump_factory\\model\\ref\\DumpModel.emdl","ok":true},"convert_to_ref":{"ok":true,"children":[{"name":"cube","type":"polymsh"}]},"add_delta":{"ok":true},"mutate_for_delta":{"ok":true,"mutate_error":"Invalid procedure call or argument"},"export_delta":{"path":"C:\\Users\\neil\\Documents\\softimage_dump_factory\\model\\ref\\DumpModel.delta","ok":false,"attempts":[{"i":0,"error":"Invalid procedure call or argument"},{"i":1,"error":"Invalid procedure call or argument"},{"i":2,"error":"Invalid argument specified._$S_2028_$E_"},{"i":3,"error":"Invalid argument specified._$S_2028_$E_"},{"i":4,"error":"Invalid argument specified._$S_2028_$E_"}],"error":"Invalid argument specified._$S_2028_$E_"}},"emdl":{"path":"C:\\Users\\neil\\Documents\\softimage_dump_factory\\model\\ref\\DumpModel.emdl","exists":true,"size":32768,"magic_hex":"D0CF11E0A1B11AE1000000000000000000000000000000003E000400FEFF0C000600000000000000010000000100000001000000000000000010000002000000","magic_ascii":"........................>.......................................","read_via":"ADODB.Stream+VBArray","error":null},"delta":{"path":"C:\\Users\\neil\\Documents\\softimage_dump_factory\\model\\ref\\DumpModel.delta","exists":false,"size":null,"magic_hex":null,"magic_ascii":null,"read_via":null,"error":null},"errors":[]}
+{
+  "meta": {
+    "softimage": "13.2.163.0",
+    "script": "si_emdl_delta_bytes_dump.js",
+    "purpose": "ExportModel .emdl + ExportDelta .delta size and first-64-byte hex magic",
+    "mode": "XSIBATCH -processing",
+    "out": "%USERPROFILE%\\Documents\\softimage_dump_factory\\model\\si_emdl_delta_bytes.json",
+    "ref_dir": "C:\\Users\\neil\\Documents\\softimage_dump_factory\\model\\ref"
+  },
+  "cases": {
+    "create_model": {
+      "ok": false,
+      "error": "Invalid argument specified._$S_2028_$E_"
+    },
+    "export_model": {
+      "path": "C:\\Users\\neil\\Documents\\softimage_dump_factory\\model\\ref\\DumpModel.emdl",
+      "ok": true
+    },
+    "convert_to_ref": {
+      "ok": true,
+      "children": [
+        {
+          "name": "cube",
+          "type": "polymsh"
+        }
+      ]
+    },
+    "add_delta": {
+      "ok": true
+    },
+    "mutate_for_delta": {
+      "ok": true,
+      "mutate_error": "Invalid procedure call or argument"
+    },
+    "export_delta": {
+      "path": "C:\\Users\\neil\\Documents\\softimage_dump_factory\\model\\ref\\DumpModel.delta",
+      "ok": false,
+      "attempts": [
+        {
+          "i": 0,
+          "error": "Invalid procedure call or argument"
+        },
+        {
+          "i": 1,
+          "error": "Invalid procedure call or argument"
+        },
+        {
+          "i": 2,
+          "error": "Invalid argument specified._$S_2028_$E_"
+        },
+        {
+          "i": 3,
+          "error": "Invalid argument specified._$S_2028_$E_"
+        },
+        {
+          "i": 4,
+          "error": "Invalid argument specified._$S_2028_$E_"
+        }
+      ],
+      "error": "Invalid argument specified._$S_2028_$E_"
+    }
+  },
+  "emdl": {
+    "path": "C:\\Users\\neil\\Documents\\softimage_dump_factory\\model\\ref\\DumpModel.emdl",
+    "exists": true,
+    "size": 32768,
+    "magic_hex": "D0CF11E0A1B11AE1000000000000000000000000000000003E000400FEFF0C000600000000000000010000000100000001000000000000000010000002000000",
+    "magic_ascii": "........................>.......................................",
+    "read_via": "ADODB.Stream+VBArray",
+    "error": null
+  },
+  "delta": {
+    "path": "C:\\Users\\neil\\Documents\\softimage_dump_factory\\model\\ref\\DumpModel.delta",
+    "exists": false,
+    "size": null,
+    "magic_hex": null,
+    "magic_ascii": null,
+    "read_via": null,
+    "error": null
+  },
+  "errors": []
+}
