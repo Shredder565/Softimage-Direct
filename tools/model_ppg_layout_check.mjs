@@ -33,6 +33,12 @@ const KEYS = [
   ['ops', 'birail'],
   ['ops', 'CurveListToMesh'],
   ['ops', 'booleansrftopoop'],
+  ['ops', 'extrude2profs'],
+  ['ops', 'revolution'],
+  ['ops', 'filletcrv'],
+  ['ops', 'loft'],
+  ['ops', 'extrusion'],
+  ['ops', 'birail'],
   ['prims', 'shape:Polygon Mesh/Torus'],
   ['prims', 'shape:Polygon Mesh/Disc'],
 ];
@@ -42,6 +48,9 @@ const SPDL_EXPECT = {
   taperop: 'taperop.spdl',
   bulgeop: 'C3DBulgeOp.spdl',
   bevelop: 'C3DBevelComponentOp.spdl',
+  extrude2profs: 'ExtrusionTwoProfiles.spdl',
+  revolution: 'revolutionAxisOp.spdl',
+  filletcrv: 'filletcrv.spdl',
 };
 
 function walk(ns, fn) {

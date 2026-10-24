@@ -42,7 +42,10 @@
     "C3DCurveListToMeshOp.spdl",
     "LoftOp.spdl",
     "extrusionAxisOp.spdl",
-    "birailop.spdl"
+    "birailop.spdl",
+    "ExtrusionTwoProfiles.spdl",
+    "revolutionAxisOp.spdl",
+    "filletcrv.spdl"
   ],
   "wired_opdefs": {
     "C3DBevelComponentOp.spdl": "bevelop",
@@ -63,6 +66,9 @@
     "C3DCurveListToMeshOp.spdl": "CurveListToMesh",
     "LoftOp.spdl": "loft",
     "extrusionAxisOp.spdl": "extrusion",
-    "birailop.spdl": "birail"
+    "birailop.spdl": "birail",
+    "ExtrusionTwoProfiles.spdl": "extrude2profs",
+    "revolutionAxisOp.spdl": "revolution",
+    "filletcrv.spdl": "filletcrv"
   }
 }
