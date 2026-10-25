@@ -32,7 +32,8 @@ const passPath = dump('si_render_passes.json');
 const regionPath = dump('si_render_region.json');
 const fbPath = dump('si_render_framebuffer_enums.json');
 const deepenPath = dump('si_render_prefs_region_deepen.json');
-for (const [n, p] of [['prefs', prefsPath], ['material', matPath], ['passes', passPath], ['region', regionPath], ['framebuffer', fbPath]]) {
+const beyondPath = dump('materials_beyond_phong.json');
+for (const [n, p] of [['prefs', prefsPath], ['material', matPath], ['passes', passPath], ['region', regionPath], ['framebuffer', fbPath], ['beyond', beyondPath]]) {
   if (!p) { console.error('missing dump ' + n); process.exit(2); }
 }
 
@@ -42,6 +43,7 @@ const passes = JSON.parse(fs.readFileSync(passPath, 'utf8'));
 const region = JSON.parse(fs.readFileSync(regionPath, 'utf8'));
 const fb = JSON.parse(fs.readFileSync(fbPath, 'utf8'));
 const deepen = deepenPath ? JSON.parse(fs.readFileSync(deepenPath, 'utf8')) : null;
+const beyond = JSON.parse(fs.readFileSync(beyondPath, 'utf8'));
 
 const diffs = [];
 const notes = [];
@@ -93,7 +95,7 @@ const r = await page.evaluate(() => {
   A.run('CreatePass', { Name: 'Pass' });
   const after = A.scene.passes.map(passSnap);
 
-  // Material / Phong
+  // Material / Phong + beyond-Phong stock presets
   A.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface' });
   const cube = A.scene.find('cube') || [...A.scene.allObjects()].find(o => /cube/i.test(o.name));
   A.select([cube]);
@@ -107,6 +109,40 @@ const r = await page.evaluate(() => {
   if (surf) {
     for (const p of surf.params) { shVals[p.name] = p.value; shLabels[p.name] = p.label; }
   }
+  const phongConnections = m?.portConnections
+    ? Object.fromEntries([...m.portConnections.entries()])
+    : {};
+
+  const snapShader = (preset) => {
+    A.run('NewScene');
+    A.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface' });
+    const c = A.scene.find('cube') || [...A.scene.allObjects()].find(o => /cube/i.test(o.name));
+    A.select([c]);
+    let err = null;
+    try { A.run('SIApplyShader', { PresetObj: preset, InputObjs: [c] }); } catch (e) { err = String(e?.message || e); }
+    const mm = c?.material;
+    const ss = mm?.surface;
+    const vals = {};
+    if (ss) for (const p of ss.params) vals[p.name] = p.value;
+    const can = A.commands.get('SIApplyShader')?.canRun?.({ PresetObj: preset, InputObjs: [c] });
+    return {
+      preset,
+      err,
+      canRun: can !== false,
+      matType: mm?.type,
+      shType: ss?.type,
+      vals,
+      connections: mm?.portConnections ? Object.fromEntries([...mm.portConnections.entries()]) : {},
+      matLabels: mm ? Object.fromEntries(mm.params.map(p => [p.name, p.label])) : {},
+    };
+  };
+
+  const beyondOk = ['Phong', 'Blinn', 'Lambert', 'Constant', 'Cooktorrance', 'Strauss', 'Anisotropic'];
+  const beyondFail = ['Architectural', 'mia_Material', 'mi_Metallic_Paint'];
+  const beyondSnaps = {};
+  for (const p of beyondOk) beyondSnaps[p] = snapShader(p);
+  const lockSnaps = {};
+  for (const p of beyondFail) lockSnaps[p] = snapShader(p);
 
   // Prefs rendering page via preferenceSets when available
   let renderPrefs = A.renderPrefs || null;
@@ -131,6 +167,8 @@ const r = await page.evaluate(() => {
     roMap, before, after, nBefore: before.length, nAfter: after.length,
     matType: m?.type, matLabels, matVals,
     shType: surf?.type, shVals, shLabels,
+    phongConnections,
+    beyondSnaps, lockSnaps,
     renderPrefs,
     sceneMat: A.scene.materials[0]?.name,
   };
@@ -213,7 +251,11 @@ else {
   }
 }
 // Parameter.Name labels on Material
-const wantMatLabels = { Name: 'Name', wrapu: 'Wrap U', wrapv: 'Wrap V', envmode: 'Mode' };
+const wantMatLabels = {
+  Name: 'Name', wrapu: 'Wrap U', wrapv: 'Wrap V', envmode: 'Mode',
+  surface: 'surface', shadow: 'shadow', photon: 'photon',
+  TrackedShader: 'Shader', ImageClipName: 'Image Clip[2]',
+};
 for (const [sn, lab] of Object.entries(wantMatLabels)) {
   if (r.matLabels[sn] !== lab) diffs.push(`Material.${sn} label Direct=${r.matLabels[sn]} want ${lab}`);
 }
@@ -222,6 +264,78 @@ else notes.push('Material classname Material');
 if (Number(r.matVals.wrapu) !== 10497 || Number(r.matVals.wrapv) !== 10497)
   diffs.push(`Material wrap Direct ${r.matVals.wrapu}/${r.matVals.wrapv} PC 10497`);
 else notes.push('Material wrapu/wrapv=10497');
+
+// Softimage connects surface/shadow/photon → shader.out (materials_beyond_phong)
+for (const port of ['surface', 'shadow', 'photon']) {
+  if (r.phongConnections?.[port] !== 'out')
+    diffs.push(`Material connection ${port} Direct=${r.phongConnections?.[port]} want out`);
+}
+if (r.phongConnections?.surface === 'out') notes.push('Material connections surface/shadow/photon→out');
+
+// ---- Materials beyond Phong (dump-backed) ----
+const approxEq = (a, b, eps = 1e-3) => {
+  if (a === b) return true;
+  if (typeof a === 'boolean' || typeof b === 'boolean') return Boolean(a) === Boolean(b);
+  if (typeof a === 'number' && typeof b === 'number') return Math.abs(a - b) <= eps;
+  if (Array.isArray(a) && Array.isArray(b)) {
+    const n = Math.min(a.length, b.length, 3);
+    for (let i = 0; i < n; i++) if (Math.abs(Number(a[i]) - Number(b[i])) > eps) return false;
+    return true;
+  }
+  return String(a) === String(b);
+};
+const skipSn = new Set(['name', 'lights', 'out', 'bump', 'ambience', 'mode']);
+const keyScalars = {
+  Phong: ['shiny', 'diffuse_inuse', 'specular_inuse', 'index_of_refraction'],
+  Blinn: ['roughness', 'ior', 'specular_inuse', 'diffuse_inuse'],
+  Lambert: ['diffuse_inuse', 'reflect_inuse', 'index_of_refraction', 'trans_glossy'],
+  Constant: ['color', 'transp'],
+  Cooktorrance: ['roughness', 'ior', 'specular_inuse'],
+  Strauss: ['smoothness', 'metalness', 'diffuse_inuse'],
+  Anisotropic: ['shiny_u', 'shiny_v', 'surfderiv_mode', 'specular_inuse'],
+};
+const wantType = {
+  Phong: 'Phong', Blinn: 'Blinn', Lambert: 'Lambert', Constant: 'Constant',
+  Cooktorrance: 'Cooktorrance', Strauss: 'Strauss', Anisotropic: 'Anisotropic',
+};
+const pcOk = beyond.summary?.ok || [];
+const pcFail = beyond.summary?.fail || [];
+if (JSON.stringify(pcOk) !== JSON.stringify(['Phong', 'Blinn', 'Lambert', 'Constant', 'Cooktorrance', 'Strauss', 'Anisotropic']))
+  notes.push(`PC summary.ok=${JSON.stringify(pcOk)}`);
+for (const label of pcOk) {
+  const row = beyond.materials?.[label];
+  const pcParams = row?.assigned?.shaders?.[0]?.params;
+  const snap = r.beyondSnaps?.[label];
+  if (!row?.apply?.ok) { diffs.push(`PC ${label} apply not ok`); continue; }
+  if (!snap || snap.err) { diffs.push(`Direct ${label} apply err=${snap?.err}`); continue; }
+  if (snap.matType !== 'Material') diffs.push(`Direct ${label} matType ${snap.matType}`);
+  if (snap.shType !== wantType[label]) diffs.push(`Direct ${label} shType ${snap.shType} want ${wantType[label]}`);
+  if (!pcParams) { diffs.push(`PC ${label} shader params missing`); continue; }
+  for (const sn of (keyScalars[label] || [])) {
+    if (!(sn in pcParams) || pcParams[sn] == null) continue;
+    if (!(sn in snap.vals)) { diffs.push(`${label} missing param ${sn}`); continue; }
+    if (!approxEq(snap.vals[sn], pcParams[sn]))
+      diffs.push(`${label}.${sn} Direct=${JSON.stringify(snap.vals[sn])} PC=${JSON.stringify(pcParams[sn])}`);
+  }
+  // Connection ports on every stock material
+  for (const port of ['surface', 'shadow', 'photon']) {
+    if (snap.connections?.[port] !== 'out')
+      diffs.push(`${label} connection ${port}=${snap.connections?.[port]}`);
+  }
+  // Material Parameter.Name for connection slots
+  if (snap.matLabels?.surface !== 'surface') diffs.push(`${label} Material.surface label ${snap.matLabels?.surface}`);
+  notes.push(`${label} OM OK type=${snap.shType}`);
+}
+// LOCK invent: Softimage headless FAIL presets must not apply in Direct
+for (const label of ['Architectural', 'mia_Material', 'mi_Metallic_Paint']) {
+  const snap = r.lockSnaps?.[label];
+  const pc = beyond.materials?.[label] || beyond.materials?.[label === 'mia_Material' ? 'Architectural' : label];
+  if (snap?.canRun) diffs.push(`LOCK invent ${label} canRun true`);
+  if (snap && !snap.err && snap.shType) diffs.push(`LOCK invent ${label} applied type=${snap.shType}`);
+  else notes.push(`LOCK invent ${label} (PC fail=${!(pc?.apply?.ok)})`);
+}
+if (pcFail?.length) notes.push(`PC FAIL LOCK ${pcFail.join(',')}`);
+notes.push(`beyond dump ${beyondPath}`);
 
 // ---- Region LOCK ----
 const regionFound = (region.probes || []).some(p => p.path?.includes('RenderRegion') && p.found);
@@ -237,5 +351,5 @@ if (deepenW != null && Number(r.roMap.imagewidth) !== Number(deepenW))
   diffs.push(`deepen imagewidth Direct=${r.roMap.imagewidth} PC=${deepenW}`);
 else if (deepenW != null) notes.push(`deepen region_like imagewidth=${deepenW}`);
 
-console.log(JSON.stringify({ ok: diffs.length === 0, diffs, notes: notes.slice(0, 40), softimage: prefs.meta?.softimage }, null, 2));
+console.log(JSON.stringify({ ok: diffs.length === 0, diffs, notes: notes.slice(0, 60), softimage: prefs.meta?.softimage }, null, 2));
 process.exit(diffs.length ? 1 : 0);
