@@ -505,6 +505,9 @@
     "ppgTitleText": "#E4E6EA",
     "ppgChromeFace": "#ABA8A6",
     "ppgChromeMid": "#9E9B99",
+    "ppgTitleHoverIdle": "#8B8A8A",
+    "ppgTitleHoverClose": "#2F2E2E",
+    "ppgTitleHoverMid": "#8B8A8A",
     "dialogBtnWDlu": 50,
     "dialogBtnHDlu": 14
   },
@@ -512,8 +515,84 @@
     "status": "DUMP_READY",
     "wire": "COLORREF_TITLE_CHROME",
     "hover": {
-      "status": "LOCK",
-      "note": "Harvest checklist PPG:titlebar_hover / PPG:close_btn_hover unfulfilled \u2014 no invent hover paint"
+      "status": "DUMP_READY",
+      "wire": "COLORREF_HOVER",
+      "note": "closer95 Desktop GetPixel: idle_title #8B8A8A, hover_close_zone #2F2E2E, hover_title_mid #8B8A8A (mid equals idle \u2014 no mid-title hover paint change). Close-zone token replaces invent yellow close hover.",
+      "source": {
+        "samples_txt": "internal/softimage-pc-dumps/closer95/ppg_hover_getpixel_samples.txt",
+        "png_idle": "media/softimage-95pct-closer/40-ppg-idle.png",
+        "png_hover_close": "media/softimage-95pct-closer/41-ppg-hover-close.png",
+        "png_hover_title": "media/softimage-95pct-closer/42-ppg-hover-title.png",
+        "tour": "docs/softimage-95pct-closer-tour.md",
+        "hwnd_win": [
+          325,
+          309,
+          1085,
+          959
+        ],
+        "dump_mirror": "data/dump/ppg_hover_getpixel_samples.txt"
+      },
+      "samples": [
+        {
+          "role": "idle_title",
+          "colorref": "0x008A8A8B",
+          "rgb": [
+            139,
+            138,
+            138
+          ],
+          "hex": "#8B8A8A",
+          "offset": [
+            40,
+            8
+          ],
+          "screen": [
+            365,
+            317
+          ]
+        },
+        {
+          "role": "hover_close_zone",
+          "colorref": "0x002E2E2F",
+          "rgb": [
+            47,
+            46,
+            46
+          ],
+          "hex": "#2F2E2E",
+          "offset": [
+            740,
+            8
+          ],
+          "screen": [
+            1065,
+            317
+          ]
+        },
+        {
+          "role": "hover_title_mid",
+          "colorref": "0x008A8A8B",
+          "rgb": [
+            139,
+            138,
+            138
+          ],
+          "hex": "#8B8A8A",
+          "offset": [
+            380,
+            8
+          ],
+          "screen": [
+            705,
+            317
+          ]
+        }
+      ],
+      "tokens": {
+        "idleTitle": "#8B8A8A",
+        "hoverClose": "#2F2E2E",
+        "hoverTitleMid": "#8B8A8A"
+      }
     },
     "tokens": {
       "titleFill": "#607388",
@@ -866,7 +945,8 @@
     "Script Editor factory font/size/tab/linenum from C3DPrefsScriptEditor.spdl; view defaultsize 485\u00d7550.",
     "Soft dialogs: PE majority 8pt MS Sans Serif; OK/Cancel 50\u00d714 DLU \u2192 ~75\u00d722 px.",
     "XSI.exe RT_DIALOG 394 is the Property Page TODO stub (title/metrics/strings only \u2014 no invent Layout).",
-    "PPG title/chrome COLORREF from Desktop modules-gdi GetPixel (DUMP_READY); hover paint stays LOCK.",
+    "PPG title/chrome COLORREF from Desktop modules-gdi GetPixel (DUMP_READY).",
+    "PPG title hover GetPixel from closer95 (DUMP_READY): idle #8B8A8A / close #2F2E2E / mid #8B8A8A.",
     "Shared PPG shell only \u2014 Model-specific opdef layouts owned by Model PPG worker."
   ]
 }

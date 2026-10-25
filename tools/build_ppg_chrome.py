@@ -145,13 +145,15 @@ def build() -> dict:
     # Softimage PPG body metrics observed across SPDL-driven pages + PE host frames.
     # Font: uiut host frames use 11pt Arial; classic dialogs / genppg use 8pt MS Sans Serif.
     # Pixel chrome for owner-draw bitmaps is taken from RT_BITMAP (not DLU alone).
-    # Title/chrome COLORREF: Desktop DUMP_READY modules-gdi harvest (no invent; hover LOCK).
+    # Title/chrome COLORREF: modules-gdi; hover GetPixel: closer95 (no invent).
     colorref = None
     cr_tokens: dict = {}
+    hover_tokens: dict = {}
     if PPG_COLORREF.exists():
         colorref = json.load(open(PPG_COLORREF))
         COLORREF_OUT.write_text(json.dumps(colorref, indent=2) + "\n")
         cr_tokens = colorref.get("tokens") or {}
+        hover_tokens = (colorref.get("hover") or {}).get("tokens") or {}
     if cr_tokens.get("titleFill") and cr_tokens.get("titleText"):
         title_fill = cr_tokens["titleFill"]
         title_text = cr_tokens["titleText"]
@@ -162,6 +164,15 @@ def build() -> dict:
         ppg_title = [title_fill, title_fill]
     else:
         raise SystemExit("si_ppg_title_colorref.json tokens required (dump-attested title/chrome COLORREF)")
+    if not (
+        hover_tokens.get("idleTitle") == "#8B8A8A"
+        and hover_tokens.get("hoverClose") == "#2F2E2E"
+        and hover_tokens.get("hoverTitleMid") == "#8B8A8A"
+    ):
+        raise SystemExit(
+            "si_ppg_title_colorref.json hover tokens required "
+            "(closer95 idle #8B8A8A / close #2F2E2E / mid #8B8A8A)"
+        )
     tokens = {
         "fontFamily": 'Arial, "MS Sans Serif", Tahoma, sans-serif',
         "fontPtHost": 11,
@@ -191,6 +202,9 @@ def build() -> dict:
         "ppgTitleText": title_text,
         "ppgChromeFace": chrome_face,
         "ppgChromeMid": chrome_mid,
+        "ppgTitleHoverIdle": hover_tokens["idleTitle"],
+        "ppgTitleHoverClose": hover_tokens["hoverClose"],
+        "ppgTitleHoverMid": hover_tokens["hoverTitleMid"],
         "fontPtDialog": 8,
         "dialogBtnWDlu": 50,
         "dialogBtnHDlu": 14,
@@ -437,7 +451,8 @@ def build() -> dict:
             "Script Editor factory font/size/tab/linenum from C3DPrefsScriptEditor.spdl; view defaultsize 485×550.",
             "Soft dialogs: PE majority 8pt MS Sans Serif; OK/Cancel 50×14 DLU → ~75×22 px.",
             "XSI.exe RT_DIALOG 394 is the Property Page TODO stub (title/metrics/strings only — no invent Layout).",
-            "PPG title/chrome COLORREF from Desktop modules-gdi GetPixel (DUMP_READY); hover paint stays LOCK.",
+            "PPG title/chrome COLORREF from Desktop modules-gdi GetPixel (DUMP_READY).",
+            "PPG title hover GetPixel from closer95 (DUMP_READY): idle #8B8A8A / close #2F2E2E / mid #8B8A8A.",
             "Shared PPG shell only — Model-specific opdef layouts owned by Model PPG worker.",
         ],
     }

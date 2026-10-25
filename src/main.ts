@@ -321,7 +321,7 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     renderToolbarChrome: renderToolbarChromeAudit(),
     // PE menu 234 Render MCP flyouts (Desktop press-hold missed; menus.json already wired)
     renderMcpFlyouts: renderMcpFlyoutsAudit(),
-    // Softimage Desktop LOCK close — region HWND DUMP_READY; PPG title COLORREF WIRED; hover/OpenView LOCK; Anim ExecCmd+paint DONE
+    // Softimage Desktop LOCK close — region HWND DUMP_READY; PPG title COLORREF WIRED; hover GetPixel DUMP_READY; OpenView LOCK; Anim ExecCmd+paint DONE
     directLockDesktop: directLockDesktopAudit(),
     ppgTitleColorref: ppgTitleColorrefAudit(),
     // Softimage floating Anim editors — ExecuteCommand([]) open path (OpenView LOCK; client paint HWND_PNG DONE)

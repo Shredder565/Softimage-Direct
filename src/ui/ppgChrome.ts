@@ -41,6 +41,16 @@ export function applyPpgChrome(host?: HTMLElement | null): PpgChrome {
     set(el, '--ppg-title-fg', (t as { ppgTitleText?: string }).ppgTitleText ?? '#E4E6EA');
     set(el, '--ppg-chrome-face', (t as { ppgChromeFace?: string }).ppgChromeFace ?? '#ABA8A6');
     set(el, '--ppg-chrome-mid', (t as { ppgChromeMid?: string }).ppgChromeMid ?? '#9E9B99');
+    const hoverTok = (t as {
+      ppgTitleHoverIdle?: string;
+      ppgTitleHoverClose?: string;
+      ppgTitleHoverMid?: string;
+    });
+    if (hoverTok.ppgTitleHoverClose) {
+      set(el, '--ppg-title-hover-idle', hoverTok.ppgTitleHoverIdle ?? '#8B8A8A');
+      set(el, '--ppg-title-hover-close', hoverTok.ppgTitleHoverClose);
+      set(el, '--ppg-title-hover-mid', hoverTok.ppgTitleHoverMid ?? hoverTok.ppgTitleHoverIdle ?? '#8B8A8A');
+    }
     set(el, '--ppg-nav-w', `${PPG_CHROME.bitmaps.inspNav.peSize?.[0] ?? 71}px`);
     set(el, '--ppg-tools-w', `${PPG_CHROME.bitmaps.tools.peSize?.[0] ?? 66}px`);
     const xp = (PPG_CHROME as any).explorer?.tokens;
@@ -148,7 +158,16 @@ export function ppgChromeAudit(root?: ParentNode | Document): Record<string, unk
     ppgChromeFace?: string;
     ppgChromeMid?: string;
   };
-  const titleCr = (PPG_CHROME as { titleColorref?: { status?: string; wire?: string; hover?: { status?: string }; tokens?: Record<string, string> } }).titleColorref;
+  const titleCr = (PPG_CHROME as {
+    titleColorref?: {
+      status?: string;
+      wire?: string;
+      hover?: { status?: string; wire?: string; tokens?: Record<string, string> };
+      tokens?: Record<string, string>;
+    };
+  }).titleColorref;
+  const hoverTok = titleCr?.hover?.tokens;
+  const cssHoverClose = cs.getPropertyValue('--ppg-title-hover-close').trim();
   return {
     softimage: PPG_CHROME.softimage,
     hostDialog: PPG_CHROME.canonicalHostDialog,
@@ -168,17 +187,25 @@ export function ppgChromeAudit(root?: ParentNode | Document): Record<string, unk
       status: titleCr?.status ?? null,
       wire: titleCr?.wire ?? null,
       hover: titleCr?.hover?.status ?? 'LOCK',
+      hoverWire: titleCr?.hover?.wire ?? null,
       titleFill: tok.ppgTitleGradient?.[0] ?? null,
       titleText: tok.ppgTitleText ?? null,
       chromeFace: tok.ppgChromeFace ?? null,
       chromeMid: tok.ppgChromeMid ?? null,
+      hoverIdle: hoverTok?.idleTitle ?? (tok as { ppgTitleHoverIdle?: string }).ppgTitleHoverIdle ?? null,
+      hoverClose: hoverTok?.hoverClose ?? (tok as { ppgTitleHoverClose?: string }).ppgTitleHoverClose ?? null,
+      hoverTitleMid: hoverTok?.hoverTitleMid ?? (tok as { ppgTitleHoverMid?: string }).ppgTitleHoverMid ?? null,
       cssTitleTop: cs.getPropertyValue('--ppg-title-top').trim(),
       cssTitleFg: cs.getPropertyValue('--ppg-title-fg').trim(),
       cssChromeFace: cs.getPropertyValue('--ppg-chrome-face').trim(),
+      cssHoverClose,
       tokensApplied:
         cs.getPropertyValue('--ppg-title-top').trim().toLowerCase() === String(tok.ppgTitleGradient?.[0] ?? '').toLowerCase() &&
         cs.getPropertyValue('--ppg-title-fg').trim().toLowerCase() === String(tok.ppgTitleText ?? '').toLowerCase() &&
         cs.getPropertyValue('--ppg-chrome-face').trim().toLowerCase() === String(tok.ppgChromeFace ?? '').toLowerCase(),
+      hoverApplied:
+        cssHoverClose.toLowerCase() === String(hoverTok?.hoverClose ?? (tok as { ppgTitleHoverClose?: string }).ppgTitleHoverClose ?? '').toLowerCase() &&
+        cssHoverClose.toLowerCase() === '#2f2e2e',
     },
     hosts: Object.keys(PPG_CHROME.hosts),
     explorer: {
