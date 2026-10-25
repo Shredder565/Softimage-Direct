@@ -13,6 +13,7 @@ import { TEXTURE_NODES, MATERIAL_PRESETS } from '../core/shaders';
 import { openSiMenu, SI_MENUS } from './si';
 import { PRESET_MODELS } from '../commands/presets';
 import { animChrome, fcurveMenuLabels, mixerMenuLabels } from './animChrome';
+import iceViewChrome from '../data/si/ice_view_chrome.json';
 
 const el = (tag: string, cls = '', text = '') => { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; };
 const btn = (l: string, t: string, fn: (e: MouseEvent) => void) => { const b = el('button', 'xp-btn', l) as HTMLButtonElement; b.title = t; b.onclick = fn; return b; };
@@ -420,8 +421,12 @@ export function animationMixer(app: App, host: HTMLElement) {
 export { Property };
 
 // ================================================================ ICE Tree (node editor for ICETree operators)
+// Softimage icetree.xsivw attests name/category/defaultsize — compound catalogs stay dump-gated (no invent).
 export function iceTree(app: App, host: HTMLElement) {
   const root = el('div', 'rtree icetree'); host.appendChild(root);
+  const iceDef = (iceViewChrome as { views?: Record<string, { category?: string; defaultsize?: number[] }> }).views?.['ICE Tree'];
+  if (iceDef?.category) root.dataset.siCategory = iceDef.category;
+  if (iceDef?.defaultsize) root.dataset.siDefaultsize = iceDef.defaultsize.join(',');
   const treeOf = (): ICETreeOperator | null => { const sel = app.selection[app.selection.length - 1] as any; if (sel instanceof ICETreeOperator) return sel; const o: X3DObject | null = app.selectedObjects.find(x => x.primitive?.operators.some(op => op instanceof ICETreeOperator)) ?? (sel?.parent?.parent instanceof X3DObject ? sel.parent.parent : null); return (o?.primitive?.operators.slice().reverse().find((op: any) => op instanceof ICETreeOperator) as ICETreeOperator) ?? null; };
   const cats = ICE_CATEGORIES();
   const nodesMenu = () => [...[...cats.entries()].map(([c, types]) => ({ label: c, items: types.map(t => ({ label: t })) })), { separator: true }, { label: 'Compounds', items: ICE_PRESETS.map(p => ({ label: p })) }];

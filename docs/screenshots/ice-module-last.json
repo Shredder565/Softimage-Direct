@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "diffs": [],
+  "notes": [
+    "loaded tops /workspace/src/data/si/ice_module_mcp_tops.json",
+    "softimage 13.2.163.0",
+    "ICE in modulesExtracted",
+    "ICE in module-select",
+    "ICE tops OK: Get, Particles, Deform, Kinematics, CrowdFX",
+    "ICE MCP buttons match dump",
+    "Anchor-to-Delete LOCK",
+    "OpenICETreeView wired",
+    "ICE Tree xsivw defaultsize 50,50,850,550",
+    "live ICE toolbar 16 buttons",
+    "live ICE groups match MENU 303 tops",
+    "live ICE MCP buttons present",
+    "Anchor-to-Delete unbound (14 slots)",
+    "SwitchToolbar Target=4 → ICE",
+    "ICE Tree shell open 850x504",
+    "ICE Tree category=ICE",
+    "host dataset defaultsize 50,50,850,550"
+  ],
+  "softimage": "13.2.163.0",
+  "menu_id": 303,
+  "tops": [
+    "Get",
+    "Particles",
+    "Deform",
+    "Kinematics",
+    "CrowdFX"
+  ]
+}

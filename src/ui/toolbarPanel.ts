@@ -101,7 +101,8 @@ export function openMenu(app: App, items: MenuItem[], x: number, y: number, path
   for (const it of items) {
     if (it.separator) { const s = document.createElement('div'); s.className = 'menu-sep'; m.appendChild(s); continue; }
     const row = document.createElement('div'); row.className = 'menu-item'; row.textContent = it.label ?? '';
-    const bound = it.id !== undefined ? CMDS[String(it.id)] : undefined;
+    // Anchor-to-Delete: Softimage runtime plugin fill — ignore PE id→cmd collisions (MENU 303).
+    const bound = (!isRuntimeAnchor(it) && it.id !== undefined) ? CMDS[String(it.id)] : undefined;
     const args = bound ? buildArgs(it, bound, [...path, it.label ?? ''], app.module) : {};
     // Softimage MenuItem.GetEnabled → Command.GetEnabled (Ghidra). Split wired vs context-grey.
     const supported = bound ? commandSupported(app, bound.cmd, args) : false;
@@ -111,11 +112,22 @@ export function openMenu(app: App, items: MenuItem[], x: number, y: number, path
       row.onpointerenter = () => { const r = row.getBoundingClientRect(); openMenu(app, it.items!, r.right - 2, r.top - 2, [...path, it.label!], level + 1); };
     } else {
       if (!enabled) row.classList.add('disabled');
-      row.title = bound
-        ? `${bound.cmd}(${bound.args.map(a => a[0] + (a[1] !== null && a[1] !== '' ? '=' + JSON.stringify(a[1]) : '')).join(', ')})${!supported ? '  — not implemented yet' : enabled ? '' : '  — disabled (selection/context)'}`
-        : 'no command mapped (tool/toggle)';
+      row.title = isRuntimeAnchor(it)
+        ? 'Softimage runtime Anchor-to-Delete (ICE Flow / CrowdFX) — LOCK, no invent compounds'
+        : bound
+          ? `${bound.cmd}(${bound.args.map(a => a[0] + (a[1] !== null && a[1] !== '' ? '=' + JSON.stringify(a[1]) : '')).join(', ')})${!supported ? '  — not implemented yet' : enabled ? '' : '  — disabled (selection/context)'}`
+          : 'no command mapped (tool/toggle)';
       row.onpointerenter = () => closeMenus(level + 1);
-      row.onclick = () => { if (!enabled) return; closeMenus(); runMenuItem(app, it, bound, [...path, it.label!]); };
+      row.onclick = () => {
+        if (isRuntimeAnchor(it)) {
+          closeMenus();
+          app.logMsg('info', `${[...path, it.label].join(' > ')}: Softimage runtime plugin slot (LOCK)`);
+          return;
+        }
+        if (!enabled) return;
+        closeMenus();
+        runMenuItem(app, it, bound, [...path, it.label!]);
+      };
     }
     m.appendChild(row);
   }
@@ -124,6 +136,11 @@ export function openMenu(app: App, items: MenuItem[], x: number, y: number, path
   m.style.left = Math.min(x, window.innerWidth - mw - 4) + 'px';
   m.style.top = Math.min(y, window.innerHeight - mh - 4) + 'px';
   openMenus[level] = m;
+}
+
+/** Softimage PE MENU 303 runtime slots — filled by ICE Flow / CrowdFX plugins; PE id may collide (e.g. 41646). */
+function isRuntimeAnchor(it: MenuItem) {
+  return (it.label ?? '') === 'Anchor-to-Delete';
 }
 
 function buildArgs(it: MenuItem, bound: { cmd: string; name: string; args: [string, any][] }, path: string[], module?: string) {
@@ -167,7 +184,7 @@ export function menuStatus(app: App, module = 'Model') {
     for (const it of items) {
       if (it.separator) continue;
       if (it.items) { walk(it.items, [...path, it.label!]); continue; }
-      const bound = it.id !== undefined ? CMDS[String(it.id)] : undefined;
+      const bound = (!isRuntimeAnchor(it) && it.id !== undefined) ? CMDS[String(it.id)] : undefined;
       const args = bound ? buildArgs(it, bound, [...path, it.label ?? ''], module) : {};
       const impl = bound ? commandSupported(app, bound.cmd, args) : false;
       const en = bound ? commandEnabled(app, bound.cmd, args) : false;
@@ -207,6 +224,20 @@ export function getEnableParity(app: App) {
   };
 }
 export function runMenuPath(app: App, module: string, path: string, label: string) {
-  const walk = (items: MenuItem[], p: string[]): MenuItem | null => { for (const it of items) { if (it.separator) continue; if (it.items) { const r = walk(it.items, [...p, it.label!]); if (r) return r; continue; } if (p.join(' > ') === path && it.label === label) { runMenuItem(app, it, it.id !== undefined ? CMDS[String(it.id)] : undefined, [...p, label]); return it; } } return null; };
+  const walk = (items: MenuItem[], p: string[]): MenuItem | null => {
+    for (const it of items) {
+      if (it.separator) continue;
+      if (it.items) { const r = walk(it.items, [...p, it.label!]); if (r) return r; continue; }
+      if (p.join(' > ') === path && it.label === label) {
+        if (isRuntimeAnchor(it)) {
+          app.logMsg('info', `${[...p, label].join(' > ')}: Softimage runtime plugin slot (LOCK)`);
+          return it;
+        }
+        runMenuItem(app, it, it.id !== undefined ? CMDS[String(it.id)] : undefined, [...p, label]);
+        return it;
+      }
+    }
+    return null;
+  };
   return walk(MENUS[module] ?? [], []);
 }
