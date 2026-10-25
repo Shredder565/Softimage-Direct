@@ -129,29 +129,49 @@ function consumeMixerPcDump(deep, label) {
   const steps = deep.steps || [];
   const storeNull = steps.filter(s => /^StoreAction/.test(s.name || '') && (s.result === 'null' || s.result == null));
   if (storeNull.length) expectedGaps.push(`PC StoreAction null handles (${storeNull.length})`);
+  const storeOk = steps.filter(s => /^StoreAction/.test(s.name || '') && s.ok && s.result && s.result !== 'null');
+  if (storeOk.length) deepNote += `; StoreAction ok ${storeOk.map(s => s.result).join(',')}`;
   const sel = steps.find(s => s.name === 'SelectClips');
   if (sel && sel.ok === false) expectedGaps.push(`PC SelectClips: ${sel.error || 'failed'}`);
+  if (sel && sel.ok === true && Array.isArray(sel.selected) && sel.selected.length >= 2) {
+    deepNote += `; SelectClips ${sel.selected.length}`;
+  }
   const bridge = steps.find(s => /Bridge/i.test(s.name || ''));
   if (bridge && bridge.ok === false) expectedGaps.push(`PC ${bridge.name}: ${bridge.error || 'failed'}`);
   const tw = steps.find(s => /TWTransition/i.test(s.name || ''));
   if (tw && tw.ok === false) expectedGaps.push(`PC ${tw.name}: ${tw.error || 'failed'}`);
+  const addTr = steps.find(s => s.name === 'AddTransition');
+  if (addTr && addTr.ok && (addTr.result === 'null' || addTr.result == null)) {
+    expectedGaps.push('PC AddTransition returned null (no Transition objects)');
+  }
   const cols = deep.mixer_collections || {};
-  if (cols && Object.values(cols).every(v => v == null)) expectedGaps.push('PC mixer_collections null (needs clip sel)');
+  if (cols && Object.keys(cols).length && Object.values(cols).every(v => v == null)) {
+    expectedGaps.push('PC mixer_collections null');
+  }
+  // Desktop pass2: clips schema (Clip classname + track) attested even when transitions empty
+  const clips = deep.clips || [];
+  if (Array.isArray(clips) && clips.length) {
+    const bad = clips.filter(c => c && c.classname && c.classname !== 'Clip');
+    if (bad.length) diffs.push(`PC clip classname ${bad.map(c => c.classname).join(',')}`);
+    else deepNote += `; PC clips ${clips.length} Clip schema`;
+    if (!(r.sources?.length >= 2)) diffs.push('PC Desktop clips present but Direct sources < 2');
+  }
   // TransitionCollection classname attested even when empty
   const tc = deep.transitions;
   if (tc && typeof tc === 'object' && !Array.isArray(tc)) {
     if (tc.classname && tc.classname !== 'TransitionCollection') {
       diffs.push(`PC transitions classname ${tc.classname}`);
     } else if (tc.classname === 'TransitionCollection') {
-      expectedGaps.push('PC TransitionCollection empty (LOCK until clip sel)');
+      expectedGaps.push('PC TransitionCollection empty');
     }
   }
   if (Array.isArray(deep.transition_list) && deep.transition_list.length === 0) {
-    expectedGaps.push('PC transition_list empty');
+    expectedGaps.push('PC transition_list empty (LOCK — AddTransition null under Desktop pass2)');
   }
   const probe = steps.find(s => s.name === 'Mixer_probe');
   if (probe && probe.n_transitions === 0) expectedGaps.push('PC Mixer_probe n_transitions=0');
-  // Only DIFF if PC claims transitions/compounds populated but Direct empty
+  if (probe && typeof probe.n_clips === 'number' && probe.n_clips > 0) deepNote += `; PC n_clips=${probe.n_clips}`;
+  // Only DIFF if PC claims transitions populated but Direct empty
   const pcTrans = Array.isArray(deep.transitions) ? deep.transitions : cols.Transitions;
   if (Array.isArray(pcTrans) && pcTrans.length && !r.transitions.length) {
     diffs.push('PC dump has transitions but Direct dump empty');
@@ -173,7 +193,14 @@ function consumeMixerPcDump(deep, label) {
     }
     const pcAuto = pcNested.find(n => n.name === 'Auto Transition');
     if (pcAuto && pcAuto.value === false && r.nestedSI?.find(n => n.name === 'Auto Transition')?.value !== false) {
-      diffs.push('Auto Transition should be false (PC empty default)');
+      diffs.push('Auto Transition should be false (PC)');
+    }
+    // Desktop pass2: finite ContainerStart/Duration when clips exist (not ±max-float empty sentinels)
+    const pcStart = pcNested.find(n => n.name === 'Start time');
+    const pcDur = pcNested.find(n => n.name === 'Duration');
+    const finite = (v) => typeof v === 'number' && Number.isFinite(v) && Math.abs(v) < 1e30;
+    if (clips.length && pcStart && finite(pcStart.value) && pcDur && finite(pcDur.value)) {
+      deepNote += `; PC ContainerStart/Duration finite (${pcStart.value}/${pcDur.value})`;
     }
   }
 }
