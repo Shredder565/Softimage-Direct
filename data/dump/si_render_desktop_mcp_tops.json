@@ -1,0 +1,29 @@
+{
+  "_comment": "Softimage Desktop Render MCP section tops — media/render-desktop-tour/08-after-key3.png + 08-left-toolbar.png (2026-10-25). PE menu 234 labels kept where OCR truncates (Regions).",
+  "softimage": "13.2.163.0",
+  "source_media": [
+    "media/render-desktop-tour/08-after-key3.png",
+    "media/render-desktop-tour/08-left-toolbar.png",
+    "media/render-desktop-tour/08-module-crop.png"
+  ],
+  "module_select": "Render",
+  "tops": ["Get", "Modify", "Render", "Pass"],
+  "buttons": {
+    "Get": ["Primitive", "Material", "Property", "Shader", "Texture", "Clip"],
+    "Modify": ["Materials", "Shader", "Texture", "Projection", "Ambience"],
+    "Render": ["Regions", "Render", "Export", "Preview"],
+    "Pass": ["<current_pass_name>", "Edit", "Partition"]
+  },
+  "pass_head": {
+    "pe_label": "RenderPass",
+    "pe_id": 40537,
+    "desktop_display": "current pass Name (Default_Pass on empty scene)",
+    "note": "Softimage MCP replaces PE leaf text with live pass name"
+  },
+  "hwnd_crop_chrome": { "status": "LOCK", "note": "tour MD not landed; no invent HWND crop px" },
+  "regions_label": {
+    "pe": "Regions",
+    "desktop_crop_ocr": "Regi… / Region (ambiguous truncation)",
+    "wire": "keep PE Regions until tour MD attests singular"
+  }
+}
