@@ -1,0 +1,5 @@
+{
+  "ok": true,
+  "diffs": [],
+  "note": "dump /workspace/data/dump/si_anim_hwnd_chrome.json; OpenView API avoided/LOCK; view_probe 6 failed (no invent); overlay attested=12 nulls=123"
+}

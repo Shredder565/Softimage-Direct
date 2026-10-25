@@ -15,7 +15,7 @@ Softimage-pc progress: `docs/rea-ghidra-residual-progress.md`.
 | B2 | Animate | PC mixer transitions | Desktop pass3 TW1 WIRE (`type=2`); empty without clip sel still LOCK | **WIRE** (TW1) / LOCK (no sel) | [mixer-clip-transitions.md](./mixer-clip-transitions.md) | AddTWTransition → TW# |
 | B3 | Animate | ApplyFlexEnv weights / Mode | Desktop VBArray: numeric % Weights.Array | **WIRE** weights + Mode | [flexenv-headless-lock.md](./flexenv-headless-lock.md) | VBArray golden; Direct unit sum |
 | B4 | Animate | Fcurve handled-spline | **`gk10` GkStdFCurve** | **DONE** | [fcurve-handled-spline.md](./fcurve-handled-spline.md) | new cases only |
-| C1 | UI | MCP live HWND Enabled | GetEnabled + HWND paste | **LOCK** live; CanBeModified **WIRE** portable | [getenabled-deepen.md](./getenabled-deepen.md) | PutEnabled gate only |
+| C1 | UI | MCP / Anim HWND Enabled | Desktop MCP + Anim Command.Enabled overlays | **WIRE** attested bools; OpenView **LOCK** | [../anim-hwnd-chrome-overnight.md](../anim-hwnd-chrome-overnight.md) | null→canRun; no invent views |
 | C2–C6 | UI | PPG GDI / PE 394 / Send-to / ICE anchors | see [ui-lock-binary-pins.md](./ui-lock-binary-pins.md) | **LOCK** | binary pins | no invent |
 
 ## Softimage-pc coordination
