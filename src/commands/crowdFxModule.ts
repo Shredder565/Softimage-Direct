@@ -6,6 +6,7 @@ import { Null, Property, X3DObject } from '../core/scene';
 import { bool, str } from '../core/params';
 import crowdfxModule from '../data/si/crowdfx_module.json';
 import crowdfxPrefs from '../data/si/crowdfx_prefs.json';
+import crowdfxDesktopMenu from '../data/si/crowdfx_desktop_menu.json';
 
 const addObject = (app: App, obj: X3DObject, parent?: X3DObject | null) => {
   const p = parent ?? app.scene.root;
@@ -331,6 +332,19 @@ export function crowdFxModuleAudit(app: App): Record<string, unknown> {
   const iceTreeLive = prefParams('C3DPrefsICETree') ?? A.icetreePrefs ?? dump.categories?.['preferences.icetree'] ?? {};
   const pathKeys = (A.crowdFxPathKeys ?? dump.crowdfx_path_keys ?? []) as string[];
   const pathOk = pathKeys.every((k: string) => Object.prototype.hasOwnProperty.call(iceOpsLive, k));
+  const desk = crowdfxDesktopMenu as {
+    status: string;
+    host_module: string;
+    reachability: {
+      path: string[];
+      buttons: string[];
+      pe_menu_ids: Record<string, number>;
+      submenu_live: boolean;
+      runtime_anchors: string;
+    };
+    desktop_paths: Record<string, string>;
+  };
+  const iceMenubar = !!document.querySelector('#menubar .m[data-si-menu="ICE"]');
   return {
     softimage: mod.softimage,
     menuId: mod.menu_id,
@@ -361,5 +375,17 @@ export function crowdFxModuleAudit(app: App): Record<string, unknown> {
       icetree: !!app.Preferences.Categories('preferences.icetree'),
     },
     currentModule: app.module,
+    // Desktop menubar ICE → CrowdFX Actors/Crowd/Simulation (DUMP_READY harvest)
+    desktopMenu: {
+      status: desk.status,
+      host: desk.host_module,
+      path: desk.reachability?.path,
+      buttons: desk.reachability?.buttons,
+      peMenuIds: desk.reachability?.pe_menu_ids,
+      submenuLive: desk.reachability?.submenu_live ?? false,
+      runtimeAnchors: desk.reachability?.runtime_anchors ?? 'LOCK',
+      media: desk.desktop_paths,
+      menubarPresent: iceMenubar,
+    },
   };
 }

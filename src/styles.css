@@ -139,6 +139,10 @@ button, select, input { font-family: inherit; }
 .menu-item:hover { background: #3875d7; color: #fff; }
 .menu-item.has-sub::after { content: '▶'; position: absolute; right: 6px; font-size: 8px; top: 5px; }
 .menu-item.disabled { color: #9a9a9a; } .menu-item.disabled:hover { background: #f4f2f0; color: #9a9a9a; }
+/* Softimage Desktop module menubar tear-off (ICE MENU 303 / CrowdFX — 40-crowdfx-ice-menu.png) */
+.menu.module-tearoff { min-width: 160px; padding-top: 0; }
+.menu-tearoff-grip { height: 10px; margin: 2px 4px 4px; border-top: 1px dashed #6a6a6a; border-bottom: 1px dashed #6a6a6a; background: repeating-linear-gradient(90deg, #c8c6c4 0 2px, transparent 2px 4px); cursor: default; }
+.menu-group { margin: 4px 4px 1px; padding: 1px 6px; font-weight: bold; font-size: 11px; color: #111; background: #8a8886; border: 1px solid #5a5a5a; border-radius: 1px; }
 .menu-sep { border-top: 1px solid #b8b8b8; margin: 3px 2px; }
 
 /* explorer — Softimage Explorer chrome (sceneexplorer PE + shared PPG shell font) */

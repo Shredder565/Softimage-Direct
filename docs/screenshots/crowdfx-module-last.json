@@ -4,6 +4,7 @@
   "notes": [
     "loaded module /workspace/src/data/si/crowdfx_module.json",
     "loaded prefs /workspace/src/data/si/crowdfx_prefs.json",
+    "loaded desktop_menu /workspace/src/data/si/crowdfx_desktop_menu.json",
     "softimage 13.2.163.0",
     "ICE host module present",
     "MCP top CrowdFX",
@@ -20,7 +21,16 @@
     "live Actors/Crowd/Simulation buttons",
     "CrowdFX PE Anchors unbound (41644/41646/41645)",
     "SwitchToolbar Target=4 → ICE (CrowdFX host)",
-    "CreateCrowd → Crowd kind=crowd"
+    "CreateCrowd → Crowd kind=crowd",
+    "desktop_menu DUMP_READY",
+    "desktop_menu submenu_live=false (anchors LOCK)",
+    "menubar ICE present",
+    "ICE menubar click → SwitchToolbar ICE host",
+    "ICE module tear-off open",
+    "tear-off CrowdFX group",
+    "tear-off Actors/Crowd/Simulation has-sub",
+    "CrowdFX submenu Anchor-to-Delete LOCK (no invent)",
+    "audit desktopMenu DUMP_READY"
   ],
   "softimage": "13.2.163.0",
   "menu_id": 303,
@@ -34,5 +44,18 @@
     "Actors": 41644,
     "Crowd": 41646,
     "Simulation": 41645
+  },
+  "desktop_menu": {
+    "status": "DUMP_READY",
+    "path": [
+      "ICE",
+      "CrowdFX"
+    ],
+    "buttons": [
+      "Actors",
+      "Crowd",
+      "Simulation"
+    ],
+    "submenu_live": false
   }
 }

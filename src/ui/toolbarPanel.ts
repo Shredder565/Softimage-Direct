@@ -241,3 +241,57 @@ export function runMenuPath(app: App, module: string, path: string, label: strin
   };
   return walk(MENUS[module] ?? [], []);
 }
+
+/**
+ * Softimage Desktop module menubar tear-off (MENU 303 ICE etc.).
+ * Section headers + submenu rows match Softimage ICE module menu (CrowdFX Actors/Crowd/Simulation DUMP_READY).
+ * Compound flyout leaves stay Anchor-to-Delete LOCK when submenu_live is false.
+ */
+export function openModuleMenuTearOff(app: App, module: string, x: number, y: number) {
+  const tree = MENUS[module];
+  if (!tree) return null;
+  closeMenus(0);
+  const m = document.createElement('div');
+  m.className = 'menu module-tearoff';
+  m.dataset.siModuleMenu = module;
+  // Softimage tear-off grip (Desktop 40-crowdfx-ice-menu.png)
+  const grip = document.createElement('div');
+  grip.className = 'menu-tearoff-grip';
+  grip.title = 'Menu Window';
+  m.appendChild(grip);
+  for (const top of tree) {
+    const h = document.createElement('div');
+    h.className = 'menu-group';
+    h.textContent = top.label ?? '';
+    if (top.label) h.dataset.siMenuGroup = top.label;
+    m.appendChild(h);
+    for (const sub of top.items ?? []) {
+      if (sub.separator) continue;
+      const row = document.createElement('div');
+      row.className = 'menu-item';
+      row.textContent = sub.label ?? '';
+      if (sub.label) row.dataset.siMenuItem = sub.label;
+      const kids = sub.items ?? (sub.id !== undefined ? [{ label: sub.label, id: sub.id }] : []);
+      if (kids.length) {
+        row.classList.add('has-sub');
+        row.onpointerenter = () => {
+          const r = row.getBoundingClientRect();
+          openMenu(app, kids, r.right - 2, r.top - 2, [top.label!, sub.label!], 1);
+        };
+      } else {
+        row.onpointerenter = () => closeMenus(1);
+        row.onclick = () => {
+          closeMenus();
+          runMenuItem(app, sub, sub.id !== undefined && !isRuntimeAnchor(sub) ? CMDS[String(sub.id)] : undefined, [top.label!, sub.label!]);
+        };
+      }
+      m.appendChild(row);
+    }
+  }
+  document.body.appendChild(m);
+  const mw = m.offsetWidth, mh = m.offsetHeight;
+  m.style.left = Math.min(x, window.innerWidth - mw - 4) + 'px';
+  m.style.top = Math.min(y, window.innerHeight - mh - 4) + 'px';
+  openMenus[0] = m;
+  return m;
+}

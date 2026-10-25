@@ -9,6 +9,7 @@ import { minimizeAll, restoreAll, closeAll, floatingWindows, openFloating } from
 import { construction } from '../core/scene';
 import { keymapNames, setKeymap, currentKeymap, bindingFor } from './keymap';
 import faceRobotTops from '../data/si/face_robot_module_mcp_tops.json';
+import { openModuleMenuTearOff } from './toolbarPanel';
 
 const ev = (name: string, detail?: any) => window.dispatchEvent(new CustomEvent(name, { detail }));
 const KEY_OF: Record<string, string> = { 'New Scene': 'New Scene', 'Open...': 'Open Scene', 'Save': 'Save Scene', 'Undo': 'Undo', 'Redo': 'Redo', 'Repeat': 'Repeat', 'Cut': 'Cut', 'Copy': 'Copy', 'Paste': 'Paste', 'Delete Selected': 'Delete', 'Select All': 'Select All', 'Exit': 'Quit', 'Softimage Help': 'Users Guide' };
@@ -37,6 +38,16 @@ const FACE_ROBOT_MENU: SiMenuItem = {
   items: ((faceRobotTops as { menu_300?: { label?: string; id?: number; separator?: boolean }[] }).menu_300 ?? []).map(x =>
     x.separator ? { separator: true } : { label: x.label, id: x.id }),
 };
+
+/**
+ * Softimage Desktop module strip — ICE (MENU 303).
+ * Tear-off opened via openModuleMenuTearOff (CrowdFX Actors/Crowd/Simulation DUMP_READY).
+ * Empty items so menubarStatus does not walk PE Anchor leaves as silent File-menu greys.
+ */
+const ICE_MODULE_MENU: SiMenuItem = { label: 'ICE', items: [] };
+
+/** Softimage Desktop module menubar tops that open PE toolbar tear-offs (not File/Edit leaves). */
+const MODULE_TEAROFF_MENUS = new Set(['ICE']);
 
 const lsBool = (key: string, fallback = false) => { try { const v = localStorage.getItem(key); return v == null ? fallback : v === '1'; } catch { return fallback; } };
 const setLsBool = (key: string, on: boolean) => { try { localStorage.setItem(key, on ? '1' : '0'); } catch { /* */ } };
@@ -113,7 +124,8 @@ export function menubarIsWired(it: SiMenuItem, path: string[] = []): boolean {
 /** Inventory Softimage File/Edit/View/… leaves: wired vs silent (grey / would log not implemented). */
 export function menubarStatus(): { path: string; label: string; id: number | null; wired: boolean }[] {
   const file = SI_MENUS.fileMenu?.[0]; const main = SI_MENUS.mainMenu ?? [];
-  const tops: SiMenuItem[] = [file ?? main[0], ...main.slice(1), FACE_ROBOT_MENU].filter(Boolean);
+  // Softimage Desktop module strip: ICE (MENU 303 CrowdFX) + Face Robot (MENU 300) after File/Edit/…
+  const tops: SiMenuItem[] = [file ?? main[0], ...main.slice(1), ICE_MODULE_MENU, FACE_ROBOT_MENU].filter(Boolean);
   const out: { path: string; label: string; id: number | null; wired: boolean }[] = [];
   const walk = (items: SiMenuItem[], path: string[]) => {
     for (const it of expandMenubarItems(items)) {
@@ -179,8 +191,8 @@ export function menubar(app: App, host: HTMLElement) {
   const bar = document.createElement('div'); bar.id = 'menubar';
   const logo = document.createElement('span'); logo.className = 'logo'; logo.textContent = 'SOFT'; bar.appendChild(logo);
   const file = SI_MENUS.fileMenu?.[0]; const main = SI_MENUS.mainMenu ?? [];
-  // Softimage Desktop module strip includes Face Robot (MENU 300) after Hair / before Window.
-  const tops: SiMenuItem[] = [file ?? main[0], ...main.slice(1), FACE_ROBOT_MENU];
+  // Softimage Desktop module strip: ICE (MENU 303 / CrowdFX DUMP_READY) + Face Robot (MENU 300).
+  const tops: SiMenuItem[] = [file ?? main[0], ...main.slice(1), ICE_MODULE_MENU, FACE_ROBOT_MENU];
   const clipboard: { objs: any[]; cut: boolean } = { objs: [], cut: false };
 
   const pick = (it: SiMenuItem, path: string[]) => {
@@ -260,7 +272,18 @@ export function menubar(app: App, host: HTMLElement) {
     const m = document.createElement('span'); m.className = 'm'; m.textContent = top.label ?? '';
     if (top.label) m.dataset.siMenu = top.label;
     bar.appendChild(m);
-    m.onclick = (e) => { e.stopPropagation(); const r = m.getBoundingClientRect(); openSiMenu(expandMenubarItems(top.items ?? []).map(accel), r.left, r.bottom, pick, { enabled, checked: it => it.id === -2 ? it.label === currentLayoutName() : undefined }, [top.label ?? '']); };
+    m.onclick = (e) => {
+      e.stopPropagation();
+      const r = m.getBoundingClientRect();
+      // Softimage Desktop module strip: ICE → SwitchToolbar host + MENU 303 tear-off (CrowdFX Actors/Crowd/Simulation).
+      if (top.label && MODULE_TEAROFF_MENUS.has(top.label)) {
+        app.module = top.label as any;
+        app.events.emit('module');
+        openModuleMenuTearOff(app, top.label, r.left, r.bottom);
+        return;
+      }
+      openSiMenu(expandMenubarItems(top.items ?? []).map(accel), r.left, r.bottom, pick, { enabled, checked: it => it.id === -2 ? it.label === currentLayoutName() : undefined }, [top.label ?? '']);
+    };
   }
   // construction-mode combo (Softimage shows it at the right of the main toolbar): operators go into the chosen region
   const cm = document.createElement('select'); cm.className = 'cmode'; cm.title = 'Construction mode: which region of the construction history new operators go into';

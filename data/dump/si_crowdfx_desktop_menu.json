@@ -1,0 +1,39 @@
+{
+  "_comment": "Softimage CrowdFX Desktop menubar reachability under ICE — DUMP_READY harvest only. Actors/Crowd/Simulation visible on ICE module menu tear-off; submenu live flyouts not captured (LOCK, no invent).",
+  "softimage": "13.2.163.0",
+  "status": "DUMP_READY",
+  "utc": "2026-10-25T19:22:51Z",
+  "source": [
+    "internal/softimage-pc-dumps/modules-gdi/deferred_gdi_harvest.json",
+    "docs/softimage-modules-gdi-tour.md",
+    "media/softimage-modules-gdi/40-crowdfx-ice-menu.png",
+    "media/softimage-modules-gdi/40-crowdfx-desktop.png",
+    "internal/softimage-pc-dumps/modules/modules_crowdfx.json",
+    "internal/softimage-pc-dumps/menu_ice.txt"
+  ],
+  "host_module": "ICE",
+  "menu_id": 303,
+  "switch_toolbar_target": 4,
+  "menubar_dx_attested": 420,
+  "desktop_paths": {
+    "ice_menu": "media/softimage-modules-gdi/40-crowdfx-ice-menu.png",
+    "desktop": "media/softimage-modules-gdi/40-crowdfx-desktop.png"
+  },
+  "reachability": {
+    "path": ["ICE", "CrowdFX"],
+    "buttons": ["Actors", "Crowd", "Simulation"],
+    "pe_menu_ids": {
+      "Actors": 41644,
+      "Crowd": 41646,
+      "Simulation": 41645
+    },
+    "submenu_live": false,
+    "runtime_anchors": "LOCK",
+    "note": "ICE module menu tear-off lists CrowdFX Actors/Crowd/Simulation (Desktop menubar reachability). Submenu compound leaves not captured — keep Anchor-to-Delete LOCK."
+  },
+  "sdk_anchors": {
+    "siMenuTbICECrowdFXActorsID": 380,
+    "siMenuTbICECrowdFXSimulationID": 381,
+    "siMenuTbICECrowdFXCrowdID": 382
+  }
+}
