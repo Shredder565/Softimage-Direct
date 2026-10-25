@@ -8,7 +8,7 @@ AfterImage is the Electron + NSIS Windows installer for this clean-room Softimag
 AfterImage-<version>-setup.exe
 ```
 
-Example for the current `package.json` version: **`AfterImage-1.0.4-setup.exe`**.
+Example for the current `package.json` version: **`AfterImage-1.0.5-setup.exe`**.
 
 ## Local / CI build (Windows)
 
@@ -39,7 +39,7 @@ Workflow: [`.github/workflows/build-windows.yml`](../.github/workflows/build-win
 Triggers:
 
 - **Manual:** Actions → *Build AfterImage Windows installer* → *Run workflow*
-- **Tag:** `git tag v1.0.4 && git push origin v1.0.4` — builds and attaches the exe to the GitHub Release for that tag
+- **Tag:** `git tag v1.0.5 && git push origin v1.0.5` — builds and attaches the exe to the GitHub Release for that tag
 - **Release published:** same attach step
 
 Download:
