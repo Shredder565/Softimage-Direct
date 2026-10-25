@@ -33,7 +33,11 @@ export function normalizePresetToken(preset: string): string {
 export function resolveMiaUnlockKey(preset: string): string | null {
   const token = normalizePresetToken(preset);
   if (!token) return null;
-  const aliased = MIA_SOFTIMAGE_ALIASES[token] ?? MIA_SOFTIMAGE_ALIASES[Object.keys(MIA_SOFTIMAGE_ALIASES).find(k => k.toLowerCase() === token.toLowerCase()) ?? ''] ?? token;
+  const aliasKey =
+    MIA_SOFTIMAGE_ALIASES[token] != null
+      ? token
+      : Object.keys(MIA_SOFTIMAGE_ALIASES).find(k => k.toLowerCase() === token.toLowerCase());
+  const aliased = (aliasKey ? MIA_SOFTIMAGE_ALIASES[aliasKey] : null) ?? token;
   const presets = MIA_UNLOCK.presets as Record<string, unknown>;
   if (presets[aliased]) return aliased;
   const hit = Object.keys(presets).find(k => k.toLowerCase() === aliased.toLowerCase());
