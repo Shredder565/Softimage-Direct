@@ -161,13 +161,26 @@ else {
   } else if ((ff.flyoutCount ?? 0) < 8) {
     fail.push(`renderMcpFlyouts expected ≥8 flyouts got ${ff.flyoutCount}`);
   } else ok.push(`Render MCP flyouts PE menu 234 (${ff.flyoutCount} buttons, Desktop press-hold gap CLOSED)`);
-  // Desktop LOCK close dump — region OM attested; HWND/PPG/OpenView stay LOCK (no invent)
+  // Desktop LOCK close dump — region OM attested; HWND/PPG/OpenView stay LOCK; Anim ExecCmd open DONE
   const dld = audit.directLockDesktop;
   if (!dld) fail.push('directLockDesktop missing from __uiAudit');
   else if (!dld.ok) fail.push(`directLockDesktop audit failed: ${JSON.stringify(dld)}`);
   else if (dld.regionHwndCrop !== 'LOCK' || dld.ppgColorref !== 'LOCK') {
     fail.push(`directLockDesktop expected HWND/PPG LOCK got hwnd=${dld.regionHwndCrop} ppg=${dld.ppgColorref}`);
-  } else ok.push(`Desktop LOCK close dump (region OM ${dld.regionOmParamCount} keys, HWND+PPG+OpenView LOCK)`);
+  } else if (dld.floatingViews !== 'EXECCMD_DONE' || dld.floatingViewsOpenview !== 'LOCK') {
+    fail.push(`directLockDesktop Anim ExecCmd expected EXECCMD_DONE/OpenView LOCK got ${dld.floatingViews}/${dld.floatingViewsOpenview}`);
+  } else if (dld.fcurveMixerClientPaint !== 'LOCK') {
+    fail.push(`directLockDesktop client paint expected LOCK got ${dld.fcurveMixerClientPaint}`);
+  } else ok.push(`Desktop LOCK close dump (region OM ${dld.regionOmParamCount} keys, HWND+PPG LOCK, Anim ExecCmd open DONE, paint LOCK)`);
+  // Softimage Anim editors ExecuteCommand([]) — open Mixer/Editor/Fcurve; paint LOCK
+  const aee = audit.animEditorsExecCmd;
+  if (!aee) fail.push('animEditorsExecCmd missing from __uiAudit');
+  else if (!aee.ok) fail.push(`animEditorsExecCmd audit failed: ${JSON.stringify(aee)}`);
+  else {
+    const smoke = await p.evaluate(() => window.__animEditorsExecCmdSmoke?.());
+    if (!smoke?.ok) fail.push(`animEditorsExecCmd smoke failed: ${JSON.stringify(smoke)}`);
+    else ok.push(`Anim ExecCmd open Mixer/Editor/Fcurve (OpenView LOCK, paint LOCK)`);
+  }
   // Softimage ≡ leaves: Lock Pivot / Volume / Edit Pivot must not fall through as "not implemented"
   const pePick = await p.evaluate(() => {
     const logs = [];

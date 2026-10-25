@@ -365,6 +365,42 @@ export function registerAnimCommands(app: App) {
     if (!n) throw new Error('Select a mesh with shape keys'); return n;
   } });
   app.register({ name: 'OpenShapeEditor', label: 'Open Shape Manager', category: 'Animation', args: [], undoable: false, execute() { window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'Animation Mixer' } })); } });
+
+  // Softimage floating Anim editors — Command.Name open path (prefer ExecuteCommand([],) over broken OpenView).
+  // Attested: Commands found in si_anim_hwnd_chrome; empty-args ExecuteCommand user Softimage JScript;
+  // OpenView wrong-args LOCK (direct_lock_desktop_close). Client paint stays LOCK without modules-gdi pixels.
+  const openAnimView = (name: string) => window.dispatchEvent(new CustomEvent('openview', { detail: { name } }));
+  app.register({
+    name: 'OpenAnimationMixer',
+    label: 'Open Animation Mixer',
+    category: 'Viewing',
+    args: [],
+    undoable: false,
+    execute() { openAnimView('Animation Mixer'); },
+  });
+  // Softimage commands_full: Open Animation Editor — AnimationView + InputObjs (AnimatableParameters); empty [] = defaults.
+  app.register({
+    name: 'OpenAnimationEditor',
+    label: 'Open Animation Editor',
+    category: 'Viewing',
+    args: [
+      { name: 'AnimationView', default: '' },
+      { name: 'InputObjs', default: null },
+    ],
+    undoable: false,
+    execute(app, a) {
+      openAnimView('Animation Editor');
+      if (a.InputObjs) app.logMsg('info', `Animation Editor: ${a.InputObjs}`);
+    },
+  });
+  app.register({
+    name: 'OpenFcurveEditor',
+    label: 'Open Fcurve Editor',
+    category: 'Viewing',
+    args: [],
+    undoable: false,
+    execute() { openAnimView('Fcurve Editor'); },
+  });
   app.register({ name: 'SaveDeformKey', label: 'Save Deform Key', category: 'Animation', args: [], execute: (app) => app.run('StoreShapeKey') });
   app.register({ name: 'ApplyDeformKey', label: 'Apply Deform Key', category: 'Animation', args: [], execute: (app) => app.run('ApplyShapeKey') });
   app.register({ name: 'LinkDeform', label: 'Link Deform', category: 'Animation', args: [], execute(app) {

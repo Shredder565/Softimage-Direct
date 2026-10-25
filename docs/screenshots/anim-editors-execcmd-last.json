@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "diffs": [],
+  "note": [
+    "OpenView LOCK errors=7",
+    "cmds=OpenAnimationMixer,OpenAnimationEditor,OpenFcurveEditor; paint LOCK; ExecCmd DONE"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "softimage": "13.2.163.0",
+    "purpose": "Wire floating Anim editors via ExecuteCommand empty args (prefer over broken OpenView)",
+    "policy": "Dump/Desktop/user Softimage JScript attested only. No invent client paint.",
+    "utc": "2026-10-25T18:05:00Z",
+    "plan": "docs/softimage-1to1-remaining-gap-plan.md workstream D"
+  },
+  "commands": {
+    "OpenAnimationMixer": {
+      "Command.Name": "OpenAnimationMixer",
+      "args": [],
+      "view": "Animation Mixer",
+      "found_in_anim_hwnd": true,
+      "execute_empty_args": "user Softimage JScript attested"
+    },
+    "OpenAnimationEditor": {
+      "Command.Name": "OpenAnimationEditor",
+      "args": [
+        { "name": "AnimationView", "default": "" },
+        { "name": "InputObjs", "default": null, "handler": "AnimatableParameters" }
+      ],
+      "view": "Animation Editor",
+      "found_in_anim_hwnd": true,
+      "found_in_commands_full": true,
+      "execute_empty_args": "user Softimage JScript attested"
+    },
+    "OpenFcurveEditor": {
+      "Command.Name": "OpenFcurveEditor",
+      "args": [],
+      "view": "Fcurve Editor",
+      "found_in_anim_hwnd": true,
+      "execute_empty_args": "user Softimage JScript attested"
+    }
+  },
+  "user_jscript": [
+    "Application.ExecuteCommand(\"OpenAnimationMixer\", []);",
+    "Application.ExecuteCommand(\"OpenAnimationEditor\", []);",
+    "Application.ExecuteCommand(\"OpenFcurveEditor\", []);"
+  ],
+  "evidence": {
+    "anim_hwnd_commands_found": "data/dump/si_anim_hwnd_chrome.json enabled_matrix — OpenAnimationMixer/OpenAnimationEditor/OpenFcurveEditor found:true",
+    "openview_lock": "src/data/si/direct_lock_desktop_close.json openview_errors — Wrong number of arguments",
+    "harvest_script_names": "docs/dump-factory/si_modules_gdi_harvest.js animCmds lists OpenAnimationMixer/OpenAnimationEditor/OpenFcurveEditor",
+    "modules_gdi_pixels": "LOCK — media/softimage-modules-gdi has screenshot index only (no PNG client paint yet); hwnd_inventory matched_children=0"
+  },
+  "honest": {
+    "animate.floating_views": {
+      "openview": "LOCK",
+      "execute_command_empty_args": "DONE",
+      "wire": "OpenAnimationMixer|OpenAnimationEditor|OpenFcurveEditor → floating views",
+      "note": "OpenView stays broken; Softimage open path is ExecuteCommand([],)"
+    },
+    "animate.fcurve_mixer_client_paint": {
+      "status": "LOCK",
+      "wire": "NONE",
+      "note": "No Desktop harvest client-paint PNG/HWND crop — do not invent"
+    }
+  }
+}

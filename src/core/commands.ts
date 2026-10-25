@@ -85,6 +85,20 @@ export class App {
 
   register(def: CommandDef) { this.commands.set(def.name, def); }
 
+  /**
+   * Softimage `Application.ExecuteCommand(CommandName, Arguments)` — positional args array maps onto
+   * the command's declared argument order (empty `[]` = Softimage defaults).
+   * User-attested open path for floating Anim editors: OpenAnimationMixer / OpenAnimationEditor / OpenFcurveEditor.
+   */
+  ExecuteCommand(name: string, args: any[] | null | undefined = []): any {
+    const def = this.commands.get(name);
+    if (!def) { this.logMsg('error', `${name}: ${(window as any).__siMessage?.(1007) ?? 'Not implemented'}`); return undefined; }
+    const list = args == null ? [] : Array.isArray(args) ? args : [args];
+    const named: Record<string, any> = {};
+    def.args.forEach((a, i) => { if (i < list.length && list[i] !== undefined) named[a.name] = list[i]; });
+    return this.run(name, named);
+  }
+
   /** Execute a command by scripting name with named args; logs it like Softimage's script log. */
   run(name: string, args: Record<string, any> = {}): any {
     const def = this.commands.get(name);

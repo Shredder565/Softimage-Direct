@@ -52,6 +52,7 @@ import { manipulatorHitboxAudit, MANIP_PE_MENUS } from './ui/manipulatorHitbox';
 import { applyRenderToolbarChrome, renderToolbarChromeAudit } from './ui/renderToolbarChrome';
 import { renderMcpFlyoutsAudit } from './ui/renderMcpFlyouts';
 import { directLockDesktopAudit } from './ui/directLockDesktop';
+import { animEditorsExecCmdAudit, animEditorsExecCmdSmoke } from './ui/animEditorsExecCmd';
 applyPpgChrome();
 applyAnimChromeVars();
 applyRenderToolbarChrome();
@@ -301,8 +302,10 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     renderToolbarChrome: renderToolbarChromeAudit(),
     // PE menu 234 Render MCP flyouts (Desktop press-hold missed; menus.json already wired)
     renderMcpFlyouts: renderMcpFlyoutsAudit(),
-    // Softimage Desktop LOCK close 2026-10-25 — OM region params OK; HWND/PPG/OpenView LOCK (no invent)
+    // Softimage Desktop LOCK close 2026-10-25 — OM region params OK; HWND/PPG/OpenView LOCK; Anim ExecCmd open DONE
     directLockDesktop: directLockDesktopAudit(),
+    // Softimage floating Anim editors — ExecuteCommand([]) open path (OpenView LOCK; client paint LOCK)
+    animEditorsExecCmd: animEditorsExecCmdAudit(app),
     // Softimage Render toolbar OM scripting names + RenderOptionsRegion SPDL (HWND crop LOCK)
     renderToolbarOm: renderToolbarOmAudit(app),
     // Softimage ICE module MENU 303 MCP tops + OpenICETreeView / xsivw shell (Anchor compounds LOCK)
@@ -377,6 +380,7 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
   };
 };
 (window as any).__openView = (name: string) => openView(name);
+(window as any).__animEditorsExecCmdSmoke = () => animEditorsExecCmdSmoke(app);
 (window as any).__switchModule = (m: string) => { app.module = m as any; app.events.emit('module'); };
 (window as any).__hairApplySmoke = () => hairApplySmoke(app);
 // FROST P0 hooks (graph session + evaluator smoke)
