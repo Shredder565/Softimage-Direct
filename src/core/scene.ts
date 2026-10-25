@@ -609,8 +609,24 @@ export type MixerClip = {
   /** Softimage `clip.actionclip.weight` FCurve keys; when set, mixer eval samples this instead of scalar `weight`. */
   weightKeys?: MixerWeightKey[];
 };
-/** Softimage mixer transition between two clips (AddTransition / AddBridgeTransition / AddTWTransition). */
-export type MixerTransition = { name: string; kind: 'standard' | 'bridge' | 'timewarp'; from: string; to: string; length: number; weight?: number };
+/**
+ * Softimage mixer transition between two clips (AddTransition / AddBridgeTransition / AddTWTransition).
+ * Desktop pass3 (`si_mixer_transitions.json`): AddTWTransition → Mixer.TW1 classname Transition with
+ * params weight=1, type=2, active=true, Name=TW1. Softimage Transition Type 2 = timewarp (TW#).
+ */
+export type MixerTransition = {
+  name: string;
+  kind: 'standard' | 'bridge' | 'timewarp';
+  from: string;
+  to: string;
+  length: number;
+  /** Softimage Parameter `sn: weight` (Transition Weight). Attested TW1 = 1. */
+  weight?: number;
+  /** Softimage Parameter `sn: type` (Transition Type). Attested TW1 = 2 (timewarp). */
+  type?: number;
+  /** Softimage Parameter `sn: active` (Active). Attested TW1 = true. */
+  active?: boolean;
+};
 /** Softimage mixer compound (CreateCompound / ExplodeCompound). */
 export type MixerCompound = { name: string; clips: string[]; start: number; duration: number };
 

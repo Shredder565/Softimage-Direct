@@ -516,7 +516,18 @@ export function registerAnimCommands(app: App) {
     const { mix, clips, transitions } = mixState(app);
     const from = a.From || clips[clips.length - 2]?.name; const to = a.To || clips[clips.length - 1]?.name;
     if (!from || !to) throw new Error('AddTWTransition: need two clips');
-    const tr: MixerTransition = { name: `tw_${from}_${to}`, kind: 'timewarp', from, to, length: Number(a.Length ?? 10) };
+    // Softimage Desktop pass3: AddTWTransition → Mixer.TW1 (classname Transition; type=2, weight=1, active=true)
+    const n = transitions.filter(t => t.kind === 'timewarp' || t.type === 2).length + 1;
+    const tr: MixerTransition = {
+      name: `TW${n}`,
+      kind: 'timewarp',
+      from,
+      to,
+      length: Number(a.Length ?? 10),
+      weight: 1,
+      type: 2,
+      active: true,
+    };
     transitions.push(tr); syncMixer(mix); app.events.emit('scene'); return tr;
   } });
   app.register({ name: 'CreateCompound', label: 'Create Compound', category: 'Animation Mixer', args: [{ name: 'Name', default: 'Compound' }, { name: 'Clips', default: '' }], execute(app, a) {

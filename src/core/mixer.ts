@@ -131,6 +131,8 @@ export function clipWeightsAt(frame: number, clips: MixerClip[], transitions: Mi
     let w = frame >= clip.start && frame < end ? 1 : 0;
     let localTime = frame - clip.start;
     for (const tr of transitions) {
+      // Softimage Transition Active (sn: active); inactive transitions do not contribute.
+      if (tr.active === false) continue;
       if (tr.from !== clip.name && tr.to !== clip.name) continue;
       const to = byName.get(tr.to); if (!to) continue;
       const len = Math.max(1, Number(tr.length) || 1);
@@ -138,14 +140,15 @@ export function clipWeightsAt(frame: number, clips: MixerClip[], transitions: Mi
       const t1 = to.start;
       if (frame < t0 || frame >= t1) continue;
       const u = (frame - t0) / len;
-      if (tr.kind === 'timewarp') {
-        // Time-warp: stretch local time of `from` into the transition window, fade to `to` (eased).
-        const e = transitionEase(u);
+      const tw = tr.weight == null ? 1 : Number(tr.weight);
+      if (tr.kind === 'timewarp' || tr.type === 2) {
+        // Time-warp (Softimage type=2 / AddTWTransition → TW#): stretch local time of `from`, fade to `to`.
+        const e = transitionEase(u) * tw;
         if (clip.name === tr.from) { w = 1 - e; localTime = u * clip.duration; }
         else if (clip.name === tr.to) { w = e; localTime = frame - clip.start; }
       } else {
         // standard + bridge: Softimage transition-curve crossfade (Hermite until decomp names exact curve)
-        const e = transitionEase(u);
+        const e = transitionEase(u) * tw;
         if (clip.name === tr.from) w = 1 - e;
         else if (clip.name === tr.to) { w = Math.max(w, e); if (frame < clip.start) localTime = 0; }
       }

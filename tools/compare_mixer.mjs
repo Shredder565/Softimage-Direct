@@ -30,6 +30,8 @@ const r = await page.evaluate(() => {
   A.run('StoreAction', { Name: 'B', Mode: 1, AddClip: true, ClipOffset: 40 });
   const tr = A.run('AddTransition', { Length: 8 });
   const bridge = A.run('AddBridgeTransition', { Length: 5 });
+  // Softimage Desktop pass3: AddTWTransition → Mixer.TW1 (type=2, weight=1, active=true)
+  const tw = A.run('AddTWTransition', { Length: 6 });
   const cpd = A.run('CreateCompound', { Name: 'Combo' });
   A.run('EqualizeClips');
   // Clip A @1–30, clip B @31–60 after equalize; transition length 8 ending at B.start
@@ -74,7 +76,7 @@ const r = await page.evaluate(() => {
     nested: ['Name', 'Hidden', 'Active', 'start', 'duration', 'sources', 'tracks', 'transitions', 'compounds', 'relations', 'autotransition']
       .map(k => ({ k, has: mix.get(k) != null })),
     nestedSI,
-    tr, bridge, cpd,
+    tr, bridge, tw, cpd,
     evalMid, evalInA, evalWeighted, evalMuted,
     presetKeys, evalEaseStart, expLock,
     posxMid: cube.kinematics.local.val('posx'),
@@ -88,6 +90,15 @@ if (r.sources.length < 2) diffs.push(`sources ${JSON.stringify(r.sources)}`);
 if (r.tracks.length < 2) diffs.push(`tracks ${r.tracks.length}`);
 if (!r.transitions.some(t => t.kind === 'standard')) diffs.push('missing standard transition');
 if (!r.transitions.some(t => t.kind === 'bridge')) diffs.push('missing bridge transition');
+const twDirect = r.transitions.find(t => t.kind === 'timewarp' || t.type === 2);
+if (!twDirect) diffs.push('missing timewarp transition (AddTWTransition)');
+else {
+  if (twDirect.name !== 'TW1') diffs.push(`TW name ${twDirect.name} != Softimage TW1`);
+  if (twDirect.type !== 2) diffs.push(`TW type ${twDirect.type} != Softimage 2`);
+  if (twDirect.weight !== 1) diffs.push(`TW weight ${twDirect.weight} != Softimage 1`);
+  if (twDirect.active !== true) diffs.push(`TW active ${twDirect.active} != Softimage true`);
+  if (r.tw?.name && r.tw.name !== 'TW1') diffs.push(`AddTWTransition return name ${r.tw.name}`);
+}
 if (!r.compounds.length) diffs.push('no compounds');
 const missing = r.nested.filter(n => !n.has).map(n => n.k);
 if (missing.length) diffs.push(`missing nested ${missing.join(',')}`);
@@ -129,32 +140,101 @@ function consumeMixerPcDump(deep, label) {
   const steps = deep.steps || [];
   const storeNull = steps.filter(s => /^StoreAction/.test(s.name || '') && (s.result === 'null' || s.result == null));
   if (storeNull.length) expectedGaps.push(`PC StoreAction null handles (${storeNull.length})`);
+  const storeOk = steps.filter(s => /^StoreAction/.test(s.name || '') && s.ok && s.result && s.result !== 'null');
+  if (storeOk.length) deepNote += `; StoreAction ok ${storeOk.map(s => s.result).join(',')}`;
   const sel = steps.find(s => s.name === 'SelectClips');
   if (sel && sel.ok === false) expectedGaps.push(`PC SelectClips: ${sel.error || 'failed'}`);
+  if (sel && sel.ok === true && Array.isArray(sel.selected) && sel.selected.length >= 2) {
+    deepNote += `; SelectClips ${sel.selected.length}`;
+  }
   const bridge = steps.find(s => /Bridge/i.test(s.name || ''));
   if (bridge && bridge.ok === false) expectedGaps.push(`PC ${bridge.name}: ${bridge.error || 'failed'}`);
   const tw = steps.find(s => /TWTransition/i.test(s.name || ''));
   if (tw && tw.ok === false) expectedGaps.push(`PC ${tw.name}: ${tw.error || 'failed'}`);
+  const addTr = steps.find(s => s.name === 'AddTransition');
+  if (addTr && addTr.ok && (addTr.result === 'null' || addTr.result == null)) {
+    expectedGaps.push('PC AddTransition returned null (no Transition objects)');
+  }
+  // Desktop pass3: trans_attempts AddTransition(c0,c1)/AddTWTransition → Mixer.Transition / Mixer.TW1
+  const attempts = deep.trans_attempts || [];
+  const twAttempt = attempts.find(a => /AddTWTransition/i.test(a.label || ''));
+  if (twAttempt?.ok && /TW\d+/i.test(String(twAttempt.result || ''))) {
+    deepNote += `; PC AddTWTransition → ${twAttempt.result}`;
+  }
+  const addPair = attempts.find(a => /AddTransition\s*\(\s*c0\s*,\s*c1\s*\)/i.test(a.label || '') || /AddTransition\s*\(\s*clipA/i.test(a.label || ''));
+  if (addPair?.ok) deepNote += `; PC ${addPair.label} → ${addPair.result}`;
   const cols = deep.mixer_collections || {};
-  if (cols && Object.values(cols).every(v => v == null)) expectedGaps.push('PC mixer_collections null (needs clip sel)');
+  if (cols && Object.keys(cols).length && Object.values(cols).every(v => v == null)) {
+    expectedGaps.push('PC mixer_collections null');
+  }
+  // Desktop pass2+: clips schema (Clip classname + track)
+  const clips = deep.clips || [];
+  if (Array.isArray(clips) && clips.length) {
+    const bad = clips.filter(c => c && c.classname && c.classname !== 'Clip');
+    if (bad.length) diffs.push(`PC clip classname ${bad.map(c => c.classname).join(',')}`);
+    else deepNote += `; PC clips ${clips.length} Clip schema`;
+    if (!(r.sources?.length >= 2)) diffs.push('PC Desktop clips present but Direct sources < 2');
+  }
   // TransitionCollection classname attested even when empty
   const tc = deep.transitions;
   if (tc && typeof tc === 'object' && !Array.isArray(tc)) {
     if (tc.classname && tc.classname !== 'TransitionCollection') {
       diffs.push(`PC transitions classname ${tc.classname}`);
     } else if (tc.classname === 'TransitionCollection') {
-      expectedGaps.push('PC TransitionCollection empty (LOCK until clip sel)');
+      expectedGaps.push('PC TransitionCollection empty');
     }
   }
-  if (Array.isArray(deep.transition_list) && deep.transition_list.length === 0) {
-    expectedGaps.push('PC transition_list empty');
+  // Desktop pass3 TW1 WIRE: transition_list[0] classname Transition + weight/type/active
+  const tlist = Array.isArray(deep.transition_list) ? deep.transition_list : [];
+  if (tlist.length === 0 && deep.meta?.mode && /pass2/i.test(String(deep.meta.mode))) {
+    expectedGaps.push('PC transition_list empty (LOCK — AddTransition null under Desktop pass2)');
+  } else if (tlist.length) {
+    deepNote += `; PC transition_list ${tlist.length}`;
+    for (const pt of tlist) {
+      if (pt.classname && pt.classname !== 'Transition') {
+        diffs.push(`PC transition classname ${pt.classname}`);
+      }
+      const nested = Array.isArray(pt.nested?.nested) ? pt.nested.nested
+        : Array.isArray(pt.nested) ? pt.nested : [];
+      const bySn = Object.fromEntries(nested.filter(p => p && p.sn).map(p => [p.sn, p.value]));
+      if (pt.name === 'TW1' || bySn.Name === 'TW1' || bySn.type === 2) {
+        deepNote += `; PC TW1 schema weight=${bySn.weight} type=${bySn.type} active=${bySn.active}`;
+        if (bySn.weight !== 1) diffs.push(`PC TW1 weight ${bySn.weight} != 1`);
+        if (bySn.type !== 2) diffs.push(`PC TW1 type ${bySn.type} != 2`);
+        if (bySn.active !== true) diffs.push(`PC TW1 active ${bySn.active} != true`);
+        // Direct must mirror Softimage TW1 OM (not empty LOCK)
+        const dTw = r.transitions?.find(t => t.name === 'TW1' || t.kind === 'timewarp' || t.type === 2);
+        if (!dTw) diffs.push('PC TW1 present but Direct missing timewarp/TW1');
+        else {
+          if (dTw.name !== 'TW1') diffs.push(`Direct TW name ${dTw.name} != PC TW1`);
+          if (dTw.type !== 2) diffs.push(`Direct TW type ${dTw.type} != PC 2`);
+          if (dTw.weight !== 1) diffs.push(`Direct TW weight ${dTw.weight} != PC 1`);
+          if (dTw.active !== true) diffs.push(`Direct TW active ${dTw.active} != PC true`);
+          if (dTw.kind !== 'timewarp') diffs.push(`Direct TW kind ${dTw.kind} != timewarp`);
+        }
+      }
+    }
+    const acc = deep.acceptance || {};
+    if (acc.has_transition_objects === true) deepNote += '; PC acceptance has_transition_objects';
+    if (Array.isArray(acc.transition_names) && acc.transition_names.includes('TW1')) {
+      deepNote += '; PC acceptance TW1';
+    }
   }
   const probe = steps.find(s => s.name === 'Mixer_probe');
-  if (probe && probe.n_transitions === 0) expectedGaps.push('PC Mixer_probe n_transitions=0');
-  // Only DIFF if PC claims transitions/compounds populated but Direct empty
+  if (probe && probe.n_transitions === 0 && tlist.length === 0) {
+    expectedGaps.push('PC Mixer_probe n_transitions=0');
+  }
+  if (probe && typeof probe.n_transitions === 'number' && probe.n_transitions > 0) {
+    deepNote += `; PC n_transitions=${probe.n_transitions}`;
+  }
+  if (probe && typeof probe.n_clips === 'number' && probe.n_clips > 0) deepNote += `; PC n_clips=${probe.n_clips}`;
+  // Only DIFF if PC claims transitions populated but Direct empty
   const pcTrans = Array.isArray(deep.transitions) ? deep.transitions : cols.Transitions;
   if (Array.isArray(pcTrans) && pcTrans.length && !r.transitions.length) {
     diffs.push('PC dump has transitions but Direct dump empty');
+  }
+  if (tlist.length && !r.transitions.length) {
+    diffs.push('PC transition_list populated but Direct transitions empty');
   }
   // Softimage nested Parameter.Name schema lock
   const pcNested = deep.mixer?.nested || [];
@@ -173,7 +253,14 @@ function consumeMixerPcDump(deep, label) {
     }
     const pcAuto = pcNested.find(n => n.name === 'Auto Transition');
     if (pcAuto && pcAuto.value === false && r.nestedSI?.find(n => n.name === 'Auto Transition')?.value !== false) {
-      diffs.push('Auto Transition should be false (PC empty default)');
+      diffs.push('Auto Transition should be false (PC)');
+    }
+    // Desktop pass2: finite ContainerStart/Duration when clips exist (not ±max-float empty sentinels)
+    const pcStart = pcNested.find(n => n.name === 'Start time');
+    const pcDur = pcNested.find(n => n.name === 'Duration');
+    const finite = (v) => typeof v === 'number' && Number.isFinite(v) && Math.abs(v) < 1e30;
+    if (clips.length && pcStart && finite(pcStart.value) && pcDur && finite(pcDur.value)) {
+      deepNote += `; PC ContainerStart/Duration finite (${pcStart.value}/${pcDur.value})`;
     }
   }
 }

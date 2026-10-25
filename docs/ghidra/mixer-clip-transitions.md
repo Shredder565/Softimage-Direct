@@ -13,7 +13,7 @@
 | OM | `sicoresdk` `CXSITransitionCore` (GetStart/EndClip, GetTime, …) |
 | Bridge script | `action.vbs` `AddBridgeTransitionFunc` → **`AddTWTransition`** (timewarp; works with FCurves) |
 | PC dump | `si_anim_mixer_deep.json` — nest OK; transitions often empty under XSIBATCH (LOCK B2) |
-| Overnight | `si_mixer_transitions.json` (2026-10-25) — StoreAction null; SelectClips fewer than 2 clips; `TransitionCollection` classname attested empty; Auto Transition default false; Bridge/TW “no command” under XSIBATCH |
+| Overnight | `si_mixer_transitions.json` — XSIBATCH empty → **Desktop pass2** clips OK / Transition LOCK → **Desktop pass3** (2026-10-25): overlapping clips; `AddTransition(c0,c1)`→`Mixer.Transition`; **`AddTWTransition`→`Mixer.TW1`** classname `Transition` with params **weight=1, type=2, active=true** (**WIRE**) |
 
 ## Critical: `clip_transitioncurves` / `clip_weightcurves` are **display**, not eval math
 
@@ -43,7 +43,8 @@ SINleCreateTransitionTask(I3DClip *from, I3DClip *to, ulong kind, I3DTransition 
 | Eval engine | **`gk10` `GkStdFCurve`** ([fcurve-handled-spline.md](./fcurve-handled-spline.md)) |
 | Presets | `action.vbs` `ModifyWeightProc` / `siWeightPresets` → Direct `SetDefaultWeight` |
 | Bridge | → `AddTWTransition` (timewarp + FCurves) |
-| PC dump of live transition weights | **LOCK** without clip selection (B2) |
+| Softimage Transition Type **2** | **TW / timewarp** — Desktop pass3 TW1 (`AddTWTransition` → `Mixer.TW1`) |
+| PC dump of live transition objects | **WIRE** pass3 (`transition_list[0]` TW1); empty without clip sel remains B2 LOCK |
 
 ### `ModifyWeightProc` preset → keys (WIRE)
 
@@ -67,11 +68,12 @@ Direct maps SetCurveType 1/2/3 → siInterpolation 0/1/3 when storing keys (`bui
 
 - Transition create + Auto Transition + Hermite crossfade window (`transitionEase`) when overlapping weight FCurves are absent.
 - `SetDefaultWeight` / `ModifyWeight` write `MixerClip.weightKeys` (actionclip.weight).
-- `clipWeightsAt` samples weight FCurve via Direct `FCurve` (gk10-faithful hermite/linear/const).
+- `clipWeightsAt` samples weight FCurve via Direct `FCurve` (gk10-faithful hermite/linear/const); respects Transition `active` / `weight`.
 - `SetClipWeight` sets scalar and clears weight keys.
+- **TW1 OM (pass3):** `AddTWTransition` names `TW#`, sets `kind:'timewarp'`, Softimage-attested `type:2`, `weight:1`, `active:true`.
 
 ## Acceptance
 
-- `compare_mixer` nest + EaseIn preset + Exponential LOCK stay OK.
-- No invent Softimage OM Transitions from null PC dumps.
+- `compare_mixer` nest + EaseIn preset + Exponential LOCK + **TW1 schema vs Desktop pass3 golden** stay OK.
+- No invent Softimage Transition Type enums beyond attested type=2 (timewarp).
 - Chrome prefs may drive curve glyph drawing — not the blend formula.

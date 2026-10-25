@@ -57,6 +57,16 @@
         "from": "A",
         "to": "B",
         "length": 5
+      },
+      {
+        "name": "TW1",
+        "kind": "timewarp",
+        "from": "A",
+        "to": "B",
+        "length": 6,
+        "weight": 1,
+        "type": 2,
+        "active": true
       }
     ],
     "compounds": [
@@ -157,6 +167,16 @@
       "to": "B",
       "length": 5
     },
+    "tw": {
+      "name": "TW1",
+      "kind": "timewarp",
+      "from": "A",
+      "to": "B",
+      "length": 6,
+      "weight": 1,
+      "type": 2,
+      "active": true
+    },
     "cpd": {
       "name": "Combo",
       "clips": [
@@ -195,8 +215,8 @@
               }
             ]
           },
-          "weight": 0.6418338108882522,
-          "localTime": 95
+          "weight": 0.7407407407407407,
+          "localTime": 33
         },
         {
           "clip": {
@@ -206,12 +226,12 @@
             "duration": 99,
             "track": 0
           },
-          "weight": 0.35816618911174786,
-          "localTime": 0
+          "weight": 0.25925925925925924,
+          "localTime": -4
         }
       ],
       "values": {
-        "Scene.Scene_Root.cube.Kinematics.Local.posx": 1.9255014326647566
+        "Scene.Scene_Root.cube.Kinematics.Local.posx": 2.2222222222222223
       }
     },
     "evalInA": {
@@ -280,8 +300,8 @@
               }
             ]
           },
-          "weight": 0.3093922651933702,
-          "localTime": 95
+          "weight": 0.4166666666666667,
+          "localTime": 33
         },
         {
           "clip": {
@@ -291,12 +311,12 @@
             "duration": 99,
             "track": 0
           },
-          "weight": 0.6906077348066298,
-          "localTime": 0
+          "weight": 0.5833333333333334,
+          "localTime": -4
         }
       ],
       "values": {
-        "Scene.Scene_Root.cube.Kinematics.Local.posx": 0.9281767955801105
+        "Scene.Scene_Root.cube.Kinematics.Local.posx": 1.25
       }
     },
     "evalMuted": {
@@ -311,7 +331,7 @@
             "track": 0
           },
           "weight": 1,
-          "localTime": 0
+          "localTime": -4
         }
       ],
       "values": {
@@ -342,5 +362,5 @@
     "expLock": "siWeightExponentialIn: not implemented in Softimage action.vbs ModifyWeightProc (LOCK)",
     "posxMid": 0
   },
-  "deepNote": "loaded /workspace/data/dump/si_anim_mixer_deep.json; expected gaps: PC StoreAction null handles (2); PC AddBridgeTransition: no command; PC mixer_collections null (needs clip sel); nestedSI Name/Hidden/Active/Start time/Duration/Auto Transition"
+  "deepNote": "loaded /workspace/data/dump/si_anim_mixer_deep.json; +/workspace/data/dump/si_mixer_transitions.json; StoreAction ok Sources.Scene_Root.ActionA,Sources.Scene_Root.ActionB; SelectClips 2; PC AddTWTransition → Mixer.TW1; PC AddTransition(c0,c1) → Mixer.Transition; PC clips 2 Clip schema; PC transition_list 1; PC TW1 schema weight=1 type=2 active=true; PC acceptance has_transition_objects; PC acceptance TW1; PC n_transitions=1; PC n_clips=2; PC ContainerStart/Duration finite (0.03333333333333333/1.6333333333333329); expected gaps: PC StoreAction null handles (2); PC AddBridgeTransition: no command; PC AddTransition returned null (no Transition objects); PC mixer_collections null; nestedSI Name/Hidden/Active/Start time/Duration/Auto Transition"
 }
