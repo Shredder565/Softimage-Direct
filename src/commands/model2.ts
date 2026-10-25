@@ -100,12 +100,25 @@ export function registerModelCommands2(app: App) {
       if (!ops.length) throw new Error('Continuity Manager: select a NURBS surface mesh'); return ops;
     };
   });
-  // ---- Snap Boundary
-  app.register({ name: 'ApplySnapFaceOp', label: 'Snap Boundary', category: 'Modeling', args: [{ name: 'ConnectionSet', default: '' }], execute(app) {
-    const s = app.selectedObjects.filter(o => o.primitive?.type === 'surfmsh'); if (s.length < 2) throw new Error('Snap Boundary: select the surface to snap, then the target surface');
-    const [o, target] = s; const st = N.surfOf(target.primitive!.mesh())!; const bnd = N.nearestBoundary(N.surfOf(o.primitive!.mesh())!, p => N.closestPointOnSurf(st, p).p);
-    return addOp(app, o, new NurbsOp('Snap Boundary', 'srfsnapboundary', [enumP('boundary', bnd, BOUNDARIES, 'Boundary')], (sf, op) => N.snapBoundary(sf, op.val('boundary'), N.surfOf(target.primitive!.mesh())!, 1)));
-  } });
+  // ---- Snap Boundary (Softimage ApplySnapFaceOp args×4 — stub-tools dump ACTIVE)
+  app.register({
+    name: 'ApplySnapFaceOp', label: 'Snap Boundary', category: 'Modeling',
+    args: [
+      { name: 'ConnectionSet', default: '' },
+      { name: 'ConnectType', default: ':siUnspecified:siBranchFlag' },
+      { name: 'ImmediateMode', default: ':siPersistentOperation:siOperationMode' },
+      { name: 'OutputObjs', default: null },
+    ],
+    execute(app, a) {
+      const fromSet = a.ConnectionSet ? app.targets(a.ConnectionSet) : [];
+      const s = (fromSet.length ? fromSet : app.selectedObjects).filter(o => o.primitive?.type === 'surfmsh');
+      if (s.length < 2) throw new Error('Snap Boundary: select the surface to snap, then the target surface');
+      const [o, target] = s;
+      const st = N.surfOf(target.primitive!.mesh())!;
+      const bnd = N.nearestBoundary(N.surfOf(o.primitive!.mesh())!, p => N.closestPointOnSurf(st, p).p);
+      return addOp(app, o, new NurbsOp('Snap Boundary', 'srfsnapboundary', [enumP('boundary', bnd, BOUNDARIES, 'Boundary')], (sf, op) => N.snapBoundary(sf, op.val('boundary'), N.surfOf(target.primitive!.mesh())!, 1)));
+    },
+  });
   // ---- ApplyGenOp: Surface Fit, Surface Fillet, Curve Fillet, GATOR
   wrap(app, 'ApplyGenOp', (def) => {
     const prevCan = def.canRun, prevExec = def.execute; const mine = ['SrfFit', 'SrfFillet', 'CrvFillet', 'Gator'];
@@ -332,13 +345,89 @@ export function registerModelCommands2(app: App) {
   const ownerOf = (n: any): X3DObject | undefined => { let o = n; while (o && !(o instanceof X3DObject)) o = o.parentObj ?? o.parent; return o; };
   const meshObj = (app: App) => { const o = app.selectedObjects.find(x => x.primitive?.mesh()) ?? app.compSel?.obj ?? app.selection.map(ownerOf).find(x => x?.primitive?.mesh()); if (!o?.primitive?.mesh()) throw new Error('Select a polygon mesh'); return o; };
   let normalClipboard: V3[] = [];
-  app.register({ name: 'ResetUserNormals', label: 'Reset User Normals', category: 'Modeling', args: [{ name: 'InputObjs', default: '' }, { name: 'ToUser', default: false }], execute(app, a) { const o = meshObj(app); const p = normalsProp(app, o)!; const map: Map<number, V3> = (p as any).normals; const comp = computedNormals(o.primitive!.mesh()!); const before = new Map(map); app.record('Reset normals', () => { for (const i of selPoints(app, o)) { if (a.ToUser) map.set(i, comp[i]); else map.delete(i); } }, () => { map.clear(); for (const [k, v] of before) map.set(k, v); }); app.events.emit('scene'); return p; } });
-  app.register({ name: 'AverageUserNormals', label: 'Average User Normals', category: 'Modeling', args: [{ name: 'InputObjs', default: '' }, { name: 'Distance', default: 0 }], execute(app) { const o = meshObj(app); const p = normalsProp(app, o)!; const map: Map<number, V3> = (p as any).normals; const m = o.primitive!.mesh()!; const comp = computedNormals(m); const nb = new Map<number, Set<number>>(); for (const f of m.polygons) for (let i = 0; i < f.length; i++) { const a = f[i], b = f[(i + 1) % f.length]; if (!nb.has(a)) nb.set(a, new Set()); if (!nb.has(b)) nb.set(b, new Set()); nb.get(a)!.add(b); nb.get(b)!.add(a); } const cur = (i: number) => map.get(i) ?? comp[i]; const before = new Map(map); const next = new Map<number, V3>(); for (const i of selPoints(app, o)) { const acc: V3 = [...cur(i)]; for (const j of nb.get(i) ?? []) { const q = cur(j); acc[0] += q[0]; acc[1] += q[1]; acc[2] += q[2]; } const l = Math.hypot(...acc) || 1; next.set(i, [acc[0] / l, acc[1] / l, acc[2] / l]); } app.record('Average normals', () => { for (const [k, v] of next) map.set(k, v); }, () => { map.clear(); for (const [k, v] of before) map.set(k, v); }); app.events.emit('scene'); return p; } });
-  app.register({ name: 'NormalizeUserNormals', label: 'Normalize User Normals', category: 'Modeling', args: [], execute(app) { const o = meshObj(app); const p = normalsProp(app, o)!; const map: Map<number, V3> = (p as any).normals; for (const [k, v] of map) { const l = Math.hypot(...v) || 1; map.set(k, [v[0] / l, v[1] / l, v[2] / l]); } app.events.emit('scene'); return p; } });
-  app.register({ name: 'Copy', label: 'Copy', category: 'Edit', args: [], undoable: false, execute(app) { if (app.compSel) { const o = meshObj(app); const p = normalsProp(app, o, false); const comp = computedNormals(o.primitive!.mesh()!); normalClipboard = selPoints(app, o).map(i => ((p as any)?.normals?.get(i) ?? comp[i]) as V3); app.logMsg('info', `Copied ${normalClipboard.length} user normal(s)`); return normalClipboard.length; } (app as any).clipboard = app.selectedObjects.slice(); return app.selectedObjects.length; } });
-  app.register({ name: 'Paste', label: 'Paste', category: 'Edit', args: [], execute(app) { if (app.compSel && normalClipboard.length) { const o = meshObj(app); const p = normalsProp(app, o)!; const map: Map<number, V3> = (p as any).normals; const before = new Map(map); const pts = selPoints(app, o); app.record('Paste normals', () => pts.forEach((i, k) => map.set(i, normalClipboard[Math.min(k, normalClipboard.length - 1)])), () => { map.clear(); for (const [k, v] of before) map.set(k, v); }); app.events.emit('scene'); return p; } const objs: X3DObject[] = (app as any).clipboard ?? []; if (objs.length) return app.run('Duplicate', { InputObjs: objs }); return null; } });
+  // Softimage stub-tools dump ACTIVE — Property scripting names + arg counts from commands_full.
+  app.register({
+    name: 'ResetUserNormals', label: 'Reset User Normals', category: 'Property',
+    args: [{ name: 'InputObjs', default: null }, { name: 'BleedSelection', default: null }],
+    execute(app, a) {
+      const o = meshObj(app); const p = normalsProp(app, o)!; const map: Map<number, V3> = (p as any).normals;
+      const before = new Map(map);
+      app.record('Reset normals', () => { for (const i of selPoints(app, o)) map.delete(i); }, () => { map.clear(); for (const [k, v] of before) map.set(k, v); });
+      app.events.emit('scene'); return p;
+    },
+  });
+  app.register({
+    name: 'AverageUserNormals', label: 'Average User Normals', category: 'Property',
+    args: [{ name: 'InputObjs', default: null }, { name: 'Distance', default: null }, { name: 'BleedSelection', default: null }],
+    execute(app) {
+      const o = meshObj(app); const p = normalsProp(app, o)!; const map: Map<number, V3> = (p as any).normals; const m = o.primitive!.mesh()!;
+      const comp = computedNormals(m); const nb = new Map<number, Set<number>>();
+      for (const f of m.polygons) for (let i = 0; i < f.length; i++) { const a = f[i], b = f[(i + 1) % f.length]; if (!nb.has(a)) nb.set(a, new Set()); if (!nb.has(b)) nb.set(b, new Set()); nb.get(a)!.add(b); nb.get(b)!.add(a); }
+      const cur = (i: number) => map.get(i) ?? comp[i]; const before = new Map(map); const next = new Map<number, V3>();
+      for (const i of selPoints(app, o)) { const acc: V3 = [...cur(i)]; for (const j of nb.get(i) ?? []) { const q = cur(j); acc[0] += q[0]; acc[1] += q[1]; acc[2] += q[2]; } const l = Math.hypot(...acc) || 1; next.set(i, [acc[0] / l, acc[1] / l, acc[2] / l]); }
+      app.record('Average normals', () => { for (const [k, v] of next) map.set(k, v); }, () => { map.clear(); for (const [k, v] of before) map.set(k, v); });
+      app.events.emit('scene'); return p;
+    },
+  });
+  app.register({
+    name: 'NormalizeUserNormals', label: 'Normalize User Normals', category: 'Property',
+    args: [{ name: 'InputObjs', default: null }, { name: 'BleedSelection', default: null }],
+    execute(app) {
+      const o = meshObj(app); const p = normalsProp(app, o)!; const map: Map<number, V3> = (p as any).normals;
+      for (const [k, v] of map) { const l = Math.hypot(...v) || 1; map.set(k, [v[0] / l, v[1] / l, v[2] / l]); }
+      app.events.emit('scene'); return p;
+    },
+  });
+  // Softimage: "Set the normals associated with the input components to the inverse normal" — NOT InvertPolygons.
+  app.register({
+    name: 'InvertUserNormals', label: 'Invert User Normals', category: 'Property',
+    args: [{ name: 'InputObjs', default: null }, { name: 'BleedSelection', default: null }],
+    execute(app) {
+      const o = meshObj(app); const p = normalsProp(app, o)!; const map: Map<number, V3> = (p as any).normals;
+      const comp = computedNormals(o.primitive!.mesh()!); const before = new Map(map); const next = new Map<number, V3>();
+      for (const i of selPoints(app, o)) { const n = map.get(i) ?? comp[i]; next.set(i, [-n[0], -n[1], -n[2]]); }
+      app.record('Invert user normals', () => { for (const [k, v] of next) map.set(k, v); }, () => { map.clear(); for (const [k, v] of before) map.set(k, v); });
+      app.events.emit('scene'); return p;
+    },
+  });
+  app.register({
+    name: 'CopyUserNormals', label: 'Copy User Normals', category: 'Property',
+    args: [{ name: 'InputObjs', default: null }], undoable: false,
+    execute(app) {
+      const o = meshObj(app); const p = normalsProp(app, o, false); const comp = computedNormals(o.primitive!.mesh()!);
+      normalClipboard = selPoints(app, o).map(i => ((p as any)?.normals?.get(i) ?? comp[i]) as V3);
+      app.logMsg('info', `Copied ${normalClipboard.length} user normal(s)`);
+      return normalClipboard.length;
+    },
+  });
+  app.register({
+    name: 'PasteUserNormals', label: 'Paste User Normals', category: 'Property',
+    args: [
+      { name: 'InputObjs', default: null }, { name: 'BleedSelection', default: null },
+      { name: 'X', default: null }, { name: 'Y', default: null }, { name: 'Z', default: null },
+      { name: 'Local', default: null }, { name: 'Normalize', default: null },
+    ],
+    execute(app, a) {
+      if (!normalClipboard.length) throw new Error('Paste User Normals: nothing copied');
+      const o = meshObj(app); const p = normalsProp(app, o)!; const map: Map<number, V3> = (p as any).normals;
+      const before = new Map(map); const pts = selPoints(app, o);
+      const norm = a.Normalize == null ? true : !!a.Normalize;
+      app.record('Paste user normals', () => {
+        pts.forEach((i, k) => {
+          let v = [...normalClipboard[Math.min(k, normalClipboard.length - 1)]] as V3;
+          if (a.X != null) v[0] = Number(a.X); if (a.Y != null) v[1] = Number(a.Y); if (a.Z != null) v[2] = Number(a.Z);
+          if (norm) { const l = Math.hypot(...v) || 1; v = [v[0] / l, v[1] / l, v[2] / l]; }
+          map.set(i, v);
+        });
+      }, () => { map.clear(); for (const [k, v] of before) map.set(k, v); });
+      app.events.emit('scene'); return p;
+    },
+  });
+  app.register({ name: 'Copy', label: 'Copy', category: 'Edit', args: [], undoable: false, execute(app) { if (app.compSel) return app.run('CopyUserNormals', {}); (app as any).clipboard = app.selectedObjects.slice(); return app.selectedObjects.length; } });
+  app.register({ name: 'Paste', label: 'Paste', category: 'Edit', args: [], execute(app) { if (app.compSel && normalClipboard.length) return app.run('PasteUserNormals', {}); const objs: X3DObject[] = (app as any).clipboard ?? []; if (objs.length) return app.run('Duplicate', { InputObjs: objs }); return null; } });
+  // Softimage SetUserNormalsSettings / "Set User Normals Settings" = FAIL in stub-tools dump — keep inspect shell only; Gap = Softimage FAIL.
   app.register({ name: 'SetUserNormalsSettings', label: 'User Normals Settings', category: 'Modeling', args: [], execute(app) { const o = meshObj(app); const p = normalsProp(app, o)!; app.events.emit('inspect', p); return p; } });
-  app.register({ name: 'TweakNormalsTool', label: 'Tweak User Normals Tool', category: 'Modeling', args: [{ name: 'Clsid', default: '' }], undoable: false, execute(app) {
+  app.register({ name: 'TweakNormalsTool', label: 'Tweak User Normals Tool', category: 'Modeling', args: [{ name: 'Clsid', default: '{D0DDA3E5-A9BE-449F-AB49-5EDB120DE5A4}' }], undoable: false, description: 'Activate the Tweak Normals tool', execute(app) {
     const o = meshObj(app); const p = normalsProp(app, o)!; const map: Map<number, V3> = (p as any).normals; const comp = computedNormals(o.primitive!.mesh()!);
     const tool: InteractiveTool & { onPaint?: any } = { name: 'Tweak User Normals', prompt: 'Tweak User Normals: drag on a point to tilt its normal (Enter/right-click to finish)', pickKind: 'point', onClick: (_p, pick) => { if (pick && pick.kind === 'point') { const i = pick.item as number; const n = map.get(i) ?? comp[i]; const t: V3 = [n[0] + 0.3, n[1], n[2]]; const l = Math.hypot(...t); map.set(i, [t[0] / l, t[1] / l, t[2] / l]); app.events.emit('scene'); } }, onFinish() { app.setTool(null); }, onCancel() { } };
     tool.onPaint = (_w: V3, _obj: X3DObject, pick: any, delta: V3) => { if (!pick || pick.kind !== 'point') return; const i = pick.item as number; const n = map.get(i) ?? comp[i]; const t: V3 = [n[0] + delta[0] * 0.05, n[1] + delta[1] * 0.05, n[2] + delta[2] * 0.05]; const l = Math.hypot(...t) || 1; map.set(i, [t[0] / l, t[1] / l, t[2] / l]); app.events.emit('scene'); };
@@ -364,10 +453,52 @@ export function registerModelCommands2(app: App) {
     const t: InteractiveTool & { onPaint?: any } = { name: kind === 'weight' ? 'Paint Tool' : kind === 'color' ? 'Paint Vertex Color Tool' : 'Paint Push Tool', prompt: `${kind === 'weight' ? 'Paint weights' : kind === 'color' ? 'Paint vertex colours' : 'Push points'} on ${o.name}: drag over the surface (R = brush radius, Enter/right-click to finish)`, pickKind: 'polygon', onClick: (p, pick) => { if (pick) stroke(pick.worldPoint); else stroke(p); }, onFinish() { app.setTool(null); if (prop) app.select([prop]); }, onCancel() { } };
     t.onPaint = (w: V3) => stroke(w); (t as any).paintObj = o; return t;
   };
-  app.register({ name: 'PaintTool', label: 'Paint Tool', category: 'Property', args: [{ name: 'Clsid', default: '' }, { name: 'CmdID', default: '' }, { name: 'KeyboardProcess', default: true }, { name: 'Properties', default: false }], undoable: false, execute(app, a) { if (a.Properties || a.Clsid === 'brush') { app.events.emit('inspect', brush()); return brush(); } const t = paintTool(app, 'weight'); app.setTool(t); return t; } });
-  app.register({ name: 'PaintPushTool', label: 'Paint Push Tool', category: 'Property', args: [], undoable: false, execute(app) { const t = paintTool(app, 'push'); app.setTool(t); return t; } });
-  app.register({ name: 'PaintVertexColorTool', label: 'Paint Vertex Color Tool', category: 'Property', args: [{ name: 'Clsid', default: '' }, { name: 'CmdID', default: '' }, { name: 'KeyboardProcess', default: true }], undoable: false, execute(app) { const t = paintTool(app, 'color'); app.setTool(t); return t; } });
+  // Softimage PaintTool ACTIVE args×3 (Clsid/CmdID/KeyboardProcess). Stroke GDI LOCK — arm tool only.
+  const armPaint = (app: App, kind: 'weight' | 'color' | 'push') => {
+    try { const t = paintTool(app, kind); app.setTool(t); return t; }
+    catch {
+      const label = kind === 'weight' ? 'Paint Tool' : kind === 'color' ? 'Paint Vertex Color Tool' : 'Paint Push Tool';
+      (app as any).armedTool = { label, clsid: null };
+      app.logMsg('info', `${label}: activated (select a mesh to paint)`);
+      app.events.emit('selection');
+      return (app as any).armedTool;
+    }
+  };
+  app.register({
+    name: 'PaintTool', label: 'Paint Tool', category: 'Paint',
+    args: [
+      { name: 'Clsid', default: '{BABE02C7-A8B6-11D1-9306-0060970A2BC8}' },
+      { name: 'CmdID', default: '{0B553B32-8F88-11D2-85D6-00C04F8EDF15}' },
+      { name: 'KeyboardProcess', default: true },
+    ],
+    undoable: false, description: 'Activate the paint tool',
+    execute: (app) => armPaint(app, 'weight'),
+  });
+  app.register({
+    name: 'PaintPushTool', label: 'Paint Push Tool', category: 'Modeling|Paint',
+    args: [], undoable: false, execute: (app) => armPaint(app, 'push'),
+  });
+  app.register({
+    name: 'PaintVertexColorTool', label: 'Paint Vertex Color Tool', category: 'Paint',
+    args: [
+      { name: 'Clsid', default: '{D9066020-ADD5-11D4-B91C-0800690C8BD0}' },
+      { name: 'CmdID', default: '{77120620-ADDB-11D4-B91C-0800690C8BD0}' },
+      { name: 'KeyboardProcess', default: true },
+    ],
+    undoable: false, execute: (app) => armPaint(app, 'color'),
+  });
+  // Softimage PaintVertexColors ACTIVE args×5 — arms vertex-color paint (stroke GDI LOCK).
+  app.register({
+    name: 'PaintVertexColors', label: 'Paint Vertex Color', category: 'Property|Paint',
+    args: [
+      { name: 'InputObj', default: null }, { name: 'Polynodes', default: null },
+      { name: 'Colors', default: null }, { name: 'Mode', default: 0 }, { name: 'OutputObj', default: null },
+    ],
+    undoable: false, description: 'Paint Vertex Color',
+    execute: (app) => armPaint(app, 'color'),
+  });
   (app as any).brushProps = brush;
+  // Softimage "Brush Properties" Name = FAIL in stub-tools dump — keep inspect helper; Gap = Softimage FAIL.
   app.register({ name: 'BrushProperties', label: 'Brush Properties', category: 'Property', args: [], undoable: false, execute(app) { app.events.emit('inspect', brush()); return brush(); } });
   // Move Point tool op factory used by Paint Push (creates/returns the top MoveComponent op)
   app.register({ name: 'MovePointTool', label: 'Move Point', category: 'Modeling', args: [{ name: 'InputObjs', default: '' }, { name: 'Create', default: false }], undoable: false, execute(app, a) { const o = app.targets(a.InputObjs)[0] ?? meshObj(app); const prim = o.primitive!; const top: any = prim.operators[prim.operators.length - 1]; if (top && top.deltas) return top; const op = new MoveComponentOperator(); app.record('Move Component', () => prim.addOperator(op), () => prim.removeOperator(op)); return op; } });
@@ -446,5 +577,33 @@ export function registerModelCommands2(app: App) {
   } });
   // ---- ICE Particle Volume shader preset
   wrap(app, 'ApplyShader', (def) => { if (!def) return; const prevCan = def.canRun, prevExec = def.execute; const isIce = (a: any) => a.PresetObj === 'ICEParticleVolumeShader' || a.PresetObj === 'ICE Particle Volume'; def.canRun = (a: any) => isIce(a) || (prevCan ? prevCan(a) : true); def.execute = (app: App, a: any) => { if (!isIce(a)) return prevExec(app, a); for (const o of app.targets(a.InputObjs)) { const sh = makePhong('ICE Particle Volume'); sh.add(num('density', 1, 'Density', { min: 0 })); sh.add(num('density_scale', 1, 'Density Scale', { min: 0 })); sh.add(enumP('shape', 0, [{ label: 'Sphere', value: 0 }, { label: 'Blob', value: 1 }, { label: 'Point', value: 2 }], 'Shape')); const mat = app.scene.newMaterial(o.name + '_Mat', sh); const old = o.material; app.record('Apply shader', () => o.setMaterial(mat), () => o.setMaterial(old)); app.select([sh]); } return null; }; });
+
+  // Softimage stub-tools dump ACTIVE Names (empty ScriptingName) — Name + attested arity.
+  // Scripting AddPolygonTool / SplitPolygonTool / KnifeTool = FAIL — skip those SNs.
+  const nameAlias = (name: string, target: string, args: { name: string; default: any }[] = [{ name: 'Clsid', default: '' }]) =>
+    app.register({
+      name, label: name, category: 'Modeling|Drawing', args, undoable: false,
+      execute: (app, a) => app.run(target, a),
+    });
+  nameAlias('Add Polygon Tool', 'AddPolygonTool');
+  nameAlias('Split Polygon Tool', 'SplitPolygonTool');
+  nameAlias('Add Vertex Tool', 'AddVertexTool');
+  nameAlias('Split Edge Tool', 'SplitEdgeTool');
+  app.register({
+    name: 'Paint Tool', label: 'Paint Tool', category: 'Paint',
+    args: [{ name: 'Clsid', default: '{BABE02C7-A8B6-11D1-9306-0060970A2BC8}' }],
+    undoable: false, execute: (app, a) => app.run('PaintTool', a),
+  });
+  app.register({
+    name: 'Snap Boundary', label: 'Snap Boundary', category: 'Operator',
+    args: [
+      { name: 'ConnectionSet', default: null },
+      { name: 'ConnectType', default: ':siUnspecified:siBranchFlag' },
+      { name: 'ImmediateMode', default: ':siPersistentOperation:siOperationMode' },
+      { name: 'OutputObjs', default: null },
+    ],
+    execute: (app, a) => app.run('ApplySnapFaceOp', a),
+  });
+
   void CurveGeomOperator; void fromPolys;
 }
