@@ -28,10 +28,14 @@
   --ppg-check: 13px;
   --ppg-float-w: 420px;
   --ppg-float-border: #3a3836;
-  --ppg-float-title-top: #7c7876;
-  --ppg-float-title-bot: #5a5654;
-  --ppg-title-top: #8f9bb0;
-  --ppg-title-bot: #6f7d96;
+  /* Desktop DUMP_READY modules-gdi COLORREF (si_ppg_title_colorref.json) — hover LOCK */
+  --ppg-float-title-top: #607388;
+  --ppg-float-title-bot: #607388;
+  --ppg-title-top: #607388;
+  --ppg-title-bot: #607388;
+  --ppg-title-fg: #E4E6EA;
+  --ppg-chrome-face: #ABA8A6;
+  --ppg-chrome-mid: #9E9B99;
   --ppg-nav-w: 71px;
   --ppg-tools-w: 66px;
   --xp-font: Arial, "MS Sans Serif", Tahoma, sans-serif;
@@ -187,13 +191,13 @@ button, select, input { font-family: inherit; }
 
 /* property editor — Softimage PPG chrome (PE uiut host + layout tokens) */
 .ppg { display: flex; flex-direction: column; height: 100%; font-family: var(--ppg-font); font-size: var(--ppg-font-pt); }
-.ppg-title { padding: 2px 6px; height: var(--ppg-title-h); box-sizing: border-box; background: linear-gradient(var(--ppg-title-top), var(--ppg-title-bot)); color: #f4f6fa; border-bottom: 1px solid #4a5468; font-weight: bold; font-size: var(--ppg-font-pt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ppg-bar { display: flex; gap: 3px; align-items: center; padding: 2px 4px; min-height: var(--ppg-toolbar-h); background: var(--bg2); border-bottom: 1px solid var(--line); font-size: 10px; }
+.ppg-title { padding: 2px 6px; height: var(--ppg-title-h); box-sizing: border-box; background: linear-gradient(var(--ppg-title-top), var(--ppg-title-bot)); color: var(--ppg-title-fg); border-bottom: 1px solid var(--ppg-chrome-mid); font-weight: bold; font-size: var(--ppg-font-pt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ppg-bar { display: flex; gap: 3px; align-items: center; padding: 2px 4px; min-height: var(--ppg-toolbar-h); background: var(--ppg-chrome-face); border-bottom: 1px solid var(--line); font-size: 10px; }
 .ppg-bar .spacer { flex: 1; } .ppg-ico { display: inline-block; width: 16px; height: 14px; text-align: center; border: 1px solid var(--line); border-radius: 2px; background: linear-gradient(var(--btn-top), var(--btn-bot)); color: #333; font-size: 9px; line-height: 13px; cursor: default; }
 .ppg-tabs { display: flex; gap: 1px; background: var(--bg); padding: 4px 3px 0; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
 .ppg-tab { padding: 2px 8px; background: linear-gradient(var(--btn-top), var(--btn-bot)); border: 1px solid var(--line); border-bottom: none; border-radius: 3px 3px 0 0; cursor: pointer; font-size: var(--ppg-tab-font); color: var(--text); }
 .ppg-tab.active { background: #f0eeec; font-weight: bold; }
-.ppg-body { flex: 1; overflow: auto; padding: var(--ppg-body-pad) var(--ppg-body-pad) 8px; background: var(--bg2); }
+.ppg-body { flex: 1; overflow: auto; padding: var(--ppg-body-pad) var(--ppg-body-pad) 8px; background: var(--ppg-chrome-face); }
 .ppg-name { display: grid; grid-template-columns: 40px 1fr; align-items: center; gap: var(--ppg-row-gap); margin: 2px 0 6px; }
 .ppg-name label { font-size: var(--ppg-font-pt); text-align: right; } .ppg-name input { background: var(--ppg-val-bg); color: var(--ppg-val-fg); border: 1px solid #111; padding: 1px 4px; font-size: var(--ppg-font-pt); height: var(--ppg-input-h); }
 .ppg-group { margin: 2px 0 6px; }
@@ -368,7 +372,7 @@ button, select, input { font-family: inherit; }
 
 /* ---- Floating property editor / soft dialogs (shared shell chrome) ---- */
 .ppg-float { position: absolute; z-index: 50; width: var(--ppg-float-w); max-height: 70%; display: flex; flex-direction: column; background: var(--bg); border: 1px solid var(--ppg-float-border); box-shadow: 2px 3px 8px rgba(0,0,0,0.45); font-size: 10px; font-family: var(--ppg-font); }
-.ppg-float-bar { height: var(--ppg-title-h); background: linear-gradient(var(--ppg-float-title-top), var(--ppg-float-title-bot)); color: #f4f2f0; display: flex; align-items: center; padding: 0 4px; cursor: move; user-select: none; font-weight: bold; }
+.ppg-float-bar { height: var(--ppg-title-h); background: linear-gradient(var(--ppg-float-title-top), var(--ppg-float-title-bot)); color: var(--ppg-title-fg); display: flex; align-items: center; padding: 0 4px; cursor: move; user-select: none; font-weight: bold; }
 .ppg-float-title { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .ppg-float-close { width: 14px; text-align: center; cursor: pointer; font-size: 12px; }
 .ppg-float-close:hover { color: #ffd34d; }

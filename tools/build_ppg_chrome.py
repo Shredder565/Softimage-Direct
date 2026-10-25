@@ -21,6 +21,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PE = ROOT / "data" / "si" / "pe_resources.json"
 PE394_DUMP = ROOT / "data" / "dump" / "si_pe_property_page_394.json"
+PPG_COLORREF = ROOT / "data" / "dump" / "si_ppg_title_colorref.json"
 # softimage-pc Phase B dumps (prefer when present)
 PC_DIALOGS = Path("/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/dialogs")
 PC_PE = PC_DIALOGS / "pe-dialogs-ui-model.json"
@@ -31,6 +32,7 @@ UIUT_BMP = ROOT / "data" / "si" / "pe_bitmaps" / "uiut"
 PUBLIC_MCP = ROOT / "public" / "si" / "mcp"
 OUT = ROOT / "src" / "data" / "si" / "ppg_chrome.json"
 PE394_OUT = ROOT / "src" / "data" / "si" / "pe_property_page_394.json"
+COLORREF_OUT = ROOT / "src" / "data" / "si" / "ppg_title_colorref.json"
 
 # Softimage PPG host dialogs in uiut.dll (owner-draw chrome over Child Property Frame).
 HOST_DIALOGS = ("138", "139", "141", "142", "144", "145", "147")
@@ -143,6 +145,23 @@ def build() -> dict:
     # Softimage PPG body metrics observed across SPDL-driven pages + PE host frames.
     # Font: uiut host frames use 11pt Arial; classic dialogs / genppg use 8pt MS Sans Serif.
     # Pixel chrome for owner-draw bitmaps is taken from RT_BITMAP (not DLU alone).
+    # Title/chrome COLORREF: Desktop DUMP_READY modules-gdi harvest (no invent; hover LOCK).
+    colorref = None
+    cr_tokens: dict = {}
+    if PPG_COLORREF.exists():
+        colorref = json.load(open(PPG_COLORREF))
+        COLORREF_OUT.write_text(json.dumps(colorref, indent=2) + "\n")
+        cr_tokens = colorref.get("tokens") or {}
+    if cr_tokens.get("titleFill") and cr_tokens.get("titleText"):
+        title_fill = cr_tokens["titleFill"]
+        title_text = cr_tokens["titleText"]
+        chrome_face = cr_tokens["chromeFace"]
+        chrome_mid = cr_tokens["chromeMid"]
+        # Single dump GetPixel title fill — both gradient stops identical (no invent second stop).
+        float_title = [title_fill, title_fill]
+        ppg_title = [title_fill, title_fill]
+    else:
+        raise SystemExit("si_ppg_title_colorref.json tokens required (dump-attested title/chrome COLORREF)")
     tokens = {
         "fontFamily": 'Arial, "MS Sans Serif", Tahoma, sans-serif',
         "fontPtHost": 11,
@@ -167,8 +186,11 @@ def build() -> dict:
         "checkboxPx": 13,
         "floatDefaultWidthPx": 420,
         "floatBorder": "#3a3836",
-        "floatTitleGradient": ["#7c7876", "#5a5654"],
-        "ppgTitleGradient": ["#8f9bb0", "#6f7d96"],
+        "floatTitleGradient": float_title,
+        "ppgTitleGradient": ppg_title,
+        "ppgTitleText": title_text,
+        "ppgChromeFace": chrome_face,
+        "ppgChromeMid": chrome_mid,
         "fontPtDialog": 8,
         "dialogBtnWDlu": 50,
         "dialogBtnHDlu": 14,
@@ -374,6 +396,17 @@ def build() -> dict:
         "spdlStats": spdl_stats,
     }
 
+    title_colorref = None
+    if colorref:
+        title_colorref = {
+            "status": colorref.get("status"),
+            "wire": colorref.get("wire"),
+            "hover": colorref.get("hover"),
+            "tokens": cr_tokens,
+            "source": colorref.get("source"),
+            "dump": "data/dump/si_ppg_title_colorref.json",
+        }
+
     return {
         "softimage": "2015 SP2",
         "source": {
@@ -382,11 +415,13 @@ def build() -> dict:
             "views": "src/data/si/views.json",
             "pc_dialogs": "internal/softimage-pc-dumps/dialogs/" if PC_PE.exists() else None,
             "pe394": "data/dump/si_pe_property_page_394.json" if PE394_DUMP.exists() else None,
+            "ppg_title_colorref": "data/dump/si_ppg_title_colorref.json" if PPG_COLORREF.exists() else None,
         },
         "canonicalHostDialog": canonical_id,
         "hosts": hosts,
         "bitmaps": bitmaps,
         "tokens": tokens,
+        "titleColorref": title_colorref,
         "explorer": explorer,
         "preferences": preferences,
         "scriptEditor": script_editor,
@@ -402,8 +437,8 @@ def build() -> dict:
             "Script Editor factory font/size/tab/linenum from C3DPrefsScriptEditor.spdl; view defaultsize 485×550.",
             "Soft dialogs: PE majority 8pt MS Sans Serif; OK/Cancel 50×14 DLU → ~75×22 px.",
             "XSI.exe RT_DIALOG 394 is the Property Page TODO stub (title/metrics/strings only — no invent Layout).",
+            "PPG title/chrome COLORREF from Desktop modules-gdi GetPixel (DUMP_READY); hover paint stays LOCK.",
             "Shared PPG shell only — Model-specific opdef layouts owned by Model PPG worker.",
-            "No Softimage Desktop takeover — PE/SPDL file scrape only.",
         ],
     }
 

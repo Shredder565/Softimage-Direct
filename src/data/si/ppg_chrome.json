@@ -5,7 +5,8 @@
     "uiut_bitmaps": "data/si/pe_bitmaps/uiut/",
     "views": "src/data/si/views.json",
     "pc_dialogs": "internal/softimage-pc-dumps/dialogs/",
-    "pe394": "data/dump/si_pe_property_page_394.json"
+    "pe394": "data/dump/si_pe_property_page_394.json",
+    "ppg_title_colorref": "data/dump/si_ppg_title_colorref.json"
   },
   "canonicalHostDialog": "147",
   "hosts": {
@@ -494,15 +495,46 @@
     "floatDefaultWidthPx": 420,
     "floatBorder": "#3a3836",
     "floatTitleGradient": [
-      "#7c7876",
-      "#5a5654"
+      "#607388",
+      "#607388"
     ],
     "ppgTitleGradient": [
-      "#8f9bb0",
-      "#6f7d96"
+      "#607388",
+      "#607388"
     ],
+    "ppgTitleText": "#E4E6EA",
+    "ppgChromeFace": "#ABA8A6",
+    "ppgChromeMid": "#9E9B99",
     "dialogBtnWDlu": 50,
     "dialogBtnHDlu": 14
+  },
+  "titleColorref": {
+    "status": "DUMP_READY",
+    "wire": "COLORREF_TITLE_CHROME",
+    "hover": {
+      "status": "LOCK",
+      "note": "Harvest checklist PPG:titlebar_hover / PPG:close_btn_hover unfulfilled \u2014 no invent hover paint"
+    },
+    "tokens": {
+      "titleFill": "#607388",
+      "titleText": "#E4E6EA",
+      "chromeFace": "#ABA8A6",
+      "chromeMid": "#9E9B99"
+    },
+    "source": {
+      "samples_txt": "internal/softimage-pc-dumps/modules-gdi/ppg_colorref_samples.txt",
+      "png": "media/softimage-modules-gdi/60-ppg-inspect-cube.png",
+      "titlebar_crop": "media/softimage-modules-gdi/60-ppg-titlebar-crop.png",
+      "harvest": "internal/softimage-pc-dumps/modules-gdi/deferred_gdi_harvest.json",
+      "tour": "docs/softimage-modules-gdi-tour.md",
+      "hwnd_win": [
+        150,
+        150,
+        693,
+        256
+      ]
+    },
+    "dump": "data/dump/si_ppg_title_colorref.json"
   },
   "explorer": {
     "renameDialog": {
@@ -834,7 +866,7 @@
     "Script Editor factory font/size/tab/linenum from C3DPrefsScriptEditor.spdl; view defaultsize 485\u00d7550.",
     "Soft dialogs: PE majority 8pt MS Sans Serif; OK/Cancel 50\u00d714 DLU \u2192 ~75\u00d722 px.",
     "XSI.exe RT_DIALOG 394 is the Property Page TODO stub (title/metrics/strings only \u2014 no invent Layout).",
-    "Shared PPG shell only \u2014 Model-specific opdef layouts owned by Model PPG worker.",
-    "No Softimage Desktop takeover \u2014 PE/SPDL file scrape only."
+    "PPG title/chrome COLORREF from Desktop modules-gdi GetPixel (DUMP_READY); hover paint stays LOCK.",
+    "Shared PPG shell only \u2014 Model-specific opdef layouts owned by Model PPG worker."
   ]
 }

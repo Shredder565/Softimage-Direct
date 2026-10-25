@@ -58,6 +58,7 @@ import { applyRenderToolbarChrome, renderToolbarChromeAudit } from './ui/renderT
 import { applyRenderRegionHwndChrome, renderRegionHwndChromeAudit } from './ui/renderRegionHwndChrome';
 import { renderMcpFlyoutsAudit } from './ui/renderMcpFlyouts';
 import { directLockDesktopAudit } from './ui/directLockDesktop';
+import { ppgTitleColorrefAudit } from './ui/ppgTitleColorref';
 import { animEditorsExecCmdAudit, animEditorsExecCmdSmoke } from './ui/animEditorsExecCmd';
 import { applyAnimClientPaintVars, animClientPaintAudit } from './ui/animClientPaint';
 applyPpgChrome();
@@ -320,8 +321,9 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     renderToolbarChrome: renderToolbarChromeAudit(),
     // PE menu 234 Render MCP flyouts (Desktop press-hold missed; menus.json already wired)
     renderMcpFlyouts: renderMcpFlyoutsAudit(),
-    // Softimage Desktop LOCK close — region HWND DUMP_READY; PPG/OpenView LOCK; Anim ExecCmd+paint DONE
+    // Softimage Desktop LOCK close — region HWND DUMP_READY; PPG title COLORREF WIRED; hover/OpenView LOCK; Anim ExecCmd+paint DONE
     directLockDesktop: directLockDesktopAudit(),
+    ppgTitleColorref: ppgTitleColorrefAudit(),
     // Softimage floating Anim editors — ExecuteCommand([]) open path (OpenView LOCK; client paint HWND_PNG DONE)
     animEditorsExecCmd: animEditorsExecCmdAudit(app),
     // Softimage Anim Mixer/Editor/Fcurve client paint — modules-gdi 50/51/52 HWND PNG

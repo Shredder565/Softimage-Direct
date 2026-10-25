@@ -3,15 +3,15 @@
     "softimage": "13.2.163.0",
     "script": "si_direct_lock_desktop_close.js",
     "purpose": "Desktop close remaining Direct LOCKs (OpenView / region / PPG checklist)",
-    "utc": "Sun, 25 Oct 2026 16:54:52 UTC",
+    "utc": "Sun, 25 Oct 2026 19:40:00 UTC",
     "mode": "Desktop-GUI",
-    "wire_note": "Desktop 2026-10-25. modules-gdi closed region HWND crop (61-render-region-*.png + DsNewRegionButtonCtrl + prefs region_color_*). Anim Mixer/Editor/Fcurve client paint DONE from modules-gdi 50/51/52 HWND PNG. PPG COLORREF still separate. OpenView wrong-args LOCK; Anim ExecCmd open DONE. Do not invent."
+    "wire_note": "Desktop 2026-10-25. modules-gdi closed region HWND crop (61-render-region-*.png + DsNewRegionButtonCtrl + prefs region_color_*). PPG title/chrome COLORREF WIRED from modules-gdi ppg_colorref_samples + 60-ppg-inspect-cube.png; hover GetPixel LOCK. Anim Mixer/Editor/Fcurve client paint DONE from modules-gdi 50/51/52 HWND PNG. OpenView wrong-args LOCK; Anim ExecCmd open DONE. Do not invent."
   },
   "per": {
     "animate.floating_views": "EXECCMD_DONE",
     "animate.fcurve_mixer_client_paint": "DONE",
     "render.region_hwnd_crop": "DUMP_READY",
-    "ui.ppg_title_hover_gdi": "PROBE",
+    "ui.ppg_title_hover_gdi": "DUMP_READY",
     "ui.manipulator_hover_px": "LOCK",
     "model.caphole_ppg_layout": "LOCK",
     "model.curve_has_layout_false": "LOCK"
@@ -24,10 +24,11 @@
       "note": "modules-gdi four_tab_region_hwnd DUMP_READY: 61-render-region-desktop/crop + DsNewRegionButtonCtrl children; prefs region_color_default=#ffff00 handle=#0000ff; handle W/H px LOCK"
     },
     "ui.ppg_title_hover_gdi": {
-      "dump_label": "PROBE",
-      "wire": "NONE",
-      "status": "LOCK",
-      "note": "InspectObj failed Unexpected failure_$S_2006; no titlebar COLORREF sample"
+      "dump_label": "DUMP_READY",
+      "wire": "COLORREF_TITLE_CHROME",
+      "status": "WIRED",
+      "hover": "LOCK",
+      "note": "modules-gdi ppg_colorref_samples.txt + 60-ppg-inspect-cube.png GetPixel; title fill #607388 text #E4E6EA chrome face #ABA8A6 mid #9E9B99; hover paint absent \u2014 no invent"
     },
     "animate.floating_views": {
       "dump_label": "LOCK",
@@ -88,12 +89,7 @@
     "Mixer": "Wrong number of arguments or invalid property assignment"
   },
   "screenshot_checklist_unfulfilled": [
-    "PPG:titlebar_idle",
     "PPG:titlebar_hover",
     "PPG:close_btn_hover"
-  ],
-  "screenshot_checklist_fulfilled": [
-    "RenderRegion:crop_widget",
-    "RenderRegion:HWND_chrome"
   ]
 }
