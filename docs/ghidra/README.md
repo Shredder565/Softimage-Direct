@@ -24,6 +24,7 @@ Residual RE progress: [../rea-ghidra-residual-progress.md](../rea-ghidra-residua
 | [bevel-dat-xrefs.md](./bevel-dat-xrefs.md) | ComputeBevelVectors DAT_* pins (docs until collide golden) |
 | [polyreduce-rename-map.md](./polyreduce-rename-map.md) | Optional topologyop FUN renames (docs unless DIFF) |
 | [ui-lock-binary-pins.md](./ui-lock-binary-pins.md) | UI LOCK C2–C6 / A3 binary string pins |
+| [uiut-ppg-gdi.md](./uiut-ppg-gdi.md) | Optional push #4 — uiut owner-draw PPG GDI LOCK (no paint pins) |
 
 ## Checklist / prior RE
 
