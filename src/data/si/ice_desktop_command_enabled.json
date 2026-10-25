@@ -45,7 +45,11 @@
   ],
   "lock": {
     "ice_tree_gdi_chrome": "LOCK",
+    "ice_tree_region_css": "LOCK",
     "mcp_flyout_item_lists": "LOCK",
-    "openview_xsibatch": "OpenView ICE Tree failed under -processing"
+    "anchor_to_delete_compounds": "LOCK",
+    "openview_xsibatch": "OpenView ICE Tree failed under -processing",
+    "note": "Shell chrome from xsivw + prefs dump; client HWND/pixels await modules-gdi harvest. Tour 12-ice-tree.png is Face Robot mislabel."
   }
 }
+

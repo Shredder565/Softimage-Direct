@@ -384,7 +384,18 @@ export function iceModuleAudit(app: App): Record<string, unknown> {
     runtime_anchors: { status: string };
   };
   const chrome = iceChrome as typeof iceChrome & {
-    views: Record<string, { defaultsize: number[]; category: string }>;
+    views: Record<string, {
+      defaultsize: number[]; category: string; clsid?: string; cmdmap?: string;
+      status?: string; client_gdi?: string;
+    }>;
+    prefs_layout?: {
+      status?: string; apply_as_css_vars?: boolean;
+      preset_manager_size?: number; explorer_size?: number;
+      leftcompoundbar_size?: number; rightcompoundbar_size?: number;
+      create_node_mode?: number;
+    };
+    toolbar_shell?: { attested?: string[]; desktop_png?: string };
+    client_gdi?: { status?: string };
   };
   const en = (iceCmdEn as { enabled_by_scriptingname: Record<string, boolean> }).enabled_by_scriptingname;
   const prefsDump = icePrefs as {
@@ -393,6 +404,7 @@ export function iceModuleAudit(app: App): Record<string, unknown> {
     'preferences.ICEOperators': { param_count: number; params: Record<string, unknown>; propset: string };
   };
   const tree = chrome.views['ICE Tree'];
+  const attr = chrome.views['ICE Attribute Editor'];
   const high = Object.keys(en);
   const wired = high.filter(n => app.commands.has(n));
   const prefSets = (window as any).__prefSets as Map<string, { params: { name: string; value: unknown }[] }> | undefined;
@@ -400,6 +412,7 @@ export function iceModuleAudit(app: App): Record<string, unknown> {
   const iceOpsSet = prefSets?.get('C3DPrefsICEOperators');
   const treeParams = iceTreeSet ? Object.fromEntries(iceTreeSet.params.map(p => [p.name, p.value])) : null;
   const opsParams = iceOpsSet ? Object.fromEntries(iceOpsSet.params.map(p => [p.name, p.value])) : null;
+  const pl = chrome.prefs_layout;
   return {
     softimage: tops.softimage,
     menuId: tops.menu_id,
@@ -410,6 +423,26 @@ export function iceModuleAudit(app: App): Record<string, unknown> {
     runtimeAnchors: tops.runtime_anchors?.status ?? 'LOCK',
     iceTreeDefaultSize: tree?.defaultsize,
     iceTreeCategory: tree?.category,
+    iceTreeClsid: tree?.clsid,
+    iceTreeCmdmap: tree?.cmdmap,
+    iceTreeStatus: tree?.status ?? 'SHELL',
+    iceTreeClientGdi: tree?.client_gdi ?? chrome.client_gdi?.status ?? 'LOCK',
+    iceAttrDefaultSize: attr?.defaultsize,
+    iceAttrCategory: attr?.category,
+    iceAttrClsid: attr?.clsid,
+    iceAttrStatus: attr?.status ?? 'SHELL_ONLY',
+    iceAttrClientGdi: attr?.client_gdi ?? 'LOCK',
+    toolbarShell: chrome.toolbar_shell?.attested ?? [],
+    toolbarDesktopPng: chrome.toolbar_shell?.desktop_png ?? 'unattested',
+    prefsLayout: {
+      status: pl?.status ?? 'PREFS_ATTESTED_REGION_UNSEEN',
+      applyAsCssVars: pl?.apply_as_css_vars ?? false,
+      preset_manager_size: pl?.preset_manager_size,
+      explorer_size: pl?.explorer_size,
+      leftcompoundbar_size: pl?.leftcompoundbar_size,
+      rightcompoundbar_size: pl?.rightcompoundbar_size,
+      create_node_mode: pl?.create_node_mode,
+    },
     commandsWired: wired,
     highEnabled: en,
     highWiredCount: wired.length,
