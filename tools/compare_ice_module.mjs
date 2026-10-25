@@ -1,5 +1,5 @@
 // Softimage ICE module shell vs PE MENU 303 dumps (MCP tops / SwitchToolbar / ICE Tree xsivw).
-// Dump-backed only. Anchor-to-Delete compounds LOCK. Needs vite preview :4173.
+// Dump-backed only. PE Anchor leaf ids DUMP_READY; plugin compound names LOCK. Needs vite preview :4173.
 // Usage: node tools/compare_ice_module.mjs
 import { chromium } from 'playwright';
 import fs from 'fs';
@@ -29,7 +29,11 @@ const prefsPath = [
   path.resolve(__dirname, '../src/data/si/ice_desktop_prefs.json'),
   path.resolve(__dirname, '../data/dump/si_ice_desktop_prefs.json'),
 ].find(p => fs.existsSync(p));
-if (!topsPath || !fs.existsSync(chromePath) || !cmdEnPath || !prefsPath) {
+const anchorPath = [
+  path.resolve(__dirname, '../src/data/si/ice_pe_anchor_leaves.json'),
+  path.resolve(__dirname, '../data/dump/si_ice_pe_anchor_leaves.json'),
+].find(p => fs.existsSync(p));
+if (!topsPath || !fs.existsSync(chromePath) || !cmdEnPath || !prefsPath || !anchorPath) {
   console.error('missing ICE dump JSON');
   process.exit(2);
 }
@@ -37,6 +41,7 @@ const tops = JSON.parse(fs.readFileSync(topsPath, 'utf8'));
 const chrome = JSON.parse(fs.readFileSync(chromePath, 'utf8'));
 const cmdEn = JSON.parse(fs.readFileSync(cmdEnPath, 'utf8'));
 const prefsDump = JSON.parse(fs.readFileSync(prefsPath, 'utf8'));
+const anchors = JSON.parse(fs.readFileSync(anchorPath, 'utf8'));
 
 const diffs = [];
 const notes = [];
@@ -70,8 +75,27 @@ else {
   }
   if (!diffs.some(d => d.startsWith('ICE buttons'))) notes.push('ICE MCP buttons match dump');
 
-  if (audit.iceModule.runtimeAnchors !== 'LOCK') diffs.push('runtime Anchors must stay LOCK');
-  else notes.push('Anchor-to-Delete LOCK');
+  if (audit.iceModule.runtimeAnchors !== 'DUMP_READY') {
+    diffs.push(`runtime Anchors want DUMP_READY (got ${audit.iceModule.runtimeAnchors})`);
+  } else notes.push('PE Anchor leaf ids DUMP_READY');
+  if (audit.iceModule.compoundNamesLock !== 'LOCK') {
+    diffs.push(`compound names must stay LOCK (got ${audit.iceModule.compoundNamesLock})`);
+  } else notes.push('plugin compound names LOCK');
+
+  const pe = audit.iceModule.peAnchorLeaves;
+  const wantLeaves = anchors.pe_menu_leaves?.leaves || [];
+  if (pe?.status !== 'DUMP_READY') diffs.push(`peAnchorLeaves.status want DUMP_READY (got ${pe?.status})`);
+  else notes.push('peAnchorLeaves DUMP_READY');
+  if (pe?.count !== wantLeaves.length) diffs.push(`peAnchorLeaves.count ${pe?.count} ≠ ${wantLeaves.length}`);
+  else notes.push(`peAnchorLeaves count ${wantLeaves.length}`);
+  if (pe?.unboundPluginCompounds !== 'LOCK') {
+    diffs.push(`unbound plugin compounds want LOCK (got ${pe?.unboundPluginCompounds})`);
+  } else notes.push('unbound plugin compounds LOCK');
+  const wantCompound = (anchors.compound_om_cmds?.found || []).map(c => c.scriptingname).sort();
+  const gotCompound = [...(pe?.compoundCmdsWired || [])].sort();
+  if (JSON.stringify(wantCompound) !== JSON.stringify(gotCompound)) {
+    diffs.push(`compound OM cmds want=${wantCompound.join('|')} got=${gotCompound.join('|')}`);
+  } else notes.push(`compound OM cmds wired: ${wantCompound.join(', ')}`);
 
   if (!audit.iceModule.openICETreeView) diffs.push('OpenICETreeView not registered');
   else notes.push('OpenICETreeView wired');
@@ -93,9 +117,16 @@ const live = await page.evaluate(async () => {
   const label = document.querySelector('.module-select')?.value;
   // CrowdFX > Crowd > Anchor-to-Delete must not fire RenderRegion (id 41646 collision)
   const status = window.__menuStatus?.('ICE') ?? [];
-  const anchors = status.filter(x => x.label === 'Anchor-to-Delete');
-  const crowd = anchors.find(x => x.path.includes('CrowdFX') && x.path.includes('Crowd'));
-  return { groups, btns, placeholder, label, anchorCount: anchors.length, crowdCmd: crowd?.cmd ?? null, crowdImpl: crowd?.implemented ?? false };
+  const anchorRows = status.filter(x => x.label === 'Anchor-to-Delete');
+  const crowd = anchorRows.find(x => x.path.includes('CrowdFX') && x.path.includes('Crowd'));
+  const byPath = Object.fromEntries(anchorRows.map(x => [`${x.path} > ${x.label}`, x]));
+  return {
+    groups, btns, placeholder, label,
+    anchorCount: anchorRows.length,
+    crowdCmd: crowd?.cmd ?? null,
+    crowdImpl: crowd?.implemented ?? false,
+    byPath,
+  };
 });
 
 if (live.label !== 'ICE' || live.placeholder) diffs.push(`switch ICE failed label=${live.label} placeholder=${live.placeholder}`);
@@ -114,6 +145,20 @@ if (!diffs.some(d => d.startsWith('live missing'))) notes.push('live ICE MCP but
 if (live.crowdCmd !== null || live.crowdImpl) {
   diffs.push(`CrowdFX Anchor must not map cmd (got cmd=${live.crowdCmd} impl=${live.crowdImpl})`);
 } else notes.push(`Anchor-to-Delete unbound (${live.anchorCount} slots)`);
+
+const wantAnchorLeaves = anchors.pe_menu_leaves?.leaves || [];
+if (live.anchorCount !== wantAnchorLeaves.length) {
+  diffs.push(`live Anchor slots ${live.anchorCount} ≠ dump ${wantAnchorLeaves.length}`);
+} else notes.push(`live Anchor slots match dump (${wantAnchorLeaves.length})`);
+let leafIdMismatches = 0;
+for (const leaf of wantAnchorLeaves) {
+  const pathKey = `${leaf.trail.join(' > ')} > Anchor-to-Delete`;
+  const row = live.byPath[pathKey];
+  if (!row) { diffs.push(`missing ICE menu leaf ${pathKey}`); leafIdMismatches++; }
+  else if (row.id !== leaf.id) { diffs.push(`${pathKey} id want=${leaf.id} got=${row.id}`); leafIdMismatches++; }
+  else if (row.cmd !== null) { diffs.push(`${pathKey} must not map cmd (got ${row.cmd})`); leafIdMismatches++; }
+}
+if (!leafIdMismatches) notes.push('MENU 303 Anchor leaf ids match closer95 PE dump');
 
 // SwitchToolbar Target=4
 const sw = await page.evaluate(() => {

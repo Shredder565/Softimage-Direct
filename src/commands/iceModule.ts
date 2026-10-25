@@ -1,5 +1,6 @@
 // Softimage ICE module — PE MENU 303 shell + Desktop tour HIGH graph cmds / prefs attestation.
-// Runtime Anchor-to-Delete particle/CrowdFX compounds stay LOCK (no invent).
+// closer95 DUMP_READY: PE Anchor leaf ids/trails + Create/Explode ICE Compound Node.
+// Plugin compound *names* under Anchor-to-Delete stay LOCK (no invent).
 import { App } from '../core/commands';
 import { Property, X3DObject } from '../core/scene';
 import { bool, str } from '../core/params';
@@ -8,6 +9,7 @@ import iceTops from '../data/si/ice_module_mcp_tops.json';
 import iceChrome from '../data/si/ice_view_chrome.json';
 import iceCmdEn from '../data/si/ice_desktop_command_enabled.json';
 import icePrefs from '../data/si/ice_desktop_prefs.json';
+import iceAnchorLeaves from '../data/si/ice_pe_anchor_leaves.json';
 
 const openView = (name: string) => window.dispatchEvent(new CustomEvent('openview', { detail: { name } }));
 
@@ -381,7 +383,7 @@ export function iceModuleAudit(app: App): Record<string, unknown> {
     tops: string[];
     buttons: Record<string, string[]>;
     switch_toolbar_target: number;
-    runtime_anchors: { status: string };
+    runtime_anchors: { status: string; compound_names?: string; pe_leaf_count?: number };
   };
   const chrome = iceChrome as typeof iceChrome & {
     views: Record<string, {
@@ -404,6 +406,12 @@ export function iceModuleAudit(app: App): Record<string, unknown> {
     'preferences.icetree': { param_count: number; params: Record<string, unknown>; propset: string };
     'preferences.ICEOperators': { param_count: number; params: Record<string, unknown>; propset: string };
   };
+  const anchors = iceAnchorLeaves as typeof iceAnchorLeaves & {
+    board: Record<string, string>;
+    pe_menu_leaves: { status: string; count: number; leaves: { trail: string[]; id: number; sdk: string; sdk_id: number }[] };
+    compound_om_cmds: { status: string; found: { scriptingname: string }[] };
+    unbound_plugin_compounds: { status: string; pe_label: string };
+  };
   const tree = chrome.views['ICE Tree'];
   const attr = chrome.views['ICE Attribute Editor'];
   const high = Object.keys(en);
@@ -414,6 +422,8 @@ export function iceModuleAudit(app: App): Record<string, unknown> {
   const treeParams = iceTreeSet ? Object.fromEntries(iceTreeSet.params.map(p => [p.name, p.value])) : null;
   const opsParams = iceOpsSet ? Object.fromEntries(iceOpsSet.params.map(p => [p.name, p.value])) : null;
   const pl = chrome.prefs_layout;
+  const compoundCmds = (anchors.compound_om_cmds?.found ?? []).map(c => c.scriptingname);
+  const compoundCmdsWired = compoundCmds.filter(n => app.commands.has(n));
   return {
     softimage: tops.softimage,
     menuId: tops.menu_id,
@@ -421,7 +431,18 @@ export function iceModuleAudit(app: App): Record<string, unknown> {
     tops: tops.tops,
     buttons: tops.buttons,
     switchToolbarTarget: tops.switch_toolbar_target,
-    runtimeAnchors: tops.runtime_anchors?.status ?? 'LOCK',
+    runtimeAnchors: tops.runtime_anchors?.status ?? 'DUMP_READY',
+    peAnchorLeaves: {
+      status: anchors.pe_menu_leaves?.status ?? 'DUMP_READY',
+      board: anchors.board,
+      count: anchors.pe_menu_leaves?.count ?? 0,
+      leaves: anchors.pe_menu_leaves?.leaves ?? [],
+      compoundOmCmds: anchors.compound_om_cmds?.status ?? 'DUMP_READY',
+      compoundCmdsWired,
+      unboundPluginCompounds: anchors.unbound_plugin_compounds?.status ?? 'LOCK',
+      peLabel: anchors.unbound_plugin_compounds?.pe_label ?? 'Anchor-to-Delete',
+    },
+    compoundNamesLock: tops.runtime_anchors?.compound_names ?? 'LOCK',
     iceTreeDefaultSize: tree?.defaultsize,
     iceTreeCategory: tree?.category,
     iceTreeClsid: tree?.clsid,

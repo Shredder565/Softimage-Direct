@@ -1,0 +1,75 @@
+{
+  "_comment": "Softimage ICE PE MENU 303 Anchor-to-Delete leaves + closer95 OM compound cmds. Dump-attested only. Do not invent plugin compound names under Anchor slots.",
+  "softimage": "13.2.163.0",
+  "source": [
+    "internal/softimage-pc-dumps/closer95/pe_module_menus.json",
+    "internal/softimage-pc-dumps/closer95/closer95_batch.json#items.ice_anchor",
+    "internal/softimage-pc-dumps/closer95/closer95_merged_board.json",
+    "internal/softimage-pc-dumps/sdk/siMenuAnchorPoints-render-simulate-ice-hair.txt",
+    "internal/softimage-pc-dumps/menu_ice.txt"
+  ],
+  "board": {
+    "ice.pe_anchor_menu_leaves": "DUMP_READY",
+    "ice.anchor_compound_leaves": "DUMP_READY"
+  },
+  "menu_id": 303,
+  "pe_label": "Anchor-to-Delete",
+  "pe_menu_leaves": {
+    "status": "DUMP_READY",
+    "note": "PE RT_MENU leaf placeholders under Particles/Deform/Kinematics/CrowdFX. Softimage fills these at runtime via ICE Flow / CrowdFX plugins. AfterImage keeps label Anchor-to-Delete — no invent compound names.",
+    "count": 14,
+    "id_collision_note": "PE id 41646 (CrowdFX > Crowd) collides with Render Regions Refresh Mode Interactive — ignore cmd map for Anchor-to-Delete.",
+    "leaves": [
+      { "trail": ["Particles", "Create"], "id": 41609, "sdk": "siMenuTbICEParticlesCreateID", "sdk_id": 320 },
+      { "trail": ["Particles", "On Emission"], "id": 41610, "sdk": "siMenuTbICEParticlesOnEmissionID", "sdk_id": 321 },
+      { "trail": ["Particles", "After Emission"], "id": 41611, "sdk": "siMenuTbICEParticlesAfterEmissionID", "sdk_id": 322 },
+      { "trail": ["Particles", "Force"], "id": 41614, "sdk": "siMenuTbICEParticlesForceID", "sdk_id": 323 },
+      { "trail": ["Particles", "Collision"], "id": 41613, "sdk": "siMenuTbICEParticlesCollisionID", "sdk_id": 324 },
+      { "trail": ["Particles", "Simulation"], "id": 41603, "sdk": "siMenuTbICEParticlesSimulationID", "sdk_id": 325 },
+      { "trail": ["Particles", "Model Library"], "id": 41621, "sdk": "siMenuTbICEParticlesModelLibraryID", "sdk_id": 326 },
+      { "trail": ["Deform", "Create"], "id": 41616, "sdk": "siMenuTbICEDeformCreateID", "sdk_id": 340 },
+      { "trail": ["Deform", "Simulate"], "id": 41626, "sdk": "siMenuTbICEDeformSimulateID", "sdk_id": 341 },
+      { "trail": ["Kinematics", "Effects"], "id": 41629, "sdk": "siMenuTbICEKinematicsEffectsID", "sdk_id": 360 },
+      { "trail": ["Kinematics", "Constrain"], "id": 41628, "sdk": "siMenuTbICEKinematicsConstrainID", "sdk_id": 361 },
+      { "trail": ["CrowdFX", "Actors"], "id": 41644, "sdk": "siMenuTbICECrowdFXActorsID", "sdk_id": 380 },
+      { "trail": ["CrowdFX", "Crowd"], "id": 41646, "sdk": "siMenuTbICECrowdFXCrowdID", "sdk_id": 382 },
+      { "trail": ["CrowdFX", "Simulation"], "id": 41645, "sdk": "siMenuTbICECrowdFXSimulationID", "sdk_id": 381 }
+    ]
+  },
+  "compound_om_cmds": {
+    "status": "DUMP_READY",
+    "note": "closer95 XSIBATCH OM sweep — Create/Explode ICE Compound Node found. Not MCP Anchor flyout compound names.",
+    "found": [
+      {
+        "name": "Create ICE Compound Node",
+        "scriptingname": "CreateICECompoundNode",
+        "category": "Simulation",
+        "enabled": true,
+        "description": "Creates a compound of ICENodes"
+      },
+      {
+        "name": "Explode ICE Compound Node",
+        "scriptingname": "ExplodeICECompoundNode",
+        "category": "Simulation",
+        "enabled": true,
+        "description": "Explodes the compound into its parent's container"
+      }
+    ],
+    "probes": {
+      "AddICENode": { "ok": true },
+      "ApplyICEOp": { "ok": true }
+    },
+    "not_found": [
+      "Anchor",
+      "Add Anchor",
+      "Create Anchor",
+      "ICE Anchor",
+      "Get>Particles>Emission>Anchor"
+    ]
+  },
+  "unbound_plugin_compounds": {
+    "status": "LOCK",
+    "pe_label": "Anchor-to-Delete",
+    "note": "Softimage runtime plugins replace Anchor-to-Delete with particle/CrowdFX compound names. closer95 did not capture live flyout compound names — do not invent."
+  }
+}
