@@ -1,0 +1,59 @@
+{
+  "ok": true,
+  "diffs": [],
+  "notes": [
+    "loaded /workspace/data/dump/si_bevel_collide.json",
+    "softimage 13.2.163.0",
+    "script si_bevel_collide_dump.js",
+    "purpose Bevel managecollisions on/off goldens (fixed lastOp)",
+    "PC collide_off_vs_on_ratio08: mesh_equal npts 67/67",
+    "PC collide_off_vs_on_ratio08: managecollisions off/on attested false/true (meshes still equal)",
+    "PC collide_off_vs_on_many_ratio06: mesh_equal npts 75/75",
+    "PC collide_off_vs_on_many_ratio06: managecollisions off/on attested false/true (meshes still equal)",
+    "collide_off_ratio08: npts=67 npolys=65 op=bevelop managecollisions=false ratio=0.8",
+    "collide_on_ratio08: npts=67 npolys=65 op=bevelop managecollisions=true ratio=0.8",
+    "collide_off_many_ratio06: npts=75 npolys=75 op=bevelop managecollisions=false ratio=0.6",
+    "collide_on_many_ratio06: npts=75 npolys=75 op=bevelop managecollisions=true ratio=0.6",
+    "collide_on_abs_ratio05: npts=69 npolys=66 op=bevelop managecollisions=true ratio=0.5",
+    "PC collide_off_ratio08 === collide_on_ratio08 bit-identical (Softimage collide no-op for case)",
+    "PC collide_off_many_ratio06 === collide_on_many_ratio06 bit-identical (Softimage collide no-op for case)",
+    "Direct managecollisions param present=true off=false on=true",
+    "Direct false/true mesh_equal=true npts=66"
+  ],
+  "dump": "/workspace/data/dump/si_bevel_collide.json",
+  "meta": {
+    "softimage": "13.2.163.0",
+    "script": "si_bevel_collide_dump.js",
+    "purpose": "Bevel managecollisions on/off goldens (fixed lastOp)",
+    "utc": "Sun, 25 Oct 2026 02:27:11 UTC"
+  },
+  "diff_summary": {
+    "collide_off_vs_on_ratio08": {
+      "npts_off": 67,
+      "npts_on": 67,
+      "npolys_off": 65,
+      "npolys_on": 65,
+      "mesh_equal": true,
+      "managecollisions_off": false,
+      "managecollisions_on": true,
+      "op_off": "bevelop",
+      "op_on": "bevelop"
+    },
+    "collide_off_vs_on_many_ratio06": {
+      "npts_off": 75,
+      "npts_on": 75,
+      "npolys_off": 75,
+      "npolys_on": 75,
+      "mesh_equal": true,
+      "managecollisions_off": false,
+      "managecollisions_on": true
+    }
+  },
+  "direct": {
+    "equal": true,
+    "npts": 66,
+    "hasParam": true,
+    "manageOff": false,
+    "manageOn": true
+  }
+}

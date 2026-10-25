@@ -9,8 +9,8 @@ Softimage-pc progress: `docs/rea-ghidra-residual-progress.md`.
 | A1 | Model | CapHoleProc ICE path | CapHoleProc VBS → ApplyICEOp; `Vertex_Index` | **DONE** (#54) | [capholeproc-path.md](./capholeproc-path.md) + [caphole-vertex-index-bind.md](./caphole-vertex-index-bind.md) | Cap_Hole + Vertex_Index confirmed |
 | A2 | Model | CapHole SPDL Layout | none (absent) | **LOCK** | corroborated | — |
 | A3 | Model | GenOpInputsButtons chrome | GenOp SPDL `has_layout:false` | **LOCK** | [ui-lock-binary-pins.md](./ui-lock-binary-pins.md) | — |
-| A4 | Model | Bevel collide / DAT_* | `mohelper` ComputeBevelVectors DAT_* **pinned** | **LOCK** until managecollisions golden | [bevel-dat-xrefs.md](./bevel-dat-xrefs.md) | no invent Bevel |
-| A5 | Model | PolyReduce QEM internals | `topologyop.dll` mesh-eval pin | **LOCK** (docs) unless DIFF | [polyreduce-rename-map.md](./polyreduce-rename-map.md) | rename map only |
+| A4 | Model | Bevel collide / DAT_* | `mohelper` ComputeBevelVectors DAT_* **pinned** | **LOCK** (optional push #1; collide harness OK, mesh-equal) | [bevel-dat-xrefs.md](./bevel-dat-xrefs.md) | no invent Bevel |
+| A5 | Model | PolyReduce QEM internals | `topologyop.dll` mesh-eval pin | **LOCK** / **NO_DIFF** (optional push #2; topo harness OK) | [polyreduce-rename-map.md](./polyreduce-rename-map.md) | rename map only |
 | B1 | Animate | Mixer weight / transition | weight=`actionclip.weight` + `siWeightPresets`; prefs=**display** | **WIRE** (this PR) | [mixer-clip-transitions.md](./mixer-clip-transitions.md) | SetDefaultWeight + FCurve sample |
 | B2 | Animate | PC mixer transitions | Desktop pass3 TW1 WIRE (`type=2`); empty without clip sel still LOCK | **WIRE** (TW1) / LOCK (no sel) | [mixer-clip-transitions.md](./mixer-clip-transitions.md) | AddTWTransition → TW# |
 | B3 | Animate | ApplyFlexEnv weights / Mode | Desktop VBArray: numeric % Weights.Array | **WIRE** weights + Mode | [flexenv-headless-lock.md](./flexenv-headless-lock.md) | VBArray golden; Direct unit sum |

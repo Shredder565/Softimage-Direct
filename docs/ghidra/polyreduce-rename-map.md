@@ -18,3 +18,12 @@ Heuristic labels only (no demangled QEM symbols). Safe for Ghidra bookmarks; **n
 | `FUN_180073a90` | `PolyReduce_PostCollapseReport` | `CDelayedTopoReport` / rename |
 
 **Wire:** none unless Softimage Direct `reduceQuadric` DIFF vs new PC golden.
+
+## Optional push #2 exit (2026-10-25)
+
+| Check | Result |
+|-------|--------|
+| `node tools/compare_topology.mjs` → `PolyReduction` | **OK** (pts/polys match `si_topo_ref.json`) |
+| softimage-pc `docs/ghidra/polyreduce-diff.md` | **absent** — no DIFF attestation |
+
+**Exit: NO_DIFF / LOCK.** No invent PolyReduce PR. Reopen only on a real Softimage vs Direct DIFF golden.
