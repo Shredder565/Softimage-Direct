@@ -10,6 +10,21 @@
       "softimage": "13.2.163.0",
       "mode": "XSIBATCH Command.Enabled (empty-scene dumpable; no HWND)",
       "commands_merged": 204
+    },
+    "hwnd_overlay": {
+      "source": "data/dump/si_mcp_hwnd_enabled.json",
+      "softimage": "13.2.163.0",
+      "mode": "Softimage Desktop overnight",
+      "note": "Command.Enabled proxy for MCP chrome keys under Desktop session.",
+      "utc": "Sun, 25 Oct 2026 02:27:11 UTC",
+      "contexts": [
+        "empty",
+        "single_mesh",
+        "multi_mesh",
+        "single_null"
+      ],
+      "attested_button_bools": 16,
+      "null_button_cells": 40
     }
   },
   "contexts": {
@@ -2106,5 +2121,71 @@
     "siCreateRetargetMapping",
     "siWriteRetargetComponentData",
     "siWriteRetargetMapping"
-  ]
+  ],
+  "hwnd_buttons": {
+    "empty": {
+      "parent": null,
+      "cut": null,
+      "freeze": null,
+      "group": null,
+      "freezeM": null,
+      "sample": null,
+      "translate": true,
+      "rotate": true,
+      "scale": true,
+      "duplicate": true,
+      "snap": null,
+      "prop": null,
+      "cog": null,
+      "symmetry": null
+    },
+    "single_mesh": {
+      "parent": null,
+      "cut": null,
+      "freeze": null,
+      "group": null,
+      "freezeM": null,
+      "sample": null,
+      "translate": true,
+      "rotate": true,
+      "scale": true,
+      "duplicate": true,
+      "snap": null,
+      "prop": null,
+      "cog": null,
+      "symmetry": null
+    },
+    "multi_mesh": {
+      "parent": null,
+      "cut": null,
+      "freeze": null,
+      "group": null,
+      "freezeM": null,
+      "sample": null,
+      "translate": true,
+      "rotate": true,
+      "scale": true,
+      "duplicate": true,
+      "snap": null,
+      "prop": null,
+      "cog": null,
+      "symmetry": null
+    },
+    "single_null": {
+      "parent": null,
+      "cut": null,
+      "freeze": null,
+      "group": null,
+      "freezeM": null,
+      "sample": null,
+      "translate": true,
+      "rotate": true,
+      "scale": true,
+      "duplicate": true,
+      "snap": null,
+      "prop": null,
+      "cog": null,
+      "symmetry": null
+    }
+  }
 }
