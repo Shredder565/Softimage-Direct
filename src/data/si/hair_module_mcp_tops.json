@@ -1,0 +1,69 @@
+{
+  "_comment": "Softimage Hair module toolbar MCP tops — PE MENU 297 (toolbarobj.dll) + menu_hair.txt + modules_hair.json Desktop tour. Dump-attested only. Hair Panel GDI LOCK (OpenView failed under -processing).",
+  "softimage": "13.2.163.0",
+  "source": [
+    "internal/softimage-pc-dumps/module-menu-hair.json",
+    "internal/softimage-pc-dumps/menu_hair.txt",
+    "internal/softimage-pc-dumps/modules/modules_hair.json",
+    "docs/softimage-hair-tour.md",
+    "media/softimage-modules-tour/20-hair-module.png"
+  ],
+  "menu_id": 297,
+  "module_select": "Hair",
+  "switch_toolbar_target": 6,
+  "switch_command": "Switch to Hair Toolbar",
+  "keymap": { "key": "2", "mods": ["ctrl"] },
+  "tops": ["Create", "Modify", "Display"],
+  "buttons": {
+    "Create": ["Hair", "Dynamics", "Forces"],
+    "Modify": [
+      "Shader", "Scale", "Brush", "Rotate", "Puff", "Clump", "Comb", "Cut",
+      "Length", "Interpolation", "Surf Lock", "Environment", "Transfer Map", "Copy Style"
+    ],
+    "Display": ["Style", "Render Hairs", "Stretchy", "Fix"]
+  },
+  "create_hair_leaves": {
+    "From Selection": { "pe_id": 41384, "cmd": "ApplyHairOp", "command_name_probe": "Create Hair From Selection", "found": false },
+    "From Curves": { "pe_id": 41385, "cmd": "ApplyHairSplineGenOp", "command_name_probe": "Create Hair From Curves", "found": false },
+    "note": "Command Names not found as probed strings; PE ids attested and mapped"
+  },
+  "apply_hair_ops": [
+    "ApplyHairOp",
+    "ApplyHairSplineGenOp",
+    "ApplyHairDynamicsOp",
+    "ApplyHairPuffOp",
+    "ApplyHairClumpOp",
+    "ApplyHairCombOp",
+    "ApplyHairCombNormalOp",
+    "ApplyHairRecombOp",
+    "ApplyHairCutOp",
+    "ApplyHairScaleOp",
+    "ApplyHairRotateOp",
+    "ApplyHairAttenuateOp",
+    "ApplyHairPopOp",
+    "ApplyHairPopSelectedOp",
+    "ApplyHairResampleOp",
+    "ApplyHairSplitOp",
+    "ApplyHairShatterOp",
+    "ApplyHairMergeOp",
+    "ApplyHairLockOp",
+    "ApplyHairUnlockOp"
+  ],
+  "hair_tools": [
+    "HairScalingTool",
+    "HairBrushTool",
+    "HairRotateRootTool",
+    "HairRotateTipTool",
+    "HairRotateCursorTool",
+    "HairStandOnEndTool",
+    "HairPuffRootsTool",
+    "HairClumpTool",
+    "ActivateTipSelTool"
+  ],
+  "hair_panel": {
+    "status": "LOCK",
+    "openview": "Hair Panel",
+    "note": "OpenView failed under XSIBATCH -processing; Desktop shot 22-hair-panel.png only. Do not invent Hair Panel GDI chrome."
+  },
+  "flyout_pixels": { "status": "LOCK", "note": "MCP press-hold flyout item pixel lists LOCK" }
+}

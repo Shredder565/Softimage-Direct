@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "diffs": [],
+  "notes": [
+    "loaded tops /workspace/src/data/si/hair_module_mcp_tops.json",
+    "softimage 13.2.163.0",
+    "Hair in modulesExtracted",
+    "Hair in module-select",
+    "Hair tops OK: Create, Modify, Display",
+    "Hair MCP buttons match dump",
+    "Hair Panel GDI LOCK",
+    "flyout pixels LOCK",
+    "ApplyHair* ops wired 20/20",
+    "SwitchToolbar present",
+    "live Hair toolbar 21 buttons",
+    "live Hair groups match MENU 297 tops",
+    "live Hair MCP buttons present",
+    "FROST module still present",
+    "SwitchToolbar Target=6 → Hair",
+    "ApplyHairOp smoke OK (Hair-Default)",
+    "no invented Hair Panel shell"
+  ],
+  "softimage": "13.2.163.0",
+  "menu_id": 297,
+  "tops": [
+    "Create",
+    "Modify",
+    "Display"
+  ]
+}
