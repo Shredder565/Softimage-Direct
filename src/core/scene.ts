@@ -4,8 +4,18 @@
 import * as THREE from 'three';
 import { ParamSet, num, int, bool, str, enumP, color } from './params';
 import { siShaderDefs, type SiShaderDef } from './shaders';
+import { miaUnlockDefs, resolveMiaUnlockKey } from './miaUnlock';
+import wrapEnum from '../data/si/render_wrap_enum.json';
 import { siParamDefs, siLayout, siName, menuDefaults, siPropDefs, siPropLayout, withOp } from './opdefs';
 import type { ParamDef } from './params';
+
+/** C3DMaterial.spdl Combo Clamp/Repeat — unlock_render_wrap_enum_probe (10496/10497). */
+const WRAP_UV_ITEMS = (wrapEnum.items as { label: string; value: number }[]).map(it => ({
+  label: it.label,
+  value: it.value,
+}));
+const WRAP_UV_DEFAULT = Number((wrapEnum as { default?: number }).default ?? 10497);
+const WRAP_DESC = (wrapEnum as { descriptions?: { wrapu?: string; wrapv?: string } }).descriptions ?? {};
 /** Merge our parameter definitions with the full SPDL property set so the Property Editor shows Softimage's complete page. */
 function withSi(key: string, ours: ParamDef[]): ParamDef[] { const si = siPropDefs(key); const mine = new Map(ours.map(d => [d.name, d])); const out = si.map(d => mine.get(d.name) ? { ...d, ...mine.get(d.name)! } : { ...d, group: d.group }); for (const d of ours) if (!si.some(x => x.name === d.name)) out.push(d); return out; }
 import { siDeformers } from './sideform';
@@ -139,10 +149,18 @@ export function makeConstant(name = 'Constant'): Shader {
     num('transp', 1, 'transp'),
   ]);
 }
+/** Absolute .Preset + SIApplyShader nested OM (unlock_render_mia_probe) — 77/101/49 params. */
+export function makeMiaUnlockShader(shaderKey: string, name?: string): Shader | null {
+  const defs = miaUnlockDefs(shaderKey);
+  if (!defs) return null;
+  return new Shader(name ?? shaderKey, shaderKey, defs);
+}
 /** A shader node from Softimage's own phenolib SPDL (material-phong, txt2d-image-explicit…) or a Get > Material preset name. */
 export function makeSiShader(key: string, name?: string): Shader | null {
   const preset = String(key).replace(/^Shaders\\Material\\/, '').replace(/^Materials\\/, '');
   if (preset === 'Constant') return makeConstant(name ?? 'Constant');
+  const miaKey = resolveMiaUnlockKey(preset);
+  if (miaKey) return makeMiaUnlockShader(miaKey, name ?? miaKey);
   const r = siShaderDefs(preset); if (!r) return null;
   const s = new Shader(name ?? r.title, r.type, r.defs, r.spdl); if (r.layout) s.layout = r.layout; return s;
 }
@@ -170,10 +188,11 @@ export class Material extends Node {
       str('realtime', '', 'realtime', { readOnly: true }),
       str('material', '', 'material', { readOnly: true }),
       str('Name', name, 'Name', { readOnly: true }),
-      // Softimage PC dump: sn envmode / wrapu / wrapv Parameter.Name Mode / Wrap U / Wrap V (raw ints LOCK — no invent wrap UI)
+      // Softimage PC dump: sn envmode / wrapu / wrapv Parameter.Name Mode / Wrap U / Wrap V
+      // unlock render.wrapu_wrapv_enum_ui: C3DMaterial.spdl Combo Clamp=10496 Repeat=10497
       int('envmode', 8448, 'Mode'),
-      int('wrapu', 10497, 'Wrap U'),
-      int('wrapv', 10497, 'Wrap V'),
+      enumP('wrapu', WRAP_UV_DEFAULT, WRAP_UV_ITEMS, 'Wrap U', { desc: WRAP_DESC.wrapu }),
+      enumP('wrapv', WRAP_UV_DEFAULT, WRAP_UV_ITEMS, 'Wrap V', { desc: WRAP_DESC.wrapv }),
       str('CAV', '', 'Vertex Color Property'),
       str('UV', '', 'UV Property'),
       int('TextureSel', 1, 'Texture Selection'),

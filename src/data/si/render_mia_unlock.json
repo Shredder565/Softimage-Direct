@@ -1,0 +1,1680 @@
+{
+  "_comment": "Unlock render.mia_architectural_metallic \u2014 absolute .Preset + SIApplyShader nested OM only. Short names FAIL stay LOCK invent.",
+  "lock_id": "render.mia_architectural_metallic",
+  "status": "UNLOCK_CANDIDATE",
+  "softimage": "13.2.163.0",
+  "source": "unlock_render_mia_probe.json",
+  "apply_path": "absolute .Preset + SIApplyShader (attempt i=1)",
+  "unlocked_shaders": [
+    "mia_Material",
+    "mia_Material_MultiOutput",
+    "mi_Metallic_Paint"
+  ],
+  "softimage_aliases": {
+    "Architectural": "mia_Material",
+    "Architectural_MO": "mia_Material_MultiOutput",
+    "MetallicPaint": "mi_Metallic_Paint"
+  },
+  "still_lock_short_or_unproven": [
+    "Car Paint",
+    "Car_Paint"
+  ],
+  "presets": {
+    "mia_Material": {
+      "shader_name": "mia_Material",
+      "classname": "Shader",
+      "absolute_preset": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\DSPresets\\Shaders\\Material\\mental images\\mia_Material.Preset",
+      "param_count": 77,
+      "defs": [
+        {
+          "sn": "name",
+          "type": "string",
+          "value": "mia_Material",
+          "label": "name"
+        },
+        {
+          "sn": "diffuse_weight",
+          "type": "int",
+          "value": 1,
+          "label": "diffuse_weight"
+        },
+        {
+          "sn": "diffuse",
+          "type": "color",
+          "value": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "value_rgba": [
+            0.5,
+            0.5,
+            0.5,
+            0
+          ],
+          "label": "diffuse"
+        },
+        {
+          "sn": "diffuse_roughness",
+          "type": "int",
+          "value": 0,
+          "label": "diffuse_roughness"
+        },
+        {
+          "sn": "reflectivity",
+          "type": "double",
+          "value": 0.6000000238418579,
+          "label": "reflectivity"
+        },
+        {
+          "sn": "refl_color",
+          "type": "color",
+          "value": [
+            1,
+            1,
+            1
+          ],
+          "value_rgba": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "label": "refl_color"
+        },
+        {
+          "sn": "refl_gloss",
+          "type": "int",
+          "value": 1,
+          "label": "refl_gloss"
+        },
+        {
+          "sn": "refl_gloss_samples",
+          "type": "int",
+          "value": 8,
+          "label": "refl_gloss_samples"
+        },
+        {
+          "sn": "refl_interpolate",
+          "type": "bool",
+          "value": false,
+          "label": "refl_interpolate"
+        },
+        {
+          "sn": "refl_hl_only",
+          "type": "bool",
+          "value": false,
+          "label": "refl_hl_only"
+        },
+        {
+          "sn": "refl_is_metal",
+          "type": "bool",
+          "value": false,
+          "label": "refl_is_metal"
+        },
+        {
+          "sn": "transparency",
+          "type": "int",
+          "value": 0,
+          "label": "transparency"
+        },
+        {
+          "sn": "refr_color",
+          "type": "color",
+          "value": [
+            1,
+            1,
+            1
+          ],
+          "value_rgba": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "label": "refr_color"
+        },
+        {
+          "sn": "refr_gloss",
+          "type": "int",
+          "value": 1,
+          "label": "refr_gloss"
+        },
+        {
+          "sn": "refr_ior",
+          "type": "double",
+          "value": 1.399999976158142,
+          "label": "refr_ior"
+        },
+        {
+          "sn": "refr_gloss_samples",
+          "type": "int",
+          "value": 8,
+          "label": "refr_gloss_samples"
+        },
+        {
+          "sn": "refr_interpolate",
+          "type": "bool",
+          "value": false,
+          "label": "refr_interpolate"
+        },
+        {
+          "sn": "refr_translucency",
+          "type": "bool",
+          "value": false,
+          "label": "refr_translucency"
+        },
+        {
+          "sn": "refr_trans_color",
+          "type": "color",
+          "value": [
+            0.699999988079071,
+            0.6000000238418579,
+            0.5
+          ],
+          "value_rgba": [
+            0.699999988079071,
+            0.6000000238418579,
+            0.5,
+            0
+          ],
+          "label": "refr_trans_color"
+        },
+        {
+          "sn": "refr_trans_weight",
+          "type": "double",
+          "value": 0.5,
+          "label": "refr_trans_weight"
+        },
+        {
+          "sn": "anisotropy",
+          "type": "int",
+          "value": 1,
+          "label": "anisotropy"
+        },
+        {
+          "sn": "anisotropy_rotation",
+          "type": "int",
+          "value": 0,
+          "label": "anisotropy_rotation"
+        },
+        {
+          "sn": "anisotropy_channel",
+          "type": "string",
+          "value": "",
+          "label": "anisotropy_channel"
+        },
+        {
+          "sn": "brdf_fresnel",
+          "type": "bool",
+          "value": false,
+          "label": "brdf_fresnel"
+        },
+        {
+          "sn": "brdf_0_degree_refl",
+          "type": "double",
+          "value": 0.20000000298023224,
+          "label": "brdf_0_degree_refl"
+        },
+        {
+          "sn": "brdf_90_degree_refl",
+          "type": "int",
+          "value": 1,
+          "label": "brdf_90_degree_refl"
+        },
+        {
+          "sn": "brdf_curve",
+          "type": "int",
+          "value": 5,
+          "label": "brdf_curve"
+        },
+        {
+          "sn": "brdf_conserve_energy",
+          "type": "bool",
+          "value": true,
+          "label": "brdf_conserve_energy"
+        },
+        {
+          "sn": "intr_grid_density",
+          "type": "int",
+          "value": 2,
+          "label": "intr_grid_density"
+        },
+        {
+          "sn": "intr_refl_samples",
+          "type": "int",
+          "value": 2,
+          "label": "intr_refl_samples"
+        },
+        {
+          "sn": "intr_refl_ddist_on",
+          "type": "bool",
+          "value": false,
+          "label": "intr_refl_ddist_on"
+        },
+        {
+          "sn": "intr_refl_ddist",
+          "type": "int",
+          "value": 0,
+          "label": "intr_refl_ddist"
+        },
+        {
+          "sn": "intr_refr_samples",
+          "type": "int",
+          "value": 2,
+          "label": "intr_refr_samples"
+        },
+        {
+          "sn": "single_env_sample",
+          "type": "bool",
+          "value": false,
+          "label": "single_env_sample"
+        },
+        {
+          "sn": "refl_falloff_on",
+          "type": "bool",
+          "value": false,
+          "label": "refl_falloff_on"
+        },
+        {
+          "sn": "refl_falloff_dist",
+          "type": "int",
+          "value": 0,
+          "label": "refl_falloff_dist"
+        },
+        {
+          "sn": "refl_falloff_color_on",
+          "type": "bool",
+          "value": false,
+          "label": "refl_falloff_color_on"
+        },
+        {
+          "sn": "refl_falloff_color",
+          "type": "color",
+          "value": [
+            0,
+            0,
+            0
+          ],
+          "value_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "label": "refl_falloff_color"
+        },
+        {
+          "sn": "refl_depth",
+          "type": "int",
+          "value": 5,
+          "label": "refl_depth"
+        },
+        {
+          "sn": "refl_cutoff",
+          "type": "double",
+          "value": 0.009999999776482582,
+          "label": "refl_cutoff"
+        },
+        {
+          "sn": "refr_falloff_on",
+          "type": "bool",
+          "value": false,
+          "label": "refr_falloff_on"
+        },
+        {
+          "sn": "refr_falloff_dist",
+          "type": "int",
+          "value": 0,
+          "label": "refr_falloff_dist"
+        },
+        {
+          "sn": "refr_falloff_color_on",
+          "type": "bool",
+          "value": false,
+          "label": "refr_falloff_color_on"
+        },
+        {
+          "sn": "refr_falloff_color",
+          "type": "color",
+          "value": [
+            0,
+            0,
+            0
+          ],
+          "value_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "label": "refr_falloff_color"
+        },
+        {
+          "sn": "refr_depth",
+          "type": "int",
+          "value": 5,
+          "label": "refr_depth"
+        },
+        {
+          "sn": "refr_cutoff",
+          "type": "double",
+          "value": 0.009999999776482582,
+          "label": "refr_cutoff"
+        },
+        {
+          "sn": "indirect_multiplier",
+          "type": "int",
+          "value": 1,
+          "label": "indirect_multiplier"
+        },
+        {
+          "sn": "fg_quality",
+          "type": "int",
+          "value": 1,
+          "label": "fg_quality"
+        },
+        {
+          "sn": "fg_quality_w",
+          "type": "int",
+          "value": 1,
+          "label": "fg_quality_w"
+        },
+        {
+          "sn": "ao_on",
+          "type": "bool",
+          "value": false,
+          "label": "ao_on"
+        },
+        {
+          "sn": "ao_samples",
+          "type": "int",
+          "value": 16,
+          "label": "ao_samples"
+        },
+        {
+          "sn": "ao_distance",
+          "type": "int",
+          "value": 1,
+          "label": "ao_distance"
+        },
+        {
+          "sn": "ao_dark",
+          "type": "color",
+          "value": [
+            0.20000000298023224,
+            0.20000000298023224,
+            0.20000000298023224
+          ],
+          "value_rgba": [
+            0.20000000298023224,
+            0.20000000298023224,
+            0.20000000298023224,
+            0
+          ],
+          "label": "ao_dark"
+        },
+        {
+          "sn": "ao_ambient",
+          "type": "color",
+          "value": [
+            0,
+            0,
+            0
+          ],
+          "value_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "label": "ao_ambient"
+        },
+        {
+          "sn": "ao_do_details",
+          "type": "int",
+          "value": 1,
+          "label": "ao_do_details"
+        },
+        {
+          "sn": "thin_walled",
+          "type": "bool",
+          "value": false,
+          "label": "thin_walled"
+        },
+        {
+          "sn": "no_visible_area_hl",
+          "type": "bool",
+          "value": true,
+          "label": "no_visible_area_hl"
+        },
+        {
+          "sn": "skip_inside_refl",
+          "type": "bool",
+          "value": true,
+          "label": "skip_inside_refl"
+        },
+        {
+          "sn": "do_refractive_caustics",
+          "type": "bool",
+          "value": false,
+          "label": "do_refractive_caustics"
+        },
+        {
+          "sn": "backface_cull",
+          "type": "bool",
+          "value": false,
+          "label": "backface_cull"
+        },
+        {
+          "sn": "propagate_alpha",
+          "type": "bool",
+          "value": false,
+          "label": "propagate_alpha"
+        },
+        {
+          "sn": "hl_vs_refl_balance",
+          "type": "int",
+          "value": 1,
+          "label": "hl_vs_refl_balance"
+        },
+        {
+          "sn": "cutout_opacity",
+          "type": "int",
+          "value": 1,
+          "label": "cutout_opacity"
+        },
+        {
+          "sn": "additional_color",
+          "type": "color",
+          "value": [
+            0,
+            0,
+            0
+          ],
+          "value_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "label": "additional_color"
+        },
+        {
+          "sn": "bump_shader",
+          "type": "null",
+          "value": null,
+          "label": "bump_shader"
+        },
+        {
+          "sn": "no_diffuse_bump",
+          "type": "bool",
+          "value": false,
+          "label": "no_diffuse_bump"
+        },
+        {
+          "sn": "mode",
+          "type": "int",
+          "value": 4,
+          "label": "mode"
+        },
+        {
+          "sn": "lights",
+          "type": "null",
+          "value": null,
+          "label": "lights"
+        },
+        {
+          "sn": "bump_mode",
+          "type": "int",
+          "value": 0,
+          "label": "bump_mode"
+        },
+        {
+          "sn": "overall_bump",
+          "type": "null",
+          "value": null,
+          "label": "overall_bump"
+        },
+        {
+          "sn": "standard_bump",
+          "type": "null",
+          "value": null,
+          "label": "standard_bump"
+        },
+        {
+          "sn": "refl_base",
+          "type": "int",
+          "value": 0,
+          "label": "refl_base"
+        },
+        {
+          "sn": "refl_base_color",
+          "type": "color",
+          "value": [
+            1,
+            0.30000001192092896,
+            0
+          ],
+          "value_rgba": [
+            1,
+            0.30000001192092896,
+            0,
+            0
+          ],
+          "label": "refl_base_color"
+        },
+        {
+          "sn": "refl_base_gloss",
+          "type": "int",
+          "value": 1,
+          "label": "refl_base_gloss"
+        },
+        {
+          "sn": "refl_base_gloss_samples",
+          "type": "int",
+          "value": 8,
+          "label": "refl_base_gloss_samples"
+        },
+        {
+          "sn": "refl_base_bump",
+          "type": "null",
+          "value": null,
+          "label": "refl_base_bump"
+        },
+        {
+          "sn": "out",
+          "type": "null",
+          "value": null,
+          "label": "out"
+        }
+      ]
+    },
+    "mia_Material_MultiOutput": {
+      "shader_name": "mia_Material_MultiOutput",
+      "classname": "Shader",
+      "absolute_preset": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\DSPresets\\Shaders\\Material\\mental images\\mia_Material_MultiOutput.Preset",
+      "param_count": 101,
+      "defs": [
+        {
+          "sn": "name",
+          "type": "string",
+          "value": "mia_Material_MultiOutput",
+          "label": "name"
+        },
+        {
+          "sn": "diffuse_weight",
+          "type": "int",
+          "value": 1,
+          "label": "diffuse_weight"
+        },
+        {
+          "sn": "diffuse",
+          "type": "color",
+          "value": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "value_rgba": [
+            0.5,
+            0.5,
+            0.5,
+            0
+          ],
+          "label": "diffuse"
+        },
+        {
+          "sn": "diffuse_roughness",
+          "type": "int",
+          "value": 0,
+          "label": "diffuse_roughness"
+        },
+        {
+          "sn": "reflectivity",
+          "type": "double",
+          "value": 0.6000000238418579,
+          "label": "reflectivity"
+        },
+        {
+          "sn": "refl_color",
+          "type": "color",
+          "value": [
+            1,
+            1,
+            1
+          ],
+          "value_rgba": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "label": "refl_color"
+        },
+        {
+          "sn": "refl_gloss",
+          "type": "int",
+          "value": 1,
+          "label": "refl_gloss"
+        },
+        {
+          "sn": "refl_gloss_samples",
+          "type": "int",
+          "value": 8,
+          "label": "refl_gloss_samples"
+        },
+        {
+          "sn": "refl_interpolate",
+          "type": "bool",
+          "value": false,
+          "label": "refl_interpolate"
+        },
+        {
+          "sn": "refl_hl_only",
+          "type": "bool",
+          "value": false,
+          "label": "refl_hl_only"
+        },
+        {
+          "sn": "refl_is_metal",
+          "type": "bool",
+          "value": false,
+          "label": "refl_is_metal"
+        },
+        {
+          "sn": "transparency",
+          "type": "int",
+          "value": 0,
+          "label": "transparency"
+        },
+        {
+          "sn": "refr_color",
+          "type": "color",
+          "value": [
+            1,
+            1,
+            1
+          ],
+          "value_rgba": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "label": "refr_color"
+        },
+        {
+          "sn": "refr_gloss",
+          "type": "int",
+          "value": 1,
+          "label": "refr_gloss"
+        },
+        {
+          "sn": "refr_ior",
+          "type": "double",
+          "value": 1.399999976158142,
+          "label": "refr_ior"
+        },
+        {
+          "sn": "refr_gloss_samples",
+          "type": "int",
+          "value": 8,
+          "label": "refr_gloss_samples"
+        },
+        {
+          "sn": "refr_interpolate",
+          "type": "bool",
+          "value": false,
+          "label": "refr_interpolate"
+        },
+        {
+          "sn": "refr_translucency",
+          "type": "bool",
+          "value": false,
+          "label": "refr_translucency"
+        },
+        {
+          "sn": "refr_trans_color",
+          "type": "color",
+          "value": [
+            0.699999988079071,
+            0.6000000238418579,
+            0.5
+          ],
+          "value_rgba": [
+            0.699999988079071,
+            0.6000000238418579,
+            0.5,
+            0
+          ],
+          "label": "refr_trans_color"
+        },
+        {
+          "sn": "refr_trans_weight",
+          "type": "double",
+          "value": 0.5,
+          "label": "refr_trans_weight"
+        },
+        {
+          "sn": "anisotropy",
+          "type": "int",
+          "value": 1,
+          "label": "anisotropy"
+        },
+        {
+          "sn": "anisotropy_rotation",
+          "type": "int",
+          "value": 0,
+          "label": "anisotropy_rotation"
+        },
+        {
+          "sn": "anisotropy_channel",
+          "type": "string",
+          "value": "",
+          "label": "anisotropy_channel"
+        },
+        {
+          "sn": "brdf_fresnel",
+          "type": "bool",
+          "value": false,
+          "label": "brdf_fresnel"
+        },
+        {
+          "sn": "brdf_0_degree_refl",
+          "type": "double",
+          "value": 0.20000000298023224,
+          "label": "brdf_0_degree_refl"
+        },
+        {
+          "sn": "brdf_90_degree_refl",
+          "type": "int",
+          "value": 1,
+          "label": "brdf_90_degree_refl"
+        },
+        {
+          "sn": "brdf_curve",
+          "type": "int",
+          "value": 5,
+          "label": "brdf_curve"
+        },
+        {
+          "sn": "brdf_conserve_energy",
+          "type": "bool",
+          "value": true,
+          "label": "brdf_conserve_energy"
+        },
+        {
+          "sn": "intr_grid_density",
+          "type": "int",
+          "value": 2,
+          "label": "intr_grid_density"
+        },
+        {
+          "sn": "intr_refl_samples",
+          "type": "int",
+          "value": 2,
+          "label": "intr_refl_samples"
+        },
+        {
+          "sn": "intr_refl_ddist_on",
+          "type": "bool",
+          "value": false,
+          "label": "intr_refl_ddist_on"
+        },
+        {
+          "sn": "intr_refl_ddist",
+          "type": "int",
+          "value": 0,
+          "label": "intr_refl_ddist"
+        },
+        {
+          "sn": "intr_refr_samples",
+          "type": "int",
+          "value": 2,
+          "label": "intr_refr_samples"
+        },
+        {
+          "sn": "single_env_sample",
+          "type": "bool",
+          "value": false,
+          "label": "single_env_sample"
+        },
+        {
+          "sn": "refl_falloff_on",
+          "type": "bool",
+          "value": false,
+          "label": "refl_falloff_on"
+        },
+        {
+          "sn": "refl_falloff_dist",
+          "type": "int",
+          "value": 0,
+          "label": "refl_falloff_dist"
+        },
+        {
+          "sn": "refl_falloff_color_on",
+          "type": "bool",
+          "value": false,
+          "label": "refl_falloff_color_on"
+        },
+        {
+          "sn": "refl_falloff_color",
+          "type": "color",
+          "value": [
+            0,
+            0,
+            0
+          ],
+          "value_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "label": "refl_falloff_color"
+        },
+        {
+          "sn": "refl_depth",
+          "type": "int",
+          "value": 5,
+          "label": "refl_depth"
+        },
+        {
+          "sn": "refl_cutoff",
+          "type": "double",
+          "value": 0.009999999776482582,
+          "label": "refl_cutoff"
+        },
+        {
+          "sn": "refr_falloff_on",
+          "type": "bool",
+          "value": false,
+          "label": "refr_falloff_on"
+        },
+        {
+          "sn": "refr_falloff_dist",
+          "type": "int",
+          "value": 0,
+          "label": "refr_falloff_dist"
+        },
+        {
+          "sn": "refr_falloff_color_on",
+          "type": "bool",
+          "value": false,
+          "label": "refr_falloff_color_on"
+        },
+        {
+          "sn": "refr_falloff_color",
+          "type": "color",
+          "value": [
+            0,
+            0,
+            0
+          ],
+          "value_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "label": "refr_falloff_color"
+        },
+        {
+          "sn": "refr_depth",
+          "type": "int",
+          "value": 5,
+          "label": "refr_depth"
+        },
+        {
+          "sn": "refr_cutoff",
+          "type": "double",
+          "value": 0.009999999776482582,
+          "label": "refr_cutoff"
+        },
+        {
+          "sn": "indirect_multiplier",
+          "type": "int",
+          "value": 1,
+          "label": "indirect_multiplier"
+        },
+        {
+          "sn": "fg_quality",
+          "type": "int",
+          "value": 1,
+          "label": "fg_quality"
+        },
+        {
+          "sn": "fg_quality_w",
+          "type": "int",
+          "value": 1,
+          "label": "fg_quality_w"
+        },
+        {
+          "sn": "ao_on",
+          "type": "bool",
+          "value": false,
+          "label": "ao_on"
+        },
+        {
+          "sn": "ao_samples",
+          "type": "int",
+          "value": 16,
+          "label": "ao_samples"
+        },
+        {
+          "sn": "ao_distance",
+          "type": "int",
+          "value": 1,
+          "label": "ao_distance"
+        },
+        {
+          "sn": "ao_dark",
+          "type": "color",
+          "value": [
+            0.20000000298023224,
+            0.20000000298023224,
+            0.20000000298023224
+          ],
+          "value_rgba": [
+            0.20000000298023224,
+            0.20000000298023224,
+            0.20000000298023224,
+            0
+          ],
+          "label": "ao_dark"
+        },
+        {
+          "sn": "ao_ambient",
+          "type": "color",
+          "value": [
+            0,
+            0,
+            0
+          ],
+          "value_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "label": "ao_ambient"
+        },
+        {
+          "sn": "ao_do_details",
+          "type": "int",
+          "value": 1,
+          "label": "ao_do_details"
+        },
+        {
+          "sn": "thin_walled",
+          "type": "bool",
+          "value": false,
+          "label": "thin_walled"
+        },
+        {
+          "sn": "no_visible_area_hl",
+          "type": "bool",
+          "value": true,
+          "label": "no_visible_area_hl"
+        },
+        {
+          "sn": "skip_inside_refl",
+          "type": "bool",
+          "value": true,
+          "label": "skip_inside_refl"
+        },
+        {
+          "sn": "do_refractive_caustics",
+          "type": "bool",
+          "value": false,
+          "label": "do_refractive_caustics"
+        },
+        {
+          "sn": "backface_cull",
+          "type": "bool",
+          "value": false,
+          "label": "backface_cull"
+        },
+        {
+          "sn": "propagate_alpha",
+          "type": "bool",
+          "value": false,
+          "label": "propagate_alpha"
+        },
+        {
+          "sn": "hl_vs_refl_balance",
+          "type": "int",
+          "value": 1,
+          "label": "hl_vs_refl_balance"
+        },
+        {
+          "sn": "cutout_opacity",
+          "type": "int",
+          "value": 1,
+          "label": "cutout_opacity"
+        },
+        {
+          "sn": "additional_color",
+          "type": "color",
+          "value": [
+            0,
+            0,
+            0
+          ],
+          "value_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "label": "additional_color"
+        },
+        {
+          "sn": "bump_shader",
+          "type": "null",
+          "value": null,
+          "label": "bump_shader"
+        },
+        {
+          "sn": "no_diffuse_bump",
+          "type": "bool",
+          "value": false,
+          "label": "no_diffuse_bump"
+        },
+        {
+          "sn": "mode",
+          "type": "int",
+          "value": 4,
+          "label": "mode"
+        },
+        {
+          "sn": "lights",
+          "type": "null",
+          "value": null,
+          "label": "lights"
+        },
+        {
+          "sn": "bump_mode",
+          "type": "int",
+          "value": 0,
+          "label": "bump_mode"
+        },
+        {
+          "sn": "overall_bump",
+          "type": "null",
+          "value": null,
+          "label": "overall_bump"
+        },
+        {
+          "sn": "standard_bump",
+          "type": "null",
+          "value": null,
+          "label": "standard_bump"
+        },
+        {
+          "sn": "multiple_outputs",
+          "type": "bool",
+          "value": true,
+          "label": "multiple_outputs"
+        },
+        {
+          "sn": "refl_base",
+          "type": "int",
+          "value": 0,
+          "label": "refl_base"
+        },
+        {
+          "sn": "refl_base_color",
+          "type": "color",
+          "value": [
+            1,
+            0.30000001192092896,
+            0
+          ],
+          "value_rgba": [
+            1,
+            0.30000001192092896,
+            0,
+            0
+          ],
+          "label": "refl_base_color"
+        },
+        {
+          "sn": "refl_base_gloss",
+          "type": "int",
+          "value": 1,
+          "label": "refl_base_gloss"
+        },
+        {
+          "sn": "refl_base_gloss_samples",
+          "type": "int",
+          "value": 8,
+          "label": "refl_base_gloss_samples"
+        },
+        {
+          "sn": "refl_base_bump",
+          "type": "null",
+          "value": null,
+          "label": "refl_base_bump"
+        },
+        {
+          "sn": "result",
+          "type": "null",
+          "value": null,
+          "label": "result"
+        },
+        {
+          "sn": "diffuse_result",
+          "type": "null",
+          "value": null,
+          "label": "diffuse_result"
+        },
+        {
+          "sn": "diffuse_raw",
+          "type": "null",
+          "value": null,
+          "label": "diffuse_raw"
+        },
+        {
+          "sn": "diffuse_level",
+          "type": "null",
+          "value": null,
+          "label": "diffuse_level"
+        },
+        {
+          "sn": "spec_result",
+          "type": "null",
+          "value": null,
+          "label": "spec_result"
+        },
+        {
+          "sn": "spec_raw",
+          "type": "null",
+          "value": null,
+          "label": "spec_raw"
+        },
+        {
+          "sn": "spec_level",
+          "type": "null",
+          "value": null,
+          "label": "spec_level"
+        },
+        {
+          "sn": "refl_result",
+          "type": "null",
+          "value": null,
+          "label": "refl_result"
+        },
+        {
+          "sn": "refl_raw",
+          "type": "null",
+          "value": null,
+          "label": "refl_raw"
+        },
+        {
+          "sn": "refl_level",
+          "type": "null",
+          "value": null,
+          "label": "refl_level"
+        },
+        {
+          "sn": "refr_result",
+          "type": "null",
+          "value": null,
+          "label": "refr_result"
+        },
+        {
+          "sn": "refr_raw",
+          "type": "null",
+          "value": null,
+          "label": "refr_raw"
+        },
+        {
+          "sn": "refr_level",
+          "type": "null",
+          "value": null,
+          "label": "refr_level"
+        },
+        {
+          "sn": "tran_result",
+          "type": "null",
+          "value": null,
+          "label": "tran_result"
+        },
+        {
+          "sn": "tran_raw",
+          "type": "null",
+          "value": null,
+          "label": "tran_raw"
+        },
+        {
+          "sn": "tran_level",
+          "type": "null",
+          "value": null,
+          "label": "tran_level"
+        },
+        {
+          "sn": "indirect_result",
+          "type": "null",
+          "value": null,
+          "label": "indirect_result"
+        },
+        {
+          "sn": "indirect_raw",
+          "type": "null",
+          "value": null,
+          "label": "indirect_raw"
+        },
+        {
+          "sn": "indirect_post_ao",
+          "type": "null",
+          "value": null,
+          "label": "indirect_post_ao"
+        },
+        {
+          "sn": "ao_raw",
+          "type": "null",
+          "value": null,
+          "label": "ao_raw"
+        },
+        {
+          "sn": "add_result",
+          "type": "null",
+          "value": null,
+          "label": "add_result"
+        },
+        {
+          "sn": "opacity_result",
+          "type": "null",
+          "value": null,
+          "label": "opacity_result"
+        },
+        {
+          "sn": "opacity_raw",
+          "type": "null",
+          "value": null,
+          "label": "opacity_raw"
+        },
+        {
+          "sn": "opacity",
+          "type": "null",
+          "value": null,
+          "label": "opacity"
+        }
+      ]
+    },
+    "mi_Metallic_Paint": {
+      "shader_name": "mi_Metallic_Paint",
+      "classname": "Shader",
+      "absolute_preset": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\DSPresets\\Shaders\\Material\\mental images\\mi_Metallic_Paint.Preset",
+      "param_count": 49,
+      "defs": [
+        {
+          "sn": "name",
+          "type": "string",
+          "value": "mi_Metallic_Paint",
+          "label": "name"
+        },
+        {
+          "sn": "ambient",
+          "type": "color",
+          "value": [
+            0,
+            0,
+            0
+          ],
+          "value_rgba": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "label": "ambient"
+        },
+        {
+          "sn": "base_color",
+          "type": "color",
+          "value": [
+            0.800000011920929,
+            1,
+            0
+          ],
+          "value_rgba": [
+            0.800000011920929,
+            1,
+            0,
+            1
+          ],
+          "label": "base_color"
+        },
+        {
+          "sn": "edge_color",
+          "type": "color",
+          "value": [
+            0,
+            0,
+            0
+          ],
+          "value_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "label": "edge_color"
+        },
+        {
+          "sn": "edge_color_bias",
+          "type": "int",
+          "value": 1,
+          "label": "edge_color_bias"
+        },
+        {
+          "sn": "lit_color",
+          "type": "color",
+          "value": [
+            0.6000000238418579,
+            0,
+            0.20000000298023224
+          ],
+          "value_rgba": [
+            0.6000000238418579,
+            0,
+            0.20000000298023224,
+            0
+          ],
+          "label": "lit_color"
+        },
+        {
+          "sn": "lit_color_bias",
+          "type": "double",
+          "value": 0.800000011920929,
+          "label": "lit_color_bias"
+        },
+        {
+          "sn": "diffuse_weight",
+          "type": "int",
+          "value": 1,
+          "label": "diffuse_weight"
+        },
+        {
+          "sn": "diffuse_bias",
+          "type": "double",
+          "value": 1.5,
+          "label": "diffuse_bias"
+        },
+        {
+          "sn": "irradiance_weight",
+          "type": "int",
+          "value": 1,
+          "label": "irradiance_weight"
+        },
+        {
+          "sn": "spec",
+          "type": "color",
+          "value": [
+            1,
+            1,
+            1
+          ],
+          "value_rgba": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "label": "spec"
+        },
+        {
+          "sn": "spec_weight",
+          "type": "double",
+          "value": 0.20000000298023224,
+          "label": "spec_weight"
+        },
+        {
+          "sn": "spec_exp",
+          "type": "int",
+          "value": 60,
+          "label": "spec_exp"
+        },
+        {
+          "sn": "spec_sec",
+          "type": "color",
+          "value": [
+            1,
+            1,
+            1
+          ],
+          "value_rgba": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "label": "spec_sec"
+        },
+        {
+          "sn": "spec_sec_weight",
+          "type": "double",
+          "value": 0.30000001192092896,
+          "label": "spec_sec_weight"
+        },
+        {
+          "sn": "spec_sec_exp",
+          "type": "int",
+          "value": 25,
+          "label": "spec_sec_exp"
+        },
+        {
+          "sn": "spec_glazing",
+          "type": "bool",
+          "value": true,
+          "label": "spec_glazing"
+        },
+        {
+          "sn": "flake_color",
+          "type": "color",
+          "value": [
+            1,
+            1,
+            1
+          ],
+          "value_rgba": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "label": "flake_color"
+        },
+        {
+          "sn": "flake_weight",
+          "type": "int",
+          "value": 1,
+          "label": "flake_weight"
+        },
+        {
+          "sn": "flake_reflect",
+          "type": "int",
+          "value": 0,
+          "label": "flake_reflect"
+        },
+        {
+          "sn": "flake_exp",
+          "type": "int",
+          "value": 45,
+          "label": "flake_exp"
+        },
+        {
+          "sn": "flake_decay",
+          "type": "int",
+          "value": 0,
+          "label": "flake_decay"
+        },
+        {
+          "sn": "flake_bump",
+          "type": "null",
+          "value": null,
+          "label": "flake_bump"
+        },
+        {
+          "sn": "global_weight",
+          "type": "int",
+          "value": 1,
+          "label": "global_weight"
+        },
+        {
+          "sn": "mode",
+          "type": "int",
+          "value": 4,
+          "label": "mode"
+        },
+        {
+          "sn": "lights",
+          "type": "null",
+          "value": null,
+          "label": "lights"
+        },
+        {
+          "sn": "result",
+          "type": "null",
+          "value": null,
+          "label": "result"
+        },
+        {
+          "sn": "ambient_result",
+          "type": "null",
+          "value": null,
+          "label": "ambient_result"
+        },
+        {
+          "sn": "ambient_raw",
+          "type": "null",
+          "value": null,
+          "label": "ambient_raw"
+        },
+        {
+          "sn": "ambient_level",
+          "type": "null",
+          "value": null,
+          "label": "ambient_level"
+        },
+        {
+          "sn": "diffuse_result",
+          "type": "null",
+          "value": null,
+          "label": "diffuse_result"
+        },
+        {
+          "sn": "diffuse_raw",
+          "type": "null",
+          "value": null,
+          "label": "diffuse_raw"
+        },
+        {
+          "sn": "diffuse_level",
+          "type": "null",
+          "value": null,
+          "label": "diffuse_level"
+        },
+        {
+          "sn": "indirect_result",
+          "type": "null",
+          "value": null,
+          "label": "indirect_result"
+        },
+        {
+          "sn": "indirect_raw",
+          "type": "null",
+          "value": null,
+          "label": "indirect_raw"
+        },
+        {
+          "sn": "indirect_level",
+          "type": "null",
+          "value": null,
+          "label": "indirect_level"
+        },
+        {
+          "sn": "spec1_result",
+          "type": "null",
+          "value": null,
+          "label": "spec1_result"
+        },
+        {
+          "sn": "spec1_raw",
+          "type": "null",
+          "value": null,
+          "label": "spec1_raw"
+        },
+        {
+          "sn": "spec1_level",
+          "type": "null",
+          "value": null,
+          "label": "spec1_level"
+        },
+        {
+          "sn": "spec2_result",
+          "type": "null",
+          "value": null,
+          "label": "spec2_result"
+        },
+        {
+          "sn": "spec2_raw",
+          "type": "null",
+          "value": null,
+          "label": "spec2_raw"
+        },
+        {
+          "sn": "spec2_level",
+          "type": "null",
+          "value": null,
+          "label": "spec2_level"
+        },
+        {
+          "sn": "flake_result",
+          "type": "null",
+          "value": null,
+          "label": "flake_result"
+        },
+        {
+          "sn": "flake_raw",
+          "type": "null",
+          "value": null,
+          "label": "flake_raw"
+        },
+        {
+          "sn": "flake_level",
+          "type": "null",
+          "value": null,
+          "label": "flake_level"
+        },
+        {
+          "sn": "flake_refl_result",
+          "type": "null",
+          "value": null,
+          "label": "flake_refl_result"
+        },
+        {
+          "sn": "flake_refl_raw",
+          "type": "null",
+          "value": null,
+          "label": "flake_refl_raw"
+        },
+        {
+          "sn": "flake_refl_level",
+          "type": "null",
+          "value": null,
+          "label": "flake_refl_level"
+        },
+        {
+          "sn": "flake_normal",
+          "type": "null",
+          "value": null,
+          "label": "flake_normal"
+        }
+      ]
+    }
+  }
+}

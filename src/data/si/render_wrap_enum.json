@@ -1,0 +1,67 @@
+{
+  "_comment": "C3DMaterial.spdl Combo wrapu/wrapv \u2014 unlock_render_wrap_enum_probe + PE SPDL. Labels Clamp/Repeat only.",
+  "lock_id": "render.wrapu_wrapv_enum_ui",
+  "status": "UNLOCK_CANDIDATE",
+  "softimage": "13.2.163.0",
+  "source": "C3DMaterial.spdl",
+  "ui_type": "Combo",
+  "param_names": {
+    "wrapu": "Wrap U",
+    "wrapv": "Wrap V"
+  },
+  "descriptions": {
+    "wrapu": "Wrapping Method in U",
+    "wrapv": "Wrapping Method in V"
+  },
+  "items": [
+    {
+      "label": "Clamp",
+      "symbol": "CLAMP",
+      "value": 10496
+    },
+    {
+      "label": "Repeat",
+      "symbol": "REPEAT",
+      "value": 10497
+    }
+  ],
+  "default": 10497,
+  "om_defaults": {
+    "wrapu": 10497,
+    "wrapv": 10497
+  },
+  "set_probes": [
+    {
+      "label": "Repeat",
+      "set_value": 10497,
+      "ok": true,
+      "readback_u": 10497,
+      "readback_v": 10497,
+      "err": null
+    },
+    {
+      "label": "Clamp",
+      "set_value": 10496,
+      "ok": true,
+      "readback_u": 10496,
+      "readback_v": 10496,
+      "err": null
+    },
+    {
+      "label": "Repeat_hex",
+      "set_value": 10497,
+      "ok": true,
+      "readback_u": 10497,
+      "readback_v": 10497,
+      "err": null
+    },
+    {
+      "label": "Clamp_hex",
+      "set_value": 10496,
+      "ok": true,
+      "readback_u": 10496,
+      "readback_v": 10496,
+      "err": null
+    }
+  ]
+}

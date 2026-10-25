@@ -1,0 +1,16 @@
+{
+  "unlockable": [
+    "render.wrapu_wrapv_enum_ui",
+    "render.mia_architectural_metallic",
+    "render.toolbar_pixel_chrome"
+  ],
+  "still_lock": [
+    "render.region_hwnd_crop"
+  ],
+  "per": {
+    "render.region_hwnd_crop": "LOCK",
+    "render.wrapu_wrapv_enum_ui": "UNLOCK_CANDIDATE",
+    "render.mia_architectural_metallic": "DUMP_READY",
+    "render.toolbar_pixel_chrome": "DUMP_READY"
+  }
+}

@@ -31,8 +31,10 @@ import { applyAnimChromeVars, animViewDefaultSize, animChromeAudit } from './ui/
 import { animationLayerManager } from './ui/animLayerManager';
 import { viewManager, SI as ViewportSI, DEFAULT_CAMERA_POS, DEFAULT_CAMERA_INTEREST, DEFAULT_CAMERA_FOV } from './ui/viewManager';
 import { manipulatorHitboxAudit, MANIP_PE_MENUS } from './ui/manipulatorHitbox';
+import { applyRenderToolbarChrome, renderToolbarChromeAudit } from './ui/renderToolbarChrome';
 applyPpgChrome();
 applyAnimChromeVars();
+applyRenderToolbarChrome();
 import { keyingPanel, layerControl, timeline, commandLine, scriptLog } from './ui/panels';
 import { mainShelf, panelSwitcher } from './ui/shelf';
 import { menubar, menubarStatus } from './ui/menubar';
@@ -247,6 +249,8 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     })(),
     // Unlock DUMP_READY ui.manipulator_hitbox_px — menus 530–532 + PE bitmap W/H; hover LOCK
     manipHitbox: manipulatorHitboxAudit(),
+    // Unlock DUMP_READY render.toolbar_pixel_chrome — PE RT_MENU/BITMAP W/H; eye LOCK
+    renderToolbarChrome: renderToolbarChromeAudit(),
     // Desktop polish #2 — manip / viewport prefs + default Camera pose (softimage-pc attested)
     viewportPolish: {
       ...(typeof (window as any).__vm?.viewportPolish === 'function' ? (window as any).__vm.viewportPolish() : {}),
