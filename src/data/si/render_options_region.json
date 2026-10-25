@@ -18,7 +18,7 @@
     "status": "DUMP_READY",
     "wire": "HWND_CROP",
     "source": "src/data/si/render_region_hwnd_crop.json",
-    "note": "modules-gdi 61-render-region-*.png + DsNewRegionButtonCtrl children + prefs region_color_* (yellow border / blue handle). Handle W/H px stays LOCK."
+    "note": "modules-gdi 61-render-region-*.png + DsNewRegionButtonCtrl children + prefs region_color_* (yellow border / blue handle). closer95 region_handle_wh DUMP_READY (7× W/H)."
   },
   "desktop_close": {
     "source": "data/dump/direct_lock_desktop_close.json",

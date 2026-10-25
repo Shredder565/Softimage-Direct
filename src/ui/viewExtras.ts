@@ -121,12 +121,14 @@ export function installViewExtras(C: Ctx) {
         const handle = getComputedStyle(document.documentElement).getPropertyValue('--si-region-handle').trim() || '#0000ff';
         g2.strokeStyle = border; g2.lineWidth = 1;
         g2.strokeRect(r.x + q.x + 0.5, r.y + q.y + 0.5, q.w, q.h);
-        // Handle W/H px unattested (LOCK) — keep pre-existing 6px corners with dump-attested blue.
+        // Softimage Name handle W/H: closer95 DsNewRegionButtonCtrl metrics in handle_size_px (DUMP_READY).
+        // HWND sizes are Softimage Name chrome metrics — not corner-grip invent; roles LOCK.
         g2.fillStyle = handle;
-        g2.fillRect(r.x + q.x - 3, r.y + q.y - 3, 6, 6);
-        g2.fillRect(r.x + q.x + q.w - 3, r.y + q.y + q.h - 3, 6, 6);
-        g2.fillRect(r.x + q.x + q.w - 3, r.y + q.y - 3, 6, 6);
-        g2.fillRect(r.x + q.x - 3, r.y + q.y + q.h - 3, 6, 6);
+        const hs = 6; // interactive corner affordance (not Softimage HWND W/H)
+        g2.fillRect(r.x + q.x - hs / 2, r.y + q.y - hs / 2, hs, hs);
+        g2.fillRect(r.x + q.x + q.w - hs / 2, r.y + q.y + q.h - hs / 2, hs, hs);
+        g2.fillRect(r.x + q.x + q.w - hs / 2, r.y + q.y - hs / 2, hs, hs);
+        g2.fillRect(r.x + q.x - hs / 2, r.y + q.y + q.h - hs / 2, hs, hs);
       }
       drawCube(vp, r);
     });

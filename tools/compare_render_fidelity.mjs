@@ -667,7 +667,7 @@ else notes.push('region HWND crop chrome DUMP_READY');
 const rrh = r.renderRegionHwnd;
 if (!rrh) diffs.push('renderRegionHwnd audit missing');
 else if (!rrh.ok) diffs.push(`renderRegionHwnd audit failed ${JSON.stringify(rrh)}`);
-else notes.push(`renderRegionHwnd ${rrh.hwndCount}×DsNewRegionButtonCtrl crop ${rrh.cropPng?.join('x')} border ${rrh.borderCss}`);
+else notes.push(`renderRegionHwnd ${rrh.hwndCount}×DsNewRegionButtonCtrl crop ${rrh.cropPng?.join('x')} border ${rrh.borderCss} handleWh ${rrh.handleSizePx}×${rrh.handleWhCount}`);
 
 // Attested region-adjacent: Scene Render Options image size (also in deepen)
 const deepenW = deepen?.region_like_params?.imagewidth ?? deepen?.render_options?.params_map?.imagewidth;
