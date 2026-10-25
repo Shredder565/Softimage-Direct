@@ -6,7 +6,7 @@ import { TEXTURE_NODES } from '../core/shaders';
 import type { FCurve } from '../core/animation';
 import { Parameter, ParamSet } from '../core/params';
 import type { LayoutNode } from '../core/opdefs';
-import { applyPpgChrome, PPG_CHROME } from './ppgChrome';
+import { applyPpgChrome, pe394StubChrome, renderPe394Stub, PPG_CHROME } from './ppgChrome';
 
 export function propertyEditor(app: App, host: HTMLElement, target?: () => Node | undefined) {
   applyPpgChrome();
@@ -90,7 +90,16 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
   const render = () => {
     const n = current();
     tabs.innerHTML = ''; body.innerHTML = '';
-    if (!n) { title.textContent = 'Property Editor'; body.innerHTML = '<div class="ppg-empty">Select an object, property or operator to inspect.</div>'; return; }
+    if (!n) {
+      // XSI.exe RT_DIALOG 394 stub chrome (title + TODO string only — no invent Layout).
+      const stub = pe394StubChrome();
+      title.textContent = stub.title;
+      body.replaceChildren();
+      const host = document.createElement('div');
+      renderPe394Stub(host);
+      body.appendChild(host);
+      return;
+    }
     const obj = n instanceof X3DObject ? n : (n as any).parentObj ?? n.parent;
     // Softimage titles the editor "<parent> : <object> (General)" for objects and "<object> : <node>" for nested nodes.
     const multi = !state.locked && !target && app.selection.length > 1 ? ` [${app.selection.length} objects]` : '';

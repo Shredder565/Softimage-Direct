@@ -297,6 +297,28 @@ else {
   if (!sd?.tokensApplied || sd.fontPt !== 8 || sd.btnWDlu !== 50 || sd.btnHDlu !== 14 || sd.btnMinW !== 75 || sd.btnMinH !== 22) {
     fail.push(`softDialog chrome expected 8pt / 50×14 DLU → 75×22px, got ${JSON.stringify(sd)}`);
   } else ok.push(`Soft-dialog chrome fontPt=${sd.fontPt} OK/Cancel DLU=${sd.btnWDlu}x${sd.btnHDlu} px=${sd.btnMinW}x${sd.btnMinH}`);
+  // XSI.exe RT_DIALOG 394 Property Page stub (title + TODO string; no invent Layout)
+  const pe394 = pc.propertyPage394;
+  if (
+    !pe394?.tokensApplied ||
+    pe394.dialogId !== 394 ||
+    pe394.rva !== 19961344 ||
+    pe394.size !== 158 ||
+    pe394.title !== 'Property Page' ||
+    pe394.stubText !== 'TODO: layout property page' ||
+    pe394.widthDlu !== 210 ||
+    pe394.heightDlu !== 154 ||
+    pe394.widthPx !== 315 ||
+    pe394.heightPx !== 242 ||
+    pe394.fontPt !== 8 ||
+    !Array.isArray(pe394.menus) ||
+    !pe394.menus.includes('PPG_CONTEXT_MENU') ||
+    !pe394.menus.includes('PPG_ANIM_CONTEXT_MENU') ||
+    !pe394.stubInDom ||
+    pe394.stubDomText !== 'TODO: layout property page'
+  ) {
+    fail.push(`propertyPage394 stub chrome expected dialog 394 / TODO stub, got ${JSON.stringify(pe394)}`);
+  } else ok.push(`PE394 Property Page stub id=${pe394.dialogId} rva=${pe394.rva} ${pe394.widthDlu}x${pe394.heightDlu}dlu stub="${pe394.stubText}"`);
 
   // Animate chrome — #47 PE base + xsivw 485×550 / KP 160×480 + PNG glyph extras
   const ac = audit.animChrome;

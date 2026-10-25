@@ -74,10 +74,57 @@ export function applyPpgChrome(host?: HTMLElement | null): PpgChrome {
       set(el, '--dlg-pad', `${sd.padPx}px`);
       set(el, '--dlg-label-w', `${sd.labelColPx}px`);
     }
+    const pe394 = (PPG_CHROME as any).propertyPage394?.tokens;
+    if (pe394) {
+      set(el, '--pe394-font', pe394.fontFamily);
+      set(el, '--pe394-font-px', `${pe394.fontPx}px`);
+      set(el, '--pe394-w', `${pe394.widthPx}px`);
+      set(el, '--pe394-h', `${pe394.heightPx}px`);
+      set(el, '--pe394-stub-x', `${pe394.stubXPx}px`);
+      set(el, '--pe394-stub-y', `${pe394.stubYPx}px`);
+      set(el, '--pe394-stub-w', `${pe394.stubWPx}px`);
+      set(el, '--pe394-stub-h', `${pe394.stubHPx}px`);
+    }
   };
   apply(root);
   if (host) apply(host);
   return PPG_CHROME;
+}
+
+/** Softimage XSI.exe RT_DIALOG 394 Property Page stub (title + TODO string only — no invent Layout). */
+export function pe394StubChrome(): {
+  title: string;
+  stubText: string;
+  dialogId: number;
+  rva: number;
+  size: number;
+  menus: string[];
+} {
+  const pe = (PPG_CHROME as any).propertyPage394;
+  return {
+    title: pe?.tokens?.title ?? pe?.dialog?.title ?? 'Property Page',
+    stubText: pe?.tokens?.stubText ?? pe?.dialog?.stub?.text ?? 'TODO: layout property page',
+    dialogId: pe?.dialog?.id ?? 394,
+    rva: pe?.dialog?.rva ?? 19961344,
+    size: pe?.dialog?.size ?? 158,
+    menus: pe?.menus ?? ['PPG_CONTEXT_MENU', 'PPG_ANIM_CONTEXT_MENU'],
+  };
+}
+
+/** Render attested PE 394 stub chrome into a host (metrics/strings only). */
+export function renderPe394Stub(host: HTMLElement): HTMLElement {
+  applyPpgChrome(host);
+  const pin = pe394StubChrome();
+  host.classList.add('pe394-stub');
+  host.dataset.peDialog = String(pin.dialogId);
+  host.dataset.peRva = String(pin.rva);
+  host.dataset.peSize = String(pin.size);
+  host.replaceChildren();
+  const label = document.createElement('div');
+  label.className = 'pe394-stub-text';
+  label.textContent = pin.stubText;
+  host.appendChild(label);
+  return host;
 }
 
 /** Compact audit payload for ui_smoke / __uiAudit. */
@@ -137,5 +184,29 @@ export function ppgChromeAudit(root?: ParentNode | Document): Record<string, unk
       peFont: (PPG_CHROME as any).softDialog?.peAttest?.fontMostCommon,
       peBtnDlu: (PPG_CHROME as any).softDialog?.peAttest?.okCancelDluMostCommon,
     },
+    propertyPage394: (() => {
+      const pe = (PPG_CHROME as any).propertyPage394;
+      const t = pe?.tokens;
+      const stub = (doc as Document).querySelector?.('.pe394-stub') ?? document.querySelector('.pe394-stub');
+      const stubText = stub?.querySelector?.('.pe394-stub-text') as HTMLElement | null;
+      return {
+        dialogId: pe?.dialog?.id ?? null,
+        rva: pe?.dialog?.rva ?? null,
+        size: pe?.dialog?.size ?? null,
+        title: t?.title ?? null,
+        stubText: t?.stubText ?? null,
+        widthDlu: t?.widthDlu ?? null,
+        heightDlu: t?.heightDlu ?? null,
+        widthPx: t?.widthPx ?? null,
+        heightPx: t?.heightPx ?? null,
+        fontPt: t?.fontPt ?? null,
+        menus: pe?.menus ?? null,
+        strings: pe?.strings ?? null,
+        tokensApplied: cs.getPropertyValue('--pe394-w').trim() === `${t?.widthPx ?? 315}px`,
+        stubInDom: !!stub,
+        stubDomText: stubText?.textContent ?? null,
+        inventoryId: (PPG_CHROME as any).inventory?.propertyPage394 ? 394 : null,
+      };
+    })(),
   };
 }

@@ -20,6 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PE = ROOT / "data" / "si" / "pe_resources.json"
+PE394_DUMP = ROOT / "data" / "dump" / "si_pe_property_page_394.json"
 # softimage-pc Phase B dumps (prefer when present)
 PC_DIALOGS = Path("/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/dialogs")
 PC_PE = PC_DIALOGS / "pe-dialogs-ui-model.json"
@@ -29,6 +30,7 @@ VIEWS = ROOT / "src" / "data" / "si" / "views.json"
 UIUT_BMP = ROOT / "data" / "si" / "pe_bitmaps" / "uiut"
 PUBLIC_MCP = ROOT / "public" / "si" / "mcp"
 OUT = ROOT / "src" / "data" / "si" / "ppg_chrome.json"
+PE394_OUT = ROOT / "src" / "data" / "si" / "pe_property_page_394.json"
 
 # Softimage PPG host dialogs in uiut.dll (owner-draw chrome over Child Property Frame).
 HOST_DIALOGS = ("138", "139", "141", "142", "144", "145", "147")
@@ -268,6 +270,66 @@ def build() -> dict:
         },
     }
 
+    # XSI.exe RT_DIALOG 394 — Property Page TODO stub (unlock pe394; no invent Layout).
+    pe394_raw = xsi.get("394") or {}
+    pe394_meta = json.load(open(PE394_DUMP)) if PE394_DUMP.exists() else {}
+    pe394_dlg = pe394_meta.get("dialog") or {}
+    pe394_ctrl = (pe394_raw.get("controls") or pe394_dlg.get("controls") or [{}])[0]
+    pe394_rect = pe394_raw.get("rect") or pe394_dlg.get("rect_dlu") or [0, 0, 210, 154]
+    pe394_font = pe394_raw.get("font") or pe394_dlg.get("font") or [8, "MS Sans Serif"]
+    stub_rect = [
+        pe394_ctrl.get("x", (pe394_ctrl.get("rect_dlu") or [60, 73, 90, 8])[0]),
+        pe394_ctrl.get("y", (pe394_ctrl.get("rect_dlu") or [60, 73, 90, 8])[1]),
+        pe394_ctrl.get("w", (pe394_ctrl.get("rect_dlu") or [60, 73, 90, 8])[2]),
+        pe394_ctrl.get("h", (pe394_ctrl.get("rect_dlu") or [60, 73, 90, 8])[3]),
+    ]
+    # Same MS Sans Serif 8 DLU→px scale as soft_dialog (×1.5 width, ×22/14 height).
+    dlu_x, dlu_y = 1.5, 22 / 14
+    property_page_394 = {
+        "lock": "ui.pe_property_page_394",
+        "source": "data/dump/si_pe_property_page_394.json" if PE394_DUMP.exists() else pe_source,
+        "dialog": {
+            "dll": "XSI.exe",
+            "id": 394,
+            "rva": pe394_dlg.get("rva", 19961344),
+            "size": pe394_dlg.get("size", 158),
+            "title": pe394_raw.get("title") or pe394_dlg.get("title") or "Property Page",
+            "style": pe394_raw.get("style") or pe394_dlg.get("style") or 1220542528,
+            "rect_dlu": pe394_rect,
+            "font": pe394_font,
+            "stub": {
+                "cls": pe394_ctrl.get("cls", "static"),
+                "text": pe394_ctrl.get("text") or "TODO: layout property page",
+                "id": pe394_ctrl.get("id", 65535),
+                "rect_dlu": stub_rect,
+                "style": pe394_ctrl.get("style", 1342308352),
+            },
+        },
+        "strings": pe394_meta.get("strings_u16")
+        or ["Property Page", "TODO: layout property page", "layout property page", "PPG"],
+        "menus": pe394_meta.get("menu_names_u16") or ["PPG_CONTEXT_MENU", "PPG_ANIM_CONTEXT_MENU"],
+        "tokens": {
+            "title": pe394_raw.get("title") or "Property Page",
+            "stubText": pe394_ctrl.get("text") or "TODO: layout property page",
+            "fontFamily": '"MS Sans Serif", "Segoe UI", Arial, sans-serif',
+            "fontPt": int(pe394_font[0]) if pe394_font else 8,
+            "fontPx": 11,
+            "widthDlu": int(pe394_rect[2]),
+            "heightDlu": int(pe394_rect[3]),
+            "widthPx": int(round(pe394_rect[2] * dlu_x)),
+            "heightPx": int(round(pe394_rect[3] * dlu_y)),
+            "stubXDlu": int(stub_rect[0]),
+            "stubYDlu": int(stub_rect[1]),
+            "stubWDlu": int(stub_rect[2]),
+            "stubHDlu": int(stub_rect[3]),
+            "stubXPx": int(round(stub_rect[0] * dlu_x)),
+            "stubYPx": int(round(stub_rect[1] * dlu_y)),
+            "stubWPx": int(round(stub_rect[2] * dlu_x)),
+            "stubHPx": int(round(stub_rect[3] * dlu_y)),
+        },
+        "note": "PE stub chrome only — Softimage Layout beyond the TODO string is not attested; do not invent.",
+    }
+
     bitmaps = {
         "inspNav": {
             "peId": "137",
@@ -319,6 +381,7 @@ def build() -> dict:
             "uiut_bitmaps": "data/si/pe_bitmaps/uiut/",
             "views": "src/data/si/views.json",
             "pc_dialogs": "internal/softimage-pc-dumps/dialogs/" if PC_PE.exists() else None,
+            "pe394": "data/dump/si_pe_property_page_394.json" if PE394_DUMP.exists() else None,
         },
         "canonicalHostDialog": canonical_id,
         "hosts": hosts,
@@ -328,6 +391,7 @@ def build() -> dict:
         "preferences": preferences,
         "scriptEditor": script_editor,
         "softDialog": soft_dialog,
+        "propertyPage394": property_page_394,
         "layoutOpts": layout_opts,
         "bitmapMatch": {"inspNav": match_nav, "tools": match_tools},
         "inventory": inventory,
@@ -337,6 +401,7 @@ def build() -> dict:
             "Explorer rename = sceneexplorer.dll 725; Preferences host frame = props.dll 264.",
             "Script Editor factory font/size/tab/linenum from C3DPrefsScriptEditor.spdl; view defaultsize 485×550.",
             "Soft dialogs: PE majority 8pt MS Sans Serif; OK/Cancel 50×14 DLU → ~75×22 px.",
+            "XSI.exe RT_DIALOG 394 is the Property Page TODO stub (title/metrics/strings only — no invent Layout).",
             "Shared PPG shell only — Model-specific opdef layouts owned by Model PPG worker.",
             "No Softimage Desktop takeover — PE/SPDL file scrape only.",
         ],
@@ -347,11 +412,32 @@ def main() -> None:
     data = build()
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(data, indent=2) + "\n")
+    pe394 = data.get("propertyPage394")
+    if pe394:
+        PE394_OUT.write_text(
+            json.dumps(
+                {
+                    "_comment": "XSI.exe RT_DIALOG 394 Property Page stub — attested PE metrics/strings only (no invent Layout).",
+                    "softimage": data["softimage"],
+                    "lock": pe394["lock"],
+                    "source": pe394["source"],
+                    "dialog": pe394["dialog"],
+                    "strings": pe394["strings"],
+                    "menus": pe394["menus"],
+                    "tokens": pe394["tokens"],
+                    "note": pe394["note"],
+                },
+                indent=2,
+            )
+            + "\n"
+        )
+        print(f"wrote {PE394_OUT}")
     print(f"wrote {OUT}")
     print(
         f"host={data['canonicalHostDialog']} "
         f"nav={data['bitmaps']['inspNav']['peSize']} tools={data['bitmaps']['tools']['peSize']} "
-        f"match={data['bitmapMatch']}"
+        f"match={data['bitmapMatch']} "
+        f"pe394={pe394['dialog']['id'] if pe394 else None}"
     )
 
 

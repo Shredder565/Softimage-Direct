@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "softimage": "2015 SP2 / 13.2.163.0",
+    "lock": "ui.pe_property_page_394",
+    "status": "DUMP_READY",
+    "sources": [
+      "internal/softimage-pc-dumps/unlock/unlock_pe394_manip_curve.json#locks.ui.pe_property_page_394",
+      "internal/softimage-pc-dumps/dialogs/pe-dialogs-ui-model.json#files.XSI.exe.dialogs.394",
+      "data/si/pe_resources.json#XSI.exe.dialogs.394"
+    ],
+    "note": "Wire PE RT_DIALOG 394 + TODO stub strings only. Do not invent PPG Layout beyond the attested stub."
+  },
+  "dialog": {
+    "dll": "XSI.exe",
+    "id": 394,
+    "rva": 19961344,
+    "size": 158,
+    "title": "Property Page",
+    "style": 1220542528,
+    "rect_dlu": [0, 0, 210, 154],
+    "font": [8, "MS Sans Serif"],
+    "controls": [
+      {
+        "cls": "static",
+        "text": "TODO: layout property page",
+        "id": 65535,
+        "rect_dlu": [60, 73, 90, 8],
+        "style": 1342308352
+      }
+    ]
+  },
+  "strings_u16": [
+    "Property Page",
+    "TODO: layout property page",
+    "layout property page",
+    "PPG"
+  ],
+  "menu_names_u16": [
+    "PPG_CONTEXT_MENU",
+    "PPG_ANIM_CONTEXT_MENU"
+  ],
+  "sibling_stub": {
+    "id": "IDD_PROPPAGE_LARGE",
+    "title": "Property Page",
+    "rect_dlu": [0, 0, 235, 156],
+    "stub_text": "TODO: layout property page",
+    "note": "Larger PE sibling stub; same TODO string. Live host chrome remains uiut dialog 147."
+  }
+}

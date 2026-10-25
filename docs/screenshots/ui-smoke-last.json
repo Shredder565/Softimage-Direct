@@ -33,6 +33,7 @@
     "Explorer+Prefs chrome rename=725 row=16 prefsHost=264 labelW=260",
     "Script Editor chrome font=10px tab=4 linenum float=485x550",
     "Soft-dialog chrome fontPt=8 OK/Cancel DLU=50x14 px=75x22",
+    "PE394 Property Page stub id=394 rva=19961344 210x154dlu stub=\"TODO: layout property page\"",
     "Anim chrome AE=485x550 kp=160x480 menus=Edit+View+Track+Clip+Effect+Playback png=34 wired=67",
     "openview Explorer",
     "openview Property Editor",

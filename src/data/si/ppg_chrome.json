@@ -4,7 +4,8 @@
     "pe": "internal/softimage-pc-dumps/dialogs/pe-dialogs-ui-model.json",
     "uiut_bitmaps": "data/si/pe_bitmaps/uiut/",
     "views": "src/data/si/views.json",
-    "pc_dialogs": "internal/softimage-pc-dumps/dialogs/"
+    "pc_dialogs": "internal/softimage-pc-dumps/dialogs/",
+    "pe394": "data/dump/si_pe_property_page_394.json"
   },
   "canonicalHostDialog": "147",
   "hosts": {
@@ -670,6 +671,70 @@
       "labelColPx": 90
     }
   },
+  "propertyPage394": {
+    "lock": "ui.pe_property_page_394",
+    "source": "data/dump/si_pe_property_page_394.json",
+    "dialog": {
+      "dll": "XSI.exe",
+      "id": 394,
+      "rva": 19961344,
+      "size": 158,
+      "title": "Property Page",
+      "style": 1220542528,
+      "rect_dlu": [
+        0,
+        0,
+        210,
+        154
+      ],
+      "font": [
+        8,
+        "MS Sans Serif"
+      ],
+      "stub": {
+        "cls": "static",
+        "text": "TODO: layout property page",
+        "id": 65535,
+        "rect_dlu": [
+          60,
+          73,
+          90,
+          8
+        ],
+        "style": 1342308352
+      }
+    },
+    "strings": [
+      "Property Page",
+      "TODO: layout property page",
+      "layout property page",
+      "PPG"
+    ],
+    "menus": [
+      "PPG_CONTEXT_MENU",
+      "PPG_ANIM_CONTEXT_MENU"
+    ],
+    "tokens": {
+      "title": "Property Page",
+      "stubText": "TODO: layout property page",
+      "fontFamily": "\"MS Sans Serif\", \"Segoe UI\", Arial, sans-serif",
+      "fontPt": 8,
+      "fontPx": 11,
+      "widthDlu": 210,
+      "heightDlu": 154,
+      "widthPx": 315,
+      "heightPx": 242,
+      "stubXDlu": 60,
+      "stubYDlu": 73,
+      "stubWDlu": 90,
+      "stubHDlu": 8,
+      "stubXPx": 90,
+      "stubYPx": 115,
+      "stubWPx": 135,
+      "stubHPx": 13
+    },
+    "note": "PE stub chrome only \u2014 Softimage Layout beyond the TODO string is not attested; do not invent."
+  },
   "layoutOpts": {
     "alignRightCommon": true,
     "labelWidthPctCommon": [
@@ -701,6 +766,32 @@
       "232",
       "3401"
     ],
+    "propertyPage394": {
+      "title": "Property Page",
+      "style": 1220542528,
+      "rect": [
+        0,
+        0,
+        210,
+        154
+      ],
+      "font": [
+        8,
+        "MS Sans Serif"
+      ],
+      "controls": [
+        {
+          "cls": "static",
+          "text": "TODO: layout property page",
+          "id": 65535,
+          "x": 60,
+          "y": 73,
+          "w": 90,
+          "h": 8,
+          "style": 1342308352
+        }
+      ]
+    },
     "propertyPageLarge": {
       "title": "Property Page",
       "style": 1220542528,
@@ -733,7 +824,8 @@
       "width": 125,
       "height": 265,
       "raw": "50,50,125,265"
-    }
+    },
+    "note": "XSI.exe Property Page 394 / IDD_PROPPAGE_LARGE are PE stubs; live PPG host chrome is uiut owner-draw (dialog 147)."
   },
   "notes": [
     "PPG host chrome is owner-draw (uiut InspNavCtrl / LoadSaveCtrl); DLU rects place controls, RT_BITMAP sizes paint them.",
@@ -741,6 +833,7 @@
     "Explorer rename = sceneexplorer.dll 725; Preferences host frame = props.dll 264.",
     "Script Editor factory font/size/tab/linenum from C3DPrefsScriptEditor.spdl; view defaultsize 485\u00d7550.",
     "Soft dialogs: PE majority 8pt MS Sans Serif; OK/Cancel 50\u00d714 DLU \u2192 ~75\u00d722 px.",
+    "XSI.exe RT_DIALOG 394 is the Property Page TODO stub (title/metrics/strings only \u2014 no invent Layout).",
     "Shared PPG shell only \u2014 Model-specific opdef layouts owned by Model PPG worker.",
     "No Softimage Desktop takeover \u2014 PE/SPDL file scrape only."
   ]
