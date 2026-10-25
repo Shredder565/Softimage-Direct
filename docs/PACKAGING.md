@@ -2,6 +2,8 @@
 
 AfterImage is the Electron + NSIS Windows installer for this clean-room Softimage-faithful web app.
 
+Distribution is **binary-only / closed source**: the NSIS installer does not grant source rights; production Vite builds ship with `sourcemap: false`.
+
 ## Artifact name
 
 ```

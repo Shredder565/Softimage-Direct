@@ -4,6 +4,7 @@
   "version": "1.0.9",
   "description": "AfterImage - clean-room Softimage-faithful 3D modeling and animation",
   "author": "AfterImage",
+  "license": "UNLICENSED",
   "private": true,
   "type": "module",
   "main": "electron/main.cjs",
