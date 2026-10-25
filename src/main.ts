@@ -15,11 +15,15 @@ import { registerRenderToolbarOmCommands, renderToolbarOmAudit } from './command
 import { registerIceModuleCommands, iceModuleAudit } from './commands/iceModule';
 import { registerHairModuleCommands, hairModuleAudit, hairApplySmoke } from './commands/hairModule';
 import { registerSimulateModuleCommands, simulateModuleAudit } from './commands/simulateModule';
+import { registerFaceRobotModuleCommands, faceRobotModuleAudit } from './commands/faceRobotModule';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
 import simulateModuleTops from './data/si/simulate_module_mcp_tops.json';
+import faceRobotTops from './data/si/face_robot_module_mcp_tops.json';
+import faceRobotStage1Chrome from './data/si/face_robot_stage1_chrome.json';
 import { iceTree, renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
+import { faceRobotStage1View, faceRobotActPanelView } from './ui/faceRobotStage1';
 import { frostGraphView, frostHairWizardView, frostClothWizardView, frostOf, runFrostSmokeTests } from './frost';
 import { registerToolbarCommands, palettesView, toolbarView, newToolbar, customizeToolbars, openToolbarWindow, userToolbars } from './ui/toolbars';
 import { playbackPanel, animationPanel, timerange, layerManager, xsiExplorer, scriptHistory } from './ui/views';
@@ -71,6 +75,7 @@ registerRenderToolbarOmCommands(app);
 registerIceModuleCommands(app);
 registerHairModuleCommands(app);
 registerSimulateModuleCommands(app);
+registerFaceRobotModuleCommands(app);
 registerToolbarCommands(app);
 (window as any).__siMessage = siMessage; (window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); (window as any).__getEnableParity = () => getEnableParity(app); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
 // Softimage Command.GetEnabled analogue for harness / Script Editor probes
@@ -123,6 +128,8 @@ const SHELL: Record<string, (h: HTMLElement) => void> = {
   'Weight Paint Panel': h => weightPaintPanel(app, h), 'Preset Manager': h => presetManager(app, h),
   'Animation Mixer': h => animationMixer(app, h), 'Expression Editor': h => { animationEditor(app, h, 'fcurve'); },
   'ICE Tree': h => iceTree(app, h),
+  'Face Robot Stage 1': h => faceRobotStage1View(app, h),
+  'Face Robot Act Floating Panel': h => faceRobotActPanelView(app, h, (app as any).__faceRobotActArgs),
   'FROST Graph': h => frostGraphView(app, h),
   'FROST Hair Wizard': h => frostHairWizardView(app, h),
   'FROST Cloth Wizard': h => frostClothWizardView(app, h),
@@ -157,11 +164,18 @@ const openView = (name: string) => {
   const key = 'view:' + name; const size = SI_VIEWS.find(v => v.name === name)?.defaultsize?.split(',').map(Number);
   const animSz = animViewDefaultSize(name);
   const iceSz = (iceViewChrome as { views?: Record<string, { defaultsize?: number[] }> }).views?.[name]?.defaultsize;
+  const frSz = name === 'Face Robot Stage 1'
+    ? (faceRobotStage1Chrome as { view?: { defaultsize?: number[] } }).view?.defaultsize
+    : name === 'Face Robot Act Floating Panel'
+      ? (faceRobotStage1Chrome as { act_panel?: { defaultsize?: number[] } }).act_panel?.defaultsize
+      : undefined;
   // Softimage .xsivw defaultsize is left,top,width,height. Script Editor uses C3DPrefsScriptEditor chrome tokens when present.
   const seTok = (PPG_CHROME as any).scriptEditor?.tokens;
-  let w = name === 'Mini Transform Panel' ? 200 : Math.max(320, size ? Math.min(900, size[2]) : (iceSz ? Math.min(900, iceSz[2]) : (animSz ? Math.min(900, animSz[2]) : 420)));
-  let h = size ? Math.min(700, size[3]) : (iceSz ? Math.min(700, iceSz[3]) : (animSz ? Math.min(700, animSz[3]) : 400));
+  let w = name === 'Mini Transform Panel' ? 200 : Math.max(320, size ? Math.min(900, size[2]) : (frSz ? Math.min(900, frSz[2]) : (iceSz ? Math.min(900, iceSz[2]) : (animSz ? Math.min(900, animSz[2]) : 420))));
+  let h = size ? Math.min(700, size[3]) : (frSz ? Math.min(900, frSz[3]) : (iceSz ? Math.min(700, iceSz[3]) : (animSz ? Math.min(700, animSz[3]) : 400)));
   if (name === 'Script Editor' && seTok) { w = seTok.floatDefaultWidthPx ?? w; h = seTok.floatDefaultHeightPx ?? h; }
+  if (name === 'Face Robot Stage 1') { w = frSz?.[2] ?? 290; h = frSz?.[3] ?? 720; }
+  if (name === 'Face Robot Act Floating Panel') { w = frSz?.[2] ?? 320; h = frSz?.[3] ?? 280; }
   if (name === 'FROST Hair Wizard' || name === 'FROST Cloth Wizard') { w = 440; h = 620; }
   if (name === 'FROST Graph') { w = Math.max(w, 720); h = Math.max(h, 480); }
   const builders: Record<string, (host: HTMLElement) => void> = {
@@ -307,6 +321,14 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
       moduleInSelect: (document.querySelector('.module-select') as HTMLSelectElement | null)
         ? Array.from((document.querySelector('.module-select') as HTMLSelectElement).options).some(o => o.value === 'Simulate')
         : false,
+    },
+    // Softimage Face Robot MENU 300 + Stage 1 Assemble + ShowFaceRobotActPanel (FR.dll LOCK; FROST stays parallel)
+    faceRobot: {
+      ...faceRobotModuleAudit(app),
+      mcpTops: faceRobotTops.tops,
+      menu300: faceRobotTops.menu_300,
+      stage1Chrome: faceRobotStage1Chrome.view,
+      menubarPresent: !!document.querySelector('#menubar .m[data-si-menu="Face Robot"]'),
     },
     // Desktop polish #2 — manip / viewport prefs + default Camera pose (softimage-pc attested)
     viewportPolish: {

@@ -8,6 +8,7 @@ import { SI_MENUS, SI_VIEWS, SiMenuItem, openSiMenu } from './si';
 import { minimizeAll, restoreAll, closeAll, floatingWindows, openFloating } from './floating';
 import { construction } from '../core/scene';
 import { keymapNames, setKeymap, currentKeymap, bindingFor } from './keymap';
+import faceRobotTops from '../data/si/face_robot_module_mcp_tops.json';
 
 const ev = (name: string, detail?: any) => window.dispatchEvent(new CustomEvent(name, { detail }));
 const KEY_OF: Record<string, string> = { 'New Scene': 'New Scene', 'Open...': 'Open Scene', 'Save': 'Save Scene', 'Undo': 'Undo', 'Redo': 'Redo', 'Repeat': 'Repeat', 'Cut': 'Cut', 'Copy': 'Copy', 'Paste': 'Paste', 'Delete Selected': 'Delete', 'Select All': 'Select All', 'Exit': 'Quit', 'Softimage Help': 'Users Guide' };
@@ -26,7 +27,16 @@ const WIRED_LABELS = new Set([
   'Softimage Home Page', 'Try Other Autodesk Products',
   'Customer Involvement Program...', 'Desktop Analytics...',
   'Manage...', 'New Custom Relational View', 'New Custom Shelf...', 'New Custom Toolbar...', 'Customize Toolbars...',
+  // Softimage MENU 300 Face Robot (modules_facerobot / menu_facerobot.txt)
+  'Face Robot Layout', 'Softimage Layout', 'Face Robot Help...', 'Face Robot Wiki...', 'Enable Face Robot',
 ]);
+
+/** Softimage PE MENU 300 — Face Robot module strip menu (Desktop-attested). */
+const FACE_ROBOT_MENU: SiMenuItem = {
+  label: 'Face Robot',
+  items: ((faceRobotTops as { menu_300?: { label?: string; id?: number; separator?: boolean }[] }).menu_300 ?? []).map(x =>
+    x.separator ? { separator: true } : { label: x.label, id: x.id }),
+};
 
 const lsBool = (key: string, fallback = false) => { try { const v = localStorage.getItem(key); return v == null ? fallback : v === '1'; } catch { return fallback; } };
 const setLsBool = (key: string, on: boolean) => { try { localStorage.setItem(key, on ? '1' : '0'); } catch { /* */ } };
@@ -103,7 +113,7 @@ export function menubarIsWired(it: SiMenuItem, path: string[] = []): boolean {
 /** Inventory Softimage File/Edit/View/… leaves: wired vs silent (grey / would log not implemented). */
 export function menubarStatus(): { path: string; label: string; id: number | null; wired: boolean }[] {
   const file = SI_MENUS.fileMenu?.[0]; const main = SI_MENUS.mainMenu ?? [];
-  const tops: SiMenuItem[] = [file ?? main[0], ...main.slice(1)].filter(Boolean);
+  const tops: SiMenuItem[] = [file ?? main[0], ...main.slice(1), FACE_ROBOT_MENU].filter(Boolean);
   const out: { path: string; label: string; id: number | null; wired: boolean }[] = [];
   const walk = (items: SiMenuItem[], path: string[]) => {
     for (const it of expandMenubarItems(items)) {
@@ -125,6 +135,8 @@ const HELP_URLS: Record<string, string> = {
   '1-Minute Startup Movies': 'https://help.autodesk.com/view/SI/2015/ENU/',
   'Learning Path': 'https://help.autodesk.com/view/SI/2015/ENU/',
   'Softimage Wiki': 'https://en.wikipedia.org/wiki/Autodesk_Softimage',
+  'Face Robot Help...': 'https://help.autodesk.com/view/SI/2015/ENU/',
+  'Face Robot Wiki...': 'https://en.wikipedia.org/wiki/Autodesk_Softimage',
   'Services and Support': 'https://www.autodesk.com/support',
   'Softimage Home Page': 'https://www.autodesk.com/',
   'Try Other Autodesk Products': 'https://www.autodesk.com/products',
@@ -167,7 +179,8 @@ export function menubar(app: App, host: HTMLElement) {
   const bar = document.createElement('div'); bar.id = 'menubar';
   const logo = document.createElement('span'); logo.className = 'logo'; logo.textContent = 'SOFT'; bar.appendChild(logo);
   const file = SI_MENUS.fileMenu?.[0]; const main = SI_MENUS.mainMenu ?? [];
-  const tops: SiMenuItem[] = [file ?? main[0], ...main.slice(1)];
+  // Softimage Desktop module strip includes Face Robot (MENU 300) after Hair / before Window.
+  const tops: SiMenuItem[] = [file ?? main[0], ...main.slice(1), FACE_ROBOT_MENU];
   const clipboard: { objs: any[]; cut: boolean } = { objs: [], cut: false };
 
   const pick = (it: SiMenuItem, path: string[]) => {
@@ -192,6 +205,12 @@ export function menubar(app: App, host: HTMLElement) {
     if (path.includes('Layouts') || l === 'Manage...') { ev('layoutmenu', { label: l, path }); return; }
     if (['New Custom Relational View', 'New Custom Shelf...', 'New Custom Toolbar...', 'Customize Toolbars...'].includes(l) || it.id === -9) { ev('toolbarmenu', { label: l }); return; }
     if (HELP_URLS[l]) { window.open(HELP_URLS[l], '_blank'); return; }
+    // Softimage MENU 300 Face Robot leaves → ExecuteCommand Names (Desktop)
+    if (path[0] === 'Face Robot') {
+      if (l === 'Enable Face Robot' || l === 'Face Robot Layout' || l === 'Softimage Layout' || l === 'Disable Face Robot') {
+        app.run(l); return;
+      }
+    }
     switch (l) {
       case 'New Scene': if (confirm('New scene? (unsaved work is lost)')) app.run('NewScene'); return;
       case 'Open...': ev('openscene'); return; case 'Save': ev('savescene'); return; case 'Save As...': ev('savescene', { as: true }); return; case 'Save Backup': ev('savescene', { backup: true }); return;
@@ -238,7 +257,9 @@ export function menubar(app: App, host: HTMLElement) {
   const enabled = (it: SiMenuItem, path: string[] = []) => menubarIsWired(it, path);
   const accel = (it: SiMenuItem) => { const k = KEY_OF[it.label ?? '']; const b = k ? bindingFor(k) : null; return b ? { ...it, accel: b } : it; };
   for (const top of tops) {
-    const m = document.createElement('span'); m.className = 'm'; m.textContent = top.label ?? ''; bar.appendChild(m);
+    const m = document.createElement('span'); m.className = 'm'; m.textContent = top.label ?? '';
+    if (top.label) m.dataset.siMenu = top.label;
+    bar.appendChild(m);
     m.onclick = (e) => { e.stopPropagation(); const r = m.getBoundingClientRect(); openSiMenu(expandMenubarItems(top.items ?? []).map(accel), r.left, r.bottom, pick, { enabled, checked: it => it.id === -2 ? it.label === currentLayoutName() : undefined }, [top.label ?? '']); };
   }
   // construction-mode combo (Softimage shows it at the right of the main toolbar): operators go into the chosen region

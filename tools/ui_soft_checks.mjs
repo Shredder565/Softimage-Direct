@@ -16,7 +16,7 @@ const CHROME = CHROME_CANDIDATES.find(p => fs.existsSync(p));
 if (!CHROME) { console.error('No Chromium; set PW_CHROME'); process.exit(2); }
 
 const EXPECTED_KEYMAPS = ['Softimage Key Map', 'Maya Compatible Key Map', '3ds Max Compatible Key Map', 'SI|3D Key Map'];
-const MIN_PREF_PAGES = 10; // Softimage ships many C3DPrefs*; Face Robot filtered
+const MIN_PREF_PAGES = 10; // Softimage ships many C3DPrefs* (incl. Face Robot / preferences.FaceRobot)
 
 const b = await chromium.launch({
   executablePath: CHROME,

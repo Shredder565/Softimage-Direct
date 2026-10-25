@@ -13,7 +13,8 @@ import { siPrefTitle } from './si';
 const pageLabel = (k: string) => k === 'C3DSceneColors' ? 'Scene Colors' : siPrefTitle(k) ?? siPropLabel(k);
 // Softimage File > Preferences: every C3DPrefs* page plus Tools > Transform (C3DTransformProps.spdl) and Scene Colors.
 const PREF_PAGES = [
-  ...Object.keys(SETS).filter(k => k.startsWith('C3DPrefs') && !['C3DPrefsMgr', 'C3DPrefsPrivate', 'C3DPrefsFaceRobot'].includes(k)),
+  // Softimage preferences.FaceRobot (C3DPrefsFaceRobot) — Desktop modules tour; include with other C3DPrefs*.
+  ...Object.keys(SETS).filter(k => k.startsWith('C3DPrefs') && !['C3DPrefsMgr', 'C3DPrefsPrivate'].includes(k)),
   'C3DTransformProps',
 ].sort((a, b) => pageLabel(a).localeCompare(pageLabel(b)));
 let prefs: Map<string, ParamSet> | null = null;
