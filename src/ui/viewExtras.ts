@@ -113,7 +113,21 @@ export function installViewExtras(C: Ctx) {
       if (v.val('sceneinfo')) lines.push(`Objects: ${[...app.scene.allObjects()].length}`); if (v.val('currenttime')) lines.push(`Frame ${app.anim.frame}`); if (v.val('camerainfo')) lines.push(`Camera: ${vp.name}`);
       if (x.isolate) lines.push(`Isolated: ${x.isolate.size} object(s)`); if (x.muted) lines.push('MUTED'); if (x.solo) lines.push('SOLO'); if (navTool && i === C.active()) lines.push(navTool);
       if (lines.length) { g2.fillStyle = 'rgba(0,0,0,.35)'; g2.fillRect(r.x + 4, r.y + 22, 180, 12 * lines.length + 4); g2.fillStyle = '#ffd34d'; lines.forEach((l, k) => g2.fillText(l, r.x + 8, r.y + 32 + k * 12)); }
-      if (x.region && !(x as any).hidden) { const q = x.region; if (x.regionImg) g2.drawImage(x.regionImg, r.x + q.x, r.y + q.y, q.w, q.h); g2.strokeStyle = '#ffd34d'; g2.lineWidth = 1; g2.strokeRect(r.x + q.x + 0.5, r.y + q.y + 0.5, q.w, q.h); g2.fillStyle = '#ffd34d'; g2.fillRect(r.x + q.x - 3, r.y + q.y - 3, 6, 6); g2.fillRect(r.x + q.x + q.w - 3, r.y + q.y + q.h - 3, 6, 6); }
+      if (x.region && !(x as any).hidden) {
+        const q = x.region;
+        if (x.regionImg) g2.drawImage(x.regionImg, r.x + q.x, r.y + q.y, q.w, q.h);
+        // Softimage prefs.rendering region_color_default / region_color_handle (Desktop dump).
+        const border = getComputedStyle(document.documentElement).getPropertyValue('--si-region-border').trim() || '#ffff00';
+        const handle = getComputedStyle(document.documentElement).getPropertyValue('--si-region-handle').trim() || '#0000ff';
+        g2.strokeStyle = border; g2.lineWidth = 1;
+        g2.strokeRect(r.x + q.x + 0.5, r.y + q.y + 0.5, q.w, q.h);
+        // Handle W/H px unattested (LOCK) — keep pre-existing 6px corners with dump-attested blue.
+        g2.fillStyle = handle;
+        g2.fillRect(r.x + q.x - 3, r.y + q.y - 3, 6, 6);
+        g2.fillRect(r.x + q.x + q.w - 3, r.y + q.y + q.h - 3, 6, 6);
+        g2.fillRect(r.x + q.x + q.w - 3, r.y + q.y - 3, 6, 6);
+        g2.fillRect(r.x + q.x - 3, r.y + q.y + q.h - 3, 6, 6);
+      }
       drawCube(vp, r);
     });
   };

@@ -1,6 +1,6 @@
 // Softimage Desktop LOCK close dump (2026-10-25) — honest wire statuses.
 // Source: internal/softimage-pc-dumps/unlock/direct_lock_desktop_close.json
-// Do not invent HWND crop px, PPG COLORREF, or OpenView paint from PROBE/DUMP_READY labels.
+// Region HWND crop closed by modules-gdi harvest; PPG COLORREF / OpenView stay LOCK — no invent.
 // Anim Mixer/Editor/Fcurve client paint DONE via modules-gdi HWND PNG (anim_client_paint.json).
 import desk from '../data/si/direct_lock_desktop_close.json';
 
@@ -23,7 +23,7 @@ const D = desk as {
 /** Softimage Desktop Passes.RenderOptions keys attested in direct_lock_desktop_close (OM only). */
 export const DESKTOP_REGION_OM_KEYS = Object.keys(D.region_params);
 
-/** Compact audit — Desktop dump; HWND/PPG/OpenView LOCK; Anim ExecCmd + client paint DONE. */
+/** Compact audit — region HWND DUMP_READY; PPG/OpenView LOCK; Anim ExecCmd + client paint DONE. */
 export function directLockDesktopAudit(): Record<string, unknown> {
   const region = D.honest['render.region_hwnd_crop'];
   const ppg = D.honest['ui.ppg_title_hover_gdi'];
@@ -35,6 +35,7 @@ export function directLockDesktopAudit(): Record<string, unknown> {
   const floatingExecDone =
     (views?.status === 'EXECCMD_DONE' || views?.wire === 'EXECCMD') &&
     (views?.openview ?? 'LOCK') === 'LOCK';
+  const regionHwnd = region?.hwnd_crop_chrome ?? 'LOCK';
   return {
     softimage: D.meta.softimage,
     utc: D.meta.utc,
@@ -43,7 +44,7 @@ export function directLockDesktopAudit(): Record<string, unknown> {
     regionOmParamCount: DESKTOP_REGION_OM_KEYS.length,
     regionOmHasImageSize:
       D.region_params.imagewidth === 1920 && D.region_params.imageheight === 1080,
-    regionHwndCrop: region?.hwnd_crop_chrome ?? 'LOCK',
+    regionHwndCrop: regionHwnd,
     regionWire: region?.wire ?? 'NONE',
     ppgColorref: ppg?.status ?? 'LOCK',
     floatingViews: views?.status ?? 'LOCK',
@@ -53,7 +54,8 @@ export function directLockDesktopAudit(): Record<string, unknown> {
     fcurveMixerClientPaintWire: paint?.wire ?? 'NONE',
     openviewAllFailed: openviewFail,
     ok:
-      (region?.hwnd_crop_chrome ?? 'LOCK') === 'LOCK' &&
+      regionHwnd === 'DUMP_READY' &&
+      (region?.wire ?? '') === 'HWND_CROP' &&
       (ppg?.status ?? 'LOCK') === 'LOCK' &&
       openviewFail &&
       floatingExecDone &&

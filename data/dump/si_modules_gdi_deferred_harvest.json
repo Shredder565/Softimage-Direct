@@ -1,0 +1,71 @@
+{
+  "utc": "Sun, 25 Oct 2026 19:23:43 GMT",
+  "floats": [
+    "after_SyCreateCloth_Inspect#0 :: 0x170AF6|AfxWnd110u|Scene_Root : [multi] : [multi] (General)|151,151,692,173 || 0xC0D04|AfxWnd110u|DS_ChildProperty Editor|154,173,689,252 || 0x17093A|AfxWnd110u|DS Property Inspector Pages Area|154,211,689,249",
+    "  kids: 0x170AF6|AfxWnd110u|Scene_Root : [multi] : [multi] (General)|151,151,692,173 ;; 0x1709BA|Button||655,151,693,173 ;; 0x140CCC|Button||638,151,655,173 ;; 0x150A78|Button||616,151,634,173 ;; 0x80DF8|Button||598,151,616,173 ;; 0x3A0804|Button||580,151,598,173 ;; 0x2D0A16|TrayClientWindowClass|TrayClientWindow|154,173,689,252 ;; 0xC0D04|AfxWnd110u|DS_ChildProperty Editor|154,173,689,252 ;; 0x70DFE|#32770||154,173,689,252 ;; 0x130A60|Static|Child Property Frame rectangle|154,211,697,795 ;; 0xC0C9A|DsAnimationCtrl2|;tooltip=Animation control|154,173,300,211 ;; 0xB0E46|DsNewRegionButtonCtrl||178,173,300,211 ;; 0x2D07EC|DsNewRegionButtonCtrl||154,173,178,211 ;; 0x270978|DsNewRegionButtonCtrl|LoadSaveCtrl|582,173,689,211 ;; 0x120A70|DsNewRegionButtonCtrl|InspNavCtrl|458,173,572,211 ;; 0xC0844|#32770||154,211,689,249 ;; 0xE0E0A|SysTabControl32|Tab1|154,211,689,249 ;; 0x17093A|AfxWnd110u|DS Property Inspector Pages Area|154,211,689,249 ;; 0x2E0D0E|#32770||154,211,689,249 ;; 0x310A44|Static|Loading Property Pages...|275,220,568,240 ;; 0xA0D1A|DSPropWndClass||154,211,689,249 ;; 0x221204|GPITabManagerBase||154,214,689,249 ;; 0xB0D20|GPITabManagerBase||154,214,689,245 ;; 0x100AA4|Edit||224,219,683,241",
+    "after_select_syCloth#0 :: 0x170AF6|AfxWnd110u|Scene_Root : [multi] : [multi] (General)|151,151,692,173 || 0xC0D04|AfxWnd110u|DS_ChildProperty Editor|154,173,689,252 || 0x17093A|AfxWnd110u|DS Property Inspector Pages Area|154,211,689,249",
+    "  kids: 0x170AF6|AfxWnd110u|Scene_Root : [multi] : [multi] (General)|151,151,692,173 ;; 0x1709BA|Button||655,151,693,173 ;; 0x140CCC|Button||638,151,655,173 ;; 0x150A78|Button||616,151,634,173 ;; 0x80DF8|Button||598,151,616,173 ;; 0x3A0804|Button||580,151,598,173 ;; 0x2D0A16|TrayClientWindowClass|TrayClientWindow|154,173,689,252 ;; 0xC0D04|AfxWnd110u|DS_ChildProperty Editor|154,173,689,252 ;; 0x70DFE|#32770||154,173,689,252 ;; 0x130A60|Static|Child Property Frame rectangle|154,211,697,795 ;; 0xC0C9A|DsAnimationCtrl2|;tooltip=Animation control|154,173,300,211 ;; 0xB0E46|DsNewRegionButtonCtrl||178,173,300,211 ;; 0x2D07EC|DsNewRegionButtonCtrl||154,173,178,211 ;; 0x270978|DsNewRegionButtonCtrl|LoadSaveCtrl|582,173,689,211 ;; 0x120A70|DsNewRegionButtonCtrl|InspNavCtrl|458,173,572,211 ;; 0xC0844|#32770||154,211,689,249 ;; 0xE0E0A|SysTabControl32|Tab1|154,211,689,249 ;; 0x17093A|AfxWnd110u|DS Property Inspector Pages Area|154,211,689,249 ;; 0x2E0D0E|#32770||154,211,689,249 ;; 0x310A44|Static|Loading Property Pages...|275,220,568,240 ;; 0xA0D1A|DSPropWndClass||154,211,689,249 ;; 0x2A1204|GPITabManagerBase||154,214,689,249 ;; 0x2C0D20|GPITabManagerBase||154,214,689,245 ;; 0x180AA4|Edit||224,219,683,241"
+  ],
+  "items": {
+    "ice_tree": {
+      "status": "DUMP_READY",
+      "path": "media/softimage-modules-gdi/20-ice-tree.png"
+    },
+    "syflex_ppg": {
+      "menu": "34-simulate-menu.png",
+      "status": "LOCK",
+      "generic": "31-simulate-cloth-ppg-generic.png",
+      "note": "SyCreateCloth after Grid+SelectObj; InspectObj remains Scene_Root General PPG (not syCloth-titled). 31-simulate-cloth-ppg.png hash==cube PPG \u2014 ignore"
+    },
+    "simulate_cloth": {
+      "menu": "34-simulate-menu.png",
+      "status": "LOCK",
+      "generic": "31-simulate-cloth-ppg-generic.png",
+      "note": "SyCreateCloth after Grid+SelectObj; InspectObj remains Scene_Root General PPG (not syCloth-titled). 31-simulate-cloth-ppg.png hash==cube PPG \u2014 ignore"
+    },
+    "crowdfx": {
+      "paths": [
+        "40-crowdfx-ice-menu.png",
+        "40-crowdfx-desktop.png"
+      ],
+      "status": "DUMP_READY",
+      "submenu_live": false,
+      "note": "ICE module menu shows CrowdFX Actors/Crowd/Simulation (Desktop menubar reachability); submenu live flyouts not captured"
+    },
+    "four_tab_anim": {
+      "paths": [
+        "50-anim-mixer.png",
+        "51-anim-editor.png",
+        "52-anim-fcurve.png"
+      ],
+      "status": "DUMP_READY"
+    },
+    "four_tab_region_hwnd": {
+      "paths": [
+        "61-render-region-desktop.png",
+        "61-render-region-crop.png"
+      ],
+      "status": "DUMP_READY",
+      "note": "DsNewRegionButtonCtrl children + viewport crop"
+    },
+    "four_tab_ppg_colorref": {
+      "status": "DUMP_READY",
+      "path": "media/softimage-modules-gdi/60-ppg-inspect-cube.png",
+      "samples": "ppg_colorref_samples.txt"
+    },
+    "hair_panel": {
+      "menu": "33-hair-menu.png",
+      "status": "LOCK",
+      "toolbar_desktop": "30-hair-toolbar-desktop.png",
+      "note": "OpenView Hair Panel + Hair menu + main child scan: no Hair Panel HWND. Partial menu+toolbar MCP crop only",
+      "mcp_crop": "30-hair-panel-mcp-crop.png"
+    }
+  },
+  "index": [
+    "33-hair-menu-retry.png",
+    "30-hair-toolbar-desktop.png (retry)",
+    "30-hair-panel-mcp-crop.png (retry)",
+    "31-simulate-cloth-ppg-generic.png :: 0x170AF6|AfxWnd110u|Scene_Root : [multi] : [multi] (General)|151,151,692,173 (not cloth-titled)"
+  ],
+  "exit": "HARVEST_COMPLETE"
+}

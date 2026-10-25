@@ -188,14 +188,16 @@ const r = await page.evaluate(() => {
   const wrapParam = m?.params?.find?.(p => p.name === 'wrapu');
   const wrapEnumItems = (wrapParam?.def?.items || []).map(it => ({ label: it.label, value: it.value }));
 
-  // render toolbar PE W/H audit + Softimage OM scripting-name inventory
+  // render toolbar PE W/H audit + Softimage OM scripting-name inventory + region HWND crop
   let renderToolbarChrome = null;
   let renderToolbarOm = null;
+  let renderRegionHwnd = null;
   let renderDesktopMcp = null;
   try {
     const audit = (window).__uiAudit?.() ?? null;
     renderToolbarChrome = audit?.renderToolbarChrome ?? null;
     renderToolbarOm = audit?.renderToolbarOm ?? null;
+    renderRegionHwnd = audit?.renderRegionHwnd ?? null;
   } catch (e) {}
   // Desktop tour MCP tops (08-after-key3) — Pass head = current pass name; Get>Shader grey
   try {
@@ -328,6 +330,7 @@ const r = await page.evaluate(() => {
     wrapuType: wrapParam?.def?.type,
     renderToolbarChrome,
     renderToolbarOm,
+    renderRegionHwnd,
     renderDesktopMcp,
     renderCmdEnabled,
     regionCreate,
@@ -634,8 +637,12 @@ const omAudit = r.renderToolbarOm;
 if (!omAudit) diffs.push('renderToolbarOm audit missing');
 else if (omAudit.missing?.length) diffs.push(`renderToolbarOm missing ${omAudit.missing.join(',')}`);
 else notes.push(`renderToolbarOm scripting names OK n=${omAudit.presentCount}`);
-if (omAudit?.hwndCrop !== 'LOCK') diffs.push(`hwndCrop status ${omAudit?.hwndCrop}`);
-else notes.push('region HWND crop chrome LOCK');
+if (omAudit?.hwndCrop !== 'DUMP_READY') diffs.push(`hwndCrop status ${omAudit?.hwndCrop} want DUMP_READY`);
+else notes.push('region HWND crop chrome DUMP_READY');
+const rrh = r.renderRegionHwnd;
+if (!rrh) diffs.push('renderRegionHwnd audit missing');
+else if (!rrh.ok) diffs.push(`renderRegionHwnd audit failed ${JSON.stringify(rrh)}`);
+else notes.push(`renderRegionHwnd ${rrh.hwndCount}×DsNewRegionButtonCtrl crop ${rrh.cropPng?.join('x')} border ${rrh.borderCss}`);
 
 // Attested region-adjacent: Scene Render Options image size (also in deepen)
 const deepenW = deepen?.region_like_params?.imagewidth ?? deepen?.render_options?.params_map?.imagewidth;

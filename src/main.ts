@@ -55,6 +55,7 @@ import { animationLayerManager } from './ui/animLayerManager';
 import { viewManager, SI as ViewportSI, DEFAULT_CAMERA_POS, DEFAULT_CAMERA_INTEREST, DEFAULT_CAMERA_FOV } from './ui/viewManager';
 import { manipulatorHitboxAudit, MANIP_PE_MENUS } from './ui/manipulatorHitbox';
 import { applyRenderToolbarChrome, renderToolbarChromeAudit } from './ui/renderToolbarChrome';
+import { applyRenderRegionHwndChrome, renderRegionHwndChromeAudit } from './ui/renderRegionHwndChrome';
 import { renderMcpFlyoutsAudit } from './ui/renderMcpFlyouts';
 import { directLockDesktopAudit } from './ui/directLockDesktop';
 import { animEditorsExecCmdAudit, animEditorsExecCmdSmoke } from './ui/animEditorsExecCmd';
@@ -64,6 +65,7 @@ applyAnimChromeVars();
 applyAnimClientPaintVars();
 applyIceTreeChromeVars();
 applyRenderToolbarChrome();
+applyRenderRegionHwndChrome();
 import { keyingPanel, layerControl, timeline, commandLine, scriptLog } from './ui/panels';
 import { mainShelf, panelSwitcher } from './ui/shelf';
 import { menubar, menubarStatus } from './ui/menubar';
@@ -318,14 +320,16 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     renderToolbarChrome: renderToolbarChromeAudit(),
     // PE menu 234 Render MCP flyouts (Desktop press-hold missed; menus.json already wired)
     renderMcpFlyouts: renderMcpFlyoutsAudit(),
-    // Softimage Desktop LOCK close 2026-10-25 — OM region params OK; HWND/PPG/OpenView LOCK; Anim ExecCmd+paint DONE
+    // Softimage Desktop LOCK close — region HWND DUMP_READY; PPG/OpenView LOCK; Anim ExecCmd+paint DONE
     directLockDesktop: directLockDesktopAudit(),
     // Softimage floating Anim editors — ExecuteCommand([]) open path (OpenView LOCK; client paint HWND_PNG DONE)
     animEditorsExecCmd: animEditorsExecCmdAudit(app),
     // Softimage Anim Mixer/Editor/Fcurve client paint — modules-gdi 50/51/52 HWND PNG
     animClientPaint: animClientPaintAudit(),
-    // Softimage Render toolbar OM scripting names + RenderOptionsRegion SPDL (HWND crop LOCK)
+    // Softimage Render toolbar OM scripting names + RenderOptionsRegion SPDL + HWND crop DUMP_READY
     renderToolbarOm: renderToolbarOmAudit(app),
+    // Softimage render.region_hwnd_crop — modules-gdi harvest crop + DsNewRegionButtonCtrl + prefs colors
+    renderRegionHwnd: renderRegionHwndChromeAudit(),
     // Softimage ICE module MENU 303 MCP tops + OpenICETreeView / xsivw shell chrome (client GDI + Anchor LOCK)
     iceModule: {
       ...iceModuleAudit(app),

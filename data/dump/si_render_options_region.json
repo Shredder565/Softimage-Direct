@@ -1,7 +1,7 @@
 {
-  "_comment": "RenderOptionsRegion.spdl — unlock_render_region_probe / unlock_render_locks_pe. Param names + Softimage labels only. HWND crop metrics stay LOCK.",
+  "_comment": "RenderOptionsRegion.spdl — unlock_render_region_probe / unlock_render_locks_pe. Param names + Softimage labels. HWND crop from modules-gdi DUMP_READY harvest.",
   "lock_id": "render.region_hwnd_crop",
-  "status": "SPDL_OM_WIRED_HWND_LOCK",
+  "status": "SPDL_OM_WIRED_HWND_DUMP_READY",
   "softimage": "13.2.163.0",
   "spdl_path": "Application/spdl/RenderOptionsRegion.spdl",
   "classname": "RenderOptions",
@@ -14,5 +14,17 @@
     { "sn": "RegionHeight", "name": "Height", "type": "number", "default": 0, "caps": "ReadOnly", "class": "MetaData" }
   ],
   "create_defaults": { "Left": 0.1, "Right": 0.9, "Top": 0.1, "Bottom": 0.9 },
-  "hwnd_crop_chrome": { "status": "LOCK", "note": "null under XSIBATCH -processing; Desktop tour may unlock later" }
+  "hwnd_crop_chrome": {
+    "status": "DUMP_READY",
+    "wire": "HWND_CROP",
+    "source": "src/data/si/render_region_hwnd_crop.json",
+    "note": "modules-gdi 61-render-region-*.png + DsNewRegionButtonCtrl children + prefs region_color_* (yellow border / blue handle). Handle W/H px stays LOCK."
+  },
+  "desktop_close": {
+    "source": "data/dump/direct_lock_desktop_close.json",
+    "dump_label": "DUMP_READY",
+    "wire": "OM_PARAMS_ONLY",
+    "note": "Prior close dump was OM-only; HWND crop closed by modules-gdi harvest"
+  }
 }
+

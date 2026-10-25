@@ -1,0 +1,199 @@
+{
+  "_comment": "Softimage render.region_hwnd_crop \u2014 Desktop modules-gdi DUMP_READY harvest. Dump-attested only; no invent.",
+  "lock_id": "render.region_hwnd_crop",
+  "status": "DUMP_READY",
+  "softimage": "13.2.163.0",
+  "utc": "Sun, 25 Oct 2026 19:23:43 GMT",
+  "source": [
+    "media/softimage-modules-gdi/61-render-region-desktop.png",
+    "media/softimage-modules-gdi/61-render-region-crop.png",
+    "internal/softimage-pc-dumps/modules-gdi/region_hwnd_children.txt",
+    "internal/softimage-pc-dumps/modules-gdi/deferred_gdi_harvest.json",
+    "src/data/si/render_desktop_prefs.json preferences.rendering region_color_*"
+  ],
+  "harvest": {
+    "status": "DUMP_READY",
+    "note": "DsNewRegionButtonCtrl children + viewport crop",
+    "paths": [
+      "61-render-region-desktop.png",
+      "61-render-region-crop.png"
+    ]
+  },
+  "crop": {
+    "path": "media/softimage-modules-gdi/61-render-region-crop.png",
+    "png_px": [
+      450,
+      350
+    ],
+    "note": "Viewport crop PNG; white vertical tile-border columns attested in pixels (prefs region_draw_tile_borders). Yellow border / blue handle px size not present in this crop \u2014 colors from prefs dump."
+  },
+  "desktop": {
+    "path": "media/softimage-modules-gdi/61-render-region-desktop.png",
+    "png_px": [
+      2880,
+      1537
+    ]
+  },
+  "hwnd_children": {
+    "cls": "DsNewRegionButtonCtrl",
+    "count": 7,
+    "source": "internal/softimage-pc-dumps/modules-gdi/region_hwnd_children.txt",
+    "children": [
+      {
+        "hwnd": "0x30DA0",
+        "cls": "DsNewRegionButtonCtrl",
+        "title": "",
+        "ltrb": [
+          2599,
+          1572,
+          3175,
+          1633
+        ],
+        "w_px": 576,
+        "h_px": 61
+      },
+      {
+        "hwnd": "0x30D9C",
+        "cls": "DsNewRegionButtonCtrl",
+        "title": "",
+        "ltrb": [
+          2162,
+          1572,
+          2808,
+          1622
+        ],
+        "w_px": 646,
+        "h_px": 50
+      },
+      {
+        "hwnd": "0x2D09E2",
+        "cls": "DsNewRegionButtonCtrl",
+        "title": "",
+        "ltrb": [
+          2851,
+          180,
+          3054,
+          547
+        ],
+        "w_px": 203,
+        "h_px": 367
+      },
+      {
+        "hwnd": "0x4209BE",
+        "cls": "DsNewRegionButtonCtrl",
+        "title": "",
+        "ltrb": [
+          2851,
+          463,
+          3045,
+          895
+        ],
+        "w_px": 194,
+        "h_px": 432
+      },
+      {
+        "hwnd": "0x3106C6",
+        "cls": "DsNewRegionButtonCtrl",
+        "title": "",
+        "ltrb": [
+          2851,
+          797,
+          3045,
+          871
+        ],
+        "w_px": 194,
+        "h_px": 74
+      },
+      {
+        "hwnd": "0x250CC6",
+        "cls": "DsNewRegionButtonCtrl",
+        "title": "",
+        "ltrb": [
+          2851,
+          849,
+          3047,
+          971
+        ],
+        "w_px": 196,
+        "h_px": 122
+      },
+      {
+        "hwnd": "0xF0CC0",
+        "cls": "DsNewRegionButtonCtrl",
+        "title": "",
+        "ltrb": [
+          2851,
+          939,
+          3045,
+          1063
+        ],
+        "w_px": 194,
+        "h_px": 124
+      }
+    ],
+    "note": "Untitled DsNewRegionButtonCtrl children enumerated during region harvest; roles not labelled in dump \u2014 do not invent LoadSave/InspNav mapping."
+  },
+  "chrome_colors": {
+    "source": "render_desktop_prefs.json preferences.rendering (Desktop tour)",
+    "region_draw_tile_borders": true,
+    "default": {
+      "r": 1,
+      "g": 1,
+      "b": 0,
+      "a": 1,
+      "css": "#ffff00"
+    },
+    "noauto": {
+      "r": 1,
+      "g": 0,
+      "b": 0,
+      "a": 1,
+      "css": "#ff0000"
+    },
+    "swipe": {
+      "r": 0.8,
+      "g": 0.6,
+      "b": 0.45,
+      "a": 1,
+      "css": "#cc9973"
+    },
+    "handle": {
+      "r": 0,
+      "g": 0,
+      "b": 1,
+      "a": 1,
+      "css": "#0000ff"
+    },
+    "scale_bar": {
+      "r": 1,
+      "g": 1,
+      "b": 1,
+      "a": 1,
+      "css": "#ffffff"
+    },
+    "bias_bar": {
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 0,
+      "css": "#000000"
+    },
+    "ctrs": {
+      "r": 1,
+      "g": 0.5,
+      "b": 0,
+      "a": 1,
+      "css": "#ff8000"
+    }
+  },
+  "handle_size_px": {
+    "status": "LOCK",
+    "note": "No Softimage-attested handle W/H in harvest PNGs; paint keeps pre-existing 6px without claiming dump."
+  },
+  "create_defaults": {
+    "Left": 0.1,
+    "Right": 0.9,
+    "Top": 0.1,
+    "Bottom": 0.9
+  }
+}

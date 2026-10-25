@@ -1,5 +1,5 @@
 // Softimage Render toolbar OM scripting names — unlock_render_toolbar_om_probe + commands_full.json.
-// Dump-backed labels/args only. Region HWND crop chrome stays LOCK (no invent).
+// Dump-backed labels/args only. Region HWND crop chrome from modules-gdi DUMP_READY harvest.
 import { App } from '../core/commands';
 import inventory from '../data/si/render_toolbar_om_cmds.json';
 import regionSpdl from '../data/si/render_options_region.json';
@@ -92,7 +92,7 @@ export function registerRenderToolbarOmCommands(app: App) {
       rr.open = true;
       rr.visible = true;
       syncRegionMeta(app, rr);
-      app.logMsg('info', `Render region created LRTB=${rr.left},${rr.right},${rr.top},${rr.bottom} (OM fractions; HWND crop LOCK)`);
+      app.logMsg('info', `Render region created LRTB=${rr.left},${rr.right},${rr.top},${rr.bottom} (OM fractions; HWND crop DUMP_READY)`);
       app.events.emit('frame');
       return rr;
     },
@@ -389,7 +389,7 @@ function syncRegionMeta(app: App, rr: RrState) {
   const prop = app.scene.renderOptionsRegion;
   if (!prop) return;
   // Softimage MetaData Region* are ReadOnly; store OM fractions as Width/Height when open.
-  // HWND pixel crop stays LOCK — do not invent px.
+  // HWND crop chrome: see render_region_hwnd_crop.json (modules-gdi DUMP_READY).
   const w = Math.max(0, rr.right - rr.left);
   const h = Math.max(0, rr.bottom - rr.top);
   if (prop.get('RegionOffsetX')) app.setParam(prop.get('RegionOffsetX')!, rr.left);

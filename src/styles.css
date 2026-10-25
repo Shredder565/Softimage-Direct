@@ -78,6 +78,10 @@
   /* unlock render.toolbar_pixel_chrome — rendercore RT_BITMAP 105–108 attested 22×22 */
   --render-tb-cell-w: 22px;
   --render-tb-cell-h: 22px;
+  /* render.region_hwnd_crop — prefs.rendering region_color_* (Desktop dump); applyRenderRegionHwndChrome overrides */
+  --si-region-border: #ffff00;
+  --si-region-handle: #0000ff;
+  --si-region-scale-bar: #ffffff;
   --fcv-ruler-h: 16px;
   --fcv-label-m: 36px;
   --mixer-track-h: 22px;

@@ -5,7 +5,7 @@
     "purpose": "Desktop close remaining Direct LOCKs (OpenView / region / PPG checklist)",
     "utc": "Sun, 25 Oct 2026 16:54:52 UTC",
     "mode": "Desktop-GUI",
-    "wire_note": "Desktop 2026-10-25. region DUMP_READY = Passes.RenderOptions OM params only (already in deepen dumps). HWND crop chrome NOT measured \u2014 stay LOCK. PPG/InspectObj failed \u2014 no COLORREF. OpenView wrong-args LOCK; floating Anim editors open via ExecuteCommand([],) (user Softimage JScript + Commands found). Anim Mixer/Editor/Fcurve client paint DONE from modules-gdi 50/51/52 HWND PNG. Do not invent."
+    "wire_note": "Desktop 2026-10-25. modules-gdi closed region HWND crop (61-render-region-*.png + DsNewRegionButtonCtrl + prefs region_color_*). Anim Mixer/Editor/Fcurve client paint DONE from modules-gdi 50/51/52 HWND PNG. PPG COLORREF still separate. OpenView wrong-args LOCK; Anim ExecCmd open DONE. Do not invent."
   },
   "per": {
     "animate.floating_views": "EXECCMD_DONE",
@@ -19,9 +19,9 @@
   "honest": {
     "render.region_hwnd_crop": {
       "dump_label": "DUMP_READY",
-      "wire": "OM_PARAMS_ONLY",
-      "hwnd_crop_chrome": "LOCK",
-      "note": "region_params are Passes.RenderOptions (image W/H etc), not crop HWND pixels; all CreateRenderRegion cmds failed"
+      "wire": "HWND_CROP",
+      "hwnd_crop_chrome": "DUMP_READY",
+      "note": "modules-gdi four_tab_region_hwnd DUMP_READY: 61-render-region-desktop/crop + DsNewRegionButtonCtrl children; prefs region_color_default=#ffff00 handle=#0000ff; handle W/H px LOCK"
     },
     "ui.ppg_title_hover_gdi": {
       "dump_label": "PROBE",
@@ -88,10 +88,12 @@
     "Mixer": "Wrong number of arguments or invalid property assignment"
   },
   "screenshot_checklist_unfulfilled": [
-    "RenderRegion:crop_widget",
-    "RenderRegion:HWND_chrome",
     "PPG:titlebar_idle",
     "PPG:titlebar_hover",
     "PPG:close_btn_hover"
+  ],
+  "screenshot_checklist_fulfilled": [
+    "RenderRegion:crop_widget",
+    "RenderRegion:HWND_chrome"
   ]
 }

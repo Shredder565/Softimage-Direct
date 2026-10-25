@@ -1,5 +1,5 @@
 {
-  "_comment": "Softimage Desktop Render MCP section tops \u2014 media/render-desktop-tour/08-after-key3.png + 08-left-toolbar.png (2026-10-25). PE menu 234 labels kept where OCR truncates (Regions).",
+  "_comment": "Softimage Desktop Render MCP section tops — media/render-desktop-tour/08-after-key3.png + 08-left-toolbar.png (2026-10-25). PE menu 234 labels kept where OCR truncates (Regions).",
   "softimage": "13.2.163.0",
   "source_media": [
     "media/render-desktop-tour/08-after-key3.png",
@@ -7,39 +7,12 @@
     "media/render-desktop-tour/08-module-crop.png"
   ],
   "module_select": "Render",
-  "tops": [
-    "Get",
-    "Modify",
-    "Render",
-    "Pass"
-  ],
+  "tops": ["Get", "Modify", "Render", "Pass"],
   "buttons": {
-    "Get": [
-      "Primitive",
-      "Material",
-      "Property",
-      "Shader",
-      "Texture",
-      "Clip"
-    ],
-    "Modify": [
-      "Materials",
-      "Shader",
-      "Texture",
-      "Projection",
-      "Ambience"
-    ],
-    "Render": [
-      "Regions",
-      "Render",
-      "Export",
-      "Preview"
-    ],
-    "Pass": [
-      "<current_pass_name>",
-      "Edit",
-      "Partition"
-    ]
+    "Get": ["Primitive", "Material", "Property", "Shader", "Texture", "Clip"],
+    "Modify": ["Materials", "Shader", "Texture", "Projection", "Ambience"],
+    "Render": ["Regions", "Render", "Export", "Preview"],
+    "Pass": ["<current_pass_name>", "Edit", "Partition"]
   },
   "pass_head": {
     "pe_label": "RenderPass",
@@ -48,14 +21,22 @@
     "note": "Softimage MCP replaces PE leaf text with live pass name"
   },
   "hwnd_crop_chrome": {
-    "status": "LOCK",
-    "note": "tour MD landed 2026-10-25; HWND crop chrome still unmeasured \u2014 no invent"
+    "status": "DUMP_READY",
+    "wire": "HWND_CROP",
+    "source": "src/data/si/render_region_hwnd_crop.json",
+    "note": "modules-gdi 61-render-region-*.png + DsNewRegionButtonCtrl; prefs region_color_*; handle W/H LOCK"
+  },
+
+  "mcp_flyout_item_lists": {
+    "status": "DONE",
+    "source": "toolbarobj.dll RT_MENU 234 → src/data/menus.json + src/data/si/render_mcp_flyouts.json",
+    "note": "Desktop press-hold tour missed menus; PE trees match menus.json item counts (Material 27, Regions 12, Render 10, Export 5, Partition 3, …)"
   },
   "get_shader": {
     "pe_id": 116,
     "cmd": "OpenMaterialLibrary",
     "desktop": "grey until Material/Shader selection (empty + Face/light/Camera attested grey)",
-    "note": "Modify>Materials id 41470 shares OpenMaterialLibrary but stays Enabled \u2014 grey by PE id"
+    "note": "Modify>Materials id 41470 shares OpenMaterialLibrary but stays Enabled — grey by PE id"
   },
   "regions_label": {
     "pe": "Regions",
