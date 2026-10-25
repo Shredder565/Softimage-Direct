@@ -14,6 +14,13 @@ import { tessellateCurve } from '../core/curves';
 import type { MeshData } from '../core/geometry';
 import { installViewExtras, DISPLAY_MENU } from './viewExtras';
 import { SI_MENUS, SiMenuItem, openSiMenu, siIcon, hasIcon } from './si';
+import {
+  MANIP_CENTRE_UNIT_HALF,
+  MANIP_CLEAN_ROOM_AXIS_PX,
+  MANIP_CLEAN_ROOM_PLANE_EDGE_PX,
+  MANIP_TOOLBAR_CELL_WH,
+  manipulatorHitboxAudit,
+} from './manipulatorHitbox';
 
 /** Scene colours and display preferences, decoded from Softimage 2015's C3DSceneColors / C3DPrefsDisplay / C3DPrefsTweak / C3DTransformProps SPDL defaults (softimage-pc dumps). */
 export const SI = {
@@ -155,6 +162,10 @@ export function viewManager(app: App, host: HTMLElement) {
         toolMode: tool.mode,
         gizmoOn,
         gizmoChildKinds: gizmo.children.map(ch => (ch as any)._manipPlane ? 'plane:' + (ch as any)._manipPlane : ch.type),
+        // PE-attested menus 530–532 + bitmap W/H; interactive hover px stay LOCK
+        manipHitbox: manipulatorHitboxAudit(),
+        manipToolbarCellWh: { ...MANIP_TOOLBAR_CELL_WH },
+        manipCentreUnitHalf: MANIP_CENTRE_UNIT_HALF,
       };
     },
   };
@@ -410,7 +421,8 @@ export function viewManager(app: App, host: HTMLElement) {
       }
     }
     // Softimage yellow centre square (view-plane translate / uniform scale) — Active colour 0xffd200
-    const cs = 0.09;
+    // Half-extent pinned in manipulator_hitbox.json (geometry pick; not invent hover px).
+    const cs = MANIP_CENTRE_UNIT_HALF;
     const square = new THREE.Mesh(new THREE.PlaneGeometry(cs * 2, cs * 2), new THREE.MeshBasicMaterial({ color: SI.active, depthTest: false, side: THREE.DoubleSide }));
     square.renderOrder = 22; square.quaternion.copy(vps[active].camera.quaternion); gizmo.add(square);
   };
@@ -422,18 +434,24 @@ export function viewManager(app: App, host: HTMLElement) {
   });
   const pxScaleOf = (vp: Viewport, r: { w: number; h: number }) => { const cam = vp.camera as any; return vp.kind === 'ortho' ? (cam._zoom ?? 20) * 2 / r.h : gizmoCenter.distanceTo(cam.position) * Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * 2 / r.h; };
   const scaleGizmo = (vp: Viewport, r: { w: number; h: number }) => { gizmo.visible = gizmoOn; if (!gizmoOn) return; const s = pxScaleOf(vp, r) * gizmoPx; gizmo.scale.set(s, s, s); };
-  /** Softimage: centre > plane handles > axes (Translate/Scale Interaction Style). */
+  /**
+   * Softimage: centre > plane handles > axes (Translate/Scale Interaction Style).
+   * Centre hit = drawn square geometry (MANIP_CENTRE_UNIT_HALF). Plane/axis edge slop is
+   * clean-room LOCK — unlock dump has no interactive hover px (do not invent Softimage values).
+   */
   const pickHandle = (vp: Viewport, at: { x: number; y: number; r: any }): ManipHandle | null => {
     if (!gizmoOn) return null; prepCam(vp, at.r);
     const P = (v: THREE.Vector3) => { const q = v.clone().project(vp.camera); return { x: at.r.x + ((q.x + 1) / 2) * at.r.w, y: at.r.y + ((1 - q.y) / 2) * at.r.h }; };
-    const c = P(gizmoCenter); if (Math.hypot(c.x - at.x, c.y - at.y) < 10) return 'centre';
     const s = pxScaleOf(vp, at.r) * gizmoPx; const fq = frameQ(); const ext = axisExtent();
+    const c = P(gizmoCenter);
+    // Geometry pick of yellow centre square (screen half-extent from unit half × gizmo scale)
+    if (Math.hypot(c.x - at.x, c.y - at.y) <= s * MANIP_CENTRE_UNIT_HALF) return 'centre';
     if (showPlaneHandles()) {
-      let bestPl: 'xy' | 'yz' | 'zx' | null = null, bd = 9;
+      // Geometry inside-quad + clean-room edge slop (LOCK — not Softimage PE hover px).
+      let bestPl: 'xy' | 'yz' | 'zx' | null = null, bd = MANIP_CLEAN_ROOM_PLANE_EDGE_PX;
       for (const pl of ['xy', 'yz', 'zx'] as const) {
         const [a0, a1] = planeAxes(pl); if (!tool.axes[a0] && !tool.axes[a1]) continue;
         const quad = planeQuadLocal(pl, planeExtent(), fq).map(v => P(gizmoCenter.clone().add(v.multiplyScalar(s))));
-        // point-in-quad (same winding as drawn) or near any edge
         const inside = (() => {
           let wn = 0; for (let i = 0; i < 4; i++) { const a = quad[i], b = quad[(i + 1) % 4]; if (a.y <= at.y) { if (b.y > at.y && (b.x - a.x) * (at.y - a.y) - (at.x - a.x) * (b.y - a.y) > 0) wn++; } else if (b.y <= at.y && (b.x - a.x) * (at.y - a.y) - (at.x - a.x) * (b.y - a.y) < 0) wn--; }
           return wn !== 0;
@@ -444,7 +462,8 @@ export function viewManager(app: App, host: HTMLElement) {
       }
       if (bestPl) return bestPl;
     }
-    let best: 'x' | 'y' | 'z' | null = null, bd = 7;
+    // Axis/ring: clean-room pick slop (LOCK — unlock dump has no interactive Softimage hover px).
+    let best: 'x' | 'y' | 'z' | null = null, bd = MANIP_CLEAN_ROOM_AXIS_PX;
     for (const ax of ['x', 'y', 'z'] as const) {
       let d: number;
       if (tool.mode === 'rotate') { // nearest point on the ring that lies in the plane perpendicular to this frame axis (front half only, like the drawn ring)

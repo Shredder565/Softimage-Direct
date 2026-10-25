@@ -30,6 +30,7 @@ import { applyPpgChrome, ppgChromeAudit, PPG_CHROME } from './ui/ppgChrome';
 import { applyAnimChromeVars, animViewDefaultSize, animChromeAudit } from './ui/animChrome';
 import { animationLayerManager } from './ui/animLayerManager';
 import { viewManager, SI as ViewportSI, DEFAULT_CAMERA_POS, DEFAULT_CAMERA_INTEREST, DEFAULT_CAMERA_FOV } from './ui/viewManager';
+import { manipulatorHitboxAudit, MANIP_PE_MENUS } from './ui/manipulatorHitbox';
 applyPpgChrome();
 applyAnimChromeVars();
 import { keyingPanel, layerControl, timeline, commandLine, scriptLog } from './ui/panels';
@@ -224,7 +225,7 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     peGrayedSymmetryWithCmd: peMenuItemGrayed('Symmetry', 32821),
     peGrayedPolynodeWithCmd: peMenuItemGrayed('Polynode', 32896),
     matrixTranslateTool: matrixCommandEnabled(app, 'TranslateTool'),
-    // Softimage viewinteraction.dll PE menus 530–532 vs Direct tool* trees
+    // Softimage viewinteraction.dll PE menus 530–532 vs Direct tool* trees (+ PE resource sizes)
     toolMenusPe: (() => {
       const map: Record<string, string> = { '530': 'toolTranslate', '531': 'toolRotate', '532': 'toolScale' };
       const leaf = (items: { label?: string; separator?: boolean }[] | undefined) =>
@@ -234,9 +235,18 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
         const pe = leaf((toolMenusPe as any).menus?.[mid]?.leaves);
         const di = leaf(SI_MENUS[key] as any);
         if (JSON.stringify(pe) !== JSON.stringify(di)) mismatches.push(`${mid}/${key}`);
+        const pin = MANIP_PE_MENUS[mid];
+        if (!pin || pin.directTool !== key) mismatches.push(`${mid}/hitboxPin`);
       }
-      return { ok: mismatches.length === 0, mismatches, menus: Object.keys(map) };
+      return {
+        ok: mismatches.length === 0,
+        mismatches,
+        menus: Object.keys(map),
+        peSizes: Object.fromEntries(Object.entries(MANIP_PE_MENUS).map(([k, v]) => [k, v.size])),
+      };
     })(),
+    // Unlock DUMP_READY ui.manipulator_hitbox_px — menus 530–532 + PE bitmap W/H; hover LOCK
+    manipHitbox: manipulatorHitboxAudit(),
     // Desktop polish #2 — manip / viewport prefs + default Camera pose (softimage-pc attested)
     viewportPolish: {
       ...(typeof (window as any).__vm?.viewportPolish === 'function' ? (window as any).__vm.viewportPolish() : {}),

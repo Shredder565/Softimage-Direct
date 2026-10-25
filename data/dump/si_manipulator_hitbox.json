@@ -1,0 +1,431 @@
+{
+  "meta": {
+    "softimage": "2015 SP2 / 13.2.163.0",
+    "source": "internal/softimage-pc-dumps/unlock/unlock_pe394_manip_curve.json#locks.ui.manipulator_hitbox_px",
+    "lock_id": "ui.manipulator_hitbox_px",
+    "note": "Bitmap W/H and menu IDs are attested; interactive hover px still may stay LOCK"
+  },
+  "menus_530_532": [
+    {
+      "pe": "viewinteraction.dll",
+      "id": 530,
+      "rva": 3063136,
+      "size": 250
+    },
+    {
+      "pe": "viewinteraction.dll",
+      "id": 531,
+      "rva": 3063392,
+      "size": 256
+    },
+    {
+      "pe": "viewinteraction.dll",
+      "id": 532,
+      "rva": 3063648,
+      "size": 256
+    }
+  ],
+  "bitmap_wh_count": 499,
+  "bitmap_wh_sample": [
+    {
+      "pe": "XSI.exe",
+      "id": "DELETE_D",
+      "rva": 19922496,
+      "size": 1770,
+      "wh": {
+        "w": 24,
+        "h": 24
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": "DELETE_HD",
+      "rva": 19920720,
+      "size": 1770,
+      "wh": {
+        "w": 24,
+        "h": 24
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": "DELETE_HU",
+      "rva": 19918944,
+      "size": 1770,
+      "wh": {
+        "w": 24,
+        "h": 24
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": "DELETE_U",
+      "rva": 19917168,
+      "size": 1770,
+      "wh": {
+        "w": 24,
+        "h": 24
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": "DELETE_X",
+      "rva": 19915392,
+      "size": 1770,
+      "wh": {
+        "w": 24,
+        "h": 24
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": "DOWN_D",
+      "rva": 19913616,
+      "size": 1770,
+      "wh": {
+        "w": 24,
+        "h": 24
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": "DOWN_HD",
+      "rva": 19911840,
+      "size": 1770,
+      "wh": {
+        "w": 24,
+        "h": 24
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": "DOWN_HU",
+      "rva": 19910064,
+      "size": 1770,
+      "wh": {
+        "w": 24,
+        "h": 24
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": "DOWN_U",
+      "rva": 19908288,
+      "size": 1770,
+      "wh": {
+        "w": 24,
+        "h": 24
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": "DOWN_X",
+      "rva": 19906512,
+      "size": 1770,
+      "wh": {
+        "w": 24,
+        "h": 24
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 178,
+      "rva": 19479696,
+      "size": 98346,
+      "wh": {
+        "w": 32,
+        "h": 1024
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 220,
+      "rva": 19578048,
+      "size": 7320,
+      "wh": {
+        "w": 121,
+        "h": 20
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 246,
+      "rva": 19585368,
+      "size": 9450,
+      "wh": {
+        "w": 56,
+        "h": 56
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 247,
+      "rva": 19594824,
+      "size": 9450,
+      "wh": {
+        "w": 56,
+        "h": 56
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 248,
+      "rva": 19604280,
+      "size": 9450,
+      "wh": {
+        "w": 56,
+        "h": 56
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 249,
+      "rva": 19613736,
+      "size": 9450,
+      "wh": {
+        "w": 55,
+        "h": 56
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 250,
+      "rva": 19623192,
+      "size": 2394,
+      "wh": {
+        "w": 28,
+        "h": 28
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 251,
+      "rva": 19625592,
+      "size": 2394,
+      "wh": {
+        "w": 28,
+        "h": 28
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 252,
+      "rva": 19627992,
+      "size": 2394,
+      "wh": {
+        "w": 28,
+        "h": 28
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 253,
+      "rva": 19630392,
+      "size": 2394,
+      "wh": {
+        "w": 28,
+        "h": 28
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 254,
+      "rva": 19632792,
+      "size": 2594,
+      "wh": {
+        "w": 38,
+        "h": 22
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 255,
+      "rva": 19635392,
+      "size": 2594,
+      "wh": {
+        "w": 38,
+        "h": 22
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 256,
+      "rva": 19637992,
+      "size": 1386,
+      "wh": {
+        "w": 18,
+        "h": 24
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 264,
+      "rva": 19639384,
+      "size": 1274,
+      "wh": {
+        "w": 18,
+        "h": 22
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 265,
+      "rva": 19640664,
+      "size": 1274,
+      "wh": {
+        "w": 18,
+        "h": 22
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 266,
+      "rva": 19641944,
+      "size": 1274,
+      "wh": {
+        "w": 18,
+        "h": 22
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 267,
+      "rva": 19643224,
+      "size": 1274,
+      "wh": {
+        "w": 18,
+        "h": 22
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 268,
+      "rva": 19644504,
+      "size": 1274,
+      "wh": {
+        "w": 18,
+        "h": 22
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 269,
+      "rva": 19645784,
+      "size": 1274,
+      "wh": {
+        "w": 18,
+        "h": 22
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 270,
+      "rva": 19647064,
+      "size": 1274,
+      "wh": {
+        "w": 18,
+        "h": 22
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 271,
+      "rva": 19648344,
+      "size": 1274,
+      "wh": {
+        "w": 18,
+        "h": 22
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 272,
+      "rva": 19649624,
+      "size": 1274,
+      "wh": {
+        "w": 18,
+        "h": 22
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 273,
+      "rva": 19650904,
+      "size": 1274,
+      "wh": {
+        "w": 18,
+        "h": 22
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 274,
+      "rva": 19652184,
+      "size": 1274,
+      "wh": {
+        "w": 18,
+        "h": 22
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 275,
+      "rva": 19653464,
+      "size": 1274,
+      "wh": {
+        "w": 18,
+        "h": 22
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 276,
+      "rva": 19654744,
+      "size": 234,
+      "wh": {
+        "w": 8,
+        "h": 8
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 277,
+      "rva": 19654984,
+      "size": 234,
+      "wh": {
+        "w": 8,
+        "h": 8
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 278,
+      "rva": 19655224,
+      "size": 234,
+      "wh": {
+        "w": 8,
+        "h": 8
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 279,
+      "rva": 19655464,
+      "size": 234,
+      "wh": {
+        "w": 8,
+        "h": 8
+      }
+    },
+    {
+      "pe": "XSI.exe",
+      "id": 289,
+      "rva": 19655704,
+      "size": 1386,
+      "wh": {
+        "w": 18,
+        "h": 24
+      }
+    }
+  ]
+}

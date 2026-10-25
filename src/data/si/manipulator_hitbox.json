@@ -1,0 +1,258 @@
+{
+  "_comment": "Softimage manipulator hit targets \u2014 attested PE only (viewinteraction menus 530-532 + XSI.exe RT_BITMAP W/H). Interactive 3D gizmo hover-only px stay LOCK (no invent).",
+  "softimage": "2015 SP2",
+  "source": "data/dump/si_manipulator_hitbox.json",
+  "lock_id": "ui.manipulator_hitbox_px",
+  "menus": {
+    "530": {
+      "id": 530,
+      "title": "TRANSLATE",
+      "pe": "viewinteraction.dll",
+      "rva": 3063136,
+      "size": 250,
+      "directTool": "toolTranslate"
+    },
+    "531": {
+      "id": 531,
+      "title": "ROTATE",
+      "pe": "viewinteraction.dll",
+      "rva": 3063392,
+      "size": 256,
+      "directTool": "toolRotate"
+    },
+    "532": {
+      "id": 532,
+      "title": "SCALE",
+      "pe": "viewinteraction.dll",
+      "rva": 3063648,
+      "size": 256,
+      "directTool": "toolScale"
+    }
+  },
+  "bitmapWhCount": 499,
+  "toolbarCellWh": {
+    "w": 24,
+    "h": 24
+  },
+  "toolbarCellBitmaps": [
+    "DELETE_D",
+    "DELETE_HD",
+    "DELETE_HU",
+    "DELETE_U",
+    "DELETE_X",
+    "DOWN_D",
+    "DOWN_HD",
+    "DOWN_HU",
+    "DOWN_U",
+    "DOWN_X"
+  ],
+  "bitmapWhSample": [
+    {
+      "id": "DELETE_D",
+      "w": 24,
+      "h": 24
+    },
+    {
+      "id": "DELETE_HD",
+      "w": 24,
+      "h": 24
+    },
+    {
+      "id": "DELETE_HU",
+      "w": 24,
+      "h": 24
+    },
+    {
+      "id": "DELETE_U",
+      "w": 24,
+      "h": 24
+    },
+    {
+      "id": "DELETE_X",
+      "w": 24,
+      "h": 24
+    },
+    {
+      "id": "DOWN_D",
+      "w": 24,
+      "h": 24
+    },
+    {
+      "id": "DOWN_HD",
+      "w": 24,
+      "h": 24
+    },
+    {
+      "id": "DOWN_HU",
+      "w": 24,
+      "h": 24
+    },
+    {
+      "id": "DOWN_U",
+      "w": 24,
+      "h": 24
+    },
+    {
+      "id": "DOWN_X",
+      "w": 24,
+      "h": 24
+    },
+    {
+      "id": 178,
+      "w": 32,
+      "h": 1024
+    },
+    {
+      "id": 220,
+      "w": 121,
+      "h": 20
+    },
+    {
+      "id": 246,
+      "w": 56,
+      "h": 56
+    },
+    {
+      "id": 247,
+      "w": 56,
+      "h": 56
+    },
+    {
+      "id": 248,
+      "w": 56,
+      "h": 56
+    },
+    {
+      "id": 249,
+      "w": 55,
+      "h": 56
+    },
+    {
+      "id": 250,
+      "w": 28,
+      "h": 28
+    },
+    {
+      "id": 251,
+      "w": 28,
+      "h": 28
+    },
+    {
+      "id": 252,
+      "w": 28,
+      "h": 28
+    },
+    {
+      "id": 253,
+      "w": 28,
+      "h": 28
+    },
+    {
+      "id": 254,
+      "w": 38,
+      "h": 22
+    },
+    {
+      "id": 255,
+      "w": 38,
+      "h": 22
+    },
+    {
+      "id": 256,
+      "w": 18,
+      "h": 24
+    },
+    {
+      "id": 264,
+      "w": 18,
+      "h": 22
+    },
+    {
+      "id": 265,
+      "w": 18,
+      "h": 22
+    },
+    {
+      "id": 266,
+      "w": 18,
+      "h": 22
+    },
+    {
+      "id": 267,
+      "w": 18,
+      "h": 22
+    },
+    {
+      "id": 268,
+      "w": 18,
+      "h": 22
+    },
+    {
+      "id": 269,
+      "w": 18,
+      "h": 22
+    },
+    {
+      "id": 270,
+      "w": 18,
+      "h": 22
+    },
+    {
+      "id": 271,
+      "w": 18,
+      "h": 22
+    },
+    {
+      "id": 272,
+      "w": 18,
+      "h": 22
+    },
+    {
+      "id": 273,
+      "w": 18,
+      "h": 22
+    },
+    {
+      "id": 274,
+      "w": 18,
+      "h": 22
+    },
+    {
+      "id": 275,
+      "w": 18,
+      "h": 22
+    },
+    {
+      "id": 276,
+      "w": 8,
+      "h": 8
+    },
+    {
+      "id": 277,
+      "w": 8,
+      "h": 8
+    },
+    {
+      "id": 278,
+      "w": 8,
+      "h": 8
+    },
+    {
+      "id": 279,
+      "w": 8,
+      "h": 8
+    },
+    {
+      "id": 289,
+      "w": 18,
+      "h": 24
+    }
+  ],
+  "interactiveHoverPx": {
+    "status": "LOCK",
+    "note": "No Softimage-attested interactive 3D gizmo hover hit-box px under headless PE scrape. Centre pick uses drawn square geometry (centreSquareUnitHalf); plane/axis edge slop is clean-room LOCK — do not invent Softimage hover px.",
+    "cleanRoomPlaneEdgePx": 9,
+    "cleanRoomAxisPx": 7
+  },
+  "centreSquareUnitHalf": 0.09
+}

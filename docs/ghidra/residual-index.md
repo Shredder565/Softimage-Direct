@@ -17,6 +17,7 @@ Softimage-pc progress: `docs/rea-ghidra-residual-progress.md`.
 | B4 | Animate | Fcurve handled-spline | **`gk10` GkStdFCurve** | **DONE** | [fcurve-handled-spline.md](./fcurve-handled-spline.md) | new cases only |
 | C1 | UI | MCP / Anim HWND Enabled | Desktop MCP + Anim Command.Enabled overlays | **WIRE** attested bools; OpenView **LOCK** | [../anim-hwnd-chrome-overnight.md](../anim-hwnd-chrome-overnight.md) | null→canRun; no invent views |
 | C2–C6 | UI | PPG GDI / PE 394 / Send-to / ICE anchors | see [ui-lock-binary-pins.md](./ui-lock-binary-pins.md) + [uiut-ppg-gdi.md](./uiut-ppg-gdi.md) | **LOCK** | empty HWND + no GDI COLORREF; PE host already #36–#41 | no invent |
+| C4b | UI | Manipulator hit-box px | `viewinteraction.dll` menus **530/531/532** + XSI.exe RT_BITMAP W/H | **DONE** (PE) / **LOCK** (hover) | unlock_pe394_manip_curve | menus+bitmap W/H wired; interactive hover px LOCK |
 
 ## Softimage-pc coordination
 
