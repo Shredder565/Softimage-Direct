@@ -46,6 +46,15 @@ const r = await page.evaluate(() => {
   const evalMuted = A.run('EvaluateMixer', { Frame: mid, Apply: false });
   A.run('MuteClip', { Clip: clips[0].name, Mute: false });
   const mix = A.scene.root.property('mixer');
+  // Softimage PC nested Parameter.Name labels (si_anim_mixer_deep.json)
+  const nestedSI = [
+    { name: 'Name', value: mix.val('Name') },
+    { name: 'Hidden', value: !!mix.val('Hidden') },
+    { name: 'Active', value: !!mix.val('Active') },
+    { name: 'Start time', value: mix.val('start') },
+    { name: 'Duration', value: mix.val('duration') },
+    { name: 'Auto Transition', value: !!mix.val('autotransition') },
+  ];
   return {
     present: !!mix,
     name: mix?.val('Name'),
@@ -53,8 +62,9 @@ const r = await page.evaluate(() => {
     tracks: JSON.parse(mix.val('tracks') || '[]'),
     transitions: JSON.parse(mix.val('transitions') || '[]'),
     compounds: JSON.parse(mix.val('compounds') || '[]'),
-    nested: ['Name', 'Hidden', 'Active', 'start', 'duration', 'sources', 'tracks', 'transitions', 'compounds', 'relations']
+    nested: ['Name', 'Hidden', 'Active', 'start', 'duration', 'sources', 'tracks', 'transitions', 'compounds', 'relations', 'autotransition']
       .map(k => ({ k, has: mix.get(k) != null })),
+    nestedSI,
     tr, bridge, cpd,
     evalMid, evalInA, evalWeighted, evalMuted,
     posxMid: cube.kinematics.local.val('posx'),
@@ -108,7 +118,28 @@ if (deepPaths[0]) {
   if (Array.isArray(pcTrans) && pcTrans.length && !r.transitions.length) {
     diffs.push('PC dump has transitions but Direct dump empty');
   }
+  // Softimage nested Parameter.Name schema lock (values may differ when clips exist vs PC empty mixer)
+  const pcNested = deep.mixer?.nested || [];
+  const pcNames = pcNested.map(n => n.name).filter(Boolean);
+  const want = ['Name', 'Hidden', 'Active', 'Start time', 'Duration', 'Auto Transition'];
+  for (const nm of want) {
+    if (pcNames.length && !pcNames.includes(nm)) diffs.push(`PC mixer nested missing ${nm}`);
+    if (!r.nestedSI?.some(n => n.name === nm)) diffs.push(`Direct nestedSI missing ${nm}`);
+  }
+  if (pcNested.length) {
+    const pcName = pcNested.find(n => n.name === 'Name');
+    if (pcName && pcName.value != null && r.name !== pcName.value) diffs.push(`Mixer Name ${r.name} != PC ${pcName.value}`);
+    const pcActive = pcNested.find(n => n.name === 'Active');
+    if (pcActive && pcActive.value === true && r.nestedSI?.find(n => n.name === 'Active')?.value !== true) {
+      diffs.push('Mixer Active should be true (PC)');
+    }
+    const pcAuto = pcNested.find(n => n.name === 'Auto Transition');
+    if (pcAuto && pcAuto.value === false && r.nestedSI?.find(n => n.name === 'Auto Transition')?.value !== false) {
+      diffs.push('Auto Transition should be false (PC empty default)');
+    }
+  }
   deepNote += expectedGaps.length ? `; expected gaps: ${expectedGaps.join('; ')}` : '';
+  deepNote += `; nestedSI ${r.nestedSI?.map(n => n.name).join('/')}`;
 }
 
 console.log(diffs.length ? 'DIFF' : 'OK', 'mixer nested + EvaluateMixer crossfade');
