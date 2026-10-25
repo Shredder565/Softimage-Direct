@@ -152,7 +152,27 @@ export function registerModelCommands(app: App) {
     }
     return topoExec(app, a);
   };
-  app.register({ name: 'CapHole', label: 'Cap Hole', category: 'Modeling|Topology', args: [{ name: 'ConnectionSet', default: '' }, { name: 'InputObjs', default: '' }], execute: (app) => app.run('ApplyTopoOp', { PresetObj: 'Cap Hole' }) });
+  // Softimage CapHoleProc: ApplyICEOp("Cap Hole") + Vertex_Index (docs/ghidra/capholeproc-path.md). ApplyTopoOp Cap Hole kept for menu preset path.
+  app.register({
+    name: 'CapHole', label: 'Cap Hole', category: 'Modeling|Topology',
+    args: [{ name: 'ConnectionSet', default: '' }, { name: 'InputObjs', default: '' }],
+    execute(app, a) {
+      const cs = app.componentSel();
+      let obj = cs?.obj;
+      if (!obj && a.ConnectionSet) obj = app.targets(a.ConnectionSet)[0];
+      if (!obj && a.InputObjs) obj = app.targets(a.InputObjs)[0];
+      if (!obj) obj = app.selectedObjects.find(o => o.primitive?.mesh());
+      if (!obj?.primitive?.mesh()) throw new Error('Cap Hole: select a polygon mesh (and a border vertex)');
+      let vtx = 0;
+      if (cs?.obj === obj && cs.sel.kind === 'point' && cs.sel.indices.length) vtx = cs.sel.indices[0] | 0;
+      else if (cs?.obj === obj && cs.sel.kind === 'edge' && (cs.sel.edges?.length ?? 0) > 0) vtx = cs.sel.edges![0][0] | 0;
+      const op: any = app.run('ApplyICEOp', { File: 'Cap Hole', Target: obj.fullName });
+      if (op?.set) op.set('Vertex_Index', vtx);
+      app.compSel = null;
+      if (op) app.select([op]);
+      return op;
+    },
+  });
   app.register({ name: 'SpinEdgeForward', label: 'Spin Edge Forward', category: 'Modeling|Topology', args: [{ name: 'InputObjs', default: '' }], execute: (app) => app.run('ApplyTopoOp', { PresetObj: 'Spin Edge Forward' }) });
   app.register({ name: 'SpinEdgeBackward', label: 'Spin Edge Backward', category: 'Modeling|Topology', args: [{ name: 'InputObjs', default: '' }], execute: (app) => app.run('ApplyTopoOp', { PresetObj: 'Spin Edge Forward' }) });
   app.register({ name: 'ApplySliceBetweenTwoVertices', label: 'Apply Slice Between Two Vertices', category: 'Modeling|Topology', args: [{ name: 'ConnectionSet', default: '' }], execute(app) { const cs = app.componentSel(); if (!cs || cs.sel.kind !== 'point' || cs.sel.indices.length !== 2) throw new Error('Select exactly two points (T)'); const m = cs.obj.primitive!.mesh()!; const [a, b] = cs.sel.indices; const pa = [m.positions[a * 3], m.positions[a * 3 + 1], m.positions[a * 3 + 2]], pb = [m.positions[b * 3], m.positions[b * 3 + 1], m.positions[b * 3 + 2]]; const d = [pb[0] - pa[0], pb[1] - pa[1], pb[2] - pa[2]]; const up = Math.abs(d[1]) < 0.9 * Math.hypot(...d) ? [0, 1, 0] : [1, 0, 0]; const n = [d[1] * up[2] - d[2] * up[1], d[2] * up[0] - d[0] * up[2], d[0] * up[1] - d[1] * up[0]]; const l = Math.hypot(...n) || 1; const nn = [n[0] / l, n[1] / l, n[2] / l] as V3; const op = new TopologyOperator2('Slice Plane', { kind: 'polygon', indices: [] }); op.plane = { n: nn, d: nn[0] * pa[0] + nn[1] * pa[1] + nn[2] * pa[2] }; const prim = cs.obj.primitive!; app.record('Slice', () => prim.addOperator(op), () => prim.removeOperator(op)); app.compSel = null; app.select([op]); } });
