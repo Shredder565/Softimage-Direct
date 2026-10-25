@@ -21,8 +21,10 @@
     "note": "Softimage MCP replaces PE leaf text with live pass name"
   },
   "hwnd_crop_chrome": {
-    "status": "LOCK",
-    "note": "Desktop lock-close 2026-10-25: region OM Dump_READY mislabel (Passes.RenderOptions only); HWND crop still unmeasured — no invent"
+    "status": "DUMP_READY",
+    "wire": "HWND_CROP",
+    "source": "src/data/si/render_region_hwnd_crop.json",
+    "note": "modules-gdi 61-render-region-*.png + DsNewRegionButtonCtrl; prefs region_color_*; handle W/H LOCK"
   },
 
   "mcp_flyout_item_lists": {

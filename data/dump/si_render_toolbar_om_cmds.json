@@ -32,7 +32,10 @@
     { "scripting_name": "ToggleCurrentLayerProperty", "label": "Rendering Visibility of Current Layer", "category": "Layer", "args": ["PropName"], "defaults": { "PropName": "rendvis" } }
   ],
   "region_hwnd_crop": {
-    "status": "LOCK",
-    "note": "SPDL/OM region options + Softimage Left/Right/Top/Bottom fractions attested; HWND crop chrome null under headless — do not invent."
+    "status": "DUMP_READY",
+    "wire": "HWND_CROP",
+    "source": "src/data/si/render_region_hwnd_crop.json",
+    "note": "modules-gdi 61-render-region crop/desktop + DsNewRegionButtonCtrl children + prefs region_color_*; handle W/H px LOCK."
   }
 }
+

@@ -161,17 +161,22 @@ else {
   } else if ((ff.flyoutCount ?? 0) < 8) {
     fail.push(`renderMcpFlyouts expected ≥8 flyouts got ${ff.flyoutCount}`);
   } else ok.push(`Render MCP flyouts PE menu 234 (${ff.flyoutCount} buttons, Desktop press-hold gap CLOSED)`);
-  // Desktop LOCK close dump — region OM attested; HWND/PPG/OpenView stay LOCK; Anim ExecCmd + client paint DONE
+  // Desktop LOCK close dump — region HWND DUMP_READY; PPG/OpenView LOCK; Anim ExecCmd + client paint DONE
   const dld = audit.directLockDesktop;
   if (!dld) fail.push('directLockDesktop missing from __uiAudit');
   else if (!dld.ok) fail.push(`directLockDesktop audit failed: ${JSON.stringify(dld)}`);
-  else if (dld.regionHwndCrop !== 'LOCK' || dld.ppgColorref !== 'LOCK') {
-    fail.push(`directLockDesktop expected HWND/PPG LOCK got hwnd=${dld.regionHwndCrop} ppg=${dld.ppgColorref}`);
+  else if (dld.regionHwndCrop !== 'DUMP_READY' || dld.regionWire !== 'HWND_CROP' || dld.ppgColorref !== 'LOCK') {
+    fail.push(`directLockDesktop expected region HWND DUMP_READY/HWND_CROP + PPG LOCK got hwnd=${dld.regionHwndCrop} wire=${dld.regionWire} ppg=${dld.ppgColorref}`);
   } else if (dld.floatingViews !== 'EXECCMD_DONE' || dld.floatingViewsOpenview !== 'LOCK') {
     fail.push(`directLockDesktop Anim ExecCmd expected EXECCMD_DONE/OpenView LOCK got ${dld.floatingViews}/${dld.floatingViewsOpenview}`);
   } else if (dld.fcurveMixerClientPaint !== 'DONE' || dld.fcurveMixerClientPaintWire !== 'HWND_PNG') {
     fail.push(`directLockDesktop client paint expected DONE/HWND_PNG got ${dld.fcurveMixerClientPaint}/${dld.fcurveMixerClientPaintWire}`);
-  } else ok.push(`Desktop LOCK close dump (region OM ${dld.regionOmParamCount} keys, HWND+PPG LOCK, Anim ExecCmd+paint DONE)`);
+  } else ok.push(`Desktop LOCK close dump (region OM ${dld.regionOmParamCount} keys, HWND DUMP_READY, PPG LOCK, Anim ExecCmd+paint DONE)`);
+  // Softimage render.region_hwnd_crop — modules-gdi crop + DsNewRegionButtonCtrl + prefs colors
+  const rrh = audit.renderRegionHwnd;
+  if (!rrh) fail.push('renderRegionHwnd missing from __uiAudit');
+  else if (!rrh.ok) fail.push(`renderRegionHwnd audit failed: ${JSON.stringify(rrh)}`);
+  else ok.push(`Render region HWND crop DUMP_READY (${rrh.hwndCount}×${rrh.hwndCls}, crop ${rrh.cropPng?.[0]}x${rrh.cropPng?.[1]}, border ${rrh.borderCss})`);
   // Softimage Anim editors ExecuteCommand([]) — open Mixer/Editor/Fcurve; client paint HWND_PNG DONE
   const aee = audit.animEditorsExecCmd;
   if (!aee) fail.push('animEditorsExecCmd missing from __uiAudit');

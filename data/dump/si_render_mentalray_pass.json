@@ -188,7 +188,7 @@
   },
   "region": {
     "create_ok": true,
-    "hwnd_crop_chrome": "LOCK",
+    "hwnd_crop_chrome": "DUMP_READY",
     "note": "Desktop session: region HWND may exist after Create Render Region; capture via screenshot checklist."
   },
   "prefs_related": [
