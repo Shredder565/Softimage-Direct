@@ -245,7 +245,7 @@ export function runMenuPath(app: App, module: string, path: string, label: strin
 /**
  * Softimage Desktop module menubar tear-off (MENU 303 ICE etc.).
  * Section headers + submenu rows match Softimage ICE module menu (CrowdFX Actors/Crowd/Simulation DUMP_READY).
- * Compound flyout leaves stay Anchor-to-Delete LOCK when submenu_live is false.
+ * closer95 crowdfx.submenu_flyouts DUMP_READY: has-sub flyouts open PE Anchor-to-Delete only (compound leaves LOCK).
  */
 export function openModuleMenuTearOff(app: App, module: string, x: number, y: number) {
   const tree = MENUS[module];

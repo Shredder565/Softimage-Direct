@@ -1,0 +1,74 @@
+{
+  "_comment": "Softimage CrowdFX ICE menubar submenu flyouts — closer95 Desktop LIVE DUMP_READY + PE MENU 303. Dump-attested only; compound plugin leaves stay LOCK (Anchor-to-Delete).",
+  "softimage": "13.2.163.0",
+  "lock_id": "crowdfx.submenu_flyouts",
+  "status": "DUMP_READY",
+  "utc": "2026-10-25T22:10:58Z",
+  "source": [
+    "internal/softimage-pc-dumps/closer95/closer95_desktop.json",
+    "internal/softimage-pc-dumps/closer95/closer95_merged_board.json",
+    "internal/softimage-pc-dumps/closer95/desktop_hwnd_notes.txt",
+    "internal/softimage-pc-dumps/closer95/pe_module_menus.json",
+    "docs/softimage-95pct-closer-tour.md",
+    "media/softimage-95pct-closer/30-crowdfx-menu-hover.png",
+    "media/softimage-modules-gdi/40-crowdfx-ice-menu.png",
+    "src/data/menus.json"
+  ],
+  "desktop": {
+    "script": "Run-Softimage-95pct-Closer-Desktop.ps1",
+    "mode": "Desktop-LIVE-unattended",
+    "board": "DUMP_READY",
+    "details": "menu_candidates=1",
+    "screenshot": "media/softimage-95pct-closer/30-crowdfx-menu-hover.png",
+    "screenshot_note": "ICE menu CrowdFX hover attempt",
+    "menubar_dx_attested": 420,
+    "path": ["ICE", "CrowdFX"],
+    "buttons": ["Actors", "Crowd", "Simulation"],
+    "hwnd_note": "CROWDFX MENU CANDIDATES listed 1 top window matching Afx:/Menu filter during ICE menubar click+hover (see desktop_hwnd_notes.txt)"
+  },
+  "pe": {
+    "menu_id": 303,
+    "module": "ICE",
+    "group": "CrowdFX",
+    "note": "toolbarobj.dll / pe_module_menus.json MENU 303 CrowdFX Actors/Crowd/Simulation leaves are PE Anchor-to-Delete placeholders filled at Softimage runtime by CrowdFX plugins. Do not invent compounds."
+  },
+  "flyouts": {
+    "CrowdFX/Actors": {
+      "section": "CrowdFX",
+      "button": "Actors",
+      "pe_menu_id": 41644,
+      "sdk_anchor": "siMenuTbICECrowdFXActorsID",
+      "sdk_id": 380,
+      "item_count": 1,
+      "items": [{ "label": "Anchor-to-Delete", "id": 41644 }],
+      "compound_leaves": "LOCK"
+    },
+    "CrowdFX/Crowd": {
+      "section": "CrowdFX",
+      "button": "Crowd",
+      "pe_menu_id": 41646,
+      "sdk_anchor": "siMenuTbICECrowdFXCrowdID",
+      "sdk_id": 382,
+      "item_count": 1,
+      "items": [{ "label": "Anchor-to-Delete", "id": 41646 }],
+      "compound_leaves": "LOCK"
+    },
+    "CrowdFX/Simulation": {
+      "section": "CrowdFX",
+      "button": "Simulation",
+      "pe_menu_id": 41645,
+      "sdk_anchor": "siMenuTbICECrowdFXSimulationID",
+      "sdk_id": 381,
+      "item_count": 1,
+      "items": [{ "label": "Anchor-to-Delete", "id": 41645 }],
+      "compound_leaves": "LOCK"
+    }
+  },
+  "summary": {
+    "flyout_count": 3,
+    "leaf_labels": ["Anchor-to-Delete"],
+    "compound_leaves": "LOCK",
+    "submenu_live_compounds": false,
+    "note": "closer95 crowdfx.submenu_flyouts DUMP_READY wires ICE menubar has-sub flyout path; PE leaf is Anchor-to-Delete only — no invent CrowdFX compounds."
+  }
+}

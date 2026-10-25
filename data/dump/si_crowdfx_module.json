@@ -10,7 +10,10 @@
     "internal/softimage-pc-dumps/modules-gdi/deferred_gdi_harvest.json",
     "media/softimage-modules-gdi/40-crowdfx-ice-menu.png",
     "media/softimage-modules-gdi/40-crowdfx-desktop.png",
-    "src/data/si/crowdfx_desktop_menu.json"
+    "media/softimage-95pct-closer/30-crowdfx-menu-hover.png",
+    "internal/softimage-pc-dumps/closer95/closer95_desktop.json",
+    "src/data/si/crowdfx_desktop_menu.json",
+    "src/data/si/crowdfx_submenu_flyouts.json"
   ],
   "desktop_menu": {
     "status": "DUMP_READY",
@@ -18,11 +21,13 @@
     "path": ["ICE", "CrowdFX"],
     "buttons": ["Actors", "Crowd", "Simulation"],
     "submenu_live": false,
+    "submenu_flyouts": "DUMP_READY",
     "media": [
       "media/softimage-modules-gdi/40-crowdfx-ice-menu.png",
-      "media/softimage-modules-gdi/40-crowdfx-desktop.png"
+      "media/softimage-modules-gdi/40-crowdfx-desktop.png",
+      "media/softimage-95pct-closer/30-crowdfx-menu-hover.png"
     ],
-    "note": "Desktop menubar ICE tear-off reaches CrowdFX Actors/Crowd/Simulation; flyout compounds LOCK"
+    "note": "Desktop menubar ICE tear-off reaches CrowdFX Actors/Crowd/Simulation; closer95 crowdfx.submenu_flyouts DUMP_READY (PE Anchor-to-Delete); compound leaves LOCK"
   },
   "under_ice": true,
   "menu_id": 303,

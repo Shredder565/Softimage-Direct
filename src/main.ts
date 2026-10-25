@@ -375,7 +375,7 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
       menubarPresent: !!document.querySelector('#menubar .m[data-si-menu="Face Robot"]'),
       controlPanelHost: !!document.querySelector('.fr-controller'),
     },
-    // Softimage CrowdFX under ICE (PE 41644/41646/41645 + Desktop ICE menubar tear-off DUMP_READY — compound leaves LOCK)
+    // Softimage CrowdFX under ICE (PE 41644/41646/41645 + Desktop ICE menubar tear-off + closer95 submenu flyouts DUMP_READY — compounds LOCK)
     crowdFxModule: {
       ...crowdFxModuleAudit(app),
       mcpTop: crowdfxModuleDump.mcp_top,
