@@ -1,4 +1,4 @@
-/** Deterministic CPU FROST evaluator — particles + character hair strands. */
+/** Deterministic CPU FROST evaluator — particles + hair strands + cloth. */
 
 import type { FrostGraphIR, FrostNodeIR } from './ir';
 import { FROST_NODES } from './nodes';
@@ -17,6 +17,21 @@ import {
   type FrostStrand,
   type StyleLayer,
 } from './strands';
+import {
+  applyPinRings,
+  clothFromMesh,
+  ClothFrameCache,
+  generateDefaultGarment,
+  generatePanelGarment,
+  packClothPositions,
+  packClothWireframe,
+  clothVertexCount,
+  tickClothDynamics,
+  type FrostClothMesh,
+  type PinRingMode,
+  QUALITY_SETTINGS,
+  type ClothQuality,
+} from './clothSim';
 
 export type { Vec3 } from './math';
 export { frostHash, frostNoise3, frostTurbulence } from './math';
@@ -52,6 +67,13 @@ export interface FrostEvalState {
   /** True after CreateStrands builds buffers for the current recipe stamp. */
   strandsReady: boolean;
   strandStamp: string;
+  /** Character cloth mesh (P2). */
+  cloth: FrostClothMesh | null;
+  clothReady: boolean;
+  clothStamp: string;
+  clothCache: ClothFrameCache;
+  /** Request settle N frames once (wizard / ClothCache). */
+  settlePending: number;
 }
 
 export interface FrostTickOpts {
@@ -68,6 +90,8 @@ export function createFrostState(): FrostEvalState {
   return {
     frame: 0, time: 0, particles: [], emitCarry: 0, attrs: new Map(),
     strands: [], strandsReady: false, strandStamp: '',
+    cloth: null, clothReady: false, clothStamp: '',
+    clothCache: new ClothFrameCache(), settlePending: 0,
   };
 }
 
@@ -198,11 +222,14 @@ export function tickFrost(graph: FrostGraphIR, state: FrostEvalState, opts: Fros
     state.particles = [];
     state.emitCarry = 0;
     state.strandsReady = false;
+    state.clothReady = false;
   } else if (frame < state.frame) {
-    // scrub backward → hard reset (MVP)
+    // scrub backward → hard reset (MVP) unless cloth cache can serve the frame
+    const hasClothCache = state.clothCache.enabled && state.clothCache.has(frame);
     state.particles = [];
     state.emitCarry = 0;
     state.strandsReady = false;
+    if (!hasClothCache) state.clothReady = false;
   }
 
   state.frame = frame;
@@ -217,7 +244,11 @@ export function tickFrost(graph: FrostGraphIR, state: FrostEvalState, opts: Fros
   let windTurb = 0;
   let colliderSphere: { cx: number; cy: number; cz: number; r: number } | null = null;
   let colliderTris: Float32Array | null = null;
+  let colliderThickness = 0.04;
   let styleLayers: StyleLayer[] = [];
+  let fabricParams: {
+    mass: number; stretch: number; shear: number; bend: number; damping: number; gravity: Vec3;
+  } | null = null;
   const meshes = opts.meshes ?? {};
 
   for (const node of ordered) {
@@ -305,6 +336,7 @@ export function tickFrost(graph: FrostGraphIR, state: FrostEvalState, opts: Fros
     } else if (node.type === 'CollideBody') {
       const bodyName = String(node.params.bodyObject ?? '');
       const quality = String(node.params.quality ?? 'Preview');
+      colliderThickness = num(node.params.thickness, 0.04);
       const mesh = bodyName ? meshes[bodyName] : undefined;
       if (mesh) {
         colliderSphere = meshBoundingSphere(mesh.positions, mesh.matrix ?? null);
@@ -318,6 +350,128 @@ export function tickFrost(graph: FrostGraphIR, state: FrostEvalState, opts: Fros
       }
       out.execute = true;
       out.geometry = bodyName || 'defaultBody';
+    } else if (node.type === 'CreateCloth') {
+      const stamp = clothRecipeStamp(node, graph);
+      if (!state.clothReady || state.clothStamp !== stamp) {
+        const res = Math.max(4, num(node.params.resolution, 14) | 0);
+        const seed = num(node.params.seed, 5) | 0;
+        const garmentName = String(node.params.garmentObject ?? '');
+        const mesh = garmentName ? meshes[garmentName] : undefined;
+        const shape = String(node.params.shape ?? 'shirt');
+        if (mesh) {
+          state.cloth = clothFromMesh(mesh.positions, mesh.indices ?? null, mesh.matrix ?? null, res * res);
+        } else if (shape === 'panel') {
+          state.cloth = generatePanelGarment(res, Math.max(4, Math.round(res * 1.2)), { seed });
+        } else {
+          state.cloth = generateDefaultGarment(res, Math.max(4, Math.round(res * 0.75)), {
+            openFront: true, seed,
+          });
+        }
+        state.clothReady = true;
+        state.clothStamp = stamp;
+        state.clothCache.clear();
+      }
+      out.execute = true;
+      out.cloth = 'cloth';
+    } else if (node.type === 'ClothPins') {
+      if (state.cloth) {
+        const rings = String(node.params.rings ?? 'neck,waist')
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean) as PinRingMode[];
+        applyPinRings(state.cloth, rings.length ? rings : ['neck'], num(node.params.strength, 1));
+      }
+      out.execute = true;
+      out.cloth = 'cloth';
+    } else if (node.type === 'FabricPreset') {
+      fabricParams = {
+        mass: num(node.params.mass, 1),
+        stretch: num(node.params.stretch, 0.92),
+        shear: num(node.params.shear, 0.55),
+        bend: num(node.params.bend, 0.18),
+        damping: num(node.params.damping, 0.12),
+        gravity: asVec3(node.params.gravity, [0, -9.2, 0]),
+      };
+      out.execute = true;
+      out.params = fabricParams;
+    } else if (node.type === 'SimulateCloth') {
+      if (state.cloth) {
+        // Prefer cache playback when enabled and frame is baked
+        const cached = state.clothCache.enabled ? state.clothCache.get(frame) : null;
+        if (cached && cached.length === state.cloth.pos.length) {
+          state.cloth.pos.set(cached);
+          state.cloth.prev.set(cached);
+        } else if (!node.params.muted) {
+          const qName = String(node.params.quality ?? 'Preview') as ClothQuality;
+          const q = QUALITY_SETTINGS[qName] ?? QUALITY_SETTINGS.Preview;
+          let g = asVec3(node.params.gravity, [0, -9.2, 0]);
+          let damping = num(node.params.damping, 0.12);
+          let stretch = num(node.params.stretch, 0.92);
+          let shear = num(node.params.shear, 0.55);
+          let bend = num(node.params.bend, 0.18);
+          let mass = num(node.params.mass, 1);
+          const paramsLink = incoming(graph, node.id, 'params');
+          if (paramsLink) {
+            const fo = nodeOut.get(paramsLink.from)?.[paramsLink.fromPort] as typeof fabricParams;
+            if (fo && typeof fo === 'object') {
+              g = fo.gravity; damping = fo.damping; stretch = fo.stretch;
+              shear = fo.shear; bend = fo.bend; mass = fo.mass;
+            }
+          } else if (fabricParams) {
+            g = fabricParams.gravity; damping = fabricParams.damping; stretch = fabricParams.stretch;
+            shear = fabricParams.shear; bend = fabricParams.bend; mass = fabricParams.mass;
+          }
+          const wind = asVec3(node.params.wind, [0.08, 0.02, 0.04]);
+          // Collider fidelity from quality
+          let tris = colliderTris;
+          let sphere = colliderSphere;
+          if (!q.useMeshCollider) tris = null;
+          if (!sphere) sphere = { cx: 0, cy: 0.85, cz: 0, r: 0.42 };
+
+          const simP = {
+            gravity: g,
+            damping,
+            stretch,
+            shear,
+            bend,
+            mass,
+            substeps: Math.max(1, num(node.params.substeps, q.substeps) | 0),
+            iterations: Math.max(1, num(node.params.iterations, q.iterations) | 0),
+            selfCollide: node.params.selfCollide !== undefined ? !!node.params.selfCollide : q.selfCollide,
+            thickness: num(node.params.thickness, colliderThickness),
+            wind,
+            dt,
+            muted: !!node.params.muted,
+            colliderSphere: sphere,
+            colliderTris: tris,
+          };
+
+          // Explicit settle pre-roll (wizard button / ClothCache settleFrames pending)
+          if (state.settlePending > 0) {
+            const n = state.settlePending;
+            state.settlePending = 0;
+            for (let i = 0; i < n; i++) tickClothDynamics(state.cloth, simP);
+          }
+
+          tickClothDynamics(state.cloth, simP);
+
+          if (state.clothCache.enabled) {
+            state.clothCache.bake(frame, state.cloth.pos);
+          }
+        } else {
+          state.cloth.pos.set(state.cloth.rest);
+          state.cloth.prev.set(state.cloth.rest);
+        }
+      }
+      didSim = true;
+      out.execute = true;
+      out.cloth = 'cloth';
+    } else if (node.type === 'ClothCache') {
+      state.clothCache.enabled = !!node.params.enabled;
+      state.attrs.set('ClothDisplayMode', [node.params.displayMode === 'wire' ? 1 : 0]);
+      state.attrs.set('ClothSettleFrames', [num(node.params.settleFrames, 24)]);
+      out.execute = true;
+      out.cloth = 'cloth';
     } else if (node.type === 'Wind') {
       windForce = asVec3(node.params.force, [0.4, 0.05, 0.1]);
       windTurb = num(node.params.turbulence, 1.5);
@@ -367,6 +521,7 @@ export function tickFrost(graph: FrostGraphIR, state: FrostEvalState, opts: Fros
       const alive = state.particles.filter(p => p.alive);
       if (name === 'NbPoints') out.value = alive.length;
       else if (name === 'NbStrands') out.value = strandCount(state.strands);
+      else if (name === 'NbClothVerts') out.value = clothVertexCount(state.cloth);
       else if (name === 'Frame') out.value = frame;
       else if (name === 'Time') out.value = state.time;
       else if (name === 'PointPosition' && alive[0]) out.value = [alive[0].px, alive[0].py, alive[0].pz];
@@ -402,6 +557,14 @@ function strandRecipeStamp(node: FrostNodeIR, graph: FrostGraphIR): string {
   ].join('|');
 }
 
+function clothRecipeStamp(node: FrostNodeIR, graph: FrostGraphIR): string {
+  const pins = graph.nodes.find(n => n.type === 'ClothPins');
+  return [
+    node.params.garmentObject, node.params.shape, node.params.resolution, node.params.seed,
+    pins ? `${pins.params.rings}|${pins.params.strength}` : '',
+  ].join('|');
+}
+
 function parseStyleLayers(raw: unknown): StyleLayer[] {
   if (typeof raw === 'string') {
     try { return parseStyleLayers(JSON.parse(raw)); } catch { return defaultStyleLayers(); }
@@ -433,10 +596,24 @@ export function frostStrandLines(state: FrostEvalState): Float32Array {
   return packStrandLineSegments(state.strands);
 }
 
+/** Packed cloth vertex positions for mesh deform display. */
+export function frostClothPositions(state: FrostEvalState): Float32Array {
+  return packClothPositions(state.cloth);
+}
+
+/** Packed cloth edge wireframe. */
+export function frostClothWireframe(state: FrostEvalState): Float32Array {
+  return packClothWireframe(state.cloth);
+}
+
 export function aliveCount(state: FrostEvalState): number {
   return state.particles.reduce((n, p) => n + (p.alive ? 1 : 0), 0);
 }
 
 export function aliveStrandCount(state: FrostEvalState): number {
   return strandCount(state.strands);
+}
+
+export function aliveClothVerts(state: FrostEvalState): number {
+  return clothVertexCount(state.cloth);
 }

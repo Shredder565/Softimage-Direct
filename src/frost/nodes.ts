@@ -1,4 +1,4 @@
-/** Built-in FROST node catalog — particles (P0) + character hair (P1). */
+/** Built-in FROST node catalog — particles (P0) + hair (P1) + cloth (P2). */
 
 import type { FrostPortDef } from './ir';
 
@@ -134,7 +134,7 @@ export const FROST_NODES: Record<string, FrostNodeDef> = {
   },
   CollideBody: {
     type: 'CollideBody',
-    category: 'Hair',
+    category: 'Collision',
     inputs: [{ name: 'execute', type: 'execution' }],
     outputs: [
       { name: 'execute', type: 'execution' },
@@ -144,6 +144,7 @@ export const FROST_NODES: Record<string, FrostNodeDef> = {
       bodyObject: '',
       quality: 'Preview', // Preview = mesh soft collide; Playblast = sphere
       useDefaultBody: true,
+      thickness: 0.04,
     },
   },
   Wind: {
@@ -200,6 +201,104 @@ export const FROST_NODES: Record<string, FrostNodeDef> = {
       noise: 0.15,
       rootColor: [0.12, 0.08, 0.05],
       tipColor: [0.38, 0.24, 0.14],
+    },
+  },
+
+  // —— Character cloth (P2 easy-path; wizard authors these) ——
+  CreateCloth: {
+    type: 'CreateCloth',
+    category: 'Cloth',
+    inputs: [{ name: 'execute', type: 'execution' }],
+    outputs: [
+      { name: 'execute', type: 'execution' },
+      { name: 'cloth', type: 'clothmesh' },
+    ],
+    defaults: {
+      garmentObject: '',
+      shape: 'shirt', // shirt | panel
+      resolution: 14,
+      seed: 5,
+    },
+  },
+  ClothPins: {
+    type: 'ClothPins',
+    category: 'Cloth',
+    inputs: [
+      { name: 'execute', type: 'execution' },
+      { name: 'cloth', type: 'clothmesh' },
+    ],
+    outputs: [
+      { name: 'execute', type: 'execution' },
+      { name: 'cloth', type: 'clothmesh' },
+    ],
+    defaults: {
+      rings: 'neck,waist',
+      strength: 1,
+      attachBones: false,
+    },
+  },
+  FabricPreset: {
+    type: 'FabricPreset',
+    category: 'Cloth',
+    inputs: [{ name: 'execute', type: 'execution' }],
+    outputs: [
+      { name: 'execute', type: 'execution' },
+      { name: 'params', type: 'any' },
+    ],
+    defaults: {
+      preset: 'Shirt',
+      mass: 1,
+      stretch: 0.92,
+      shear: 0.55,
+      bend: 0.18,
+      damping: 0.12,
+      gravity: [0, -9.2, 0],
+    },
+  },
+  SimulateCloth: {
+    type: 'SimulateCloth',
+    category: 'Cloth',
+    inputs: [
+      { name: 'execute', type: 'execution' },
+      { name: 'cloth', type: 'clothmesh' },
+      { name: 'params', type: 'any' },
+      { name: 'force', type: 'vec3' },
+    ],
+    outputs: [
+      { name: 'execute', type: 'execution' },
+      { name: 'cloth', type: 'clothmesh' },
+    ],
+    defaults: {
+      gravity: [0, -9.2, 0],
+      damping: 0.12,
+      stretch: 0.92,
+      shear: 0.55,
+      bend: 0.18,
+      mass: 1,
+      substeps: 2,
+      iterations: 4,
+      selfCollide: false,
+      thickness: 0.04,
+      wind: [0.08, 0.02, 0.04],
+      muted: false,
+      quality: 'Preview',
+    },
+  },
+  ClothCache: {
+    type: 'ClothCache',
+    category: 'Cloth',
+    inputs: [
+      { name: 'execute', type: 'execution' },
+      { name: 'cloth', type: 'clothmesh' },
+    ],
+    outputs: [
+      { name: 'execute', type: 'execution' },
+      { name: 'cloth', type: 'clothmesh' },
+    ],
+    defaults: {
+      enabled: false,
+      settleFrames: 24,
+      displayMode: 'mesh',
     },
   },
 };

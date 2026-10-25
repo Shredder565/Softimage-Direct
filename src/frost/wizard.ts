@@ -1,4 +1,4 @@
-/** FROST Character Hair Wizard UI — scalp → maps → groom → collide → sim → look. */
+/** FROST Character Hair + Cloth Wizard UI (P1/P2 easy-paths). */
 
 import type { App } from '../core/commands';
 import type { X3DObject } from '../core/scene';
@@ -13,6 +13,14 @@ import {
   type WindPresetName,
   type ColliderQuality,
 } from './hair';
+import {
+  CLOTH_STEPS,
+  applyFabricPreset,
+  applyClothQuality,
+  type FabricPresetName,
+  type ClothQuality,
+  type PinRingMode,
+} from './cloth';
 import type { StyleLayer } from './strands';
 
 const el = (tag: string, cls = '', text = '') => {
@@ -330,4 +338,263 @@ function layerRow(layer: StyleLayer, onChange: () => void) {
   inp.oninput = () => { layer.strength = Number(inp.value); onChange(); };
   row.appendChild(inp);
   return row;
+}
+
+/** Mount the Character Cloth Wizard — garment → body → pins → preset → quality → cache. */
+export function frostClothWizardView(app: App, host: HTMLElement) {
+  const frost = frostOf(app);
+  const wiz = frost.ensureClothWizard();
+  if (!frost.isClothGraph()) frost.loadClothRecipe(wiz);
+
+  const root = el('div', 'frost-wiz frost-wiz-cloth');
+  host.appendChild(root);
+
+  const apply = (opts?: { resetSim?: boolean }) => {
+    frost.cloth = wiz;
+    frost.applyClothWizard();
+    if (opts?.resetSim) {
+      frost.reset();
+      frost.tick(app.anim.frame);
+      app.events.emit('scene');
+    }
+    app.logMsg('info', `FROST Cloth: step ${CLOTH_STEPS[wiz.step].title}`);
+    render();
+  };
+
+  const toggleRing = (ring: PinRingMode) => {
+    const i = wiz.pinRings.indexOf(ring);
+    if (i >= 0) wiz.pinRings = wiz.pinRings.filter(r => r !== ring);
+    else wiz.pinRings = [...wiz.pinRings, ring];
+    if (!wiz.pinRings.length) wiz.pinRings = ['neck'];
+    apply({ resetSim: true });
+  };
+
+  const render = () => {
+    root.innerHTML = '';
+    const head = el('div', 'frost-wiz-head frost-wiz-head-cloth');
+    head.appendChild(el('div', 'frost-wiz-title', 'Character Cloth'));
+    head.appendChild(el('div', 'frost-wiz-sub', 'garment → pins → fabric · average-user path'));
+    root.appendChild(head);
+
+    const steps = el('div', 'frost-wiz-steps');
+    CLOTH_STEPS.forEach((s, i) => {
+      const b = el('button', 'frost-wiz-step' + (i === wiz.step ? ' active' : '') + (i < wiz.step ? ' done' : ''), `${i + 1}. ${s.title}`) as HTMLButtonElement;
+      b.type = 'button';
+      b.onclick = () => { wiz.step = i; render(); };
+      steps.appendChild(b);
+    });
+    root.appendChild(steps);
+
+    const body = el('div', 'frost-wiz-body');
+    const step = CLOTH_STEPS[wiz.step];
+    body.appendChild(el('h3', 'frost-wiz-h', step.title));
+    body.appendChild(el('p', 'frost-wiz-blurb', step.blurb));
+
+    if (wiz.step === 0) {
+      const meshes = meshObjects(app);
+      body.appendChild(selectField(
+        'Garment mesh',
+        wiz.garmentObject,
+        [{ value: '', label: '(procedural garment)' }, ...meshes.map(m => ({ value: m.name, label: m.name }))],
+        v => { wiz.garmentObject = v; apply({ resetSim: true }); },
+      ));
+      const pickSel = el('button', 'xp-btn frost-wiz-action', 'Use current selection') as HTMLButtonElement;
+      pickSel.onclick = () => {
+        const o = app.selectedObjects.find(x => x.primitive?.mesh?.());
+        if (!o) { app.logMsg('info', 'FROST Cloth: select a polygon mesh first'); return; }
+        wiz.garmentObject = o.name;
+        apply({ resetSim: true });
+      };
+      body.appendChild(pickSel);
+      body.appendChild(chipGroup<'shirt' | 'panel'>(
+        'Procedural shape (when no mesh)',
+        wiz.garmentShape,
+        [{ id: 'shirt', label: 'Shirt / coat body' }, { id: 'panel', label: 'Cape / curtain panel' }],
+        id => { wiz.garmentShape = id; apply({ resetSim: true }); },
+      ));
+      body.appendChild(el('p', 'frost-wiz-hint',
+        wiz.garmentObject
+          ? `Using scene mesh “${wiz.garmentObject}” (auto-remeshed for sim).`
+          : 'No garment picked — a procedural shirt cylinder or hanging panel is used.'));
+    } else if (wiz.step === 1) {
+      const meshes = meshObjects(app);
+      body.appendChild(selectField(
+        'Body collider',
+        wiz.bodyObject,
+        [{ value: '', label: '(default torso sphere)' }, ...meshes.map(m => ({ value: m.name, label: m.name }))],
+        v => { wiz.bodyObject = v; apply(); },
+      ));
+      const pickSel = el('button', 'xp-btn frost-wiz-action', 'Bind selected mesh') as HTMLButtonElement;
+      pickSel.onclick = () => {
+        const o = app.selectedObjects.find(x => x.primitive?.mesh?.());
+        if (!o) { app.logMsg('info', 'FROST Cloth: select a body mesh first'); return; }
+        wiz.bodyObject = o.name;
+        apply();
+      };
+      body.appendChild(pickSel);
+      body.appendChild(sliderField('Thickness offset', wiz.thickness, 0, 0.15, 0.005, v => { wiz.thickness = v; apply(); }));
+      body.appendChild(el('p', 'frost-wiz-hint', 'Thickness keeps cloth off the body surface. Quality step retargets mesh vs sphere collider.'));
+    } else if (wiz.step === 2) {
+      body.appendChild(el('p', 'frost-wiz-hint', 'Toggle pin rings. Shirt defaults: neck + waist. Cape/curtain: top edge.'));
+      const rings: { id: PinRingMode; label: string }[] = [
+        { id: 'neck', label: 'Neck' },
+        { id: 'waist', label: 'Waist' },
+        { id: 'cuffs', label: 'Cuffs' },
+        { id: 'top', label: 'Top edge' },
+      ];
+      const wrap = el('div', 'frost-wiz-chips');
+      for (const r of rings) {
+        const on = wiz.pinRings.includes(r.id);
+        const b = el('button', 'frost-wiz-chip' + (on ? ' active' : ''), r.label) as HTMLButtonElement;
+        b.type = 'button';
+        b.onclick = () => toggleRing(r.id);
+        wrap.appendChild(b);
+      }
+      body.appendChild(wrap);
+      body.appendChild(sliderField('Pin strength', wiz.pinStrength, 0.2, 1, 0.05, v => { wiz.pinStrength = v; apply({ resetSim: true }); }));
+      const bones = el('button', 'xp-btn frost-wiz-action', 'Attach to nearest bones (stub)') as HTMLButtonElement;
+      bones.onclick = () => app.logMsg('info', 'FROST Cloth: bone attach maps pin rings to nearest deformers in a later pass');
+      body.appendChild(bones);
+    } else if (wiz.step === 3) {
+      body.appendChild(chipGroup<FabricPresetName>(
+        'Fabric preset',
+        wiz.fabric,
+        [
+          { id: 'Shirt', label: 'Shirt' },
+          { id: 'Coat', label: 'Coat' },
+          { id: 'Cape', label: 'Cape' },
+          { id: 'Curtain', label: 'Soft curtain' },
+        ],
+        id => { applyFabricPreset(wiz, id); apply({ resetSim: true }); },
+      ));
+      const mute = el('label', 'frost-wiz-check');
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = wiz.simMuted;
+      cb.onchange = () => { wiz.simMuted = cb.checked; apply(); };
+      mute.append(cb, document.createTextNode(' Mute dynamics (rest pose only)'));
+      body.appendChild(mute);
+      body.appendChild(el('p', 'frost-wiz-hint', 'Named fabrics set stretch / bend / damping. Open Advanced only if you need TD numbers.'));
+    } else if (wiz.step === 4) {
+      body.appendChild(chipGroup<ClothQuality>(
+        'Quality vs speed',
+        wiz.quality,
+        [
+          { id: 'Playblast', label: 'Playblast' },
+          { id: 'Preview', label: 'Preview' },
+          { id: 'Final', label: 'Final' },
+        ],
+        id => { applyClothQuality(wiz, id); apply({ resetSim: true }); },
+      ));
+      body.appendChild(el('p', 'frost-wiz-hint',
+        wiz.quality === 'Playblast'
+          ? 'Fast: low res, sphere collider, no self-collide.'
+          : wiz.quality === 'Final'
+            ? 'Final: denser mesh, more substeps, self-collide on.'
+            : 'Preview: balanced substeps + mesh collider.'));
+    } else if (wiz.step === 5) {
+      body.appendChild(sliderField('Settle frames', wiz.settleFrames, 0, 120, 1, v => { wiz.settleFrames = v | 0; }));
+      const settle = el('button', 'xp-btn frost-wiz-action frost-wiz-primary', `Settle ${wiz.settleFrames} frames`) as HTMLButtonElement;
+      settle.onclick = () => {
+        wiz.cacheEnabled = wiz.cacheEnabled;
+        frost.cloth = wiz;
+        frost.applyClothWizard();
+        frost.settleCloth(wiz.settleFrames);
+        app.logMsg('info', `FROST Cloth: settled ${wiz.settleFrames} frames`);
+        render();
+      };
+      body.appendChild(settle);
+      const bake = el('button', 'xp-btn frost-wiz-action', 'Bake cache (one-click)') as HTMLButtonElement;
+      bake.onclick = () => {
+        frost.cloth = wiz;
+        frost.bakeClothCache();
+        app.logMsg('info', 'FROST Cloth: cache enabled — scrub timeline without re-sim for baked frames');
+        render();
+      };
+      body.appendChild(bake);
+      const clear = el('button', 'xp-btn frost-wiz-action', 'Clear cache') as HTMLButtonElement;
+      clear.onclick = () => {
+        wiz.cacheEnabled = false;
+        frost.state.clothCache.enabled = false;
+        frost.state.clothCache.clear();
+        apply();
+      };
+      body.appendChild(clear);
+      body.appendChild(chipGroup<'mesh' | 'wire'>(
+        'Viewport display',
+        wiz.displayMode,
+        [{ id: 'mesh', label: 'Mesh deform' }, { id: 'wire', label: 'Wireframe' }],
+        id => { wiz.displayMode = id; apply(); },
+      ));
+      body.appendChild(el('p', 'frost-wiz-hint',
+        `Cache ${wiz.cacheEnabled ? 'ON' : 'OFF'} · ${frost.state.clothCache.size} baked frames. Reveal Graph ejects this recipe.`));
+    }
+
+    root.appendChild(body);
+
+    const adv = el('details', 'frost-wiz-adv') as HTMLDetailsElement;
+    adv.open = wiz.advancedOpen;
+    adv.appendChild(el('summary', '', 'Advanced parameters'));
+    adv.ontoggle = () => { wiz.advancedOpen = adv.open; };
+    const advBody = el('div', 'frost-wiz-adv-body');
+    advBody.appendChild(sliderField('Resolution', wiz.resolution, 6, 24, 1, v => { wiz.resolution = v | 0; apply({ resetSim: true }); }));
+    advBody.appendChild(sliderField('Substeps', wiz.substeps, 1, 6, 1, v => { wiz.substeps = v | 0; apply(); }));
+    advBody.appendChild(sliderField('Iterations', wiz.iterations, 1, 12, 1, v => { wiz.iterations = v | 0; apply(); }));
+    advBody.appendChild(sliderField('Mass', wiz.mass, 0.3, 2.5, 0.05, v => { wiz.mass = v; apply(); }));
+    advBody.appendChild(sliderField('Stretch', wiz.stretch, 0.5, 1, 0.01, v => { wiz.stretch = v; apply(); }));
+    advBody.appendChild(sliderField('Shear', wiz.shear, 0.1, 1, 0.01, v => { wiz.shear = v; apply(); }));
+    advBody.appendChild(sliderField('Bend', wiz.bend, 0, 0.6, 0.01, v => { wiz.bend = v; apply(); }));
+    advBody.appendChild(sliderField('Damping', wiz.damping, 0.02, 0.4, 0.01, v => { wiz.damping = v; apply(); }));
+    advBody.appendChild(sliderField('Gravity Y', wiz.gravity[1], -14, 0, 0.1, v => { wiz.gravity = [wiz.gravity[0], v, wiz.gravity[2]]; apply(); }));
+    const self = el('label', 'frost-wiz-check');
+    const scb = document.createElement('input');
+    scb.type = 'checkbox';
+    scb.checked = wiz.selfCollide;
+    scb.onchange = () => { wiz.selfCollide = scb.checked; apply(); };
+    self.append(scb, document.createTextNode(' Self-collide'));
+    advBody.appendChild(self);
+    adv.appendChild(advBody);
+    root.appendChild(adv);
+
+    const foot = el('div', 'frost-wiz-foot');
+    const back = el('button', 'xp-btn', 'Back') as HTMLButtonElement;
+    back.disabled = wiz.step === 0;
+    back.onclick = () => { wiz.step = Math.max(0, wiz.step - 1); render(); };
+    const next = el('button', 'xp-btn frost-wiz-primary', wiz.step === CLOTH_STEPS.length - 1 ? 'Apply & Play' : 'Next') as HTMLButtonElement;
+    next.onclick = () => {
+      if (wiz.step < CLOTH_STEPS.length - 1) { wiz.step++; apply(); }
+      else {
+        apply();
+        try { app.run('PlayForwards'); } catch { app.anim.play(); }
+        app.logMsg('info', 'FROST Cloth: recipe applied — playing timeline');
+      }
+    };
+    const reveal = el('button', 'xp-btn', 'Reveal Graph') as HTMLButtonElement;
+    reveal.title = 'Eject recipe into FROST Graph editor';
+    reveal.onclick = () => {
+      apply();
+      window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'FROST Graph' } }));
+    };
+    const reset = el('button', 'xp-btn', 'Reset Sim') as HTMLButtonElement;
+    reset.onclick = () => {
+      frost.reset();
+      frost.tick(app.anim.frame);
+      app.events.emit('scene');
+      render();
+    };
+    foot.append(back, next, reveal, reset);
+    root.appendChild(foot);
+
+    const stats = el('div', 'frost-wiz-stats', frost.status());
+    root.appendChild(stats);
+  };
+
+  render();
+  app.events.on('frame', () => {
+    const s = root.querySelector('.frost-wiz-stats');
+    if (s) s.textContent = frost.status();
+  });
+  app.events.on('selection', () => {
+    if (wiz.step === 0 || wiz.step === 1) render();
+  });
 }
