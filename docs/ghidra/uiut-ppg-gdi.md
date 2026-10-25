@@ -35,6 +35,7 @@ RE / dump **cannot** attest live PPG owner-draw **paint pixels** (title-bar / ho
 
 - **Optional push #4 → LOCK**
 - **No** invent PR changing `--ppg-title-*` / hover CSS
+- Docs LOCK note: Direct [#71](https://github.com/Shredder565/Softimage-Direct/pull/71)
 - Reopen wire only if softimage-pc later lands attested GDI pins (headless Ghidra `COLORREF` / DrawItem constants) — still **no** Desktop
 
 See plan: [optional-ghidra-pushes-1-4.md](../optional-ghidra-pushes-1-4.md).
