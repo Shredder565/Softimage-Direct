@@ -11,7 +11,8 @@ const panel = (title: string) => { const p = document.createElement('div'); p.cl
 
 // Selection / Transformation / Snap / Edit panels now live in mcp.ts (the Main Command Panel).
 export function keyingPanel(app: App, host: HTMLElement) {
-  const root = document.createElement('div'); root.className = 'kp';
+  // Softimage KeyingPanel.xsivw chrome class (tokens via applyAnimChromeVars on :root)
+  const root = document.createElement('div'); root.className = 'kp anim-keying';
   host.appendChild(root);
   const render = () => {
     root.innerHTML = '';

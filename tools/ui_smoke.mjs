@@ -284,6 +284,22 @@ else {
   if (!sd?.tokensApplied || sd.fontPt !== 8 || sd.btnWDlu !== 50 || sd.btnHDlu !== 14 || sd.btnMinW !== 75 || sd.btnMinH !== 22) {
     fail.push(`softDialog chrome expected 8pt / 50×14 DLU → 75×22px, got ${JSON.stringify(sd)}`);
   } else ok.push(`Soft-dialog chrome fontPt=${sd.fontPt} OK/Cancel DLU=${sd.btnWDlu}x${sd.btnHDlu} px=${sd.btnMinW}x${sd.btnMinH}`);
+
+  // Animate chrome — #47 PE base + xsivw 485×550 / KP 160×480 + PNG glyph extras
+  const ac = audit.animChrome;
+  if (!ac) fail.push('animChrome missing from __uiAudit');
+  else if (!ac.tokensApplied) fail.push(`animChrome CSS tokens not applied (--fcv-list-w), got ${JSON.stringify(ac)}`);
+  else if (!Array.isArray(ac.aeFloat) || ac.aeFloat[2] !== 485 || ac.aeFloat[3] !== 550) {
+    fail.push(`animChrome AE xsivw expected 485×550, got ${JSON.stringify(ac.aeFloat)}`);
+  } else if (!Array.isArray(ac.kpFloat) || ac.kpFloat[2] !== 160 || ac.kpFloat[3] !== 480) {
+    fail.push(`animChrome Keying xsivw expected 160×480, got ${JSON.stringify(ac.kpFloat)}`);
+  } else if (!Array.isArray(ac.mixerMenus) || ac.mixerMenus.length < 4) {
+    fail.push(`animChrome mixerMenus expected Softimage bar, got ${JSON.stringify(ac.mixerMenus)}`);
+  } else if ((ac.pngExtra ?? 0) < 30) {
+    fail.push(`animChrome PNG toolbar glyphs expected ≥30 extras, got ${ac.pngExtra}`);
+  } else if ((ac.bitmapWired ?? 0) < 60) {
+    fail.push(`animChrome wired bitmaps expected ≥60 (BMP+#50 PNG), got ${ac.bitmapWired}`);
+  } else ok.push(`Anim chrome AE=${ac.aeFloat.slice(2).join('x')} kp=${ac.kpFloat.slice(2).join('x')} menus=${ac.mixerMenus.join('+')} png=${ac.pngExtra} wired=${ac.bitmapWired}`);
 }
 
 // Open floating views

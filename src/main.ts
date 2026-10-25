@@ -27,7 +27,7 @@ import { mcpPanel } from './ui/mcp';
 import { installKeymap } from './ui/keymap';
 import { propertyEditor } from './ui/ppg';
 import { applyPpgChrome, ppgChromeAudit, PPG_CHROME } from './ui/ppgChrome';
-import { applyAnimChromeVars, animViewDefaultSize } from './ui/animChrome';
+import { applyAnimChromeVars, animViewDefaultSize, animChromeAudit } from './ui/animChrome';
 import { animationLayerManager } from './ui/animLayerManager';
 import { viewManager, SI as ViewportSI, DEFAULT_CAMERA_POS, DEFAULT_CAMERA_INTEREST, DEFAULT_CAMERA_FOV } from './ui/viewManager';
 applyPpgChrome();
@@ -248,6 +248,8 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     },
     // Phase B — Softimage PPG / floating dialog shell chrome (uiut PE host + RT_BITMAP)
     ppgChrome: ppgChromeAudit(),
+    // Animate chrome (PE pack #47 + xsivw / PNG glyph extras)
+    animChrome: animChromeAudit(),
   };
 };
 (window as any).__menubarStatus = () => menubarStatus();
