@@ -33,7 +33,12 @@ const regionPath = dump('si_render_region.json');
 const fbPath = dump('si_render_framebuffer_enums.json');
 const deepenPath = dump('si_render_prefs_region_deepen.json');
 const beyondPath = dump('materials_beyond_phong.json');
-for (const [n, p] of [['prefs', prefsPath], ['material', matPath], ['passes', passPath], ['region', regionPath], ['framebuffer', fbPath], ['beyond', beyondPath]]) {
+const catsPath = [
+  path.resolve(__dirname, '../data/dump/si_preference_categories.json'),
+  '/cursor/stores/self/internal/softimage-pc-dumps/unlock/unlock_all_remaining.json',
+  '/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/unlock/unlock_all_remaining.json',
+].find(p => fs.existsSync(p));
+for (const [n, p] of [['prefs', prefsPath], ['material', matPath], ['passes', passPath], ['region', regionPath], ['framebuffer', fbPath], ['beyond', beyondPath], ['preference_categories', catsPath]]) {
   if (!p) { console.error('missing dump ' + n); process.exit(2); }
 }
 
@@ -44,6 +49,14 @@ const region = JSON.parse(fs.readFileSync(regionPath, 'utf8'));
 const fb = JSON.parse(fs.readFileSync(fbPath, 'utf8'));
 const deepen = deepenPath ? JSON.parse(fs.readFileSync(deepenPath, 'utf8')) : null;
 const beyond = JSON.parse(fs.readFileSync(beyondPath, 'utf8'));
+const catsRaw = JSON.parse(fs.readFileSync(catsPath, 'utf8'));
+const pcCats = catsRaw.categories
+  || catsRaw.locks?.['render.preference_categories']?.detail?.sample_keys
+  || catsRaw.sample_keys
+  || [];
+const pcSample = catsRaw.sample_keys
+  || catsRaw.locks?.['render.preference_categories']?.detail?.sample_keys
+  || pcCats.slice(0, 30);
 
 const diffs = [];
 const notes = [];
@@ -163,6 +176,38 @@ const r = await page.evaluate(() => {
     }
   } catch (e) {}
 
+  // Softimage Application.Preferences.Categories (unlock_all_remaining UNLOCK_CANDIDATE)
+  let preferenceCategories = null;
+  try {
+    const cats = A.Preferences?.Categories;
+    if (cats == null) preferenceCategories = { null: true };
+    else {
+      const keys = [];
+      if (typeof cats[Symbol.iterator] === 'function') {
+        for (const c of cats) keys.push(String(c?.FullName ?? c?.Name ?? c));
+      } else if (typeof cats.toArray === 'function') {
+        for (const c of cats.toArray()) keys.push(String(c?.FullName ?? c?.Name ?? c));
+      } else if (typeof cats.Count === 'number') {
+        for (let i = 0; i < cats.Count; i++) {
+          const c = cats.Item ? cats.Item(i) : cats(i);
+          keys.push(String(c?.FullName ?? c?.Name ?? c));
+        }
+      }
+      const lookupRendering = cats('preferences.rendering') || cats.Item?.('preferences.rendering');
+      preferenceCategories = {
+        null: false,
+        type: typeof cats,
+        Count: cats.Count ?? keys.length,
+        keys,
+        sample: keys.slice(0, 30),
+        has_rendering: !!(lookupRendering && String(lookupRendering.FullName || lookupRendering) === 'preferences.rendering'),
+        nesting_ok: keys.every(k => typeof k === 'string' && k.startsWith('preferences.')),
+      };
+    }
+  } catch (e) {
+    preferenceCategories = { null: true, err: String(e?.message || e) };
+  }
+
   return {
     roMap, before, after, nBefore: before.length, nAfter: after.length,
     matType: m?.type, matLabels, matVals,
@@ -170,6 +215,7 @@ const r = await page.evaluate(() => {
     phongConnections,
     beyondSnaps, lockSnaps,
     renderPrefs,
+    preferenceCategories,
     sceneMat: A.scene.materials[0]?.name,
   };
 });
@@ -195,6 +241,33 @@ if (r.renderPrefs) {
   else notes.push(`renderPrefs.renderer=${r.renderPrefs.renderer}`);
   if (Number(r.renderPrefs.region_display_mode) !== 1 && r.renderPrefs.region_display_mode != null)
     notes.push(`region_display_mode=${r.renderPrefs.region_display_mode} (SPDL default 1)`);
+}
+
+// ---- Preferences.Categories (unlock: non-null; attested keys only — no invent HWND) ----
+notes.push(`loaded preference_categories ${catsPath}`);
+if (!pcCats.length) diffs.push('PC preference_categories empty');
+if (!r.preferenceCategories || r.preferenceCategories.null) {
+  diffs.push('Direct Preferences.Categories null (PC unlock flipped this)');
+} else {
+  notes.push(`Preferences.Categories Count=${r.preferenceCategories.Count} type=${r.preferenceCategories.type}`);
+  if (!r.preferenceCategories.nesting_ok)
+    diffs.push('Preferences.Categories nesting: expected preferences.<leaf> FullNames only');
+  for (const k of pcSample) {
+    if (!r.preferenceCategories.keys.includes(k))
+      diffs.push(`Preferences.Categories missing sample key ${k}`);
+  }
+  if (pcSample.length && pcSample.every(k => r.preferenceCategories.keys.includes(k)))
+    notes.push(`Preferences.Categories sample_keys OK n=${pcSample.length}`);
+  for (const k of pcCats) {
+    if (!r.preferenceCategories.keys.includes(k))
+      diffs.push(`Preferences.Categories missing attested key ${k}`);
+  }
+  if (r.preferenceCategories.keys.length !== pcCats.length)
+    diffs.push(`Preferences.Categories Count Direct=${r.preferenceCategories.keys.length} PC=${pcCats.length}`);
+  else notes.push(`Preferences.Categories full list OK n=${pcCats.length}`);
+  if (!r.preferenceCategories.has_rendering)
+    diffs.push('Preferences.Categories("preferences.rendering") lookup failed');
+  else notes.push('Categories("preferences.rendering") OK');
 }
 
 // ---- Passes ----
