@@ -9,6 +9,7 @@ import wrapEnum from '../data/si/render_wrap_enum.json';
 import mentalRayPass from '../data/si/render_mentalray_pass.json';
 import { siParamDefs, siLayout, siName, menuDefaults, siPropDefs, siPropLayout, withOp } from './opdefs';
 import type { ParamDef } from './params';
+import { movieFormatParamDefs } from './renderOutput';
 
 /** C3DMaterial.spdl Combo Clamp/Repeat — unlock_render_wrap_enum_probe (10496/10497). */
 const WRAP_UV_ITEMS = (wrapEnum.items as { label: string; value: number }[]).map(it => ({
@@ -745,6 +746,8 @@ export class Pass extends Node {
       num('MotionBlurShutterSpeed', 0.5, 'MotionBlurShutterSpeed'),
       bool('MotionBlurDeformation', true, 'MotionBlurDeformation'),
       int('OverrideCameraLensShaders', 0, 'OverrideCameraLensShaders'),
+      // Softimage RenderPass Movie* (desktop_tour / SPDL); AfterImage: MovieFormat default mp4, no mov
+      ...movieFormatParamDefs(),
     ]);
     this.mentalray = makeMentalRayPassOptions();
     this.mentalray.parent = this as any;

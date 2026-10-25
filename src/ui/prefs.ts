@@ -71,8 +71,32 @@ function apply(app: App, key: string, set: ParamSet) {
     case 'C3DPrefsGeneral': A.maxUndo = Math.max(1, Number(v('undo') ?? 50)); A.modelWildcards = v('modelwildcards') !== false; A.refModelPrefix = String(v('refmodelprefix') ?? ''); break;
     case 'C3DPrefsUnitsSetting': SI.units = { length: Number(v('length') ?? 2), angle: Number(v('angle') ?? 2), time: Number(v('time') ?? 0), mass: Number(v('mass') ?? 2) }; break;
     case 'C3DPrefsTime': if (app.anim) { const fr = Number(v('framerate')); if (fr > 0) app.anim.fps = fr; A.displayFrames = v('displayframes') !== false; A.frameFormat = Number(v('frameformat') ?? 10); } break;
-    // Softimage PC dump Passes.RenderOptions / C3DPrefsOutputFormat: 1920x1080, ratio 1.777778 (not NTSC 720x486)
-    case 'C3DPrefsOutputFormat': A.outputFormat = { xres: Number(v('ir_xres') ?? 1920), yres: Number(v('ir_yres') ?? 1080), pixelRatio: Number(v('ir_pixel_ratio') ?? 1), frameStep: Number(v('frame_step') ?? 1), frameRate: Number(v('frame_rate') ?? 30), fields: !!v('field_enable') }; break;
+    // Softimage PC dump Passes.RenderOptions / C3DPrefsOutputFormat: 1920x1080, ratio 1.777778 (not NTSC 720x486).
+    // AfterImage: picture_standard 23=2K 2048x1080, 24=4K UHD 3840x2160 (propsets).
+    case 'C3DPrefsOutputFormat': {
+      const std = Number(v('picture_standard') ?? 18);
+      const AFTERIMAGE_STD: Record<number, [number, number, number]> = {
+        23: [2048, 1080, 2048 / 1080],
+        24: [3840, 2160, 16 / 9],
+      };
+      if (AFTERIMAGE_STD[std]) {
+        const [xw, yh, ratio] = AFTERIMAGE_STD[std];
+        const px = set.get('ir_xres'), py = set.get('ir_yres'), pr = set.get('picture_ratio');
+        if (px && Number(px.value) !== xw) px.value = xw;
+        if (py && Number(py.value) !== yh) py.value = yh;
+        if (pr && Math.abs(Number(pr.value) - ratio) > 1e-6) pr.value = ratio;
+      }
+      A.outputFormat = {
+        xres: Number(v('ir_xres') ?? 1920),
+        yres: Number(v('ir_yres') ?? 1080),
+        pixelRatio: Number(v('ir_pixel_ratio') ?? 1),
+        frameStep: Number(v('frame_step') ?? 1),
+        frameRate: Number(v('frame_rate') ?? 30),
+        fields: !!v('field_enable'),
+        pictureStandard: std,
+      };
+      break;
+    }
     case 'C3DPrefsAnimation': app.autoKey = !!v('autokey'); A.autoKeyModified = v('autokeymodified') !== false; A.autoKeyHighlights = v('autokeyhighlights') !== false; A.keyInsert = !!v('keyinsert'); A.tangentOri = Number(v('tangentori') ?? 0); A.tangentLen = Number(v('tangentlen') ?? 0); A.si3dStyle = !!v('si3dstyle'); break;
     case 'C3DPrefsScripting': A.scriptLang = String(v('language') ?? 'VBScript'); A.cmdLog = v('cmdlog') !== false; A.msgLog = v('msglog') !== false; A.cmdLogSize = Number(v('cmdlogsize') ?? 500); A.sipython = !!v('sipython'); break;
     case 'C3DPrefsScriptEditor': document.documentElement.style.setProperty('--script-font', `${v('fontsize') || 10}px ${v('font') || 'Courier New, monospace'}`); document.body.classList.toggle('script-linenum', !!v('linenum')); A.tabSize = Number(v('tabsize') ?? 4); break;

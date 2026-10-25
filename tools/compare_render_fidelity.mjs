@@ -115,6 +115,10 @@ const r = await page.evaluate(() => {
         Format: f.val('Format'), DataType: f.val('DataType'), BitDepth: f.val('BitDepth'),
         Filename: f.val('Filename'), Enabled: f.val('Enabled'), RenderChannel: f.val('RenderChannel'),
       })),
+      // AfterImage Render tab: MovieFormat default mp4; Softimage SPDL had mov+avi (no mov offered)
+      MovieFormat: p.val('MovieFormat'),
+      MovieCreate: p.val('MovieCreate'),
+      movieFormatItems: (p.get('MovieFormat')?.def?.items || []).map(it => ({ label: it.label, value: it.value })),
     };
   };
 
@@ -430,6 +434,27 @@ else {
   if (dFb.Enabled !== true) diffs.push(`FB Enabled ${dFb.Enabled}`);
   if (dFb.type !== 'Framebuffer') diffs.push(`FB type ${dFb.type}`);
   notes.push(`FB Main format=${dFb.Format} DataType=${dFb.DataType}`);
+}
+
+// ---- AfterImage Render output upgrades (mp4 default, no mov; Softimage FB Format stays pic) ----
+{
+  const mf = r.before?.[0]?.MovieFormat;
+  const items = r.before?.[0]?.movieFormatItems || [];
+  if (String(mf) !== 'mp4') diffs.push(`Pass MovieFormat Direct=${mf} want mp4`);
+  else notes.push('Pass MovieFormat=mp4 (AfterImage default)');
+  if (items.some(it => String(it.value) === 'mov' || /quicktime/i.test(String(it.label))))
+    diffs.push(`Pass MovieFormat still offers mov: ${JSON.stringify(items)}`);
+  else if (!items.some(it => String(it.value) === 'mp4'))
+    diffs.push(`Pass MovieFormat missing mp4: ${JSON.stringify(items)}`);
+  else notes.push('Pass MovieFormat items mp4+avi, no mov');
+  const propsets = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../src/data/si/propsets.json'), 'utf8'));
+  const picStd = (propsets.C3DPrefsOutputFormat?.params || []).find(p => p.sn === 'picture_standard');
+  const ids = new Set((picStd?.items || []).map(it => it[1]));
+  if (!ids.has(23) || !ids.has(24)) diffs.push(`Output Format picture_standard missing 2K/4K (23/24); got ${[...ids].sort((a, b) => a - b)}`);
+  else notes.push('Output Format picture_standard includes 2K (23) + 4K (24)');
+  const xres = (propsets.C3DPrefsOutputFormat?.params || []).find(p => p.sn === 'ir_xres');
+  if (Number(xres?.uimax) < 3840) diffs.push(`ir_xres uimax ${xres?.uimax} too low for 4K`);
+  else notes.push(`ir_xres uimax=${xres.uimax}`);
 }
 
 // ---- Material Phong ----
