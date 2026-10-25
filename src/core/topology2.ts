@@ -304,10 +304,97 @@ export function meshUVProjection(m: MeshData, kind: string): Float32Array {
 }
 
 // ----------------------------------------------------------- bevel (edge chamfer with rounding), like Softimage's bevelop
+/** Softimage Absolute Distance is SI units for collide (param_8 path); mesh chamfer width uses Distance×0.125
+ *  (attested grid_r08 OFF inset 0.1 for Distance 0.8). Relative keeps Distance×0.125×avgEdge. */
+const BEVEL_DISTANCE_SCALE = 0.125;
+/** DAT_180168380 — geometry epsilon on Softimage collide path. */
+const BEVEL_COLLIDE_EPS = 1e-12;
+
+/**
+ * Softimage managecollisions ON for an all-edge bevel of a planar (all-flat) open mesh: when Absolute
+ * Distance reaches half the minimum face extent, Softimage's collide queue collapses each face to its
+ * centroid and rebuilds the dual (grid_r08 ON = 96 pts / 109 polys). Creased/closed meshes stay on the
+ * normal chamfer path (hard-dump cube cases remain mesh_equal).
+ */
+function bevelCollidePlanarDual(verts: V[], faces: number[][]): MeshData {
+  const edgeFaces = new Map<string, number[]>();
+  faces.forEach((f, fi) => { for (let i = 0; i < f.length; i++) { const k = edgeKey(f[i], f[(i + 1) % f.length]); (edgeFaces.get(k) ?? edgeFaces.set(k, []).get(k)!).push(fi); } });
+  const boundaryEdges: { a: number; b: number; fi: number }[] = [];
+  const boundaryVert = new Set<number>();
+  for (const [k, fs] of edgeFaces) {
+    if (fs.length !== 1) continue;
+    const [a, b] = k.split('-').map(Number);
+    boundaryEdges.push({ a, b, fi: fs[0] });
+    boundaryVert.add(a); boundaryVert.add(b);
+  }
+  const vFaces = new Map<number, number[]>();
+  faces.forEach((f, fi) => f.forEach(v => (vFaces.get(v) ?? vFaces.set(v, []).get(v)!).push(fi)));
+  const outV: V[] = [];
+  const bMap = new Map<number, number>();
+  for (const v of boundaryVert) { bMap.set(v, outV.length); outV.push(verts[v]); }
+  const cMap = faces.map(f => { const i = outV.length; outV.push(faceCenter(verts, f)); return i; });
+  const outF: number[][] = [];
+  // Interior vertex → n-gon of incident face centers (Softimage junction dual).
+  for (let v = 0; v < verts.length; v++) {
+    if (boundaryVert.has(v)) continue;
+    const fs = vFaces.get(v) ?? []; if (fs.length < 3) continue;
+    const nrm = faceNormal(verts, faces[fs[0]]);
+    const c0 = verts[v];
+    let tx: V = [1, 0, 0]; if (Math.abs(dot(tx, nrm)) > 0.9) tx = [0, 1, 0];
+    tx = norm(sub(tx, mul(nrm, dot(tx, nrm)))); const ty = cross(nrm, tx);
+    const ordered = [...fs].sort((fa, fb) => {
+      const ca = sub(faceCenter(verts, faces[fa]), c0), cb = sub(faceCenter(verts, faces[fb]), c0);
+      return Math.atan2(dot(ca, ty), dot(ca, tx)) - Math.atan2(dot(cb, ty), dot(cb, tx));
+    });
+    outF.push(ordered.map(fi => cMap[fi]));
+  }
+  // Every boundary edge → triangle with its face center (covers BBF + corner CBC).
+  for (const { a, b, fi } of boundaryEdges) {
+    const f = faces[fi];
+    // Wind with the face so the tri matches Softimage.
+    const ia = f.indexOf(a), ib = f.indexOf(b);
+    const ab = ia >= 0 && f[(ia + 1) % f.length] === b;
+    outF.push(ab ? [bMap.get(a)!, bMap.get(b)!, cMap[fi]] : [bMap.get(b)!, bMap.get(a)!, cMap[fi]]);
+  }
+  // Non-corner boundary verts with ≥2 faces → BFF (border + two centers across an interior edge).
+  for (const v of boundaryVert) {
+    const fs = vFaces.get(v) ?? []; if (fs.length < 2) continue;
+    let nrm: V = [0, 0, 0]; for (const fi of fs) nrm = add(nrm, faceNormal(verts, faces[fi])); nrm = norm(nrm);
+    let tx: V = [1, 0, 0]; if (Math.abs(dot(tx, nrm)) > 0.9) tx = [0, 1, 0];
+    tx = norm(sub(tx, mul(nrm, dot(tx, nrm)))); const ty = cross(nrm, tx);
+    const ordered = [...fs].sort((fa, fb) => {
+      const ca = sub(faceCenter(verts, faces[fa]), verts[v]), cb = sub(faceCenter(verts, faces[fb]), verts[v]);
+      return Math.atan2(dot(ca, ty), dot(ca, tx)) - Math.atan2(dot(cb, ty), dot(cb, tx));
+    });
+    const seenPair = new Set<string>();
+    for (let i = 0; i < ordered.length; i++) {
+      const a = ordered[i], b = ordered[(i + 1) % ordered.length];
+      const fa = faces[a], fb = faces[b];
+      let sharedOther = -1;
+      for (let j = 0; j < fa.length; j++) {
+        const p = fa[j], q = fa[(j + 1) % fa.length];
+        if (p !== v && q !== v) continue;
+        const other = p === v ? q : p;
+        if (fb.includes(v) && fb.includes(other)) { sharedOther = other; break; }
+      }
+      if (sharedOther < 0) continue;
+      // Only interior (manifold) edges — boundary edges already become BBF/CBC tris.
+      if ((edgeFaces.get(edgeKey(v, sharedOther))?.length ?? 0) < 2) continue;
+      const pk = a < b ? `${a}-${b}` : `${b}-${a}`;
+      if (seenPair.has(pk)) continue;
+      seenPair.add(pk);
+      outF.push([bMap.get(v)!, cMap[a], cMap[b]]);
+    }
+  }
+  return fromPolys(outV, outF.filter(f => f.length >= 3));
+}
+
 /** Bevel the selection: selected edges (or the border edges of selected polygons, or all edges at selected points) are
  *  replaced by chamfer strips of width `width`; `subdivs` > 0 rounds the strip (quadratic profile through the old edge);
- *  corner polygons close the junctions. `miter` keeps chamfer corners sharp (no junction polygon when only 2 edges meet). */
-export function bevelEdges(m: MeshData, sel: CompSel, width: number, subdivs = 0, miter = false, relative = true): MeshData {
+ *  corner polygons close the junctions. `miter` keeps chamfer corners sharp (no junction polygon when only 2 edges meet).
+ *  `manageCollisions` gates Softimage's collide path (ComputeBevelVectors param_8); `distanceParam` is the raw Softimage
+ *  Distance (ratio) used for Absolute collide reach — dump-attested by grid_r08. */
+export function bevelEdges(m: MeshData, sel: CompSel, width: number, subdivs = 0, miter = false, relative = true, manageCollisions = false, distanceParam?: number): MeshData {
   const { verts, faces } = toPolys(m); const n = verts.length;
   // 1. which edges are bevelled
   const selE = new Set<string>();
@@ -315,6 +402,31 @@ export function bevelEdges(m: MeshData, sel: CompSel, width: number, subdivs = 0
   else if (sel.kind === 'polygon') { const ps = selPolygons(m, sel); const cnt = new Map<string, number>(); for (const pi of ps) { const f = faces[pi]; for (let i = 0; i < f.length; i++) { const k = edgeKey(f[i], f[(i + 1) % f.length]); cnt.set(k, (cnt.get(k) ?? 0) + 1); } } for (const [k, c] of cnt) if (c === 1) selE.add(k); }
   else { const pts = selPoints(m, sel); faces.forEach(f => { for (let i = 0; i < f.length; i++) { const a = f[i], b = f[(i + 1) % f.length]; if (pts.has(a) || pts.has(b)) selE.add(edgeKey(a, b)); } }); }
   if (!selE.size) return m;
+  // Softimage collide (param_8): planar all-edge selection with Absolute Distance past half-face extent
+  // collapses to the face-centroid dual (si_bevel_collide_hard grid_r08 ON). Non-planar / partial
+  // selections keep the chamfer path so cube hard-cases stay mesh_equal.
+  if (manageCollisions && sel.kind === 'edge') {
+    const allE = new Set<string>(); faces.forEach(f => { for (let i = 0; i < f.length; i++) allE.add(edgeKey(f[i], f[(i + 1) % f.length])); });
+    if (selE.size === allE.size && faces.length) {
+      const n0 = faceNormal(verts, faces[0]);
+      const planar = faces.every(f => Math.abs(dot(faceNormal(verts, f), n0)) > 1 - 1e-6);
+      if (planar) {
+        let minExtent = Infinity;
+        for (const f of faces) {
+          // In-plane AABB extent of the face (grid quads → cell size).
+          let tx: V = [1, 0, 0]; if (Math.abs(dot(tx, n0)) > 0.9) tx = [0, 1, 0];
+          tx = norm(sub(tx, mul(n0, dot(tx, n0)))); const ty = cross(n0, tx);
+          let u0 = Infinity, u1 = -Infinity, v0 = Infinity, v1 = -Infinity;
+          for (const i of f) { const u = dot(verts[i], tx), v = dot(verts[i], ty); if (u < u0) u0 = u; if (u > u1) u1 = u; if (v < v0) v0 = v; if (v > v1) v1 = v; }
+          minExtent = Math.min(minExtent, u1 - u0, v1 - v0);
+        }
+        const avg0 = [...selE].reduce((s, k) => { const [a, b] = k.split('-').map(Number); return s + Math.hypot(...sub(verts[a], verts[b])); }, 0) / selE.size;
+        // Absolute: Softimage collide uses raw Distance SI; Relative: Distance×0.125×avg (same as chamfer).
+        const collideReach = relative ? width * avg0 : (distanceParam ?? width / BEVEL_DISTANCE_SCALE);
+        if (collideReach * 2 >= minExtent - BEVEL_COLLIDE_EPS) return bevelCollidePlanarDual(verts, faces);
+      }
+    }
+  }
   const edgeFaces = new Map<string, number[]>(); faces.forEach((f, fi) => { for (let i = 0; i < f.length; i++) { const k = edgeKey(f[i], f[(i + 1) % f.length]); (edgeFaces.get(k) ?? edgeFaces.set(k, []).get(k)!).push(fi); } });
   let avg = 0; for (const k of selE) { const [a, b] = k.split('-').map(Number); avg += Math.hypot(...sub(verts[a], verts[b])); } avg /= selE.size;
   // relative: `width` is a fraction of the average selected edge length (Softimage ratio 0.5 → L/16 per side).
@@ -546,11 +658,62 @@ export function bevelEdges(m: MeshData, sel: CompSel, width: number, subdivs = 0
     if (h.length > 1 && h[0] === h[h.length - 1]) h.pop();
     return h;
   }).filter(f => f.length >= 3);
+  // Softimage open-mesh border (si_bevel_collide_hard grid_r08 OFF): keep original boundary verts,
+  // add a quad per bevelled boundary edge (border a/b + face corners) and a tri per non-corner
+  // boundary vert across its interior manifold edge. Closed meshes have no 1-face edges — no-op.
+  const borderFaces: number[][] = [];
+  {
+    const meshBoundary: { a: number; b: number; fi: number }[] = [];
+    const bVert = new Set<number>();
+    for (const [k, fs] of edgeFaces) {
+      if (fs.length !== 1 || !selE.has(k)) continue;
+      const [a, b] = k.split('-').map(Number);
+      meshBoundary.push({ a, b, fi: fs[0] });
+      bVert.add(a); bVert.add(b);
+    }
+    if (meshBoundary.length) {
+      for (const { a, b, fi } of meshBoundary) {
+        const f = faces[fi];
+        // Softimage border strip: boundary verts + inset corners of the opposite face edge
+        // (grid_r08 OFF: far-edge corners, not the near border corners).
+        const ia = f.indexOf(a);
+        if (ia < 0) continue;
+        const ab = f[(ia + 1) % f.length] === b;
+        const start = ab ? a : b, end = ab ? b : a;
+        const mid: number[] = [];
+        for (let step = 1; step < f.length; step++) {
+          const v = f[(f.indexOf(end) + step) % f.length];
+          if (v === start) break;
+          mid.push(v);
+        }
+        if (!mid.length || mid.some(v => corner.get(v + '|' + fi) === undefined)) continue;
+        const cMid = mid.map(v => corner.get(v + '|' + fi)!);
+        borderFaces.push([start, end, ...cMid.slice().reverse()]);
+      }
+      const vFacesB = new Map<number, number[]>();
+      faces.forEach((f, fi) => f.forEach(v => { if (bVert.has(v)) (vFacesB.get(v) ?? vFacesB.set(v, []).get(v)!).push(fi); }));
+      for (const v of bVert) {
+        const fs = vFacesB.get(v) ?? []; if (fs.length < 2) continue;
+        // Find the interior (manifold) edge from v; Softimage BFF uses the two face corners on that edge.
+        for (const [k, efs] of edgeFaces) {
+          if (efs.length !== 2) continue;
+          const [p, q] = k.split('-').map(Number);
+          if (p !== v && q !== v) continue;
+          const other = p === v ? q : p;
+          if (bVert.has(other)) continue;
+          const c0 = corner.get(v + '|' + efs[0]), c1 = corner.get(v + '|' + efs[1]);
+          if (c0 === undefined || c1 === undefined) continue;
+          borderFaces.push([v, c0, c1]);
+          break;
+        }
+      }
+    }
+  }
   // Weld coincident vertices (Softimage merges chamfer ends that land on the same point) and drop unused.
   const key = (p: V) => p.map(x => Math.round(x * 1e6) / 1e6).join(',');
   const map = new Map<string, number>(); const outV: V[] = [];
   const remap = (i: number) => { const k = key(verts[i]); if (!map.has(k)) { map.set(k, outV.length); outV.push(verts[i]); } return map.get(k)!; };
-  const welded = cleaned.map(f => { const g = f.map(remap); const h: number[] = []; for (const v of g) if (!h.length || h[h.length - 1] !== v) h.push(v); if (h.length > 1 && h[0] === h[h.length - 1]) h.pop(); return h; }).filter(f => f.length >= 3);
+  const welded = [...cleaned, ...borderFaces].map(f => { const g = f.map(remap); const h: number[] = []; for (const v of g) if (!h.length || h[h.length - 1] !== v) h.push(v); if (h.length > 1 && h[0] === h[h.length - 1]) h.pop(); return h; }).filter(f => f.length >= 3);
   const re = new Map<number, number>(); const vv: V[] = [];
   for (const f of welded) for (let i = 0; i < f.length; i++) { const v = f[i]; if (!re.has(v)) { re.set(v, vv.length); vv.push(outV[v]); } f[i] = re.get(v)!; }
   return fromPolys(vv, welded);
