@@ -6,11 +6,13 @@ A clean-room reimplementation of Autodesk Softimage 2015's Model and Animate too
 (TypeScript + Three.js). The UI, menu trees, command names and argument lists follow the original, extracted
 from the data files that ship with Softimage (menus, command maps, layouts, dictionaries) — not from its code.
 
+**License:** proprietary / closed source (All Rights Reserved). This repository is **public** so anyone can download AfterImage release installers without GitHub auth. The source is **not** open source — viewing or cloning does not grant source rights; see [`LICENSE`](LICENSE). Binary distribution of the installer does not grant source rights.
+
 ## Latest Releases
 
 Desktop builds ship as **AfterImage** (Windows NSIS installer; no Softimage/Autodesk binaries).
 
-- [Releases](https://github.com/Shredder565/Softimage-Direct/releases) — all published versions
+- [Releases](https://github.com/Shredder565/Softimage-Direct/releases) — all published versions (public downloads; no auth required)
 - [Latest release](https://github.com/Shredder565/Softimage-Direct/releases/latest) — always the current stable
 - **Download:** [AfterImage-1.0.9-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.9/AfterImage-1.0.9-setup.exe)
 - Prior: [AfterImage-1.0.8-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.8/AfterImage-1.0.8-setup.exe) · [AfterImage-1.0.7-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.7/AfterImage-1.0.7-setup.exe) · [AfterImage-1.0.6-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.6/AfterImage-1.0.6-setup.exe) · [AfterImage-1.0.5-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.5/AfterImage-1.0.5-setup.exe) · [AfterImage-1.0.4-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.4/AfterImage-1.0.4-setup.exe) · [AfterImage-1.0.3-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.3/AfterImage-1.0.3-setup.exe) · [AfterImage-1.0.2-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.2/AfterImage-1.0.2-setup.exe) · [AfterImage-1.0.1-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.1/AfterImage-1.0.1-setup.exe) · [AfterImage-1.0.0-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.0/AfterImage-1.0.0-setup.exe)
