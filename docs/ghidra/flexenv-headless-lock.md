@@ -12,18 +12,16 @@
 
 Optional unlock: user Script Editor paste / non-`-processing` attested dump only — no Desktop agent takeover.
 
-## WIRE — Mode / DistanceWeighting surface (landed)
+## WIRE — Mode / DistanceWeighting (SPDL attested)
 
-Softimage `ApplyFlexEnv` args in Direct (`src/commands/rigging.ts`):
+Softimage `C3DEnvelopeAutoAssignOp2.spdl` **`autoassignmeth`**: **0 = Distance-based**, **1 = Normal-based** (default **1**).
 
 | Arg | Direct | Softimage-faithful note |
 |-----|--------|-------------------------|
 | ConnectionSet / DeformerSet | Yes | Mesh + deformers selection |
-| Mode | Default **2** (automatic/assign); `1` → alternate `weighting=1` | Enum labels still soft until SPDL/cmd dump names land |
-| DistanceWeighting | Truthy → force distance `weighting=0` (overrides Mode) | Softimage parallel switch |
+| Mode | Default **1** (Normal); **0** → Distance | Maps to `envelopop.weighting` 1 / 0 |
+| DistanceWeighting | Truthy → force distance `weighting=0` | Overrides Mode → autoassignmeth 0 |
 | canRun | Mesh + deformers selected | GetEnabled-style grey when incomplete selection |
-
-Ghidra follow-up: string hunt `ApplyFlexEnv` / `envelopop` / weight assign in deform DLLs; pin Mode constants to Softimage enum names.
 
 ## Acceptance
 

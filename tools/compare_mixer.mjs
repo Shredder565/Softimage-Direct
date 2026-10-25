@@ -45,6 +45,15 @@ const r = await page.evaluate(() => {
   A.run('MuteClip', { Clip: clips[0].name, Mute: true });
   const evalMuted = A.run('EvaluateMixer', { Frame: mid, Apply: false });
   A.run('MuteClip', { Clip: clips[0].name, Mute: false });
+  // Softimage SetDefaultWeight / siWeightPresets → actionclip.weight FCurve (not prefs display bits)
+  A.run('SetDefaultWeight', { InputObj: clips[0].name, Mode: ':siWeightEaseIn:siWeightPresets' });
+  const presetClip = clips[0];
+  const presetKeys = presetClip.weightKeys || [];
+  A.anim.frame = clips[0].start;
+  const evalEaseStart = A.run('EvaluateMixer', { Frame: clips[0].start, Apply: false });
+  let expLock = null;
+  try { A.run('SetDefaultWeight', { InputObj: clips[0].name, Mode: 'siWeightExponentialIn' }); }
+  catch (e) { expLock = String(e && e.message || e); }
   const mix = A.scene.root.property('mixer');
   // Softimage PC nested Parameter.Name labels (si_anim_mixer_deep.json)
   const nestedSI = [
@@ -67,6 +76,7 @@ const r = await page.evaluate(() => {
     nestedSI,
     tr, bridge, cpd,
     evalMid, evalInA, evalWeighted, evalMuted,
+    presetKeys, evalEaseStart, expLock,
     posxMid: cube.kinematics.local.val('posx'),
   };
 });
@@ -93,6 +103,12 @@ if (!(r.evalWeighted?.weights?.some(w => w.clip?.weight === 0.25 || Math.abs((w.
   /* weight applied before normalize — at least ensure evalWeighted ran */
 }
 if (!r.evalWeighted?.weights?.length) diffs.push('SetClipWeight eval empty');
+if (!(r.presetKeys?.length >= 2)) diffs.push(`SetDefaultWeight EaseIn keys missing: ${JSON.stringify(r.presetKeys)}`);
+else {
+  const first = r.presetKeys[0], last = r.presetKeys[r.presetKeys.length - 1];
+  if (!(first.value === 0 && last.value === 1)) diffs.push(`EaseIn key values ${first.value}->${last.value}`);
+}
+if (!(r.expLock && /not implemented|LOCK/i.test(r.expLock))) diffs.push(`Exponential should LOCK, got ${r.expLock}`);
 
 // Softimage PC deep dump (known gaps: StoreAction null handles; AddBridgeTransition missing under XSIBATCH;
 // mixer_collections null without clip selection). Direct still asserts nested OM + eval.

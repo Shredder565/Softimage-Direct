@@ -1,8 +1,8 @@
 // Softimage Animation Mixer evaluation: clip weights + transition crossfades → blended action values.
 // Nested Sources/Tracks/Transitions/Compounds live on the Mixer property (see makeMixer / syncMixer).
 import type { Parameter } from './params';
-import { Property, type MixerClip, type MixerTransition, mixerOf, syncMixer, type X3DObject } from './scene';
-import { FCurve } from './animation';
+import { Property, type MixerClip, type MixerTransition, type MixerWeightKey, mixerOf, syncMixer, type X3DObject } from './scene';
+import { FCurve, SI_KEY_INTERP_CONSTANT, SI_KEY_INTERP_LINEAR, SI_KEY_INTERP_SPLINE } from './animation';
 
 /** Minimal app surface used by mixer eval (avoids circular import with commands.ts). */
 export type MixerHost = {
@@ -19,13 +19,106 @@ export type MixerHost = {
 export type ClipWeight = { clip: MixerClip; weight: number; localTime: number };
 
 /**
- * Softimage mixer transition curves (prefs `clip_transitioncurves` default on): Hermite smoothstep.
- * Linear u kept available for timewarp blend factor before ease; replace with animationmixer.dll
- * decomp formula when softimage-pc lands it (docs/ghidra/mixer-clip-transitions.md).
+ * Softimage mixer transition curves: Hermite smoothstep for crossfade windows when clips lack
+ * overlapping `actionclip.weight` FCurves. Prefs `clip_transitioncurves` are display-only
+ * (docs/ghidra/mixer-clip-transitions.md) — not an eval switch.
  */
 export function transitionEase(u: number): number {
   const t = Math.max(0, Math.min(1, u));
   return t * t * (3 - 2 * t);
+}
+
+/** Map Softimage `SetCurveType` / gk10 FSKind (1 const, 2 linear, 3 spline) → Direct siInterpolation. */
+export function mapSetCurveTypeToInterp(setCurveType: number): number {
+  if (setCurveType === 1) return SI_KEY_INTERP_CONSTANT;
+  if (setCurveType === 2) return SI_KEY_INTERP_LINEAR;
+  return SI_KEY_INTERP_SPLINE;
+}
+
+/** Softimage `siWeightPresets` names (action.vbs ModifyWeightProc). Exponential is NOT implemented in Softimage VBS. */
+export type SiWeightPreset =
+  | 'siWeightEaseIn' | 'siWeightEaseOut'
+  | 'siWeightLinearEaseIn' | 'siWeightLinearEaseOut'
+  | 'siWeightGaussian' | 'siWeightGaussianReverse'
+  | 'siWeightSquare' | 'siWeightSquareReverse'
+  | 'siWeightConstant';
+
+function normalizeWeightPreset(mode: string): string {
+  const s = String(mode || '').trim();
+  const m = s.match(/siWeight\w+/i);
+  return m ? m[0] : s.replace(/^:+/, '').split(':')[0] || s;
+}
+
+/**
+ * Build Softimage ModifyWeightProc keys for `clip.actionclip.weight` over [lower, upper).
+ * Keys use Direct interp codes (mapped from SetCurveType 1/2/3).
+ */
+export function buildWeightPresetKeys(
+  preset: string,
+  lower: number,
+  upper: number,
+  extra = 1,
+): MixerWeightKey[] {
+  const name = normalizeWeightPreset(preset);
+  const lo = Number(lower);
+  const hi = Math.max(lo + 1, Number(upper));
+  const last = hi - 1; // Softimage upper-1
+  const mid = (lo + last) / 2;
+  const k = (time: number, value: number, setCurveType: number): MixerWeightKey => {
+    const interp = mapSetCurveTypeToInterp(setCurveType);
+    return { time, value, left: value, right: value, interp };
+  };
+  switch (name) {
+    case 'siWeightEaseIn':
+      return [k(lo, 0, 3), k(last, 1, 3)];
+    case 'siWeightEaseOut':
+      return [k(lo, 1, 3), k(last, 0, 3)];
+    case 'siWeightLinearEaseIn':
+      return [k(lo, 0, 2), k(last, 1, 2)];
+    case 'siWeightLinearEaseOut':
+      return [k(lo, 1, 2), k(last, 0, 2)];
+    case 'siWeightGaussian':
+      return [k(lo, 0, 3), k(mid, 1, 3), k(last, 0, 3)];
+    case 'siWeightGaussianReverse':
+      return [k(lo, 1, 3), k(mid, 0, 3), k(last, 1, 3)];
+    case 'siWeightSquare': {
+      const a = lo;
+      const b = Math.min(lo + 1, last);
+      const c = Math.max(last - 1, b);
+      const d = last;
+      return [k(a, 0, 1), k(b, 1, 1), k(c, 1, 1), k(d, 0, 1)];
+    }
+    case 'siWeightSquareReverse': {
+      const a = lo;
+      const b = Math.min(lo + 1, last);
+      const c = Math.max(last - 1, b);
+      const d = last;
+      return [k(a, 1, 1), k(b, 0, 1), k(c, 0, 1), k(d, 1, 1)];
+    }
+    case 'siWeightConstant': {
+      const v = Number(extra);
+      const val = Number.isFinite(v) ? v : 1;
+      return [k(lo, val, 1), k(last, val, 1)];
+    }
+    case 'siWeightExponentialIn':
+    case 'siWeightExponentialOut':
+      throw new Error(`${name}: not implemented in Softimage action.vbs ModifyWeightProc (LOCK)`);
+    default:
+      throw new Error(`Unknown siWeightPresets mode: ${preset}`);
+  }
+}
+
+/** Sample Softimage `clip.actionclip.weight` at absolute frame (gk10 / Direct FCurve). */
+export function sampleClipWeight(clip: MixerClip, frame: number): number {
+  const keys = clip.weightKeys;
+  if (!keys?.length) return Number(clip.weight ?? 1);
+  const fc = new FCurve({ value: keys[0].value, def: { name: 'actionclip.weight' } } as any);
+  fc.keys = keys.map(x => ({
+    time: x.time, value: x.value,
+    left: x.left ?? x.value, right: x.right ?? x.value,
+    interp: x.interp ?? SI_KEY_INTERP_SPLINE,
+  }));
+  return fc.eval(frame);
 }
 
 /** Softimage-like clip weight at `frame`, with standard/bridge crossfade over transition.length ending at the destination clip start. */
@@ -57,7 +150,8 @@ export function clipWeightsAt(frame: number, clips: MixerClip[], transitions: Mi
         else if (clip.name === tr.to) { w = Math.max(w, e); if (frame < clip.start) localTime = 0; }
       }
     }
-    w *= Number(clip.weight ?? 1);
+    // Softimage clip mix weight = actionclip.weight FCurve (gk10); scalar weight when no keys.
+    w *= sampleClipWeight(clip, frame);
     if (w > 1e-8) out.push({ clip, weight: w, localTime });
   }
   // Normalize non-additive clips per track; additive clips keep raw weight (layer on top).

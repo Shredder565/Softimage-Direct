@@ -5,7 +5,8 @@ import * as THREE from 'three';
 import { App } from '../core/commands';
 import { X3DObject, Property, Model, mixerOf, syncMixer, type MixerClip, type MixerTransition, type MixerCompound } from '../core/scene';
 import { Parameter, num, str, int } from '../core/params';
-import { evaluateMixer, installMixerEval, mixerDump, clipWeightsAt } from '../core/mixer';
+import { evaluateMixer, installMixerEval, mixerDump, clipWeightsAt, buildWeightPresetKeys } from '../core/mixer';
+import { putCommandEnabled, commandCanBeModified } from '../ui/cmdEnable';
 import { ensureShapeBase, ensureShapeOperator, evaluateShapes } from '../core/shape';
 import { findParam } from './index';
 import { openFloating } from '../ui/floating';
@@ -429,8 +430,66 @@ export function registerAnimCommands(app: App) {
   } });
   app.register({ name: 'SetClipWeight', label: 'Set Clip Weight', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }, { name: 'Weight', default: 1 }], execute(app, a) {
     const { mix, clips } = mixState(app); const c = clips.find(x => x.name === a.Clip) ?? clips[clips.length - 1]; if (!c) throw new Error('No clip');
-    c.weight = Math.max(0, Number(a.Weight ?? 1)); syncMixer(mix); app.events.emit('scene'); return c;
+    c.weight = Math.max(0, Number(a.Weight ?? 1));
+    // Scalar SetClipWeight clears actionclip.weight FCurve (Softimage static weight).
+    delete c.weightKeys;
+    syncMixer(mix); app.events.emit('scene'); return c;
   } });
+  // Softimage SetDefaultWeight / ModifyWeightProc → siWeightPresets on clip.actionclip.weight (gk10).
+  // Prefs clip_weightcurves = display only. Exponential presets LOCK (not in Softimage VBS).
+  app.register({
+    name: 'SetDefaultWeight', label: 'Preset weight curve', category: 'Animation Mixer',
+    description: 'Presets the weight curve of the selected clips (action.vbs ModifyWeightProc / siWeightPresets).',
+    args: [{ name: 'InputObj', default: '' }, { name: 'Mode', default: ':siWeightEaseIn:siWeightPresets' }, { name: 'Extra', default: 1 }],
+    execute(app, a) {
+      const { mix, clips } = mixState(app);
+      const want = a.InputObj ? String(a.InputObj).split(/[,;]/).map((s: string) => s.trim()).filter(Boolean) : [];
+      const targets = want.length ? clips.filter(c => want.includes(c.name)) : (clips.length ? [clips[clips.length - 1]] : []);
+      if (!targets.length) throw new Error('SetDefaultWeight: no clip');
+      const mode = String(a.Mode ?? ':siWeightEaseIn:siWeightPresets');
+      const extra = Number(a.Extra ?? 1);
+      const applied: MixerClip[] = [];
+      for (const c of targets) {
+        const lower = c.start;
+        const upper = c.start + Math.max(1, c.duration);
+        const keys = buildWeightPresetKeys(mode, lower, upper, extra);
+        const prev = c.weightKeys ? c.weightKeys.map(k => ({ ...k })) : undefined;
+        const prevW = c.weight;
+        app.record('Preset weight curve', () => {
+          c.weightKeys = keys;
+          c.weight = keys[keys.length - 1]?.value ?? c.weight ?? 1;
+          syncMixer(mix);
+        }, () => {
+          if (prev) c.weightKeys = prev; else delete c.weightKeys;
+          c.weight = prevW;
+          syncMixer(mix);
+        });
+        applied.push(c);
+      }
+      app.events.emit('scene');
+      return applied.length === 1 ? applied[0] : applied;
+    },
+  });
+  app.register({
+    name: 'ModifyWeight', label: 'Modify Weight Curve', category: 'Animation Mixer',
+    args: [{ name: 'InputObj', default: '' }, { name: 'Mode', default: ':siWeightEaseIn:siWeightPresets' }, { name: 'Extra', default: 1 }],
+    execute: (app, a) => app.run('SetDefaultWeight', a),
+  });
+  // Softimage PutEnabled (CanBeModified gated) — portable without HWND; live MCP matrix stays LOCK.
+  app.register({
+    name: 'PutEnabled', label: 'Put Enabled', category: 'Command',
+    args: [{ name: 'Command', default: '' }, { name: 'Enabled', default: true }],
+    undoable: false,
+    execute(app, a) {
+      const name = String(a.Command || '');
+      if (!name) throw new Error('PutEnabled: Command name required');
+      if (!commandCanBeModified(app, name)) throw new Error(`PutEnabled: ${name} cannot be modified (CanBeModified=false)`);
+      const ok = putCommandEnabled(app, name, a.Enabled !== false && a.Enabled !== 0);
+      if (!ok) throw new Error(`PutEnabled: unknown command ${name}`);
+      app.events.emit('selection');
+      return ok;
+    },
+  });
   app.register({ name: 'DeleteClip', label: 'Delete Clip', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }], execute(app, a) {
     const { mix, clips, transitions } = mixState(app); const i = clips.findIndex(x => !a.Clip || x.name === a.Clip); if (i < 0) throw new Error('No clip');
     const [c] = clips.splice(i, 1);

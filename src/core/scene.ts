@@ -601,8 +601,14 @@ export class Group extends Node {
 export class Pass extends Node { constructor(name: string) { super(name, 'pass', 'pass', [bool('Active', true, 'Active'), int('FrameStart', 1, 'Start Frame'), int('FrameEnd', 100, 'End Frame')]); } }
 
 // ---------------------------------------------------------------- scene
+/** Softimage actionclip.weight FCurve key (ModifyWeightProc / gk10 via SetDefaultWeight). */
+export type MixerWeightKey = { time: number; value: number; left?: number; right?: number; interp?: number };
 /** Softimage Mixer clip on a track (PC dump nested Sources/Tracks). */
-export type MixerClip = { name: string; source: string; start: number; duration: number; track?: number; weight?: number; mute?: boolean; additive?: boolean };
+export type MixerClip = {
+  name: string; source: string; start: number; duration: number; track?: number; weight?: number; mute?: boolean; additive?: boolean;
+  /** Softimage `clip.actionclip.weight` FCurve keys; when set, mixer eval samples this instead of scalar `weight`. */
+  weightKeys?: MixerWeightKey[];
+};
 /** Softimage mixer transition between two clips (AddTransition / AddBridgeTransition / AddTWTransition). */
 export type MixerTransition = { name: string; kind: 'standard' | 'bridge' | 'timewarp'; from: string; to: string; length: number; weight?: number };
 /** Softimage mixer compound (CreateCompound / ExplodeCompound). */
