@@ -21768,5 +21768,227 @@
 ]
 }
 ]
+},
+"C3DPrefsICEOperators": {
+"label": "ICE Operators",
+"params": [
+{
+"sn": "createparticles",
+"label": "Create Particles",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "createrigidbody",
+"label": "Create Rigid Body",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "createsoftbody",
+"label": "Create Soft Body",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "createcloth",
+"label": "Create Cloth",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "modifyparticles",
+"label": "Modify Particles",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "modifyrigidbody",
+"label": "Modify Rigid Body",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "modifydeform",
+"label": "Modify Deform",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "iceparticlescreate",
+"label": "ICE Particles Create",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "iceparticlesonemission",
+"label": "ICE Particles On Emission",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "iceparticlesafteremission",
+"label": "ICE Particles After Emission",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "iceparticlesforce",
+"label": "ICE Particles Force",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "iceparticlescollision",
+"label": "ICE Particles Collision",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "iceparticlessimulation",
+"label": "ICE Particles Simulation",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "iceparticlesmodellibrary",
+"label": "ICE Particles Model Library",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "icedeformcreate",
+"label": "ICE Deform Create",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "icedeformsimulate",
+"label": "ICE Deform Simulate",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "icekinematicseffects",
+"label": "ICE Kinematics Effects",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "icekinematicsconstrain",
+"label": "ICE Kinematics Constrain",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "icecrowdfxactors",
+"label": "ICE CrowdFX Actors",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "icecrowdfxcrowd",
+"label": "ICE CrowdFX Crowd",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+},
+{
+"sn": "icecrowdfxsimulation",
+"label": "ICE CrowdFX Simulation",
+"type": "string",
+"default": "",
+"desc": "Softimage ICEOperators compound path (Desktop tour empty default)"
+}
+],
+"layout": [
+{
+"group": "ICE Operators",
+"items": [
+{
+"param": "createparticles"
+},
+{
+"param": "createrigidbody"
+},
+{
+"param": "createsoftbody"
+},
+{
+"param": "createcloth"
+},
+{
+"param": "modifyparticles"
+},
+{
+"param": "modifyrigidbody"
+},
+{
+"param": "modifydeform"
+},
+{
+"param": "iceparticlescreate"
+},
+{
+"param": "iceparticlesonemission"
+},
+{
+"param": "iceparticlesafteremission"
+},
+{
+"param": "iceparticlesforce"
+},
+{
+"param": "iceparticlescollision"
+},
+{
+"param": "iceparticlessimulation"
+},
+{
+"param": "iceparticlesmodellibrary"
+},
+{
+"param": "icedeformcreate"
+},
+{
+"param": "icedeformsimulate"
+},
+{
+"param": "icekinematicseffects"
+},
+{
+"param": "icekinematicsconstrain"
+},
+{
+"param": "icecrowdfxactors"
+},
+{
+"param": "icecrowdfxcrowd"
+},
+{
+"param": "icecrowdfxsimulation"
+}
+]
+}
+]
 }
 }
