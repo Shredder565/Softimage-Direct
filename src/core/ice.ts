@@ -4,8 +4,9 @@
 import { MeshData } from './geometry';
 import { Operator, X3DObject, stampOf } from './scene';
 import { ParamSet } from './params';
-import { num, bool, enumP, str } from './params';
+import { num, int, bool, enumP, str } from './params';
 import type { V3 } from './curves';
+import { capHoles } from './topology2';
 
 export type IceValue = number | V3 | boolean;
 export interface IcePort { name: string; type: 'scalar' | 'vector' | 'bool' | 'any'; }
@@ -66,20 +67,61 @@ export const ICE_NODES: Record<string, IceNodeDef> = {
 };
 export const ICE_CATEGORIES = () => { const m = new Map<string, string[]>(); for (const d of Object.values(ICE_NODES)) (m.get(d.category) ?? m.set(d.category, []).get(d.category)!).push(d.type); return m; };
 
-/** The ICE Tree operator: evaluates its graph per point; Set Data PointPosition writes the result. */
+/** Softimage Cap Hole ICETree name (CapHoleProc → ApplyICEOp("Cap Hole") → Cap_Hole:ICETree). */
+export function isCapHoleIce(name: string): boolean {
+  return /^Cap_?Hole$/i.test(String(name || '').replace(/\s+/g, '_')) || /^CapHole$/i.test(String(name || ''));
+}
+
+/** Softimage CapHoleProc picks a border vertex; prefer stored Vertex_Index when it lies on a boundary. */
+function capHoleBorderSeed(m: MeshData, preferred: number): number {
+  const count = new Map<string, number>();
+  const ends = new Map<string, [number, number]>();
+  for (const f of m.polygons) {
+    for (let i = 0; i < f.length; i++) {
+      const a = f[i], b = f[(i + 1) % f.length];
+      const k = a < b ? `${a},${b}` : `${b},${a}`;
+      count.set(k, (count.get(k) ?? 0) + 1);
+      ends.set(k, [a, b]);
+    }
+  }
+  const border = new Set<number>();
+  for (const [k, c] of count) if (c === 1) { const [a, b] = ends.get(k)!; border.add(a); border.add(b); }
+  if (!border.size) return preferred;
+  if (border.has(preferred)) return preferred;
+  return [...border].sort((a, b) => a - b)[0];
+}
+
+/** The ICE Tree operator: evaluates its graph per point; Set Data PointPosition writes the result.
+ * Cap_Hole is a Softimage CapHoleProc topology compound (Vertex_Index seed) — not a point graph. */
 export class ICETreeOperator extends Operator {
   nodes: IceNode[] = []; links: IceLink[] = []; nextId = 1; getTime: () => { frame: number; time: number } = () => ({ frame: 1, time: 0 });
-  constructor(name = 'ICETree', readonly owner: () => X3DObject | null) { super(name, 'icetree', [bool('mute', false, 'Mute')]); }
+  constructor(name = 'ICETree', readonly owner: () => X3DObject | null) {
+    const defs: any[] = [bool('mute', false, 'Mute')];
+    if (isCapHoleIce(name)) defs.push(int('Vertex_Index', 0, 'Vertex Index', { min: 0 }));
+    super(name, 'icetree', defs);
+  }
   addNode(type: string, x = 40, y = 40): IceNode { const def = ICE_NODES[type]; if (!def) throw new Error('Unknown ICE node ' + type); const params = new ParamSet(type, 'icenode', def.params ?? []); params.parent = this as any; (params as any).iceType = type; const n = { id: this.nextId++, type, x, y, params }; this.nodes.push(n); this.touch(); return n; }
   removeNode(id: number) { this.nodes = this.nodes.filter(n => n.id !== id); this.links = this.links.filter(l => l.from !== id && l.to !== id); this.touch(); }
   connect(from: number, fromPort: string, to: number, toPort: string) { this.links = this.links.filter(l => !(l.to === to && l.toPort === toPort)); this.links.push({ from, fromPort, to, toPort }); this.touch(); }
   disconnect(to: number, toPort: string) { this.links = this.links.filter(l => !(l.to === to && l.toPort === toPort)); this.touch(); }
   touch() { const prim: any = this.parent; if (prim) prim.dirty = true; this.stamp++; }
   stamp = 0;
-  depStamp() { return stampOf([this.owner()]) + '|' + this.stamp + '|' + this.getTime().frame + '|' + this.nodes.map(n => n.params.params.map(p => p.value).join(',')).join(';'); }
+  depStamp() { return stampOf([this.owner()]) + '|' + this.stamp + '|' + this.getTime().frame + '|' + (isCapHoleIce(this.name) ? String(this.val('Vertex_Index')) : '') + '|' + this.nodes.map(n => n.params.params.map(p => p.value).join(',')).join(';'); }
   /** Node evaluation order: inputs before their consumers. */
   private order(): IceNode[] { const seen = new Set<number>(); const out: IceNode[] = []; const visit = (n: IceNode) => { if (seen.has(n.id)) return; seen.add(n.id); for (const l of this.links) if (l.to === n.id) { const src = this.nodes.find(x => x.id === l.from); if (src) visit(src); } out.push(n); }; for (const n of this.nodes) visit(n); return out; }
   apply(m: MeshData | null): MeshData | null {
+    // Softimage CapHoleProc compound: cap border loops seeded by Vertex_Index (docs/ghidra/capholeproc-path.md).
+    // CapHoleProc always picks a *border* vertex; headless dumps SetValue Vertex_Index=0 when that index is on-hole.
+    // If the stored index is not on a boundary (Direct delete topology differs), resolve to a border seed — same as Softimage pick filter — so Cap_Hole:ICETree still caps.
+    if (isCapHoleIce(this.name)) {
+      if (!m || this.val('mute')) return m;
+      const preferred = Math.max(0, Number(this.val('Vertex_Index') ?? 0) | 0);
+      const seed = capHoleBorderSeed(m, preferred);
+      const capped = capHoles(m, { kind: 'point', indices: [seed] });
+      // Softimage Cap Hole.xsicompound walks from seed to the hole; if seed still misses, cap all open borders (empty sel).
+      if (capped.polygons.length === m.polygons.length) return capHoles(m, { kind: 'point', indices: [] });
+      return capped;
+    }
     if (!m || this.val('mute') || !this.nodes.some(n => n.type === 'Set Data')) return m;
     const order = this.order(); const n = m.positions.length / 3; const nrm = computeNormals(m); const me = this.owner(); const op = me ? me.globalMatrix().elements : null; const objPos: V3 = op ? [op[12], op[13], op[14]] : [0, 0, 0]; const t = this.getTime();
     const out = { ...m, positions: new Float32Array(m.positions) }; const globals = new Map<string, any>();
@@ -97,8 +139,13 @@ export class ICETreeOperator extends Operator {
 }
 function computeNormals(m: MeshData): Float32Array { const n = new Float32Array(m.positions.length); const P = m.positions; for (const f of m.polygons) { let nx = 0, ny = 0, nz = 0; for (let i = 0; i < f.length; i++) { const a = f[i] * 3, b = f[(i + 1) % f.length] * 3; nx += (P[a + 1] - P[b + 1]) * (P[a + 2] + P[b + 2]); ny += (P[a + 2] - P[b + 2]) * (P[a] + P[b]); nz += (P[a] - P[b]) * (P[a + 1] + P[b + 1]); } for (const vi of f) { n[vi * 3] += nx; n[vi * 3 + 1] += ny; n[vi * 3 + 2] += nz; } } for (let i = 0; i < n.length; i += 3) { const l = Math.hypot(n[i], n[i + 1], n[i + 2]) || 1; n[i] /= l; n[i + 1] /= l; n[i + 2] /= l; } return n; }
 
-/** Factory compounds built as graphs. */
+/** Factory compounds built as graphs. Cap Hole is topology (CapHoleProc) — no point graph. */
 export function buildPreset(op: ICETreeOperator, preset: string) {
+  if (/^Cap\s*Hole$/i.test(preset) || isCapHoleIce(preset)) {
+    // Softimage Cap Hole.xsicompound: Vertex_Index lives on the Cap_Hole ICETree (CapHoleProc sets it).
+    if (op.get('Vertex_Index')) op.set('Vertex_Index', Number(op.val('Vertex_Index') ?? 0));
+    return;
+  }
   const N = (type: string, x: number, y: number, vals: Record<string, any> = {}) => { const n = op.addNode(type, x, y); for (const [k, val] of Object.entries(vals)) n.params.set(k, val); return n; };
   const L = (a: IceNode, ap: string, b: IceNode, bp: string) => op.connect(a.id, ap, b.id, bp);
   const pos = N('Get Data', 40, 60, { reference: 'PointPosition' }); const set = N('Set Data', 620, 60, { reference: 'PointPosition' });
@@ -116,4 +163,4 @@ export function buildPreset(op: ICETreeOperator, preset: string) {
     default: L(pos, 'value', set, 'value');
   }
 }
-export const ICE_PRESETS = ['Push Points', 'Turbulize Mesh', 'Randomize Position', 'Twist', 'Wave', 'Footprints'];
+export const ICE_PRESETS = ['Push Points', 'Turbulize Mesh', 'Randomize Position', 'Twist', 'Wave', 'Footprints', 'Cap Hole'];

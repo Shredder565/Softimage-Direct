@@ -132,13 +132,16 @@ export function registerModelCommands2(app: App) {
       app.select([target]); return target;
     };
   });
-  // ---- ICE: ApplyICEOp creates an ICE Tree operator (File = a factory compound: Footprints, Turbulize Mesh, Push Points, Randomize Position, Twist, Wave; empty = blank tree)
+  // ---- ICE: ApplyICEOp creates an ICE Tree operator (File = factory compound; Cap Hole = CapHoleProc Cap_Hole:ICETree)
   wrap(app, 'ApplyICEOp', (def) => {
-    def.canRun = (a: any) => !a.File || ICE_PRESETS.includes(a.File) || a.File === 'ICETree';
+    def.canRun = (a: any) => !a.File || ICE_PRESETS.includes(a.File) || a.File === 'ICETree' || /^Cap\s*Hole$/i.test(String(a.File || ''));
     def.args = [{ name: 'File', default: '' }, { name: 'Target', default: '' }, { name: 'Input', default: '' }];
     def.execute = (app: App, a: any) => {
       const o = (a.Target ? app.targets(a.Target)[0] : undefined) ?? app.selectedObjects.find(x => x.primitive?.mesh()); if (!o?.primitive?.mesh()) throw new Error(`${a.File || 'ICE Tree'}: select a polygon mesh`);
-      const op = new ICETreeOperator(a.File && a.File !== 'ICETree' ? String(a.File).replace(/\s+/g, '') : 'ICETree', () => o); op.getTime = () => ({ frame: app.anim.frame, time: (app.anim.frame - 1) / (app.anim.fps || 30) });
+      // Softimage CapHoleProc names the tree Cap_Hole (history Cap_Hole:ICETree); other presets collapse spaces.
+      const file = String(a.File || '');
+      const opName = !file || file === 'ICETree' ? 'ICETree' : /^Cap\s*Hole$/i.test(file) ? 'Cap_Hole' : file.replace(/\s+/g, '');
+      const op = new ICETreeOperator(opName, () => o); op.getTime = () => ({ frame: app.anim.frame, time: (app.anim.frame - 1) / (app.anim.fps || 30) });
       if (a.File && a.File !== 'ICETree') buildPreset(op, String(a.File));
       return addOp(app, o, op);
     };
