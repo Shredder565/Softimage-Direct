@@ -12,7 +12,7 @@ import { registerAnimCommands } from './commands/anim';
 import { registerRenderCommands } from './commands/render';
 import { registerModuleToolbarCommands } from './commands/moduleToolbar';
 import { iceTree, renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
-import { frostGraphView, frostOf, runFrostSmokeTests } from './frost';
+import { frostGraphView, frostHairWizardView, frostOf, runFrostSmokeTests } from './frost';
 import { registerToolbarCommands, palettesView, toolbarView, newToolbar, customizeToolbars, openToolbarWindow, userToolbars } from './ui/toolbars';
 import { playbackPanel, animationPanel, timerange, layerManager, xsiExplorer, scriptHistory } from './ui/views';
 import { LayoutEngine, layoutByName, currentLayoutName, layoutNames, dockInto } from './ui/layout';
@@ -107,6 +107,7 @@ const SHELL: Record<string, (h: HTMLElement) => void> = {
   'Animation Mixer': h => animationMixer(app, h), 'Expression Editor': h => { animationEditor(app, h, 'fcurve'); },
   'ICE Tree': h => iceTree(app, h),
   'FROST Graph': h => frostGraphView(app, h),
+  'FROST Hair Wizard': h => frostHairWizardView(app, h),
   'FX Tree': deferredView('FX Tree', 'Softimage Fx Tree (compositing) — UI frame wired; Render/FX evaluation deferred past UI+Model+Animation DoD.'),
   'Fx Viewer': deferredView('Fx Viewer', 'Softimage Fx Viewer — UI frame wired; compositing deferred.'),
   'Fx Paint Brush List': deferredView('Fx Paint Brush List', 'Softimage Fx brushes list — UI frame wired; compositing deferred.'),
@@ -142,6 +143,8 @@ const openView = (name: string) => {
   let w = name === 'Mini Transform Panel' ? 200 : Math.max(320, size ? Math.min(900, size[2]) : (animSz ? Math.min(900, animSz[2]) : 420));
   let h = size ? Math.min(700, size[3]) : (animSz ? Math.min(700, animSz[3]) : 400);
   if (name === 'Script Editor' && seTok) { w = seTok.floatDefaultWidthPx ?? w; h = seTok.floatDefaultHeightPx ?? h; }
+  if (name === 'FROST Hair Wizard') { w = 440; h = 620; }
+  if (name === 'FROST Graph') { w = Math.max(w, 720); h = Math.max(h, 480); }
   const builders: Record<string, (host: HTMLElement) => void> = {
     'Explorer': h => explorerView(app, h), 'Property Editor': h => propertyEditor(app, h), 'Script Editor': h => scriptLog(app, h), 'Script History View': h => scriptHistory(app, h),
     'Keying Panel': h => keyingPanel(app, h), 'Layer Control': h => layerControl(app, h), 'Main Shelf': h => mainShelf(app, h), 'Toolbar Panel': h => toolbarPanel(app, h), 'Command Line': h => commandLine(app, h),

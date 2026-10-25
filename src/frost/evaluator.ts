@@ -1,9 +1,25 @@
-/** Deterministic CPU FROST evaluator — emit + integrate (+ turbulize force). */
+/** Deterministic CPU FROST evaluator — particles + character hair strands. */
 
 import type { FrostGraphIR, FrostNodeIR } from './ir';
 import { FROST_NODES } from './nodes';
+import { frostHash, frostTurbulence, type Vec3 } from './math';
+import {
+  applyStyleLayers,
+  generateStrands,
+  meshBoundingSphere,
+  meshToColliderTris,
+  packStrandLineSegments,
+  proceduralScalpSamples,
+  scalpSamplesFromMesh,
+  strandCount,
+  tickStrandDynamics,
+  defaultStyleLayers,
+  type FrostStrand,
+  type StyleLayer,
+} from './strands';
 
-export type Vec3 = [number, number, number];
+export type { Vec3 } from './math';
+export { frostHash, frostNoise3, frostTurbulence } from './math';
 
 export interface FrostParticle {
   px: number; py: number; pz: number;
@@ -16,6 +32,14 @@ export interface FrostParticle {
   seed: number;
 }
 
+export interface FrostMeshBinding {
+  name: string;
+  positions: Float32Array;
+  indices?: Uint32Array | null;
+  /** Column-major 4x4 world matrix. */
+  matrix?: number[] | Float32Array | null;
+}
+
 export interface FrostEvalState {
   frame: number;
   time: number;
@@ -23,48 +47,28 @@ export interface FrostEvalState {
   /** Accumulated emit remainder for fractional rates. */
   emitCarry: number;
   attrs: Map<string, Float32Array | number[]>;
+  /** Character hair strand buffers (P1). */
+  strands: FrostStrand[];
+  /** True after CreateStrands builds buffers for the current recipe stamp. */
+  strandsReady: boolean;
+  strandStamp: string;
 }
 
 export interface FrostTickOpts {
   frame: number;
   dt?: number;
   fps?: number;
+  /** Scene mesh bindings keyed by object name (scalp / body). */
+  meshes?: Record<string, FrostMeshBinding>;
 }
 
 const EPS = 1e-9;
 
-/** Deterministic hash → [0,1). */
-export function frostHash(a: number, b: number, c: number, seed: number): number {
-  let h = Math.imul(a | 0, 374761393) ^ Math.imul(b | 0, 668265263) ^ Math.imul(c | 0, 2147483647 ^ 1274126177) ^ Math.imul(seed | 0, 974711);
-  h = Math.imul(h ^ (h >>> 13), 1274126177);
-  return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
-}
-
-const smooth = (t: number) => t * t * (3 - 2 * t);
-
-export function frostNoise3(p: Vec3, seed = 0): number {
-  const xi = Math.floor(p[0]), yi = Math.floor(p[1]), zi = Math.floor(p[2]);
-  const fx = smooth(p[0] - xi), fy = smooth(p[1] - yi), fz = smooth(p[2] - zi);
-  const c = (dx: number, dy: number, dz: number) => frostHash(xi + dx, yi + dy, zi + dz, seed);
-  const lx = (a: number, b: number, t: number) => a + (b - a) * t;
-  return lx(
-    lx(lx(c(0, 0, 0), c(1, 0, 0), fx), lx(c(0, 1, 0), c(1, 1, 0), fx), fy),
-    lx(lx(c(0, 0, 1), c(1, 0, 1), fx), lx(c(0, 1, 1), c(1, 1, 1), fx), fy),
-    fz,
-  ) * 2 - 1;
-}
-
-export function frostTurbulence(p: Vec3, octaves = 3, seed = 0): number {
-  let a = 0, amp = 1, f = 1, n = 0;
-  for (let o = 0; o < octaves; o++) {
-    a += frostNoise3([p[0] * f, p[1] * f, p[2] * f], seed + o) * amp;
-    n += amp; amp *= 0.5; f *= 2;
-  }
-  return n > 0 ? a / n : 0;
-}
-
 export function createFrostState(): FrostEvalState {
-  return { frame: 0, time: 0, particles: [], emitCarry: 0, attrs: new Map() };
+  return {
+    frame: 0, time: 0, particles: [], emitCarry: 0, attrs: new Map(),
+    strands: [], strandsReady: false, strandStamp: '',
+  };
 }
 
 function asVec3(v: unknown, fallback: Vec3 = [0, 0, 0]): Vec3 {
@@ -193,10 +197,12 @@ export function tickFrost(graph: FrostGraphIR, state: FrostEvalState, opts: Fros
   if (!graph.simulated) {
     state.particles = [];
     state.emitCarry = 0;
+    state.strandsReady = false;
   } else if (frame < state.frame) {
     // scrub backward → hard reset (MVP)
     state.particles = [];
     state.emitCarry = 0;
+    state.strandsReady = false;
   }
 
   state.frame = frame;
@@ -207,6 +213,12 @@ export function tickFrost(graph: FrostGraphIR, state: FrostEvalState, opts: Fros
   let forceSum: Vec3 = [0, 0, 0];
   let didEmit = false;
   let didSim = false;
+  let windForce: Vec3 = [0, 0, 0];
+  let windTurb = 0;
+  let colliderSphere: { cx: number; cy: number; cz: number; r: number } | null = null;
+  let colliderTris: Float32Array | null = null;
+  let styleLayers: StyleLayer[] = [];
+  const meshes = opts.meshes ?? {};
 
   for (const node of ordered) {
     const def = FROST_NODES[node.type];
@@ -254,11 +266,107 @@ export function tickFrost(graph: FrostGraphIR, state: FrostEvalState, opts: Fros
       didSim = true;
       out.execute = true;
       out.cloud = 'particles';
+    } else if (node.type === 'CreateStrands') {
+      const stamp = strandRecipeStamp(node, graph);
+      if (!state.strandsReady || state.strandStamp !== stamp) {
+        const count = Math.max(1, num(node.params.guideCount, 64) | 0);
+        const segments = Math.max(2, num(node.params.segments, 8) | 0);
+        const length = Math.max(0.05, num(node.params.length, 1.2));
+        const seed = num(node.params.seed, 1) | 0;
+        const scalpName = String(node.params.scalpObject ?? '');
+        const mesh = scalpName ? meshes[scalpName] : undefined;
+        const samples = mesh
+          ? scalpSamplesFromMesh(mesh.positions, mesh.matrix ?? null, count, seed)
+          : proceduralScalpSamples(count, seed);
+        state.strands = generateStrands({
+          count,
+          segments,
+          length,
+          thickness: num(node.params.thickness, 0.02),
+          seed,
+          samples,
+          lengthMap: num(node.params.lengthMap, 1),
+          densityMap: num(node.params.densityMap, 1),
+        });
+        state.strandsReady = true;
+        state.strandStamp = stamp;
+      }
+      out.execute = true;
+      out.strands = 'strands';
+    } else if (node.type === 'StyleLayers') {
+      styleLayers = parseStyleLayers(node.params.layers);
+      applyStyleLayers(state.strands, styleLayers, num(node.params.seed, 1) | 0);
+      // When sim is muted or first frame after rebuild, snap to rest
+      if (!graph.simulated || frame <= 1 || !!node.params.snapToRest) {
+        for (const st of state.strands) { st.pos.set(st.rest); st.prev.set(st.rest); }
+      }
+      out.execute = true;
+      out.strands = 'strands';
+    } else if (node.type === 'CollideBody') {
+      const bodyName = String(node.params.bodyObject ?? '');
+      const quality = String(node.params.quality ?? 'Preview');
+      const mesh = bodyName ? meshes[bodyName] : undefined;
+      if (mesh) {
+        colliderSphere = meshBoundingSphere(mesh.positions, mesh.matrix ?? null);
+        if (quality !== 'Playblast') {
+          colliderTris = meshToColliderTris(mesh.positions, mesh.indices ?? null, mesh.matrix ?? null, 80);
+        } else {
+          colliderTris = null; // capsules / sphere only
+        }
+      } else if (node.params.useDefaultBody !== false) {
+        colliderSphere = { cx: 0, cy: 0.85, cz: 0, r: 0.42 };
+      }
+      out.execute = true;
+      out.geometry = bodyName || 'defaultBody';
+    } else if (node.type === 'Wind') {
+      windForce = asVec3(node.params.force, [0.4, 0.05, 0.1]);
+      windTurb = num(node.params.turbulence, 1.5);
+      out.force = windForce;
+      out.execute = true;
+    } else if (node.type === 'SimulateStrands') {
+      const muted = !!node.params.muted;
+      const g = asVec3(node.params.gravity, [0, -4.5, 0]);
+      // Optional linked wind
+      const forceLink = incoming(graph, node.id, 'force');
+      let wind: Vec3 = [...windForce] as Vec3;
+      let turb = windTurb;
+      if (forceLink) {
+        const fo = nodeOut.get(forceLink.from)?.[forceLink.fromPort];
+        if (Array.isArray(fo)) wind = asVec3(fo);
+        const src = graph.nodes.find(n => n.id === forceLink.from);
+        if (src?.type === 'Wind') turb = num(src.params.turbulence, turb);
+      }
+      tickStrandDynamics(state.strands, {
+        gravity: g,
+        damping: num(node.params.damping, 0.12),
+        stiffness: num(node.params.stiffness, 0.35),
+        stretchLimit: num(node.params.stretchLimit, 1.05),
+        iterations: Math.max(1, num(node.params.iterations, 4) | 0),
+        wind,
+        windTurbulence: turb,
+        dt,
+        time: state.time,
+        colliderSphere,
+        colliderTris,
+        muted,
+      });
+      didSim = true;
+      out.execute = true;
+      out.strands = 'strands';
+    } else if (node.type === 'HairLook') {
+      state.attrs.set('HairRootColor', asVec3(node.params.rootColor, [0.12, 0.08, 0.05]) as unknown as number[]);
+      state.attrs.set('HairTipColor', asVec3(node.params.tipColor, [0.35, 0.22, 0.12]) as unknown as number[]);
+      state.attrs.set('HairTaper', [num(node.params.taper, 0.7)]);
+      state.attrs.set('HairNoise', [num(node.params.noise, 0.15)]);
+      state.attrs.set('HairDisplayMode', [node.params.displayMode === 'points' ? 1 : 0]);
+      out.execute = true;
+      out.strands = 'strands';
     } else if (node.type === 'GetAttr') {
       const name = String(node.params.name ?? 'PointPosition');
       // MVP: expose first alive particle sample / counts for probes
       const alive = state.particles.filter(p => p.alive);
       if (name === 'NbPoints') out.value = alive.length;
+      else if (name === 'NbStrands') out.value = strandCount(state.strands);
       else if (name === 'Frame') out.value = frame;
       else if (name === 'Time') out.value = state.time;
       else if (name === 'PointPosition' && alive[0]) out.value = [alive[0].px, alive[0].py, alive[0].pz];
@@ -281,8 +389,32 @@ export function tickFrost(graph: FrostGraphIR, state: FrostEvalState, opts: Fros
   }
 
   // Safety: if graph has Emit but no Simulate, still age nothing — particles sit at birth
-  void didEmit; void didSim;
+  void didEmit; void didSim; void styleLayers;
   return state;
+}
+
+function strandRecipeStamp(node: FrostNodeIR, graph: FrostGraphIR): string {
+  const style = graph.nodes.find(n => n.type === 'StyleLayers');
+  return [
+    node.params.guideCount, node.params.segments, node.params.length, node.params.seed,
+    node.params.scalpObject, node.params.densityMap, node.params.lengthMap, node.params.thickness,
+    style ? JSON.stringify(style.params.layers ?? '') : '',
+  ].join('|');
+}
+
+function parseStyleLayers(raw: unknown): StyleLayer[] {
+  if (typeof raw === 'string') {
+    try { return parseStyleLayers(JSON.parse(raw)); } catch { return defaultStyleLayers(); }
+  }
+  if (!Array.isArray(raw)) return defaultStyleLayers();
+  return raw.map((l: any, i: number) => ({
+    id: String(l?.id ?? `layer${i}`),
+    name: String(l?.name ?? `Layer ${i + 1}`),
+    kind: String(l?.kind ?? 'comb'),
+    strength: Number(l?.strength) || 0,
+    muted: !!l?.muted,
+    direction: Array.isArray(l?.direction) ? asVec3(l.direction) : undefined,
+  }));
 }
 
 /** Packed positions of alive particles (xyz interleaved). */
@@ -296,6 +428,15 @@ export function frostPositions(state: FrostEvalState): Float32Array {
   return out;
 }
 
+/** Packed line-segment positions for strand display. */
+export function frostStrandLines(state: FrostEvalState): Float32Array {
+  return packStrandLineSegments(state.strands);
+}
+
 export function aliveCount(state: FrostEvalState): number {
   return state.particles.reduce((n, p) => n + (p.alive ? 1 : 0), 0);
+}
+
+export function aliveStrandCount(state: FrostEvalState): number {
+  return strandCount(state.strands);
 }

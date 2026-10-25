@@ -8,6 +8,7 @@ export type FrostPortType =
   | 'bool'
   | 'execution'
   | 'pointcloud'
+  | 'strandfield'
   | 'geometry'
   | 'any';
 
