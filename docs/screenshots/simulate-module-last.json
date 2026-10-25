@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "diffs": [],
+  "notes": [
+    "loaded tops /workspace/src/data/si/simulate_module_mcp_tops.json",
+    "softimage 13.2.163.0",
+    "Simulate in modulesExtracted",
+    "Simulate in module-select",
+    "Simulate tops OK: Get, Create, Modify",
+    "Simulate MCP buttons match dump",
+    "flyout pixels LOCK",
+    "Syflex client GDI LOCK",
+    "SyCreateCloth wired",
+    "ApplyCloth wired",
+    "CreateActiveRigidBody wired",
+    "ApplySoftBody wired",
+    "preferences.simulation cachefiletypestring=icecache",
+    "preferences.simulation rbdengine=0",
+    "FROST cloth stays",
+    "live Simulate toolbar 11 buttons",
+    "live Simulate groups match MENU 205 tops",
+    "live Simulate MCP buttons present",
+    "Simulate≠ICE (205 Rigid/Soft/Cloth vs 303 Particles/CrowdFX)",
+    "SwitchToolbar Target=5 → Simulate",
+    "SyCreateCloth + ApplyCloth present",
+    "SyCreateCloth → cloth property via ApplyCloth"
+  ],
+  "softimage": "13.2.163.0",
+  "menu_id": 205,
+  "tops": [
+    "Get",
+    "Create",
+    "Modify"
+  ]
+}

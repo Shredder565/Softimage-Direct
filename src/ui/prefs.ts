@@ -85,6 +85,19 @@ function apply(app: App, key: string, set: ParamSet) {
     case 'C3DPrefsObjectView': A.objectViewPrefs = { autoFrame: !!v('autoframe'), autoSelect: !!v('autoselect'), localView: !!v('localview'), toolbar: v('displaytoolbar') !== false }; break;
     case 'C3DPrefsTransformGroup': A.groupPivot = Number(v('pivot') ?? 0); break;
     case 'C3DPrefsShaderball': A.shaderball = { model: Number(v('def_model_spatial') ?? 0), background: Number(v('def_background_spatial') ?? 0), quality: Number(v('quality') ?? 1) }; break;
+    // Softimage preferences.simulation (modules_prefs_related.json) — C3DPrefsSimulation SPDL; no invent engines
+    case 'C3DPrefsSimulation': A.simulationPrefs = {
+      rbdengine: Number(v('rbdengine') ?? 0),
+      cachetemplatefilename: String(v('cachetemplatefilename') ?? '[object]_[version]_[frame]'),
+      cachefiletypestring: String(v('cachefiletypestring') ?? 'icecache'),
+      defaulttemplateindex: Number(v('defaulttemplateindex') ?? 0),
+      cachetemplateprojectpath: String(v('cachetemplateprojectpath') ?? '[project path]/Simulation/[model]/[object]'),
+      cachetemplatelocalpath: String(v('cachetemplatelocalpath') ?? '[env XSI_USERHOME]/Simulation/[project]/[scene]/[model]/[object]'),
+      cachetemplatepatha: String(v('cachetemplatepatha') ?? ''),
+      cachetemplatepathb: String(v('cachetemplatepathb') ?? ''),
+      cachetemplatepathc: String(v('cachetemplatepathc') ?? ''),
+      cachefiletype: Number(v('cachefiletype') ?? 0),
+    }; break;
   }
   window.dispatchEvent(new CustomEvent('prefschanged', { detail: { key, set } }));
   if (['C3DSceneColors', 'C3DPrefsDisplay', 'C3DPrefsViewCube', 'C3DTransformProps'].includes(key)) app.events.emit('scene');
