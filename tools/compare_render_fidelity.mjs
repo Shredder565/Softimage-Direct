@@ -180,11 +180,20 @@ const r = await page.evaluate(() => {
   // render toolbar PE W/H audit + Softimage OM scripting-name inventory
   let renderToolbarChrome = null;
   let renderToolbarOm = null;
+  let renderDesktopMcp = null;
   try {
     const audit = (window).__uiAudit?.() ?? null;
     renderToolbarChrome = audit?.renderToolbarChrome ?? null;
     renderToolbarOm = audit?.renderToolbarOm ?? null;
   } catch (e) {}
+  // Desktop tour MCP tops (08-after-key3) — Pass head = current pass name
+  try {
+    if (A.module !== 'Render') { A.module = 'Render'; A.events.emit('module'); }
+    const passBtn = document.querySelector('.toolbar-panel.Render button.tb-btn[data-si-pass-head="1"]');
+    const groups = [...document.querySelectorAll('.toolbar-panel.Render .tb-group')].map(g => g.textContent.trim());
+    const btns = [...document.querySelectorAll('.toolbar-panel.Render button.tb-btn')].map(b => b.textContent.trim());
+    renderDesktopMcp = { groups, btns, passHead: passBtn?.textContent?.trim() ?? null, module: A.module };
+  } catch (e) { renderDesktopMcp = { err: String(e?.message || e) }; }
 
   // Softimage RenderRegionCreate + RenderOptionsRegion SPDL OM (HWND crop stays LOCK)
   let regionCreate = null;
@@ -270,6 +279,7 @@ const r = await page.evaluate(() => {
     wrapuType: wrapParam?.def?.type,
     renderToolbarChrome,
     renderToolbarOm,
+    renderDesktopMcp,
     regionCreate,
     regionOptions,
     renderPrefs,
@@ -582,6 +592,20 @@ const deepenW = deepen?.region_like_params?.imagewidth ?? deepen?.render_options
 if (deepenW != null && Number(r.roMap.imagewidth) !== Number(deepenW))
   diffs.push(`deepen imagewidth Direct=${r.roMap.imagewidth} PC=${deepenW}`);
 else if (deepenW != null) notes.push(`deepen region_like imagewidth=${deepenW}`);
+
+
+// Desktop Render MCP tops + Pass head (tour 08) — no invent HWND
+const deskTops = ["Get", "Modify", "Render", "Pass"];
+if (!r.renderDesktopMcp || r.renderDesktopMcp.err) diffs.push(`renderDesktopMcp ${r.renderDesktopMcp?.err || "missing"}`);
+else {
+  for (const g of deskTops) if (!r.renderDesktopMcp.groups.includes(g)) diffs.push(`Render MCP missing group ${g}`);
+  if (r.renderDesktopMcp.passHead !== "Default_Pass") diffs.push(`Pass head ${r.renderDesktopMcp.passHead} want Default_Pass`);
+  else notes.push("Desktop Pass head Default_Pass OK");
+  if (!r.renderDesktopMcp.btns.includes("Regions")) diffs.push("Render MCP missing Regions (PE label)");
+  else notes.push("Render MCP Regions PE label OK");
+  if (!r.renderDesktopMcp.btns.includes("Ambience")) diffs.push("Render MCP missing Ambience");
+  else notes.push("Render MCP Ambience OK");
+}
 
 console.log(JSON.stringify({ ok: diffs.length === 0, diffs, notes: notes.slice(0, 80), softimage: prefs.meta?.softimage }, null, 2));
 process.exit(diffs.length ? 1 : 0);

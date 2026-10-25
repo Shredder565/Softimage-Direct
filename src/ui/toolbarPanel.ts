@@ -43,7 +43,16 @@ export function toolbarPanel(app: App, host: HTMLElement) {
       const g = document.createElement('div'); g.className = 'tb-group'; g.textContent = top.label ?? ''; scroll.appendChild(g);
       for (const sub of top.items ?? []) {
         if (sub.separator) continue;
-        const b = document.createElement('button'); b.className = 'tb-btn'; b.textContent = sub.label ?? '';
+        const b = document.createElement('button'); b.className = 'tb-btn';
+        // Softimage Desktop Render MCP (tour 08-after-key3): Pass head shows current pass name
+        // (Default_Pass), not the PE resource leaf "RenderPass". Keep PE id/cmd mapping.
+        const passHead = app.module === 'Render' && top.label === 'Pass' && (sub.label === 'RenderPass' || sub.id === 40537);
+        b.textContent = passHead
+          ? (app.scene.passes[app.scene.passes.length - 1]?.name
+            ?? app.scene.passes[0]?.name
+            ?? 'Default_Pass')
+          : (sub.label ?? '');
+        if (passHead) b.dataset.siPassHead = '1';
         b.onclick = (e) => { const r = b.getBoundingClientRect(); openMenu(app, sub.items ?? [{ label: sub.label, id: sub.id }], r.right + 2, r.top, [top.label!, sub.label!]); e.stopPropagation(); };
         scroll.appendChild(b);
       }
@@ -51,6 +60,9 @@ export function toolbarPanel(app: App, host: HTMLElement) {
   };
   render();
   app.events.on('module', render);
+  // Pass head label tracks Softimage current pass name
+  app.events.on('scene', render);
+  app.events.on('newscene', render);
 }
 
 let openMenus: HTMLElement[] = [];
