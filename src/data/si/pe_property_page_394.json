@@ -1,0 +1,66 @@
+{
+  "_comment": "XSI.exe RT_DIALOG 394 Property Page stub \u2014 attested PE metrics/strings only (no invent Layout).",
+  "softimage": "2015 SP2",
+  "lock": "ui.pe_property_page_394",
+  "source": "data/dump/si_pe_property_page_394.json",
+  "dialog": {
+    "dll": "XSI.exe",
+    "id": 394,
+    "rva": 19961344,
+    "size": 158,
+    "title": "Property Page",
+    "style": 1220542528,
+    "rect_dlu": [
+      0,
+      0,
+      210,
+      154
+    ],
+    "font": [
+      8,
+      "MS Sans Serif"
+    ],
+    "stub": {
+      "cls": "static",
+      "text": "TODO: layout property page",
+      "id": 65535,
+      "rect_dlu": [
+        60,
+        73,
+        90,
+        8
+      ],
+      "style": 1342308352
+    }
+  },
+  "strings": [
+    "Property Page",
+    "TODO: layout property page",
+    "layout property page",
+    "PPG"
+  ],
+  "menus": [
+    "PPG_CONTEXT_MENU",
+    "PPG_ANIM_CONTEXT_MENU"
+  ],
+  "tokens": {
+    "title": "Property Page",
+    "stubText": "TODO: layout property page",
+    "fontFamily": "\"MS Sans Serif\", \"Segoe UI\", Arial, sans-serif",
+    "fontPt": 8,
+    "fontPx": 11,
+    "widthDlu": 210,
+    "heightDlu": 154,
+    "widthPx": 315,
+    "heightPx": 242,
+    "stubXDlu": 60,
+    "stubYDlu": 73,
+    "stubWDlu": 90,
+    "stubHDlu": 8,
+    "stubXPx": 90,
+    "stubYPx": 115,
+    "stubWPx": 135,
+    "stubHPx": 13
+  },
+  "note": "PE stub chrome only \u2014 Softimage Layout beyond the TODO string is not attested; do not invent."
+}

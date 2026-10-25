@@ -16,8 +16,14 @@ Softimage-pc progress: `docs/rea-ghidra-residual-progress.md`.
 | B3 | Animate | ApplyFlexEnv weights / Mode | Desktop VBArray: numeric % Weights.Array | **WIRE** weights + Mode | [flexenv-headless-lock.md](./flexenv-headless-lock.md) | VBArray golden; Direct unit sum |
 | B4 | Animate | Fcurve handled-spline | **`gk10` GkStdFCurve** | **DONE** | [fcurve-handled-spline.md](./fcurve-handled-spline.md) | new cases only |
 | C1 | UI | MCP / Anim HWND Enabled | Desktop MCP + Anim Command.Enabled overlays | **WIRE** attested bools; OpenView **LOCK** | [../anim-hwnd-chrome-overnight.md](../anim-hwnd-chrome-overnight.md) | null→canRun; no invent views |
+<<<<<<< HEAD
 | C2–C6 | UI | PPG GDI / PE 394 / Send-to / ICE anchors | see [ui-lock-binary-pins.md](./ui-lock-binary-pins.md) + [uiut-ppg-gdi.md](./uiut-ppg-gdi.md) | **LOCK** | empty HWND + no GDI COLORREF; PE host already #36–#41 | no invent |
 | C4b | UI | Manipulator hit-box px | `viewinteraction.dll` menus **530/531/532** + XSI.exe RT_BITMAP W/H | **DONE** (PE) / **LOCK** (hover) | unlock_pe394_manip_curve | menus+bitmap W/H wired; interactive hover px LOCK |
+=======
+| C2 | UI | PPG title/hover GDI | [uiut-ppg-gdi.md](./uiut-ppg-gdi.md) | **LOCK** | no COLORREF / owner-draw pins | no invent |
+| C3 | UI | PE Property Page 394 stub | XSI.exe RT_DIALOG 394 + TODO strings | **DONE** (this PR) | [ui-lock-binary-pins.md](./ui-lock-binary-pins.md) | shell chrome only; no invent Layout |
+| C4–C6 | UI | Send-to / Add-On / ICE anchors | [ui-lock-binary-pins.md](./ui-lock-binary-pins.md) | **LOCK** / out | shell strings only | no invent |
+>>>>>>> bac6f78 (Wire Softimage PE Property Page 394 stub chrome)
 
 ## Softimage-pc coordination
 

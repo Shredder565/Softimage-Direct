@@ -49,6 +49,15 @@
   --dlg-btn-h: 22px;
   --dlg-pad: 8px;
   --dlg-label-w: 90px;
+  /* XSI.exe RT_DIALOG 394 Property Page stub (PE metrics only; no invent Layout) */
+  --pe394-font: "MS Sans Serif", "Segoe UI", Arial, sans-serif;
+  --pe394-font-px: 11px;
+  --pe394-w: 315px;
+  --pe394-h: 242px;
+  --pe394-stub-x: 90px;
+  --pe394-stub-y: 115px;
+  --pe394-stub-w: 135px;
+  --pe394-stub-h: 13px;
   /* Softimage Animate chrome (PE RT_DIALOG + views; see src/data/si/anim_chrome.json) */
   --anim-font: Tahoma, "MS Sans Serif", Arial, sans-serif;
   --anim-font-px: 11px;
@@ -204,6 +213,34 @@ button, select, input { font-family: inherit; }
 .anim-dot.small { width: 10px; height: 10px; }
 .anim-dot.animated { background: radial-gradient(circle at 40% 40%, #ffd27a, #e0932a); border-color: #8a5a10; } .anim-dot.keyed { background: radial-gradient(circle at 40% 40%, #ff8a7a, #d43a2a); border-color: #7a1a10; }
 .ppg-empty { padding: 10px; color: var(--muted); }
+/* Softimage XSI.exe RT_DIALOG 394 — Property Page TODO stub (attested DLU→px only) */
+.pe394-stub {
+  position: relative;
+  width: var(--pe394-w);
+  height: var(--pe394-h);
+  max-width: 100%;
+  font-family: var(--pe394-font);
+  font-size: var(--pe394-font-px);
+  color: var(--text);
+  background: var(--bg3);
+  border: 1px solid var(--line);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.pe394-stub-text {
+  position: absolute;
+  left: var(--pe394-stub-x);
+  top: var(--pe394-stub-y);
+  width: var(--pe394-stub-w);
+  height: var(--pe394-stub-h);
+  line-height: var(--pe394-stub-h);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--muted);
+  font-family: var(--pe394-font);
+  font-size: var(--pe394-font-px);
+}
 
 /* viewports */
 .vm { position: relative; width: 100%; height: 100%; background: var(--vp-bg); }
