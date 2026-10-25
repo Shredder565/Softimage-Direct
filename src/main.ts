@@ -16,12 +16,14 @@ import { registerIceModuleCommands, iceModuleAudit } from './commands/iceModule'
 import { registerHairModuleCommands, hairModuleAudit, hairApplySmoke } from './commands/hairModule';
 import { registerSimulateModuleCommands, simulateModuleAudit } from './commands/simulateModule';
 import { registerFaceRobotModuleCommands, faceRobotModuleAudit } from './commands/faceRobotModule';
+import { registerCrowdFxModuleCommands, crowdFxModuleAudit } from './commands/crowdFxModule';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
 import simulateModuleTops from './data/si/simulate_module_mcp_tops.json';
 import faceRobotTops from './data/si/face_robot_module_mcp_tops.json';
 import faceRobotStage1Chrome from './data/si/face_robot_stage1_chrome.json';
+import crowdfxModuleDump from './data/si/crowdfx_module.json';
 import { iceTree, renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
 import { faceRobotStage1View, faceRobotActPanelView } from './ui/faceRobotStage1';
 import { frostGraphView, frostHairWizardView, frostClothWizardView, frostOf, runFrostSmokeTests } from './frost';
@@ -76,6 +78,7 @@ registerIceModuleCommands(app);
 registerHairModuleCommands(app);
 registerSimulateModuleCommands(app);
 registerFaceRobotModuleCommands(app);
+registerCrowdFxModuleCommands(app);
 registerToolbarCommands(app);
 (window as any).__siMessage = siMessage; (window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); (window as any).__getEnableParity = () => getEnableParity(app); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
 // Softimage Command.GetEnabled analogue for harness / Script Editor probes
@@ -329,6 +332,13 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
       menu300: faceRobotTops.menu_300,
       stage1Chrome: faceRobotStage1Chrome.view,
       menubarPresent: !!document.querySelector('#menubar .m[data-si-menu="Face Robot"]'),
+    },
+    // Softimage CrowdFX under ICE (PE 41644/41646/41645 + ICEOperators icecrowdfx* — compound leaves LOCK)
+    crowdFxModule: {
+      ...crowdFxModuleAudit(app),
+      mcpTop: crowdfxModuleDump.mcp_top,
+      mcpButtons: crowdfxModuleDump.buttons,
+      peMenuIds: crowdfxModuleDump.pe_menu_ids,
     },
     // Desktop polish #2 — manip / viewport prefs + default Camera pose (softimage-pc attested)
     viewportPolish: {
