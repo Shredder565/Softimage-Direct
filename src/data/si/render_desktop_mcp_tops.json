@@ -24,7 +24,7 @@
     "status": "DUMP_READY",
     "wire": "HWND_CROP",
     "source": "src/data/si/render_region_hwnd_crop.json",
-    "note": "modules-gdi 61-render-region-*.png + DsNewRegionButtonCtrl; prefs region_color_*; handle W/H LOCK"
+    "note": "modules-gdi 61-render-region-*.png + DsNewRegionButtonCtrl; prefs region_color_*; closer95 handle W/H DUMP_READY"
   },
 
   "mcp_flyout_item_lists": {

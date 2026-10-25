@@ -174,11 +174,11 @@ else {
   } else if (dld.fcurveMixerClientPaint !== 'DONE' || dld.fcurveMixerClientPaintWire !== 'HWND_PNG') {
     fail.push(`directLockDesktop client paint expected DONE/HWND_PNG got ${dld.fcurveMixerClientPaint}/${dld.fcurveMixerClientPaintWire}`);
   } else ok.push(`Desktop LOCK close (region OM ${dld.regionOmParamCount} keys, HWND DUMP_READY, PPG COLORREF WIRED, Anim ExecCmd+paint DONE)`);
-  // Softimage render.region_hwnd_crop — modules-gdi crop + DsNewRegionButtonCtrl + prefs colors
+  // Softimage render.region_hwnd_crop + closer95 render.region_handle_wh — DsNewRegionButtonCtrl W/H
   const rrh = audit.renderRegionHwnd;
   if (!rrh) fail.push('renderRegionHwnd missing from __uiAudit');
   else if (!rrh.ok) fail.push(`renderRegionHwnd audit failed: ${JSON.stringify(rrh)}`);
-  else ok.push(`Render region HWND crop DUMP_READY (${rrh.hwndCount}×${rrh.hwndCls}, crop ${rrh.cropPng?.[0]}x${rrh.cropPng?.[1]}, border ${rrh.borderCss})`);
+  else ok.push(`Render region HWND crop DUMP_READY (${rrh.hwndCount}×${rrh.hwndCls}, crop ${rrh.cropPng?.[0]}x${rrh.cropPng?.[1]}, border ${rrh.borderCss}, handleWh ${rrh.handleSizePx} ${rrh.handleWhCount})`);
   // PPG title/chrome COLORREF from modules-gdi harvest (hover LOCK)
   const pcr = audit.ppgTitleColorref;
   if (!pcr) fail.push('ppgTitleColorref missing from __uiAudit');

@@ -1,14 +1,16 @@
 {
-  "_comment": "Softimage render.region_hwnd_crop \u2014 Desktop modules-gdi DUMP_READY harvest. Dump-attested only; no invent.",
+  "_comment": "Softimage render.region_hwnd_crop + closer95 render.region_handle_wh \u2014 Desktop DUMP_READY harvest. Dump-attested only; no invent.",
   "lock_id": "render.region_hwnd_crop",
   "status": "DUMP_READY",
   "softimage": "13.2.163.0",
-  "utc": "Sun, 25 Oct 2026 19:23:43 GMT",
+  "utc": "Sun, 25 Oct 2026 22:10:00 GMT",
   "source": [
     "media/softimage-modules-gdi/61-render-region-desktop.png",
     "media/softimage-modules-gdi/61-render-region-crop.png",
     "internal/softimage-pc-dumps/modules-gdi/region_hwnd_children.txt",
     "internal/softimage-pc-dumps/modules-gdi/deferred_gdi_harvest.json",
+    "internal/softimage-pc-dumps/closer95/region_handle_wh.txt",
+    "internal/softimage-pc-dumps/closer95/closer95_merged_board.json",
     "src/data/si/render_desktop_prefs.json preferences.rendering region_color_*"
   ],
   "harvest": {
@@ -187,8 +189,22 @@
     }
   },
   "handle_size_px": {
-    "status": "LOCK",
-    "note": "No Softimage-attested handle W/H in harvest PNGs; paint keeps pre-existing 6px without claiming dump."
+    "lock_id": "render.region_handle_wh",
+    "status": "DUMP_READY",
+    "cls": "DsNewRegionButtonCtrl",
+    "source": "internal/softimage-pc-dumps/closer95/region_handle_wh.txt",
+    "repo_dump": "data/dump/si_render_region_handle_wh.txt",
+    "count": 7,
+    "handles": [
+      { "w_px": 576, "h_px": 61, "rect": [2599, 1572, 3175, 1633] },
+      { "w_px": 646, "h_px": 50, "rect": [2162, 1572, 2808, 1622] },
+      { "w_px": 203, "h_px": 367, "rect": [2851, 180, 3054, 547] },
+      { "w_px": 194, "h_px": 432, "rect": [2851, 463, 3045, 895] },
+      { "w_px": 194, "h_px": 74, "rect": [2851, 797, 3045, 871] },
+      { "w_px": 196, "h_px": 122, "rect": [2851, 849, 3047, 971] },
+      { "w_px": 194, "h_px": 124, "rect": [2851, 939, 3045, 1063] }
+    ],
+    "note": "closer95 Desktop DUMP_READY after CreateRenderRegion — Softimage Name DsNewRegionButtonCtrl W/H metrics. Untitled roles stay LOCK (no LoadSave/InspNav invent)."
   },
   "create_defaults": {
     "Left": 0.1,

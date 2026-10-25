@@ -21,7 +21,7 @@
       "dump_label": "DUMP_READY",
       "wire": "HWND_CROP",
       "hwnd_crop_chrome": "DUMP_READY",
-      "note": "modules-gdi four_tab_region_hwnd DUMP_READY: 61-render-region-desktop/crop + DsNewRegionButtonCtrl children; prefs region_color_default=#ffff00 handle=#0000ff; handle W/H px LOCK"
+      "note": "modules-gdi four_tab_region_hwnd DUMP_READY: 61-render-region-desktop/crop + DsNewRegionButtonCtrl children; prefs region_color_default=#ffff00 handle=#0000ff; closer95 render.region_handle_wh DUMP_READY (7× DsNewRegionButtonCtrl W/H)"
     },
     "ui.ppg_title_hover_gdi": {
       "dump_label": "DUMP_READY",
