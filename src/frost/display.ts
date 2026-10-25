@@ -1,10 +1,10 @@
-/** Three.js display for FROST particle points + hair strand lines. */
+/** Three.js display for FROST particles, hair strands, and cloth mesh deform. */
 
 import * as THREE from 'three';
 import type { App } from '../core/commands';
 import { frostOf } from './session';
 
-/** Attach Points + LineSegments overlays; updates on frame/params. */
+/** Attach Points + LineSegments + cloth Mesh overlays; updates on frame/params. */
 export function installFrostDisplay(app: App, scene: THREE.Scene, needs: () => void) {
   const frost = frostOf(app);
 
@@ -54,12 +54,46 @@ export function installFrostDisplay(app: App, scene: THREE.Scene, needs: () => v
   tipPoints.frustumCulled = false;
   scene.add(tipPoints);
 
-  let stamp = '';
+  // Cloth mesh deform (solid)
+  const clothGeo = new THREE.BufferGeometry();
+  clothGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(0), 3));
+  const clothMat = new THREE.MeshStandardMaterial({
+    color: 0x6a8f9e,
+    side: THREE.DoubleSide,
+    flatShading: true,
+    transparent: true,
+    opacity: 0.88,
+    metalness: 0.05,
+    roughness: 0.75,
+    depthTest: true,
+  });
+  const clothMesh = new THREE.Mesh(clothGeo, clothMat);
+  clothMesh.renderOrder = 10;
+  (clothMesh as any)._frost = true;
+  clothMesh.frustumCulled = false;
+  scene.add(clothMesh);
+
+  // Cloth wireframe overlay
+  const clothWireGeo = new THREE.BufferGeometry();
+  clothWireGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(0), 3));
+  const clothWireMat = new THREE.LineBasicMaterial({
+    color: 0xb8d4de,
+    transparent: true,
+    opacity: 0.85,
+    depthTest: true,
+  });
+  const clothWire = new THREE.LineSegments(clothWireGeo, clothWireMat);
+  clothWire.renderOrder = 14;
+  (clothWire as any)._frost = true;
+  clothWire.frustumCulled = false;
+  scene.add(clothWire);
+
+  let indexStamp = '';
   const sync = () => {
     const pos = frost.positions;
     const lines = frost.strandLines;
-    const key = `${pos.length}:${lines.length}:${app.anim.frame}:${frost.state.strands.length}`;
-    stamp = key;
+    const cpos = frost.clothPositions;
+    const cwire = frost.clothWire;
 
     geo.setAttribute('position', new THREE.BufferAttribute(pos.length ? pos : new Float32Array(0), 3));
     geo.computeBoundingSphere();
@@ -93,6 +127,34 @@ export function installFrostDisplay(app: App, scene: THREE.Scene, needs: () => v
       strandMat.color.setRGB(Number(root[0]), Number(root[1]), Number(root[2]));
     }
 
+    // —— Cloth mesh deform ——
+    const cloth = frost.state.cloth;
+    const clothMode = frost.state.attrs.get('ClothDisplayMode');
+    const wireOnly = Array.isArray(clothMode) && Number(clothMode[0]) === 1;
+    if (cloth?.alive && cpos.length >= 9) {
+      clothGeo.setAttribute('position', new THREE.BufferAttribute(cpos, 3));
+      const idxKey = `${cloth.indices.length}:${cloth.pin.length}`;
+      if (idxKey !== indexStamp) {
+        indexStamp = idxKey;
+        if (cloth.indices.length >= 3) {
+          clothGeo.setIndex(new THREE.BufferAttribute(cloth.indices, 1));
+        } else {
+          clothGeo.setIndex(null);
+        }
+      }
+      clothGeo.computeVertexNormals();
+      clothGeo.computeBoundingSphere();
+      clothMesh.visible = !wireOnly;
+      clothWireGeo.setAttribute('position', new THREE.BufferAttribute(cwire.length ? cwire : new Float32Array(0), 3));
+      clothWireGeo.computeBoundingSphere();
+      clothWire.visible = wireOnly || cwire.length > 0;
+      if (!wireOnly) clothWire.visible = false; // mesh mode: solid only
+      if (wireOnly) clothMesh.visible = false;
+    } else {
+      clothMesh.visible = false;
+      clothWire.visible = false;
+    }
+
     needs();
   };
 
@@ -101,5 +163,5 @@ export function installFrostDisplay(app: App, scene: THREE.Scene, needs: () => v
   app.events.on('scene', sync);
   app.events.on('newscene', () => { frost.reset(); sync(); });
   sync();
-  return { points, strands, tipPoints, sync };
+  return { points, strands, tipPoints, clothMesh, clothWire, sync };
 }

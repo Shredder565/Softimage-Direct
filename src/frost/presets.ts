@@ -1,8 +1,9 @@
-/** Default FROST recipes for P0 particles + P1 character hair. */
+/** Default FROST recipes for P0 particles + P1 hair + P2 cloth. */
 
 import { emptyFrostGraph, frostId, type FrostGraphIR } from './ir';
 import { FROST_NODES } from './nodes';
 import { defaultHairWizard, hairRecipe } from './hair';
+import { defaultClothWizard, clothRecipe } from './cloth';
 
 function node(type: string, x: number, y: number, params: Record<string, number | string | boolean | number[]> = {}) {
   const def = FROST_NODES[type];
@@ -37,7 +38,13 @@ export function characterHairRecipe(name = 'CharacterHair'): FrostGraphIR {
   return hairRecipe(defaultHairWizard(), name);
 }
 
+/** Character cloth easy-path recipe (wizard default). */
+export function characterClothRecipe(name = 'CharacterCloth'): FrostGraphIR {
+  return clothRecipe(defaultClothWizard(), name);
+}
+
 export const FROST_PRESETS: { label: string; build: () => FrostGraphIR }[] = [
   { label: 'Emit → Simulate Particles', build: () => emitSimulateRecipe() },
   { label: 'Character Hair', build: () => characterHairRecipe() },
+  { label: 'Character Cloth', build: () => characterClothRecipe() },
 ];

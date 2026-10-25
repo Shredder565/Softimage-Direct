@@ -1,16 +1,19 @@
-/** Deterministic emit + integrate + strand hair smoke checks (no DOM). */
+/** Deterministic emit + integrate + hair + cloth smoke checks (no DOM). */
 
-import { emitSimulateRecipe, characterHairRecipe } from './presets';
+import { emitSimulateRecipe, characterHairRecipe, characterClothRecipe } from './presets';
 import {
   createFrostState,
   tickFrost,
   aliveCount,
   aliveStrandCount,
+  aliveClothVerts,
   frostPositions,
   frostStrandLines,
+  frostClothPositions,
 } from './evaluator';
 import { parseFrostGraph, serializeFrostGraph } from './ir';
 import { defaultHairWizard, hairRecipe } from './hair';
+import { defaultClothWizard, clothRecipe } from './cloth';
 import {
   generateStrands,
   applyStyleLayers,
@@ -18,6 +21,13 @@ import {
   tickStrandDynamics,
   packStrandLineSegments,
 } from './strands';
+import {
+  generateDefaultGarment,
+  applyPinRings,
+  tickClothDynamics,
+  settleCloth,
+  packClothWireframe,
+} from './clothSim';
 
 export interface FrostSmokeResult {
   ok: boolean;
@@ -187,6 +197,103 @@ export function runFrostSmokeTests(): FrostSmokeResult {
     // Hair IR round-trip
     const rt = parseFrostGraph(serializeFrostGraph(g));
     assert(rt.nodes.length === g.nodes.length && rt.links.length === g.links.length, 'hair IR round-trip', failures, checks);
+  }
+
+  // —— P2: cloth generate + pin rings ——
+  {
+    const cloth = generateDefaultGarment(10, 8, { openFront: true, seed: 4 });
+    assert(cloth.pin.length === 80, `cloth generate verts (${cloth.pin.length})`, failures, checks);
+    assert(cloth.edges.length > 0 && cloth.restLen.length === cloth.edges.length / 2, 'cloth edge rest lengths', failures, checks);
+    applyPinRings(cloth, ['neck', 'waist'], 1);
+    const pinned = cloth.pin.reduce((n, w) => n + (w > 0.5 ? 1 : 0), 0);
+    assert(pinned > 0, `cloth pin rings (${pinned} pinned)`, failures, checks);
+    const wire = packClothWireframe(cloth);
+    assert(wire.length === cloth.edges.length * 3, `cloth wire pack (${wire.length})`, failures, checks);
+  }
+
+  // —— P2: cloth dynamics tick / settle ——
+  {
+    const cloth = generateDefaultGarment(8, 6, { openFront: true, seed: 7 });
+    applyPinRings(cloth, ['neck'], 1);
+    const freeY0 = (() => {
+      let s = 0, c = 0;
+      for (let i = 0; i < cloth.pin.length; i++) {
+        if (cloth.pin[i] > 0.5) continue;
+        s += cloth.pos[i * 3 + 1]; c++;
+      }
+      return s / Math.max(1, c);
+    })();
+    const simP = {
+      gravity: [0, -9.5, 0] as [number, number, number],
+      damping: 0.1,
+      stretch: 0.9,
+      shear: 0.5,
+      bend: 0.1,
+      mass: 1,
+      substeps: 2,
+      iterations: 4,
+      selfCollide: false,
+      thickness: 0.04,
+      wind: [0.2, 0, 0.05] as [number, number, number],
+      dt: 1 / 30,
+      colliderSphere: { cx: 0, cy: 0.85, cz: 0, r: 0.4 },
+    };
+    settleCloth(cloth, simP, 16);
+    const freeY1 = (() => {
+      let s = 0, c = 0;
+      for (let i = 0; i < cloth.pin.length; i++) {
+        if (cloth.pin[i] > 0.5) continue;
+        s += cloth.pos[i * 3 + 1]; c++;
+      }
+      return s / Math.max(1, c);
+    })();
+    let moved = 0;
+    for (let i = 0; i < cloth.pin.length; i++) {
+      if (cloth.pin[i] > 0.5) continue;
+      const d = Math.hypot(
+        cloth.pos[i * 3] - cloth.rest[i * 3],
+        cloth.pos[i * 3 + 1] - cloth.rest[i * 3 + 1],
+        cloth.pos[i * 3 + 2] - cloth.rest[i * 3 + 2],
+      );
+      if (d > 1e-3) moved++;
+    }
+    assert(moved > 0 || freeY1 < freeY0 - 0.01, `cloth settle tick (moved=${moved} Δy=${(freeY1 - freeY0).toFixed(3)})`, failures, checks);
+    // One more dynamics tick still runs
+    tickClothDynamics(cloth, simP);
+    assert(cloth.alive, 'cloth still alive after tick', failures, checks);
+  }
+
+  // —— P2: cloth recipe graph evaluates ——
+  {
+    const wiz = defaultClothWizard();
+    wiz.resolution = 10;
+    wiz.settleFrames = 8;
+    const g = clothRecipe(wiz, 'clothSmoke');
+    assert(g.nodes.some(n => n.type === 'CreateCloth'), 'cloth recipe has CreateCloth', failures, checks);
+    assert(g.nodes.some(n => n.type === 'ClothPins'), 'cloth recipe has ClothPins', failures, checks);
+    assert(g.nodes.some(n => n.type === 'FabricPreset'), 'cloth recipe has FabricPreset', failures, checks);
+    assert(g.nodes.some(n => n.type === 'SimulateCloth'), 'cloth recipe has SimulateCloth', failures, checks);
+    assert(g.nodes.some(n => n.type === 'ClothCache'), 'cloth recipe has ClothCache', failures, checks);
+    assert(g.nodes.some(n => n.type === 'CollideBody'), 'cloth recipe has CollideBody', failures, checks);
+    const st = createFrostState();
+    st.settlePending = 6;
+    for (let f = 1; f <= 12; f++) tickFrost(g, st, { frame: f, fps: 30 });
+    const n = aliveClothVerts(st);
+    const pos = frostClothPositions(st);
+    assert(n > 0, `cloth graph births verts (n=${n})`, failures, checks);
+    assert(pos.length === n * 3, `cloth graph packs positions (${pos.length})`, failures, checks);
+
+    const run = () => {
+      const st2 = createFrostState();
+      const g2 = characterClothRecipe('detCloth');
+      for (let f = 1; f <= 8; f++) tickFrost(g2, st2, { frame: f, fps: 30 });
+      return Array.from(frostClothPositions(st2));
+    };
+    const a = run(), b = run();
+    assert(a.length === b.length && a.every((v, i) => v === b[i]), 'deterministic cloth tick', failures, checks);
+
+    const rt = parseFrostGraph(serializeFrostGraph(g));
+    assert(rt.nodes.length === g.nodes.length && rt.links.length === g.links.length, 'cloth IR round-trip', failures, checks);
   }
 
   return { ok: failures.length === 0, failures, checks };

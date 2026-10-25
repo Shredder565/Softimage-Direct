@@ -9,6 +9,7 @@ export type FrostPortType =
   | 'execution'
   | 'pointcloud'
   | 'strandfield'
+  | 'clothmesh'
   | 'geometry'
   | 'any';
 
