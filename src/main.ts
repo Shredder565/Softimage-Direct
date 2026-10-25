@@ -57,8 +57,10 @@ import { applyRenderToolbarChrome, renderToolbarChromeAudit } from './ui/renderT
 import { renderMcpFlyoutsAudit } from './ui/renderMcpFlyouts';
 import { directLockDesktopAudit } from './ui/directLockDesktop';
 import { animEditorsExecCmdAudit, animEditorsExecCmdSmoke } from './ui/animEditorsExecCmd';
+import { applyAnimClientPaintVars, animClientPaintAudit } from './ui/animClientPaint';
 applyPpgChrome();
 applyAnimChromeVars();
+applyAnimClientPaintVars();
 applyIceTreeChromeVars();
 applyRenderToolbarChrome();
 import { keyingPanel, layerControl, timeline, commandLine, scriptLog } from './ui/panels';
@@ -315,10 +317,12 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     renderToolbarChrome: renderToolbarChromeAudit(),
     // PE menu 234 Render MCP flyouts (Desktop press-hold missed; menus.json already wired)
     renderMcpFlyouts: renderMcpFlyoutsAudit(),
-    // Softimage Desktop LOCK close 2026-10-25 — OM region params OK; HWND/PPG/OpenView LOCK; Anim ExecCmd open DONE
+    // Softimage Desktop LOCK close 2026-10-25 — OM region params OK; HWND/PPG/OpenView LOCK; Anim ExecCmd+paint DONE
     directLockDesktop: directLockDesktopAudit(),
-    // Softimage floating Anim editors — ExecuteCommand([]) open path (OpenView LOCK; client paint LOCK)
+    // Softimage floating Anim editors — ExecuteCommand([]) open path (OpenView LOCK; client paint HWND_PNG DONE)
     animEditorsExecCmd: animEditorsExecCmdAudit(app),
+    // Softimage Anim Mixer/Editor/Fcurve client paint — modules-gdi 50/51/52 HWND PNG
+    animClientPaint: animClientPaintAudit(),
     // Softimage Render toolbar OM scripting names + RenderOptionsRegion SPDL (HWND crop LOCK)
     renderToolbarOm: renderToolbarOmAudit(app),
     // Softimage ICE module MENU 303 MCP tops + OpenICETreeView / xsivw shell chrome (client GDI + Anchor LOCK)

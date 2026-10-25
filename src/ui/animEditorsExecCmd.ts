@@ -1,5 +1,5 @@
 // Softimage floating Anim editors — ExecuteCommand empty-args open path (workstream D).
-// Dump: src/data/si/anim_editors_execcmd.json — OpenView LOCK; client paint LOCK without pixels.
+// Dump: src/data/si/anim_editors_execcmd.json — OpenView LOCK; client paint DONE (modules-gdi HWND PNG).
 import dump from '../data/si/anim_editors_execcmd.json';
 import type { App } from '../core/commands';
 import { floatingWindows } from './floating';
@@ -15,7 +15,7 @@ const D = dump as {
 
 const CMD_NAMES = ['OpenAnimationMixer', 'OpenAnimationEditor', 'OpenFcurveEditor'] as const;
 
-/** Compact audit — ExecCmd open path DONE; OpenView + client paint stay LOCK (no invent). */
+/** Compact audit — ExecCmd open DONE; OpenView LOCK; client paint HWND_PNG DONE. */
 export function animEditorsExecCmdAudit(app: App): Record<string, unknown> {
   const registered = CMD_NAMES.map(n => ({
     name: n,
@@ -42,7 +42,8 @@ export function animEditorsExecCmdAudit(app: App): Record<string, unknown> {
       registered.every(c => c.registered) &&
       fv.execute_command_empty_args === 'DONE' &&
       fv.openview === 'LOCK' &&
-      paint.status === 'LOCK',
+      paint.status === 'DONE' &&
+      paint.wire === 'HWND_PNG',
   };
 }
 

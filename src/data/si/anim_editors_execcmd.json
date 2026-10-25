@@ -42,7 +42,7 @@
     "anim_hwnd_commands_found": "data/dump/si_anim_hwnd_chrome.json enabled_matrix — OpenAnimationMixer/OpenAnimationEditor/OpenFcurveEditor found:true",
     "openview_lock": "src/data/si/direct_lock_desktop_close.json openview_errors — Wrong number of arguments",
     "harvest_script_names": "docs/dump-factory/si_modules_gdi_harvest.js animCmds lists OpenAnimationMixer/OpenAnimationEditor/OpenFcurveEditor",
-    "modules_gdi_pixels": "LOCK — media/softimage-modules-gdi has screenshot index only (no PNG client paint yet); hwnd_inventory matched_children=0"
+    "modules_gdi_pixels": "DONE — media/softimage-modules-gdi/50-anim-mixer.png + 51-anim-editor.png (+ 52==51 SHA); public/si/modules-gdi/ wired HWND_PNG"
   },
   "honest": {
     "animate.floating_views": {
@@ -52,9 +52,10 @@
       "note": "OpenView stays broken; Softimage open path is ExecuteCommand([],)"
     },
     "animate.fcurve_mixer_client_paint": {
-      "status": "LOCK",
-      "wire": "NONE",
-      "note": "No Desktop harvest client-paint PNG/HWND crop — do not invent"
+      "dump_label": "DUMP_READY",
+      "status": "DONE",
+      "wire": "HWND_PNG",
+      "note": "Desktop modules-gdi 50/51/52 HWND crops → public/si/modules-gdi + anim_client_paint.json; Editor+Fcurve share HWND"
     }
   }
 }

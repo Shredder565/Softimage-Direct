@@ -58,22 +58,23 @@
   --pe394-stub-y: 115px;
   --pe394-stub-w: 135px;
   --pe394-stub-h: 13px;
-  /* Softimage Animate chrome (PE RT_DIALOG + views; see src/data/si/anim_chrome.json) */
+  /* Softimage Animate chrome — PE + Desktop modules-gdi client paint (50/51 HWND PNG) */
   --anim-font: Tahoma, "MS Sans Serif", Arial, sans-serif;
   --anim-font-px: 11px;
   --anim-panel-font-px: 10px;
-  --anim-client-bg: #4a4a4a;
-  --anim-list-bg: #9d9b99;
-  --anim-panel-bg: #a9a7a5;
-  --anim-toolbar-bg: #b6b2af;
-  --anim-track-bg: #8a8886;
-  --anim-clip-bg: #c9c5c2;
+  --anim-client-bg: #aba8a6;
+  --anim-list-bg: #aba8a6;
+  --anim-panel-bg: #aba8a6;
+  --anim-toolbar-bg: #aba8a6;
+  --anim-track-bg: #8c8c8c;
+  --anim-clip-bg: #9ab49d;
   --anim-clip-sel: #3a5a8c;
   --anim-key: #ffd34d;
-  --anim-grid: #5c5c5c;
-  --anim-cursor: #ffd34d;
-  --fcv-list-w: 150px;
-  --fcv-toolbar-h: 22px;
+  --anim-grid: #8c8c8c;
+  --anim-cursor: #ff0000;
+  --anim-border: #464646;
+  --fcv-list-w: 195px;
+  --fcv-toolbar-h: 56px;
   /* unlock render.toolbar_pixel_chrome — rendercore RT_BITMAP 105–108 attested 22×22 */
   --render-tb-cell-w: 22px;
   --render-tb-cell-h: 22px;
@@ -531,8 +532,23 @@ button, select, input { font-family: inherit; }
 .fill-canvas { display: block; }
 .rt-title { margin-left: auto; color: #222; font-size: 10px; }
 .rtree, .texed, .schematic, .fcv, .sheet, .plugmgr, .netview, .clips, .rendmgr, .matmgr, .presetmgr, .mixer, .wpaint { display: flex; flex-direction: column; height: 100%; font: var(--anim-font-px) var(--anim-font); background: var(--anim-panel-bg); overflow: hidden; }
-.fcv > .xp-head, .mixer > .xp-head { min-height: var(--fcv-toolbar-h); background: var(--anim-toolbar-bg); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
+/* Desktop HWND client paint underlay (modules-gdi 50/51) — MCP-style background attestation */
+.mixer[data-si-client-paint="DONE"], .fcv[data-si-client-paint="DONE"] {
+  background-color: var(--anim-panel-bg);
+  background-image: var(--anim-client-paint-url);
+  background-repeat: no-repeat;
+  background-position: left top;
+  background-size: auto;
+}
+.fcv > .xp-head, .mixer > .xp-head { min-height: var(--mixer-toolbar-h); background: var(--anim-toolbar-bg); border-bottom: 1px solid var(--anim-border, var(--line)); display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
+.fcv > .xp-head.fcv-menubar { min-height: var(--fcv-toolbar-h); }
 .mixer .mixer-ico { width: 16px; height: 16px; image-rendering: pixelated; flex: 0 0 auto; margin-left: 1px; }
+.mixer-toolbar-text, .fcv-field-strip { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-left: 4px; }
+.mixer-track-flags { font: 10px Tahoma, Verdana, sans-serif; color: #111; padding: 1px 6px; letter-spacing: 2px; background: var(--anim-toolbar-bg); border-bottom: 1px solid var(--anim-border, #555); }
+.mixer-track-row .mixer-track-flags { display: inline; border: 0; padding: 0 4px; background: transparent; }
+.fcv-field-label { font-size: 10px; color: #222; margin-left: 4px; }
+.fcv-field-input { width: 56px; height: 16px; font: 10px Tahoma, sans-serif; border: 1px solid #555; background: #ddd; }
+.fcv-mode-combo { font-size: 10px; padding: 1px 6px; border: 1px solid #555; background: #c9c6c2; margin-left: 6px; }
 .kp-title-bar { display: flex; align-items: center; gap: 6px; }
 .kp-toolbar-strip { image-rendering: pixelated; flex: 0 0 auto; }
 button.anim-auto-key { padding: 0; border: 1px solid #555; background: #3a3a3a; line-height: 0; cursor: pointer; }

@@ -368,7 +368,7 @@ export function registerAnimCommands(app: App) {
 
   // Softimage floating Anim editors — Command.Name open path (prefer ExecuteCommand([],) over broken OpenView).
   // Attested: Commands found in si_anim_hwnd_chrome; empty-args ExecuteCommand user Softimage JScript;
-  // OpenView wrong-args LOCK (direct_lock_desktop_close). Client paint stays LOCK without modules-gdi pixels.
+  // OpenView wrong-args LOCK (direct_lock_desktop_close). Client paint DONE via modules-gdi 50/51/52 HWND PNG.
   const openAnimView = (name: string) => window.dispatchEvent(new CustomEvent('openview', { detail: { name } }));
   app.register({
     name: 'OpenAnimationMixer',
