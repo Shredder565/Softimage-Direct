@@ -13,6 +13,7 @@
 | OM | `sicoresdk` `CXSITransitionCore` (GetStart/EndClip, GetTime, …) |
 | Bridge script | `action.vbs` `AddBridgeTransitionFunc` → **`AddTWTransition`** (timewarp; works with FCurves) |
 | PC dump | `si_anim_mixer_deep.json` — nest OK; transitions often empty under XSIBATCH (LOCK B2) |
+| Overnight | `si_mixer_transitions.json` (2026-10-25) — StoreAction null; SelectClips fewer than 2 clips; `TransitionCollection` classname attested empty; Auto Transition default false; Bridge/TW “no command” under XSIBATCH |
 
 ## Critical: `clip_transitioncurves` / `clip_weightcurves` are **display**, not eval math
 

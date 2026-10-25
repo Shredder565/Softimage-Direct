@@ -117,24 +117,46 @@ const deepPaths = [
   '/cursor/stores/self/internal/softimage-pc-dumps/anim/si_anim_mixer_deep.json',
   '/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/anim/si_anim_mixer_deep.json',
 ].filter(p => fs.existsSync(p));
+const transDumpPaths = [
+  path.resolve(__dirname, '../data/dump/si_mixer_transitions.json'),
+  '/cursor/stores/self/internal/softimage-pc-dumps/anim/si_mixer_transitions.json',
+  '/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/anim/si_mixer_transitions.json',
+].filter(p => fs.existsSync(p));
 let deepNote = 'no PC deep dump yet';
 let expectedGaps = [];
-if (deepPaths[0]) {
-  const deep = JSON.parse(fs.readFileSync(deepPaths[0], 'utf8'));
-  deepNote = `loaded ${deepPaths[0]}`;
+function consumeMixerPcDump(deep, label) {
+  deepNote = deepNote.startsWith('no PC') ? `loaded ${label}` : `${deepNote}; +${label}`;
   const steps = deep.steps || [];
   const storeNull = steps.filter(s => /^StoreAction/.test(s.name || '') && (s.result === 'null' || s.result == null));
   if (storeNull.length) expectedGaps.push(`PC StoreAction null handles (${storeNull.length})`);
+  const sel = steps.find(s => s.name === 'SelectClips');
+  if (sel && sel.ok === false) expectedGaps.push(`PC SelectClips: ${sel.error || 'failed'}`);
   const bridge = steps.find(s => /Bridge/i.test(s.name || ''));
   if (bridge && bridge.ok === false) expectedGaps.push(`PC ${bridge.name}: ${bridge.error || 'failed'}`);
+  const tw = steps.find(s => /TWTransition/i.test(s.name || ''));
+  if (tw && tw.ok === false) expectedGaps.push(`PC ${tw.name}: ${tw.error || 'failed'}`);
   const cols = deep.mixer_collections || {};
   if (cols && Object.values(cols).every(v => v == null)) expectedGaps.push('PC mixer_collections null (needs clip sel)');
+  // TransitionCollection classname attested even when empty
+  const tc = deep.transitions;
+  if (tc && typeof tc === 'object' && !Array.isArray(tc)) {
+    if (tc.classname && tc.classname !== 'TransitionCollection') {
+      diffs.push(`PC transitions classname ${tc.classname}`);
+    } else if (tc.classname === 'TransitionCollection') {
+      expectedGaps.push('PC TransitionCollection empty (LOCK until clip sel)');
+    }
+  }
+  if (Array.isArray(deep.transition_list) && deep.transition_list.length === 0) {
+    expectedGaps.push('PC transition_list empty');
+  }
+  const probe = steps.find(s => s.name === 'Mixer_probe');
+  if (probe && probe.n_transitions === 0) expectedGaps.push('PC Mixer_probe n_transitions=0');
   // Only DIFF if PC claims transitions/compounds populated but Direct empty
-  const pcTrans = deep.transitions || cols.Transitions;
+  const pcTrans = Array.isArray(deep.transitions) ? deep.transitions : cols.Transitions;
   if (Array.isArray(pcTrans) && pcTrans.length && !r.transitions.length) {
     diffs.push('PC dump has transitions but Direct dump empty');
   }
-  // Softimage nested Parameter.Name schema lock (values may differ when clips exist vs PC empty mixer)
+  // Softimage nested Parameter.Name schema lock
   const pcNested = deep.mixer?.nested || [];
   const pcNames = pcNested.map(n => n.name).filter(Boolean);
   const want = ['Name', 'Hidden', 'Active', 'Start time', 'Duration', 'Auto Transition'];
@@ -154,7 +176,11 @@ if (deepPaths[0]) {
       diffs.push('Auto Transition should be false (PC empty default)');
     }
   }
-  deepNote += expectedGaps.length ? `; expected gaps: ${expectedGaps.join('; ')}` : '';
+}
+if (deepPaths[0]) consumeMixerPcDump(JSON.parse(fs.readFileSync(deepPaths[0], 'utf8')), deepPaths[0]);
+if (transDumpPaths[0]) consumeMixerPcDump(JSON.parse(fs.readFileSync(transDumpPaths[0], 'utf8')), transDumpPaths[0]);
+if (deepPaths[0] || transDumpPaths[0]) {
+  deepNote += expectedGaps.length ? `; expected gaps: ${[...new Set(expectedGaps)].join('; ')}` : '';
   deepNote += `; nestedSI ${r.nestedSI?.map(n => n.name).join('/')}`;
 }
 
