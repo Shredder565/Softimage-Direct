@@ -5,6 +5,7 @@ import { App } from '../core/commands';
 import frTops from '../data/si/face_robot_module_mcp_tops.json';
 import stage1 from '../data/si/face_robot_stage1_chrome.json';
 import ctrl from '../data/si/face_robot_controller_chrome.json';
+import viewsIndex from '../data/si/face_robot_views_index.json';
 import { faceRobotCurrentStage, setFaceRobotStage } from '../ui/faceRobotController';
 
 const openView = (name: string) => window.dispatchEvent(new CustomEvent('openview', { detail: { name } }));
@@ -266,10 +267,28 @@ export function faceRobotModuleAudit(app: App): Record<string, unknown> {
   };
   const controller = ctrl as typeof ctrl & {
     view: { name: string; defaultsize: number[] };
-    stages: { index: number; side_view_type: string; status: string }[];
-    synoptic: { stage_frames: string[]; act_panel: { html_body: string } };
+    stages: {
+      index: number;
+      side_view_type: string;
+      status: string;
+      title_url?: string;
+      path_status?: string;
+      nested?: { synoptic_tray?: { frames: { name: string; path?: string }[] } };
+    }[];
+    synoptic: {
+      stage_frames: string[];
+      stage_paths?: Record<string, string>;
+      act_panel: { html_body: string; path_default?: string; path_status?: string };
+    };
+    views_index?: { status: string; n_files_indexed?: number; closer95_n_files?: number; stages_seen?: string[] };
     sizechild: number[];
     runtime_lock: { status: string };
+  };
+  const vidx = viewsIndex as typeof viewsIndex & {
+    status: string;
+    synoptic_htm?: Record<string, { path: string; size: number }>;
+    stages?: { index: number; titleframe: { path: string } }[];
+    closer95?: { n_synoptic_htm?: number; stages_seen?: string[] };
   };
   const layoutCmds = FR_LAYOUT_CMDS.filter(n => app.commands.has(n));
   const prefsPages: string[] = (() => {
@@ -299,7 +318,22 @@ export function faceRobotModuleAudit(app: App): Record<string, unknown> {
     stageCount: controller.stages?.length ?? 0,
     stageTypes: (controller.stages ?? []).map(s => s.side_view_type),
     synopticFrames: controller.synoptic?.stage_frames ?? [],
+    synopticPaths: controller.synoptic?.stage_paths ?? {},
+    synopticPathStatus: controller.synoptic?.act_panel?.path_status ?? 'LOCK',
     synopticHtmlLock: controller.synoptic?.act_panel?.html_body ?? 'LOCK',
+    actSynopticPath: controller.synoptic?.act_panel?.path_default ?? null,
+    viewsIndexStatus: controller.views_index?.status ?? vidx.status ?? 'LOCK',
+    viewsIndexFileCount: controller.views_index?.n_files_indexed
+      ?? (Array.isArray((vidx as { files?: unknown[] }).files) ? (vidx as { files: unknown[] }).files.length : 0),
+    closer95FileCount: controller.views_index?.closer95_n_files
+      ?? (vidx.closer95 as { n_files?: number } | undefined)?.n_files
+      ?? 0,
+    stagesSeen: controller.views_index?.stages_seen ?? vidx.closer95?.stages_seen ?? [],
+    titleframePaths: (controller.stages ?? []).map(s => s.title_url),
+    stagePathStatuses: (controller.stages ?? []).map(s => s.path_status ?? 'LOCK'),
+    stage5SynopticPaths: (controller.stages?.find(s => s.index === 5)?.nested?.synoptic_tray?.frames ?? [])
+      .filter(f => f.path)
+      .map(f => ({ name: f.name, path: f.path })),
     currentStage: faceRobotCurrentStage(app),
     commandsWired: [
       'ShowFaceRobotActPanel',

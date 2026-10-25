@@ -88,6 +88,30 @@ else {
   if (audit.faceRobot.synopticHtmlLock !== 'LOCK') diffs.push('synoptic HTML must stay LOCK');
   else notes.push('synoptic HTML LOCK');
 
+  // closer95 / modules-gdi DUMP_READY path index (paths only; bodies LOCK)
+  if (audit.faceRobot.viewsIndexStatus !== 'DUMP_READY') {
+    diffs.push(`viewsIndexStatus want=DUMP_READY got=${audit.faceRobot.viewsIndexStatus}`);
+  } else notes.push('views path index DUMP_READY (closer95)');
+
+  const wantPaths = ctrl.synoptic?.stage_paths ?? {};
+  for (const [frame, path] of Object.entries(wantPaths)) {
+    if (audit.faceRobot.synopticPaths?.[frame] !== path) {
+      diffs.push(`synopticPath ${frame} want=${path} got=${audit.faceRobot.synopticPaths?.[frame]}`);
+    } else notes.push(`synoptic Path ${frame}`);
+  }
+  if (audit.faceRobot.synopticPathStatus !== 'DUMP_READY') {
+    diffs.push(`synopticPathStatus want=DUMP_READY got=${audit.faceRobot.synopticPathStatus}`);
+  } else notes.push('Act synoptic Path DUMP_READY');
+
+  const wantTitles = (ctrl.stages || []).map(s => s.title_url);
+  if (JSON.stringify(wantTitles) !== JSON.stringify(audit.faceRobot.titleframePaths)) {
+    diffs.push('titleframePaths mismatch');
+  } else notes.push('stage titleframe Paths DUMP_READY');
+
+  if (!(audit.faceRobot.stagesSeen || []).includes('facestage1') || (audit.faceRobot.stagesSeen || []).length < 6) {
+    diffs.push(`stagesSeen want facestage1–6 got=${(audit.faceRobot.stagesSeen || []).join('|')}`);
+  } else notes.push(`stages_seen ${(audit.faceRobot.stagesSeen || []).join(', ')}`);
+
   const wantSz = stage1.view?.defaultsize;
   const gotSz = audit.faceRobot.stage1DefaultSize;
   if (JSON.stringify(wantSz) !== JSON.stringify(gotSz)) {
@@ -178,22 +202,39 @@ const layout = await page.evaluate(() => {
 if (!layout.ctrl || !layout.host || !layout.enabled) diffs.push('Face Robot Layout failed');
 else notes.push('Face Robot Layout → Control Panel OK');
 
-// Switch to Stage 5 — synoptic slots from xsily
+// Switch to Stage 5 — synoptic slots + dump-attested Paths
 const s5 = await page.evaluate(() => {
   window.Application.run('fr_SwitchFaceLayout', { inLayoutID: 5 });
   const ctrlHost = document.querySelector('.fr-controller');
-  const slots = [...(ctrlHost?.querySelectorAll('.fr-synoptic-slot') ?? [])].map(s => s.dataset.siFrFrame);
+  const slots = [...(ctrlHost?.querySelectorAll('.fr-synoptic-slot') ?? [])].map(s => ({
+    frame: s.dataset.siFrFrame,
+    path: s.querySelector('.fr-synoptic-path')?.textContent?.trim() ?? '',
+    pathStatus: s.dataset.siFrPathStatus ?? null,
+    lock: s.querySelector('.fr-synoptic-lock')?.textContent?.includes('LOCK') ?? false,
+  }));
   const type = ctrlHost?.querySelector('.fr-stage-type')?.textContent?.trim() ?? null;
+  const titleUrl = ctrlHost?.querySelector('.fr-stage-title-url')?.textContent?.trim() ?? null;
   const stage = window.Application.run('fr_GetCurrentStage');
-  return { slots, type, stage, activeTab: ctrlHost?.querySelector('.fr-stage-tab.active')?.textContent?.trim() };
+  return { slots, type, titleUrl, stage, activeTab: ctrlHost?.querySelector('.fr-stage-tab.active')?.textContent?.trim() };
 });
 if (s5.stage !== 5) diffs.push(`fr_SwitchFaceLayout(5) stage got=${s5.stage}`);
 else notes.push('fr_SwitchFaceLayout(5)');
 if (s5.type !== 'FaceStage5_UpperSideView') diffs.push(`Stage5 type got=${s5.type}`);
 else notes.push('Stage5 FaceStage5_UpperSideView shell');
-if (!s5.slots.includes('stage5select') || !s5.slots.includes('stage5cameras')) {
-  diffs.push(`Stage5 synoptic slots got=${(s5.slots || []).join('|')}`);
+const s5frames = (s5.slots || []).map(s => s.frame);
+if (!s5frames.includes('stage5select') || !s5frames.includes('stage5cameras')) {
+  diffs.push(`Stage5 synoptic slots got=${s5frames.join('|')}`);
 } else notes.push('Stage5 synoptic frames stage5select/stage5cameras');
+const sel = (s5.slots || []).find(s => s.frame === 'stage5select');
+const cam = (s5.slots || []).find(s => s.frame === 'stage5cameras');
+if (!sel?.path?.includes('Stage5Selection.htm')) diffs.push(`stage5select Path missing Stage5Selection.htm got=${sel?.path}`);
+else notes.push('stage5select → Stage5Selection.htm');
+if (!cam?.path?.includes('Stage5Camera.htm')) diffs.push(`stage5cameras Path missing Stage5Camera.htm got=${cam?.path}`);
+else notes.push('stage5cameras → Stage5Camera.htm');
+if (!sel?.lock || !cam?.lock) diffs.push('Stage5 synoptic HTML LOCK note missing');
+else notes.push('Stage5 synoptic HTML LOCK');
+if (!s5.titleUrl?.includes('stage5_titleframe.html')) diffs.push(`Stage5 titleframe Path got=${s5.titleUrl}`);
+else notes.push('Stage5 titleframe Path DUMP_READY');
 
 // ShowFaceRobotActPanel — Synoptic View structure
 const act = await page.evaluate(() => {
