@@ -14,9 +14,11 @@ import { registerModuleToolbarCommands } from './commands/moduleToolbar';
 import { registerRenderToolbarOmCommands, renderToolbarOmAudit } from './commands/renderToolbarOm';
 import { registerIceModuleCommands, iceModuleAudit } from './commands/iceModule';
 import { registerHairModuleCommands, hairModuleAudit, hairApplySmoke } from './commands/hairModule';
+import { registerSimulateModuleCommands, simulateModuleAudit } from './commands/simulateModule';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
+import simulateModuleTops from './data/si/simulate_module_mcp_tops.json';
 import { iceTree, renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
 import { frostGraphView, frostHairWizardView, frostClothWizardView, frostOf, runFrostSmokeTests } from './frost';
 import { registerToolbarCommands, palettesView, toolbarView, newToolbar, customizeToolbars, openToolbarWindow, userToolbars } from './ui/toolbars';
@@ -68,6 +70,7 @@ registerModuleToolbarCommands(app);
 registerRenderToolbarOmCommands(app);
 registerIceModuleCommands(app);
 registerHairModuleCommands(app);
+registerSimulateModuleCommands(app);
 registerToolbarCommands(app);
 (window as any).__siMessage = siMessage; (window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); (window as any).__getEnableParity = () => getEnableParity(app); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
 // Softimage Command.GetEnabled analogue for harness / Script Editor probes
@@ -294,6 +297,15 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
       mcpButtons: hairModuleTops.buttons,
       moduleInSelect: (document.querySelector('.module-select') as HTMLSelectElement | null)
         ? Array.from((document.querySelector('.module-select') as HTMLSelectElement).options).some(o => o.value === 'Hair')
+        : false,
+    },
+    // Softimage Simulate module MENU 205 MCP tops + SyCreateCloth/ApplyCloth + preferences.simulation (flyout/Syflex GDI LOCK)
+    simulateModule: {
+      ...simulateModuleAudit(app),
+      mcpTops: simulateModuleTops.tops,
+      mcpButtons: simulateModuleTops.buttons,
+      moduleInSelect: (document.querySelector('.module-select') as HTMLSelectElement | null)
+        ? Array.from((document.querySelector('.module-select') as HTMLSelectElement).options).some(o => o.value === 'Simulate')
         : false,
     },
     // Desktop polish #2 — manip / viewport prefs + default Camera pose (softimage-pc attested)
