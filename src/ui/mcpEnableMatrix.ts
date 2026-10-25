@@ -27,7 +27,7 @@ type MatrixFile = {
   pe_grayed_safe_norms?: string[];
   pe_grayed_ambiguous_norms?: string[];
   bool_attested: string[];
-  /** Optional interactive Script Editor HWND / chrome overlay (user paste). */
+  /** Optional Softimage Desktop / Script Editor HWND chrome overlay (null → canRun). */
   hwnd_buttons?: Record<string, Record<string, boolean | null>>;
 };
 
@@ -137,7 +137,7 @@ export function peMenuItemGrayed(label: string | undefined | null, cmdId?: numbe
   return SAFE_NORMS.has(n);
 }
 
-/** Optional HWND / chrome button overlay from Script Editor paste (context → button → enabled). */
+/** HWND / chrome button overlay (Desktop overnight or Script Editor paste). Null → canRun. */
 export function hwndButtonEnabled(app: App, button: string): boolean | null {
   const hwnd = M.hwnd_buttons;
   if (!hwnd) return null;

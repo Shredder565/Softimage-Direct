@@ -129,10 +129,42 @@ def main() -> int:
     hwnd_path = find_hwnd()
     if hwnd_path:
         hwnd = load_json(hwnd_path)
+        # Overnight Desktop dump shape: contexts[].buttons / contexts[].commands
+        # Legacy paste shape: top-level hwnd_buttons
         buttons = hwnd.get("hwnd_buttons")
+        if not (isinstance(buttons, dict) and buttons) and isinstance(hwnd.get("contexts"), list):
+            buttons = {}
+            for c in hwnd["contexts"]:
+                cid = c.get("id")
+                if not cid:
+                    continue
+                row = c.get("buttons") or {}
+                buttons[cid] = {k: (None if v is None else bool(v)) for k, v in row.items()}
+                # Merge Command.Enabled bools into matrix contexts (attested only)
+                block = out["contexts"].setdefault(cid, {"selection": c.get("selection"), "commands": {}})
+                cmds_map = block.setdefault("commands", {})
+                for name, info in (c.get("commands") or {}).items():
+                    en = info.get("enabled") if isinstance(info, dict) else info
+                    if en is True or en is False:
+                        if name not in cmds_map or cmds_map[name] is None:
+                            cmds_map[name] = bool(en)
+                            bool_attested.add(name)
+            out["bool_attested"] = sorted(bool_attested)
         if isinstance(buttons, dict) and buttons:
             out["hwnd_buttons"] = buttons
-            out["meta"]["hwnd_source"] = hwnd_path.name
+            out["meta"]["hwnd_source"] = str(hwnd_path.name)
+            out["meta"]["hwnd_overlay"] = {
+                "source": str(hwnd_path),
+                "softimage": (hwnd.get("meta") or {}).get("softimage"),
+                "mode": (hwnd.get("meta") or {}).get("mode"),
+                "note": (hwnd.get("meta") or {}).get("note"),
+                "utc": (hwnd.get("meta") or {}).get("utc"),
+                "contexts": list(buttons.keys()),
+                "attested_button_bools": sum(
+                    1 for row in buttons.values() for v in row.values() if v is True or v is False
+                ),
+                "null_button_cells": sum(1 for row in buttons.values() for v in row.values() if v is None),
+            }
 
     OUT.write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
     print(f"wrote {OUT} contexts={list(contexts)} bools={sorted(bool_attested)} cmds={len(cmds)} hwnd={bool(out.get('hwnd_buttons'))}")
