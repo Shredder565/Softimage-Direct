@@ -10,6 +10,15 @@ import { Node, X3DObject, Shader, Material, Model, Property } from '../core/scen
 import { Parameter } from '../core/params';
 import { FCurve } from '../core/animation';
 import { TEXTURE_NODES, MATERIAL_PRESETS } from '../core/shaders';
+import {
+  DEFAULT_RENDER_OUTPUT_FORMAT,
+  RENDER_OUTPUT_FORMATS,
+  RENDER_RESOLUTION_PRESETS,
+  acceptsRenderOutputFormat,
+  extensionForFormat,
+  isMovieOutputFormat,
+  resolutionPresetFor,
+} from '../core/renderOutput';
 import { openSiMenu, SI_MENUS } from './si';
 import { PRESET_MODELS } from '../commands/presets';
 import { animChrome, fcurveMenuLabels, mixerMenuLabels } from './animChrome';
@@ -333,36 +342,128 @@ export function imageClips(app: App, host: HTMLElement) {
 // ================================================================ Render Manager
 export function renderManager(app: App, host: HTMLElement) {
   const root = el('div', 'rendmgr'); host.appendChild(root);
-  // Softimage Passes.RenderOptions defaults (si_render_prefs.json): 1920x1080, OutputDir Render_Pictures
+  // Softimage Passes.RenderOptions size (si_render_prefs.json). AfterImage: default output .mp4; 2K/4K presets; no .mov.
   const ro = () => app.scene.renderOptions;
+  const pathFor = (fmt: string) => `Render_Pictures/[Pass]_[Framebuffer].${extensionForFormat(fmt)}`;
+  const syncPassMovie = (fmt: string) => {
+    const pass = app.scene.passes.find(p => p.name === opts.pass);
+    if (!pass?.get('MovieFormat')) return;
+    if (isMovieOutputFormat(fmt)) app.setParam(pass.get('MovieFormat')!, fmt);
+  };
   const opts = {
     width: Number(ro()?.val('ImageWidth') ?? 1920),
     height: Number(ro()?.val('ImageHeight') ?? 1080),
-    path: 'Render_Pictures/[Pass]_[Framebuffer].png',
+    format: DEFAULT_RENDER_OUTPUT_FORMAT,
+    path: pathFor(DEFAULT_RENDER_OUTPUT_FORMAT),
     frames: 'current' as 'current' | 'range',
     pass: app.scene.passes[0]?.name ?? 'Default_Pass',
   };
-  const render = () => { root.innerHTML = ''; root.appendChild(head(btn('Render Current Frame', 'Render the active camera at the output resolution', () => doRender(false)), btn('Render Pass', 'Render the pass frame range to a Flipbook', () => doRender(true)), btn('Preview', 'Render preview window', () => doRender(false))));
+  const applySize = (w: number, h: number) => {
+    opts.width = w; opts.height = h;
+    const rop = ro();
+    if (rop?.get('ImageWidth')) app.setParam(rop.get('ImageWidth')!, w);
+    if (rop?.get('ImageHeight')) app.setParam(rop.get('ImageHeight')!, h);
+    const pass = app.scene.passes.find(p => p.name === opts.pass);
+    if (pass?.get('ImageWidth')) app.setParam(pass.get('ImageWidth')!, w);
+    if (pass?.get('ImageHeight')) app.setParam(pass.get('ImageHeight')!, h);
+  };
+  const render = () => {
+    root.innerHTML = '';
+    root.appendChild(head(
+      btn('Render Current Frame', 'Render the active camera at the output resolution', () => doRender(false)),
+      btn('Render Pass', 'Render the pass frame range to a Flipbook', () => doRender(true)),
+      btn('Preview', 'Render preview window', () => doRender(false)),
+    ));
     const form = el('div', 'dlg');
     const row = (label: string, ctl: HTMLElement) => { const r = el('div', 'row'); r.append(el('label', '', label), ctl); form.appendChild(r); };
-    const passSel = el('select') as HTMLSelectElement; for (const p of app.scene.passes) { const o = el('option', '', p.name); passSel.appendChild(o); } passSel.value = opts.pass; passSel.onchange = () => { opts.pass = passSel.value; }; row('Current Pass', passSel);
-    const pw = el('input') as HTMLInputElement; pw.type = 'number'; pw.value = String(opts.width); pw.onchange = () => { opts.width = Number(pw.value); }; row('Image Width', pw);
-    const ph = el('input') as HTMLInputElement; ph.type = 'number'; ph.value = String(opts.height); ph.onchange = () => { opts.height = Number(ph.value); }; row('Image Height', ph);
+    const passSel = el('select') as HTMLSelectElement;
+    for (const p of app.scene.passes) { const o = el('option', '', p.name); passSel.appendChild(o); }
+    passSel.value = opts.pass;
+    passSel.onchange = () => { opts.pass = passSel.value; syncPassMovie(opts.format); render(); };
+    row('Current Pass', passSel);
+
+    const fmtSel = el('select') as HTMLSelectElement;
+    for (const f of RENDER_OUTPUT_FORMATS) {
+      if (f.value === 'mov') continue;
+      const o = el('option', '', f.label) as HTMLOptionElement; o.value = f.value; fmtSel.appendChild(o);
+    }
+    if (!acceptsRenderOutputFormat(opts.format) || opts.format === 'mov') opts.format = DEFAULT_RENDER_OUTPUT_FORMAT;
+    fmtSel.value = opts.format;
+    fmtSel.onchange = () => {
+      opts.format = extensionForFormat(fmtSel.value);
+      opts.path = pathFor(opts.format);
+      syncPassMovie(opts.format);
+      render();
+    };
+    row('Output Format', fmtSel);
+
+    const resSel = el('select') as HTMLSelectElement;
+    const curPreset = resolutionPresetFor(opts.width, opts.height);
+    for (const p of RENDER_RESOLUTION_PRESETS) {
+      const o = el('option', '', p.label) as HTMLOptionElement; o.value = String(p.value); resSel.appendChild(o);
+    }
+    resSel.value = String(curPreset.value);
+    resSel.onchange = () => {
+      const p = RENDER_RESOLUTION_PRESETS.find(x => String(x.value) === resSel.value);
+      if (!p || p.value === 0) return;
+      applySize(p.width, p.height);
+      render();
+    };
+    row('Output Size', resSel);
+
+    const pw = el('input') as HTMLInputElement; pw.type = 'number'; pw.value = String(opts.width);
+    pw.onchange = () => { applySize(Number(pw.value), opts.height); render(); }; row('Image Width', pw);
+    const ph = el('input') as HTMLInputElement; ph.type = 'number'; ph.value = String(opts.height);
+    ph.onchange = () => { applySize(opts.width, Number(ph.value)); render(); }; row('Image Height', ph);
     const pp = el('input') as HTMLInputElement; pp.value = opts.path; pp.onchange = () => { opts.path = pp.value; }; row('Output Path', pp);
     for (const i of [pw, ph, pp]) i.onkeydown = e => e.stopPropagation();
-    const pass = app.scene.passes.find(p => p.name === opts.pass); if (pass) { const fs = el('input') as HTMLInputElement; fs.type = 'number'; fs.value = String(pass.val('FrameStart')); fs.onchange = () => app.setParam(pass.get('FrameStart')!, Number(fs.value)); row('Frame Start', fs); const fe = el('input') as HTMLInputElement; fe.type = 'number'; fe.value = String(pass.val('FrameEnd')); fe.onchange = () => app.setParam(pass.get('FrameEnd')!, Number(fe.value)); row('Frame End', fe); }
-    const np = btn('New Pass', 'Create a render pass', () => { app.run('CreatePass', { Name: 'Pass' }); render(); }); form.appendChild(np);
-    root.appendChild(form); root.appendChild(el('div', 'hint', 'Renderer: viewport shading (three.js) at the output resolution. Pictures download as PNG; a pass range opens a Flipbook.'));
+    const pass = app.scene.passes.find(p => p.name === opts.pass);
+    if (pass) {
+      const fs = el('input') as HTMLInputElement; fs.type = 'number'; fs.value = String(pass.val('FrameStart'));
+      fs.onchange = () => app.setParam(pass.get('FrameStart')!, Number(fs.value)); row('Frame Start', fs);
+      const fe = el('input') as HTMLInputElement; fe.type = 'number'; fe.value = String(pass.val('FrameEnd'));
+      fe.onchange = () => app.setParam(pass.get('FrameEnd')!, Number(fe.value)); row('Frame End', fe);
+    }
+    form.appendChild(btn('New Pass', 'Create a render pass', () => { app.run('CreatePass', { Name: 'Pass' }); render(); }));
+    root.appendChild(form);
+    root.appendChild(el('div', 'hint', `Renderer: viewport shading (three.js). Default output .${DEFAULT_RENDER_OUTPUT_FORMAT} (no .mov). Still formats download as PNG preview; a pass range opens a Flipbook.`));
   };
-  const doRender = (range: boolean) => { const three = (window as any).__three; if (!three?.scene) { app.logMsg('error', 'No viewport to render from'); return; } const cam = (window as any).__activeCamera as THREE.Camera | undefined; if (!cam) { app.logMsg('error', 'No active camera'); return; }
-    const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); r.setSize(opts.width, opts.height); r.shadowMap.enabled = true; const c = cam.clone() as any; if (c.aspect !== undefined) { c.aspect = opts.width / opts.height; c.updateProjectionMatrix(); }
-    const pass = app.scene.passes.find(p => p.name === opts.pass); const frames: string[] = []; const A = app.anim; const f0 = range && pass ? Number(pass.val('FrameStart')) : A.frame, f1 = range && pass ? Number(pass.val('FrameEnd')) : A.frame; const cur = A.frame;
-    for (let f = f0; f <= f1; f++) { if (range) { A.frame = f; three.needs?.(); } r.render(three.scene, c); frames.push(r.domElement.toDataURL('image/png')); if (frames.length > 300) break; }
+  const doRender = (range: boolean) => {
+    const three = (window as any).__three; if (!three?.scene) { app.logMsg('error', 'No viewport to render from'); return; }
+    const cam = (window as any).__activeCamera as THREE.Camera | undefined; if (!cam) { app.logMsg('error', 'No active camera'); return; }
+    const fmt = extensionForFormat(opts.format);
+    const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+    r.setSize(opts.width, opts.height); r.shadowMap.enabled = true;
+    const c = cam.clone() as any; if (c.aspect !== undefined) { c.aspect = opts.width / opts.height; c.updateProjectionMatrix(); }
+    const pass = app.scene.passes.find(p => p.name === opts.pass);
+    const frames: string[] = []; const A = app.anim;
+    const f0 = range && pass ? Number(pass.val('FrameStart')) : A.frame;
+    const f1 = range && pass ? Number(pass.val('FrameEnd')) : A.frame;
+    const cur = A.frame;
+    for (let f = f0; f <= f1; f++) {
+      if (range) { A.frame = f; three.needs?.(); }
+      r.render(three.scene, c); frames.push(r.domElement.toDataURL('image/png'));
+      if (frames.length > 300) break;
+    }
     if (range) A.frame = cur; r.dispose();
-    const name = opts.path.replace('[Pass]', opts.pass).replace('[Frame]', String(f0).padStart(4, '0')).split('/').pop()!.replace(/\.png$/, '');
-    if (frames.length === 1) { const w = window.open('', '_blank'); if (w) { w.document.write(`<title>${name}</title><body style="margin:0;background:#222;text-align:center"><a download="${name}.png" href="${frames[0]}" style="color:#ddd;font:12px Tahoma">save ${name}.png</a><br><img src="${frames[0]}"></body>`); w.document.close(); } else { const a = document.createElement('a'); a.href = frames[0]; a.download = name + '.png'; a.click(); } }
-    else { window.dispatchEvent(new CustomEvent('flipbook-frames', { detail: { frames, name } })); }
-    app.logMsg('info', `Rendered ${frames.length} frame(s) at ${opts.width}x${opts.height}`); };
+    const extRe = /\.(png|mp4|avi|pic|exr|tif|tiff|jpg|jpeg|mov)$/i;
+    const name = opts.path.replace('[Pass]', opts.pass).replace('[Frame]', String(f0).padStart(4, '0')).split('/').pop()!.replace(extRe, '');
+    const stillExt = fmt === 'jpg' || fmt === 'jpeg' ? 'jpg' : (isMovieOutputFormat(fmt) ? 'png' : (fmt === 'pic' || fmt === 'exr' || fmt === 'tif' ? 'png' : fmt));
+    if (frames.length === 1) {
+      const file = `${name}.${stillExt}`;
+      const w = window.open('', '_blank');
+      if (w) {
+        w.document.write(`<title>${name}</title><body style="margin:0;background:#222;text-align:center"><a download="${file}" href="${frames[0]}" style="color:#ddd;font:12px Tahoma">save ${file}</a> <span style="color:#888;font:11px Tahoma">output format ${fmt}</span><br><img src="${frames[0]}"></body>`);
+        w.document.close();
+      } else {
+        const a = document.createElement('a'); a.href = frames[0]; a.download = file; a.click();
+      }
+    } else {
+      window.dispatchEvent(new CustomEvent('flipbook-frames', { detail: { frames, name, format: fmt } }));
+    }
+    app.logMsg('info', `Rendered ${frames.length} frame(s) at ${opts.width}x${opts.height} (.${fmt})`);
+  };
+  syncPassMovie(opts.format);
   render(); app.events.on('scene', render);
 }
 
