@@ -1,0 +1,21 @@
+{
+  "junk.emdl": {
+    "size": 2211840,
+    "sha256_12": "16bb86b368b9",
+    "magic_hex": "D0CF11E0A1B11AE1",
+    "om": "si/models/junk.json",
+    "model": "junk",
+    "nodes": [
+      "junk",
+      "sphere2"
+    ],
+    "mesh_stats": {
+      "sphere2": {
+        "npts": 8951,
+        "npolys": 8263,
+        "nedges": 17213
+      }
+    },
+    "geometry": "full"
+  }
+}

@@ -291,16 +291,30 @@ window.addEventListener('savescene', (e: any) => {
   if (!e.detail?.backup) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' })); a.download = name + '.scn.txt'; a.click(); }
   sceneName = name; updateTitle(); app.logMsg('info', `Saved scene "${name}" (${text.split('\n').filter(Boolean).length} commands)`);
 });
+const importEmdlFile = (f: File, { newScene = false } = {}) => {
+  if (newScene) app.run('NewScene');
+  return f.arrayBuffer().then(buf => app.run('ImportModel', { Bytes: buf, FileName: f.name })).then((m: any) => {
+    sceneName = f.name.replace(/\.emdl$/i, '') || sceneName;
+    updateTitle();
+    return m;
+  });
+};
 window.addEventListener('openscene', (e: any) => {
   let name = e.detail?.name; const rec: string[] = (() => { try { return JSON.parse(localStorage.getItem('si.recent') ?? '[]'); } catch { return []; } })();
   if (!name) { name = prompt('Open scene:\n' + rec.map((n, i) => `${i + 1}. ${n}`).join('\n') + '\n(number or name; leave empty to pick a file)', '') ?? ''; if (/^\d+$/.test(name)) name = rec[Number(name) - 1]; }
   const load = (text: string, nm: string) => { app.run('NewScene'); sceneStart = app.log.length; app.autoInspect = false; for (const line of text.split(/\r?\n/)) { if (line.trim()) { try { runScriptLine(app, line); } catch { /* logged */ } } } app.autoInspect = true; app.select([]); sceneName = nm; updateTitle(); };
   if (name) { const t = localStorage.getItem('si.scene.' + name); if (t !== null) load(t, name); else app.logMsg('error', `Scene "${name}" not found`); return; }
-  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.txt,.scn.txt'; inp.onchange = () => { const f = inp.files?.[0]; if (!f) return; f.text().then(t => load(t, f.name.replace(/\.scn\.txt$|\.txt$/, ''))); }; inp.click();
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.txt,.scn.txt,.emdl,.json';
+  inp.onchange = () => {
+    const f = inp.files?.[0]; if (!f) return;
+    if (/\.emdl$/i.test(f.name) || /\.json$/i.test(f.name)) { importEmdlFile(f, { newScene: true }); return; }
+    f.text().then(t => load(t, f.name.replace(/\.scn\.txt$|\.txt$/, '')));
+  };
+  inp.click();
 });
-// File > Merge… (and interchange formats without a dedicated parser): append a scene script, or import .obj meshes.
+// File > Merge… (and interchange formats without a dedicated parser): append a scene script, or import .obj / .emdl.
 window.addEventListener('mergescene', (e: any) => {
-  const accept = e.detail?.accept ?? '.txt,.scn.txt';
+  const accept = e.detail?.accept ?? '.txt,.scn.txt,.emdl,.json';
   const format = e.detail?.format ? String(e.detail.format) : 'scene';
   const inp = document.createElement('input'); inp.type = 'file'; inp.accept = accept;
   inp.onchange = () => {
@@ -310,6 +324,7 @@ window.addEventListener('mergescene', (e: any) => {
       Promise.resolve(app.run('ImportObjFile', { FileName: url })).finally(() => URL.revokeObjectURL(url));
       return;
     }
+    if (/\.emdl$/i.test(f.name) || /\.json$/i.test(f.name)) { importEmdlFile(f); return; }
     f.text().then(text => {
       let n = 0; app.autoInspect = false;
       for (const line of text.split(/\r?\n/)) { if (line.trim()) { try { runScriptLine(app, line); n++; } catch { /* logged */ } } }
@@ -318,6 +333,20 @@ window.addEventListener('mergescene', (e: any) => {
     });
   };
   inp.click();
+});
+// Desktop drag-drop: Softimage .emdl / Direct JSON OM / .obj onto the shell.
+window.addEventListener('dragover', (e) => { if (e.dataTransfer?.types?.includes('Files')) { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; } });
+window.addEventListener('drop', (e) => {
+  const files = e.dataTransfer?.files; if (!files?.length) return;
+  const f = files[0];
+  if (!/\.(emdl|json|obj)$/i.test(f.name)) return;
+  e.preventDefault();
+  if (/\.obj$/i.test(f.name)) {
+    const url = URL.createObjectURL(f);
+    Promise.resolve(app.run('ImportObjFile', { FileName: url })).finally(() => URL.revokeObjectURL(url));
+    return;
+  }
+  importEmdlFile(f);
 });
 app.events.on('newscene', () => { sceneName = 'Untitled'; sceneStart = app.log.length; updateTitle(); });
 updateTitle();
