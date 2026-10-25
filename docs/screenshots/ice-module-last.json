@@ -18,7 +18,15 @@
     "SwitchToolbar Target=4 → ICE",
     "ICE Tree shell open 850x504",
     "ICE Tree category=ICE",
-    "host dataset defaultsize 50,50,850,550"
+    "host dataset defaultsize 50,50,850,550",
+    "tour HIGH cmds wired 19",
+    "audit highWiredCount 19",
+    "preferences.icetree 10 params",
+    "preferences.ICEOperators 21 params",
+    "C3DPrefsICETree matches dump keys",
+    "C3DPrefsICEOperators matches dump keys",
+    "AddICENode → node 1",
+    "GeneratePointCloudWithICETemplate → empty"
   ],
   "softimage": "13.2.163.0",
   "menu_id": 303,
@@ -28,5 +36,10 @@
     "Deform",
     "Kinematics",
     "CrowdFX"
-  ]
+  ],
+  "tour_high": 19,
+  "prefs": {
+    "icetree": 10,
+    "ICEOperators": 21
+  }
 }

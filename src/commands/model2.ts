@@ -137,7 +137,11 @@ export function registerModelCommands2(app: App) {
     def.canRun = (a: any) => !a.File || ICE_PRESETS.includes(a.File) || a.File === 'ICETree' || /^Cap\s*Hole$/i.test(String(a.File || ''));
     def.args = [{ name: 'File', default: '' }, { name: 'Target', default: '' }, { name: 'Input', default: '' }];
     def.execute = (app: App, a: any) => {
-      const o = (a.Target ? app.targets(a.Target)[0] : undefined) ?? app.selectedObjects.find(x => x.primitive?.mesh()); if (!o?.primitive?.mesh()) throw new Error(`${a.File || 'ICE Tree'}: select a polygon mesh`);
+      // Softimage ApplyICEOp targets polymesh or point cloud (Desktop GeneratePointCloudWithICE*).
+      const isIceHost = (x: any) => !!x?.primitive && (!!x.primitive.mesh() || x.type === 'pointcloud' || /point\s*cloud/i.test(String(x.type || '')));
+      const host = (a.Target ? app.targets(a.Target)[0] : undefined) ?? app.selectedObjects.find(isIceHost);
+      if (!isIceHost(host)) throw new Error(`${a.File || 'ICE Tree'}: select a polygon mesh or point cloud`);
+      const o = host as import('../core/scene').X3DObject;
       // Softimage CapHoleProc names the tree Cap_Hole (history Cap_Hole:ICETree); other presets collapse spaces.
       const file = String(a.File || '');
       const opName = !file || file === 'ICETree' ? 'ICETree' : /^Cap\s*Hole$/i.test(file) ? 'Cap_Hole' : file.replace(/\s+/g, '');

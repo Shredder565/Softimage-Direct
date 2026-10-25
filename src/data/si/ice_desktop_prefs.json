@@ -1,0 +1,49 @@
+{
+  "_comment": "Softimage Desktop modules tour preferences.icetree + preferences.ICEOperators (2026-10-25).",
+  "softimage": "13.2.163.0",
+  "source": "internal/softimage-pc-dumps/modules/modules_prefs_related.json",
+  "preferences.icetree": {
+    "param_count": 10,
+    "params": {
+      "preset_manager_size": 250,
+      "explorer_size": 150,
+      "create_node_mode": 0,
+      "offline_editing_mode": false,
+      "ice_selection_locked": true,
+      "allow_explorer_selection": false,
+      "allow_explorer_node_skipping": true,
+      "leftcompoundbar_size": 100,
+      "rightcompoundbar_size": 100,
+      "create_node_shortcutdelimiter": ":"
+    },
+    "propset": "C3DPrefsICETree"
+  },
+  "preferences.ICEOperators": {
+    "param_count": 21,
+    "params": {
+      "createparticles": "",
+      "createrigidbody": "",
+      "createsoftbody": "",
+      "createcloth": "",
+      "modifyparticles": "",
+      "modifyrigidbody": "",
+      "modifydeform": "",
+      "iceparticlescreate": "",
+      "iceparticlesonemission": "",
+      "iceparticlesafteremission": "",
+      "iceparticlesforce": "",
+      "iceparticlescollision": "",
+      "iceparticlessimulation": "",
+      "iceparticlesmodellibrary": "",
+      "icedeformcreate": "",
+      "icedeformsimulate": "",
+      "icekinematicseffects": "",
+      "icekinematicsconstrain": "",
+      "icecrowdfxactors": "",
+      "icecrowdfxcrowd": "",
+      "icecrowdfxsimulation": ""
+    },
+    "propset": "C3DPrefsICEOperators",
+    "note": "Empty string path keys — Softimage installs fill with ICE Flow / CrowdFX compound folders"
+  }
+}

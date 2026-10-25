@@ -1,0 +1,51 @@
+{
+  "_comment": "Softimage Desktop ICE tour HIGH Command.Enabled + ScriptingName (empty scene). Source modules_ice.json command_probes + tour MD.",
+  "softimage": "13.2.163.0",
+  "source": [
+    "docs/softimage-ice-tour.md",
+    "internal/softimage-pc-dumps/modules/modules_ice.json"
+  ],
+  "ice_cmd_count": 109,
+  "ice_enabled": 109,
+  "enabled_by_scriptingname": {
+    "ApplyICEOp": true,
+    "ApplyICETemplate": true,
+    "AddICENode": true,
+    "AddICECompoundNode": true,
+    "CreateICECompoundNode": true,
+    "ConnectICENodes": true,
+    "ExplodeICECompoundNode": true,
+    "ExportICECompoundNode": true,
+    "OpenICETreeView": true,
+    "GeneratePointCloudWithICETemplate": true,
+    "GeneratePointCloudWithICETerminal": true,
+    "CreateSimulatedICETree": true,
+    "SIApplyICEOp": true,
+    "SwitchToolbar": true,
+    "AddStaticICEAttribute": true,
+    "RemoveStaticICEAttribute": true,
+    "RenameStaticICEAttribute": true,
+    "SetStaticICEAttributeType": true,
+    "ToggleICEAttributeAlwaysEvaluated": true
+  },
+  "high_probes": [
+    { "name": "Apply ICE Operator", "scriptingname": "ApplyICEOp", "enabled": true },
+    { "name": "Apply ICE Template", "scriptingname": "ApplyICETemplate", "enabled": true },
+    { "name": "Add ICE Node", "scriptingname": "AddICENode", "enabled": true },
+    { "name": "Add ICE Compound Node", "scriptingname": "AddICECompoundNode", "enabled": true },
+    { "name": "Create ICE Compound Node", "scriptingname": "CreateICECompoundNode", "enabled": true },
+    { "name": "Connect ICE Nodes", "scriptingname": "ConnectICENodes", "enabled": true },
+    { "name": "Explode ICE Compound Node", "scriptingname": "ExplodeICECompoundNode", "enabled": true },
+    { "name": "Export ICE Compound", "scriptingname": "ExportICECompoundNode", "enabled": true },
+    { "name": "Open ICE Tree View", "scriptingname": "OpenICETreeView", "enabled": true },
+    { "name": "Generate Point Cloud with ICE Template", "scriptingname": "GeneratePointCloudWithICETemplate", "enabled": true },
+    { "name": "Generate Point Cloud With ICE Terminal", "scriptingname": "GeneratePointCloudWithICETerminal", "enabled": true },
+    { "name": "Create Simulated ICETree", "scriptingname": "CreateSimulatedICETree", "enabled": true },
+    { "name": "Low level Apply ICE Operator", "scriptingname": "SIApplyICEOp", "enabled": true }
+  ],
+  "lock": {
+    "ice_tree_gdi_chrome": "LOCK",
+    "mcp_flyout_item_lists": "LOCK",
+    "openview_xsibatch": "OpenView ICE Tree failed under -processing"
+  }
+}

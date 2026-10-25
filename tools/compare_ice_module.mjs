@@ -21,12 +21,22 @@ const topsPath = [
   path.resolve(__dirname, '../data/dump/si_ice_module_mcp_tops.json'),
 ].find(p => fs.existsSync(p));
 const chromePath = path.resolve(__dirname, '../src/data/si/ice_view_chrome.json');
-if (!topsPath || !fs.existsSync(chromePath)) {
+const cmdEnPath = [
+  path.resolve(__dirname, '../src/data/si/ice_desktop_command_enabled.json'),
+  path.resolve(__dirname, '../data/dump/si_ice_desktop_command_enabled.json'),
+].find(p => fs.existsSync(p));
+const prefsPath = [
+  path.resolve(__dirname, '../src/data/si/ice_desktop_prefs.json'),
+  path.resolve(__dirname, '../data/dump/si_ice_desktop_prefs.json'),
+].find(p => fs.existsSync(p));
+if (!topsPath || !fs.existsSync(chromePath) || !cmdEnPath || !prefsPath) {
   console.error('missing ICE dump JSON');
   process.exit(2);
 }
 const tops = JSON.parse(fs.readFileSync(topsPath, 'utf8'));
 const chrome = JSON.parse(fs.readFileSync(chromePath, 'utf8'));
+const cmdEn = JSON.parse(fs.readFileSync(cmdEnPath, 'utf8'));
+const prefsDump = JSON.parse(fs.readFileSync(prefsPath, 'utf8'));
 
 const diffs = [];
 const notes = [];
@@ -136,6 +146,60 @@ const wantDs = chrome.views['ICE Tree'].defaultsize.join(',');
 if (tree.defaultsize !== wantDs) diffs.push(`host defaultsize ${tree.defaultsize} ≠ ${wantDs}`);
 else notes.push(`host dataset defaultsize ${wantDs}`);
 
+// Desktop tour HIGH: ScriptingNames registered + prefs icetree(10) / ICEOperators(21)
+const high = Object.keys(cmdEn.enabled_by_scriptingname || {});
+const highLive = await page.evaluate((names) => {
+  const ice = window.__uiAudit?.()?.iceModule;
+  const missing = names.filter(n => !window.Application.commands.has(n));
+  return {
+    missing,
+    highWiredCount: ice?.highWiredCount,
+    highExpectedCount: ice?.highExpectedCount,
+    prefs: ice?.prefs,
+    addNode: (() => {
+      try {
+        window.Application.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface' });
+        window.Application.run('SelectObj', { InputObjs: window.Application.scene.root.children.slice(-1)[0]?.fullName });
+        window.Application.run('ApplyICEOp', { File: '' });
+        const n = window.Application.run('AddICENode', { PresetObj: 'Get Data' });
+        return { ok: !!n, id: n?.id ?? null };
+      } catch (e) {
+        return { ok: false, err: String(e?.message || e) };
+      }
+    })(),
+    genCloud: (() => {
+      try {
+        const r = window.Application.run('GeneratePointCloudWithICETemplate', { File: '' });
+        return { ok: !!r?.cloud, name: r?.cloud?.name ?? null };
+      } catch (e) {
+        return { ok: false, err: String(e?.message || e) };
+      }
+    })(),
+  };
+}, high);
+
+if (highLive.missing.length) diffs.push(`HIGH cmds missing: ${highLive.missing.join(',')}`);
+else notes.push(`tour HIGH cmds wired ${high.length}`);
+if (highLive.highWiredCount !== high.length) {
+  diffs.push(`highWiredCount ${highLive.highWiredCount} ≠ ${high.length}`);
+} else notes.push(`audit highWiredCount ${highLive.highWiredCount}`);
+
+const wantTreeN = prefsDump['preferences.icetree']?.param_count ?? 10;
+const wantOpsN = prefsDump['preferences.ICEOperators']?.param_count ?? 21;
+if (highLive.prefs?.icetreeCount !== wantTreeN) diffs.push(`prefs.icetree count ${highLive.prefs?.icetreeCount}`);
+else notes.push(`preferences.icetree ${wantTreeN} params`);
+if (highLive.prefs?.iceOperatorsCount !== wantOpsN) diffs.push(`prefs.ICEOperators count ${highLive.prefs?.iceOperatorsCount}`);
+else notes.push(`preferences.ICEOperators ${wantOpsN} params`);
+if (!highLive.prefs?.icetreeMatch) diffs.push('C3DPrefsICETree live params mismatch dump');
+else notes.push('C3DPrefsICETree matches dump keys');
+if (!highLive.prefs?.iceOperatorsMatch) diffs.push('C3DPrefsICEOperators live params mismatch dump');
+else notes.push('C3DPrefsICEOperators matches dump keys');
+
+if (!highLive.addNode?.ok) diffs.push(`AddICENode failed: ${highLive.addNode?.err}`);
+else notes.push(`AddICENode → node ${highLive.addNode.id}`);
+if (!highLive.genCloud?.ok) diffs.push(`GeneratePointCloudWithICETemplate failed: ${highLive.genCloud?.err}`);
+else notes.push(`GeneratePointCloudWithICETemplate → ${highLive.genCloud.name}`);
+
 await b.close();
 
 const out = {
@@ -145,6 +209,8 @@ const out = {
   softimage: tops.softimage,
   menu_id: tops.menu_id,
   tops: tops.tops,
+  tour_high: high.length,
+  prefs: { icetree: wantTreeN, ICEOperators: wantOpsN },
 };
 console.log(JSON.stringify(out, null, 2));
 const dir = path.resolve(__dirname, '../docs/screenshots');
