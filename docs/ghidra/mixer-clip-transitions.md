@@ -1,38 +1,51 @@
-# Mixer clip transitions — RE note
+# Mixer clip transitions - RE note
+
+**Date:** 2026-10-24 (softimage-pc residual RE)  
+**Mode:** Headless Ghidra import/decomp + string hunt. No Softimage Desktop.
 
 ## Softimage surface
 
 | Asset | Evidence |
 |-------|----------|
-| Prefs / propset | `animation_mixer.clip_transition`, `clip_transitioncurves`, `clip_timewarp`, `clip_weightcurves` (propsets + `animationmixer.dll` UTF-16 strings) |
-| DLL | `Application/bin/animationmixer.dll` — `CAnimMixerOpenGLClientWnd`, `AnimMixerTimeLine`, prefs keys |
+| Prefs / propset | `animation_mixer.clip_transition`, `clip_transitioncurves`, `clip_timewarp`, `clip_weightcurve` |
+| Mixer UI DLL | `Application\bin\animationmixer.dll` - `CAnimMixerOpenGLClientWnd`, prefs keys |
 | OM cmds | `AddTransition`, `AddBridgeTransition`, `AddTWTransition`, mixer `autotransition` |
-| PC dump | `si_anim_mixer_deep.json`: nest Name/Hidden/Active/Start/Duration OK; **transitions often empty** without clip selection under XSIBATCH |
+| PC dump | `si_anim_mixer_deep.json`: nest names OK; **transitions often empty** without clip selection under XSIBATCH |
 
 ## Headless LOCK (PC dump only)
 
-Softimage cannot populate mixer Transitions collections under `-processing` without interactive clip selection (dump steps: StoreAction null handles; AddBridgeTransition fail; mixer_collections null). **Direct implements transitions;** PC gap is dump-only LOCK.
+Softimage cannot populate mixer Transitions collections under `-processing` without interactive clip selection (StoreAction null; AddBridgeTransition fails). **Direct implements transitions**; PC gap is dump-only LOCK (residuals B2).
 
-## Direct today
+## Create transition (binary) - RE proven
 
-- `src/core/mixer.ts` `clipWeightsAt`: standard/bridge linear crossfade over `length` ending at destination start; timewarp stretches `from` local time and fades.
-- Commands in `src/commands/anim.ts`: AddTransition / Bridge / TW / CreateCompound / EqualizeClips.
-- Harness `compare_mixer.mjs` locks nested schema + mid-crossfade blend.
+| DLL | Symbol | VA |
+|-----|--------|-----|
+| **`nlehelper.dll`** | `SINleCreateTransitionTask` | `180008870` |
 
-## Softimage-faithful deltas (WIRE — landed)
+```
+SINleCreateTransitionTask(I3DClip *from, I3DClip *to, ulong kind, I3DTransition **out)
+```
 
-1. **Transition curves** — Softimage default `clip_transitioncurves=true` implies non-linear fade. Direct uses Hermite smoothstep `u*u*(3-2*u)` for standard/bridge/timewarp weight (`transitionEase` in `src/core/mixer.ts`). Replace with animationmixer.dll decomp formula when softimage-pc lands it.
-2. **Timewarp** — stretch of `from` into transition window kept; fade factor eased.
-3. **Auto Transition** — when mixer `autotransition` is true, `AddClip` after another clip on the same track inserts a standard transition.
-4. **Bridge vs standard** — both use eased crossfade until decomp proves bridge-specific weight path; `kind` discriminant kept for OM fidelity.
+- `kind == 2` -> one CLSID path; else alternate - Bridge vs standard class (which number is Bridge not yet named).
+- Builds exec context, packs clips, sets "From" + second clip, creates transition object.
 
-## Ghidra entry (softimage-pc)
+Decomp: `internal/ghidra/decomp/nlehelper.dll__SINleCreateTransitionTask.c`  
+`animationmixer.dll` **imports** this task (does not own create math).
 
-1. Import `animationmixer.dll`.
-2. Xrefs to UTF-16 `clip_transition` / `clip_transitioncurves` / `AddTransition`.
-3. Decompile weight-at-time / timewarp helpers; paste notes under Project `internal/ghidra/decomp/`.
+## Direct wire (landed)
+
+- `AddTransition` / `AddBridgeTransition` / `AddTWTransition` keep `kind` discriminant (`standard` / `bridge` / `timewarp`) matching Softimage OM surface until `kind==2` is named.
+- Mixer `autotransition`: `AddClip` inserts a standard transition when flag is on (same track).
+- `CXSITransitionCore` = OM shell only - **no** weight/curve eval there.
+
+## Weight / curve eval - still open
+
+Prefs imply non-linear fades when `clip_transitioncurves` is on. Direct: Hermite smoothstep (`transitionEase` in `src/core/mixer.ts`) until Softimage formula pinned.
+
+**Next RE:** string-xref `clip_transitioncurves` / transition weight fcurve host (action / gap / mixer eval DLL) - not TransitionCore. Do not invent Softimage curve math.
 
 ## Acceptance
 
 - `compare_mixer` stays OK.
 - No invent Softimage transition OM from null PC dumps.
+- Replace ease with Softimage formula only when decomp lands.

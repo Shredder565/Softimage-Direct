@@ -1,0 +1,58 @@
+# ApplyFlexEnv / envelopop path
+
+**Date:** 2026-10-24 (softimage-pc residual RE)  
+**Mode:** VBS + SPDL + string/Ghidra on `deformop.dll`. No Softimage Desktop.  
+**XSIBATCH:** ApplyFlexEnv **cancelled** under `-processing` (prior anim dump) - weight goldens remain **LOCK**.
+
+## Script / command path
+
+`Application\DSScripts\operators.vbs`
+
+| Function | Role |
+|----------|------|
+| `ApplyFlexibleEnvelopeProc` / `ApplyFlexibleEnvelopeFunc` | UI entry; may pop AssignNew dialog |
+| Detect existing envelope | `ActivePrimitive.ConstructionHistory.Find("envelopop")` |
+| Apply | `FApplySelectedOp(connectionset, TRUE, AssignNew, 1, ConstructionMode)` -> FlexEnv op |
+| Inspect | `AutoInspect MyFlexEnv` (GUI - skipped headless) |
+
+Headless fail mode: wizard / pick / construction-mode prompts -> cancel under `-processing`. Shape keys still dump OK.
+
+## Operator registration
+
+| Asset | Detail |
+|-------|--------|
+| SPDL | `Application\spdl\C3DEnvelopOp.spdl` |
+| Parameter | `"envelopop"` |
+| CLSID | `{470CF890-D3AA-11d0-996C-00A0243F0E60}` (`CLSID_3DEnvelopeOp`) |
+| Include | `C3DDeform.spdl` |
+| Binary host | **`deformop.dll`** (UTF-16 `C3DEnvelopOp.spdl` + related auto-assign SPDLs) |
+
+Related SPDLs (same family): `C3DEnvelopeAutoAssignOp(.2)`, `C3DSmoothEnvelopeWeightOp`, `C3DLockEnvelopeWeightsOp`, `C3DLimitEnvelopeDeformersOp`, `c3denvelopeweightprop.spdl`.
+
+## Weight / deform binary pins (`deformop.dll`)
+
+Imported in Ghidra project. Decomps under `internal/ghidra/decomp/deformop.dll__*`.
+
+| Symbol | VA | Note |
+|--------|-----|------|
+| `C3DDeform::AdjustFromVertexWeight` | `180001390` | If flag `this+0x2c4`: `w *= *(double*)(this+0x2b8)`; else passthrough |
+| `C3DDeform::GetVertexWeight` | `180002d10` | Weight read |
+| `C3DDeform::IsConnectedToWeightMap` | `18001cc10` | Weight-map connection |
+
+`mogeometry.dll` exports envelope helpers: `F3DFindEnvelopeOp` -> `I3DMultiWeightMapsOp`, `C3DEnvelopeWeightProp`, `EnvelopeWeights` / `EnvelopeWeightsPerDeformer` attribute names.
+
+OM: `sicoresdk` `CXSIEnvelopeCore` / `CXSIEnvelopeWeightCore`.
+
+## Wire guidance (residuals B3)
+
+| Item | Class |
+|------|-------|
+| Softimage weight goldens via XSIBATCH `-processing` | **LOCK** (cancelled) - need user kit / interactive |
+| Direct ApplyFlexEnv + normalize/mirror harness | Keep green on fixture |
+| Mode / DistanceWeighting enums | WIRE from SPDL param names + deformop/auto-assign SPDL when harness cases exist - do not invent Softimage weights |
+| Construction mode default | Script prefers **Animation** construction mode when not already |
+
+## Related dumps
+
+- `internal/softimage-pc-dumps/anim/si_anim_envelope_shape.json`
+- `internal/softimage-pc-dumps/re-exports/deformop-strings.txt`

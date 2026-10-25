@@ -12,20 +12,21 @@
 
 Optional unlock: user Script Editor paste / non-`-processing` attested dump only — no Desktop agent takeover.
 
-## WIRE — Mode / DistanceWeighting surface
+## WIRE — Mode / DistanceWeighting surface (landed)
 
-Softimage `ApplyFlexEnv` args used by Direct (`src/commands/rigging.ts`):
+Softimage `ApplyFlexEnv` args in Direct (`src/commands/rigging.ts`):
 
 | Arg | Direct | Softimage-faithful note |
 |-----|--------|-------------------------|
 | ConnectionSet / DeformerSet | Yes | Mesh + deformers selection |
-| Mode | Default 2; maps weighting when DistanceWeighting unset | Lock enum labels when SPDL/cmd dump names land |
-| DistanceWeighting | Forces distance weighting when truthy | Keep as Softimage parallel switch |
+| Mode | Default **2** (automatic/assign); `1` → alternate `weighting=1` | Enum labels still soft until SPDL/cmd dump names land |
+| DistanceWeighting | Truthy → force distance `weighting=0` (overrides Mode) | Softimage parallel switch |
+| canRun | Mesh + deformers selected | GetEnabled-style grey when incomplete selection |
 
-Ghidra follow-up: string hunt `ApplyFlexEnv` / `envelopop` / weight assign in deform DLLs; pin Mode constants.
+Ghidra follow-up: string hunt `ApplyFlexEnv` / `envelopop` / weight assign in deform DLLs; pin Mode constants to Softimage enum names.
 
 ## Acceptance
 
 - LOCK documented with dump citation.
-- Direct envelope harness remains green.
+- Direct envelope harness remains green (`compare_envelope_shape`).
 - No fake Softimage weight golden files.

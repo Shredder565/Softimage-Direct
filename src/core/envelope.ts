@@ -15,6 +15,8 @@ export class EnvelopeOperator extends Operator {
   deformers: X3DObject[];
   constructor(deformers: X3DObject[], readonly owner: () => X3DObject | null) {
     super('Envelope Op', 'envelopop', [int('nbdeformers', deformers.length, 'Deformers', { readOnly: true }), enumP('weighting', 0, [{ label: 'Distance (falloff)', value: 0 }, { label: 'Nearest deformer', value: 1 }, { label: 'Heat-like (smoothed distance)', value: 2 }], 'Initial Weighting'), int('maxdeformers', 2, 'Max Deformers per Point', { min: 1, max: 8 }), num('falloff', 2, 'Falloff Exponent', { min: 0.1, max: 8 }), bool('mute', false, 'Mute')]);
+    // Softimage ApplyFlexibleEnvelope prefers Animation construction mode (docs/ghidra/applyflexenv-path.md).
+    this.region = 'animation';
     this.deformers = deformers.slice();
   }
   depStamp() { return stampOf([...this.deformers, this.owner()]); }
