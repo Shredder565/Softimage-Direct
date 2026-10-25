@@ -37,3 +37,14 @@
 | Applied preset | `BevelComponent` |
 
 **Verdict:** Softimage **attests** managecollisions on/off with **no mesh delta** for these edge selections/ratios. Direct must keep true/false mesh-identical (no invent collide). Reopen collide algorithm only if a future dump shows `mesh_equal: false`. Harness: `tools/compare_bevel_collide.mjs`.
+
+## Optional push #1 exit (2026-10-25)
+
+| Check | Result |
+|-------|--------|
+| `node tools/compare_bevel_collide.mjs` on `main` | **OK** / PASS |
+| PC `diff_summary.*.mesh_equal` | **true** (collide on/off bit-identical) |
+| Direct `managecollisions` false vs true | **mesh_equal=true** (no invent delta) |
+| softimage-pc `docs/ghidra/bevel-collide-deepen.md` | **absent** — no new hard-mesh collide attestation |
+
+**Exit: LOCK.** No Direct collide-path wire. Reopen only if a future Softimage golden attests `mesh_equal: false` for managecollisions on/off.
