@@ -1,0 +1,67 @@
+{
+  "_comment": "Softimage preferences.ICEOperators + preferences.simulation \u2014 modules_prefs_related.json Desktop tour (CrowdFX path keys icecrowdfx*). Live values: C3DPrefsICEOperators / C3DPrefsSimulation (ICE #97 / Simulate #99).",
+  "softimage": "13.2.163.0",
+  "source": [
+    "internal/softimage-pc-dumps/modules/modules_prefs_related.json",
+    "src/data/si/ice_desktop_prefs.json"
+  ],
+  "categories": {
+    "preferences.ICEOperators": {
+      "createparticles": "",
+      "createrigidbody": "",
+      "createsoftbody": "",
+      "createcloth": "",
+      "modifyparticles": "",
+      "modifyrigidbody": "",
+      "modifydeform": "",
+      "iceparticlescreate": "",
+      "iceparticlesonemission": "",
+      "iceparticlesafteremission": "",
+      "iceparticlesforce": "",
+      "iceparticlescollision": "",
+      "iceparticlessimulation": "",
+      "iceparticlesmodellibrary": "",
+      "icedeformcreate": "",
+      "icedeformsimulate": "",
+      "icekinematicseffects": "",
+      "icekinematicsconstrain": "",
+      "icecrowdfxactors": "",
+      "icecrowdfxcrowd": "",
+      "icecrowdfxsimulation": ""
+    },
+    "preferences.simulation": {
+      "rbdengine": 0,
+      "cachetemplatefilename": "[object]_[version]_[frame]",
+      "cachefiletypestring": "icecache",
+      "defaulttemplateindex": 0,
+      "cachetemplateprojectpath": "[project path]/Simulation/[model]/[object]/",
+      "cachetemplatelocalpath": "[env XSI_USERHOME]/Simulation/[project]/[scene]/[model]/[object]/",
+      "cachetemplatepatha": "",
+      "cachetemplatepathb": "",
+      "cachetemplatepathc": "",
+      "cachefiletype": 0
+    },
+    "preferences.icetree": {
+      "preset_manager_size": 250,
+      "explorer_size": 150,
+      "create_node_mode": 0,
+      "offline_editing_mode": false,
+      "ice_selection_locked": true,
+      "allow_explorer_selection": false,
+      "allow_explorer_node_skipping": true,
+      "leftcompoundbar_size": 100,
+      "rightcompoundbar_size": 100,
+      "create_node_shortcutdelimiter": ":"
+    }
+  },
+  "crowdfx_path_keys": [
+    "icecrowdfxactors",
+    "icecrowdfxcrowd",
+    "icecrowdfxsimulation"
+  ],
+  "propsets": {
+    "preferences.ICEOperators": "C3DPrefsICEOperators",
+    "preferences.simulation": "C3DPrefsSimulation",
+    "preferences.icetree": "C3DPrefsICETree"
+  }
+}

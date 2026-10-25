@@ -1,0 +1,182 @@
+{
+  "_comment": "Softimage CrowdFX under ICE MCP \u2014 Desktop modules_crowdfx.json + PE MENU 303 Actors/Crowd/Simulation (41644/41646/41645). Dump-backed only; Anchor-to-Delete compounds LOCK (no invent).",
+  "softimage": "13.2.163.0",
+  "source": [
+    "internal/softimage-pc-dumps/modules/modules_crowdfx.json",
+    "internal/softimage-pc-dumps/modules/modules_prefs_related.json",
+    "internal/softimage-pc-dumps/menu_ice.txt",
+    "internal/softimage-pc-dumps/sdk/siMenuAnchorPoints-render-simulate-ice-hair.txt",
+    "media/softimage-modules-tour/60-crowdfx-under-ice.png"
+  ],
+  "under_ice": true,
+  "menu_id": 303,
+  "module_select": "ICE",
+  "switch_toolbar_target": 4,
+  "switch_cmd": "Switch to ICE Toolbar",
+  "mcp_top": "CrowdFX",
+  "buttons": [
+    "Actors",
+    "Crowd",
+    "Simulation"
+  ],
+  "pe_menu_ids": {
+    "Actors": 41644,
+    "Crowd": 41646,
+    "Simulation": 41645
+  },
+  "runtime_anchors": {
+    "status": "LOCK",
+    "pe_label": "Anchor-to-Delete",
+    "note": "MENU 303 CrowdFX Actors/Crowd/Simulation leaves are PE placeholders filled at Softimage runtime by CrowdFX plugins. Do not invent compound leaves. PE id 41646 collides with Render Regions Refresh Mode Interactive \u2014 ignore cmd map for Anchor-to-Delete."
+  },
+  "sdk_anchors": {
+    "siMenuTbICECrowdFXActorsID": 380,
+    "siMenuTbICECrowdFXSimulationID": 381,
+    "siMenuTbICECrowdFXCrowdID": 382
+  },
+  "commands": [
+    {
+      "name": "Attractor",
+      "scriptingname": "CreateForce",
+      "category": "Primitive",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "Reset Actor",
+      "scriptingname": "ResetActor",
+      "category": "Animation",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "Load Actor",
+      "scriptingname": "BvrLoadActor",
+      "category": "",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "FBXExportScaleFactor",
+      "scriptingname": "FBXExportScaleFactor",
+      "category": "",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "Cache Actor Copies",
+      "scriptingname": "CacheActorCopies",
+      "category": "Custom",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "GLSL Actor Envelope Update Defines",
+      "scriptingname": "GLSLActorEnvelopeUpdateDefines",
+      "category": "Custom",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "Remove Actor Proxy",
+      "scriptingname": "RemoveActorProxy",
+      "category": "Custom",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "GLSL Actor Envelope Link ICE Attributes",
+      "scriptingname": "GLSLActorEnvelopeLinkICEAttributes",
+      "category": "Custom",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "Crowd Setup Stadium Actor",
+      "scriptingname": "CrowdSetupStadiumActor",
+      "category": "Custom",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "Crowd Setup Pedestrian Actor",
+      "scriptingname": "CrowdSetupPedestrianActor",
+      "category": "Custom",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "Save Actor",
+      "scriptingname": "BvrSaveActor",
+      "category": "",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "Add Actor Source",
+      "scriptingname": "AddActorSource",
+      "category": "Custom",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "Add Actor Proxy Animations",
+      "scriptingname": "AddActorProxyAnimations",
+      "category": "Custom",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "FBXImportScaleFactor",
+      "scriptingname": "FBXImportScaleFactor",
+      "category": "",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "Import BVH Actor",
+      "scriptingname": "BvrImportBVHActor",
+      "category": "",
+      "enabled": true,
+      "found": true
+    },
+    {
+      "name": "Create Crowd",
+      "scriptingname": "CreateCrowd",
+      "category": "Custom",
+      "enabled": true,
+      "found": true
+    }
+  ],
+  "command_probes": {
+    "CrowdFX": {
+      "name": "CrowdFX",
+      "found": false
+    },
+    "Create Crowd": {
+      "name": "Create Crowd",
+      "found": true,
+      "enabled": true,
+      "description": "Create a new Crowd",
+      "category": "Custom",
+      "scriptingname": "CreateCrowd"
+    },
+    "Create Actor": {
+      "name": "Create Actor",
+      "found": false
+    },
+    "CrowdFX Actors": {
+      "name": "CrowdFX Actors",
+      "found": false
+    },
+    "CrowdFX Crowd": {
+      "name": "CrowdFX Crowd",
+      "found": false
+    },
+    "CrowdFX Simulation": {
+      "name": "CrowdFX Simulation",
+      "found": false
+    }
+  },
+  "note": "CrowdFX lives under ICE module MCP/menu (Actors/Crowd/Simulation)"
+}

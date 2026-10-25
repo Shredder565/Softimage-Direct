@@ -1,0 +1,38 @@
+{
+  "ok": true,
+  "diffs": [],
+  "notes": [
+    "loaded module /workspace/src/data/si/crowdfx_module.json",
+    "loaded prefs /workspace/src/data/si/crowdfx_prefs.json",
+    "softimage 13.2.163.0",
+    "ICE host module present",
+    "MCP top CrowdFX",
+    "buttons OK: Actors, Crowd, Simulation",
+    "PE ids Actors=41644 Crowd=41646 Simulation=41645",
+    "Anchor-to-Delete LOCK",
+    "CreateCrowd wired",
+    "CrowdFX commands wired 16/16",
+    "icecrowdfx path keys: icecrowdfxactors,icecrowdfxcrowd,icecrowdfxsimulation",
+    "ICEOperators icecrowdfx* match dump",
+    "preferences.simulation path keys match dump",
+    "Preferences.Categories has ICEOperators + simulation",
+    "live ICE CrowdFX group",
+    "live Actors/Crowd/Simulation buttons",
+    "CrowdFX PE Anchors unbound (41644/41646/41645)",
+    "SwitchToolbar Target=4 → ICE (CrowdFX host)",
+    "CreateCrowd → Crowd kind=crowd"
+  ],
+  "softimage": "13.2.163.0",
+  "menu_id": 303,
+  "mcp_top": "CrowdFX",
+  "buttons": [
+    "Actors",
+    "Crowd",
+    "Simulation"
+  ],
+  "pe_menu_ids": {
+    "Actors": 41644,
+    "Crowd": 41646,
+    "Simulation": 41645
+  }
+}
