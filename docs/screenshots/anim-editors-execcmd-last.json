@@ -3,6 +3,6 @@
   "diffs": [],
   "note": [
     "OpenView LOCK errors=7",
-    "cmds=OpenAnimationMixer,OpenAnimationEditor,OpenFcurveEditor; paint LOCK; ExecCmd DONE"
+    "cmds=OpenAnimationMixer,OpenAnimationEditor,OpenFcurveEditor; paint DONE HWND_PNG; ExecCmd DONE"
   ]
 }

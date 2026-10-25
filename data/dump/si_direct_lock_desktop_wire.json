@@ -5,11 +5,11 @@
     "purpose": "Desktop close remaining Direct LOCKs (OpenView / region / PPG checklist)",
     "utc": "Sun, 25 Oct 2026 16:54:52 UTC",
     "mode": "Desktop-GUI",
-    "wire_note": "Desktop 2026-10-25. region DUMP_READY = Passes.RenderOptions OM params only (already in deepen dumps). HWND crop chrome NOT measured \u2014 stay LOCK. PPG/InspectObj failed \u2014 no COLORREF. OpenView wrong-args LOCK; floating Anim editors open via ExecuteCommand([],) (user Softimage JScript + Commands found). Client paint LOCK without pixels. Do not invent."
+    "wire_note": "Desktop 2026-10-25. region DUMP_READY = Passes.RenderOptions OM params only (already in deepen dumps). HWND crop chrome NOT measured \u2014 stay LOCK. PPG/InspectObj failed \u2014 no COLORREF. OpenView wrong-args LOCK; floating Anim editors open via ExecuteCommand([],) (user Softimage JScript + Commands found). Anim Mixer/Editor/Fcurve client paint DONE from modules-gdi 50/51/52 HWND PNG. Do not invent."
   },
   "per": {
     "animate.floating_views": "EXECCMD_DONE",
-    "animate.fcurve_mixer_client_paint": "LOCK",
+    "animate.fcurve_mixer_client_paint": "DONE",
     "render.region_hwnd_crop": "DUMP_READY",
     "ui.ppg_title_hover_gdi": "PROBE",
     "ui.manipulator_hover_px": "LOCK",
@@ -37,10 +37,10 @@
       "note": "OpenView wrong-args LOCK; OpenAnimationMixer/OpenAnimationEditor/OpenFcurveEditor ExecuteCommand([]) opens floating shells (user Softimage JScript + si_anim_hwnd found)"
     },
     "animate.fcurve_mixer_client_paint": {
-      "dump_label": "PROBE",
-      "wire": "NONE",
-      "status": "LOCK",
-      "note": "OpenView failed; modules-gdi client paint PNG/HWND absent — no invent"
+      "dump_label": "DUMP_READY",
+      "wire": "HWND_PNG",
+      "status": "DONE",
+      "note": "modules-gdi 50-anim-mixer / 51-anim-editor / 52-anim-fcurve (52 SHA==51) HWND crops wired; see anim_client_paint.json"
     },
     "ui.manipulator_hover_px": {
       "status": "LOCK"

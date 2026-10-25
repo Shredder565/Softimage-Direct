@@ -1,0 +1,101 @@
+{
+  "_comment": "Softimage Animation Mixer / Animation Editor / FCurve client GDI paint — Desktop modules-gdi DUMP_READY. Dump/Desktop-attested only. No invent. Builds on ExecCmd openers (#106).",
+  "softimage": "13.2.163.0",
+  "utc": "2026-10-25T19:11Z",
+  "policy": "Dump/Desktop HWND/PNG attested only. No invent. OpenView stays LOCK; floating open via ExecuteCommand([]).",
+  "source": [
+    "docs/softimage-modules-gdi-tour.md",
+    "internal/softimage-pc-dumps/modules-gdi/priority_ice_anim_live.json",
+    "internal/softimage-pc-dumps/modules-gdi/float_children_detail.txt",
+    "internal/softimage-pc-dumps/modules-gdi/desktop_screenshot_index_priority2.txt",
+    "media/softimage-modules-gdi/50-anim-mixer.png",
+    "media/softimage-modules-gdi/51-anim-editor.png",
+    "media/softimage-modules-gdi/52-anim-fcurve.png"
+  ],
+  "status": "DONE",
+  "wire": "HWND_PNG",
+  "views": {
+    "Animation Mixer": {
+      "cmd": "OpenAnimationMixer",
+      "args": [],
+      "hwnd_title": "AnimationMixer[Scene_Root]",
+      "png": "public/si/modules-gdi/50-anim-mixer.png",
+      "media": "media/softimage-modules-gdi/50-anim-mixer.png",
+      "png_px": [1010, 327],
+      "sha256": "d4b141283ba6d2788aaecf56760bbd943bd44ecca9da250438ed4be9e7631113",
+      "menubar": ["Edit", "View", "Track", "Clip", "Mix", "Effect"],
+      "toolbar_text": ["Up", "Offset Map", "Action Key"],
+      "track_flags": ["r", "m", "s", "g"],
+      "note": "Desktop LIVE HWND crop via View>Animation / OpenAnimationMixer []. Mix menu attested on Desktop (PE dict had Playback instead)."
+    },
+    "Animation Editor": {
+      "cmd": "OpenAnimationEditor",
+      "args": [],
+      "hwnd_title": "Animation Editor - FCurve Editor",
+      "hwnd_child": "DS_ChildAnimation Editor",
+      "png": "public/si/modules-gdi/51-anim-editor.png",
+      "media": "media/softimage-modules-gdi/51-anim-editor.png",
+      "png_px": [1056, 327],
+      "sha256": "6af13d7e788a4570a8dff0561113c3ef1fc13b5936bb6237e1e24905ba7071d3",
+      "menubar": ["Explorer", "Editor", "File", "Edit", "View", "Select", "Curves", "Keys"],
+      "toolbar_labels": ["Explorer", "Editor"],
+      "fields": ["Frame:", "Value:"],
+      "mode_combo": "Absolute Offset",
+      "explorer_w_px": 195,
+      "hwnd": {
+        "title": { "class": "AfxWnd110u", "text": "Animation Editor - FCurve Editor", "rect": [239, 692, 1293, 714], "h_px": 22 },
+        "client": { "class": "TrayClientWindowClass", "rect": [242, 714, 1290, 1014], "w_px": 1048, "h_px": 300 },
+        "child": { "name": "DS_ChildAnimation Editor", "rect": [242, 714, 1290, 1014] },
+        "toolbar_dialog": { "class": "#32770", "rect": [242, 714, 1290, 770], "h_px": 56 },
+        "explorer": { "name": "SceneExplorer 0", "rect": [244, 772, 439, 1012], "w_px": 195 },
+        "fcurve_viewer": { "name": "FcurveViewer 0", "rect": [448, 772, 1288, 1012] }
+      },
+      "note": "OpenAnimationEditor [] / OpenFcurveEditor [] share this HWND (FCurve pane)."
+    },
+    "Fcurve Editor": {
+      "cmd": "OpenFcurveEditor",
+      "args": [],
+      "hwnd_title": "Animation Editor - FCurve Editor",
+      "png": "public/si/modules-gdi/52-anim-fcurve.png",
+      "media": "media/softimage-modules-gdi/52-anim-fcurve.png",
+      "png_px": [1056, 327],
+      "sha256": "6af13d7e788a4570a8dff0561113c3ef1fc13b5936bb6237e1e24905ba7071d3",
+      "same_as": "Animation Editor",
+      "note": "52-anim-fcurve.png SHA256 identical to 51-anim-editor.png — same HWND FCurve pane."
+    }
+  },
+  "colors": {
+    "panel_bg": "#aba8a6",
+    "toolbar_bg": "#aba8a6",
+    "client_bg": "#aba8a6",
+    "list_bg": "#aba8a6",
+    "track_bg": "#8c8c8c",
+    "clip_bg": "#9ab49d",
+    "grid": "#8c8c8c",
+    "time_cursor": "#ff0000",
+    "border": "#464646",
+    "note": "Sampled from Desktop HWND PNG crops 50/51 (modules-gdi). Playhead #ff0000 on Mixer ruler; track fill #9ab49d."
+  },
+  "layout": {
+    "title_h_px": 22,
+    "mixer_toolbar_h_px": 22,
+    "fcv_toolbar_h_px": 56,
+    "fcv_explorer_w_px": 195,
+    "fcv_list_w_px": 195,
+    "mixer_png_px": [1010, 327],
+    "fcv_png_px": [1056, 327]
+  },
+  "honest": {
+    "animate.fcurve_mixer_client_paint": {
+      "dump_label": "DUMP_READY",
+      "status": "DONE",
+      "wire": "HWND_PNG",
+      "note": "Desktop modules-gdi 50/51/52 HWND crops wired; Editor+Fcurve share HWND. Icon bitmaps beyond existing PE RT_BITMAP stay as-is; dope/keying unchanged."
+    },
+    "animate.floating_views": {
+      "openview": "LOCK",
+      "execute_command_empty_args": "DONE",
+      "wire": "EXECCMD"
+    }
+  }
+}

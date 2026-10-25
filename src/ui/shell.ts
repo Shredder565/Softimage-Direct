@@ -13,6 +13,17 @@ import { TEXTURE_NODES, MATERIAL_PRESETS } from '../core/shaders';
 import { openSiMenu, SI_MENUS } from './si';
 import { PRESET_MODELS } from '../commands/presets';
 import { animChrome, fcurveMenuLabels, mixerMenuLabels } from './animChrome';
+import {
+  applyAnimClientPaintVars,
+  attachAnimClientPaint,
+  fcurveClientMenubar,
+  fcurveFieldLabels,
+  fcurveModeCombo,
+  fcurveToolbarLabels,
+  mixerClientMenubar,
+  mixerToolbarText,
+  mixerTrackFlags,
+} from './animClientPaint';
 import iceViewChrome from '../data/si/ice_view_chrome.json';
 import {
   applyIceTreeChromeVars, iceToolbarShellLabels, iceToolbarTextLabels,
@@ -142,17 +153,66 @@ const animParams = (app: App): Parameter[] => { const out: Parameter[] = []; con
 const CURVE_COLORS: Record<string, string> = { posx: '#ff5a5a', posy: '#5aff5a', posz: '#5a7cff', rotx: '#ff5a5a', roty: '#5aff5a', rotz: '#5a7cff', sclx: '#ff5a5a', scly: '#5aff5a', sclz: '#5a7cff' };
 export function animationEditor(app: App, host: HTMLElement, mode: 'fcurve' | 'dopesheet' = 'fcurve') {
   const root = el('div', 'fcv'); host.appendChild(root); const A = app.anim;
+  // Desktop modules-gdi client paint (Gate B) — HWND PNG + menubar/fields; DopeSheet keeps PE menus.
+  if (mode === 'fcurve') attachAnimClientPaint(root, 'Animation Editor');
+  else applyAnimClientPaintVars(root);
   let shown = new Set<Parameter>(); let selKeys = new Set<string>(); const key = (p: Parameter, t: number) => `${p.fullName}@${t}`;
-  // Softimage Animation Editor / DopeSheet menubar labels from PE dict chrome tokens
-  const menus = mode === 'fcurve' ? fcurveMenuLabels() : animChrome.menus.dopesheet;
-  const hd = head(menuBtn(menus[0] || 'Edit', () => [{ label: 'Select All Keys' }, { label: 'Deselect All' }, { separator: true }, { label: 'Delete Keys' }, { label: 'Set Key at Current Frame' }, { separator: true }, { label: 'Move Keys...' }, { label: 'Scale Keys...' }], (l) => edit(l)),
-    menuBtn(mode === 'fcurve' ? (menus[1] || 'Curves') : (menus[1] || 'View'), () => mode === 'fcurve' ? [{ label: 'Linear' }, { label: 'Spline' }, { label: 'Constant (step)' }] : [{ label: 'Frame All' }, { label: 'Frame Selection' }, { separator: true }, { label: 'Show Values' }], (l) => {
-      if (mode !== 'fcurve' || l.startsWith('Frame') || l === 'Show Values') { if (l.startsWith('Frame')) frameAll(); else if (l === 'Show Values') showVals = !showVals; draw(); return; }
-      for (const p of shown) { const fc = A.fcurve(p); if (fc) { fc.interp = l.startsWith('Lin') ? 1 : l.startsWith('Con') ? 0 : 3; for (const k of fc.keys) k.interp = fc.interp; } }
-      A.frame = A.frame; draw();
-    }),
-    menuBtn(menus[2] || 'View', () => [{ label: 'Frame All' }, { label: 'Frame Selection' }, { separator: true }, { label: 'Show Values' }, { label: 'Show Handles' }, { label: 'Lock Parameters' }], (l) => { if (l.startsWith('Frame')) frameAll(); else if (l === 'Lock Parameters') lock = !lock; else if (l === 'Show Handles') showHandles = !showHandles; else showVals = !showVals; draw(); }),
-    btn(mode === 'fcurve' ? 'Dopesheet' : 'F-Curves', 'Switch editor', () => { root.remove(); animationEditor(app, host, mode === 'fcurve' ? 'dopesheet' : 'fcurve'); }), btn('Frame', 'Frame all', () => { frameAll(); draw(); }));
+  // Softimage Animation Editor menubar: Desktop 51-anim-editor.png (Explorer…Keys); DopeSheet stays PE.
+  const menus = mode === 'fcurve' ? fcurveClientMenubar() : animChrome.menus.dopesheet;
+  const peMenus = mode === 'fcurve' ? fcurveMenuLabels() : animChrome.menus.dopesheet;
+  const lockMenu = (label: string) => [{ label: `${label} leaves LOCK (no invent)` }];
+  const editMenu = () => [{ label: 'Select All Keys' }, { label: 'Deselect All' }, { separator: true }, { label: 'Delete Keys' }, { label: 'Set Key at Current Frame' }, { separator: true }, { label: 'Move Keys...' }, { label: 'Scale Keys...' }];
+  const curvesMenu = () => [{ label: 'Linear' }, { label: 'Spline' }, { label: 'Constant (step)' }];
+  const viewMenu = () => [{ label: 'Frame All' }, { label: 'Frame Selection' }, { separator: true }, { label: 'Show Values' }, { label: 'Show Handles' }, { label: 'Lock Parameters' }];
+  const hd = el('div', 'xp-head fcv-menubar');
+  if (mode === 'fcurve') {
+    for (const label of menus) {
+      if (label === 'Edit') hd.appendChild(menuBtn('Edit', editMenu, (l) => edit(l)));
+      else if (label === 'Curves') hd.appendChild(menuBtn('Curves', curvesMenu, (l) => {
+        for (const p of shown) { const fc = A.fcurve(p); if (fc) { fc.interp = l.startsWith('Lin') ? 1 : l.startsWith('Con') ? 0 : 3; for (const k of fc.keys) k.interp = fc.interp; } }
+        A.frame = A.frame; draw();
+      }));
+      else if (label === 'View' || label === 'Keys') hd.appendChild(menuBtn(label, viewMenu, (l) => {
+        if (l.startsWith('Frame')) frameAll();
+        else if (l === 'Lock Parameters') lock = !lock;
+        else if (l === 'Show Handles') showHandles = !showHandles;
+        else showVals = !showVals;
+        draw();
+      }));
+      else if (label === 'Explorer' || label === 'Editor') {
+        // Desktop toolbar_labels twin — also appear as menubar toggles on HWND
+        hd.appendChild(btn(label, label, () => { /* pane toggle LOCK without enum dump */ }));
+      }
+      else hd.appendChild(menuBtn(label, () => lockMenu(label), () => { /* flyout leaves LOCK */ }));
+    }
+  } else {
+    hd.append(
+      menuBtn(peMenus[0] || 'Edit', editMenu, (l) => edit(l)),
+      menuBtn(peMenus[1] || 'View', viewMenu, (l) => { if (l.startsWith('Frame')) frameAll(); else if (l === 'Show Values') showVals = !showVals; draw(); }),
+      menuBtn(peMenus[2] || 'Keys', viewMenu, (l) => { if (l.startsWith('Frame')) frameAll(); else showVals = !showVals; draw(); }),
+    );
+  }
+  hd.append(
+    btn(mode === 'fcurve' ? 'Dopesheet' : 'F-Curves', 'Switch editor', () => { root.remove(); animationEditor(app, host, mode === 'fcurve' ? 'dopesheet' : 'fcurve'); }),
+    btn('Frame', 'Frame all', () => { frameAll(); draw(); }),
+  );
+  // Desktop FCurve toolbar strip: Frame:/Value: + Absolute Offset (51-anim-editor.png / float_children)
+  if (mode === 'fcurve') {
+    const fieldStrip = el('div', 'fcv-field-strip');
+    for (const lab of fcurveFieldLabels()) {
+      fieldStrip.appendChild(el('span', 'fcv-field-label', lab));
+      const inp = document.createElement('input');
+      inp.className = 'fcv-field-input';
+      inp.type = 'text';
+      fieldStrip.appendChild(inp);
+    }
+    const modeEl = el('span', 'fcv-mode-combo', fcurveModeCombo());
+    fieldStrip.appendChild(modeEl);
+    for (const lab of fcurveToolbarLabels()) {
+      fieldStrip.appendChild(btn(lab, lab, () => { /* Explorer/Editor pane — HWND attested */ }));
+    }
+    hd.appendChild(fieldStrip);
+  }
   const info = el('span', 'rt-title'); hd.appendChild(info); root.appendChild(hd);
   const body = el('div', 'fcv-body'); const list = el('div', 'fcv-list'); const wrap = el('div', 'fcv-canvas'); body.append(list, wrap); root.appendChild(body); const cv = canvasFill(wrap);
   let lock = false, showVals = true, showHandles = true; let view = { t0: A.startFrame - 2, t1: A.endFrame + 2, v0: -10, v1: 10 };
@@ -162,8 +222,11 @@ export function animationEditor(app: App, host: HTMLElement, mode: 'fcurve' | 'd
   const X = (t: number) => LM + (t - view.t0) / (view.t1 - view.t0) * (cv.clientWidth - LM - 6); const Y = (v: number) => TB + (1 - (v - view.v0) / (view.v1 - view.v0)) * (cv.clientHeight - TB - 6);
   const invX = (x: number) => view.t0 + (x - LM) / (cv.clientWidth - LM - 6) * (view.t1 - view.t0); const invY = (y: number) => view.v1 - (y - TB) / (cv.clientHeight - TB - 6) * (view.v1 - view.v0);
   const rows = () => [...shown];
-  const draw = () => { const g = ctx2(cv); const W = cv.clientWidth, H = cv.clientHeight; g.fillStyle = animChrome.colors.client_bg; g.fillRect(0, 0, W, H);
-    const tstep = (view.t1 - view.t0) > 200 ? 50 : (view.t1 - view.t0) > 60 ? 10 : 5; g.strokeStyle = animChrome.colors.grid; g.fillStyle = '#ccc';
+  const draw = () => { const g = ctx2(cv); const W = cv.clientWidth, H = cv.clientHeight;
+    const csPaint = getComputedStyle(root);
+    g.fillStyle = csPaint.getPropertyValue('--anim-client-bg').trim() || animChrome.colors.client_bg; g.fillRect(0, 0, W, H);
+    const tstep = (view.t1 - view.t0) > 200 ? 50 : (view.t1 - view.t0) > 60 ? 10 : 5;
+    g.strokeStyle = csPaint.getPropertyValue('--anim-grid').trim() || animChrome.colors.grid; g.fillStyle = '#ccc';
     const vg = pref('C3DPrefsFCurveEditor', 'vert_grid_vis') !== false, hg = pref('C3DPrefsFCurveEditor', 'horz_grid_vis') !== false, hr = pref('C3DPrefsFCurveEditor', 'horz_ruler_vis') !== false, vr = pref('C3DPrefsFCurveEditor', 'vert_ruler_vis') !== false;
     for (let t = Math.ceil(view.t0 / tstep) * tstep; t <= view.t1; t += tstep) { const x = X(t); if (vg || mode !== 'fcurve') { g.beginPath(); g.moveTo(x, TB); g.lineTo(x, H); g.stroke(); } if (hr) g.fillText(String(t), x + 2, 10); }
     if (mode === 'fcurve') { const vstep = niceStep(view.v1 - view.v0); for (let v = Math.ceil(view.v0 / vstep) * vstep; v <= view.v1; v += vstep) { const y = Y(v); if (hg) { g.beginPath(); g.moveTo(LM, y); g.lineTo(W, y); g.stroke(); } if (vr) g.fillText(String(Math.round(v * 100) / 100), 2, y + 3); } g.strokeStyle = '#888'; g.beginPath(); g.moveTo(LM, Y(0)); g.lineTo(W, Y(0)); g.stroke(); }
@@ -192,7 +255,8 @@ export function animationEditor(app: App, host: HTMLElement, mode: 'fcurve' | 'd
         }
       }
       else { const y = TB + 8 + ri * 18; g.fillStyle = 'rgba(0,0,0,.15)'; g.fillRect(LM, y - 2, W - LM, 16); g.fillStyle = '#ddd'; g.fillText(p.label, 2, y + 10); for (const k of fc.keys) { const x = X(k.time); g.fillStyle = selKeys.has(key(p, k.time)) ? '#fff' : col; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 5, y + 6); g.lineTo(x, y + 12); g.lineTo(x - 5, y + 6); g.closePath(); g.fill(); } } });
-    g.fillStyle = animChrome.colors.time_cursor; g.fillRect(X(A.frame) - 1, TB, 2, H - TB); g.fillText(String(A.frame), X(A.frame) + 3, H - 3); };
+    g.fillStyle = getComputedStyle(root).getPropertyValue('--anim-cursor').trim() || animChrome.colors.time_cursor;
+    g.fillRect(X(A.frame) - 1, TB, 2, H - TB); g.fillText(String(A.frame), X(A.frame) + 3, H - 3); };
   const keyAt = (px: number, py: number): { p: Parameter; t: number } | null => { const rs = rows(); for (let ri = 0; ri < rs.length; ri++) { const p = rs[ri]; const fc = A.fcurve(p); if (!fc) continue; for (const k of fc.keys) { const x = X(k.time), y = mode === 'fcurve' ? Y(k.value) : TB + 8 + ri * 18 + 6; if (Math.abs(x - px) < 6 && Math.abs(y - py) < 7) return { p, t: k.time }; } } return null; };
   const edit = (l: string) => { if (l === 'Select All Keys') { selKeys.clear(); for (const p of shown) for (const k of A.fcurve(p)?.keys ?? []) selKeys.add(key(p, k.time)); } else if (l === 'Deselect All') selKeys.clear(); else if (l === 'Delete Keys') { for (const p of shown) for (const k of [...(A.fcurve(p)?.keys ?? [])]) if (selKeys.has(key(p, k.time))) app.run('RemoveKey', { InputObjs: p.fullName, Time: k.time }); selKeys.clear(); } else if (l === 'Set Key at Current Frame') { for (const p of shown) app.run('SaveKey', { InputObjs: p.fullName }); } else if (l === 'Move Keys...' || l === 'Scale Keys...') { const v = Number(prompt(l === 'Move Keys...' ? 'Offset (frames):' : 'Scale factor about the first selected key:', l === 'Move Keys...' ? '10' : '2') ?? NaN); if (!Number.isFinite(v)) return; for (const p of shown) { const fc = A.fcurve(p); if (!fc) continue; const sel = fc.keys.filter(k => selKeys.has(key(p, k.time))); if (!sel.length) continue; const t0 = sel[0].time; const old = fc.keys.map(k => ({ ...k })); app.record(l, () => { for (const k of sel) k.time = Math.round(l === 'Move Keys...' ? k.time + v : t0 + (k.time - t0) * v); fc.keys.sort((a, b) => a.time - b.time); }, () => { fc.keys = old; }); } selKeys.clear(); A.frame = A.frame; } draw(); };
   let drag: { sx: number; sy: number; mode: 'key' | 'pan' | 'box' | 'scrub'; start: Map<string, { t: number; v: number }>; keys: FCurve[] } | null = null;
@@ -340,28 +404,48 @@ export function presetManager(app: App, host: HTMLElement) {
 }
 export function animationMixer(app: App, host: HTMLElement) {
   const root = el('div', 'mixer'); host.appendChild(root);
+  // Desktop modules-gdi 50-anim-mixer.png client paint (Gate B)
+  attachAnimClientPaint(root, 'Animation Mixer');
   const sources = () => {
     const hostModel = app.selectedObjects[0]?.model ?? app.scene.root;
     return [...hostModel.properties.filter(p => p.type === 'actionsource'), ...app.scene.root.properties.filter(p => p.type === 'actionsource')];
   };
   const mix = () => (app.selectedObjects[0]?.model ?? app.scene.root).property('mixer') ?? app.scene.root.property('mixer');
-  // Softimage Animation Mixer menubar labels from XSIANIMATIONMIXER.dict / anim_chrome tokens
-  const mm = mixerMenuLabels();
-  const hd = head(
-    menuBtn(mm[0] || 'Edit', () => [{ label: 'Store Action' }, { label: 'Apply Action' }, { separator: true }, { label: 'Equalize Clips' }], (l) => {
-      if (l === 'Store Action') app.run('StoreAction', { Name: prompt('Action name:', 'Action') || 'Action', AddClip: true });
-      else if (l === 'Apply Action') app.run('ApplyAction');
-      else if (l === 'Equalize Clips') app.run('EqualizeClips');
-      render();
-    }),
-    menuBtn(mm[1] || 'View', () => [{ label: 'Refresh' }, { label: 'Frame All' }], () => render()),
-    menuBtn(mm[2] || 'Track', () => [{ label: 'Insert Animation Track' }, { label: 'Insert Shape Track' }], (l) => { app.logMsg('info', `Mixer: ${l}`); }),
-    menuBtn(mm[3] || 'Clip', () => [{ label: 'Add Transition' }, { label: 'Add Bridge Transition' }, { label: 'Create Compound' }], (l) => {
-      if (l === 'Add Transition') app.run('AddTransition');
-      else if (l === 'Add Bridge Transition') app.run('AddBridgeTransition');
-      else if (l === 'Create Compound') app.run('CreateCompound');
-      render();
-    }),
+  // Softimage Animation Mixer menubar — Desktop 50-anim-mixer.png: Edit View Track Clip Mix Effect
+  const mm = mixerClientMenubar().length ? mixerClientMenubar() : mixerMenuLabels();
+  const lockMenu = (label: string) => [{ label: `${label} leaves LOCK (no invent)` }];
+  const hd = el('div', 'xp-head mixer-menubar');
+  for (const label of mm) {
+    if (label === 'Edit') {
+      hd.appendChild(menuBtn('Edit', () => [{ label: 'Store Action' }, { label: 'Apply Action' }, { separator: true }, { label: 'Equalize Clips' }], (l) => {
+        if (l === 'Store Action') app.run('StoreAction', { Name: prompt('Action name:', 'Action') || 'Action', AddClip: true });
+        else if (l === 'Apply Action') app.run('ApplyAction');
+        else if (l === 'Equalize Clips') app.run('EqualizeClips');
+        render();
+      }));
+    } else if (label === 'View') {
+      hd.appendChild(menuBtn('View', () => [{ label: 'Refresh' }, { label: 'Frame All' }], () => render()));
+    } else if (label === 'Track') {
+      hd.appendChild(menuBtn('Track', () => [{ label: 'Insert Animation Track' }, { label: 'Insert Shape Track' }], (l) => { app.logMsg('info', `Mixer: ${l}`); }));
+    } else if (label === 'Clip') {
+      hd.appendChild(menuBtn('Clip', () => [{ label: 'Add Transition' }, { label: 'Add Bridge Transition' }, { label: 'Create Compound' }], (l) => {
+        if (l === 'Add Transition') app.run('AddTransition');
+        else if (l === 'Add Bridge Transition') app.run('AddBridgeTransition');
+        else if (l === 'Create Compound') app.run('CreateCompound');
+        render();
+      }));
+    } else {
+      // Mix / Effect — Desktop menubar attested; flyout leaves LOCK without dump
+      hd.appendChild(menuBtn(label, () => lockMenu(label), () => { /* flyout LOCK */ }));
+    }
+  }
+  // Desktop toolbar text buttons (50-anim-mixer.png): Up, Offset Map, Action Key
+  const toolStrip = el('div', 'mixer-toolbar-text');
+  for (const lab of mixerToolbarText()) {
+    toolStrip.appendChild(btn(lab, lab, () => { app.logMsg('info', `Mixer: ${lab}`); }));
+  }
+  hd.appendChild(toolStrip);
+  hd.append(
     btn('Store Action', 'Store selection animation as an action source on the model', () => { app.run('StoreAction', { Name: prompt('Action name:', 'Action') || 'Action', AddClip: true }); render(); }),
     btn('Apply', 'Apply the selected action source', () => { app.run('ApplyAction'); render(); }),
     btn('Refresh', '', () => render()),
@@ -374,6 +458,9 @@ export function animationMixer(app: App, host: HTMLElement) {
     hd.appendChild(img);
   }
   root.appendChild(hd);
+  // Desktop track flags r m s g (50-anim-mixer.png)
+  const flags = el('div', 'mixer-track-flags', mixerTrackFlags().join(' '));
+  root.appendChild(flags);
   const tracksEl = el('div', 'mixer-tracks'); root.appendChild(tracksEl);
   const render = () => {
     tracksEl.innerHTML = '';
@@ -393,6 +480,7 @@ export function animationMixer(app: App, host: HTMLElement) {
       for (const [ti, list] of [...byTrack.entries()].sort((a, b) => a[0] - b[0])) {
         const row = el('div', 'mixer-track-row');
         row.appendChild(el('div', 'mixer-track-label', `Animation Track ${ti}`));
+        row.appendChild(el('span', 'mixer-track-flags', mixerTrackFlags().join(' ')));
         for (const c of list) {
           const bar = el('div', 'mixer-clip-bar', `${c.name} · ${c.source ?? ''} @${c.start} (${c.duration}f)${c.mute ? ' [mute]' : ''}${c.additive ? ' [add]' : ''}`);
           bar.onclick = () => app.run('SelectObj', { InputObjs: c.source });

@@ -1,6 +1,7 @@
 // Softimage Desktop LOCK close dump (2026-10-25) — honest wire statuses.
 // Source: internal/softimage-pc-dumps/unlock/direct_lock_desktop_close.json
 // Do not invent HWND crop px, PPG COLORREF, or OpenView paint from PROBE/DUMP_READY labels.
+// Anim Mixer/Editor/Fcurve client paint DONE via modules-gdi HWND PNG (anim_client_paint.json).
 import desk from '../data/si/direct_lock_desktop_close.json';
 
 type Honest = {
@@ -22,7 +23,7 @@ const D = desk as {
 /** Softimage Desktop Passes.RenderOptions keys attested in direct_lock_desktop_close (OM only). */
 export const DESKTOP_REGION_OM_KEYS = Object.keys(D.region_params);
 
-/** Compact audit — Desktop dump landed; HWND/PPG/OpenView stay LOCK; Anim ExecCmd open DONE (no invent paint). */
+/** Compact audit — Desktop dump; HWND/PPG/OpenView LOCK; Anim ExecCmd + client paint DONE. */
 export function directLockDesktopAudit(): Record<string, unknown> {
   const region = D.honest['render.region_hwnd_crop'];
   const ppg = D.honest['ui.ppg_title_hover_gdi'];
@@ -49,13 +50,15 @@ export function directLockDesktopAudit(): Record<string, unknown> {
     floatingViewsOpenview: views?.openview ?? 'LOCK',
     floatingViewsWire: views?.wire ?? 'NONE',
     fcurveMixerClientPaint: paint?.status ?? 'LOCK',
+    fcurveMixerClientPaintWire: paint?.wire ?? 'NONE',
     openviewAllFailed: openviewFail,
     ok:
       (region?.hwnd_crop_chrome ?? 'LOCK') === 'LOCK' &&
       (ppg?.status ?? 'LOCK') === 'LOCK' &&
       openviewFail &&
       floatingExecDone &&
-      (paint?.status ?? 'LOCK') === 'LOCK' &&
+      (paint?.status ?? 'LOCK') === 'DONE' &&
+      (paint?.wire ?? 'NONE') === 'HWND_PNG' &&
       DESKTOP_REGION_OM_KEYS.length >= 20 &&
       D.region_params.imagewidth === 1920,
   };

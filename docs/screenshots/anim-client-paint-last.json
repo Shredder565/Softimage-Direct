@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "notes": [
+    "mixer PNG sha OK",
+    "editor PNG sha OK",
+    "fcurve PNG sha OK",
+    "51/52 identical HWND",
+    "mixer menubar Desktop Mix",
+    "editor menubar 8 labels",
+    "live mixer menubar=Edit|View|Track|Clip|Mix|Effect|Store Action|Apply|Refresh",
+    "live fcv mode=Absolute Offset"
+  ],
+  "diffs": []
+}
