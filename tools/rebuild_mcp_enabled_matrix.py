@@ -66,6 +66,9 @@ def find_hwnd() -> Path | None:
 STORE_ANIM = Path(
     "/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/anim"
 )
+STORE_RENDER = Path(
+    "/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/render"
+)
 
 
 def find_anim_hwnd() -> Path | None:
@@ -73,6 +76,84 @@ def find_anim_hwnd() -> Path | None:
         if p.exists():
             return p
     return None
+
+
+def find_render_desktop_tour() -> Path | None:
+    for p in (
+        STORE_RENDER / "desktop_tour_commands.json",
+        DUMP / "desktop_tour_commands.json",
+        ROOT / "src" / "data" / "si" / "render_desktop_command_enabled.json",
+    ):
+        if p.exists():
+            return p
+    return None
+
+
+def merge_render_desktop_tour_commands(out: dict, bool_attested: set[str], tour: dict) -> None:
+    """Merge Desktop tour Command.Enabled by unique ScriptingName into empty context.
+
+    Softimage indexes some specialty passes (Curve/Surface Pass) with ScriptingName ApplyOp
+    and Enabled=false; do not demote shared ApplyOp from those rows.
+    """
+    from collections import Counter
+
+    commands = tour.get("commands") or {}
+    # Compact inventory shape: enabled_by_scriptingname already unique
+    if "enabled_by_scriptingname" in tour and isinstance(tour["enabled_by_scriptingname"], dict):
+        merged = {k: bool(v) for k, v in tour["enabled_by_scriptingname"].items() if v is True or v is False}
+        skipped = []
+    else:
+        sn_count: Counter[str] = Counter()
+        rows: list[tuple[str, str, bool | None]] = []
+        for name, v in commands.items():
+            if not isinstance(v, dict) or not v.get("found"):
+                continue
+            sn = v.get("scriptingname") or name
+            sn_count[sn] += 1
+            en = v.get("enabled")
+            rows.append((sn, name, en if isinstance(en, bool) else None))
+        merged = {}
+        skipped = []
+        for sn, name, en in rows:
+            if en is None:
+                continue
+            if en is False and (sn_count[sn] > 1 or sn == "ApplyOp"):
+                skipped.append({"scriptingname": sn, "name": name, "enabled": en})
+                continue
+            if sn in merged and merged[sn] != en:
+                if en is True:
+                    merged[sn] = True
+                skipped.append({"scriptingname": sn, "name": name, "enabled": en, "reason": "conflict"})
+            else:
+                merged[sn] = bool(en)
+
+    empty = out["contexts"].setdefault("empty", {"selection": None, "commands": {}})
+    cmds_map = empty.setdefault("commands", {})
+    added = 0
+    for sn, en in sorted(merged.items()):
+        if sn not in cmds_map or cmds_map[sn] is None:
+            cmds_map[sn] = bool(en)
+            bool_attested.add(sn)
+            added += 1
+        elif en is True and cmds_map[sn] is not True:
+            # Prefer attested Enabled=true over stale false/null
+            cmds_map[sn] = True
+            bool_attested.add(sn)
+            added += 1
+        elif cmds_map[sn] is True or cmds_map[sn] is False:
+            bool_attested.add(sn)
+    out["bool_attested"] = sorted(bool_attested)
+    out["meta"]["render_desktop_tour"] = {
+        "source": str((tour.get("meta") or {}).get("script") or "desktop_tour_commands.json"),
+        "softimage": (tour.get("meta") or {}).get("softimage") or "13.2.163.0",
+        "mode": "empty-scene Command.Enabled + ScriptingName",
+        "utc": (tour.get("meta") or {}).get("utc"),
+        "commands_rows": len(commands) or len(tour.get("rows") or []),
+        "merged_unique_scriptingnames": len(merged),
+        "added_to_empty": added,
+        "skipped": skipped,
+        "note": "Merge unique ScriptingName→Enabled into empty; skip shared ApplyOp false (Curve/Surface Pass)",
+    }
 
 
 def merge_command_enabled_contexts(out: dict, bool_attested: set[str], dump: dict) -> None:
@@ -189,6 +270,11 @@ def main() -> int:
                 ),
                 "null_button_cells": sum(1 for row in buttons.values() for v in row.values() if v is None),
             }
+
+    render_tour_path = find_render_desktop_tour()
+    if render_tour_path:
+        merge_render_desktop_tour_commands(out, bool_attested, load_json(render_tour_path))
+        print(f"merged render desktop tour {render_tour_path.name}")
 
     anim_hwnd_path = find_anim_hwnd()
     if anim_hwnd_path:

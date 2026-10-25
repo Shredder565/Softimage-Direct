@@ -1,0 +1,1761 @@
+{
+  "meta": {
+    "softimage": "13.2.163.0",
+    "script": "si_render_desktop_tour.js",
+    "mode": "Softimage Desktop live GUI",
+    "utc": "Sun, 25 Oct 2026 16:13:29 UTC"
+  },
+  "switch_to_render": {
+    "name": "Switch to Render Toolbar",
+    "ok": true,
+    "result": null,
+    "err": null
+  },
+  "commands": {
+    "Switch to Render Toolbar": {
+      "name": "Switch to Render Toolbar",
+      "found": true,
+      "enabled": true,
+      "description": "Display the rendering toolbar",
+      "category": "Toolbar",
+      "scriptingname": "SwitchToolbar"
+    },
+    "Render Pass": {
+      "name": "Render Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Render the specified pass (current pass if not specified)",
+      "category": "Rendering",
+      "scriptingname": "RenderPass"
+    },
+    "Render Passes": {
+      "name": "Render Passes",
+      "found": true,
+      "enabled": true,
+      "description": "Render a the list of passes, or current pass if none specified, at the current frame",
+      "category": "Rendering",
+      "scriptingname": "RenderPasses"
+    },
+    "Render Selected Passes": {
+      "name": "Render Selected Passes",
+      "found": true,
+      "enabled": true,
+      "description": "Render selected passes",
+      "category": "Rendering",
+      "scriptingname": "RenderSelectedPasses"
+    },
+    "Render All Passes": {
+      "name": "Render All Passes",
+      "found": true,
+      "enabled": true,
+      "description": "Render all passes",
+      "category": "Rendering",
+      "scriptingname": "RenderAllPasses"
+    },
+    "Render Current Pass": {
+      "name": "Render Current Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Render selected passes",
+      "category": "Rendering",
+      "scriptingname": "RenderPasses"
+    },
+    "Render Current Frame": {
+      "name": "Render Current Frame",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Custom",
+      "scriptingname": "RenderCurrentFrame"
+    },
+    "Render Current Frame All Passes": {
+      "name": "Render Current Frame All Passes",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Custom",
+      "scriptingname": "RenderCurrentFrameAllPasses"
+    },
+    "Render Passes Using a Frame Set": {
+      "name": "Render Passes Using a Frame Set",
+      "found": true,
+      "enabled": true,
+      "description": "Render a set of frames from the specified pass, or current pass if none specified",
+      "category": "Rendering",
+      "scriptingname": "RenderPassesFrameSet"
+    },
+    "Scene Render Options": {
+      "name": "Scene Render Options",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "InspectObj"
+    },
+    "Inspect Current Pass Renderer Options": {
+      "name": "Inspect Current Pass Renderer Options",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "InspectObj"
+    },
+    "Inspect Rendering Preferences": {
+      "name": "Inspect Rendering Preferences",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": ""
+    },
+    "Open Rendering Preferences": {
+      "name": "Open Rendering Preferences",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Custom",
+      "scriptingname": "OpenRenderingPreferences"
+    },
+    "Update Render Options": {
+      "name": "Update Render Options",
+      "found": true,
+      "enabled": true,
+      "description": "Update render options based on the global preference settings",
+      "category": "Rendering|Preferences",
+      "scriptingname": "SIUpdateRenderOptionsFromGlobalPref"
+    },
+    "Render Region Tool": {
+      "name": "Render Region Tool",
+      "found": true,
+      "enabled": true,
+      "description": "Create a region for interactive rendering",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionTool"
+    },
+    "Create Render Region": {
+      "name": "Create Render Region",
+      "found": true,
+      "enabled": true,
+      "description": "Creates a new render region with the given dimensions",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionCreate"
+    },
+    "Close Render Region": {
+      "name": "Close Render Region",
+      "found": true,
+      "enabled": true,
+      "description": "Closes a render region",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionClose"
+    },
+    "Show/Hide Render Region": {
+      "name": "Show/Hide Render Region",
+      "found": true,
+      "enabled": true,
+      "description": "Hides/unhides a render region",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionToggleVisibility"
+    },
+    "Show/Hide All Render Regions": {
+      "name": "Show/Hide All Render Regions",
+      "found": true,
+      "enabled": true,
+      "description": "Hides/unhides all render regions",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionToggleVisibility"
+    },
+    "Refresh Render Region": {
+      "name": "Refresh Render Region",
+      "found": true,
+      "enabled": true,
+      "description": "Refreshes a render region by re-rendering its contents",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionRefresh"
+    },
+    "Refresh All Render Regions": {
+      "name": "Refresh All Render Regions",
+      "found": true,
+      "enabled": true,
+      "description": "Refreshes all open render regions by re-rendering their contents",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionRefresh"
+    },
+    "Toggle Auto-Refresh Mode for Render Region": {
+      "name": "Toggle Auto-Refresh Mode for Render Region",
+      "found": true,
+      "enabled": true,
+      "description": "Toggles the auto-refresh mode for the render region",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionToggleAutoRefresh"
+    },
+    "Toggle Auto-Refresh Mode for All Render Regions": {
+      "name": "Toggle Auto-Refresh Mode for All Render Regions",
+      "found": true,
+      "enabled": true,
+      "description": "Toggles the auto-refresh mode for all render regions",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionToggleAutoRefresh"
+    },
+    "Set Refresh Mode for Render Region": {
+      "name": "Set Refresh Mode for Render Region",
+      "found": true,
+      "enabled": true,
+      "description": "Sets the refresh mode for the render region",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionSetRefreshMode"
+    },
+    "Get Refresh Mode for Render Region": {
+      "name": "Get Refresh Mode for Render Region",
+      "found": true,
+      "enabled": true,
+      "description": "Gets the refresh mode for the render region",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionGetRefreshMode"
+    },
+    "Set All Render Regions Refresh Mode to Interactive": {
+      "name": "Set All Render Regions Refresh Mode to Interactive",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionSetRefreshMode"
+    },
+    "Set All Render Regions Refresh Mode to Manual": {
+      "name": "Set All Render Regions Refresh Mode to Manual",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionSetRefreshMode"
+    },
+    "Set All Render Regions Refresh Mode to Camera, Time and Region State": {
+      "name": "Set All Render Regions Refresh Mode to Camera, Time and Region State",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionSetRefreshMode"
+    },
+    "Set Render Region Display Type": {
+      "name": "Set Render Region Display Type",
+      "found": true,
+      "enabled": true,
+      "description": "Set the display type for the render region's contents",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionSetDisplayType"
+    },
+    "Get Render Region Display Type": {
+      "name": "Get Render Region Display Type",
+      "found": true,
+      "enabled": true,
+      "description": "Get the display type for the render region's contents",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionGetDisplayType"
+    },
+    "Set All Render Regions Display Type to RGB Only": {
+      "name": "Set All Render Regions Display Type to RGB Only",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionSetDisplayType"
+    },
+    "Set All Render Regions Display Type to RGB + Alpha": {
+      "name": "Set All Render Regions Display Type to RGB + Alpha",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionSetDisplayType"
+    },
+    "Set All Render Regions Display Type to Alpha Channel": {
+      "name": "Set All Render Regions Display Type to Alpha Channel",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionSetDisplayType"
+    },
+    "Set All Render Regions Display Type to Red Channel": {
+      "name": "Set All Render Regions Display Type to Red Channel",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionSetDisplayType"
+    },
+    "Set All Render Regions Display Type to Green Channel": {
+      "name": "Set All Render Regions Display Type to Green Channel",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionSetDisplayType"
+    },
+    "Set All Render Regions Display Type to Blue Channel": {
+      "name": "Set All Render Regions Display Type to Blue Channel",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionSetDisplayType"
+    },
+    "Set Render Region Viewing Render Channel": {
+      "name": "Set Render Region Viewing Render Channel",
+      "found": true,
+      "enabled": true,
+      "description": "Set which render channel to view by the render region",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionSetRenderChannel"
+    },
+    "Get Render Region Viewing Render Channel": {
+      "name": "Get Render Region Viewing Render Channel",
+      "found": true,
+      "enabled": true,
+      "description": "Get which render channel is displayed by the render region",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionGetRenderChannel"
+    },
+    "Toggle Selection Tracking for Render Region": {
+      "name": "Toggle Selection Tracking for Render Region",
+      "found": true,
+      "enabled": true,
+      "description": "Toggles the selection tracking mode for the render region",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionToggleSelectionTracking"
+    },
+    "Toggle Selection Tracking for All Render Regions": {
+      "name": "Toggle Selection Tracking for All Render Regions",
+      "found": true,
+      "enabled": true,
+      "description": "Toggles the selection tracking mode for all render regions",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionToggleSelectionTracking"
+    },
+    "All Render Region Options": {
+      "name": "All Render Region Options",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "InspectObj"
+    },
+    "Inspect Viewport Render Region Options": {
+      "name": "Inspect Viewport Render Region Options",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "InspectViewportRenderRegionOptions"
+    },
+    "Save Render Region To File": {
+      "name": "Save Render Region To File",
+      "found": true,
+      "enabled": true,
+      "description": "Save the contents of the render region to a file",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionSave"
+    },
+    "Save All Render Regions To Separate Files": {
+      "name": "Save All Render Regions To Separate Files",
+      "found": true,
+      "enabled": true,
+      "description": "Save the contents of all open render regions to a file",
+      "category": "Rendering",
+      "scriptingname": "RenderRegionSave"
+    },
+    "Create New Render Channel": {
+      "name": "Create New Render Channel",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "CreateRenderChannel"
+    },
+    "Remove Render Channel": {
+      "name": "Remove Render Channel",
+      "found": true,
+      "enabled": true,
+      "description": "Remove a render channel",
+      "category": "Rendering",
+      "scriptingname": "RemoveRenderChannel"
+    },
+    "Export Passes to Render Archive": {
+      "name": "Export Passes to Render Archive",
+      "found": true,
+      "enabled": true,
+      "description": "Export a list of passes to a render archive, or the current pass if none specified",
+      "category": "Rendering",
+      "scriptingname": "ExportRenderArchiveFrameSet"
+    },
+    "Export Selected Passes to Render Archive": {
+      "name": "Export Selected Passes to Render Archive",
+      "found": true,
+      "enabled": true,
+      "description": "Export the selected passes to a render archive",
+      "category": "Rendering",
+      "scriptingname": "ExportRenderArchive"
+    },
+    "Export All Passes to Render Archives": {
+      "name": "Export All Passes to Render Archives",
+      "found": true,
+      "enabled": true,
+      "description": "Export All Passes to Render Archives",
+      "category": "Rendering",
+      "scriptingname": "ExportRenderArchiveAllPasses"
+    },
+    "Export an Object to a Render Archive": {
+      "name": "Export an Object to a Render Archive",
+      "found": true,
+      "enabled": true,
+      "description": "Export an object and all its children to a render archive, or the current selection if none specified",
+      "category": "Rendering",
+      "scriptingname": "ExportObjectRenderArchive"
+    },
+    "Toggle Show Rendered Image for Pass Rendering": {
+      "name": "Toggle Show Rendered Image for Pass Rendering",
+      "found": true,
+      "enabled": true,
+      "description": "Toggles the show rendered image preference for pass rendering with the UI",
+      "category": "Rendering",
+      "scriptingname": "RenderPassToggleShowRenderedImage"
+    },
+    "Dispose Rendering Cache": {
+      "name": "Dispose Rendering Cache",
+      "found": true,
+      "enabled": true,
+      "description": "Dispose all rendering data including materials, shaders and internal rendering data. This command is used when the user no longer needs the rendering information and wants to free some memory space.",
+      "category": "",
+      "scriptingname": "DisposeRenderingCache"
+    },
+    "Update Render Manager": {
+      "name": "Update Render Manager",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Custom",
+      "scriptingname": "UpdateRenderManager"
+    },
+    "Make Renderer Local to Pass": {
+      "name": "Make Renderer Local to Pass",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Custom",
+      "scriptingname": "MakeRendererLocalToPass"
+    },
+    "Make Pass Renderer Global": {
+      "name": "Make Pass Renderer Global",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Custom",
+      "scriptingname": "MakePassRendererGlobal"
+    },
+    "RenderMap": {
+      "name": "RenderMap",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Property|Rendering",
+      "scriptingname": "AddProp"
+    },
+    "Render Setup": {
+      "name": "Render Setup",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "",
+      "scriptingname": "BvrRenderSetup"
+    },
+    "GenerateRenderSetup": {
+      "name": "GenerateRenderSetup",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "",
+      "scriptingname": "BvrGenerateRenderSetup"
+    },
+    "Copy Render Options ": {
+      "name": "Copy Render Options ",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Custom",
+      "scriptingname": "CopyRenderOptions"
+    },
+    "RenderTree Shader Pop-up Menu": {
+      "name": "RenderTree Shader Pop-up Menu",
+      "found": true,
+      "enabled": true,
+      "description": "Pop-up a menu of available shaders",
+      "category": "",
+      "scriptingname": "UIMapButton"
+    },
+    "RendertreeDeleteShaders": {
+      "name": "RendertreeDeleteShaders",
+      "found": true,
+      "enabled": true,
+      "description": "Take a list of shaders, disconnect them from other shaders, and delete them.",
+      "category": "Rendering",
+      "scriptingname": "DisconnectAndDeleteShaders"
+    },
+    "RendertreeDeleteOrUnnestShaders": {
+      "name": "RendertreeDeleteOrUnnestShaders",
+      "found": true,
+      "enabled": true,
+      "description": "Take a list of shaders, disconnect them from other shaders, and delete or unnest them. Image clips are going to be unnested from the given container",
+      "category": "Rendering",
+      "scriptingname": "DisconnectAndDeleteOrUnnestShaders"
+    },
+    "ShowRenderTree": {
+      "name": "ShowRenderTree",
+      "found": false
+    },
+    "OpenRenderTree": {
+      "name": "OpenRenderTree",
+      "found": false
+    },
+    "RenderTree": {
+      "name": "RenderTree",
+      "found": false
+    },
+    "Rendering Visibility of Current Layer": {
+      "name": "Rendering Visibility of Current Layer",
+      "found": true,
+      "enabled": true,
+      "description": "Toggle rendering visibility of current layer",
+      "category": "Layer",
+      "scriptingname": "ToggleCurrentLayerProperty"
+    },
+    "Create New Output Framebuffer on a Pass": {
+      "name": "Create New Output Framebuffer on a Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Creates a new output framebuffer on a pass from render channel",
+      "category": "Rendering",
+      "scriptingname": "CreateFramebuffer"
+    },
+    "OGL3Pass Shader": {
+      "name": "OGL3Pass Shader",
+      "found": true,
+      "enabled": true,
+      "description": "Apply the OGL3Pass shader to the selected objects",
+      "category": "Rendering",
+      "scriptingname": "ApplyShader"
+    },
+    "Set current pass": {
+      "name": "Set current pass",
+      "found": true,
+      "enabled": true,
+      "description": "Set the current pass",
+      "category": "Rendering",
+      "scriptingname": "SetCurrentPass"
+    },
+    "Get current pass": {
+      "name": "Get current pass",
+      "found": true,
+      "enabled": true,
+      "description": "Get the current pass",
+      "category": "Rendering",
+      "scriptingname": "GetCurrentPass"
+    },
+    "OGL1Pass Shader": {
+      "name": "OGL1Pass Shader",
+      "found": true,
+      "enabled": true,
+      "description": "Apply the OGL1Pass shader to the selected objects",
+      "category": "Rendering",
+      "scriptingname": "ApplyShader"
+    },
+    "Duplicate Current Pass": {
+      "name": "Duplicate Current Pass",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "",
+      "scriptingname": "Duplicate"
+    },
+    "OGL2Pass Shader": {
+      "name": "OGL2Pass Shader",
+      "found": true,
+      "enabled": true,
+      "description": "Apply the OGL2Pass shader to the selected objects",
+      "category": "Rendering",
+      "scriptingname": "ApplyShader"
+    },
+    "Pass Options": {
+      "name": "Pass Options",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Rendering",
+      "scriptingname": "InspectObj"
+    },
+    "More Passes...": {
+      "name": "More Passes...",
+      "found": true,
+      "enabled": true,
+      "description": "Browse for passes",
+      "category": "Rendering",
+      "scriptingname": "GetPass"
+    },
+    "CreatePassiveRigidBody": {
+      "name": "CreatePassiveRigidBody",
+      "found": true,
+      "enabled": true,
+      "description": "Set the object as a passive rigid body",
+      "category": "Simulation",
+      "scriptingname": "CreatePassiveRigidBody"
+    },
+    "New Isolate Matte Pass": {
+      "name": "New Isolate Matte Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Isolate Matte Pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New Selective Shadow Pass": {
+      "name": "New Selective Shadow Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Selective Shadow Pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "AddPassInputFxOp": {
+      "name": "AddPassInputFxOp",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "",
+      "scriptingname": "AddPassInputFxOp"
+    },
+    "New Pass with Partition": {
+      "name": "New Pass with Partition",
+      "found": true,
+      "enabled": true,
+      "description": "Create a new pass and set visibility on background partition",
+      "category": "Rendering",
+      "scriptingname": "CreatePassWithPartition"
+    },
+    "New Ambient/Diffuse Pass": {
+      "name": "New Ambient/Diffuse Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Ambient/Diffuse pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New Ambient Pass": {
+      "name": "New Ambient Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Ambient pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New Diffuse Pass": {
+      "name": "New Diffuse Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Diffuse pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New Lens Flare Pass": {
+      "name": "New Lens Flare Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Lens Flare pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New Volumic Pass": {
+      "name": "New Volumic Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Volumic pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New White Matte Pass": {
+      "name": "New White Matte Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a White Matte Pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "Low Level Create Pass": {
+      "name": "Low Level Create Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a new pass",
+      "category": "Rendering",
+      "scriptingname": "SICreatePass"
+    },
+    "Delete Current Pass": {
+      "name": "Delete Current Pass",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "",
+      "scriptingname": "DeleteCurrentPass"
+    },
+    "Export Shader Tree": {
+      "name": "Export Shader Tree",
+      "found": true,
+      "enabled": true,
+      "description": "Exports the shader tree to a file",
+      "category": "Rendering",
+      "scriptingname": "ExportShaderTree"
+    },
+    "Export All Passes To MI2": {
+      "name": "Export All Passes To MI2",
+      "found": true,
+      "enabled": true,
+      "description": "Export all passes to MI2 files",
+      "category": "Rendering",
+      "scriptingname": "ExportAllPassesToMI2"
+    },
+    "New Toon Pass": {
+      "name": "New Toon Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Toon Pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "Create Image Based Lighting Pass": {
+      "name": "Create Image Based Lighting Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a new Image based lighting pass",
+      "category": "Rendering",
+      "scriptingname": "CreateImageBasedLightingPass"
+    },
+    "Curve Pass": {
+      "name": "Curve Pass",
+      "found": true,
+      "enabled": false,
+      "description": "",
+      "category": "Operator",
+      "scriptingname": "ApplyOp"
+    },
+    "Surface Pass": {
+      "name": "Surface Pass",
+      "found": true,
+      "enabled": false,
+      "description": "",
+      "category": "Operator",
+      "scriptingname": "ApplyOp"
+    },
+    "Remove the pass through from an exposed port": {
+      "name": "Remove the pass through from an exposed port",
+      "found": true,
+      "enabled": true,
+      "description": "Removes the pass through node from the compound's exposed port",
+      "category": "Simulation",
+      "scriptingname": "RemoveExposedPortPassThrough"
+    },
+    "RenderFxOp": {
+      "name": "RenderFxOp",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "",
+      "scriptingname": "RenderFxOp"
+    },
+    "New Pass": {
+      "name": "New Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a new pass and add properties",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New Caustic Pass": {
+      "name": "New Caustic Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a caustic pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New Depth Pass": {
+      "name": "New Depth Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Depth pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New Global Illumination Pass": {
+      "name": "New Global Illumination Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Global Illumination pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New Glow Pass": {
+      "name": "New Glow Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Glow pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New Highlight Pass": {
+      "name": "New Highlight Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Highlight pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New Refraction Pass": {
+      "name": "New Refraction Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Refraction pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New RGBA Matte Pass": {
+      "name": "New RGBA Matte Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a RGBA Matte pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New Reflection Pass": {
+      "name": "New Reflection Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Reflection pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New Shadow Pass": {
+      "name": "New Shadow Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Create a Shadow pass",
+      "category": "Rendering",
+      "scriptingname": "CreatePass"
+    },
+    "New Pass Based on Layers": {
+      "name": "New Pass Based on Layers",
+      "found": true,
+      "enabled": true,
+      "description": "Create a new pass with partitions that match layers, make current, and inspect",
+      "category": "Rendering",
+      "scriptingname": "CreatePassFromLayers"
+    },
+    "Launch Flipbook For Pass": {
+      "name": "Launch Flipbook For Pass",
+      "found": true,
+      "enabled": true,
+      "description": "Automatic Set Render File Paths",
+      "category": "File|Rendering",
+      "scriptingname": "LaunchFlipbookForPass"
+    },
+    "Import Shader Tree": {
+      "name": "Import Shader Tree",
+      "found": true,
+      "enabled": true,
+      "description": "Imports the shader tree from a file",
+      "category": "Rendering",
+      "scriptingname": "ImportShaderTree"
+    },
+    "Override Marked Pass Parameters": {
+      "name": "Override Marked Pass Parameters",
+      "found": true,
+      "enabled": true,
+      "description": "",
+      "category": "Custom",
+      "scriptingname": "OverrideMarkedPassParameters"
+    }
+  },
+  "open_views": {
+    "Scene Render Options": {
+      "name": "Scene Render Options",
+      "ok": true,
+      "result": null,
+      "err": null
+    },
+    "Inspect Rendering Preferences": {
+      "name": "Inspect Rendering Preferences",
+      "ok": true,
+      "result": null,
+      "err": null
+    },
+    "Update Render Manager": {
+      "name": "Update Render Manager",
+      "ok": true,
+      "result": null,
+      "err": null
+    },
+    "All Render Region Options": {
+      "name": "All Render Region Options",
+      "ok": true,
+      "result": null,
+      "err": null
+    },
+    "Inspect Current Pass Renderer Options": {
+      "name": "Inspect Current Pass Renderer Options",
+      "ok": true,
+      "result": null,
+      "err": null
+    },
+    "openview": {
+      "Render Tree": {
+        "ok": false,
+        "name": "Render Tree",
+        "err": "OpenView failed"
+      },
+      "Render Manager": {
+        "ok": false,
+        "name": "Render Manager",
+        "err": "OpenView failed"
+      },
+      "Script Editor": {
+        "ok": false,
+        "name": "Script Editor",
+        "err": "OpenView failed"
+      },
+      "Explorer": {
+        "ok": false,
+        "name": "Explorer",
+        "err": "OpenView failed"
+      },
+      "Property Page": {
+        "ok": false,
+        "name": "Property Page",
+        "err": "OpenView failed"
+      }
+    }
+  },
+  "prefs": {
+    "categories_all": [
+      {
+        "name": "Animation Editor",
+        "full": "preferences.animation_editor",
+        "param_count": 13
+      },
+      {
+        "name": "Animation Mixer",
+        "full": "preferences.animation_mixer",
+        "param_count": 31
+      },
+      {
+        "name": "Camera Sequencer Editor",
+        "full": "preferences.camera_sequencer",
+        "param_count": 15
+      },
+      {
+        "name": "Dopesheet",
+        "full": "preferences.dopesheet",
+        "param_count": 49
+      },
+      {
+        "name": "Explorer",
+        "full": "preferences.explorer",
+        "param_count": 9
+      },
+      {
+        "name": "FCurve Editor",
+        "full": "preferences.fcurve_editor",
+        "param_count": 73
+      },
+      {
+        "name": "Keying Panel",
+        "full": "preferences.keying_panel",
+        "param_count": 5
+      },
+      {
+        "name": "Scene Layer Manager",
+        "full": "preferences.layercontrol",
+        "param_count": 6
+      },
+      {
+        "name": "Material Manager",
+        "full": "preferences.MaterialManager",
+        "param_count": 20
+      },
+      {
+        "name": "Material Panel",
+        "full": "preferences.MaterialPanel",
+        "param_count": 8
+      },
+      {
+        "name": "ICE Tree",
+        "full": "preferences.icetree",
+        "param_count": 10
+      },
+      {
+        "name": "NetView",
+        "full": "preferences.netview",
+        "param_count": 1
+      },
+      {
+        "name": "Object View",
+        "full": "preferences.objectview",
+        "param_count": 13
+      },
+      {
+        "name": "SceneDebugging",
+        "full": "preferences.SceneDebugging",
+        "param_count": 3
+      },
+      {
+        "name": "Preset Manager",
+        "full": "preferences.preset_manager",
+        "param_count": 8
+      },
+      {
+        "name": "Render Tree",
+        "full": "preferences.render_tree",
+        "param_count": 9
+      },
+      {
+        "name": "Scene Search",
+        "full": "preferences.scene_search",
+        "param_count": 5
+      },
+      {
+        "name": "Schematic View",
+        "full": "preferences.schematic",
+        "param_count": 12
+      },
+      {
+        "name": "Script Editor",
+        "full": "preferences.scripteditor",
+        "param_count": 17
+      },
+      {
+        "name": "Texture Editor",
+        "full": "preferences.texture_editor",
+        "param_count": 60
+      },
+      {
+        "name": "Texture Layer Editor",
+        "full": "preferences.texture_layer_editor",
+        "param_count": 10
+      },
+      {
+        "name": "Weight Editor and Paint Panel",
+        "full": "preferences.weighteditor",
+        "param_count": 8
+      },
+      {
+        "name": "XSI Explorer",
+        "full": "preferences.xsi_explorer",
+        "param_count": 3
+      },
+      {
+        "name": "Cg_Display",
+        "full": "preferences.Cg_Display",
+        "param_count": 1
+      },
+      {
+        "name": "ICEOperators",
+        "full": "preferences.ICEOperators",
+        "param_count": 21
+      },
+      {
+        "name": "Duplicate Options",
+        "full": "preferences.duplicate",
+        "param_count": 19
+      },
+      {
+        "name": "Transform Group Options",
+        "full": "preferences.transformgroup",
+        "param_count": 1
+      },
+      {
+        "name": "Camera",
+        "full": "preferences.Camera",
+        "param_count": 26
+      },
+      {
+        "name": "Polygon",
+        "full": "preferences.Polygon",
+        "param_count": 2
+      },
+      {
+        "name": "Selection",
+        "full": "preferences.Select",
+        "param_count": 11
+      },
+      {
+        "name": "Snapping",
+        "full": "preferences.SnapProperties",
+        "param_count": 33
+      },
+      {
+        "name": "Symmetry",
+        "full": "preferences.SymmetryProperties",
+        "param_count": 4
+      },
+      {
+        "name": "Transform",
+        "full": "preferences.TransformProperties",
+        "param_count": 40
+      },
+      {
+        "name": "Tweak",
+        "full": "preferences.Tweak",
+        "param_count": 3
+      },
+      {
+        "name": "Tweak Normals",
+        "full": "preferences.TweakNormals",
+        "param_count": 6
+      },
+      {
+        "name": "Animation",
+        "full": "preferences.animation",
+        "param_count": 18
+      },
+      {
+        "name": "Shape Animation",
+        "full": "preferences.shape_animation",
+        "param_count": 5
+      },
+      {
+        "name": "Compositing",
+        "full": "preferences.Compositing",
+        "param_count": 18
+      },
+      {
+        "name": "Data Management",
+        "full": "preferences.data_management",
+        "param_count": 36
+      },
+      {
+        "name": "Plug-in Manager",
+        "full": "preferences.plugin_manager",
+        "param_count": 9
+      },
+      {
+        "name": "Display",
+        "full": "preferences.Display",
+        "param_count": 56
+      },
+      {
+        "name": "General",
+        "full": "preferences.General",
+        "param_count": 14
+      },
+      {
+        "name": "Face Robot",
+        "full": "preferences.FaceRobot",
+        "param_count": 10
+      },
+      {
+        "name": "Interaction",
+        "full": "preferences.Interaction",
+        "param_count": 27
+      },
+      {
+        "name": "Modeling",
+        "full": "preferences.modeling",
+        "param_count": 4
+      },
+      {
+        "name": "Output Format",
+        "full": "preferences.output_format",
+        "param_count": 18
+      },
+      {
+        "name": "Rendering",
+        "full": "preferences.rendering",
+        "param_count": 81
+      },
+      {
+        "name": "Shaderball",
+        "full": "preferences.shaderball",
+        "param_count": 6
+      },
+      {
+        "name": "Scene Colors",
+        "full": "preferences.Scenecolors",
+        "param_count": 29
+      },
+      {
+        "name": "Scripting",
+        "full": "preferences.scripting",
+        "param_count": 13
+      },
+      {
+        "name": "Simulation",
+        "full": "preferences.simulation",
+        "param_count": 10
+      },
+      {
+        "name": "Time",
+        "full": "preferences.time",
+        "param_count": 5
+      },
+      {
+        "name": "Units",
+        "full": "preferences.units",
+        "param_count": 5
+      },
+      {
+        "name": "ViewCube",
+        "full": "preferences.ViewCube",
+        "param_count": 9
+      }
+    ],
+    "rendering_related": [
+      {
+        "name": "Render Tree",
+        "full": "preferences.render_tree",
+        "params": {
+          "create_node_mode": 2,
+          "diagonal_connectors": true,
+          "thumbnails": false,
+          "shaderballs": false,
+          "high_quality_text": false,
+          "birds_eye_view": true,
+          "preset_manager_size": 250,
+          "selection_locked": true,
+          "auto_delete_unused_nodes": false
+        }
+      },
+      {
+        "name": "Output Format",
+        "full": "preferences.output_format",
+        "params": {
+          "preset": -16,
+          "vert_spacing": "",
+          "picture_standard": 18,
+          "picture_ratio": 1.777778,
+          "ir_xres": 1920,
+          "ir_yres": 1080,
+          "ir_pixel_ratio": 1,
+          "ir_inverse_ratio": true,
+          "roto_pixel_ratio": 1,
+          "roto_use_pixel_ratio": true,
+          "update_playcontrol": true,
+          "frame_step": 1,
+          "frame_format": 19,
+          "frame_rate": 30,
+          "field_enable": false,
+          "field_interleave": false,
+          "field_order": 0,
+          "preset_to_delete": 0
+        }
+      },
+      {
+        "name": "Rendering",
+        "full": "preferences.rendering",
+        "params": {
+          "cache_dispose_on_region_close": false,
+          "cache_dispose_on_pass_finish": false,
+          "cache_dispose_on_preview_finish": false,
+          "default_image_management_type": 1,
+          "default_image_source_windows": "",
+          "default_image_source_unix": "",
+          "reload_clips_on_focus": true,
+          "material_overlap": 0,
+          "material_global_namespace": false,
+          "generate_proxies_automatically": false,
+          "maximum_proxy_level": 2,
+          "minimum_proxy_size": 256,
+          "generate_proxy_thumbnail": true,
+          "proxy_generation_method": 0,
+          "proxy_verbose": false,
+          "auto_convert_images": false,
+          "minimum_auto_convert_size": 512,
+          "region_refresh_mode": 0,
+          "region_display_mode": 1,
+          "region_track_selection": false,
+          "region_auto_refresh": true,
+          "preview_uses_pixel_ratio": false,
+          "renderer": "Mental Ray",
+          "output_directory": "[Project Path]/Render_Pictures",
+          "output_filename": "[Pass]_[Framebuffer]",
+          "archive_filename": "[Project Path]/Render_Archives/[Pass]_Archive",
+          "object_archive_filename": "[Project Path]/Render_Archives/[Object]_Archive",
+          "frame_padding": 1,
+          "color_format": "pic",
+          "color_datatype": "rgba",
+          "color_bitdepth": 3,
+          "grayscale_format": "exr",
+          "grayscale_datatype": "intensity",
+          "grayscale_bitdepth": 21,
+          "depth_format": "zt",
+          "depth_datatype": "depth",
+          "depth_bitdepth": 21,
+          "vector_format": "mt",
+          "vector_datatype": "motion",
+          "vector_bitdepth": 21,
+          "normal_format": "nt",
+          "normal_datatype": "normal",
+          "normal_bitdepth": 21,
+          "label_format": "tt",
+          "label_datatype": "label",
+          "label_bitdepth": 5,
+          "render_pass_show_rendered_images": true,
+          "default_image_color_profile": "Linear",
+          "default_image_color_profile_gamma": 2.2,
+          "default_savepicture_filetype": ".png",
+          "region_draw_tile_borders": true,
+          "region_color_default_r": 1,
+          "region_color_default_g": 1,
+          "region_color_default_b": 0,
+          "region_color_default_a": 1,
+          "region_color_noauto_r": 1,
+          "region_color_noauto_g": 0,
+          "region_color_noauto_b": 0,
+          "region_color_noauto_a": 1,
+          "region_color_swipe_r": 0.8,
+          "region_color_swipe_g": 0.6,
+          "region_color_swipe_b": 0.45,
+          "region_color_swipe_a": 1,
+          "region_color_handle_r": 0,
+          "region_color_handle_g": 0,
+          "region_color_handle_b": 1,
+          "region_color_handle_a": 1,
+          "region_color_scale_bar_r": 1,
+          "region_color_scale_bar_g": 1,
+          "region_color_scale_bar_b": 1,
+          "region_color_scale_bar_a": 1,
+          "region_color_bias_bar_r": 0,
+          "region_color_bias_bar_g": 0,
+          "region_color_bias_bar_b": 0,
+          "region_color_bias_bar_a": 0,
+          "region_clear_rendered_image": false,
+          "region_color_ctrs_r": 1,
+          "region_color_ctrs_g": 0.5,
+          "region_color_ctrs_b": 0,
+          "region_color_ctrs_a": 1,
+          "region_show_exposure_ctrs": false
+        }
+      }
+    ],
+    "scene_render_options": {
+      "found": true,
+      "params": {
+        "type": 1,
+        "user": true,
+        "renderer": "Mental Ray",
+        "outputdir": "[Project Path]/Render_Pictures",
+        "resolvedoutputdir": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\XSI_SAMPLES\\Render_Pictures",
+        "framepadding": 1,
+        "imageformatpreset": -16,
+        "imageaspectratio": 1.777778,
+        "imagewidth": 1920,
+        "imageheight": 1080,
+        "imagepixelratio": 1,
+        "imagelockaspectratio": true,
+        "framerangesource": 0,
+        "framestart": 1,
+        "frameend": 100,
+        "framestep": 1,
+        "frameset": "1-100",
+        "fieldenable": false,
+        "fieldorder": 0,
+        "fieldinterleave": false,
+        "motionblurshutterspeed": 0.5,
+        "motionblurshutteroffset": 0,
+        "motionblurshuttertype": 0,
+        "motionblurdeformation": true
+      },
+      "classname": "SceneRenderProperty"
+    },
+    "rendering_prefs_obj": {
+      "found": false
+    }
+  },
+  "preferences_categories": [],
+  "pass": {
+    "active": {
+      "name": "Default_Pass",
+      "full": "Passes.Default_Pass",
+      "classname": "Pass",
+      "params": {
+        "overridecameralensshaders": 0,
+        "name": "Default_Pass",
+        "camera": "Camera",
+        "renderer": "",
+        "rendereroptions": null,
+        "imageformatoverride": false,
+        "imageformatpreset": -16,
+        "imageaspectratio": 1.777778,
+        "imagewidth": 1920,
+        "imageheight": 1080,
+        "imagepixelratio": 1,
+        "imagelockaspectratio": true,
+        "framerangesource": 3,
+        "framestart": 1,
+        "frameend": 100,
+        "framestep": 1,
+        "frameset": "1-100",
+        "frameskiprendered": false,
+        "fieldoverride": false,
+        "fieldenable": false,
+        "fieldorder": 0,
+        "fieldinterleave": false,
+        "cropwindowenabled": false,
+        "cropwindowoffsetx": 0,
+        "cropwindowoffsety": 0,
+        "cropwindowwidth": 1920,
+        "cropwindowheight": 1080,
+        "selectiontracking": false,
+        "selectiononly": false,
+        "motionblur": false,
+        "motionbluroverride": false,
+        "motionblurshutterspeed": 0.5,
+        "motionblurshutteroffset": 0,
+        "motionblurshuttertype": 0,
+        "motionblurdeformation": true,
+        "moviecreate": false,
+        "movieformat": "avi",
+        "moviefilename": "[Pass]_[Framebuffer]",
+        "movieresolvedfilename": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\XSI_SAMPLES\\Render_Pictures\\Default_Pass_Main.avi",
+        "moviedeleteoriginalsequence": false,
+        "moviewritealpha": true,
+        "moviecodec": "",
+        "archivefilename": "[Project Path]/Render_Archives/[Pass]_Archive",
+        "archiveresolvedfilename": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\XSI_SAMPLES\\Render_Archives\\Default_Pass_Archive.1.mi2",
+        "archivemultiframe": false,
+        "usedisplaygammacorrection": false,
+        "slatetype": null,
+        "slateformattedstring": "[Frame #4]\n[DATE dd_mmm] [User]\n[Pass]\n[Camera]\n[Project]\n[Scene]",
+        "slateposition": 0,
+        "slatesize": 0.05000000074505806,
+        "slateresolvedtext": "",
+        "slateoffsetx": 0.009999999776482582,
+        "slateoffsety": 0.009999999776482582,
+        "slatetextcolor_r": 1,
+        "slatetextcolor_g": 1,
+        "slatetextcolor_b": 1,
+        "slatetextcolor_a": 1,
+        "slatebackcolor_r": 0,
+        "slatebackcolor_g": 0,
+        "slatebackcolor_b": 0,
+        "slatebackcolor_a": 0,
+        "slateenable": false
+      }
+    },
+    "list": [
+      {
+        "name": "Default_Pass",
+        "full": "Passes.Default_Pass",
+        "classname": "Pass"
+      }
+    ]
+  },
+  "framebuffers": {
+    "channels": [
+      {
+        "name": "Main",
+        "full": "Passes.Default_Pass.Main",
+        "classname": "Framebuffer",
+        "params": {
+          "name": "Main",
+          "renderchannel": "Main",
+          "enabled": true,
+          "filename": "[Pass]_[Framebuffer]",
+          "resolvedfilename": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\XSI_SAMPLES\\Render_Pictures\\Default_Pass_Main.1.pic",
+          "format": "pic",
+          "datatype": "RGBA",
+          "bitdepth": 3
+        }
+      }
+    ]
+  },
+  "region": {
+    "prefs": {},
+    "camera_props": [],
+    "create_probe": {
+      "name": "Create Render Region",
+      "ok": true,
+      "result": null,
+      "err": null
+    },
+    "hwnd_note": "Desktop session: region HWND may exist after Create Render Region; capture via screenshot checklist."
+  },
+  "render_options": {},
+  "materials": {
+    "default_material": {
+      "name": "Scene_Material",
+      "full": "Sources.Materials.DefaultLib.Scene_Material",
+      "shaders": [
+        "Phong"
+      ]
+    }
+  },
+  "mental_ray": {
+    "renderer_options": {
+      "found": true,
+      "full": "Passes.Default_Pass.mentalray",
+      "classname": "Property",
+      "params": {
+        "rendertype": 0,
+        "indirectillumalgorithm": 0,
+        "scanline": 1,
+        "samplescontrastred": 0.20000000298023224,
+        "samplescontrastgreen": 0.20000000298023224,
+        "samplescontrastblue": 0.20000000298023224,
+        "samplescontrastalpha": 0.20000000298023224,
+        "samplesmin": -1,
+        "samplesmax": 1,
+        "rasterizershadingsamples": 4,
+        "rasterizerpixelsamples": 4,
+        "rasterizermotionsamples": 1,
+        "rasterizermotionfactor": 0,
+        "rasterizermaxdepth": 0,
+        "unifiedsampling": false,
+        "unifiedsamplesmin": 0.5,
+        "unifiedsamplesmax": 5,
+        "unifiedsamplesquality": 0.5,
+        "unifiedsampleserrorcutoff": 0,
+        "trace": true,
+        "tracedepthcombined": 10,
+        "tracedepthreflection": 5,
+        "tracedepthrefraction": 5,
+        "motionsamples": 5,
+        "motionstepstransform": 1,
+        "motionstepsdeform": 1,
+        "motionshutter": 1,
+        "motiondelay": 0,
+        "motionmaxlength": 150,
+        "motioncompensate": true,
+        "samplesfiltertype": 2,
+        "samplesfiltersize": 3,
+        "samplesjitter": true,
+        "samplelock": false,
+        "tileorder": 0,
+        "tilesize": 0,
+        "dither": true,
+        "desaturate": false,
+        "colorclipping": 0,
+        "premultiply": true,
+        "virtualframebuffers": true,
+        "contrastcheckallcolorbuffers": true,
+        "shadowtype": 3,
+        "shadowmapenable": true,
+        "shadowmapmotionblur": true,
+        "shadowmaprebuild": true,
+        "fgenable": false,
+        "fgadvanced": false,
+        "fgvisualize": true,
+        "fgrefinementpasses": false,
+        "fgmode": 0,
+        "fgrays": 100,
+        "fgviewdependent": false,
+        "fgpoints": 15,
+        "fgminradius": 0,
+        "fgmaxradius": 0,
+        "fgnormaltolerance": 25.841999053955078,
+        "fgpresampledensity": 1,
+        "fgsamplescontrastred": 0.20000000298023224,
+        "fgsamplescontrastgreen": 0.20000000298023224,
+        "fgsamplescontrastblue": 0.20000000298023224,
+        "fgsamplescontrastalpha": 0.20000000298023224,
+        "fgfalloffenable": false,
+        "fgfalloffstart": 0,
+        "fgfalloffstop": 0,
+        "fgfastlookup": false,
+        "fgfiltersize": 1,
+        "fgtracedepthcombined": 20,
+        "fgtracedepthdiffuse": 0,
+        "fgtracedepthreflection": 10,
+        "fgtracedepthrefraction": 10,
+        "fgprimarycolorscalered": 1,
+        "fgprimarycolorscalegreen": 1,
+        "fgprimarycolorscaleblue": 1,
+        "fgprimarycolorscalealpha": 1,
+        "fgsecondarycolorscalered": 1,
+        "fgsecondarycolorscalegreen": 1,
+        "fgsecondarycolorscaleblue": 1,
+        "fgsecondarycolorscalealpha": 1,
+        "fgmapfile": "[Pass].[Frame].fgmap",
+        "fgrebuild": 1,
+        "ambientocclusionenable": true,
+        "ambientocclusionrays": 250,
+        "ambientocclusioncache": false,
+        "ambientocclusioncachedensity": 1,
+        "ambientocclusioncachepoints": 50,
+        "gpuambientocclusionenable": false,
+        "gpuambientocclusionpasses": 3,
+        "gpuambientocclusionfalloff": 1,
+        "gpuambientocclusionmindistance": 0.0010000000474974513,
+        "gpuambientocclusionmaxdistance": 32,
+        "gpuambientocclusionoutput": "",
+        "importonenable": false,
+        "importondensity": 1,
+        "importonmergefactor": 0.20000000298023224,
+        "importondepthdiffuse": 0,
+        "importontracethrough": true,
+        "gienable": false,
+        "giaccuracy": 500,
+        "giaccuracyradius": 2.5,
+        "giphotonmergefactor": 1,
+        "gicolorscalered": 1,
+        "gicolorscalegreen": 1,
+        "gicolorscaleblue": 1,
+        "gicolorscalealpha": 1,
+        "causticenable": false,
+        "causticaccuracy": 100,
+        "causticaccuracyradius": 0,
+        "causticphotonmergefactor": 1,
+        "causticfiltertype": 1,
+        "causticfiltersize": 1.100000023841858,
+        "causticscalered": 1,
+        "causticscalegreen": 1,
+        "causticscaleblue": 1,
+        "causticscalealpha": 1,
+        "photontracedepthcombined": 20,
+        "photontracedepthreflection": 10,
+        "photontracedepthrefraction": 10,
+        "photonvolumeaccuracy": 30,
+        "photonvolumeaccuracyradius": 0,
+        "photonvolumephotonmergefactor": 1,
+        "photonvolumescalered": 1,
+        "photonvolumescalegreen": 1,
+        "photonvolumescaleblue": 1,
+        "photonvolumescalealpha": 1,
+        "photonmapfile": "[Pass].[Frame].phmap",
+        "photonmaprebuild": true,
+        "ipenable": false,
+        "ipindirectpasses": 0,
+        "iprays": 250,
+        "iprays1": 32,
+        "iprays2": 32,
+        "iprays3": 32,
+        "ipintensity": 1,
+        "ipinterpolate": 1,
+        "ipinterpolatepoints": 50,
+        "ipenvironmentenable": true,
+        "ipenvironmentintensity": 1,
+        "ipenvironmentrays": 0,
+        "ipmapfile": "[Pass].[Frame].ipmap",
+        "ipmaprebuild": true,
+        "diagnosticsampling": false,
+        "diagnosticphoton": 0,
+        "diagnosticphotondensityvalue": 0,
+        "diagnosticgrid": 0,
+        "diagnosticgridspacing": 1,
+        "diagnosticfinalgather": false,
+        "diagnosticmaxpixeltime": 150,
+        "verbositylevel": 12,
+        "memorylimitenable": false,
+        "memorylimitsize": 1024,
+        "meshsplittingfactor": 1,
+        "visiblegeometryface": 2,
+        "displacementpresample": true,
+        "displacementmotionquality": 1,
+        "mapautoconvert": 0,
+        "enableoutputshaders": true,
+        "enabledisplacementshaders": true,
+        "enablegeometryshaders": true,
+        "enablevolumeshaders": true,
+        "enablelensshaders": true,
+        "enablehairgeometry": true,
+        "enablelightmaps": true,
+        "archiveallcameras": false,
+        "archiveapproximatepolygons": false,
+        "archiveapproximatenurbs": false,
+        "archiveasciioutput": false,
+        "archiveembedtextures": false,
+        "archiveusesubdivisiongeometryshaders": true,
+        "stringoptionsenable": false,
+        "stringoptions": "",
+        "progrendersubsamplingsize": 4,
+        "progrendersubsamplingmode": 1,
+        "progrendersubsamplingpattern": 1,
+        "progrenderminsamples": 4,
+        "progrendermaxsamples": 100,
+        "progrendererrorthreshold": 0.05000000074505806,
+        "fgmapfileresolved": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\XSI_SAMPLES\\Render_Pictures\\Default_Pass.1.fgmap",
+        "photonmapfileresolved": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\XSI_SAMPLES\\Render_Pictures\\Default_Pass.1.phmap",
+        "ipmapfileresolved": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\XSI_SAMPLES\\Render_Pictures\\Default_Pass.1.ipmap"
+      }
+    },
+    "commands": {
+      "mental ray": {
+        "name": "mental ray",
+        "found": false
+      },
+      "Mental Ray": {
+        "name": "Mental Ray",
+        "found": false
+      },
+      "mi_metallic_paint": {
+        "name": "mi_metallic_paint",
+        "found": false
+      },
+      "Architectural": {
+        "name": "Architectural",
+        "found": false
+      }
+    }
+  },
+  "output": {
+    "framebuffer_formats": {
+      "name": "Main",
+      "renderchannel": "Main",
+      "enabled": true,
+      "filename": "[Pass]_[Framebuffer]",
+      "resolvedfilename": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\XSI_SAMPLES\\Render_Pictures\\Default_Pass_Main.1.pic",
+      "format": "pic",
+      "datatype": "RGBA",
+      "bitdepth": 3
+    }
+  },
+  "menus_inventory": {
+    "module_hotkey": {
+      "keymap": "Softimage.xsikm",
+      "command": "Switch to Render Toolbar",
+      "key": "3"
+    },
+    "script_editor_hotkey": {
+      "keymap": "Softimage.xsikm",
+      "command": "Script Editor",
+      "key": "Alt+4"
+    },
+    "module_selector": "Purple MCP header dropdown shows Render when active",
+    "mcp_sections_observed": [
+      "Get",
+      "Modify",
+      "Render"
+    ],
+    "mcp_get_buttons": [
+      "Primitive",
+      "Material",
+      "Property",
+      "Shader(grey)",
+      "Texture(grey)",
+      "Clip"
+    ],
+    "mcp_modify_buttons": [
+      "Material",
+      "Shader(grey)",
+      "Texture(grey)",
+      "Projection",
+      "Ambient"
+    ],
+    "mcp_render_buttons": [
+      "Region"
+    ],
+    "top_pass_dropdown": "Default_Pass",
+    "note": "MCP labels truncated in narrow strip; expand via screenshots"
+  },
+  "screenshot_checklist": [
+    "Scene Render Options",
+    "Inspect Rendering Preferences",
+    "Update Render Manager",
+    "All Render Region Options",
+    "Inspect Current Pass Renderer Options"
+  ]
+}

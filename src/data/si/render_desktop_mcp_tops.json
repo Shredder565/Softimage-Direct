@@ -20,10 +20,16 @@
     "desktop_display": "current pass Name (Default_Pass on empty scene)",
     "note": "Softimage MCP replaces PE leaf text with live pass name"
   },
-  "hwnd_crop_chrome": { "status": "LOCK", "note": "tour MD not landed; no invent HWND crop px" },
+  "hwnd_crop_chrome": { "status": "LOCK", "note": "tour MD landed 2026-10-25; HWND crop chrome still unmeasured — no invent" },
+  "get_shader": {
+    "pe_id": 116,
+    "cmd": "OpenMaterialLibrary",
+    "desktop": "grey until Material/Shader selection (empty + Face/light/Camera attested grey)",
+    "note": "Modify>Materials id 41470 shares OpenMaterialLibrary but stays Enabled — grey by PE id"
+  },
   "regions_label": {
     "pe": "Regions",
-    "desktop_crop_ocr": "Regi… / Region (ambiguous truncation)",
-    "wire": "keep PE Regions until tour MD attests singular"
+    "desktop": "Regions (frame 21 / tour MD)",
+    "wire": "keep PE Regions plural"
   }
 }

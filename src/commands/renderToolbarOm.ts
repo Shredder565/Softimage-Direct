@@ -320,6 +320,29 @@ export function registerRenderToolbarOmCommands(app: App) {
     },
   });
 
+  // Softimage Desktop tour: Create New Output Framebuffer on a Pass (ScriptingName CreateFramebuffer)
+  app.register({
+    name: 'CreateFramebuffer',
+    label: 'Create New Output Framebuffer on a Pass',
+    category: 'Rendering',
+    args: [
+      { name: 'Pass', default: '' },
+      { name: 'Name', default: 'Framebuffer' },
+    ],
+    undoable: true,
+    execute(app, a) {
+      const passName = String(a.Pass || '');
+      const pass = (passName && app.scene.passes.find(p => p.name === passName))
+        || app.scene.passes[app.scene.passes.length - 1]
+        || app.scene.passes[0];
+      if (!pass) { app.logMsg('error', 'CreateFramebuffer: no pass'); return; }
+      const fb = pass.addFramebuffer(String(a.Name || 'Framebuffer'));
+      app.events.emit('scene');
+      app.logMsg('info', `CreateFramebuffer → ${pass.name}.${fb.name}`);
+      return fb;
+    },
+  });
+
   app.register({
     name: 'DisconnectAndDeleteShaders',
     label: 'RendertreeDeleteShaders',

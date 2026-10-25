@@ -86,26 +86,37 @@ const r = await page.evaluate(() => {
   if (ro) for (const p of ro.params) roMap[p.name.toLowerCase()] = p.value;
 
   const defPass = A.scene.passes.find(p => p.name === 'Default_Pass') || A.scene.passes[0];
-  const passSnap = (p) => ({
-    name: p.name,
-    type: p.type,
-    classname: p.type,
-    FrameStart: p.val('FrameStart'),
-    FrameEnd: p.val('FrameEnd'),
-    ImageWidth: p.val('ImageWidth'),
-    ImageHeight: p.val('ImageHeight'),
-    Camera: p.val('Camera'),
-    partitions: (p.partitions || []).map(x => ({
-      name: x.name, type: x.type,
-      labels: Object.fromEntries(x.params.map(pp => [pp.name, pp.label])),
-      viewvis: x.val('viewvis'), rendvis: x.val('rendvis'),
-    })),
-    framebuffers: (p.framebuffers || []).map(f => ({
-      name: f.name, type: f.type,
-      Format: f.val('Format'), DataType: f.val('DataType'), BitDepth: f.val('BitDepth'),
-      Filename: f.val('Filename'), Enabled: f.val('Enabled'), RenderChannel: f.val('RenderChannel'),
-    })),
-  });
+  const passSnap = (p) => {
+    const mr = p.mentalray;
+    const mrVals = {};
+    if (mr?.params) for (const pp of mr.params) mrVals[pp.name] = pp.value;
+    return {
+      name: p.name,
+      type: p.type,
+      classname: p.type,
+      FrameStart: p.val('FrameStart'),
+      FrameEnd: p.val('FrameEnd'),
+      ImageWidth: p.val('ImageWidth'),
+      ImageHeight: p.val('ImageHeight'),
+      Camera: p.val('Camera'),
+      mentalray: mr ? {
+        name: mr.name,
+        type: mr.type,
+        n: mr.params?.length ?? 0,
+        vals: mrVals,
+      } : null,
+      partitions: (p.partitions || []).map(x => ({
+        name: x.name, type: x.type,
+        labels: Object.fromEntries(x.params.map(pp => [pp.name, pp.label])),
+        viewvis: x.val('viewvis'), rendvis: x.val('rendvis'),
+      })),
+      framebuffers: (p.framebuffers || []).map(f => ({
+        name: f.name, type: f.type,
+        Format: f.val('Format'), DataType: f.val('DataType'), BitDepth: f.val('BitDepth'),
+        Filename: f.val('Filename'), Enabled: f.val('Enabled'), RenderChannel: f.val('RenderChannel'),
+      })),
+    };
+  };
 
   const before = A.scene.passes.map(passSnap);
   A.run('CreatePass', { Name: 'Pass' });
@@ -186,14 +197,52 @@ const r = await page.evaluate(() => {
     renderToolbarChrome = audit?.renderToolbarChrome ?? null;
     renderToolbarOm = audit?.renderToolbarOm ?? null;
   } catch (e) {}
-  // Desktop tour MCP tops (08-after-key3) — Pass head = current pass name
+  // Desktop tour MCP tops (08-after-key3) — Pass head = current pass name; Get>Shader grey
   try {
     if (A.module !== 'Render') { A.module = 'Render'; A.events.emit('module'); }
     const passBtn = document.querySelector('.toolbar-panel.Render button.tb-btn[data-si-pass-head="1"]');
+    const shaderBtn = document.querySelector('.toolbar-panel.Render button.tb-btn[data-si-get-shader="1"]');
     const groups = [...document.querySelectorAll('.toolbar-panel.Render .tb-group')].map(g => g.textContent.trim());
     const btns = [...document.querySelectorAll('.toolbar-panel.Render button.tb-btn')].map(b => b.textContent.trim());
-    renderDesktopMcp = { groups, btns, passHead: passBtn?.textContent?.trim() ?? null, module: A.module };
+    // Modify > Materials stays enabled (shares OpenMaterialLibrary with Get>Shader)
+    const materialsBtn = [...document.querySelectorAll('.toolbar-panel.Render button.tb-btn')]
+      .find(b => b.textContent.trim() === 'Materials');
+    // Empty selection → Get>Shader grey (Desktop tour)
+    A.select([]);
+    A.events.emit('selection');
+    const shaderGreyEmpty = !!document.querySelector('.toolbar-panel.Render button.tb-btn[data-si-get-shader="1"]:disabled');
+    renderDesktopMcp = {
+      groups, btns,
+      passHead: passBtn?.textContent?.trim() ?? null,
+      module: A.module,
+      getShaderDisabledEmpty: shaderGreyEmpty,
+      getShaderPresent: !!shaderBtn,
+      materialsEnabled: materialsBtn ? !materialsBtn.disabled : null,
+    };
   } catch (e) { renderDesktopMcp = { err: String(e?.message || e) }; }
+
+  // Desktop tour Command.Enabled matrix (ScriptingName) — empty scene
+  let renderCmdEnabled = null;
+  try {
+    // Probe registered Softimage ScriptingNames from tour Enabled matrix (CreateFramebuffer still open)
+    const probe = ['RenderPass', 'RenderRegionCreate', 'CreatePass', 'SwitchToolbar', 'OpenRenderingPreferences'];
+    const enFn = window.__commandEnabled;
+    const mxFn = window.__matrixCommandEnabled;
+    const got = {};
+    for (const n of probe) {
+      got[n] = {
+        has: A.commands.has(n),
+        enabled: typeof enFn === 'function' ? enFn(n) : null,
+        matrix: typeof mxFn === 'function' ? mxFn(n) : null,
+      };
+    }
+    const audit = (window).__uiAudit?.() ?? null;
+    renderCmdEnabled = {
+      probe: got,
+      hasRenderDesktopTour: !!audit?.mcpMatrix?.hasRenderDesktopTour,
+      mergedCount: audit?.mcpMatrix?.renderDesktopTour?.merged_unique_scriptingnames ?? null,
+    };
+  } catch (e) { renderCmdEnabled = { err: String(e?.message || e) }; }
 
   // Softimage RenderRegionCreate + RenderOptionsRegion SPDL OM (HWND crop stays LOCK)
   let regionCreate = null;
@@ -280,6 +329,7 @@ const r = await page.evaluate(() => {
     renderToolbarChrome,
     renderToolbarOm,
     renderDesktopMcp,
+    renderCmdEnabled,
     regionCreate,
     regionOptions,
     renderPrefs,
@@ -605,7 +655,78 @@ else {
   else notes.push("Render MCP Regions PE label OK");
   if (!r.renderDesktopMcp.btns.includes("Ambience")) diffs.push("Render MCP missing Ambience");
   else notes.push("Render MCP Ambience OK");
+  // Desktop tour: Get > Shader grey on empty; Modify > Materials stays enabled
+  if (!r.renderDesktopMcp.getShaderPresent) diffs.push('Get>Shader button missing');
+  else if (!r.renderDesktopMcp.getShaderDisabledEmpty) diffs.push('Get>Shader should be grey on empty selection');
+  else notes.push('Get>Shader grey on empty OK');
+  if (r.renderDesktopMcp.materialsEnabled === false) diffs.push('Modify>Materials should stay Enabled');
+  else if (r.renderDesktopMcp.materialsEnabled === true) notes.push('Modify>Materials Enabled OK');
 }
 
-console.log(JSON.stringify({ ok: diffs.length === 0, diffs, notes: notes.slice(0, 80), softimage: prefs.meta?.softimage }, null, 2));
+// Passes.Default_Pass.mentalray — Desktop tour 180-param MR PPG
+const mrDumpPath = dump('si_render_mentalray_pass.json')
+  || path.resolve(__dirname, '../src/data/si/render_mentalray_pass.json');
+if (!mrDumpPath) diffs.push('si_render_mentalray_pass.json missing');
+else {
+  const mrDump = JSON.parse(fs.readFileSync(mrDumpPath, 'utf8'));
+  const wantMr = mrDump.params || {};
+  const wantN = Object.keys(wantMr).length;
+  const gotMr = r.before?.[0]?.mentalray;
+  if (!gotMr) diffs.push('Default_Pass.mentalray missing');
+  else {
+    if (gotMr.n !== wantN) diffs.push(`mentalray param count Direct=${gotMr.n} PC=${wantN}`);
+    else notes.push(`Default_Pass.mentalray ${gotMr.n} params OK`);
+    for (const k of ['samplesmin', 'samplesmax', 'samplescontrastred', 'scanline', 'indirectillumalgorithm', 'rendertype']) {
+      if (wantMr[k] !== undefined && gotMr.vals?.[k] !== wantMr[k]
+        && !(typeof wantMr[k] === 'number' && Math.abs(Number(gotMr.vals?.[k]) - Number(wantMr[k])) < 1e-5)) {
+        diffs.push(`mentalray.${k} Direct=${gotMr.vals?.[k]} PC=${wantMr[k]}`);
+      }
+    }
+    if (gotMr.type !== 'mentalray' && gotMr.name !== 'mentalray')
+      diffs.push(`mentalray type ${gotMr.type}/${gotMr.name}`);
+    else notes.push('mentalray Property attached OK');
+  }
+}
+
+// Desktop tour prefs categories 81/18/9 — propsets already match; attest dump present
+const deskPrefsPath = dump('si_render_desktop_prefs.json')
+  || path.resolve(__dirname, '../src/data/si/render_desktop_prefs.json');
+if (deskPrefsPath) {
+  const deskPrefs = JSON.parse(fs.readFileSync(deskPrefsPath, 'utf8'));
+  const cats = deskPrefs.categories || {};
+  function catParamCount(key) {
+    const c = cats[key];
+    if (!c) return 0;
+    if (c.params && typeof c.params === 'object') return Object.keys(c.params).length;
+    return Object.keys(c).filter(k => !['FullName', 'Name', 'fullname', 'classname'].includes(k) && !k.startsWith('_')).length;
+  }
+  const wantCounts = { 'preferences.rendering': 81, 'preferences.output_format': 18, 'preferences.render_tree': 9 };
+  for (const [fn, n] of Object.entries(wantCounts)) {
+    if (!cats[fn]) { diffs.push(`desktop prefs missing ${fn}`); continue; }
+    const got = catParamCount(fn);
+    if (got !== n) diffs.push(`desktop prefs ${fn} n=${got} want ${n}`);
+    else notes.push(`desktop prefs ${fn} n=${n} OK`);
+  }
+} else notes.push('si_render_desktop_prefs.json absent (optional)');
+
+// Desktop tour Command.Enabled + ScriptingName matrix
+const cmdEnPath = dump('si_render_desktop_command_enabled.json')
+  || path.resolve(__dirname, '../src/data/si/render_desktop_command_enabled.json');
+if (!r.renderCmdEnabled || r.renderCmdEnabled.err) diffs.push(`renderCmdEnabled ${r.renderCmdEnabled?.err || 'missing'}`);
+else {
+  if (!r.renderCmdEnabled.hasRenderDesktopTour) diffs.push('mcp matrix missing render_desktop_tour meta');
+  else notes.push(`render desktop tour matrix merged n=${r.renderCmdEnabled.mergedCount}`);
+  for (const [n, row] of Object.entries(r.renderCmdEnabled.probe || {})) {
+    if (!row.has) diffs.push(`tour cmd missing ${n}`);
+    else if (row.matrix !== true && row.enabled !== true) diffs.push(`tour cmd ${n} not Enabled (matrix=${row.matrix} en=${row.enabled})`);
+  }
+  if (cmdEnPath) {
+    const inv = JSON.parse(fs.readFileSync(cmdEnPath, 'utf8'));
+    const n = Object.keys(inv.enabled_by_scriptingname || {}).length;
+    if (n < 60) diffs.push(`command enabled inventory too small n=${n}`);
+    else notes.push(`command Enabled inventory n=${n}`);
+  }
+}
+
+console.log(JSON.stringify({ ok: diffs.length === 0, diffs, notes: notes.slice(0, 100), softimage: prefs.meta?.softimage }, null, 2));
 process.exit(diffs.length ? 1 : 0);

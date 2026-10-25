@@ -61,6 +61,9 @@ registerModuleToolbarCommands(app);
 registerRenderToolbarOmCommands(app);
 registerToolbarCommands(app);
 (window as any).__siMessage = siMessage; (window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); (window as any).__getEnableParity = () => getEnableParity(app); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
+// Softimage Command.GetEnabled analogue for harness / Script Editor probes
+(window as any).__commandEnabled = (name: string, args: Record<string, unknown> = {}) => commandEnabled(app, name, args);
+(window as any).__matrixCommandEnabled = (name: string) => matrixCommandEnabled(app, name);
 
 const appEl = document.getElementById('app')!;
 menubar(app, appEl);

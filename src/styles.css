@@ -130,6 +130,8 @@ button, select, input { font-family: inherit; }
 .toolbar-panel.Render .tb-btn { min-height: var(--render-tb-cell-h); }
 .tb-btn { display: block; width: 100%; text-align: center; margin: 3px 0 0; padding: 4px 8px; background: linear-gradient(var(--btn-top), var(--btn-bot)); color: var(--text); border: 1px solid #5f5b58; border-radius: 3px; cursor: pointer; font-size: 11px; position: relative; }
 .tb-btn:hover { background: linear-gradient(var(--btn-hover-top), var(--btn-hover-bot)); }
+.tb-btn:disabled, .tb-btn.disabled { color: #9a9a9a; cursor: default; opacity: 0.65; }
+.tb-btn:disabled:hover, .tb-btn.disabled:hover { background: linear-gradient(var(--btn-top), var(--btn-bot)); }
 .tb-btn::after { content: ''; position: absolute; right: 3px; bottom: 3px; border-style: solid; border-width: 0 0 7px 7px; border-color: transparent transparent #2a2a2a transparent; }
 .menu { position: fixed; z-index: 1000; background: #f4f2f0; color: #111; border: 1px solid #6a6a6a; box-shadow: 2px 3px 8px rgba(0,0,0,.45); min-width: 180px; padding: 2px 0; font-size: 11px; max-height: 90vh; overflow-y: auto; }
 .menu-item { padding: 3px 24px 3px 20px; cursor: default; position: relative; white-space: nowrap; }
