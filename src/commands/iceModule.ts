@@ -394,8 +394,9 @@ export function iceModuleAudit(app: App): Record<string, unknown> {
       leftcompoundbar_size?: number; rightcompoundbar_size?: number;
       create_node_mode?: number;
     };
-    toolbar_shell?: { attested?: string[]; desktop_png?: string };
-    client_gdi?: { status?: string };
+    toolbar_shell?: { attested?: string[]; desktop_png?: string; toolbar_text?: string[] };
+    client_gdi?: { status?: string; toolbar_h_px?: number };
+    attr_client_gdi?: { status?: string };
   };
   const en = (iceCmdEn as { enabled_by_scriptingname: Record<string, boolean> }).enabled_by_scriptingname;
   const prefsDump = icePrefs as {
@@ -425,18 +426,20 @@ export function iceModuleAudit(app: App): Record<string, unknown> {
     iceTreeCategory: tree?.category,
     iceTreeClsid: tree?.clsid,
     iceTreeCmdmap: tree?.cmdmap,
-    iceTreeStatus: tree?.status ?? 'SHELL',
-    iceTreeClientGdi: tree?.client_gdi ?? chrome.client_gdi?.status ?? 'LOCK',
+    iceTreeStatus: tree?.status ?? 'CLIENT_GDI',
+    iceTreeClientGdi: tree?.client_gdi ?? chrome.client_gdi?.status ?? 'DUMP_READY',
     iceAttrDefaultSize: attr?.defaultsize,
     iceAttrCategory: attr?.category,
     iceAttrClsid: attr?.clsid,
-    iceAttrStatus: attr?.status ?? 'SHELL_ONLY',
-    iceAttrClientGdi: attr?.client_gdi ?? 'LOCK',
+    iceAttrStatus: attr?.status ?? 'CLIENT_GDI',
+    iceAttrClientGdi: attr?.client_gdi ?? chrome.attr_client_gdi?.status ?? 'DUMP_READY',
     toolbarShell: chrome.toolbar_shell?.attested ?? [],
+    toolbarText: chrome.toolbar_shell?.toolbar_text ?? [],
     toolbarDesktopPng: chrome.toolbar_shell?.desktop_png ?? 'unattested',
+    clientGdiToolbarH: chrome.client_gdi?.toolbar_h_px ?? null,
     prefsLayout: {
-      status: pl?.status ?? 'PREFS_ATTESTED_REGION_UNSEEN',
-      applyAsCssVars: pl?.apply_as_css_vars ?? false,
+      status: pl?.status ?? 'PREFS_ATTESTED_REGION_DESKTOP',
+      applyAsCssVars: pl?.apply_as_css_vars ?? true,
       preset_manager_size: pl?.preset_manager_size,
       explorer_size: pl?.explorer_size,
       leftcompoundbar_size: pl?.leftcompoundbar_size,

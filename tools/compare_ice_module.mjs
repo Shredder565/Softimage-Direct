@@ -129,7 +129,8 @@ const tree = await page.evaluate(() => {
   window.Application.run('OpenICETreeView');
   const host = document.querySelector('.rtree.icetree');
   const win = [...document.querySelectorAll('.ppg-float')].find(el => el.querySelector('.ppg-float-title')?.textContent === 'ICE Tree');
-  const tb = [...(host?.querySelectorAll('.xp-head > button.xp-btn') ?? [])].map(b => (b.textContent || '').replace(/▾$/, '').trim());
+  const tb = [...(host?.querySelectorAll('.ice-menubar > button.xp-btn') ?? [])].map(b => (b.textContent || '').replace(/▾$/, '').trim());
+  const tbText = [...(host?.querySelectorAll('.ice-toolbar-text > button.xp-btn') ?? [])].map(b => (b.textContent || '').replace(/▾$/, '').trim());
   const cs = getComputedStyle(document.documentElement);
   return {
     host: !!host,
@@ -138,6 +139,7 @@ const tree = await page.evaluate(() => {
     clsid: host?.dataset.siClsid ?? null,
     cmdmap: host?.dataset.siCmdmap ?? null,
     clientGdi: host?.dataset.siClientGdi ?? null,
+    status: host?.dataset.siStatus ?? null,
     explorerSize: host?.dataset.siExplorerSize ?? null,
     presetSize: host?.dataset.siPresetManagerSize ?? null,
     leftBar: host?.dataset.siLeftCompoundbarSize ?? null,
@@ -145,9 +147,16 @@ const tree = await page.evaluate(() => {
     createNodeMode: host?.dataset.siCreateNodeMode ?? null,
     prefsApplyCss: host?.dataset.siPrefsApplyCss ?? null,
     toolbar: tb,
-    chromeStrip: !!host?.querySelector('.ice-chrome-strip'),
+    toolbarText: tbText,
+    bodyLayout: !!host?.querySelector('.ice-body'),
+    palette: !!host?.querySelector('.ice-palette'),
+    explorer: !!host?.querySelector('.ice-explorer'),
     iceDefaultW: cs.getPropertyValue('--ice-default-w').trim(),
     iceDefaultH: cs.getPropertyValue('--ice-default-h').trim(),
+    icePresetW: cs.getPropertyValue('--ice-preset-w').trim(),
+    iceExplorerW: cs.getPropertyValue('--ice-explorer-w').trim(),
+    iceToolbarH: cs.getPropertyValue('--ice-toolbar-h').trim(),
+    icePanelBg: cs.getPropertyValue('--ice-panel-bg').trim(),
     float: !!win,
     w: win ? Math.round(win.getBoundingClientRect().width) : 0,
     h: win ? Math.round(win.getBoundingClientRect().height) : 0,
@@ -166,10 +175,12 @@ else if (wantClsid) notes.push(`ICE Tree clsid ${wantClsid}`);
 const wantCmd = chrome.views['ICE Tree'].cmdmap;
 if (wantCmd && tree.cmdmap !== wantCmd) diffs.push(`ICE Tree cmdmap ${tree.cmdmap}`);
 else if (wantCmd) notes.push('ICE Tree cmdmap shared with Render Tree');
-if (tree.clientGdi !== 'LOCK') diffs.push(`ICE Tree client_gdi must stay LOCK (got ${tree.clientGdi})`);
-else notes.push('ICE Tree client_gdi LOCK');
-if (tree.prefsApplyCss !== 'false') diffs.push(`prefs region CSS must stay off (got ${tree.prefsApplyCss})`);
-else notes.push('prefs region CSS off (PREFS_ATTESTED_REGION_UNSEEN)');
+if (tree.clientGdi !== 'DUMP_READY') diffs.push(`ICE Tree client_gdi want DUMP_READY (got ${tree.clientGdi})`);
+else notes.push('ICE Tree client_gdi DUMP_READY');
+if (tree.status !== 'CLIENT_GDI') diffs.push(`ICE Tree status=${tree.status}`);
+else notes.push('ICE Tree status CLIENT_GDI');
+if (tree.prefsApplyCss !== 'true') diffs.push(`prefs region CSS must be on (got ${tree.prefsApplyCss})`);
+else notes.push('prefs region CSS on (PREFS_ATTESTED_REGION_DESKTOP)');
 const pl = chrome.prefs_layout || {};
 if (String(pl.explorer_size) !== tree.explorerSize) diffs.push(`explorer_size dataset ${tree.explorerSize}`);
 else notes.push(`explorer_size dataset ${tree.explorerSize}`);
@@ -178,19 +189,40 @@ else notes.push(`preset_manager_size dataset ${tree.presetSize}`);
 if (String(pl.leftcompoundbar_size) !== tree.leftBar || String(pl.rightcompoundbar_size) !== tree.rightBar) {
   diffs.push(`compoundbar dataset L/R ${tree.leftBar}/${tree.rightBar}`);
 } else notes.push(`compoundbar dataset ${tree.leftBar}/${tree.rightBar}`);
-const wantTb = chrome.toolbar_shell?.attested || ['Nodes', 'Edit', 'Update', 'Frame'];
+const wantTb = chrome.toolbar_shell?.attested || ['Create', 'Show', 'Tools', 'Nodes', 'Compounds', 'User Tools'];
 if (JSON.stringify(tree.toolbar) !== JSON.stringify(wantTb)) {
-  diffs.push(`toolbar want=${wantTb.join('|')} got=${(tree.toolbar || []).join('|')}`);
-} else notes.push(`toolbar shell ${wantTb.join(', ')}`);
+  diffs.push(`menubar want=${wantTb.join('|')} got=${(tree.toolbar || []).join('|')}`);
+} else notes.push(`menubar Desktop ${wantTb.join(', ')}`);
+const wantTbText = chrome.toolbar_shell?.toolbar_text || ['Attr. Editor', 'No Highlight'];
+if (JSON.stringify(tree.toolbarText) !== JSON.stringify(wantTbText)) {
+  diffs.push(`toolbar text want=${wantTbText.join('|')} got=${(tree.toolbarText || []).join('|')}`);
+} else notes.push(`toolbar text ${wantTbText.join(', ')}`);
 if (tree.toolbar?.includes('New Tree')) diffs.push('New Tree invent must not appear on toolbar');
-if (!tree.chromeStrip) diffs.push('ICE chrome strip missing');
-else notes.push('ICE chrome strip present');
+if (!tree.bodyLayout || !tree.palette || !tree.explorer) diffs.push('ICE body/palette/explorer layout missing');
+else notes.push('ICE body palette|canvas|explorer layout');
 if (tree.iceDefaultW !== `${chrome.views['ICE Tree'].defaultsize[2]}px`) {
   diffs.push(`--ice-default-w ${tree.iceDefaultW}`);
 } else notes.push(`--ice-default-w ${tree.iceDefaultW}`);
 if (tree.iceDefaultH !== `${chrome.views['ICE Tree'].defaultsize[3]}px`) {
   diffs.push(`--ice-default-h ${tree.iceDefaultH}`);
 } else notes.push(`--ice-default-h ${tree.iceDefaultH}`);
+if (tree.icePresetW !== `${pl.preset_manager_size}px`) diffs.push(`--ice-preset-w ${tree.icePresetW}`);
+else notes.push(`--ice-preset-w ${tree.icePresetW}`);
+if (tree.iceExplorerW !== `${pl.explorer_size}px`) diffs.push(`--ice-explorer-w ${tree.iceExplorerW}`);
+else notes.push(`--ice-explorer-w ${tree.iceExplorerW}`);
+const wantToolbarH = chrome.client_gdi?.toolbar_h_px;
+if (wantToolbarH != null && tree.iceToolbarH !== `${wantToolbarH}px`) diffs.push(`--ice-toolbar-h ${tree.iceToolbarH}`);
+else if (wantToolbarH != null) notes.push(`--ice-toolbar-h ${tree.iceToolbarH}`);
+const wantPanelBg = chrome.client_gdi?.colors?.panel_bg;
+if (wantPanelBg && tree.icePanelBg !== wantPanelBg) diffs.push(`--ice-panel-bg ${tree.icePanelBg}`);
+else if (wantPanelBg) notes.push(`--ice-panel-bg ${tree.icePanelBg}`);
+// Mislabel guard: never treat Face Robot tour 12 as ICE Tree source
+if (chrome.desktop_png_attestation?.shots?.['12-ice-tree.png']?.use_for_ice_tree_gdi) {
+  diffs.push('tour 12-ice-tree.png must not be used for ICE Tree GDI');
+} else notes.push('tour 12-ice-tree.png excluded (Face Robot mislabel)');
+if (!chrome.desktop_png_attestation?.shots?.['20-ice-tree.png']?.use_for_ice_tree_gdi) {
+  diffs.push('20-ice-tree.png must be attested for ICE Tree GDI');
+} else notes.push('20-ice-tree.png DUMP_READY attested');
 
 // ICE Attribute Editor SHELL_ONLY from iceattributeeditor.xsivw
 const attr = await page.evaluate(() => {
@@ -204,6 +236,8 @@ const attr = await page.evaluate(() => {
     clsid: host?.dataset.siClsid ?? null,
     status: host?.dataset.siStatus ?? null,
     clientGdi: host?.dataset.siClientGdi ?? null,
+    toolbar: [...(host?.querySelectorAll('.ice-attr-toolbar > button.xp-btn') ?? [])].map(b => (b.textContent || '').replace(/▾$/, '').trim()),
+    bodyStatic: host?.querySelector('.ice-attr-body-static')?.textContent?.trim() ?? null,
     float: !!win,
     w: win ? Math.round(win.getBoundingClientRect().width) : 0,
     h: win ? Math.round(win.getBoundingClientRect().height) : 0,
@@ -218,18 +252,28 @@ if (attr.defaultsize !== (wantAttr?.defaultsize || []).join(',')) diffs.push(`IC
 else notes.push(`ICE Attribute Editor defaultsize ${attr.defaultsize}`);
 if (attr.clsid !== wantAttr?.clsid) diffs.push(`ICE Attribute Editor clsid ${attr.clsid}`);
 else notes.push(`ICE Attribute Editor clsid OK`);
-if (attr.status !== 'SHELL_ONLY') diffs.push(`ICE Attribute Editor status=${attr.status}`);
-else notes.push('ICE Attribute Editor SHELL_ONLY');
-if (attr.clientGdi !== 'LOCK') diffs.push(`ICE Attribute Editor client_gdi=${attr.clientGdi}`);
-else notes.push('ICE Attribute Editor client_gdi LOCK');
+if (attr.status !== 'CLIENT_GDI') diffs.push(`ICE Attribute Editor status=${attr.status}`);
+else notes.push('ICE Attribute Editor CLIENT_GDI');
+if (attr.clientGdi !== 'DUMP_READY') diffs.push(`ICE Attribute Editor client_gdi=${attr.clientGdi}`);
+else notes.push('ICE Attribute Editor client_gdi DUMP_READY');
+const wantAttrTb = wantAttr?.toolbar_labels || chrome.attr_client_gdi?.toolbar_labels || [];
+if (JSON.stringify(attr.toolbar) !== JSON.stringify(wantAttrTb)) {
+  diffs.push(`attr toolbar want=${wantAttrTb.join('|')} got=${(attr.toolbar || []).join('|')}`);
+} else notes.push(`attr toolbar ${wantAttrTb.join(', ')}`);
+const wantBody = wantAttr?.body_static || chrome.attr_client_gdi?.body_static;
+if (attr.bodyStatic !== wantBody) diffs.push(`attr body static mismatch`);
+else notes.push('attr body static from HWND');
 
 // Audit chrome tokens from iceModule
 const chromeAudit = await page.evaluate(() => window.__uiAudit?.()?.iceModule?.iceTreeChrome);
 if (!chromeAudit?.tokensApplied) diffs.push('iceTreeChrome tokensApplied false');
 else notes.push('iceTreeChrome CSS vars applied');
-if (chromeAudit?.clientGdi !== 'LOCK') diffs.push(`audit clientGdi ${chromeAudit?.clientGdi}`);
-if (chromeAudit?.prefsApplyCss) diffs.push('audit prefsApplyCss must be false');
-else notes.push('audit prefsApplyCss false');
+if (chromeAudit?.clientGdi !== 'DUMP_READY') diffs.push(`audit clientGdi ${chromeAudit?.clientGdi}`);
+else notes.push('audit clientGdi DUMP_READY');
+if (!chromeAudit?.prefsApplyCss) diffs.push('audit prefsApplyCss must be true');
+else notes.push('audit prefsApplyCss true');
+if (!chromeAudit?.regionCssApplied) diffs.push('audit regionCssApplied false');
+else notes.push('audit region CSS vars applied');
 
 // Desktop tour HIGH: ScriptingNames registered + prefs icetree(10) / ICEOperators(21)
 const high = Object.keys(cmdEn.enabled_by_scriptingname || {});

@@ -1,8 +1,8 @@
-// Softimage ICE Attribute Editor view shell — iceattributeeditor.xsivw dump tokens only.
-// Editor body / client GDI stay LOCK (no invent).
+// Softimage ICE Attribute Editor — xsivw shell + Desktop HWND client GDI (Gate B).
+// Toolbar labels + body static from float_children_detail; grid cells LOCK.
 import { App } from '../core/commands';
 import iceViewChrome from '../data/si/ice_view_chrome.json';
-import { applyIceTreeChromeVars } from './iceTreeChrome';
+import { applyIceTreeChromeVars, iceAttrToolbarLabels, iceAttrBodyStatic } from './iceTreeChrome';
 
 const el = (tag: string, cls?: string, text?: string) => {
   const n = document.createElement(tag);
@@ -25,7 +25,7 @@ type IceViewDef = {
   note?: string;
 };
 
-/** Softimage OpenView("ICE Attribute Editor") — xsivw shell chrome; body awaits Desktop/GDI harvest. */
+/** Softimage OpenView("ICE Attribute Editor") — Desktop DUMP_READY client chrome. */
 export function iceAttributeEditorView(_app: App, host: HTMLElement) {
   applyIceTreeChromeVars();
   const root = el('div', 'ice-attr-editor');
@@ -39,21 +39,21 @@ export function iceAttributeEditorView(_app: App, host: HTMLElement) {
   if (def?.maxinstances) root.dataset.siMaxinstances = def.maxinstances;
   if (def?.private) root.dataset.siPrivate = def.private;
   if (def?.acceptfocus) root.dataset.siAcceptfocus = def.acceptfocus;
-  root.dataset.siStatus = def?.status ?? 'SHELL_ONLY';
-  root.dataset.siClientGdi = def?.client_gdi ?? 'LOCK';
+  root.dataset.siStatus = def?.status ?? 'CLIENT_GDI';
+  root.dataset.siClientGdi = def?.client_gdi ?? 'DUMP_READY';
 
-  root.appendChild(el('div', 'ice-attr-title', 'ICE Attribute Editor'));
-  const meta = el('div', 'ice-attr-meta');
-  meta.append(
-    el('span', 'ice-attr-meta-row', `category=${def?.category ?? ''}`),
-    el('span', 'ice-attr-meta-row', `defaultsize=${(def?.defaultsize ?? []).join(',')}`),
-    el('span', 'ice-attr-meta-row', `clsid=${def?.clsid ?? ''}`),
-    el('span', 'ice-attr-meta-row', `supportedtypes=${def?.supportedtypes ?? ''} maxinstances=${def?.maxinstances ?? ''}`),
-  );
-  root.appendChild(meta);
-  const note = el('div', 'view-placeholder deferred');
-  note.innerHTML =
-    `<div class="view-placeholder-title">ICE Attribute Editor client GDI LOCK</div>` +
-    `<p>${def?.note ?? 'xsivw shell only — no invent editor body.'}</p>`;
-  root.appendChild(note);
+  const toolbar = el('div', 'ice-attr-toolbar');
+  for (const label of iceAttrToolbarLabels()) {
+    const b = el('button', 'xp-btn', label) as HTMLButtonElement;
+    if (label === 'ICE Tree') {
+      b.onclick = () => window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'ICE Tree' } }));
+    }
+    toolbar.appendChild(b);
+  }
+  root.appendChild(toolbar);
+
+  const body = el('div', 'ice-attr-body');
+  const msg = iceAttrBodyStatic();
+  body.appendChild(el('div', 'ice-attr-body-static', msg));
+  root.appendChild(body);
 }
