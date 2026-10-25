@@ -49,3 +49,43 @@ export function mixerMenuLabels(): string[] {
 export function fcurveMenuLabels(): string[] {
   return chrome.menus.fcurve;
 }
+
+/** Compact audit for ui_smoke / __uiAudit (PE pack + xsivw + PNG extras). */
+export function animChromeAudit(): Record<string, unknown> {
+  const cs = getComputedStyle(document.documentElement);
+  const L = chrome.layout;
+  const V = chrome.views as Record<string, number[]>;
+  const bm = chrome.bitmaps as { wired?: string[]; png_extra_count?: number };
+  const pngs = (bm.wired ?? []).filter((f) => f.endsWith('.png'));
+  return {
+    softimage: chrome.softimage,
+    tokensApplied: cs.getPropertyValue('--fcv-list-w').trim() === `${L.fcv_list_w}px`,
+    fcvListW: L.fcv_list_w,
+    fcvToolbarH: L.fcv_toolbar_h,
+    mixerTrackH: L.mixer_track_h,
+    kpDefaultW: L.kp_default_w,
+    layerMgrW: L.layer_mgr_w,
+    fontPx: chrome.fonts.editor_px,
+    aeFloat: V['Animation Editor'],
+    mixerFloat: V['Animation Mixer'],
+    dopeFloat: V['DopeSheet'] ?? V['Standalone DopeSheet'],
+    kpFloat: V['Keying Panel'],
+    layerFloat: V['Animation Layer Manager'],
+    playbackFloat: V['Playback Panel'],
+    mixerMenus: chrome.menus.mixer,
+    fcurveMenus: chrome.menus.fcurve,
+    bitmapWired: bm.wired?.length ?? 0,
+    pngExtra: bm.png_extra_count ?? pngs.length,
+    pngGlyphs: pngs,
+    live: {
+      listW: cs.getPropertyValue('--fcv-list-w').trim(),
+      kp: !!document.querySelector('.kp.anim-keying'),
+      kpToolbar: !!document.querySelector('.kp .kp-toolbar-strip'),
+      mixer: !!document.querySelector('.mixer'),
+      fcv: !!document.querySelector('.fcv'),
+      layerMgr: !!document.querySelector('.anim-layer-mgr'),
+      mixerIcons: document.querySelectorAll('.mixer .mixer-ico').length,
+      autoKeyGlyph: !!document.querySelector('.kp.anim-keying button.anim-auto-key img'),
+    },
+  };
+}

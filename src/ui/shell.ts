@@ -334,7 +334,7 @@ export function animationMixer(app: App, host: HTMLElement) {
   const mix = () => (app.selectedObjects[0]?.model ?? app.scene.root).property('mixer') ?? app.scene.root.property('mixer');
   // Softimage Animation Mixer menubar labels from XSIANIMATIONMIXER.dict / anim_chrome tokens
   const mm = mixerMenuLabels();
-  root.appendChild(head(
+  const hd = head(
     menuBtn(mm[0] || 'Edit', () => [{ label: 'Store Action' }, { label: 'Apply Action' }, { separator: true }, { label: 'Equalize Clips' }], (l) => {
       if (l === 'Store Action') app.run('StoreAction', { Name: prompt('Action name:', 'Action') || 'Action', AddClip: true });
       else if (l === 'Apply Action') app.run('ApplyAction');
@@ -352,7 +352,15 @@ export function animationMixer(app: App, host: HTMLElement) {
     btn('Store Action', 'Store selection animation as an action source on the model', () => { app.run('StoreAction', { Name: prompt('Action name:', 'Action') || 'Action', AddClip: true }); render(); }),
     btn('Apply', 'Apply the selected action source', () => { app.run('ApplyAction'); render(); }),
     btn('Refresh', '', () => render()),
-  ));
+  );
+  // Extra PNG toolbar glyphs (#50) — PE ids not in the #47 BMP wire set (34–42,75 + 78–99)
+  for (const id of [34, 35, 36, 37, 38, 39, 40, 41, 42, 75, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]) {
+    const img = el('img', 'mixer-ico') as HTMLImageElement;
+    img.src = `si/anim/animationmixer_rtbitmap_${id}.png`;
+    img.width = 16; img.height = 16; img.alt = ''; img.title = `Mixer tool PE ${id}`;
+    hd.appendChild(img);
+  }
+  root.appendChild(hd);
   const tracksEl = el('div', 'mixer-tracks'); root.appendChild(tracksEl);
   const render = () => {
     tracksEl.innerHTML = '';

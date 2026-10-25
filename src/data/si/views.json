@@ -16,6 +16,54 @@
 "supportedtypes": "6"
 },
 {
+"file": "animationeditor.xsivw",
+"name": "Animation Editor",
+"clsid": "{C0B5C8C5-25E2-11D4-A95F-00C04F8EDEB9}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "10000",
+"supportedtypes": "6"
+},
+{
+"file": "fcurveeditor.xsivw",
+"name": "FCurve Editor",
+"clsid": "{82EAC260-0C9C-11D4-B25E-00A0C9A8AD15}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "10000",
+"supportedtypes": "6"
+},
+{
+"file": "dopesheetproxy.xsivw",
+"name": "DopeSheet",
+"clsid": "{B7360800-F216-11D4-BCD9-00D0B719022B}",
+"defaultsize": "40,106,485,1143",
+"maxinstances": "10000",
+"supportedtypes": "6"
+},
+{
+"file": "dopesheet.xsivw",
+"name": "Standalone DopeSheet",
+"clsid": "{833BE021-3637-11D4-B26A-00A0C9A8AD15}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "10000",
+"supportedtypes": "6"
+},
+{
+"file": "animationmixer.xsivw",
+"name": "Animation Mixer",
+"clsid": "{1E3B7F3C-4BE4-4596-8749-47FFD8AA5EF1}",
+"defaultsize": "50,50,485,550",
+"maxinstances": "10000",
+"supportedtypes": "4"
+},
+{
+"file": "AnimationLayers.xsivw",
+"name": "Animation Layer Manager",
+"clsid": "{A0DC5710-5C00-49c3-8516-BFA8F5B433DE}",
+"defaultsize": "0,0,230,260",
+"maxinstances": "10000",
+"supportedtypes": "6"
+},
+{
 "file": "animationpanel.xsivw",
 "name": "Animation Panel",
 "clsid": "{B17DF864-6768-11D1-8029-00A0243E2717}",

@@ -11,11 +11,19 @@ const panel = (title: string) => { const p = document.createElement('div'); p.cl
 
 // Selection / Transformation / Snap / Edit panels now live in mcp.ts (the Main Command Panel).
 export function keyingPanel(app: App, host: HTMLElement) {
-  const root = document.createElement('div'); root.className = 'kp';
+  // Softimage KeyingPanel.xsivw chrome class (tokens via applyAnimChromeVars on :root)
+  const root = document.createElement('div'); root.className = 'kp anim-keying';
   host.appendChild(root);
   const render = () => {
     root.innerHTML = '';
-    const t = document.createElement('div'); t.className = 'mcp-title'; t.textContent = 'Keying Panel'; root.appendChild(t);
+    const t = document.createElement('div'); t.className = 'mcp-title kp-title-bar';
+    const tb = document.createElement('img'); tb.className = 'kp-toolbar-strip'; tb.src = 'si/anim/ctrl_rtbitmap_TOOLBARU.png'; tb.width = 80; tb.height = 28; tb.alt = ''; tb.title = 'Keying toolbar (PE TOOLBARU)';
+    const label = document.createElement('span'); label.textContent = 'Keying Panel';
+    const autoBtn = document.createElement('button'); autoBtn.className = 'anim-auto-key'; autoBtn.title = 'Auto-key: key any changed animated parameter';
+    const autoImg = document.createElement('img'); autoImg.src = 'si/anim/ctrl_rtbitmap_XSIANIMAUTO_U.png'; autoImg.width = 65; autoImg.height = 25; autoImg.alt = 'Auto'; autoImg.draggable = false;
+    autoBtn.appendChild(autoImg); autoBtn.classList.toggle('on', app.autoKey);
+    autoBtn.onclick = () => { app.autoKey = !app.autoKey; autoBtn.classList.toggle('on', app.autoKey); app.events.emit('selection'); };
+    t.append(tb, label, autoBtn); root.appendChild(t);
     const objs = app.selectedObjects;
     if (!objs.length) { root.insertAdjacentHTML('beforeend', '<div class="ppg-empty">Select an object to see its keyable parameters.</div>'); return; }
     for (const o of objs) {

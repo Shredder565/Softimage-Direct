@@ -42,7 +42,7 @@
     "kp_num_w": 56,
     "kp_default_w": 160,
     "kp_title_h": 15,
-    "layer_mgr_w": 280,
+    "layer_mgr_w": 230,
     "ok_cancel": {
       "w_dlu": 50,
       "h_dlu": 14,
@@ -277,38 +277,44 @@
     "Animation Editor": [
       50,
       50,
-      640,
-      400
+      485,
+      550
     ],
     "Fcurve Editor": [
       50,
       50,
-      640,
-      400
+      485,
+      550
     ],
     "DopeSheet": [
       50,
       50,
-      640,
-      280
+      485,
+      550
     ],
     "Animation Mixer": [
       50,
       50,
-      720,
-      360
+      485,
+      550
     ],
     "Animation Layer Manager": [
-      50,
-      50,
-      280,
-      320
+      0,
+      0,
+      230,
+      260
     ],
     "Playback Panel": [
       0,
       0,
-      320,
-      28
+      431,
+      38
+    ],
+    "Standalone DopeSheet": [
+      50,
+      50,
+      485,
+      550
     ]
   },
   "menus": {
@@ -472,8 +478,43 @@
       "dopesheet_rtbitmap_219.bmp",
       "dopesheet_rtbitmap_245.bmp",
       "dopesheet_rtbitmap_246.bmp",
-      "dopesheet_rtbitmap_250.bmp"
-    ]
+      "dopesheet_rtbitmap_250.bmp",
+      "animationmixer_rtbitmap_34.png",
+      "animationmixer_rtbitmap_35.png",
+      "animationmixer_rtbitmap_36.png",
+      "animationmixer_rtbitmap_37.png",
+      "animationmixer_rtbitmap_38.png",
+      "animationmixer_rtbitmap_39.png",
+      "animationmixer_rtbitmap_40.png",
+      "animationmixer_rtbitmap_41.png",
+      "animationmixer_rtbitmap_42.png",
+      "animationmixer_rtbitmap_75.png",
+      "animationmixer_rtbitmap_78.png",
+      "animationmixer_rtbitmap_79.png",
+      "animationmixer_rtbitmap_80.png",
+      "animationmixer_rtbitmap_81.png",
+      "animationmixer_rtbitmap_82.png",
+      "animationmixer_rtbitmap_83.png",
+      "animationmixer_rtbitmap_84.png",
+      "animationmixer_rtbitmap_85.png",
+      "animationmixer_rtbitmap_86.png",
+      "animationmixer_rtbitmap_87.png",
+      "animationmixer_rtbitmap_88.png",
+      "animationmixer_rtbitmap_89.png",
+      "animationmixer_rtbitmap_90.png",
+      "animationmixer_rtbitmap_91.png",
+      "animationmixer_rtbitmap_92.png",
+      "animationmixer_rtbitmap_93.png",
+      "animationmixer_rtbitmap_94.png",
+      "animationmixer_rtbitmap_95.png",
+      "animationmixer_rtbitmap_96.png",
+      "animationmixer_rtbitmap_97.png",
+      "animationmixer_rtbitmap_98.png",
+      "animationmixer_rtbitmap_99.png",
+      "ctrl_rtbitmap_TOOLBARU.png",
+      "ctrl_rtbitmap_XSIANIMAUTO_U.png"
+    ],
+    "png_extra_count": 34
   },
   "pe_pack": {
     "dialogs": 133,
