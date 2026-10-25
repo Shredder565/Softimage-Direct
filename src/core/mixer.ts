@@ -18,6 +18,16 @@ export type MixerHost = {
 
 export type ClipWeight = { clip: MixerClip; weight: number; localTime: number };
 
+/**
+ * Softimage mixer transition curves (prefs `clip_transitioncurves` default on): Hermite smoothstep.
+ * Linear u kept available for timewarp blend factor before ease; replace with animationmixer.dll
+ * decomp formula when softimage-pc lands it (docs/ghidra/mixer-clip-transitions.md).
+ */
+export function transitionEase(u: number): number {
+  const t = Math.max(0, Math.min(1, u));
+  return t * t * (3 - 2 * t);
+}
+
 /** Softimage-like clip weight at `frame`, with standard/bridge crossfade over transition.length ending at the destination clip start. */
 export function clipWeightsAt(frame: number, clips: MixerClip[], transitions: MixerTransition[]): ClipWeight[] {
   const byName = new Map(clips.map(c => [c.name, c]));
@@ -36,13 +46,15 @@ export function clipWeightsAt(frame: number, clips: MixerClip[], transitions: Mi
       if (frame < t0 || frame >= t1) continue;
       const u = (frame - t0) / len;
       if (tr.kind === 'timewarp') {
-        // Time-warp: stretch local time of `from` into the transition window, fade to `to`.
-        if (clip.name === tr.from) { w = 1 - u; localTime = u * clip.duration; }
-        else if (clip.name === tr.to) { w = u; localTime = frame - clip.start; }
+        // Time-warp: stretch local time of `from` into the transition window, fade to `to` (eased).
+        const e = transitionEase(u);
+        if (clip.name === tr.from) { w = 1 - e; localTime = u * clip.duration; }
+        else if (clip.name === tr.to) { w = e; localTime = frame - clip.start; }
       } else {
-        // standard + bridge: linear crossfade
-        if (clip.name === tr.from) w = 1 - u;
-        else if (clip.name === tr.to) { w = Math.max(w, u); if (frame < clip.start) localTime = 0; }
+        // standard + bridge: Softimage transition-curve crossfade (Hermite until decomp names exact curve)
+        const e = transitionEase(u);
+        if (clip.name === tr.from) w = 1 - e;
+        else if (clip.name === tr.to) { w = Math.max(w, e); if (frame < clip.start) localTime = 0; }
       }
     }
     w *= Number(clip.weight ?? 1);

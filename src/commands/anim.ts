@@ -398,11 +398,24 @@ export function registerAnimCommands(app: App) {
     return { model, mix, clips: s.clips as MixerClip[], transitions: s.transitions as MixerTransition[], compounds: s.compounds as MixerCompound[] };
   };
   app.register({ name: 'AddClip', label: 'Add Clip', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }, { name: 'Time', default: null }, { name: 'Track', default: 0 }, { name: 'Name', default: '' }], execute(app, a) {
-    const { mix, clips } = mixState(app);
+    const { mix, clips, transitions } = mixState(app);
     const src = (app.selection.find(n => (n as any).type === 'actionsource') as Property | undefined) ?? hostModel(app).properties.find(p => p.type === 'actionsource' && (!a.Source || p.name === a.Source));
     if (!src) throw new Error('AddClip: select or name an action source');
+    const prev = clips.length ? clips[clips.length - 1] : null;
     const clip: MixerClip = { name: a.Name || src.name, source: src.name, start: Number(a.Time ?? A.frame), duration: Math.max(1, A.endFrame - A.startFrame), track: Number(a.Track ?? 0), weight: 1, mute: false, additive: false };
-    app.record('Add Clip', () => { clips.push(clip); syncMixer(mix); }, () => { const i = clips.indexOf(clip); if (i >= 0) clips.splice(i, 1); syncMixer(mix); });
+    // Softimage mixer Auto Transition: when flag is on, adding a clip after another inserts a standard transition (docs/ghidra/mixer-clip-transitions.md).
+    const autoTr: MixerTransition | null = (mix.val('autotransition') && prev && prev.track === clip.track)
+      ? { name: `${prev.name}_to_${clip.name}`, kind: 'standard', from: prev.name, to: clip.name, length: 10, weight: 1 }
+      : null;
+    app.record('Add Clip', () => {
+      clips.push(clip);
+      if (autoTr) transitions.push(autoTr);
+      syncMixer(mix);
+    }, () => {
+      if (autoTr) { const ti = transitions.indexOf(autoTr); if (ti >= 0) transitions.splice(ti, 1); }
+      const i = clips.indexOf(clip); if (i >= 0) clips.splice(i, 1);
+      syncMixer(mix);
+    });
     app.events.emit('scene'); return clip;
   } });
   app.register({ name: 'AddLayerClip', label: 'Add Layer Clip', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }, { name: 'Time', default: null }], execute(app, a) {
