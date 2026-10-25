@@ -5,7 +5,7 @@ import { openSiMenu } from '../ui/si';
 import { FROST_NODES, frostCategories } from './nodes';
 import { frostOf } from './session';
 import { FROST_PRESETS } from './presets';
-import { aliveCount } from './evaluator';
+import { aliveCount, aliveStrandCount } from './evaluator';
 
 const el = (tag: string, cls = '', text = '') => {
   const e = document.createElement(tag);
@@ -72,6 +72,11 @@ export function frostGraphView(app: App, host: HTMLElement) {
     else if (l === 'Clear Graph') { frost.graph.nodes = []; frost.graph.links = []; frost.reset(); }
     else if (l === 'Reset Simulation') frost.reset();
     else if (l === 'Load Emit→Simulate recipe') frost.loadRecipe();
+    else if (l === 'Load Character Hair recipe') frost.loadHairRecipe();
+    else if (l === 'Open Hair Wizard') {
+      window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'FROST Hair Wizard' } }));
+      return;
+    }
     else if (l === 'Export Graph (.json)') {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([frost.toJSON()], { type: 'application/json' }));
@@ -96,6 +101,8 @@ export function frostGraphView(app: App, host: HTMLElement) {
   const hd = head(
     menuBtn('Nodes', nodesMenu, addNode),
     menuBtn('Edit', () => [
+      { label: 'Open Hair Wizard' },
+      { label: 'Load Character Hair recipe' },
       { label: 'Load Emit→Simulate recipe' },
       { label: 'Reset Simulation' },
       { label: 'Toggle Simulated' },
@@ -106,7 +113,8 @@ export function frostGraphView(app: App, host: HTMLElement) {
       { label: 'Export Graph (.json)' },
       { label: 'Import Graph (.json)' },
     ], edit),
-    btn('Reset', 'Reset particle state', () => { frost.reset(); frost.tick(app.anim.frame); app.events.emit('scene'); render(); }),
+    btn('Reset', 'Reset particle/strand state', () => { frost.reset(); frost.tick(app.anim.frame); app.events.emit('scene'); render(); }),
+    btn('Hair', 'Load Character Hair recipe', () => { frost.loadHairRecipe(); render(); }),
     btn('Recipe', 'Load Emit → Simulate Particles', () => { frost.loadRecipe(); render(); }),
   );
   const title = el('span', 'rt-title');
@@ -234,7 +242,15 @@ export function frostGraphView(app: App, host: HTMLElement) {
   const stats = el('div', 'frost-stats');
   root.appendChild(stats);
   const updStats = () => {
-    stats.textContent = `Particles ${aliveCount(frost.state)} · frame ${app.anim.frame} · ${frost.graph.simulated ? 'simulated' : 'procedural'}`;
+    const strands = aliveStrandCount(frost.state);
+    const part = aliveCount(frost.state);
+    const bits = [
+      strands ? `${strands} strands` : null,
+      part ? `${part} pts` : null,
+      `frame ${app.anim.frame}`,
+      frost.graph.simulated ? 'simulated' : 'procedural',
+    ].filter(Boolean);
+    stats.textContent = bits.join(' · ');
   };
 
   render();
@@ -259,9 +275,16 @@ export function frostToolbar(app: App, host: HTMLElement) {
   };
   wrap.append(
     el('div', 'tb-group', 'FROST'),
+    mk('Hair Wizard', 'Character hair easy-path (scalp → look)', () => {
+      window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'FROST Hair Wizard' } }));
+    }),
+    mk('Character Hair', 'Load hair recipe with defaults', () => {
+      frost.loadHairRecipe();
+      app.logMsg('info', 'FROST: loaded Character Hair recipe');
+    }),
     mk('Graph Editor', 'Open FROST Graph view', () => window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'FROST Graph' } }))),
     mk('Emit→Simulate', 'Load default particle recipe', () => { frost.loadRecipe(); app.logMsg('info', 'FROST: loaded Emit→Simulate recipe'); }),
-    mk('Reset Sim', 'Clear particles and re-evaluate', () => { frost.reset(); frost.tick(app.anim.frame); app.events.emit('scene'); }),
+    mk('Reset Sim', 'Clear particles/strands and re-evaluate', () => { frost.reset(); frost.tick(app.anim.frame); app.events.emit('scene'); }),
     mk('Export JSON', 'Download frost-graph IR', () => {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([frost.toJSON()], { type: 'application/json' }));
@@ -269,7 +292,7 @@ export function frostToolbar(app: App, host: HTMLElement) {
       a.click();
     }),
   );
-  const hint = el('div', 'frost-tb-hint', 'Play the timeline to advance particles in the viewport.');
+  const hint = el('div', 'frost-tb-hint', 'Hair Wizard for character hair · Graph for particles/TD recipes. Play the timeline to advance sim.');
   wrap.appendChild(hint);
   host.appendChild(wrap);
 }

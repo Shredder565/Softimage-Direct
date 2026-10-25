@@ -1,8 +1,23 @@
-/** Deterministic emit + integrate smoke checks (no DOM). */
+/** Deterministic emit + integrate + strand hair smoke checks (no DOM). */
 
-import { emitSimulateRecipe } from './presets';
-import { createFrostState, tickFrost, aliveCount, frostPositions } from './evaluator';
+import { emitSimulateRecipe, characterHairRecipe } from './presets';
+import {
+  createFrostState,
+  tickFrost,
+  aliveCount,
+  aliveStrandCount,
+  frostPositions,
+  frostStrandLines,
+} from './evaluator';
 import { parseFrostGraph, serializeFrostGraph } from './ir';
+import { defaultHairWizard, hairRecipe } from './hair';
+import {
+  generateStrands,
+  applyStyleLayers,
+  defaultStyleLayers,
+  tickStrandDynamics,
+  packStrandLineSegments,
+} from './strands';
 
 export interface FrostSmokeResult {
   ok: boolean;
@@ -99,6 +114,79 @@ export function runFrostSmokeTests(): FrostSmokeResult {
     tickFrost(g, st, { frame: 2 });
     const n2 = aliveCount(st);
     assert(n1 > 0 && n2 > 0 && n2 <= n1 + 2, `procedural no carry (n1=${n1} n2=${n2})`, failures, checks);
+  }
+
+  // —— P1: strand generate ——
+  {
+    const strands = generateStrands({ count: 40, segments: 6, length: 1.0, seed: 9 });
+    assert(strands.length === 40, `strand generate count (${strands.length})`, failures, checks);
+    assert(strands.every(s => s.pos.length === 7 * 3), 'strand segment buffers', failures, checks);
+    applyStyleLayers(strands, defaultStyleLayers(), 9);
+    const lines = packStrandLineSegments(strands);
+    assert(lines.length === 40 * 6 * 6, `strand line pack (${lines.length})`, failures, checks);
+  }
+
+  // —— P1: simple dynamics tick moves tips under gravity/wind ——
+  {
+    const strands = generateStrands({ count: 20, segments: 5, length: 1.2, seed: 2 });
+    applyStyleLayers(strands, defaultStyleLayers(), 2);
+    for (const s of strands) { s.pos.set(s.rest); s.prev.set(s.rest); }
+    const tipY0 = strands.reduce((a, s) => a + s.pos[s.segments * 3 + 1], 0) / strands.length;
+    for (let i = 0; i < 12; i++) {
+      tickStrandDynamics(strands, {
+        gravity: [0, -6, 0],
+        damping: 0.08,
+        stiffness: 0.2,
+        stretchLimit: 1.08,
+        iterations: 4,
+        wind: [0.8, 0, 0.2],
+        windTurbulence: 1.2,
+        dt: 1 / 30,
+        time: i / 30,
+        colliderSphere: { cx: 0, cy: 0.8, cz: 0, r: 0.4 },
+      });
+    }
+    const tipY1 = strands.reduce((a, s) => a + s.pos[s.segments * 3 + 1], 0) / strands.length;
+    let moved = 0;
+    for (const s of strands) {
+      const i = s.segments * 3;
+      const d = Math.hypot(s.pos[i] - s.rest[i], s.pos[i + 1] - s.rest[i + 1], s.pos[i + 2] - s.rest[i + 2]);
+      if (d > 1e-3) moved++;
+    }
+    assert(moved > 0 || tipY1 < tipY0 - 0.01, `strand dynamics tick (moved=${moved} Δy=${(tipY1 - tipY0).toFixed(3)})`, failures, checks);
+  }
+
+  // —— P1: hair recipe graph evaluates strands ——
+  {
+    const wiz = defaultHairWizard();
+    wiz.guideCount = 48;
+    wiz.segments = 6;
+    const g = hairRecipe(wiz, 'hairSmoke');
+    assert(g.nodes.some(n => n.type === 'CreateStrands'), 'hair recipe has CreateStrands', failures, checks);
+    assert(g.nodes.some(n => n.type === 'SimulateStrands'), 'hair recipe has SimulateStrands', failures, checks);
+    assert(g.nodes.some(n => n.type === 'StyleLayers'), 'hair recipe has StyleLayers', failures, checks);
+    assert(g.nodes.some(n => n.type === 'CollideBody'), 'hair recipe has CollideBody', failures, checks);
+    assert(g.nodes.some(n => n.type === 'Wind'), 'hair recipe has Wind', failures, checks);
+    const st = createFrostState();
+    for (let f = 1; f <= 10; f++) tickFrost(g, st, { frame: f, fps: 30 });
+    const n = aliveStrandCount(st);
+    const lines = frostStrandLines(st);
+    assert(n > 0, `hair graph births strands (n=${n})`, failures, checks);
+    assert(lines.length > 0, `hair graph packs strand lines (${lines.length})`, failures, checks);
+
+    // Deterministic hair tick
+    const run = () => {
+      const st2 = createFrostState();
+      const g2 = characterHairRecipe('detHair');
+      for (let f = 1; f <= 8; f++) tickFrost(g2, st2, { frame: f, fps: 30 });
+      return Array.from(frostStrandLines(st2));
+    };
+    const a = run(), b = run();
+    assert(a.length === b.length && a.every((v, i) => v === b[i]), 'deterministic hair strand tick', failures, checks);
+
+    // Hair IR round-trip
+    const rt = parseFrostGraph(serializeFrostGraph(g));
+    assert(rt.nodes.length === g.nodes.length && rt.links.length === g.links.length, 'hair IR round-trip', failures, checks);
   }
 
   return { ok: failures.length === 0, failures, checks };
