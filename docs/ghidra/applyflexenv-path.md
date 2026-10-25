@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-24 (updated 2026-10-25 SPDL Mode lock)  
 **Mode:** VBS + SPDL + string/Ghidra on `deformop.dll`. No Softimage Desktop.  
-**XSIBATCH:** ApplyFlexEnv **cancelled** under `-processing`. **Desktop deep:** ApplyFlexEnv **OK** + `EnvelopeWeight` path, but `weight_table` reads remain **LOCK** (see [flexenv-headless-lock.md](./flexenv-headless-lock.md)).
+**XSIBATCH:** ApplyFlexEnv **cancelled** under `-processing`. **Desktop VBArray:** ApplyFlexEnv **OK** + numeric `Weights.Array` (Softimage % scale) — see [flexenv-headless-lock.md](./flexenv-headless-lock.md).
 
 ## Script / command path
 

@@ -1,17 +1,18 @@
-# ApplyFlexEnv — headless LOCK + Mode wire note
+# ApplyFlexEnv — weights + Mode wire note
 
-## LOCK — Softimage weight *table* still unreadable
+## WIRE — Softimage weight table via VBArray (Desktop 2026-10-25)
 
 | Evidence | Result |
 |----------|--------|
-| `si_anim_envelope_shape_dump.js` → `si_anim_envelope_shape.json` | Shape StoreShapeKey OK |
-| ApplyFlexEnv under `XSIBATCH -processing` | **Cancelled** / runtime fail |
-| Overnight first pass `si_flexenv_weights.json` | Softimage 13.2.163.0; **ApplyFlexEnv all 7 attempts failed**; envelope null |
-| **Desktop deep** `si_flexenv_weights.json` (2026-10-25) | **`apply.ok=true`** → `…Envelope_Weights.autoenvassign`; classname **`EnvelopeWeight`**; `envelopop` present; deformers `[bone]`; **`weight_table` 32 rows all `weights:null`** (COM: String expected / no method / Invalid procedure / Value undefined) |
+| XSIBATCH `-processing` | ApplyFlexEnv cancelled / runtime fail |
+| Overnight first pass | ApplyFlexEnv all attempts failed; envelope null |
+| Desktop deep | Apply OK + `EnvelopeWeight`; element reads null |
+| Desktop pass4 | `Weights.Array` probed but JS null cells |
+| **Desktop VBArray** `si_flexenv_weights.json` | **`apply.ok=true`**; deformers `[root,bone,eff]`; **`VBArray` Bounds** 3×32; **`weight_table` numeric** (e.g. `[0,100,0]` = 100% on bone); `acceptance.has_nonzero=true` |
 
-**Proof class:** Softimage Desktop can **create** the envelope (`ApplyFlexEnv` OK) but scripted weight-element reads remain Softimage-impossible with the probed APIs. Do **not** invent Softimage envelope weight tables. Direct `compare_envelope_shape` validates Direct fixture (weight sum 1, normalize, mirror, RemoveFlexEnvDeformer). Dump path: `data/dump/si_flexenv_weights.json`.
+Softimage `envelopop.Weights.Array` is a 2D VBArray (deformer × point) with **percentage** weights (sum ≈ **100** per point). Direct `envelopop.weights` stay **unit-normalized** (sum ≈ **1**). Do **not** invent Softimage tables — consume the dump golden.
 
-Optional unlock: Softimage-attested weight-element dump API (Elements/GetValue path that returns arrays) before 2026-10-25 09:00 ET Desktop window ends.
+Dump path: `data/dump/si_flexenv_weights.json`.
 
 ## WIRE — Mode / DistanceWeighting (SPDL attested)
 
@@ -26,6 +27,6 @@ Softimage `C3DEnvelopeAutoAssignOp2.spdl` **`autoassignmeth`**: **0 = Distance-b
 
 ## Acceptance
 
-- LOCK documented with Desktop-deep dump citation (Apply OK / weights null).
-- Direct envelope harness remains green (`compare_envelope_shape`).
-- No fake Softimage weight golden files.
+- Softimage VBArray weight golden cited; `compare_envelope_shape` asserts numeric rows + Direct unit sum.
+- No fake Softimage weight files.
+- Scale note: Softimage % vs Direct 0–1 — compare schemas, not raw cell equality across engines.
