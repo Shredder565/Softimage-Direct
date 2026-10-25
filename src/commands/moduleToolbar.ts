@@ -215,8 +215,32 @@ export function registerModuleToolbarCommands(app: App) {
   app.register({ name: 'RemoveFromPartition', label: 'Remove Object from Partition', category: 'Rendering', args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], execute(app) { app.logMsg('info', `Remove from partition: ${app.selectedObjects.map(o => o.name).join(', ') || '(nothing selected)'}`); } });
 
   const renderLog = (app: App, what: string) => { app.logMsg('info', `${what} (offline render stub — use Softimage for frames)`); };
-  app.register({ name: 'RenderPass', label: 'Render Pass', category: 'Rendering', args: [{ name: 'Passes', default: 'Passes.Current' }], undoable: false, execute: (app) => renderLog(app, 'Render Pass') });
-  app.register({ name: 'RenderPasses', label: 'Render Passes', category: 'Rendering', args: [{ name: 'Passes', default: 'Passes.Current' }], undoable: false, execute: (app, a) => renderLog(app, a.Passes === 'Passes.Current' ? 'Render Current Pass' : 'Render Passes') });
+  // Softimage stub-tools dump ACTIVE — RenderPass args×6 / RenderPasses args×5 (commands_full).
+  app.register({
+    name: 'RenderPass', label: 'Render Pass', category: 'Rendering',
+    args: [
+      { name: 'Passes', default: 'Passes.Current' }, { name: 'PresetObj', default: null },
+      { name: 'StartFrame', default: null }, { name: 'EndFrame', default: null },
+      { name: 'StepFrame', default: null }, { name: 'DisposeRendering', default: true },
+    ],
+    undoable: false, description: 'Render the specified pass (current pass if not specified)',
+    execute: (app) => renderLog(app, 'Render Pass'),
+  });
+  app.register({
+    name: 'RenderPasses', label: 'Render Passes', category: 'Rendering',
+    args: [
+      { name: 'Passes', default: 'Passes.Current' }, { name: 'StartFrame', default: null },
+      { name: 'EndFrame', default: null }, { name: 'StepFrame', default: null },
+      { name: 'Verbose', default: ':siRenderVerbosityDefault:siRenderVerbosity' },
+    ],
+    undoable: false, description: 'Render a the list of passes, or current pass if none specified',
+    execute: (app, a) => renderLog(app, a.Passes === 'Passes.Current' ? 'Render Current Pass' : 'Render Passes'),
+  });
+  app.register({
+    name: 'Render Current Pass', label: 'Render Current Pass', category: 'Rendering',
+    args: [{ name: 'Passes', default: 'Passes.Current' }], undoable: false,
+    execute: (app, a) => app.run('RenderPasses', a),
+  });
   app.register({ name: 'RenderSelectedPasses', label: 'Render Selected Passes', category: 'Rendering', args: [], undoable: false, execute: (app) => renderLog(app, 'Render Selected Passes') });
   app.register({ name: 'RenderAllPasses', label: 'Render All Passes', category: 'Rendering', args: [], undoable: false, execute: (app) => renderLog(app, 'Render All Passes') });
   app.register({ name: 'RenderCurrentFrame', label: 'Render Current Frame', category: 'Rendering', args: [], undoable: false, execute: (app) => renderLog(app, 'Render Current Frame') });
@@ -225,8 +249,19 @@ export function registerModuleToolbarCommands(app: App) {
   app.register({ name: 'OpenRenderingPreferences', label: 'Open Rendering Preferences', category: 'Rendering', args: [], undoable: false, execute() { window.dispatchEvent(new CustomEvent('openprefs', { detail: { page: 'Rendering' } })); } });
   app.register({ name: 'InspectCurrentPass', label: 'Inspect Current Pass', category: 'Rendering', args: [], undoable: false, execute(app) { const p = app.scene.passes[app.scene.passes.length - 1]; if (p) app.logMsg('info', `Current pass: ${p.name}`); openView('Render Manager'); } });
   app.register({ name: 'InspectRendererOptions', label: 'Inspect Renderer Options', category: 'Rendering', args: [], undoable: false, execute() { window.dispatchEvent(new CustomEvent('openprefs', { detail: { page: 'Rendering' } })); } });
-  app.register({ name: 'ExportRenderArchive', label: 'Export Passes to Render Archive', category: 'Rendering', args: [], undoable: false, execute: (app) => app.logMsg('info', 'Export render archive: stub') });
-  app.register({ name: 'ExportRenderArchiveAllPasses', label: 'Export All Passes to Render Archives', category: 'Rendering', args: [], undoable: false, execute: (app) => app.logMsg('info', 'Export all passes archive: stub') });
+  // Softimage ExportRenderArchive* ACTIVE — attested arg counts (commands_full). Offline archive bytes LOCK.
+  app.register({
+    name: 'ExportRenderArchive', label: 'Export Selected Passes to Render Archive', category: 'Rendering',
+    args: [{ name: 'Passes', default: null }], undoable: false,
+    description: 'Export the selected passes to a render archive',
+    execute: (app, a) => app.logMsg('info', `Export render archive: ${a.Passes ?? 'stub'}`),
+  });
+  app.register({
+    name: 'ExportRenderArchiveAllPasses', label: 'Export All Passes to Render Archives', category: 'Rendering',
+    args: [{ name: 'Passes', default: 'Passes.List.*' }], undoable: false,
+    description: 'Export All Passes to Render Archives',
+    execute: (app, a) => app.logMsg('info', `Export all passes archive: ${a.Passes}`),
+  });
   app.register({ name: 'ExportObjectRenderArchive', label: 'Export an Object to a Render Archive', category: 'Rendering', args: [], undoable: false, execute: (app) => app.logMsg('info', 'Export object render archive: stub') });
 
   // ——— Simulate: rigid / soft / cloth ———
@@ -437,8 +472,21 @@ export function registerModuleToolbarCommands(app: App) {
       return null;
     },
   });
+  // Softimage HairTransferMap / HairCopyStyle / TransferMap = FAIL in stub-tools dump — keep shells; Gap = Softimage FAIL.
   app.register({ name: 'HairTransferMap', label: 'Hair Transfer Map', category: 'Modeling', args: [], execute: (app) => stubTool(app, 'Hair Transfer Map') });
   app.register({ name: 'HairCopyStyle', label: 'Hair Copy Style', category: 'Modeling', args: [], execute: (app) => stubTool(app, 'Hair Copy Style') });
+  // Softimage CopyStyle ACTIVE Simulation args×2 (TargetHairObject, ModelHairStyleObject) — arm shell, no invent style transfer.
+  app.register({
+    name: 'CopyStyle', label: 'CopyStyle', category: 'Simulation',
+    args: [{ name: 'TargetHairObject', default: null }, { name: 'ModelHairStyleObject', default: null }],
+    description: 'Copies a hair style from one object to another',
+    execute(app, a) {
+      const tgt = a.TargetHairObject ?? app.selectedObjects[0]?.name ?? '';
+      const src = a.ModelHairStyleObject ?? app.selectedObjects[1]?.name ?? '';
+      app.logMsg('info', `CopyStyle: ${src || '(source)'} → ${tgt || '(target)'} (hair style transfer shell)`);
+      return stubTool(app, 'CopyStyle');
+    },
+  });
   app.register({ name: 'HairDisplayStyle', label: 'Hair Display Style', category: 'Viewing', args: [], undoable: false, execute: (app) => app.logMsg('info', 'Hair display style toggled') });
   app.register({
     name: 'HairShowRenderHairs', label: 'Show Render Hairs', category: 'Viewing',
