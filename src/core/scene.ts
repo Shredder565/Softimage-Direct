@@ -138,10 +138,22 @@ export function makeSiShader(key: string, name?: string): Shader | null {
 }
 export function makePhong(name = 'Phong') { return makeSiShader('Phong', name)!; }
 export function makeLambert(name = 'Lambert') { return makeSiShader('Lambert', name)!; }
+/** Softimage Material OM (si_render_material_phong.json): classname Material; Parameter.Name labels attested. */
 export class Material extends Node {
   surface: Shader | null = null;
   constructor(name: string) {
-    super(name, 'material', 'material', [str('Name', name, 'Name', { readOnly: true }), bool('wrapu', false, 'Wrap U'), bool('wrapv', false, 'Wrap V')]);
+    super(name, 'Material', 'material', [
+      str('Name', name, 'Name', { readOnly: true }),
+      // Softimage PC dump: sn envmode / wrapu / wrapv Parameter.Name Mode / Wrap U / Wrap V (values attested, not invented)
+      int('envmode', 8448, 'Mode'),
+      int('wrapu', 10497, 'Wrap U'),
+      int('wrapv', 10497, 'Wrap V'),
+      str('CAV', '', 'Vertex Color Property'),
+      str('UV', '', 'UV Property'),
+      int('TextureSel', 1, 'Texture Selection'),
+      bool('TextureOverriden', false, 'Overriden by Texture Editor Selection'),
+      bool('alphamask', false, 'Use Alpha Mask'),
+    ]);
   }
   setSurface(s: Shader | null) { if (this.surface) this.surface.parent = null; this.surface = s; if (s) s.parent = this; }
   explorerChildren() { return this.surface ? [this.surface] : []; }
@@ -598,7 +610,104 @@ export class Group extends Node {
   constructor(name: string) { super(name, 'group', 'folder', []); }
   explorerChildren(): Node[] { return [...this.members]; }
 }
-export class Pass extends Node { constructor(name: string) { super(name, 'pass', 'pass', [bool('Active', true, 'Active'), int('FrameStart', 1, 'Start Frame'), int('FrameEnd', 100, 'End Frame')]); } }
+/** Softimage Partition under a Pass (Background_Objects / Background_Lights). viewvis=2 is Softimage default (siInherited). */
+export class Partition extends Node {
+  constructor(name: string) {
+    super(name, 'Partition', 'folder', [
+      str('Name', name, 'Name', { readOnly: true }),
+      int('viewvis', 2, 'View Visibility'),
+      int('rendvis', 2, 'Render Visibility'),
+      int('selectability', 2, 'Selectability'),
+      int('ghosting', 2, 'Animation Ghosting'),
+      int('viewplaybackvis', 2, 'View Playback Visibility'),
+    ]);
+  }
+}
+/** Softimage Framebuffer on a Pass (Default_Pass.Main). Dump: si_render_framebuffer_enums.json */
+export class Framebuffer extends Node {
+  constructor(name = 'Main') {
+    super(name, 'Framebuffer', 'property', [
+      str('Name', name, 'Name'),
+      str('RenderChannel', 'Main', 'RenderChannel'),
+      bool('Enabled', true, 'Enabled'),
+      str('Filename', '[Pass]_[Framebuffer]', 'Filename'),
+      str('Format', 'pic', 'Format'),
+      str('DataType', 'RGBA', 'DataType'),
+      int('BitDepth', 3, 'BitDepth'),
+    ]);
+  }
+}
+/**
+ * Softimage Pass OM (si_render_passes.json): classname Pass, Default_Pass + CreatePass→Pass,
+ * nested partitions + Main framebuffer; ImageWidth/Height match Scene Render Options defaults.
+ */
+export class Pass extends Node {
+  readonly partitions: Partition[] = [];
+  readonly framebuffers: Framebuffer[] = [];
+  constructor(name: string) {
+    super(name, 'Pass', 'pass', [
+      bool('Active', true, 'Active'),
+      str('Name', name, 'Name'),
+      str('Camera', 'Camera', 'Camera'),
+      str('Renderer', '', 'Renderer'),
+      int('ImageWidth', 1920, 'ImageWidth'),
+      int('ImageHeight', 1080, 'ImageHeight'),
+      num('ImageAspectRatio', 1.777778, 'ImageAspectRatio'),
+      num('ImagePixelRatio', 1, 'ImagePixelRatio'),
+      bool('ImageLockAspectRatio', true, 'ImageLockAspectRatio'),
+      int('ImageFormatPreset', -16, 'ImageFormatPreset'),
+      bool('ImageFormatOverride', false, 'ImageFormatOverride'),
+      int('FrameRangeSource', 3, 'FrameRangeSource'),
+      int('FrameStart', 1, 'FrameStart'),
+      int('FrameEnd', 100, 'FrameEnd'),
+      int('FrameStep', 1, 'FrameStep'),
+      str('FrameSet', '1-100', 'FrameSet'),
+      bool('FieldEnable', false, 'FieldEnable'),
+      int('FieldOrder', 0, 'FieldOrder'),
+      bool('MotionBlur', false, 'MotionBlur'),
+      num('MotionBlurShutterSpeed', 0.5, 'MotionBlurShutterSpeed'),
+      bool('MotionBlurDeformation', true, 'MotionBlurDeformation'),
+      int('OverrideCameraLensShaders', 0, 'OverrideCameraLensShaders'),
+    ]);
+    this.addPartition('Background_Objects_Partition');
+    this.addPartition('Background_Lights_Partition');
+    this.addFramebuffer('Main');
+  }
+  addPartition(name: string) {
+    const p = new Partition(name); p.parent = this; this.partitions.push(p); return p;
+  }
+  addFramebuffer(name: string) {
+    const f = new Framebuffer(name); f.parent = this; this.framebuffers.push(f); return f;
+  }
+  explorerChildren(): Node[] { return [...this.partitions, ...this.framebuffers]; }
+}
+/** Softimage Passes.RenderOptions (SceneRenderProperty) — si_render_prefs.json */
+export function makeSceneRenderOptions(): Property {
+  const p = new Property('Scene Render Options', 'SceneRenderProperty', [
+    str('Renderer', 'Mental Ray', 'Renderer'),
+    str('OutputDir', '[Project Path]/Render_Pictures', 'OutputDir'),
+    int('FramePadding', 1, 'FramePadding'),
+    int('ImageFormatPreset', -16, 'ImageFormatPreset'),
+    num('ImageAspectRatio', 1.777778, 'ImageAspectRatio'),
+    int('ImageWidth', 1920, 'ImageWidth'),
+    int('ImageHeight', 1080, 'ImageHeight'),
+    num('ImagePixelRatio', 1, 'ImagePixelRatio'),
+    bool('ImageLockAspectRatio', true, 'ImageLockAspectRatio'),
+    int('FrameRangeSource', 0, 'FrameRangeSource'),
+    int('FrameStart', 1, 'FrameStart'),
+    int('FrameEnd', 100, 'FrameEnd'),
+    int('FrameStep', 1, 'FrameStep'),
+    str('FrameSet', '1-100', 'FrameSet'),
+    bool('FieldEnable', false, 'FieldEnable'),
+    int('FieldOrder', 0, 'FieldOrder'),
+    bool('FieldInterleave', false, 'FieldInterleave'),
+    num('MotionBlurShutterSpeed', 0.5, 'MotionBlurShutterSpeed'),
+    num('MotionBlurShutterOffset', 0, 'MotionBlurShutterOffset'),
+    int('MotionBlurShutterType', 0, 'MotionBlurShutterType'),
+    bool('MotionBlurDeformation', true, 'MotionBlurDeformation'),
+  ]);
+  return p;
+}
 
 // ---------------------------------------------------------------- scene
 /** Softimage actionclip.weight FCurve key (ModifyWeightProc / gk10 via SetDefaultWeight). */
@@ -676,6 +785,8 @@ export class Scene extends Node {
   readonly passes: Pass[] = [];
   readonly materials: Material[] = [];   // sources > materials library
   readonly groupList: Group[] = [];
+  /** Softimage Passes.RenderOptions (SceneRenderProperty). */
+  readonly renderOptions: Property;
   constructor() {
     super('Scene', 'scene', 'scene', [str('Name', 'Untitled', 'Scene Name')]);
     this.root = new Model('Scene_Root');
@@ -683,6 +794,8 @@ export class Scene extends Node {
     this.root.setMaterial(this.newMaterial('Scene_Material', makePhong()));
     this.root.addProperty(makeDisplay()); this.root.addProperty(makeGeomApprox());
     this.root.addProperty(makeMixer());
+    this.renderOptions = makeSceneRenderOptions();
+    this.renderOptions.parent = this as any;
     this.addLayer('Layer_Default'); this.addPass('Default_Pass');
   }
   newMaterial(name: string, surface: Shader) { const m = new Material(this.uniqueName(name)); m.setSurface(surface); this.materials.push(m); return m; }
@@ -691,7 +804,7 @@ export class Scene extends Node {
   *allObjects(): Generator<X3DObject> { yield* this.root.descendants(); }
   find(name: string): X3DObject | undefined { for (const o of this.allObjects()) if (o.name === name || o.fullName === name) return o; return undefined; }
   uniqueName(base: string): string {
-    const taken = new Set<string>(); for (const o of this.allObjects()) taken.add(o.name); for (const l of this.layers) taken.add(l.name); for (const m of this.materials) taken.add(m.name);
+    const taken = new Set<string>(); for (const o of this.allObjects()) taken.add(o.name); for (const l of this.layers) taken.add(l.name); for (const m of this.materials) taken.add(m.name); for (const p of this.passes) taken.add(p.name);
     if (!taken.has(base)) return base;
     let i = 1; while (taken.has(`${base}${i}`)) i++; return `${base}${i}`;
   }
