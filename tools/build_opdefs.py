@@ -33,6 +33,22 @@ SYNTH_LAYOUT = {
     'blendcrv': [{'group': 'Blend', 'items': [{'param': 'startscl'}, {'param': 'endscl'}]}],
     'mergemesh': [{'group': 'Merge', 'items': [{'param': 'tolerance'}, {'param': 'blend'}, {'param': 'NormalizeWeights'}]}],
 }
+# Softimage GenOpInputsButtonsDisplay.spdl (has_layout:false) — attested Button text only.
+# Runtime siLayout() also prepends this for inline consumers; keep here for rebuild fidelity.
+GENOP_INPUTS_CHROME = [
+    {'group': 'Inputs', 'opts': ['continue', '30%'], 'items': [
+        {'button': 'HideInputs', 'label': 'Hide/Unhide', 'opts': ['continue'], 'command': 'HideGeneratorInputs'},
+        {'button': 'DeleteInputs', 'label': 'Delete', 'command': 'DeleteGeneratorInputs'},
+        {'param': 'syncwithinputspose'},
+    ]},
+    {'group': "Inputs' construction mode", 'items': [
+        {'param': 'inputreadregion', 'opts': ['NoLabel']},
+    ]},
+]
+GENOP_INLINE_OPS = {
+    'booleansrftopoop', 'CurveListToMesh', 'mergemesh', 'nurbstomesh', 'TransferAttributes',
+    'extractcrvseg', 'filletcrv', 'fitcrv', 'fitsrf', 'intersectsrf', 'mergecrv', 'blendcrv',
+}
 
 def spdl_params_index():
     idx = {}
@@ -108,6 +124,10 @@ def layout_for_nodes(lay, sns):
     def prune(nodes):
         out = []
         for n in nodes:
+            if n.get('button'):
+                # Attested GenOp SPDL Button chrome (Hide/Unhide, Delete) — keep text flags.
+                out.append({k: n[k] for k in ('button', 'label', 'opts', 'command') if k in n and n[k] is not None})
+                continue
             if 'param' in n:
                 raw = str(n['param'])
                 # Skip Softimage inline GenOp button includes (not Layout grammar), but keep
@@ -121,10 +141,24 @@ def layout_for_nodes(lay, sns):
             else:
                 k = 'group' if 'group' in n else 'row' if 'row' in n else 'tab'
                 items = prune(n.get('items') or [])
-                if items: out.append({k: n[k], 'items': items})
+                if items:
+                    node = {k: n[k], 'items': items}
+                    if n.get('opts'): node['opts'] = n['opts']
+                    out.append(node)
         return out
     pruned = prune(lay)
     return pruned or None
+
+def with_genop_chrome(op_type, lay, sns):
+    """Prepend attested GenOp Hide/Delete Inputs groups for Softimage inline consumers."""
+    if op_type not in GENOP_INLINE_OPS:
+        return lay
+    chrome = layout_for_nodes(GENOP_INPUTS_CHROME, sns) or []
+    if not chrome:
+        return lay
+    if lay and any(n.get('group') == 'Inputs' and any(i.get('button') == 'HideInputs' for i in (n.get('items') or [])) for n in lay):
+        return lay
+    return chrome + (lay or [])
 
 def layout_for(f, sns):
     return layout_for_nodes(spdl.get(f, {}).get('layout'), sns)
@@ -294,6 +328,14 @@ for t, nodes in SYNTH_LAYOUT.items():
     if d.get('layout') and want and all(w in have for w in want):
         continue
     lay = layout_for_nodes(nodes, sns)
+    if lay: d['layout'] = lay
+
+# Prepend attested GenOp Hide/Delete chrome for Softimage GenOpInputsButtonsDisplay inline consumers.
+for t in list(GENOP_INLINE_OPS):
+    if t not in defs: continue
+    d = defs[t]
+    sns = [p['sn'] for p in d['params']]
+    lay = with_genop_chrome(t, d.get('layout'), sns)
     if lay: d['layout'] = lay
 
 # mesh statistics of primitives (for verification)
