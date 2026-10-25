@@ -3,6 +3,7 @@ import { Scene, X3DObject, Node, Operator } from './scene';
 import { AnimationManager } from './animation';
 import { Parameter } from './params';
 import type { CompKind } from './topology';
+import { Preferences } from './preferences';
 
 /** An interactive viewport tool (curve drawing, chain drawing, add vertex...). The viewport feeds it clicks. */
 export interface InteractiveTool {
@@ -57,6 +58,8 @@ export class EventBus {
 export class App {
   scene = new Scene();
   anim = new AnimationManager();
+  /** Softimage Application.Preferences — Categories from PC dump (non-null). */
+  Preferences = new Preferences();
   events = new EventBus();
   commands = new Map<string, CommandDef>();
   selection: Node[] = [];
