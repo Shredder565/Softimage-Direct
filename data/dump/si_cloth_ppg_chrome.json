@@ -1,0 +1,727 @@
+{
+  "_comment": "Softimage Simulate cloth PPG chrome from SPDL dumps (C3DClothProp/C3DClothOp). Dump-attested only; Syflex client GDI LOCK. FROST cloth stays parallel.",
+  "softimage": "13.2.163.0",
+  "source": [
+    "internal/softimage-pc-dumps/dialogs/spdl-layouts-model-ui.json",
+    "internal/softimage-pc-dumps/dialogs/spdl-layout-index.json",
+    "internal/softimage-pc-dumps/views/propertyeditor.xsivw",
+    "internal/softimage-pc-dumps/modules/modules_simulate.json",
+    "media/softimage-modules-tour/30-simulate-module.png"
+  ],
+  "syflex_client_gdi": {
+    "status": "LOCK",
+    "note": "No HWND/pixel Syflex client harvest (modules-gdi absent). Do not invent."
+  },
+  "flyout_pixels": {
+    "status": "LOCK",
+    "note": "MCP press-hold flyout item pixel lists not attested."
+  },
+  "property_editor_shell": {
+    "file": "propertyeditor.xsivw",
+    "name": "Property Editor",
+    "clsid": "{5F3351D9-A33E-11D3-A93D-00C04F8EDEB9}",
+    "defaultsize": [
+      50,
+      50,
+      125,
+      265
+    ],
+    "maxinstances": "10000",
+    "supportedtypes": "2",
+    "category": "General",
+    "note": "Cloth PPG body hosts inside Softimage Property Editor shell (xsivw attested)."
+  },
+  "simulate_panel": {
+    "menu_id": 205,
+    "module_select": "Simulate",
+    "switch_toolbar_target": 5,
+    "mcp_tops": [
+      "Get",
+      "Create",
+      "Modify"
+    ],
+    "mcp_buttons": {
+      "Get": [
+        "Primitive",
+        "Force",
+        "Property"
+      ],
+      "Create": [
+        "Rigid Body",
+        "Soft Body",
+        "Cloth"
+      ],
+      "Modify": [
+        "Rigid Body",
+        "Shader",
+        "Deform",
+        "Soft Body",
+        "Cloth"
+      ]
+    },
+    "source": "PE MENU 205 + modules_simulate.json + tour PNG 30-simulate-module.png",
+    "note": "MCP panel chrome already wired (#99); this JSON re-attests for Syflex/cloth PPG deepen."
+  },
+  "propsets": {
+    "C3DClothProp": {
+      "file": "C3DClothProp.spdl",
+      "propset": "C3DClothProp",
+      "ref": "{E76CD881-5120-11d4-A24B-00D0B7190223}",
+      "help": "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/property7004.htm",
+      "n_params": 13,
+      "has_layout": true,
+      "layout_groups": [
+        "General",
+        "Presets"
+      ],
+      "param_sns": [
+        "ClothProp",
+        "Name",
+        "Master",
+        "Nail",
+        "Local",
+        "Mass",
+        "Friction",
+        "Shear",
+        "Bend",
+        "Stretch",
+        "Tension",
+        "StretchLimit",
+        "Triangulate"
+      ],
+      "label": "Cloth",
+      "params": [
+        {
+          "sn": "Name",
+          "label": "Name",
+          "type": "string",
+          "default": ""
+        },
+        {
+          "sn": "Master",
+          "label": "Master",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "sn": "Nail",
+          "label": "Nail",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "sn": "Local",
+          "label": "Local",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "sn": "Mass",
+          "label": "Mass",
+          "type": "double",
+          "default": 1.0,
+          "min": 0.001,
+          "max": 50.0
+        },
+        {
+          "sn": "Friction",
+          "label": "Friction",
+          "type": "double",
+          "default": 0.2,
+          "min": 0.0,
+          "max": 1.0
+        },
+        {
+          "sn": "Shear",
+          "label": "Shear Resistance",
+          "type": "double",
+          "default": 10.0,
+          "min": 1.0,
+          "max": 15000.0
+        },
+        {
+          "sn": "Bend",
+          "label": "Bend Resistance",
+          "type": "double",
+          "default": 2.0,
+          "min": 0.0,
+          "max": 15000.0
+        },
+        {
+          "sn": "Stretch",
+          "label": "Stretch Resistance",
+          "type": "double",
+          "default": 80.0,
+          "min": 1.0,
+          "max": 30000.0
+        },
+        {
+          "sn": "Tension",
+          "label": "Initial Tension %",
+          "type": "double",
+          "default": 0.0,
+          "min": -1000.0,
+          "max": 1000.0
+        },
+        {
+          "sn": "StretchLimit",
+          "label": "Stretch Limit",
+          "type": "double",
+          "default": 2.0,
+          "min": 1.0,
+          "max": 1000.0
+        },
+        {
+          "sn": "Triangulate",
+          "label": "Triangulate Polygons",
+          "type": "bool",
+          "default": false
+        }
+      ],
+      "layout": [
+        {
+          "tab": "General",
+          "items": [
+            {
+              "param": "Name"
+            },
+            {
+              "param": "Nail",
+              "opts": [
+                "AlignRight"
+              ]
+            },
+            {
+              "param": "Triangulate",
+              "opts": [
+                "AlignRight",
+                "continue",
+                "94%"
+              ]
+            },
+            {
+              "param": "Local",
+              "opts": [
+                "LabelWidth(40%, 80)"
+              ]
+            },
+            {
+              "param": "Mass",
+              "opts": [
+                "LabelWidth(40%, 80)"
+              ]
+            },
+            {
+              "param": "Friction",
+              "opts": [
+                "LabelWidth(40%, 80)"
+              ]
+            },
+            {
+              "param": "Tension",
+              "opts": [
+                "LabelWidth(40%, 80)"
+              ]
+            },
+            {
+              "param": "StretchLimit",
+              "opts": [
+                "LabelWidth(40%, 80)"
+              ]
+            },
+            {
+              "group": "Stiffness - Resistence to... ",
+              "items": [
+                {
+                  "param": "Shear",
+                  "opts": [
+                    "LabelWidth(40%, 80)"
+                  ]
+                },
+                {
+                  "param": "Bend",
+                  "opts": [
+                    "LabelWidth(40%, 80)"
+                  ]
+                },
+                {
+                  "param": "Stretch",
+                  "opts": [
+                    "LabelWidth(40%, 80)"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tab": "Presets",
+          "items": [
+            {
+              "button": "PresetCarpet",
+              "label": "Carpet",
+              "opts": [
+                "AlignCenter",
+                "120"
+              ]
+            },
+            {
+              "button": "PresetChiffon",
+              "label": "Chiffon",
+              "opts": [
+                "AlignCenter",
+                "120"
+              ]
+            },
+            {
+              "button": "PresetLeather",
+              "label": "Leather",
+              "opts": [
+                "AlignCenter",
+                "120"
+              ]
+            },
+            {
+              "button": "PresetNylon",
+              "label": "Nylon",
+              "opts": [
+                "AlignCenter",
+                "120"
+              ]
+            },
+            {
+              "button": "PresetPaper",
+              "label": "Paper",
+              "opts": [
+                "AlignCenter",
+                "120"
+              ]
+            },
+            {
+              "button": "PresetPizzaDough",
+              "label": "Pizza Dough",
+              "opts": [
+                "AlignCenter",
+                "120"
+              ]
+            },
+            {
+              "button": "PresetPlastic",
+              "label": "Plastic",
+              "opts": [
+                "AlignCenter",
+                "120"
+              ]
+            },
+            {
+              "button": "PresetSilk",
+              "label": "Silk",
+              "opts": [
+                "AlignCenter",
+                "120"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "C3DClothOp": {
+      "file": "C3DClothOp.spdl",
+      "propset": "C3DClothOp",
+      "ref": "{A6046ECA-EF84-11d3-B018-0050DA287511}",
+      "help": "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/property7006.htm",
+      "n_params": 27,
+      "has_layout": true,
+      "layout_groups": [
+        "Simulation",
+        "Collisions",
+        "Stitching",
+        "Forces"
+      ],
+      "param_sns": [
+        "ClothOp",
+        "SimMute",
+        "SimStartFrame",
+        "SimEndFrame",
+        "SimNbIterPerFrame",
+        "SimTimeWarp",
+        "SimSaveSim",
+        "CollStartFrame",
+        "CollActive",
+        "CollAccurateActive",
+        "CollKeepEdgeLength",
+        "CollSelfActive",
+        "CollAccurateSelfActive",
+        "CollClothThickness",
+        "StitchActive",
+        "StitchThreshold",
+        "ForceViscosity",
+        "ForceNoise",
+        "HiddenStitchControl",
+        "WriteCache",
+        "RestartFlag",
+        "RestartFilename",
+        "RestartFilePath",
+        "CleanCachedFiles",
+        "DummyForRestartLogic",
+        "FanCoef",
+        "EddyCoef"
+      ],
+      "label": "ClothOp",
+      "params": [
+        {
+          "sn": "SimMute",
+          "label": "Mute",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "sn": "SimStartFrame",
+          "label": "Start Frame",
+          "type": "int",
+          "default": 0
+        },
+        {
+          "sn": "SimEndFrame",
+          "label": "End Frame",
+          "type": "int",
+          "default": 0
+        },
+        {
+          "sn": "SimNbIterPerFrame",
+          "label": "Number of Iterations Per Frame",
+          "type": "int",
+          "default": 1,
+          "min": 1,
+          "max": 1000
+        },
+        {
+          "sn": "SimTimeWarp",
+          "label": "Time Warp",
+          "type": "double",
+          "default": 1,
+          "min": 0.0,
+          "max": 1000.0
+        },
+        {
+          "sn": "SimSaveSim",
+          "label": "Save Simulation",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "sn": "CollStartFrame",
+          "label": "Start Frame",
+          "type": "int",
+          "default": 1
+        },
+        {
+          "sn": "CollActive",
+          "label": "Collision Active",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "sn": "CollAccurateActive",
+          "label": "Accurate Obstacle Collision Active",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "sn": "CollKeepEdgeLength",
+          "label": "Keep Edge Length",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "sn": "CollSelfActive",
+          "label": "Self Collision Active",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "sn": "CollAccurateSelfActive",
+          "label": "Accurate Self Collision Active",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "sn": "CollClothThickness",
+          "label": "Cloth Thickness",
+          "type": "double",
+          "default": 0.5,
+          "min": 0.0,
+          "max": 1000.0
+        },
+        {
+          "sn": "StitchActive",
+          "label": "Activate Stitch",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "sn": "StitchThreshold",
+          "label": "Threshold",
+          "type": "double",
+          "default": 0.2,
+          "min": 0.0,
+          "max": 10000.0
+        },
+        {
+          "sn": "ForceViscosity",
+          "label": "Viscosity",
+          "type": "double",
+          "default": 0.1,
+          "min": 0.0,
+          "max": 10000.0
+        },
+        {
+          "sn": "ForceNoise",
+          "label": "Noise",
+          "type": "double",
+          "default": 0.0,
+          "min": 0.0,
+          "max": 10000.0
+        },
+        {
+          "sn": "HiddenStitchControl",
+          "label": "HiddenStitchControl",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "sn": "WriteCache",
+          "label": "Write Cache",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "sn": "RestartFlag",
+          "label": "Restart From File",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "sn": "RestartFilename",
+          "label": "Restart File Name",
+          "type": "string",
+          "default": "filenameDefault"
+        },
+        {
+          "sn": "RestartFilePath",
+          "label": "Restart File Path",
+          "type": "string",
+          "default": ""
+        },
+        {
+          "sn": "CleanCachedFiles",
+          "label": "Clean Cached Files",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "sn": "DummyForRestartLogic",
+          "label": "DummyForRestartLogic",
+          "type": "int",
+          "default": 0
+        },
+        {
+          "sn": "FanCoef",
+          "label": "Fan Force Coefficient",
+          "type": "double",
+          "default": 0,
+          "min": 0,
+          "max": 10000
+        },
+        {
+          "sn": "EddyCoef",
+          "label": "Eddy Force Coefficient",
+          "type": "double",
+          "default": 0,
+          "min": 0,
+          "max": 10000
+        }
+      ],
+      "layout": [
+        {
+          "tab": "Simulation",
+          "items": [
+            {
+              "group": "Execution State",
+              "items": [
+                {
+                  "param": "SimMute",
+                  "opts": [
+                    "AlignRight"
+                  ]
+                }
+              ]
+            },
+            {
+              "group": "Range",
+              "items": [
+                {
+                  "param": "SimStartFrame",
+                  "opts": [
+                    "AlignRight"
+                  ]
+                },
+                {
+                  "param": "SimEndFrame",
+                  "opts": [
+                    "AlignRight"
+                  ]
+                },
+                {
+                  "button": "CopyRangeFromScene",
+                  "label": "Copy from Scene",
+                  "opts": [
+                    "AlignCenter",
+                    "120"
+                  ]
+                },
+                {
+                  "button": "CopyRangeToScene",
+                  "label": "Copy to Scene",
+                  "opts": [
+                    "AlignCenter",
+                    "120"
+                  ]
+                }
+              ]
+            },
+            {
+              "param": "SimNbIterPerFrame"
+            },
+            {
+              "param": "SimTimeWarp"
+            },
+            {
+              "param": "SimSaveSim",
+              "opts": [
+                "AlignRight"
+              ]
+            },
+            {
+              "group": "Restart",
+              "items": [
+                {
+                  "param": "WriteCache",
+                  "opts": [
+                    "AlignCenter"
+                  ]
+                },
+                {
+                  "param": "RestartFlag",
+                  "opts": [
+                    "AlignCenter"
+                  ]
+                },
+                {
+                  "param": "CleanCachedFiles",
+                  "opts": [
+                    "AlignCenter"
+                  ]
+                },
+                {
+                  "param": "RestartFilePath"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tab": "Collisions",
+          "items": [
+            {
+              "param": "CollStartFrame"
+            },
+            {
+              "param": "CollActive",
+              "opts": [
+                "AlignRight"
+              ]
+            },
+            {
+              "param": "CollAccurateActive",
+              "opts": [
+                "AlignRight"
+              ]
+            },
+            {
+              "param": "CollKeepEdgeLength",
+              "opts": [
+                "AlignRight"
+              ]
+            },
+            {
+              "group": "Self Collision",
+              "items": [
+                {
+                  "param": "CollSelfActive",
+                  "opts": [
+                    "AlignRight"
+                  ]
+                },
+                {
+                  "param": "CollAccurateSelfActive",
+                  "opts": [
+                    "AlignRight"
+                  ]
+                },
+                {
+                  "param": "CollClothThickness"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tab": "Stitching",
+          "items": [
+            {
+              "param": "StitchActive"
+            },
+            {
+              "param": "StitchThreshold"
+            }
+          ]
+        },
+        {
+          "tab": "Forces",
+          "items": [
+            {
+              "group": "External Forces Coefficients",
+              "items": [
+                {
+                  "param": "ForceViscosity",
+                  "opts": [
+                    "LabelWidth(40%, 80)"
+                  ]
+                },
+                {
+                  "param": "ForceNoise",
+                  "opts": [
+                    "LabelWidth(40%, 80)"
+                  ]
+                },
+                {
+                  "param": "FanCoef",
+                  "opts": [
+                    "LabelWidth(40%, 80)"
+                  ]
+                },
+                {
+                  "param": "EddyCoef",
+                  "opts": [
+                    "LabelWidth(40%, 80)"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

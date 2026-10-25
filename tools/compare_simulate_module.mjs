@@ -1,6 +1,6 @@
 // Softimage Simulate module shell vs PE MENU 205 dumps (MCP tops / SwitchToolbar / prefs.simulation).
-// Dump-backed only. Flyout pixels + Syflex client GDI LOCK. FROST untouched. Needs vite preview :4173.
-// Usage: node tools/compare_simulate_module.mjs
+// Cloth PPG: C3DClothProp/C3DClothOp SPDL chrome. Flyout pixels + Syflex client GDI LOCK. FROST untouched.
+// Needs vite preview :4173. Usage: node tools/compare_simulate_module.mjs
 import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
@@ -25,6 +25,19 @@ if (!topsPath) {
   process.exit(2);
 }
 const tops = JSON.parse(fs.readFileSync(topsPath, 'utf8'));
+
+const clothChromePath = [
+  path.resolve(__dirname, '../src/data/si/cloth_ppg_chrome.json'),
+  path.resolve(__dirname, '../data/dump/si_cloth_ppg_chrome.json'),
+].find(p => fs.existsSync(p));
+const viewChromePath = [
+  path.resolve(__dirname, '../src/data/si/simulate_view_chrome.json'),
+  path.resolve(__dirname, '../data/dump/si_simulate_view_chrome.json'),
+].find(p => fs.existsSync(p));
+if (!clothChromePath) { console.error('missing cloth_ppg_chrome.json'); process.exit(2); }
+if (!viewChromePath) { console.error('missing simulate_view_chrome.json'); process.exit(2); }
+const clothChrome = JSON.parse(fs.readFileSync(clothChromePath, 'utf8'));
+const viewChrome = JSON.parse(fs.readFileSync(viewChromePath, 'utf8'));
 
 const diffs = [];
 const notes = [];
@@ -62,6 +75,28 @@ else {
   else notes.push('flyout pixels LOCK');
   if (audit.simulateModule.syflexClientGdi !== 'LOCK') diffs.push('Syflex client GDI must stay LOCK');
   else notes.push('Syflex client GDI LOCK');
+
+  if (audit.simulateModule.clothPpg !== 'SPDL') diffs.push(`cloth PPG status want=SPDL got=${audit.simulateModule.clothPpg}`);
+  else notes.push('cloth PPG SPDL');
+  const wantPropTabs = (clothChrome.propsets?.C3DClothProp?.layout || []).map(t => t.tab).filter(Boolean);
+  const gotPropTabs = audit.simulateModule.clothPpgAudit?.clothPropTabs || [];
+  if (JSON.stringify(wantPropTabs) !== JSON.stringify(gotPropTabs)) {
+    diffs.push(`cloth prop tabs want=${wantPropTabs.join('|')} got=${gotPropTabs.join('|')}`);
+  } else notes.push(`C3DClothProp tabs ${wantPropTabs.join(', ')}`);
+  const wantOpTabs = (clothChrome.propsets?.C3DClothOp?.layout || []).map(t => t.tab).filter(Boolean);
+  const gotOpTabs = audit.simulateModule.clothPpgAudit?.clothOpTabs || [];
+  if (JSON.stringify(wantOpTabs) !== JSON.stringify(gotOpTabs)) {
+    diffs.push(`cloth op tabs want=${wantOpTabs.join('|')} got=${gotOpTabs.join('|')}`);
+  } else notes.push(`C3DClothOp tabs ${wantOpTabs.join(', ')}`);
+  const wantMass = clothChrome.propsets?.C3DClothProp?.params?.find(p => p.sn === 'Mass');
+  if (wantMass && !audit.simulateModule.clothPpgAudit?.clothPropParamSns?.includes('Mass')) {
+    diffs.push('cloth prop missing Mass sn');
+  } else notes.push('C3DClothProp Mass attested');
+  const peSz = viewChrome.property_editor?.defaultsize;
+  const gotPe = audit.simulateModule.simulateViewChrome?.propertyEditorDefaultsize;
+  if (peSz && JSON.stringify(peSz) !== JSON.stringify(gotPe)) {
+    diffs.push(`PE defaultsize want=${peSz} got=${gotPe}`);
+  } else notes.push(`Property Editor defaultsize ${gotPe?.join?.(',') ?? gotPe}`);
 
   if (!audit.simulateModule.syCreateCloth) diffs.push('SyCreateCloth not registered');
   else notes.push('SyCreateCloth wired');
@@ -143,25 +178,53 @@ if (sw.module !== 'Simulate' || sw.select !== 'Simulate') {
   diffs.push(`SwitchToolbar Target=5 → ${sw.module}/${sw.select}`);
 } else notes.push('SwitchToolbar Target=5 → Simulate');
 
-// SyCreateCloth routes to ApplyCloth property path (no Syflex GDI)
+// SyCreateCloth → ApplyCloth: C3DClothProp params + C3DClothOp stack chrome (no Syflex GDI)
 const cloth = await page.evaluate(() => {
   window.Application.run('CreatePrim', { PresetObj: 'Grid', GeometryType: 'MeshSurface' });
+  const grid = window.Application.selectedObjects?.[0];
   window.Application.run('SyCreateCloth', {});
-  const o = window.Application.selectedObjects?.[0]
-    ?? window.Application.scene?.root?.children?.find?.(c => c.properties?.some?.(p => p.type === 'cloth'));
-  const sel = window.Application.selection;
-  const clothProp = (sel || []).find?.(x => x?.type === 'cloth')
+  const sel = window.Application.selection || [];
+  const clothProp = [...sel].find?.(x => x?.type === 'cloth')
+    || grid?.properties?.find?.(p => p.type === 'cloth')
     || window.Application.selectedObjects?.[0]?.properties?.find?.(p => p.type === 'cloth');
+  const host = clothProp?.parent || grid || window.Application.selectedObjects?.[0];
+  const clothOp = host?.primitive?.operators?.find?.(op => op.type === 'clothop');
+  const propSns = (clothProp?.params || []).map(p => p.name);
+  const opSns = (clothOp?.params || []).map(p => p.name);
+  const propTabs = (clothProp?.layout || []).map(t => t.tab).filter(Boolean);
+  const opTabs = (clothOp?.layout || []).map(t => t.tab).filter(Boolean);
   return {
     hasSy: window.Application.commands.has('SyCreateCloth'),
     hasApply: window.Application.commands.has('ApplyCloth'),
-    clothProp: !!clothProp || !!(sel && [...sel].some?.(x => x?.type === 'cloth' || x?.name === 'Cloth')),
+    clothProp: !!clothProp,
+    clothOp: !!clothOp,
+    propSns,
+    opSns,
+    propTabs,
+    opTabs,
+    hasMass: propSns.includes('Mass'),
+    hasShear: propSns.includes('Shear'),
+    hasSimMute: opSns.includes('SimMute'),
   };
 });
 if (!cloth.hasSy || !cloth.hasApply) diffs.push(`cloth cmds Sy=${cloth.hasSy} Apply=${cloth.hasApply}`);
 else notes.push('SyCreateCloth + ApplyCloth present');
-if (!cloth.clothProp) notes.push('SyCreateCloth executed (cloth prop optional if selection edge)');
-else notes.push('SyCreateCloth → cloth property via ApplyCloth');
+if (!cloth.clothProp) diffs.push('SyCreateCloth did not create cloth property');
+else notes.push('SyCreateCloth → C3DClothProp via ApplyCloth');
+if (!cloth.clothOp) diffs.push('ApplyCloth missing clothop stack chrome');
+else notes.push('ApplyCloth → C3DClothOp on stack');
+if (!cloth.hasMass || !cloth.hasShear) diffs.push(`cloth prop sns Mass=${cloth.hasMass} Shear=${cloth.hasShear}`);
+else notes.push('cloth prop Mass/Shear dump sns');
+if (!cloth.hasSimMute) diffs.push('cloth op missing SimMute');
+else notes.push('cloth op SimMute dump sn');
+const wantPropTabsLive = (clothChrome.propsets?.C3DClothProp?.layout || []).map(t => t.tab).filter(Boolean);
+if (JSON.stringify(cloth.propTabs) !== JSON.stringify(wantPropTabsLive)) {
+  diffs.push(`live cloth prop tabs want=${wantPropTabsLive.join('|')} got=${(cloth.propTabs || []).join('|')}`);
+} else notes.push('live C3DClothProp layout tabs');
+const wantOpTabsLive = (clothChrome.propsets?.C3DClothOp?.layout || []).map(t => t.tab).filter(Boolean);
+if (JSON.stringify(cloth.opTabs) !== JSON.stringify(wantOpTabsLive)) {
+  diffs.push(`live cloth op tabs want=${wantOpTabsLive.join('|')} got=${(cloth.opTabs || []).join('|')}`);
+} else notes.push('live C3DClothOp layout tabs');
 
 await b.close();
 

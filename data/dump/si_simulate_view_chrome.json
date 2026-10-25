@@ -1,0 +1,59 @@
+{
+  "_comment": "Softimage Simulate / Syflex panel chrome — dump/Desktop-attested only. Syflex client GDI stays LOCK until modules-gdi harvest. Cloth PPG body lives in cloth_ppg_chrome.json. FROST cloth stays parallel.",
+  "softimage": "13.2.163.0",
+  "source": [
+    "internal/softimage-pc-dumps/modules/modules_simulate.json",
+    "internal/softimage-pc-dumps/menu_simulate.txt",
+    "internal/softimage-pc-dumps/views/propertyeditor.xsivw",
+    "src/data/si/panelswitcher.json",
+    "src/data/si/simulate_module_mcp_tops.json",
+    "src/data/si/cloth_ppg_chrome.json",
+    "media/softimage-modules-tour/30-simulate-module.png",
+    "media/softimage-modules-tour/31-simulate-after-dump.png"
+  ],
+  "mcp_panel": {
+    "menu_id": 205,
+    "module_select": "Simulate",
+    "switch_toolbar_target": 5,
+    "switch_command_name": "Switch to Simulate Toolbar",
+    "keymap": "Ctrl+4",
+    "tops": ["Get", "Create", "Modify"],
+    "buttons": {
+      "Get": ["Primitive", "Force", "Property"],
+      "Create": ["Rigid Body", "Soft Body", "Cloth"],
+      "Modify": ["Rigid Body", "Shader", "Deform", "Soft Body", "Cloth"]
+    },
+    "status": "WIRED",
+    "note": "MCP toolbar chrome from PE MENU 205 + Desktop tour PNGs (#99)."
+  },
+  "property_editor": {
+    "file": "propertyeditor.xsivw",
+    "name": "Property Editor",
+    "clsid": "{5F3351D9-A33E-11D3-A93D-00C04F8EDEB9}",
+    "defaultsize": [50, 50, 125, 265],
+    "category": "General",
+    "supportedtypes": "2",
+    "maxinstances": "10000",
+    "note": "Cloth PPG hosts inside Property Editor shell (xsivw)."
+  },
+  "cloth_ppg": {
+    "status": "SPDL",
+    "chrome": "cloth_ppg_chrome.json",
+    "propsets": ["C3DClothProp", "C3DClothOp"],
+    "apply_cloth": "ApplyCloth",
+    "sy_create_cloth": "SyCreateCloth",
+    "pe_create_cloth_id": 41015
+  },
+  "panelswitcher": {
+    "SIMULATE_MODULE": "ICE Tree",
+    "note": "Tree button under Simulate opens ICE Tree (same as ICE_MODULE)."
+  },
+  "syflex_client_gdi": {
+    "status": "LOCK",
+    "note": "No modules-gdi HWND/pixel harvest yet. Do not invent Syflex client paint."
+  },
+  "flyout_pixels": {
+    "status": "LOCK",
+    "note": "MCP press-hold flyout item pixel lists not attested."
+  }
+}

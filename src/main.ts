@@ -21,6 +21,7 @@ import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
 import simulateModuleTops from './data/si/simulate_module_mcp_tops.json';
+import simulateViewChrome from './data/si/simulate_view_chrome.json';
 import faceRobotTops from './data/si/face_robot_module_mcp_tops.json';
 import faceRobotStage1Chrome from './data/si/face_robot_stage1_chrome.json';
 import crowdfxModuleDump from './data/si/crowdfx_module.json';
@@ -316,11 +317,12 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
         ? Array.from((document.querySelector('.module-select') as HTMLSelectElement).options).some(o => o.value === 'Hair')
         : false,
     },
-    // Softimage Simulate module MENU 205 MCP tops + SyCreateCloth/ApplyCloth + preferences.simulation (flyout/Syflex GDI LOCK)
+    // Softimage Simulate MENU 205 MCP + cloth PPG (C3DClothProp/Op SPDL) + prefs.simulation (Syflex client GDI LOCK)
     simulateModule: {
       ...simulateModuleAudit(app),
       mcpTops: simulateModuleTops.tops,
       mcpButtons: simulateModuleTops.buttons,
+      viewChrome: (simulateViewChrome as { cloth_ppg?: { status: string }; syflex_client_gdi?: { status: string } }),
       moduleInSelect: (document.querySelector('.module-select') as HTMLSelectElement | null)
         ? Array.from((document.querySelector('.module-select') as HTMLSelectElement).options).some(o => o.value === 'Simulate')
         : false,

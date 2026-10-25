@@ -5,6 +5,7 @@ import { App } from '../core/commands';
 import { Null, Property, X3DObject } from '../core/scene';
 import { bool, num, str } from '../core/params';
 import { getSiRenderRegion } from './renderToolbarOm';
+import { applyClothToObjects } from './clothPpg';
 
 const addObject = (app: App, obj: X3DObject, parent?: X3DObject | null) => {
   const p = parent ?? app.scene.root;
@@ -251,9 +252,13 @@ export function registerModuleToolbarCommands(app: App) {
     name: 'ApplySoftBody', label: 'Apply SoftBody', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }],
     execute: (app, a) => addNamedProp(app, app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects, 'Soft Body', 'softbody', [num('stiffness', 0.5, 'Stiffness')]),
   });
+  // Softimage ApplyCloth (PE 41015): C3DClothProp + C3DClothOp PPG chrome from SPDL dumps (no invent Syflex GDI).
   app.register({
     name: 'ApplyCloth', label: 'Apply Cloth', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }],
-    execute: (app, a) => addNamedProp(app, app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects, 'Cloth', 'cloth', [num('stiffness', 0.2, 'Stiffness')]),
+    execute(app, a) {
+      const objs = app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects;
+      return applyClothToObjects(app, objs);
+    },
   });
   app.register({
     name: 'AddClothClusters', label: 'Add Cloth Clusters', category: 'Simulation', args: [{ name: 'InputObj', default: '' }],
