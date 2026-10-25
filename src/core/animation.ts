@@ -41,25 +41,31 @@ export class FCurve {
     for (let f = start; f <= end; f += step) out.push({ frame: f, value: this.eval(f) });
     return out;
   }
-  private slopeAt(i: number, side: 'left' | 'right'): number {
+  /**
+   * Softimage PC golden (si_anim_fcurve_eval_golden dense samples):
+   * Between keys, spline segments evaluate toward the *next key's Left* handle value
+   * (when Left==Value this is continuous Softimage default / flat hermite).
+   * At exact key times, eval returns key.Value (may discontinuous vs Left when PutLeft poked).
+   * Outgoing slope from Right when Right!=Value; flat (m=0) when Right==Value.
+   */
+  private slopeOut(i: number): number {
     const k = this.keys[i];
-    const v = k.value, L = k.left ?? v, R = k.right ?? v;
-    // Softimage Left/Right are handle *values*; convert to slope vs neighbouring key span.
-    if (side === 'left') {
-      if (L !== v && i > 0) { const dt = k.time - this.keys[i - 1].time; return dt ? (2 * (v - L)) / dt : 0; }
-      return 0; // flat when Left==Value (golden default)
-    }
-    if (R !== v && i + 1 < this.keys.length) { const dt = this.keys[i + 1].time - k.time; return dt ? (2 * (R - v)) / dt : 0; }
-    return 0;
+    const v = k.value, R = k.right ?? v;
+    if (R === v || i + 1 >= this.keys.length) return 0;
+    const dt = this.keys[i + 1].time - k.time;
+    return dt ? (2 * (R - v)) / dt : 0;
   }
   private hermite(a: Key, b: Key, i: number, time: number): number {
     const dt = b.time - a.time; if (!dt) return a.value;
     const t = (time - a.time) / dt;
-    const m0 = this.slopeAt(i, 'right') * dt;
-    const m1 = this.slopeAt(i + 1, 'left') * dt;
+    // Softimage PC: segment end for in-between frames is next key Left (see handled_spline_* dens samples).
+    const end = b.left ?? b.value;
+    const m0 = this.slopeOut(i) * dt;
+    // Incoming into Left endpoint: Left relative to itself → flat m1 (matches dense goldens).
+    const m1 = 0;
     const t2 = t * t, t3 = t2 * t;
     const h00 = 2 * t3 - 3 * t2 + 1, h10 = t3 - 2 * t2 + t, h01 = -2 * t3 + 3 * t2, h11 = t3 - t2;
-    return h00 * a.value + h10 * m0 + h01 * b.value + h11 * m1;
+    return h00 * a.value + h10 * m0 + h01 * end + h11 * m1;
   }
   private mapExtrapolated(time: number): number {
     const ks = this.keys; if (!ks.length) return time;
@@ -87,11 +93,13 @@ export class FCurve {
       const a = ks[ks.length - 2], b = ks[ks.length - 1]; const t = (time - a.time) / (b.time - a.time); return a.value + (b.value - a.value) * t;
     }
     const te = this.mapExtrapolated(time);
-    if (te <= ks[0].time) return ks[0].value;
-    if (te >= ks[ks.length - 1].time) return ks[ks.length - 1].value;
+    // Exact key times always return key.Value (Softimage; Left may differ after PutLeft).
+    for (const k of ks) if (te === k.time) return k.value;
+    if (te < ks[0].time) return ks[0].value;
+    if (te > ks[ks.length - 1].time) return ks[ks.length - 1].value;
     for (let i = 0; i + 1 < ks.length; i++) {
       const a = ks[i], b = ks[i + 1];
-      if (te >= a.time && te <= b.time) {
+      if (te > a.time && te < b.time) {
         const kind = a.interp ?? this.interp;
         // Softimage siInterpolation*: 0 constant, 1 linear, 3 spline (default golden)
         if (kind === SI_KEY_INTERP_CONSTANT) return a.value;

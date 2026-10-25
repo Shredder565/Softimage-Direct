@@ -1,5 +1,5 @@
 // Compare Softimage Direct fcurve dump vs Softimage PC golden (si_anim_fcurve_golden.json)
-// plus PC eval samples from si_anim_fcurve_eval_golden.json when present.
+// plus dense PC eval samples from si_anim_fcurve_eval_golden.json (flat + handled_*).
 // Needs `vite preview` on :4173. Usage: node tools/compare_fcurves.mjs
 import { chromium } from 'playwright';
 import fs from 'fs';
@@ -29,8 +29,6 @@ if (!GOLDEN) { console.error('No si_anim_fcurve_golden.json'); process.exit(2); 
 const golden = JSON.parse(fs.readFileSync(GOLDEN, 'utf8'));
 const gfc = golden.fcurve;
 
-// Softimage default keys have Left==Right==Value → flat tangents → cubic hermite with m0=m1=0
-// ≡ smoothstep between keys. Used only when PC eval dump is absent.
 function smoothstepHermite(t0, v0, t1, v1, frame) {
   const t = (frame - t0) / (t1 - t0);
   const s = t * t * (3 - 2 * t);
@@ -46,7 +44,8 @@ let EVAL_EXPECTED = EVAL_FRAMES.map(f => {
   return { frame: f, value: v };
 });
 let evalSource = 'direct-hermite-pin';
-let handledCase = null;
+/** @type {{ name: string, keys: any[], samples: {frame:number,value:number}[] }[]} */
+let handledCases = [];
 
 const EVAL_GOLDEN = findDump('si_anim_fcurve_eval_golden.json');
 if (EVAL_GOLDEN) {
@@ -54,21 +53,27 @@ if (EVAL_GOLDEN) {
     const eg = JSON.parse(fs.readFileSync(EVAL_GOLDEN, 'utf8'));
     const cases = Array.isArray(eg.cases) ? eg.cases : [];
     const flat = cases.find(c => /flat/i.test(c.name || '')) || cases[0];
-    const handled = cases.find(c => /handled/i.test(c.name || ''));
     const samples = flat?.mid_frames?.length ? flat.mid_frames : (flat?.samples || eg.samples || eg.eval || eg.flat_samples || []);
     if (Array.isArray(samples) && samples.length) {
       EVAL_EXPECTED = EVAL_FRAMES.map(f => {
         const row = samples.find(s => s.frame === f || s.time === f);
         return row ? { frame: f, value: Number(row.value) } : EVAL_EXPECTED.find(e => e.frame === f);
       }).filter(Boolean);
+      // Prefer dense 1..20 when present for flat hard gate
+      if (flat?.samples?.length >= 20) {
+        EVAL_EXPECTED = flat.samples.map(s => ({ frame: s.frame ?? s.time, value: Number(s.value) }));
+      }
       evalSource = EVAL_GOLDEN + (flat?.name ? `#${flat.name}` : '');
     }
-    if (handled?.fcurve?.keys?.length && (handled.mid_frames?.length || handled.samples?.length)) {
-      handledCase = {
-        keys: handled.fcurve.keys,
-        samples: handled.mid_frames?.length ? handled.mid_frames : handled.samples,
-        name: handled.name,
-      };
+    for (const handled of cases.filter(c => /handled/i.test(c.name || ''))) {
+      const samp = handled.samples?.length ? handled.samples : handled.mid_frames;
+      if (handled?.fcurve?.keys?.length && samp?.length) {
+        handledCases.push({
+          name: handled.name,
+          keys: handled.fcurve.keys,
+          samples: samp.map(s => ({ frame: s.frame ?? s.time, value: Number(s.value) })),
+        });
+      }
     }
   } catch { /* keep hermite pin */ }
 }
@@ -117,37 +122,40 @@ for (const exp of EVAL_EXPECTED) {
   if (Math.abs(row.value - exp.value) > TOL) diffs.push(`eval@${exp.frame} ${row.value} != ${exp.value}`);
 }
 
-// Non-flat tangent: prefer PC handled case. Softimage Left/Right after PutRight/PutLeft are not
-// cubic-hermite-fittable from dumped absolute handles (samples ease harder than any m0/m1 hermite);
-// treat PC handled mismatches as residual warnings — flat mid_frames remain the hard PC gate.
-const warnings = [];
-let handled = null;
-if (handledCase) {
-  handled = await page.evaluate((keys) => {
+// Handled-spline dense PC goldens are a hard gate (pixel-perfect Animate track 2).
+const handledResults = [];
+for (const hc of handledCases) {
+  const sampled = await page.evaluate((keys) => {
     const A = window.Application;
-    const p = A.scene.find('null').kinematics.local.get('posy') || A.scene.find('null').kinematics.local.get('posx');
+    const n = A.scene.find('null') || (() => { A.run('GetPrim', { PresetObj: 'Null', Name: 'null' }); return A.scene.find('null'); })();
+    const p = n.kinematics.local.get('posy') || n.kinematics.local.get('posx');
     const fc = A.anim.fcurve(p, true);
     fc.keys = keys.map(k => ({ time: k.time, value: k.value, left: k.left ?? k.value, right: k.right ?? k.value, interp: k.interp ?? 3 }));
     return { samples: fc.sample(1, 20, 1) };
-  }, handledCase.keys);
-  for (const exp of handledCase.samples) {
-    const f = exp.frame ?? exp.time;
-    const row = handled.samples.find(s => s.frame === f);
-    if (!row) { warnings.push(`handled eval frame ${f} missing`); continue; }
-    if (Math.abs(row.value - Number(exp.value)) > TOL) warnings.push(`handled@${f} ${row.value} != ${exp.value} (residual: Softimage Left/Right RE)`);
+  }, hc.keys);
+  const caseDiffs = [];
+  for (const exp of hc.samples) {
+    const row = sampled.samples.find(s => s.frame === exp.frame);
+    if (!row) { caseDiffs.push(`frame ${exp.frame} missing`); continue; }
+    if (Math.abs(row.value - exp.value) > TOL) caseDiffs.push(`@${exp.frame} ${row.value} != ${exp.value}`);
   }
-  // Smoke: user handles must still move mid eval off flat hermite
-  const mid = handledCase.samples.find(s => (s.frame ?? s.time) === 5) || handledCase.samples[1];
-  const flatAt5 = (() => {
-    const a = handledCase.keys[0], b = handledCase.keys[1];
+  // Must differ from flat hermite Value→Value mid when Left≠Value on next key
+  const nextLeft = hc.keys[1]?.left, nextVal = hc.keys[1]?.value;
+  if (nextLeft != null && nextVal != null && nextLeft !== nextVal) {
+    const mid = hc.samples.find(s => s.frame === 5) || hc.samples[1];
+    const a = hc.keys[0], b = hc.keys[1];
     const t = (5 - a.time) / (b.time - a.time);
-    return a.value + (b.value - a.value) * (t * t * (3 - 2 * t));
-  })();
-  const got5 = handled.samples.find(s => s.frame === 5)?.value;
-  if (got5 != null && !(Math.abs(got5 - flatAt5) > 1e-6)) diffs.push(`handled mid eval equals flat hermite (${got5})`);
-  handled = { ...handled, case: handledCase.name, flatAt5, got5 };
-} else {
-  handled = await page.evaluate(() => {
+    const flatToValue = a.value + (b.value - a.value) * (t * t * (3 - 2 * t));
+    const got5 = sampled.samples.find(s => s.frame === 5)?.value;
+    if (got5 != null && Math.abs(got5 - flatToValue) < 1e-6) caseDiffs.push(`mid equals flat-to-Value hermite (${got5})`);
+  }
+  for (const d of caseDiffs) diffs.push(`${hc.name}: ${d}`);
+  handledResults.push({ name: hc.name, ok: caseDiffs.length === 0, diffs: caseDiffs, nSamples: hc.samples.length });
+}
+
+if (!handledCases.length) {
+  // Fallback smoke when PC handled cases absent
+  const handled = await page.evaluate(() => {
     const A = window.Application;
     const p = A.scene.find('null').kinematics.local.get('posx');
     const fc = A.anim.fcurve(p, true);
@@ -159,18 +167,18 @@ if (handledCase) {
     return { frame: 5, value: p.value, flatRef: (() => { const t = 4 / 9; return 0 + 5 * (t * t * (3 - 2 * t)); })() };
   });
   if (!(Math.abs(handled.value - handled.flatRef) > 1e-6)) diffs.push(`tangent handles did not change mid eval (${handled.value})`);
+  handledResults.push(handled);
 }
 
-console.log(diffs.length ? 'DIFF' : 'OK', 'fcurve vs Softimage golden + hermite eval');
+console.log(diffs.length ? 'DIFF' : 'OK', 'fcurve vs Softimage golden + dense handled eval');
 console.log(' evalSource', evalSource);
 console.log(' dump', JSON.stringify(dump));
-console.log(' eval', JSON.stringify(EVAL_EXPECTED.map(e => ({ ...e, got: got.samples.find(s => s.frame === e.frame)?.value }))));
-console.log(' handled', handled);
+console.log(' flatFrames', EVAL_EXPECTED.length, 'handledCases', handledCases.map(c => c.name).join(','));
+console.log(' handled', JSON.stringify(handledResults));
 for (const d of diffs) console.log(' ', d);
-for (const w of warnings) console.log('  warn:', w);
 
 const outPath = path.resolve(__dirname, '../docs/screenshots/fcurve-compare-last.json');
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
-fs.writeFileSync(outPath, JSON.stringify({ ok: diffs.length === 0, diffs, warnings, dump, evalSource, evalExpected: EVAL_EXPECTED, samples: got.samples, handled }, null, 2));
+fs.writeFileSync(outPath, JSON.stringify({ ok: diffs.length === 0, diffs, dump, evalSource, evalExpected: EVAL_EXPECTED, samples: got.samples, handled: handledResults }, null, 2));
 await b.close();
 process.exit(diffs.length ? 1 : 0);
