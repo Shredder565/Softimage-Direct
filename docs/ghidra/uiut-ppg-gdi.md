@@ -1,41 +1,36 @@
-# uiut owner-draw PPG GDI — LOCK
+# uiut owner-draw PPG GDI
 
 **Date:** 2026-10-25  
-**Class:** **LOCK** (optional push #4)  
-**Desktop:** Softimage GUI **FORBIDDEN** — PE / Ghidra / existing dumps only.  
-**Wire:** no invent CSS/TS chrome PR.
+**Class:** **LOCK** (title/hover paint) · **DUMP_READY** (binary pins / RT_BITMAP inventory)  
+**Desktop:** Softimage GUI **FORBIDDEN**  
+**softimage-pc pins:** `internal/softimage-pc-dumps/re-exports/uiut-ppg-gdi-pins.json`  
+**Resources:** `…/uiut-ppg-gdi-resources.json`  
+**Bitmap metrics:** `…/uiut-ppg-gdi-bitmap-metrics.json` (43 BITMAPs)
 
 ## Verdict
 
-RE / dump **cannot** attest live PPG owner-draw **paint pixels** (title-bar / hover composite skins, `COLORREF` fills). Direct already ships PE-backed host layout + RT_BITMAP sizes from PRs **#36–#41**. Push #4 stops here.
+| Layer | Status |
+|-------|--------|
+| PPG title-bar / hover **pixel chrome** | **LOCK** — empty overnight HWND; no `COLORREF` title/hover constants |
+| Owner-draw + GDI entrypoints | **DUMP_READY** — `CDSBasePropertyFrame::OnDrawItem`, `C3DTrackMenu::DrawItem`, `BitBlt`/`StretchBlt`/`FillRect`/`SetTextColor` |
+| Static RT_BITMAP inventory | **DUMP_READY** — 43×24bpp; sizes include **71×25** / **66×25** (InspNav/tools) |
+| Direct chrome wire follow-up | **None** — PE host + toolbar bitmap sizes already in `#36–#41`; quantized dominant RGB is bitmap palette summary, **not** title/hover theme (do not invent gradients) |
 
-## Evidence consumed
+## Direct audit after softimage-pc #4 RE
 
-| Artifact | Result |
-|----------|--------|
-| `internal/softimage-pc-dumps/ui/si_ppg_hwnd_capture.json` | `windows: []` — overnight HWND kit empty; **no** title/hover metrics |
-| `docs/ghidra/ui-lock-binary-pins.md` + `re-exports/ui-lock-binary-pins.json` | `uiut.dll` hits = `AddOn` / `EnableMenuItem` / `EnableWindow` only — **no** paint / `COLORREF` / DrawItem pins |
-| softimage-pc `docs/ghidra/uiut-ppg-gdi.md` + pins JSON | **Absent** at wire time (softimage-pc dump agent not landed) |
-| `internal/ghidra/decomp/` | **No** uiut PPG owner-draw / `WM_DRAWITEM` / `GradientFill` decomp |
-| PE `dialogs/pe-dialogs-ui-model.json` → uiut hosts **138–147** | DLU + font only (already mirrored in `src/data/si/ppg_chrome.json`) |
+| Attested item | Direct |
+|---------------|--------|
+| uiut hosts **138–147** DLU/font | Match `ppg_chrome.hosts` |
+| InspNav **137** 71×25, tools **141** 66×25 | `bitmapMatch` true; `data/si/pe_bitmaps/uiut` has **43** PNGs (= metrics count) |
+| Toolbar height 25px | `--ppg-toolbar-h` from bitmap height |
+| Other RT_BITMAP sizes (30×30, 50×22, 80×30, …) | Inventory only — not PPG shell title chrome |
+| Dominant greys on 71×25/66×25 (~`[168,168,168]`) | Already painted via PNG assets; **not** a CSS title-gradient pin |
+| Title/float gradient hex in `build_ppg_chrome.py` | Still unattested — leave as-is (no “correct” invent) |
 
-## Direct PPG chrome audit (vs attested PE)
+## Wire guidance (from softimage-pc)
 
-| Item | Attested? | Direct status |
-|------|-----------|---------------|
-| uiut host dialogs **138–147** font / `rect_dlu` / control DLU | **Yes** (PE) | Match `ppg_chrome.hosts` — no drift |
-| Canonical host **147** (anim + nav + load/save) | **Yes** | Wired #36 |
-| InspNav RT_BITMAP **137** 71×25, tools **141** 66×25 + hit strips | **Yes** (PE bitmap) | `bitmapMatch` true; public PNGs size-match |
-| Toolbar height from bitmap height (25px) | **Yes** | `--ppg-toolbar-h` |
-| Title-bar / float **gradient colors**, group/slider/value hex colors | **No** `COLORREF` / HWND sample | Hardcoded in `build_ppg_chrome.py` — **do not “correct” without RE** |
-| Hover composite skins for nav bitmaps | **No** | Interactive-only residual ([dialog-pixel-perfect-progress.md](../dialog-pixel-perfect-progress.md)) |
-| XSI.exe Property Page **394** | Stub `TODO: layout property page` | LOCK (not live host; live = uiut 147) |
+- OK: document owner-draw + GDI BitBlt/FillRect family; cite bitmap size inventory.
+- LOCK: any specific title/hover pixel, theme color, or skin gradient without HWND (banned) or attested `COLORREF`.
 
-## Exit
-
-- **Optional push #4 → LOCK**
-- **No** invent PR changing `--ppg-title-*` / hover CSS
-- Docs LOCK note: Direct [#71](https://github.com/Shredder565/Softimage-Direct/pull/71)
-- Reopen wire only if softimage-pc later lands attested GDI pins (headless Ghidra `COLORREF` / DrawItem constants) — still **no** Desktop
-
-See plan: [optional-ghidra-pushes-1-4.md](../optional-ghidra-pushes-1-4.md).
+Docs LOCK PR: [#71](https://github.com/Shredder565/Softimage-Direct/pull/71).  
+Related: [ui-lock-binary-pins.md](./ui-lock-binary-pins.md) · overnight empty `si_ppg_hwnd_capture.json`.
