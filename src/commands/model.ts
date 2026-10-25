@@ -343,7 +343,31 @@ export function registerModelCommands(app: App) {
   };
   app.register({ name: 'MakeLocalMaterialsForHierarchy', label: 'Make Material Local', category: 'Rendering', args: [{ name: 'InputObj', default: '' }], execute(app, a) { for (const o of app.targets(a.InputObj)) { const src = o.material ?? app.scene.root.material!; const mat = app.scene.newMaterial(o.name + '_Mat', cloneShader(src.surface!)); const old = o.material; app.record('Make local', () => o.setMaterial(mat), () => o.setMaterial(old)); } } });
   app.commands.get('AssignMaterial')!.execute = (app, a) => { const mat = app.selection.find(n => n.kind === 'material') as any ?? (a.Material ? app.scene.materials.find(m => m.name === a.Material) : null) ?? app.scene.materials[app.scene.materials.length - 1]; if (!mat) throw new Error('No material to assign; select one in the Explorer (Materials scope)'); for (const o of app.targets(a.InputObjs)) { const old = o.material; app.record('Assign', () => o.setMaterial(mat), () => o.setMaterial(old)); } };
-  app.register({ name: 'OpenMaterialLibrary', label: 'More materials...', category: 'Rendering', args: [], undoable: false, execute(app) { const sw = document.querySelector<HTMLElement>('.switcher[data-name=module_menu] .switcher-bar'); (sw?.children[1] as HTMLElement)?.click(); app.logMsg('info', 'Open the Explorer in the Materials scope to browse the material library'); } });
+  // Softimage full-tab harvest: Material Manager_cmd ACTIVE (OpenView fails under -processing).
+  // Get > Shader / Modify > Materials map here — open Material Manager, not Explorer Materials scope.
+  app.register({
+    name: 'OpenMaterialLibrary',
+    label: 'More materials...',
+    category: 'Rendering',
+    args: [],
+    undoable: false,
+    execute(app) {
+      window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'Material Manager' } }));
+      app.logMsg('info', 'OpenMaterialLibrary → Material Manager');
+      return null;
+    },
+  });
+  app.register({
+    name: 'Material Manager',
+    label: 'Material Manager',
+    category: 'Viewing',
+    args: [],
+    undoable: false,
+    execute(app) {
+      window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'Material Manager' } }));
+      return null;
+    },
+  });
 
   // ------------------------------------------------------------ properties
   // Softimage menu PresetObj names (GeomApprox, AttributeDisplay, …) map to opdefs/SPDL defaults.

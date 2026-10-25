@@ -111,9 +111,13 @@ export function registerFaceRobotModuleCommands(app: App) {
     args: [],
     undoable: false,
     execute(app) {
-      // Softimage returns to Default Softimage layout; FR Control Panel float stays closable by user.
+      // Softimage full-tab harvest: ExecuteCommand("Softimage Layout", []) ACTIVE (boot + Face Robot).
+      // Closer95 boot: Disable Face Robot then Softimage Layout → Default Softimage layout.
       (app as any).__faceRobotAltLayout = false;
-      app.logMsg('info', 'Softimage Layout');
+      setFaceRobotEnabled(app, false);
+      // layoutEdit listens for layoutmenu — Default is Softimage Default.xsily.
+      window.dispatchEvent(new CustomEvent('layoutmenu', { detail: { label: 'Default', path: ['Window', 'Layouts'] } }));
+      app.logMsg('info', 'Softimage Layout → Default');
       return null;
     },
   });

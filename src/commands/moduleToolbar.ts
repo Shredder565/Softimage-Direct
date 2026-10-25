@@ -86,8 +86,36 @@ export function registerModuleToolbarCommands(app: App) {
   });
 
   // ——— Render region (Softimage scripting names; HWND crop LOCK — see renderToolbarOm) ———
+  // full-tab harvest: RenderRegionTool / CreateRenderRegion / ToggleRenderRegion ACTIVE with [].
   const rr = getSiRenderRegion();
-  app.register({ name: 'RenderRegionTool', label: 'Render Region Tool', category: 'Rendering', args: [{ name: 'Clsid', default: '' }], undoable: false, execute: (app) => stubTool(app, 'Render Region Tool') });
+  app.register({
+    name: 'RenderRegionTool',
+    label: 'Render Region Tool',
+    category: 'Rendering',
+    args: [{ name: 'Clsid', default: '' }, { name: 'Viewport', default: '' }],
+    undoable: false,
+    description: 'Create a region for interactive rendering',
+    execute(app) {
+      // Softimage description: create interactive region — same OM path as RenderRegionCreate.
+      return app.run('RenderRegionCreate', {});
+    },
+  });
+  app.register({
+    name: 'CreateRenderRegion',
+    label: 'Create Render Region',
+    category: 'Rendering',
+    args: [],
+    undoable: false,
+    execute: (app) => app.run('RenderRegionCreate', {}),
+  });
+  app.register({
+    name: 'ToggleRenderRegion',
+    label: 'Toggle Render Region',
+    category: 'Rendering',
+    args: [],
+    undoable: false,
+    execute: (app) => app.run('RenderRegionToggleVisibility', {}),
+  });
   app.register({ name: 'RenderRegionSave', label: 'Save Render Region To File', category: 'Rendering', args: [{ name: 'FileName', default: null }], undoable: false, execute(app, a) { app.logMsg('info', `Render region save${a.FileName ? ': ' + a.FileName : ' (pick a path in Softimage)'}`); } });
   app.register({ name: 'RenderRegionRefresh', label: 'Refresh Render Region', category: 'Rendering', args: [{ name: 'Viewport', default: '' }], undoable: false, execute(app) { app.logMsg('info', 'Render region refreshed'); app.events.emit('frame'); } });
   app.register({ name: 'RenderRegionToggleVisibility', label: 'Show/Hide Render Region', category: 'Rendering', args: [{ name: 'Viewport', default: '' }], undoable: false, execute(app) { rr.visible = !rr.visible; app.logMsg('info', `Render region ${rr.visible ? 'shown' : 'hidden'}`); } });
@@ -118,8 +146,12 @@ export function registerModuleToolbarCommands(app: App) {
     execute(app) {
       const ro = app.scene.renderOptionsRegion;
       const map = ro ? Object.fromEntries(ro.params.map(p => [p.name, p.value])) : {};
-      app.logMsg('info', `Render region options: visible=${rr.visible} track=${rr.track} refresh=${rr.refresh} display=${rr.display} channel=${rr.channel} open=${rr.open} UsePassOptions=${map.UsePassOptions} (HWND crop LOCK)`);
-      if (ro) app.select([ro]);
+      app.logMsg('info', `Render region options: visible=${rr.visible} track=${rr.track} refresh=${rr.refresh} display=${rr.display} channel=${rr.channel} open=${rr.open} UsePassOptions=${map.UsePassOptions}`);
+      if (ro) {
+        app.select([ro]);
+        app.events.emit('inspect', ro);
+      }
+      return ro;
     },
   });
 
