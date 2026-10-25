@@ -163,6 +163,7 @@ export function hwndButtonEnabled(app: App, button: string): boolean | null {
 
 export function mcpMatrixMeta() {
   const animHwnd = (M.meta as { anim_hwnd_overlay?: unknown }).anim_hwnd_overlay;
+  const renderTour = (M.meta as { render_desktop_tour?: unknown }).render_desktop_tour;
   return {
     softimage: M.meta.softimage ?? null,
     source: M.meta.source ?? null,
@@ -175,5 +176,7 @@ export function mcpMatrixMeta() {
     aliases: { ...ALIASES },
     hasHwndOverlay: !!M.hwnd_buttons && Object.keys(M.hwnd_buttons).length > 0,
     hasAnimHwndOverlay: !!animHwnd,
+    hasRenderDesktopTour: !!renderTour,
+    renderDesktopTour: renderTour ?? null,
   };
 }

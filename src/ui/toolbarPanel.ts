@@ -2,6 +2,7 @@
 // toolbarobj.dll. Leaf items dispatch to commands through the menu-id -> command map.
 // FROST is the 2026 FX successor module (not a Softimage PE extract).
 import { App } from '../core/commands';
+import { Material, Shader } from '../core/scene';
 import menus from '../data/menus.json';
 import menuCommands from '../data/menu_commands.json';
 import { commandEnabled, commandSupported } from './cmdEnable';
@@ -10,6 +11,16 @@ import { frostToolbar } from '../frost/ui';
 type MenuItem = { label?: string; id?: number; items?: MenuItem[]; separator?: boolean };
 const MENUS = menus as Record<string, MenuItem[]>;
 const CMDS = menuCommands as unknown as Record<string, { cmd: string; name: string; args: [string, any][] }>;
+
+/**
+ * Softimage Desktop Render MCP Get > Shader (menus id 116 → OpenMaterialLibrary).
+ * Tour: grey on empty and on Face+light+Camera multi-select; Enabled only with a valid
+ * shader target (Material / Shader in selection). Modify > Materials (41470) shares the
+ * same command but stays Enabled — grey the button by PE id, not OpenMaterialLibrary globally.
+ */
+function renderGetShaderEnabled(app: App): boolean {
+  return app.selection.some(n => n instanceof Material || n instanceof Shader);
+}
 
 export function toolbarPanel(app: App, host: HTMLElement) {
   const root = document.createElement('div'); root.className = 'toolbar-panel ' + app.module;
@@ -47,22 +58,36 @@ export function toolbarPanel(app: App, host: HTMLElement) {
         // Softimage Desktop Render MCP (tour 08-after-key3): Pass head shows current pass name
         // (Default_Pass), not the PE resource leaf "RenderPass". Keep PE id/cmd mapping.
         const passHead = app.module === 'Render' && top.label === 'Pass' && (sub.label === 'RenderPass' || sub.id === 40537);
+        // Desktop tour: Get > Shader (id 116) grey until Material/Shader selection
+        const getShader = app.module === 'Render' && top.label === 'Get' && (sub.id === 116 || sub.label === 'Shader');
         b.textContent = passHead
           ? (app.scene.passes[app.scene.passes.length - 1]?.name
             ?? app.scene.passes[0]?.name
             ?? 'Default_Pass')
           : (sub.label ?? '');
         if (passHead) b.dataset.siPassHead = '1';
-        b.onclick = (e) => { const r = b.getBoundingClientRect(); openMenu(app, sub.items ?? [{ label: sub.label, id: sub.id }], r.right + 2, r.top, [top.label!, sub.label!]); e.stopPropagation(); };
+        if (getShader) {
+          b.dataset.siGetShader = '1';
+          const en = renderGetShaderEnabled(app);
+          b.disabled = !en;
+          if (!en) b.classList.add('disabled');
+        }
+        b.onclick = (e) => {
+          if (getShader && !renderGetShaderEnabled(app)) return;
+          const r = b.getBoundingClientRect();
+          openMenu(app, sub.items ?? [{ label: sub.label, id: sub.id }], r.right + 2, r.top, [top.label!, sub.label!]);
+          e.stopPropagation();
+        };
         scroll.appendChild(b);
       }
     }
   };
   render();
   app.events.on('module', render);
-  // Pass head label tracks Softimage current pass name
+  // Pass head label tracks Softimage current pass name; Get>Shader tracks selection
   app.events.on('scene', render);
   app.events.on('newscene', render);
+  app.events.on('selection', render);
 }
 
 let openMenus: HTMLElement[] = [];

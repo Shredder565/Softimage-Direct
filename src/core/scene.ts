@@ -6,6 +6,7 @@ import { ParamSet, num, int, bool, str, enumP, color } from './params';
 import { siShaderDefs, type SiShaderDef } from './shaders';
 import { miaUnlockDefs, resolveMiaUnlockKey } from './miaUnlock';
 import wrapEnum from '../data/si/render_wrap_enum.json';
+import mentalRayPass from '../data/si/render_mentalray_pass.json';
 import { siParamDefs, siLayout, siName, menuDefaults, siPropDefs, siPropLayout, withOp } from './opdefs';
 import type { ParamDef } from './params';
 
@@ -695,12 +696,31 @@ export class Framebuffer extends Node {
   }
 }
 /**
+ * Softimage Passes.<Pass>.mentalray Property — Desktop tour desktop_tour_commands.json
+ * (180 OM params). No invent HWND / PPG chrome beyond attested defaults.
+ */
+export function makeMentalRayPassOptions(): Property {
+  const raw = (mentalRayPass as { params: Record<string, unknown> }).params || {};
+  const defs: ParamDef[] = [];
+  for (const [sn, v] of Object.entries(raw)) {
+    if (typeof v === 'boolean') defs.push(bool(sn, v, sn));
+    else if (typeof v === 'number' && Number.isInteger(v)) defs.push(int(sn, v, sn));
+    else if (typeof v === 'number') defs.push(num(sn, v, sn));
+    else defs.push(str(sn, String(v ?? ''), sn));
+  }
+  return new Property('mentalray', 'mentalray', defs);
+}
+
+/**
  * Softimage Pass OM (si_render_passes.json): classname Pass, Default_Pass + CreatePass→Pass,
  * nested partitions + Main framebuffer; ImageWidth/Height match Scene Render Options defaults.
+ * Desktop tour: Passes.Default_Pass.mentalray Property attached.
  */
 export class Pass extends Node {
   readonly partitions: Partition[] = [];
   readonly framebuffers: Framebuffer[] = [];
+  /** Softimage Passes.<Pass>.mentalray — desktop_tour_commands.json */
+  readonly mentalray: Property;
   constructor(name: string) {
     super(name, 'Pass', 'pass', [
       bool('Active', true, 'Active'),
@@ -726,6 +746,8 @@ export class Pass extends Node {
       bool('MotionBlurDeformation', true, 'MotionBlurDeformation'),
       int('OverrideCameraLensShaders', 0, 'OverrideCameraLensShaders'),
     ]);
+    this.mentalray = makeMentalRayPassOptions();
+    this.mentalray.parent = this as any;
     this.addPartition('Background_Objects_Partition');
     this.addPartition('Background_Lights_Partition');
     this.addFramebuffer('Main');
@@ -736,7 +758,7 @@ export class Pass extends Node {
   addFramebuffer(name: string) {
     const f = new Framebuffer(name); f.parent = this; this.framebuffers.push(f); return f;
   }
-  explorerChildren(): Node[] { return [...this.partitions, ...this.framebuffers]; }
+  explorerChildren(): Node[] { return [this.mentalray, ...this.partitions, ...this.framebuffers]; }
 }
 /** Softimage Passes.RenderOptions (SceneRenderProperty) — si_render_prefs.json */
 export function makeSceneRenderOptions(): Property {

@@ -1,5 +1,5 @@
 {
-  "_comment": "Softimage Desktop Render MCP section tops — media/render-desktop-tour/08-after-key3.png + 08-left-toolbar.png (2026-10-25). PE menu 234 labels kept where OCR truncates (Regions).",
+  "_comment": "Softimage Desktop Render MCP section tops \u2014 media/render-desktop-tour/08-after-key3.png + 08-left-toolbar.png (2026-10-25). PE menu 234 labels kept where OCR truncates (Regions).",
   "softimage": "13.2.163.0",
   "source_media": [
     "media/render-desktop-tour/08-after-key3.png",
@@ -7,12 +7,39 @@
     "media/render-desktop-tour/08-module-crop.png"
   ],
   "module_select": "Render",
-  "tops": ["Get", "Modify", "Render", "Pass"],
+  "tops": [
+    "Get",
+    "Modify",
+    "Render",
+    "Pass"
+  ],
   "buttons": {
-    "Get": ["Primitive", "Material", "Property", "Shader", "Texture", "Clip"],
-    "Modify": ["Materials", "Shader", "Texture", "Projection", "Ambience"],
-    "Render": ["Regions", "Render", "Export", "Preview"],
-    "Pass": ["<current_pass_name>", "Edit", "Partition"]
+    "Get": [
+      "Primitive",
+      "Material",
+      "Property",
+      "Shader",
+      "Texture",
+      "Clip"
+    ],
+    "Modify": [
+      "Materials",
+      "Shader",
+      "Texture",
+      "Projection",
+      "Ambience"
+    ],
+    "Render": [
+      "Regions",
+      "Render",
+      "Export",
+      "Preview"
+    ],
+    "Pass": [
+      "<current_pass_name>",
+      "Edit",
+      "Partition"
+    ]
   },
   "pass_head": {
     "pe_label": "RenderPass",
@@ -20,10 +47,19 @@
     "desktop_display": "current pass Name (Default_Pass on empty scene)",
     "note": "Softimage MCP replaces PE leaf text with live pass name"
   },
-  "hwnd_crop_chrome": { "status": "LOCK", "note": "tour MD not landed; no invent HWND crop px" },
+  "hwnd_crop_chrome": {
+    "status": "LOCK",
+    "note": "tour MD landed 2026-10-25; HWND crop chrome still unmeasured \u2014 no invent"
+  },
+  "get_shader": {
+    "pe_id": 116,
+    "cmd": "OpenMaterialLibrary",
+    "desktop": "grey until Material/Shader selection (empty + Face/light/Camera attested grey)",
+    "note": "Modify>Materials id 41470 shares OpenMaterialLibrary but stays Enabled \u2014 grey by PE id"
+  },
   "regions_label": {
     "pe": "Regions",
-    "desktop_crop_ocr": "Regi… / Region (ambiguous truncation)",
-    "wire": "keep PE Regions until tour MD attests singular"
+    "desktop": "Regions (frame 21 / tour MD)",
+    "wire": "keep PE Regions plural"
   }
 }

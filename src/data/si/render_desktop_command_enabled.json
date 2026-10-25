@@ -1,0 +1,736 @@
+{
+  "_comment": "Softimage Desktop tour Command.Enabled + ScriptingName (empty scene). Curve/Surface Pass ApplyOp:false skipped as shared ScriptingName.",
+  "softimage": "13.2.163.0",
+  "source": "desktop_tour_commands.json",
+  "enabled_by_scriptingname": {
+    "SwitchToolbar": true,
+    "RenderPass": true,
+    "RenderPasses": true,
+    "RenderSelectedPasses": true,
+    "RenderAllPasses": true,
+    "RenderCurrentFrame": true,
+    "RenderCurrentFrameAllPasses": true,
+    "RenderPassesFrameSet": true,
+    "InspectObj": true,
+    "Inspect Rendering Preferences": true,
+    "OpenRenderingPreferences": true,
+    "SIUpdateRenderOptionsFromGlobalPref": true,
+    "RenderRegionTool": true,
+    "RenderRegionCreate": true,
+    "RenderRegionClose": true,
+    "RenderRegionToggleVisibility": true,
+    "RenderRegionRefresh": true,
+    "RenderRegionToggleAutoRefresh": true,
+    "RenderRegionSetRefreshMode": true,
+    "RenderRegionGetRefreshMode": true,
+    "RenderRegionSetDisplayType": true,
+    "RenderRegionGetDisplayType": true,
+    "RenderRegionSetRenderChannel": true,
+    "RenderRegionGetRenderChannel": true,
+    "RenderRegionToggleSelectionTracking": true,
+    "InspectViewportRenderRegionOptions": true,
+    "RenderRegionSave": true,
+    "CreateRenderChannel": true,
+    "RemoveRenderChannel": true,
+    "ExportRenderArchiveFrameSet": true,
+    "ExportRenderArchive": true,
+    "ExportRenderArchiveAllPasses": true,
+    "ExportObjectRenderArchive": true,
+    "RenderPassToggleShowRenderedImage": true,
+    "DisposeRenderingCache": true,
+    "UpdateRenderManager": true,
+    "MakeRendererLocalToPass": true,
+    "MakePassRendererGlobal": true,
+    "AddProp": true,
+    "BvrRenderSetup": true,
+    "BvrGenerateRenderSetup": true,
+    "CopyRenderOptions": true,
+    "UIMapButton": true,
+    "DisconnectAndDeleteShaders": true,
+    "DisconnectAndDeleteOrUnnestShaders": true,
+    "ToggleCurrentLayerProperty": true,
+    "CreateFramebuffer": true,
+    "ApplyShader": true,
+    "SetCurrentPass": true,
+    "GetCurrentPass": true,
+    "Duplicate": true,
+    "GetPass": true,
+    "CreatePassiveRigidBody": true,
+    "CreatePass": true,
+    "AddPassInputFxOp": true,
+    "CreatePassWithPartition": true,
+    "SICreatePass": true,
+    "DeleteCurrentPass": true,
+    "ExportShaderTree": true,
+    "ExportAllPassesToMI2": true,
+    "CreateImageBasedLightingPass": true,
+    "RemoveExposedPortPassThrough": true,
+    "RenderFxOp": true,
+    "CreatePassFromLayers": true,
+    "LaunchFlipbookForPass": true,
+    "ImportShaderTree": true,
+    "OverrideMarkedPassParameters": true
+  },
+  "rows": [
+    {
+      "name": "Switch to Render Toolbar",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "SwitchToolbar"
+    },
+    {
+      "name": "Render Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderPass"
+    },
+    {
+      "name": "Render Passes",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderPasses"
+    },
+    {
+      "name": "Render Selected Passes",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderSelectedPasses"
+    },
+    {
+      "name": "Render All Passes",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderAllPasses"
+    },
+    {
+      "name": "Render Current Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderPasses"
+    },
+    {
+      "name": "Render Current Frame",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderCurrentFrame"
+    },
+    {
+      "name": "Render Current Frame All Passes",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderCurrentFrameAllPasses"
+    },
+    {
+      "name": "Render Passes Using a Frame Set",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderPassesFrameSet"
+    },
+    {
+      "name": "Scene Render Options",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "InspectObj"
+    },
+    {
+      "name": "Inspect Current Pass Renderer Options",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "InspectObj"
+    },
+    {
+      "name": "Inspect Rendering Preferences",
+      "found": true,
+      "enabled": true,
+      "scriptingname": ""
+    },
+    {
+      "name": "Open Rendering Preferences",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "OpenRenderingPreferences"
+    },
+    {
+      "name": "Update Render Options",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "SIUpdateRenderOptionsFromGlobalPref"
+    },
+    {
+      "name": "Render Region Tool",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionTool"
+    },
+    {
+      "name": "Create Render Region",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionCreate"
+    },
+    {
+      "name": "Close Render Region",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionClose"
+    },
+    {
+      "name": "Show/Hide Render Region",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionToggleVisibility"
+    },
+    {
+      "name": "Show/Hide All Render Regions",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionToggleVisibility"
+    },
+    {
+      "name": "Refresh Render Region",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionRefresh"
+    },
+    {
+      "name": "Refresh All Render Regions",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionRefresh"
+    },
+    {
+      "name": "Toggle Auto-Refresh Mode for Render Region",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionToggleAutoRefresh"
+    },
+    {
+      "name": "Toggle Auto-Refresh Mode for All Render Regions",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionToggleAutoRefresh"
+    },
+    {
+      "name": "Set Refresh Mode for Render Region",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionSetRefreshMode"
+    },
+    {
+      "name": "Get Refresh Mode for Render Region",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionGetRefreshMode"
+    },
+    {
+      "name": "Set All Render Regions Refresh Mode to Interactive",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionSetRefreshMode"
+    },
+    {
+      "name": "Set All Render Regions Refresh Mode to Manual",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionSetRefreshMode"
+    },
+    {
+      "name": "Set All Render Regions Refresh Mode to Camera, Time and Region State",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionSetRefreshMode"
+    },
+    {
+      "name": "Set Render Region Display Type",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionSetDisplayType"
+    },
+    {
+      "name": "Get Render Region Display Type",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionGetDisplayType"
+    },
+    {
+      "name": "Set All Render Regions Display Type to RGB Only",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionSetDisplayType"
+    },
+    {
+      "name": "Set All Render Regions Display Type to RGB + Alpha",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionSetDisplayType"
+    },
+    {
+      "name": "Set All Render Regions Display Type to Alpha Channel",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionSetDisplayType"
+    },
+    {
+      "name": "Set All Render Regions Display Type to Red Channel",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionSetDisplayType"
+    },
+    {
+      "name": "Set All Render Regions Display Type to Green Channel",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionSetDisplayType"
+    },
+    {
+      "name": "Set All Render Regions Display Type to Blue Channel",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionSetDisplayType"
+    },
+    {
+      "name": "Set Render Region Viewing Render Channel",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionSetRenderChannel"
+    },
+    {
+      "name": "Get Render Region Viewing Render Channel",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionGetRenderChannel"
+    },
+    {
+      "name": "Toggle Selection Tracking for Render Region",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionToggleSelectionTracking"
+    },
+    {
+      "name": "Toggle Selection Tracking for All Render Regions",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionToggleSelectionTracking"
+    },
+    {
+      "name": "All Render Region Options",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "InspectObj"
+    },
+    {
+      "name": "Inspect Viewport Render Region Options",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "InspectViewportRenderRegionOptions"
+    },
+    {
+      "name": "Save Render Region To File",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionSave"
+    },
+    {
+      "name": "Save All Render Regions To Separate Files",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderRegionSave"
+    },
+    {
+      "name": "Create New Render Channel",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreateRenderChannel"
+    },
+    {
+      "name": "Remove Render Channel",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RemoveRenderChannel"
+    },
+    {
+      "name": "Export Passes to Render Archive",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "ExportRenderArchiveFrameSet"
+    },
+    {
+      "name": "Export Selected Passes to Render Archive",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "ExportRenderArchive"
+    },
+    {
+      "name": "Export All Passes to Render Archives",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "ExportRenderArchiveAllPasses"
+    },
+    {
+      "name": "Export an Object to a Render Archive",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "ExportObjectRenderArchive"
+    },
+    {
+      "name": "Toggle Show Rendered Image for Pass Rendering",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderPassToggleShowRenderedImage"
+    },
+    {
+      "name": "Dispose Rendering Cache",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "DisposeRenderingCache"
+    },
+    {
+      "name": "Update Render Manager",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "UpdateRenderManager"
+    },
+    {
+      "name": "Make Renderer Local to Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "MakeRendererLocalToPass"
+    },
+    {
+      "name": "Make Pass Renderer Global",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "MakePassRendererGlobal"
+    },
+    {
+      "name": "RenderMap",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "AddProp"
+    },
+    {
+      "name": "Render Setup",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "BvrRenderSetup"
+    },
+    {
+      "name": "GenerateRenderSetup",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "BvrGenerateRenderSetup"
+    },
+    {
+      "name": "Copy Render Options ",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CopyRenderOptions"
+    },
+    {
+      "name": "RenderTree Shader Pop-up Menu",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "UIMapButton"
+    },
+    {
+      "name": "RendertreeDeleteShaders",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "DisconnectAndDeleteShaders"
+    },
+    {
+      "name": "RendertreeDeleteOrUnnestShaders",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "DisconnectAndDeleteOrUnnestShaders"
+    },
+    {
+      "name": "ShowRenderTree",
+      "found": false,
+      "enabled": null,
+      "scriptingname": null
+    },
+    {
+      "name": "OpenRenderTree",
+      "found": false,
+      "enabled": null,
+      "scriptingname": null
+    },
+    {
+      "name": "RenderTree",
+      "found": false,
+      "enabled": null,
+      "scriptingname": null
+    },
+    {
+      "name": "Rendering Visibility of Current Layer",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "ToggleCurrentLayerProperty"
+    },
+    {
+      "name": "Create New Output Framebuffer on a Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreateFramebuffer"
+    },
+    {
+      "name": "OGL3Pass Shader",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "ApplyShader"
+    },
+    {
+      "name": "Set current pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "SetCurrentPass"
+    },
+    {
+      "name": "Get current pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "GetCurrentPass"
+    },
+    {
+      "name": "OGL1Pass Shader",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "ApplyShader"
+    },
+    {
+      "name": "Duplicate Current Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "Duplicate"
+    },
+    {
+      "name": "OGL2Pass Shader",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "ApplyShader"
+    },
+    {
+      "name": "Pass Options",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "InspectObj"
+    },
+    {
+      "name": "More Passes...",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "GetPass"
+    },
+    {
+      "name": "CreatePassiveRigidBody",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePassiveRigidBody"
+    },
+    {
+      "name": "New Isolate Matte Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New Selective Shadow Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "AddPassInputFxOp",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "AddPassInputFxOp"
+    },
+    {
+      "name": "New Pass with Partition",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePassWithPartition"
+    },
+    {
+      "name": "New Ambient/Diffuse Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New Ambient Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New Diffuse Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New Lens Flare Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New Volumic Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New White Matte Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "Low Level Create Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "SICreatePass"
+    },
+    {
+      "name": "Delete Current Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "DeleteCurrentPass"
+    },
+    {
+      "name": "Export Shader Tree",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "ExportShaderTree"
+    },
+    {
+      "name": "Export All Passes To MI2",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "ExportAllPassesToMI2"
+    },
+    {
+      "name": "New Toon Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "Create Image Based Lighting Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreateImageBasedLightingPass"
+    },
+    {
+      "name": "Curve Pass",
+      "found": true,
+      "enabled": false,
+      "scriptingname": "ApplyOp"
+    },
+    {
+      "name": "Surface Pass",
+      "found": true,
+      "enabled": false,
+      "scriptingname": "ApplyOp"
+    },
+    {
+      "name": "Remove the pass through from an exposed port",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RemoveExposedPortPassThrough"
+    },
+    {
+      "name": "RenderFxOp",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "RenderFxOp"
+    },
+    {
+      "name": "New Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New Caustic Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New Depth Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New Global Illumination Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New Glow Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New Highlight Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New Refraction Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New RGBA Matte Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New Reflection Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New Shadow Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePass"
+    },
+    {
+      "name": "New Pass Based on Layers",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "CreatePassFromLayers"
+    },
+    {
+      "name": "Launch Flipbook For Pass",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "LaunchFlipbookForPass"
+    },
+    {
+      "name": "Import Shader Tree",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "ImportShaderTree"
+    },
+    {
+      "name": "Override Marked Pass Parameters",
+      "found": true,
+      "enabled": true,
+      "scriptingname": "OverrideMarkedPassParameters"
+    }
+  ]
+}
