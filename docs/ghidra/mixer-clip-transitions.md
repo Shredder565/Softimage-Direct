@@ -19,12 +19,12 @@ Softimage cannot populate mixer Transitions collections under `-processing` with
 - Commands in `src/commands/anim.ts`: AddTransition / Bridge / TW / CreateCompound / EqualizeClips.
 - Harness `compare_mixer.mjs` locks nested schema + mid-crossfade blend.
 
-## Proposed Softimage-faithful deltas (WIRE)
+## Softimage-faithful deltas (WIRE — landed)
 
-1. **Transition curves** — Softimage default `clip_transitioncurves=true` implies non-linear fade. Until animationmixer decomp names the exact curve, use Hermite smoothstep `u*u*(3-2*u)` for standard/bridge (preserves mid-blend harness band). Replace with decomp formula when softimage-pc lands it.
-2. **Timewarp** — keep stretch of `from` into transition window; pin against future PC samples.
-3. **Auto Transition** — when mixer `autotransition` is true, adding a clip after another inserts a standard transition (Softimage mixer flag).
-4. **Bridge vs standard** — both use eased crossfade until decomp proves bridge-specific weight path; keep `kind` discriminant for OM fidelity.
+1. **Transition curves** — Softimage default `clip_transitioncurves=true` implies non-linear fade. Direct uses Hermite smoothstep `u*u*(3-2*u)` for standard/bridge/timewarp weight (`transitionEase` in `src/core/mixer.ts`). Replace with animationmixer.dll decomp formula when softimage-pc lands it.
+2. **Timewarp** — stretch of `from` into transition window kept; fade factor eased.
+3. **Auto Transition** — when mixer `autotransition` is true, `AddClip` after another clip on the same track inserts a standard transition.
+4. **Bridge vs standard** — both use eased crossfade until decomp proves bridge-specific weight path; `kind` discriminant kept for OM fidelity.
 
 ## Ghidra entry (softimage-pc)
 
