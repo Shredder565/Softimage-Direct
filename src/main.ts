@@ -27,8 +27,11 @@ import { mcpPanel } from './ui/mcp';
 import { installKeymap } from './ui/keymap';
 import { propertyEditor } from './ui/ppg';
 import { applyPpgChrome, ppgChromeAudit, PPG_CHROME } from './ui/ppgChrome';
+import { applyAnimChromeVars, animViewDefaultSize } from './ui/animChrome';
+import { animationLayerManager } from './ui/animLayerManager';
 import { viewManager, SI as ViewportSI, DEFAULT_CAMERA_POS, DEFAULT_CAMERA_INTEREST, DEFAULT_CAMERA_FOV } from './ui/viewManager';
 applyPpgChrome();
+applyAnimChromeVars();
 import { keyingPanel, layerControl, timeline, commandLine, scriptLog } from './ui/panels';
 import { mainShelf, panelSwitcher } from './ui/shelf';
 import { menubar, menubarStatus } from './ui/menubar';
@@ -109,13 +112,8 @@ layout.registerView('Scene Layer Manager', h => layerManager(app, h));
 layout.registerView('Script History', h => scriptHistory(app, h));
 layout.registerView('XSI Explorer', h => xsiExplorer(app, h));
 layout.registerView('SDK Explorer', h => xsiExplorer(app, h));
-// Softimage Dual/Default layouts include Animation Layer Manager; host a dedicated panel (scene layers ≠ anim layers).
-layout.registerView('Animation Layer Manager', h => {
-  const d = document.createElement('div'); d.className = 'view-placeholder';
-  d.innerHTML = '<div class="view-placeholder-title">Animation Layer Manager</div><p>Animation layers / mixer clips: open <b>Animation Mixer</b> for sources. Full Softimage anim-layer chrome lands with Animation fidelity (Phase A).</p>';
-  const b = document.createElement('button'); b.textContent = 'Open Animation Mixer'; b.onclick = () => window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'Animation Mixer' } }));
-  d.appendChild(b); h.appendChild(d);
-});
+// Softimage Dual/Default layouts include Animation Layer Manager (anim layers / mixer clips ≠ scene layers).
+layout.registerView('Animation Layer Manager', h => animationLayerManager(app, h));
 layout.build(layoutByName(currentLayoutName()) ?? layoutByName('Default')!, root);
 installLayoutEditing(app, layout, root);
 setDockHook((win, frame) => { const body = win.body; const title = win.title; return dockInto(frame, title, body, (b) => { openFloating(title, (nb, w) => { nb.replaceWith(b); b.classList.remove('docked-body'); b.className = 'ppg-float-body'; (w as any).body = b; }, { w: 480, h: 400 }); }); });
@@ -133,10 +131,11 @@ window.addEventListener('togglepanel', (e: any) => {
 // ---- Floating views (View > Views, shelf/explorer buttons, Enter on a selection)
 const openView = (name: string) => {
   const key = 'view:' + name; const size = SI_VIEWS.find(v => v.name === name)?.defaultsize?.split(',').map(Number);
+  const animSz = animViewDefaultSize(name);
   // Softimage .xsivw defaultsize is left,top,width,height. Script Editor uses C3DPrefsScriptEditor chrome tokens when present.
   const seTok = (PPG_CHROME as any).scriptEditor?.tokens;
-  let w = name === 'Mini Transform Panel' ? 200 : Math.max(320, size ? Math.min(900, size[2]) : 420);
-  let h = size ? Math.min(700, size[3]) : 400;
+  let w = name === 'Mini Transform Panel' ? 200 : Math.max(320, size ? Math.min(900, size[2]) : (animSz ? Math.min(900, animSz[2]) : 420));
+  let h = size ? Math.min(700, size[3]) : (animSz ? Math.min(700, animSz[3]) : 400);
   if (name === 'Script Editor' && seTok) { w = seTok.floatDefaultWidthPx ?? w; h = seTok.floatDefaultHeightPx ?? h; }
   const builders: Record<string, (host: HTMLElement) => void> = {
     'Explorer': h => explorerView(app, h), 'Property Editor': h => propertyEditor(app, h), 'Script Editor': h => scriptLog(app, h), 'Script History View': h => scriptHistory(app, h),

@@ -1,0 +1,485 @@
+{
+  "softimage": "2015 SP2 / 13.2.163.0",
+  "source": {
+    "pe": "internal/softimage-pc-dumps/anim/anim-editor-mixer-pe-dialogs.json",
+    "dict": "internal/softimage-pc-dumps/anim/anim-dict-strings.json",
+    "generated_utc": "2026-10-25T00:29:48Z",
+    "mode": "file-scrape-only"
+  },
+  "scale": {
+    "dlu_to_px_x": 1.5,
+    "dlu_to_px_y": 1.625
+  },
+  "fonts": {
+    "editor": "Tahoma, \"MS Sans Serif\", Arial, sans-serif",
+    "editor_px": 11,
+    "panel": "Tahoma, \"MS Sans Serif\", Arial, sans-serif",
+    "panel_px": 10,
+    "dialog": "\"MS Sans Serif\", Tahoma, Arial, sans-serif",
+    "dialog_pt": 8
+  },
+  "colors": {
+    "client_bg": "#4a4a4a",
+    "list_bg": "#9d9b99",
+    "panel_bg": "#a9a7a5",
+    "toolbar_bg": "#b6b2af",
+    "track_bg": "#8a8886",
+    "clip_bg": "#c9c5c2",
+    "clip_sel": "#3a5a8c",
+    "key_diamond": "#ffd34d",
+    "grid": "#5c5c5c",
+    "time_cursor": "#ffd34d"
+  },
+  "layout": {
+    "fcv_list_w": 150,
+    "fcv_toolbar_h": 22,
+    "fcv_ruler_h": 16,
+    "fcv_label_margin": 36,
+    "mixer_track_h": 22,
+    "mixer_clip_h": 18,
+    "mixer_toolbar_h": 22,
+    "kp_row_h": 16,
+    "kp_num_w": 56,
+    "kp_default_w": 160,
+    "kp_title_h": 15,
+    "layer_mgr_w": 280,
+    "ok_cancel": {
+      "w_dlu": 50,
+      "h_dlu": 14,
+      "w_px": 75,
+      "h_px": 23
+    }
+  },
+  "dialogs": {
+    "action_instanced": {
+      "dll": "action.dll",
+      "id": "106",
+      "title": "",
+      "font": [
+        8,
+        "MS Sans Serif"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        260,
+        211
+      ],
+      "size_px_hint": [
+        390,
+        343
+      ],
+      "control_count": 64,
+      "labels": [
+        "Instanced Actions",
+        "Exclusive",
+        "Normalize mode",
+        ";class=dsnewnumberctrl;min=0.0;max=1.0",
+        ";class=dsnewnumberctrl;min=0.0;max=1.0",
+        ";class=dsnewnumberctrl;min=0.0;max=1.0",
+        ";class=dsnewnumberctrl;min=0.0;max=1.0",
+        ";class=dsnewnumberctrl;min=0.0;max=1.0",
+        ";class=dsnewnumberctrl;min=0.0;max=1.0",
+        "From",
+        "To",
+        "Mix Weight",
+        "1",
+        "2",
+        "6",
+        "3",
+        "4",
+        "5",
+        ";class=dsnewnumberctrl;min=0.0;max=1.0",
+        "7",
+        ";class=dsnewnumberctrl;min=0.0;max=1.0",
+        "8",
+        "<",
+        ">"
+      ]
+    },
+    "action_source_editor": {
+      "dll": "action.dll",
+      "id": "108",
+      "title": "",
+      "font": [
+        8,
+        "MS Sans Serif"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        344,
+        364
+      ],
+      "size_px_hint": [
+        516,
+        592
+      ],
+      "control_count": 19,
+      "labels": [
+        "Edit Source Data...",
+        "Source",
+        "Select/Unselect All",
+        "Toggle Activeness",
+        "Storage",
+        "File:",
+        "Type",
+        "Name",
+        "Partial Fcurves Offloaded ranges [Start,End;...]",
+        "Reload",
+        "Remove Item",
+        "Clip Color",
+        ";class=dsnewcolorchipctrl;auto=1"
+      ]
+    },
+    "action_inst_clip": {
+      "dll": "action.dll",
+      "id": "124",
+      "title": "",
+      "font": [
+        8,
+        "MS Sans Serif"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        298,
+        202
+      ],
+      "size_px_hint": [
+        447,
+        328
+      ],
+      "control_count": 4,
+      "labels": [
+        "InstAction",
+        "Edit Clip-Specific Data...",
+        "Toggle Active",
+        "Clear Fx"
+      ]
+    },
+    "mcp_current_time": {
+      "dll": "mcp.dll",
+      "id": "220",
+      "title": "Current Time",
+      "font": [
+        8,
+        "MS Sans Serif"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        186,
+        95
+      ],
+      "size_px_hint": [
+        279,
+        154
+      ],
+      "control_count": 8,
+      "labels": [
+        "OK",
+        "Cancel",
+        "FRAME",
+        "SECOND",
+        "MILLISECOND"
+      ]
+    },
+    "clip_time_control": {
+      "dll": "props.dll",
+      "id": "103",
+      "title": "",
+      "font": [
+        11,
+        "Arial"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        190,
+        160
+      ],
+      "size_px_hint": [
+        285,
+        260
+      ],
+      "control_count": 40,
+      "labels": [
+        " Source Clipping ",
+        " Time Control ",
+        " Extrapolation Before ",
+        " Extrapolation After ",
+        "In:",
+        "Out:",
+        "Start Offset:",
+        "Scale:",
+        "Duration:",
+        "Resulting In:",
+        "Resulting Out:",
+        "no contribution",
+        "hold",
+        "cycle",
+        "bounce",
+        "Frms",
+        "times",
+        "times",
+        "no contribution",
+        "hold",
+        "cycle",
+        "bounce",
+        "Frms",
+        "times"
+      ]
+    },
+    "ppg_host_147": {
+      "dll": "uiut.dll",
+      "id": "147",
+      "title": "",
+      "font": [
+        11,
+        "Arial"
+      ],
+      "rect_dlu": [
+        0,
+        0,
+        200,
+        181
+      ],
+      "size_px_hint": [
+        300,
+        294
+      ],
+      "control_count": 7,
+      "labels": [
+        "Child Property Frame rectangle",
+        ";tooltip=Animation control",
+        "LoadSaveCtrl",
+        "InspNavCtrl",
+        "Position Reference For Widget",
+        ";tip=Reset All Parameters to Defaults",
+        ";tip=Reset Current Parameter Group To Defaults"
+      ]
+    }
+  },
+  "views": {
+    "Keying Panel": [
+      0,
+      0,
+      160,
+      480
+    ],
+    "Animation Panel": [
+      50,
+      50,
+      485,
+      550
+    ],
+    "Animation Editor": [
+      50,
+      50,
+      640,
+      400
+    ],
+    "Fcurve Editor": [
+      50,
+      50,
+      640,
+      400
+    ],
+    "DopeSheet": [
+      50,
+      50,
+      640,
+      280
+    ],
+    "Animation Mixer": [
+      50,
+      50,
+      720,
+      360
+    ],
+    "Animation Layer Manager": [
+      50,
+      50,
+      280,
+      320
+    ],
+    "Playback Panel": [
+      0,
+      0,
+      320,
+      28
+    ]
+  },
+  "menus": {
+    "mixer": [
+      "Edit",
+      "View",
+      "Track",
+      "Clip",
+      "Effect",
+      "Playback"
+    ],
+    "fcurve": [
+      "Edit",
+      "Curves",
+      "View",
+      "Keys"
+    ],
+    "dopesheet": [
+      "Edit",
+      "View",
+      "Keys"
+    ],
+    "keying": [
+      "Key",
+      "Mark",
+      "Keyable"
+    ]
+  },
+  "dict_labels": {
+    "mixer": [
+      "Animation Mixer",
+      "AM Selection Tool",
+      "Select",
+      "Context Menu",
+      "Add to selection",
+      "Toggle selection",
+      "AM PanZoom Tool",
+      "Zoom In",
+      "Zoom Out",
+      "AM Standard Transition Tool",
+      "Reset",
+      "AM Cardinal Transition Tool",
+      "AM Bridge Transition Tool",
+      "AM Remove Transition Tool",
+      "Next",
+      "AM Rectangular Selection Tool",
+      "ContextMenu",
+      "*** Warning ***",
+      "The object you want to edit is in a referenced model.",
+      "Do you want to enable this option?",
+      "Animation Mixer warning",
+      "Edit",
+      "View",
+      "Track",
+      "Clip",
+      "Effect",
+      "Start:",
+      "End:",
+      "Offset Map",
+      "Action Key",
+      "Insert Animation Track",
+      "Insert Shape Track",
+      "Insert Audio Track",
+      "AM Marker Tool",
+      "Create Marker",
+      "Create Marker at nearest frame",
+      "Exit Tool",
+      "Navigate",
+      "Constrained Pan",
+      "Horizontal Zoom"
+    ],
+    "action": [
+      "Action",
+      "ActionOp",
+      "MixerProp",
+      "Mixer property",
+      "Action PPG",
+      "Speech Blend PPG",
+      "MapTemplate",
+      "MappingTemplate",
+      "A template providing the mapping between Action items and actual connections.",
+      "Name",
+      "The entity name of the mapping template.",
+      "Mapping Template PPG",
+      "Instanced Action Operator",
+      "Value Mapping Template PPG",
+      "ValueMappingTemplate",
+      "VMT_",
+      "CMT_",
+      "Pick Target Object",
+      "Pick Reference Object",
+      "MixerOp",
+      "Mixer Operator",
+      "Shape Action",
+      "Viseme Action",
+      "Pick source geometry",
+      "ShapeKey",
+      "ClsKeyPrxy",
+      "Cluster Key Proxy",
+      "Active",
+      "Clip Item Information",
+      "Animation Mixer Credits",
+      "Lead Dev :",
+      "Gordon Cameron",
+      "Glen Fraser",
+      "Christian Roy",
+      "Ronald Beirouti",
+      "Design :",
+      "Rejean Gagne",
+      "Gareth Morgan",
+      "Quality Assurance :",
+      "Erik Goulet, Teresa Lang"
+    ]
+  },
+  "interactive_only": "RT_DIALOG templates are static PE resources (title/rect/controls). Live HWND layout, docking chrome, FCurve/Mixer view client paint, and Keying/Playback panel interaction require interactive Softimage (or Softimage Direct viewport observation) ? not available under XSIBATCH -processing.",
+  "mixer_tools": [
+    "AM Selection Tool",
+    "AM PanZoom Tool",
+    "AM Standard Transition Tool",
+    "AM Bridge Transition Tool",
+    "AM Remove Transition Tool",
+    "AM Rectangular Selection Tool",
+    "Insert Animation Track",
+    "Insert Shape Track",
+    "Insert Audio Track"
+  ],
+  "bitmaps": {
+    "public_dir": "public/si/anim",
+    "source": "internal/softimage-pc-dumps/anim/pe-bitmaps",
+    "count_pack": 718,
+    "wired": [
+      "action_rtbitmap_105.bmp",
+      "animationmixer_rtbitmap_100.bmp",
+      "animationmixer_rtbitmap_101.bmp",
+      "animationmixer_rtbitmap_102.bmp",
+      "animationmixer_rtbitmap_103.bmp",
+      "animationmixer_rtbitmap_104.bmp",
+      "animationmixer_rtbitmap_105.bmp",
+      "animationmixer_rtbitmap_106.bmp",
+      "animationmixer_rtbitmap_107.bmp",
+      "animationmixer_rtbitmap_108.bmp",
+      "animationmixer_rtbitmap_109.bmp",
+      "animationmixer_rtbitmap_110.bmp",
+      "animationmixer_rtbitmap_21.bmp",
+      "animationmixer_rtbitmap_22.bmp",
+      "animationmixer_rtbitmap_23.bmp",
+      "animationmixer_rtbitmap_24.bmp",
+      "animationmixer_rtbitmap_25.bmp",
+      "animationmixer_rtbitmap_26.bmp",
+      "animationmixer_rtbitmap_27.bmp",
+      "animationmixer_rtbitmap_28.bmp",
+      "animationmixer_rtbitmap_29.bmp",
+      "animationmixer_rtbitmap_30.bmp",
+      "animationmixer_rtbitmap_31.bmp",
+      "animationmixer_rtbitmap_32.bmp",
+      "animationmixer_rtbitmap_33.bmp",
+      "dopesheet_rtbitmap_215.bmp",
+      "dopesheet_rtbitmap_216.bmp",
+      "dopesheet_rtbitmap_217.bmp",
+      "dopesheet_rtbitmap_218.bmp",
+      "dopesheet_rtbitmap_219.bmp",
+      "dopesheet_rtbitmap_245.bmp",
+      "dopesheet_rtbitmap_246.bmp",
+      "dopesheet_rtbitmap_250.bmp"
+    ]
+  },
+  "pe_pack": {
+    "dialogs": 133,
+    "bitmaps": 718,
+    "menus": 113,
+    "views": 19,
+    "summary": "internal/softimage-pc-dumps/anim/anim-dump-summary.json"
+  }
+}
