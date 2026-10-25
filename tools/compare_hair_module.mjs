@@ -1,5 +1,5 @@
-// Softimage Hair module shell vs PE MENU 297 dumps (MCP tops / SwitchToolbar Target=6 / ApplyHair*).
-// Dump-backed only. Hair Panel GDI LOCK — no invent. Needs vite preview :4173.
+// Softimage Hair module shell vs PE MENU 297 dumps (MCP tops / SwitchToolbar Target=6 / ApplyHair* / Hair Panel xsivw).
+// Dump-backed only. Hair Panel client GDI LOCK — shell from hairpanel.xsivw. Needs vite preview :4173.
 // Usage: node tools/compare_hair_module.mjs
 import { chromium } from 'playwright';
 import fs from 'fs';
@@ -26,9 +26,20 @@ if (!topsPath) {
 }
 const tops = JSON.parse(fs.readFileSync(topsPath, 'utf8'));
 
+const chromePath = [
+  path.resolve(__dirname, '../src/data/si/hair_view_chrome.json'),
+  path.resolve(__dirname, '../data/dump/si_hair_view_chrome.json'),
+].find(p => fs.existsSync(p));
+if (!chromePath) {
+  console.error('missing Hair Panel view chrome JSON');
+  process.exit(2);
+}
+const chrome = JSON.parse(fs.readFileSync(chromePath, 'utf8'));
+
 const diffs = [];
 const notes = [];
 notes.push(`loaded tops ${topsPath}`);
+notes.push(`loaded chrome ${chromePath}`);
 
 const b = await chromium.launch({ executablePath: CHROME, args: ['--headless=new', '--use-gl=swiftshader'] });
 const page = await b.newPage();
@@ -58,11 +69,20 @@ else {
   }
   if (!diffs.some(d => d.startsWith('Hair buttons'))) notes.push('Hair MCP buttons match dump');
 
-  if (audit.hairModule.hairPanel !== 'LOCK') diffs.push('Hair Panel must stay LOCK (no invent GDI)');
-  else notes.push('Hair Panel GDI LOCK');
+  if (audit.hairModule.hairPanel !== 'SHELL') diffs.push(`Hair Panel status want=SHELL got=${audit.hairModule.hairPanel}`);
+  else notes.push('Hair Panel xsivw SHELL');
+
+  if (audit.hairModule.hairPanelClientGdi !== 'LOCK') diffs.push('Hair Panel client GDI must stay LOCK');
+  else notes.push('Hair Panel client GDI LOCK');
 
   if (audit.hairModule.flyoutPixels !== 'LOCK') diffs.push('flyout pixels must stay LOCK');
   else notes.push('flyout pixels LOCK');
+
+  const wantSz = chrome.views?.['Hair Panel']?.defaultsize;
+  const gotSz = audit.hairModule.hairPanelDefaultSize;
+  if (JSON.stringify(wantSz) !== JSON.stringify(gotSz)) {
+    diffs.push(`Hair Panel defaultsize want=${wantSz} got=${gotSz}`);
+  } else notes.push(`Hair Panel xsivw defaultsize ${wantSz?.join(',')}`);
 
   const wantOps = tops.apply_hair_ops?.length ?? 0;
   const gotOps = audit.hairModule.applyHairOpsCount ?? 0;
@@ -116,13 +136,45 @@ const smoke = await page.evaluate(() => window.__hairApplySmoke?.());
 if (!smoke?.ok) diffs.push(`ApplyHairOp smoke failed: ${smoke?.err || 'no result'}`);
 else notes.push(`ApplyHairOp smoke OK (${smoke.name})`);
 
-// Ensure we did not invent a Hair Panel floating shell
+// Softimage OpenView("Hair Panel") — xsivw shell with dump size tokens (no invent client widgets)
 const panel = await page.evaluate(() => {
+  window.__openView?.('Hair Panel');
+  const host = document.querySelector('.hair-panel');
   const win = [...document.querySelectorAll('.ppg-float')].find(el => el.querySelector('.ppg-float-title')?.textContent === 'Hair Panel');
-  return { invented: !!win };
+  const inventWidgets = !!(host && (
+    host.querySelector('.hair-panel-tool') ||
+    host.querySelector('[data-invent]') ||
+    [...host.querySelectorAll('button')].some(b => !b.closest('.ppg-float-titlebar'))
+  ));
+  return {
+    host: !!host,
+    category: host?.dataset.siCategory ?? null,
+    defaultsize: host?.dataset.siDefaultsize ?? null,
+    clsid: host?.dataset.siClsid ?? null,
+    status: host?.dataset.siStatus ?? null,
+    clientGdi: host?.dataset.siClientGdi ?? null,
+    float: !!win,
+    w: win ? Math.round(win.getBoundingClientRect().width) : 0,
+    h: win ? Math.round(win.getBoundingClientRect().height) : 0,
+    inventWidgets,
+  };
 });
-if (panel.invented) diffs.push('Hair Panel floating shell invented — must stay LOCK');
-else notes.push('no invented Hair Panel shell');
+if (!panel.host || !panel.float) diffs.push('OpenView Hair Panel did not open xsivw shell');
+else notes.push(`Hair Panel shell open ${panel.w}x${panel.h}`);
+if (panel.category !== 'General') diffs.push(`Hair Panel category=${panel.category}`);
+else notes.push('Hair Panel category=General');
+const wantDs = chrome.views['Hair Panel'].defaultsize.join(',');
+if (panel.defaultsize !== wantDs) diffs.push(`host defaultsize ${panel.defaultsize} ≠ ${wantDs}`);
+else notes.push(`host dataset defaultsize ${wantDs}`);
+if (panel.clsid !== chrome.views['Hair Panel'].clsid) diffs.push(`clsid ${panel.clsid}`);
+else notes.push('Hair Panel clsid matches xsivw');
+if (panel.status !== 'SHELL') diffs.push(`host status=${panel.status}`);
+if (panel.clientGdi !== 'LOCK') diffs.push(`host clientGdi=${panel.clientGdi}`);
+if (panel.inventWidgets) diffs.push('Hair Panel invented client widgets — must stay LOCK');
+else notes.push('no invented Hair Panel client widgets');
+// Softimage defaultsize height is 115 — float should be thin (allow titlebar chrome)
+if (panel.h > 200) diffs.push(`Hair Panel float height ${panel.h} too tall for xsivw 115 (+ chrome)`);
+else notes.push(`Hair Panel float height ${panel.h} within thin panel budget`);
 
 await b.close();
 
@@ -133,6 +185,7 @@ const out = {
   softimage: tops.softimage,
   menu_id: tops.menu_id,
   tops: tops.tops,
+  hair_panel: tops.hair_panel,
 };
 console.log(JSON.stringify(out, null, 2));
 const dir = path.resolve(__dirname, '../docs/screenshots');

@@ -206,5 +206,16 @@
 "defaultsize": "100,100,900,650",
 "maxinstances": "10000",
 "supportedtypes": "6"
+},
+{
+"file": "hairpanel.xsivw",
+"name": "Hair Panel",
+"clsid": "{0E338020-8317-42C5-B48E-E8CABB3643E8}",
+"defaultsize": "0,0,900,115",
+"maxinstances": "1",
+"acceptfocus": "true",
+"private": "true",
+"supportedtypes": "6",
+"category": "General"
 }
 ]

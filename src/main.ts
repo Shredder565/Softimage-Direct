@@ -26,6 +26,8 @@ import faceRobotStage1Chrome from './data/si/face_robot_stage1_chrome.json';
 import crowdfxModuleDump from './data/si/crowdfx_module.json';
 import { iceTree, renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
 import { faceRobotStage1View, faceRobotActPanelView } from './ui/faceRobotStage1';
+import { hairPanelView } from './ui/hairPanel';
+import hairViewChrome from './data/si/hair_view_chrome.json';
 import { frostGraphView, frostHairWizardView, frostClothWizardView, frostOf, runFrostSmokeTests } from './frost';
 import { registerToolbarCommands, palettesView, toolbarView, newToolbar, customizeToolbars, openToolbarWindow, userToolbars } from './ui/toolbars';
 import { playbackPanel, animationPanel, timerange, layerManager, xsiExplorer, scriptHistory } from './ui/views';
@@ -131,6 +133,7 @@ const SHELL: Record<string, (h: HTMLElement) => void> = {
   'Weight Paint Panel': h => weightPaintPanel(app, h), 'Preset Manager': h => presetManager(app, h),
   'Animation Mixer': h => animationMixer(app, h), 'Expression Editor': h => { animationEditor(app, h, 'fcurve'); },
   'ICE Tree': h => iceTree(app, h),
+  'Hair Panel': h => hairPanelView(app, h),
   'Face Robot Stage 1': h => faceRobotStage1View(app, h),
   'Face Robot Act Floating Panel': h => faceRobotActPanelView(app, h, (app as any).__faceRobotActArgs),
   'FROST Graph': h => frostGraphView(app, h),
@@ -167,6 +170,7 @@ const openView = (name: string) => {
   const key = 'view:' + name; const size = SI_VIEWS.find(v => v.name === name)?.defaultsize?.split(',').map(Number);
   const animSz = animViewDefaultSize(name);
   const iceSz = (iceViewChrome as { views?: Record<string, { defaultsize?: number[] }> }).views?.[name]?.defaultsize;
+  const hairSz = (hairViewChrome as { views?: Record<string, { defaultsize?: number[] }> }).views?.[name]?.defaultsize;
   const frSz = name === 'Face Robot Stage 1'
     ? (faceRobotStage1Chrome as { view?: { defaultsize?: number[] } }).view?.defaultsize
     : name === 'Face Robot Act Floating Panel'
@@ -174,9 +178,11 @@ const openView = (name: string) => {
       : undefined;
   // Softimage .xsivw defaultsize is left,top,width,height. Script Editor uses C3DPrefsScriptEditor chrome tokens when present.
   const seTok = (PPG_CHROME as any).scriptEditor?.tokens;
-  let w = name === 'Mini Transform Panel' ? 200 : Math.max(320, size ? Math.min(900, size[2]) : (frSz ? Math.min(900, frSz[2]) : (iceSz ? Math.min(900, iceSz[2]) : (animSz ? Math.min(900, animSz[2]) : 420))));
-  let h = size ? Math.min(700, size[3]) : (frSz ? Math.min(900, frSz[3]) : (iceSz ? Math.min(700, iceSz[3]) : (animSz ? Math.min(700, animSz[3]) : 400)));
+  let w = name === 'Mini Transform Panel' ? 200 : Math.max(320, size ? Math.min(900, size[2]) : (hairSz ? Math.min(900, hairSz[2]) : (frSz ? Math.min(900, frSz[2]) : (iceSz ? Math.min(900, iceSz[2]) : (animSz ? Math.min(900, animSz[2]) : 420)))));
+  let h = size ? Math.min(700, size[3]) : (hairSz ? Math.min(700, hairSz[3]) : (frSz ? Math.min(900, frSz[3]) : (iceSz ? Math.min(700, iceSz[3]) : (animSz ? Math.min(700, animSz[3]) : 400))));
   if (name === 'Script Editor' && seTok) { w = seTok.floatDefaultWidthPx ?? w; h = seTok.floatDefaultHeightPx ?? h; }
+  // Softimage hairpanel.xsivw defaultsize 0,0,900,115 — thin horizontal panel (do not clamp to 320×400 defaults).
+  if (name === 'Hair Panel') { w = hairSz?.[2] ?? size?.[2] ?? 900; h = hairSz?.[3] ?? size?.[3] ?? 115; }
   if (name === 'Face Robot Stage 1') { w = frSz?.[2] ?? 290; h = frSz?.[3] ?? 720; }
   if (name === 'Face Robot Act Floating Panel') { w = frSz?.[2] ?? 320; h = frSz?.[3] ?? 280; }
   if (name === 'FROST Hair Wizard' || name === 'FROST Cloth Wizard') { w = 440; h = 620; }
@@ -307,11 +313,12 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
         ? Array.from((document.querySelector('.module-select') as HTMLSelectElement).options).some(o => o.value === 'ICE')
         : false,
     },
-    // Softimage Hair module MENU 297 MCP Create/Modify/Display + ApplyHair* (Hair Panel GDI LOCK)
+    // Softimage Hair module MENU 297 MCP Create/Modify/Display + ApplyHair* + Hair Panel xsivw shell (client GDI LOCK)
     hairModule: {
       ...hairModuleAudit(app),
       mcpTops: hairModuleTops.tops,
       mcpButtons: hairModuleTops.buttons,
+      hairPanelChrome: (hairViewChrome as { views?: Record<string, unknown> }).views?.['Hair Panel'],
       moduleInSelect: (document.querySelector('.module-select') as HTMLSelectElement | null)
         ? Array.from((document.querySelector('.module-select') as HTMLSelectElement).options).some(o => o.value === 'Hair')
         : false,

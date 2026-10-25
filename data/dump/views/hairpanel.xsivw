@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="viewdefinition" xsi_version="3.0" syntax_version="1.0">
+	<viewdef clsid="{0E338020-8317-42C5-B48E-E8CABB3643E8}" name="Hair Panel">
+		<definition maxinstances="1" acceptfocus="true" private="true" defaultsize="0,0,900,115" cmdmap="{00000000-0000-0000-0000-000000000000}" supportedtypes="6" category="General"> </definition>
+	</viewdef>
+</xsi_file>
