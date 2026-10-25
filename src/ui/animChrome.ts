@@ -80,10 +80,12 @@ export function animChromeAudit(): Record<string, unknown> {
     live: {
       listW: cs.getPropertyValue('--fcv-list-w').trim(),
       kp: !!document.querySelector('.kp.anim-keying'),
+      kpToolbar: !!document.querySelector('.kp .kp-toolbar-strip'),
       mixer: !!document.querySelector('.mixer'),
       fcv: !!document.querySelector('.fcv'),
       layerMgr: !!document.querySelector('.anim-layer-mgr'),
       mixerIcons: document.querySelectorAll('.mixer .mixer-ico').length,
+      autoKeyGlyph: !!document.querySelector('.kp.anim-keying button.anim-auto-key img'),
     },
   };
 }

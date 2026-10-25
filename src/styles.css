@@ -486,6 +486,11 @@ button, select, input { font-family: inherit; }
 .rtree, .texed, .schematic, .fcv, .sheet, .plugmgr, .netview, .clips, .rendmgr, .matmgr, .presetmgr, .mixer, .wpaint { display: flex; flex-direction: column; height: 100%; font: var(--anim-font-px) var(--anim-font); background: var(--anim-panel-bg); overflow: hidden; }
 .fcv > .xp-head, .mixer > .xp-head { min-height: var(--fcv-toolbar-h); background: var(--anim-toolbar-bg); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
 .mixer .mixer-ico { width: 16px; height: 16px; image-rendering: pixelated; flex: 0 0 auto; margin-left: 1px; }
+.kp-title-bar { display: flex; align-items: center; gap: 6px; }
+.kp-toolbar-strip { image-rendering: pixelated; flex: 0 0 auto; }
+button.anim-auto-key { padding: 0; border: 1px solid #555; background: #3a3a3a; line-height: 0; cursor: pointer; }
+button.anim-auto-key img { display: block; image-rendering: pixelated; }
+button.anim-auto-key.on { outline: 1px solid #ffd34d; }
 .rt-canvas { position: relative; flex: 1; overflow: auto; background: #5f5f5f; }
 .rt-links { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; } .rt-link { fill: none; stroke: #ffd34d; stroke-width: 1.5; }
 .rt-node { position: absolute; width: 150px; background: #c9c6c2; border: 1px solid #333; border-radius: 3px; box-shadow: 2px 2px 4px rgba(0,0,0,.4); user-select: none; }

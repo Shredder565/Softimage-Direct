@@ -353,8 +353,8 @@ export function animationMixer(app: App, host: HTMLElement) {
     btn('Apply', 'Apply the selected action source', () => { app.run('ApplyAction'); render(); }),
     btn('Refresh', '', () => render()),
   );
-  // Extra PNG toolbar glyphs (#50) — PE ids not in the #47 BMP wire set
-  for (const id of [34, 35, 36, 37, 38, 39, 40, 41, 42, 75]) {
+  // Extra PNG toolbar glyphs (#50) — PE ids not in the #47 BMP wire set (34–42,75 + 78–99)
+  for (const id of [34, 35, 36, 37, 38, 39, 40, 41, 42, 75, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]) {
     const img = el('img', 'mixer-ico') as HTMLImageElement;
     img.src = `si/anim/animationmixer_rtbitmap_${id}.png`;
     img.width = 16; img.height = 16; img.alt = ''; img.title = `Mixer tool PE ${id}`;
