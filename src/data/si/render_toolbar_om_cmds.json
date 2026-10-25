@@ -1,0 +1,38 @@
+{
+  "_comment": "Softimage Render toolbar OM command inventory — unlock_render_toolbar_om_probe.json + data/commands_full.json. Scripting names + Softimage display labels only; no invent HWND crop chrome.",
+  "lock_id": "render.toolbar_om_cmds",
+  "softimage": "13.2.163.0",
+  "source": [
+    "internal/softimage-pc-dumps/render/unlock_render_toolbar_om_probe.json",
+    "data/commands_full.json"
+  ],
+  "cmds": [
+    { "scripting_name": "RenderRegionCreate", "label": "Create Render Region", "category": "Rendering", "args": ["Viewport", "Left", "Right", "Top", "Bottom"], "defaults": { "Left": 0.1, "Right": 0.9, "Top": 0.1, "Bottom": 0.9 } },
+    { "scripting_name": "RenderRegionClose", "label": "Close Render Region", "category": "Rendering", "args": ["Viewport"] },
+    { "scripting_name": "RenderRegionToggleAutoRefresh", "label": "Toggle Auto-Refresh Mode for Render Region", "category": "Rendering", "args": ["Viewport"] },
+    { "scripting_name": "RenderRegionGetRefreshMode", "label": "Get Refresh Mode for Render Region", "category": "Rendering", "args": ["Viewport"] },
+    { "scripting_name": "RenderRegionGetDisplayType", "label": "Get Render Region Display Type", "category": "Rendering", "args": ["Viewport"] },
+    { "scripting_name": "RenderRegionSetRenderChannel", "label": "Set Render Region Viewing Render Channel", "category": "Rendering", "args": ["Viewport", "RenderChannel"], "defaults": { "RenderChannel": "Main" } },
+    { "scripting_name": "RenderRegionGetRenderChannel", "label": "Get Render Region Viewing Render Channel", "category": "Rendering", "args": ["Viewport"] },
+    { "scripting_name": "CreateRenderChannel", "label": "Create New Render Channel", "category": "Rendering", "args": ["Name", "Type", "Value"] },
+    { "scripting_name": "RemoveRenderChannel", "label": "Remove Render Channel", "category": "Rendering", "args": ["Name"] },
+    { "scripting_name": "DisposeRenderingCache", "label": "Dispose Rendering Cache", "category": "Rendering", "args": [] },
+    { "scripting_name": "SIUpdateRenderOptionsFromGlobalPref", "label": "Update Render Options", "category": "Rendering|Preferences", "args": ["InputObjs"] },
+    { "scripting_name": "RenderPassToggleShowRenderedImage", "label": "Toggle Show Rendered Image for Pass Rendering", "category": "Rendering", "args": [] },
+    { "scripting_name": "RenderPassesFrameSet", "label": "Render Passes Using a Frame Set", "category": "Rendering", "args": ["Passes", "FrameSet", "Verbose"] },
+    { "scripting_name": "ExportRenderArchiveFrameSet", "label": "Export Passes to Render Archive", "category": "Rendering", "args": ["Passes", "FrameSet", "Verbose"] },
+    { "scripting_name": "SIRenderPass", "label": "Render Pass", "category": "Rendering", "args": ["Passes", "PresetObj", "StartFrame", "EndFrame", "StepFrame", "DisposeRendering"] },
+    { "scripting_name": "CopyRenderOptions", "label": "Copy Render Options ", "category": "Custom", "args": [] },
+    { "scripting_name": "MakeRendererLocalToPass", "label": "Make Renderer Local to Pass", "category": "Custom", "args": [] },
+    { "scripting_name": "MakePassRendererGlobal", "label": "Make Pass Renderer Global", "category": "Custom", "args": [] },
+    { "scripting_name": "UpdateRenderManager", "label": "Update Render Manager", "category": "Custom", "args": [] },
+    { "scripting_name": "SwitchToolbar", "label": "Switch to Render Toolbar", "category": "Toolbar", "args": ["Target"], "defaults": { "Target": 3 }, "target_map": { "1": "Model", "2": "Animate", "3": "Render", "4": "ICE", "5": "Simulate", "6": "Hair" } },
+    { "scripting_name": "DisconnectAndDeleteShaders", "label": "RendertreeDeleteShaders", "category": "Rendering", "args": ["Shaders"] },
+    { "scripting_name": "DisconnectAndDeleteOrUnnestShaders", "label": "RendertreeDeleteOrUnnestShaders", "category": "Rendering", "args": ["Shaders", "Containers"] },
+    { "scripting_name": "ToggleCurrentLayerProperty", "label": "Rendering Visibility of Current Layer", "category": "Layer", "args": ["PropName"], "defaults": { "PropName": "rendvis" } }
+  ],
+  "region_hwnd_crop": {
+    "status": "LOCK",
+    "note": "SPDL/OM region options + Softimage Left/Right/Top/Bottom fractions attested; HWND crop chrome null under headless — do not invent."
+  }
+}

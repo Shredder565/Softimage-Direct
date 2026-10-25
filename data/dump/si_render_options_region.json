@@ -1,0 +1,18 @@
+{
+  "_comment": "RenderOptionsRegion.spdl — unlock_render_region_probe / unlock_render_locks_pe. Param names + Softimage labels only. HWND crop metrics stay LOCK.",
+  "lock_id": "render.region_hwnd_crop",
+  "status": "SPDL_OM_WIRED_HWND_LOCK",
+  "softimage": "13.2.163.0",
+  "spdl_path": "Application/spdl/RenderOptionsRegion.spdl",
+  "classname": "RenderOptions",
+  "property_name": "Render Region Options",
+  "params": [
+    { "sn": "UsePassOptions", "name": "Use Current Pass Options", "type": "bool", "default": true },
+    { "sn": "RegionOffsetX", "name": "Offset X", "type": "number", "default": 0, "caps": "ReadOnly", "class": "MetaData" },
+    { "sn": "RegionOffsetY", "name": "Offset Y", "type": "number", "default": 0, "caps": "ReadOnly", "class": "MetaData" },
+    { "sn": "RegionWidth", "name": "Width", "type": "number", "default": 0, "caps": "ReadOnly", "class": "MetaData" },
+    { "sn": "RegionHeight", "name": "Height", "type": "number", "default": 0, "caps": "ReadOnly", "class": "MetaData" }
+  ],
+  "create_defaults": { "Left": 0.1, "Right": 0.9, "Top": 0.1, "Bottom": 0.9 },
+  "hwnd_crop_chrome": { "status": "LOCK", "note": "null under XSIBATCH -processing; Desktop tour may unlock later" }
+}

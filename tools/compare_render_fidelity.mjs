@@ -177,9 +177,37 @@ const r = await page.evaluate(() => {
   const wrapParam = m?.params?.find?.(p => p.name === 'wrapu');
   const wrapEnumItems = (wrapParam?.def?.items || []).map(it => ({ label: it.label, value: it.value }));
 
-  // render toolbar PE W/H audit
+  // render toolbar PE W/H audit + Softimage OM scripting-name inventory
   let renderToolbarChrome = null;
-  try { renderToolbarChrome = (window).__uiAudit?.()?.renderToolbarChrome ?? null; } catch (e) {}
+  let renderToolbarOm = null;
+  try {
+    const audit = (window).__uiAudit?.() ?? null;
+    renderToolbarChrome = audit?.renderToolbarChrome ?? null;
+    renderToolbarOm = audit?.renderToolbarOm ?? null;
+  } catch (e) {}
+
+  // Softimage RenderRegionCreate + RenderOptionsRegion SPDL OM (HWND crop stays LOCK)
+  let regionCreate = null;
+  let regionOptions = null;
+  try {
+    A.run('RenderRegionCreate', { Left: 0.1, Right: 0.9, Top: 0.1, Bottom: 0.9 });
+    const prop = A.scene.renderOptionsRegion;
+    regionOptions = prop ? Object.fromEntries(prop.params.map(p => [p.name, { label: p.label, value: p.value }])) : null;
+    regionCreate = {
+      hasCreate: A.commands.has('RenderRegionCreate'),
+      hasClose: A.commands.has('RenderRegionClose'),
+      hasSwitchToolbar: A.commands.has('SwitchToolbar'),
+      after: (window).__siRenderRegion ? {
+        open: (window).__siRenderRegion.open,
+        left: (window).__siRenderRegion.left,
+        right: (window).__siRenderRegion.right,
+        top: (window).__siRenderRegion.top,
+        bottom: (window).__siRenderRegion.bottom,
+      } : null,
+    };
+  } catch (e) {
+    regionCreate = { err: String(e?.message || e) };
+  }
 
   // Prefs rendering page via preferenceSets when available
   let renderPrefs = A.renderPrefs || null;
@@ -241,6 +269,9 @@ const r = await page.evaluate(() => {
     wrapEnumItems,
     wrapuType: wrapParam?.def?.type,
     renderToolbarChrome,
+    renderToolbarOm,
+    regionCreate,
+    regionOptions,
     renderPrefs,
     preferenceCategories,
     sceneMat: A.scene.materials[0]?.name,
@@ -501,19 +532,56 @@ else {
   else notes.push('render eye chrome beyond W/H LOCK');
 }
 
-// ---- Region LOCK ----
+// ---- Region LOCK (HWND) + SPDL/OM wire ----
 const regionFound = (region.probes || []).some(p => p.path?.includes('RenderRegion') && p.found);
 const regionCmds = Object.values(region.commands || {}).some(c => c.found);
 if (regionFound || regionCmds) {
   diffs.push('PC region HWND/commands unexpectedly attested — reopen Direct region wire');
 } else {
-  notes.push('LOCK: Camera.RenderRegion + region commands null (no invent HWND/crop)');
+  notes.push('LOCK: Camera.RenderRegion + short region cmds null (no invent HWND/crop)');
 }
+// Softimage RenderOptionsRegion.spdl OM params (UsePassOptions + Region* MetaData)
+const wantRegionParams = ['UsePassOptions', 'RegionOffsetX', 'RegionOffsetY', 'RegionWidth', 'RegionHeight'];
+if (!r.regionOptions) diffs.push('Direct renderOptionsRegion missing');
+else {
+  for (const sn of wantRegionParams) {
+    if (!(sn in r.regionOptions)) diffs.push(`renderOptionsRegion missing ${sn}`);
+  }
+  if (r.regionOptions.UsePassOptions?.label !== 'Use Current Pass Options')
+    diffs.push(`UsePassOptions label ${r.regionOptions.UsePassOptions?.label}`);
+  else notes.push('RenderOptionsRegion UsePassOptions OK');
+  if (r.regionOptions.RegionOffsetX?.label !== 'Offset X')
+    diffs.push(`RegionOffsetX label ${r.regionOptions.RegionOffsetX?.label}`);
+  else notes.push('RenderOptionsRegion Region* labels OK');
+}
+// Softimage RenderRegionCreate defaults from commands_full (normalized fractions, not HWND px)
+if (!r.regionCreate?.hasCreate) diffs.push('RenderRegionCreate missing');
+else if (r.regionCreate.err) diffs.push(`RenderRegionCreate ${r.regionCreate.err}`);
+else {
+  const a = r.regionCreate.after;
+  if (!a?.open) diffs.push('RenderRegionCreate did not open region');
+  if (Math.abs(Number(a?.left) - 0.1) > 1e-5 || Math.abs(Number(a?.right) - 0.9) > 1e-5)
+    diffs.push(`RenderRegionCreate L/R ${a?.left}/${a?.right} want 0.1/0.9`);
+  else notes.push('RenderRegionCreate LRTB Softimage defaults OK');
+}
+if (!r.regionCreate?.hasClose) diffs.push('RenderRegionClose missing');
+else notes.push('RenderRegionClose OK');
+if (!r.regionCreate?.hasSwitchToolbar) diffs.push('SwitchToolbar missing');
+else notes.push('SwitchToolbar OK');
+
+// Softimage Render toolbar OM scripting-name inventory
+const omAudit = r.renderToolbarOm;
+if (!omAudit) diffs.push('renderToolbarOm audit missing');
+else if (omAudit.missing?.length) diffs.push(`renderToolbarOm missing ${omAudit.missing.join(',')}`);
+else notes.push(`renderToolbarOm scripting names OK n=${omAudit.presentCount}`);
+if (omAudit?.hwndCrop !== 'LOCK') diffs.push(`hwndCrop status ${omAudit?.hwndCrop}`);
+else notes.push('region HWND crop chrome LOCK');
+
 // Attested region-adjacent: Scene Render Options image size (also in deepen)
 const deepenW = deepen?.region_like_params?.imagewidth ?? deepen?.render_options?.params_map?.imagewidth;
 if (deepenW != null && Number(r.roMap.imagewidth) !== Number(deepenW))
   diffs.push(`deepen imagewidth Direct=${r.roMap.imagewidth} PC=${deepenW}`);
 else if (deepenW != null) notes.push(`deepen region_like imagewidth=${deepenW}`);
 
-console.log(JSON.stringify({ ok: diffs.length === 0, diffs, notes: notes.slice(0, 60), softimage: prefs.meta?.softimage }, null, 2));
+console.log(JSON.stringify({ ok: diffs.length === 0, diffs, notes: notes.slice(0, 80), softimage: prefs.meta?.softimage }, null, 2));
 process.exit(diffs.length ? 1 : 0);

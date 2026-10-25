@@ -4,6 +4,7 @@
 import { App } from '../core/commands';
 import { Null, Property, X3DObject } from '../core/scene';
 import { bool, num, str } from '../core/params';
+import { getSiRenderRegion } from './renderToolbarOm';
 
 const addObject = (app: App, obj: X3DObject, parent?: X3DObject | null) => {
   const p = parent ?? app.scene.root;
@@ -83,19 +84,19 @@ export function registerModuleToolbarCommands(app: App) {
     undoable: false, execute() { openView('Texture Editor'); },
   });
 
-  // ——— Render region ———
-  const rr = (window as any).__siRenderRegion ?? ((window as any).__siRenderRegion = { visible: true, track: false, refresh: 'Interactive', display: 'RGBA' });
+  // ——— Render region (Softimage scripting names; HWND crop LOCK — see renderToolbarOm) ———
+  const rr = getSiRenderRegion();
   app.register({ name: 'RenderRegionTool', label: 'Render Region Tool', category: 'Rendering', args: [{ name: 'Clsid', default: '' }], undoable: false, execute: (app) => stubTool(app, 'Render Region Tool') });
   app.register({ name: 'RenderRegionSave', label: 'Save Render Region To File', category: 'Rendering', args: [{ name: 'FileName', default: null }], undoable: false, execute(app, a) { app.logMsg('info', `Render region save${a.FileName ? ': ' + a.FileName : ' (pick a path in Softimage)'}`); } });
-  app.register({ name: 'RenderRegionRefresh', label: 'Refresh Render Region', category: 'Rendering', args: [], undoable: false, execute(app) { app.logMsg('info', 'Render region refreshed'); app.events.emit('frame'); } });
-  app.register({ name: 'RenderRegionToggleVisibility', label: 'Show/Hide Render Region', category: 'Rendering', args: [], undoable: false, execute(app) { rr.visible = !rr.visible; app.logMsg('info', `Render region ${rr.visible ? 'shown' : 'hidden'}`); } });
-  app.register({ name: 'RenderRegionToggleSelectionTracking', label: 'Toggle Selection Tracking for Render Region', category: 'Rendering', args: [], undoable: false, execute(app) { rr.track = !rr.track; app.logMsg('info', `Render region track selection ${rr.track ? 'ON' : 'OFF'}`); } });
+  app.register({ name: 'RenderRegionRefresh', label: 'Refresh Render Region', category: 'Rendering', args: [{ name: 'Viewport', default: '' }], undoable: false, execute(app) { app.logMsg('info', 'Render region refreshed'); app.events.emit('frame'); } });
+  app.register({ name: 'RenderRegionToggleVisibility', label: 'Show/Hide Render Region', category: 'Rendering', args: [{ name: 'Viewport', default: '' }], undoable: false, execute(app) { rr.visible = !rr.visible; app.logMsg('info', `Render region ${rr.visible ? 'shown' : 'hidden'}`); } });
+  app.register({ name: 'RenderRegionToggleSelectionTracking', label: 'Toggle Selection Tracking for Render Region', category: 'Rendering', args: [{ name: 'Viewport', default: '' }], undoable: false, execute(app) { rr.track = !rr.track; app.logMsg('info', `Render region track selection ${rr.track ? 'ON' : 'OFF'}`); } });
   app.register({
     name: 'RenderRegionSetRefreshMode', label: 'Set Refresh Mode for Render Region', category: 'Rendering',
     args: [{ name: 'Viewport', default: '' }, { name: 'RefreshMode', default: '' }], undoable: false,
     execute(app, a) {
       const m = String(a.RefreshMode || '');
-      rr.refresh = m.includes('Manual') ? 'Manual' : m.includes('CTRS') ? 'Camera/Time/Region' : 'Interactive';
+      rr.refresh = m.includes('Manual') ? 'Manual' : (m.includes('CTRS') || m.includes('Camera')) ? 'Camera/Time/Region' : 'Interactive';
       app.logMsg('info', `Render region refresh: ${rr.refresh}`);
     },
   });
@@ -110,7 +111,16 @@ export function registerModuleToolbarCommands(app: App) {
       app.logMsg('info', `Render region display: ${rr.display}`);
     },
   });
-  app.register({ name: 'InspectViewportRenderRegionOptions', label: 'Inspect Viewport Render Region Options', category: 'Rendering', args: [], undoable: false, execute(app) { app.logMsg('info', `Render region options: visible=${rr.visible} track=${rr.track} refresh=${rr.refresh} display=${rr.display}`); } });
+  app.register({
+    name: 'InspectViewportRenderRegionOptions', label: 'Inspect Viewport Render Region Options', category: 'Rendering',
+    args: [{ name: 'View', default: '' }], undoable: false,
+    execute(app) {
+      const ro = app.scene.renderOptionsRegion;
+      const map = ro ? Object.fromEntries(ro.params.map(p => [p.name, p.value])) : {};
+      app.logMsg('info', `Render region options: visible=${rr.visible} track=${rr.track} refresh=${rr.refresh} display=${rr.display} channel=${rr.channel} open=${rr.open} UsePassOptions=${map.UsePassOptions} (HWND crop LOCK)`);
+      if (ro) app.select([ro]);
+    },
+  });
 
   // ——— Passes / render ———
   const passName = (a: any) => a.Name || String(a.PresetObj || 'Pass').replace(/_Pass$/i, '').replace(/_/g, ' ') || 'Pass';
