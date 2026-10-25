@@ -10,7 +10,7 @@ Distribution is **binary-only / closed source**: the NSIS installer does not gra
 AfterImage-<version>-setup.exe
 ```
 
-Example for the current `package.json` version: **`AfterImage-1.0.12-setup.exe`**.
+Example for the current `package.json` version: **`AfterImage-1.0.13-setup.exe`**.
 
 ## Local / CI build (Windows)
 
@@ -41,7 +41,7 @@ Workflow: [`.github/workflows/build-windows.yml`](../.github/workflows/build-win
 Triggers:
 
 - **Manual:** Actions → *Build AfterImage Windows installer* → *Run workflow*
-- **Tag:** `git tag v1.0.12 && git push origin v1.0.12` — builds and attaches the exe to the GitHub Release for that tag
+- **Tag:** `git tag v1.0.13 && git push origin v1.0.13` — builds and attaches the exe to the GitHub Release for that tag
 - **Release published:** same attach step
 
 Download:
