@@ -93,7 +93,7 @@ Standard cubic Bezier Horner form. Matches dump note: **mid-segment samples use 
 
 ## Softimage Direct
 
-If `compare_fcurves` stays green on dense handled cases, treat formula as **confirmed** - no invent. Use this note when adding new handled / asymmetric / auto-tangent cases. Residual DIFF -> re-check time-parameter solve (`FUN_180021f90`), not linear `u=(t-t0)/(t1-t0)`.
+Harness [#48](https://github.com/Shredder565/Softimage-Direct/pull/48) / `compare_fcurves` stays green on dense handled cases vs PC goldens. Direct `FCurve.hermite` already targets **next-key Left** as segment end and key.Value at exact times - matching dump/RE note. Softimage binary path is cubic Bezier with non-uniform time->u (`FUN_180021f90`); treat formula as **confirmed** - no invent rewrite while goldens stay OK. Residual DIFF on new cases -> re-check time-parameter solve, not linear `u=(t-t0)/(t1-t0)`.
 
 ## Related dumps
 
