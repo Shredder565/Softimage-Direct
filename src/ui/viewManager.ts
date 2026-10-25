@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import { App } from '../core/commands';
 import { X3DObject, MoveComponentOperator, geomPoints, Model, threeOrder } from '../core/scene';
+import { installFrostDisplay } from '../frost/display';
 import { ChainRoot, Bone } from '../core/scene2';
 import { meshEdges, edgeKey } from '../core/topology';
 import { catmullClark, dooSabin, loopSubdivide } from '../core/topology2';
@@ -517,6 +518,8 @@ export function viewManager(app: App, host: HTMLElement) {
     for (const o of app.scene.allObjects()) { if (!o.visible) continue; const v = new THREE.Vector3().setFromMatrixPosition(o.globalMatrix()).project(vp.camera); if (v.z > 1) continue; const s = document.createElement('span'); s.className = 'vp-name'; s.textContent = o.name; s.style.left = ((v.x + 1) / 2) * r.w + 4 + 'px'; s.style.top = ((1 - v.y) / 2) * r.h - 6 + 'px'; host.appendChild(s); }
   };
   const XT = installViewExtras({ app, vps: vps as any, renderer, scene, get grid() { return grid; }, set grid(g) { grid = g; }, axes: axesH, defaultLights, root, rect, prepCam: prepCam as any, orbit, switchView: switchView as any, frameBox: (o, c) => frameBox(o, c), setDisplay: setDisplay as any, needs: () => { needs = true; }, active: () => active, setActive: (i) => { active = i; }, vpAt: (e) => vpAt(e) });
+  // FROST P0: particle point cloud overlay (CPU evaluator → Three.js Points)
+  installFrostDisplay(app, scene, () => { needs = true; });
   const frameLoop = () => {
     requestAnimationFrame(frameLoop);
     if (!needs) return; needs = false;

@@ -72,7 +72,7 @@ export class App {
   log: { kind: 'cmd' | 'info' | 'error'; text: string }[] = [];
   undoStack: UndoEntry[] = [];
   redoStack: UndoEntry[] = [];
-  module: 'Model' | 'Animate' | 'Render' | 'Simulate' | 'ICE' | 'Hair' = 'Model';
+  module: 'Model' | 'Animate' | 'Render' | 'Simulate' | 'ICE' | 'Hair' | 'FROST' = 'Model';
   autoInspect = true;
   autoKey = false;
   /** PPG recycle flag (property editor toolbar): reuse the floating editor for the next inspected node. */

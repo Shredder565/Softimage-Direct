@@ -11,6 +11,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
+    "test:frost": "node tools/frost_eval_check.mjs",
     "electron:dev": "ELECTRON_DEV=1 electron .",
     "dist": "npm run build && electron-builder --win nsis",
     "build:win": "npm run build && electron-builder --win nsis --x64",
