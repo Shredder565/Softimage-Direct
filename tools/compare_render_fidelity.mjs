@@ -169,18 +169,22 @@ const r = await page.evaluate(() => {
   };
 
   const beyondOk = ['Phong', 'Blinn', 'Lambert', 'Constant', 'Cooktorrance', 'Strauss', 'Anisotropic'];
-  // unlock render.mia_architectural_metallic — absolute .Preset + Softimage aliases
+  // unlock render.mia_architectural_metallic + Car_Paint — absolute .Preset + Softimage aliases
   const miaAbs = 'C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\DSPresets\\Shaders\\Material\\mental images\\mia_Material.Preset';
+  const carPaintAbs = 'C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\DSPresets\\Shaders\\Material\\mental images\\Car_Paint.Preset';
   const miaUnlockPresets = [
     'Architectural',
     'mia_Material',
     'mia_Material_MultiOutput',
     'mi_Metallic_Paint',
+    'Car Paint',
+    'Car_Paint',
     miaAbs,
+    carPaintAbs,
     '$XSI_DSPRESETS\\Shaders\\Material\\mental images\\mia_Material.Preset',
+    '$XSI_DSPRESETS\\Shaders\\Material\\mental images\\Car_Paint.Preset',
   ];
-  // Still LOCK invent — Car Paint unproven under unlock dump
-  const beyondFail = ['Car Paint', 'Car_Paint'];
+  const beyondFail = [];
   const beyondSnaps = {};
   for (const p of beyondOk) beyondSnaps[p] = snapShader(p);
   const miaSnaps = {};
@@ -568,6 +572,8 @@ const miaWant = {
   mia_Material: 'mia_Material',
   mia_Material_MultiOutput: 'mia_Material_MultiOutput',
   mi_Metallic_Paint: 'mi_Metallic_Paint',
+  'Car Paint': 'Car_Paint',
+  Car_Paint: 'Car_Paint',
 };
 for (const [label, wantType] of Object.entries(miaWant)) {
   const snap = r.miaSnaps?.[label];
@@ -586,20 +592,17 @@ for (const [label, wantType] of Object.entries(miaWant)) {
   }
   notes.push(`mia unlock ${label} OK type=${snap.shType} n=${nParams}`);
 }
-// Absolute / $XSI_DSPRESETS paths must resolve to mia_Material
+// Absolute / $XSI_DSPRESETS paths must resolve to dump-proven shader ScriptName
 for (const key of Object.keys(r.miaSnaps || {})) {
   if (!/[\\/]|\.Preset|\$XSI_DSPRESETS/i.test(key)) continue;
   const snap = r.miaSnaps[key];
-  if (snap?.err || snap?.shType !== 'mia_Material') diffs.push(`mia abs path ${key} → ${snap?.shType} err=${snap?.err}`);
-  else notes.push(`mia abs PresetObj OK → mia_Material`);
+  const want = /Car_Paint\.Preset/i.test(key) ? 'Car_Paint' : 'mia_Material';
+  if (snap?.err || snap?.shType !== want) diffs.push(`mia abs path ${key} → ${snap?.shType} want ${want} err=${snap?.err}`);
+  else notes.push(`mia abs PresetObj OK → ${want}`);
 }
-// LOCK invent: Car Paint still FAIL / unproven
-for (const label of ['Car Paint', 'Car_Paint']) {
-  const snap = r.lockSnaps?.[label];
-  if (snap?.canRun) diffs.push(`LOCK invent ${label} canRun true`);
-  if (snap && !snap.err && snap.shType) diffs.push(`LOCK invent ${label} applied type=${snap.shType}`);
-  else notes.push(`LOCK invent ${label}`);
-}
+// Car Paint LOCK carve-out cleared — closer95 absolute SIApplyShader + model nested OM
+if (Object.keys(r.lockSnaps || {}).length) diffs.push(`unexpected lockSnaps ${Object.keys(r.lockSnaps)}`);
+else notes.push('Car Paint LOCK carve-out cleared');
 if (pcFail?.length) notes.push(`PC FAIL (short-name era) ${pcFail.join(',')}`);
 notes.push(`beyond dump ${beyondPath}`);
 notes.push(`mia unlock dump ${miaUnlockPath}`);

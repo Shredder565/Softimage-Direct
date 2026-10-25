@@ -1,24 +1,24 @@
 {
-  "_comment": "Unlock render.mia_architectural_metallic \u2014 absolute .Preset + SIApplyShader nested OM only. Short names FAIL stay LOCK invent.",
+  "_comment": "Unlock render.mia_architectural_metallic + Car_Paint \u2014 absolute .Preset + SIApplyShader nested OM only. Short names FAIL under headless stay unproven as Softimage Apply path; Softimage menu aliases + absolute path UNLOCK.",
   "lock_id": "render.mia_architectural_metallic",
   "status": "UNLOCK_CANDIDATE",
   "softimage": "13.2.163.0",
-  "source": "unlock_render_mia_probe.json",
-  "apply_path": "absolute .Preset + SIApplyShader (attempt i=1)",
+  "source": "unlock_render_mia_probe.json + closer95_batch.json (Car_Paint SIApplyShader) + si_model_dump.json (Car_Paint nested OM)",
+  "apply_path": "absolute .Preset + SIApplyShader",
   "unlocked_shaders": [
     "mia_Material",
     "mia_Material_MultiOutput",
-    "mi_Metallic_Paint"
+    "mi_Metallic_Paint",
+    "Car_Paint"
   ],
   "softimage_aliases": {
     "Architectural": "mia_Material",
     "Architectural_MO": "mia_Material_MultiOutput",
-    "MetallicPaint": "mi_Metallic_Paint"
+    "MetallicPaint": "mi_Metallic_Paint",
+    "Car Paint": "Car_Paint",
+    "Car_Paint": "Car_Paint"
   },
-  "still_lock_short_or_unproven": [
-    "Car Paint",
-    "Car_Paint"
-  ],
+  "still_lock_short_or_unproven": [],
   "presets": {
     "mia_Material": {
       "shader_name": "mia_Material",
@@ -1675,6 +1675,351 @@
           "label": "flake_normal"
         }
       ]
+    },
+    "Car_Paint": {
+      "shader_name": "Car_Paint",
+      "classname": "Shader",
+      "progid": "Softimage.mi_car_paint_phen.1.0",
+      "absolute_preset": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\DSPresets\\Shaders\\Material\\mental images\\Car_Paint.Preset",
+      "param_count": 39,
+      "defs": [
+        {
+          "sn": "name",
+          "type": "string",
+          "value": "Car_Paint",
+          "label": "name"
+        },
+        {
+          "sn": "ambient",
+          "type": "color",
+          "value": [
+            0,
+            0,
+            0
+          ],
+          "value_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "label": "ambient"
+        },
+        {
+          "sn": "base_color",
+          "type": "color",
+          "value": [
+            0.800000011920929,
+            0.10000000149011612,
+            0
+          ],
+          "value_rgba": [
+            0.800000011920929,
+            0.10000000149011612,
+            0,
+            0
+          ],
+          "label": "base_color"
+        },
+        {
+          "sn": "edge_color",
+          "type": "color",
+          "value": [
+            0,
+            0,
+            0
+          ],
+          "value_rgba": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "label": "edge_color"
+        },
+        {
+          "sn": "edge_color_bias",
+          "type": "int",
+          "value": 1,
+          "label": "edge_color_bias"
+        },
+        {
+          "sn": "lit_color",
+          "type": "color",
+          "value": [
+            0.699999988079071,
+            0.10000000149011612,
+            0
+          ],
+          "value_rgba": [
+            0.699999988079071,
+            0.10000000149011612,
+            0,
+            0
+          ],
+          "label": "lit_color"
+        },
+        {
+          "sn": "lit_color_bias",
+          "type": "int",
+          "value": 5,
+          "label": "lit_color_bias"
+        },
+        {
+          "sn": "diffuse_weight",
+          "type": "int",
+          "value": 1,
+          "label": "diffuse_weight"
+        },
+        {
+          "sn": "diffuse_bias",
+          "type": "int",
+          "value": 1,
+          "label": "diffuse_bias"
+        },
+        {
+          "sn": "irradiance_weight",
+          "type": "int",
+          "value": 1,
+          "label": "irradiance_weight"
+        },
+        {
+          "sn": "spec",
+          "type": "color",
+          "value": [
+            1,
+            1,
+            1
+          ],
+          "value_rgba": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "label": "spec"
+        },
+        {
+          "sn": "spec_weight",
+          "type": "double",
+          "value": 0.30000001192092896,
+          "label": "spec_weight"
+        },
+        {
+          "sn": "spec_exp",
+          "type": "int",
+          "value": 45,
+          "label": "spec_exp"
+        },
+        {
+          "sn": "spec_sec",
+          "type": "color",
+          "value": [
+            1,
+            1,
+            1
+          ],
+          "value_rgba": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "label": "spec_sec"
+        },
+        {
+          "sn": "spec_sec_weight",
+          "type": "double",
+          "value": 0.30000001192092896,
+          "label": "spec_sec_weight"
+        },
+        {
+          "sn": "spec_sec_exp",
+          "type": "int",
+          "value": 20,
+          "label": "spec_sec_exp"
+        },
+        {
+          "sn": "spec_glazing",
+          "type": "bool",
+          "value": true,
+          "label": "spec_glazing"
+        },
+        {
+          "sn": "flake_color",
+          "type": "color",
+          "value": [
+            1,
+            1,
+            1
+          ],
+          "value_rgba": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "label": "flake_color"
+        },
+        {
+          "sn": "flake_weight",
+          "type": "int",
+          "value": 1,
+          "label": "flake_weight"
+        },
+        {
+          "sn": "flake_reflect",
+          "type": "int",
+          "value": 0,
+          "label": "flake_reflect"
+        },
+        {
+          "sn": "flake_exp",
+          "type": "int",
+          "value": 45,
+          "label": "flake_exp"
+        },
+        {
+          "sn": "flake_density",
+          "type": "double",
+          "value": 0.5,
+          "label": "flake_density"
+        },
+        {
+          "sn": "flake_decay",
+          "type": "int",
+          "value": 0,
+          "label": "flake_decay"
+        },
+        {
+          "sn": "flake_strength",
+          "type": "double",
+          "value": 0.5,
+          "label": "flake_strength"
+        },
+        {
+          "sn": "flake_scale",
+          "type": "double",
+          "value": 0.0010000000474974513,
+          "label": "flake_scale"
+        },
+        {
+          "sn": "reflection_color",
+          "type": "color",
+          "value": [
+            1,
+            1,
+            1
+          ],
+          "value_rgba": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "label": "reflection_color"
+        },
+        {
+          "sn": "edge_factor",
+          "type": "int",
+          "value": 7,
+          "label": "edge_factor"
+        },
+        {
+          "sn": "reflection_edge_weight",
+          "type": "double",
+          "value": 0.10000000149011612,
+          "label": "reflection_edge_weight"
+        },
+        {
+          "sn": "reflection_base_weight",
+          "type": "double",
+          "value": 0.10000000149011612,
+          "label": "reflection_base_weight"
+        },
+        {
+          "sn": "samples",
+          "type": "int",
+          "value": 0,
+          "label": "samples"
+        },
+        {
+          "sn": "glossy_spread",
+          "type": "int",
+          "value": 0,
+          "label": "glossy_spread"
+        },
+        {
+          "sn": "max_distance",
+          "type": "int",
+          "value": 0,
+          "label": "max_distance"
+        },
+        {
+          "sn": "single_env_sample",
+          "type": "bool",
+          "value": true,
+          "label": "single_env_sample"
+        },
+        {
+          "sn": "dirt_color",
+          "type": "color",
+          "value": [
+            0.30000001192092896,
+            0.30000001192092896,
+            0.30000001192092896
+          ],
+          "value_rgba": [
+            0.30000001192092896,
+            0.30000001192092896,
+            0.30000001192092896,
+            0
+          ],
+          "label": "dirt_color"
+        },
+        {
+          "sn": "dirt_weight",
+          "type": "int",
+          "value": 0,
+          "label": "dirt_weight"
+        },
+        {
+          "sn": "global_weight",
+          "type": "int",
+          "value": 1,
+          "label": "global_weight"
+        },
+        {
+          "sn": "mode",
+          "type": "int",
+          "value": 4,
+          "label": "mode"
+        },
+        {
+          "sn": "lights",
+          "type": "null",
+          "value": null,
+          "label": "lights"
+        },
+        {
+          "sn": "out",
+          "type": "null",
+          "value": null,
+          "label": "out"
+        }
+      ]
     }
+  },
+  "car_paint_closer95": {
+    "status": "DUMP_READY",
+    "note": "SIApplyShader nested OM attested for C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\DSPresets\\Shaders\\Material\\mental images\\Car_Paint.Preset",
+    "absolute_preset_ok": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\DSPresets\\Shaders\\Material\\mental images\\Car_Paint.Preset",
+    "shaders": [
+      "Car_Paint"
+    ],
+    "short_name_fail": [
+      "Car_Paint",
+      "Materials\\mental images\\Car_Paint"
+    ]
   }
 }
