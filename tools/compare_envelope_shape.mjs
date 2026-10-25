@@ -121,35 +121,71 @@ if (PC_DUMP) {
   pcNote = `fixture ${FIXTURE}`;
 }
 // Overnight ApplyFlexEnv weight probe (si_flexenv_weights.json)
-// Desktop deep: ApplyFlexEnv OK + EnvelopeWeight path, but weight_table still unreadable (LOCK).
+// Desktop VBArray: envelopop.Weights.Array → numeric Softimage % weights (0–100). Earlier deep/pass4 null LOCK superseded.
 if (FLEXENV_WEIGHTS) {
   const fw = JSON.parse(fs.readFileSync(FLEXENV_WEIGHTS, 'utf8'));
   pcNote += `; flexenv_weights ${FLEXENV_WEIGHTS}`;
+  if (fw.meta?.mode) pcNote += ` (${fw.meta.mode})`;
   const flex = fw.steps?.find?.(s => s.name === 'ApplyFlexEnv');
   const apply = fw.apply;
-  const wtOk = Array.isArray(fw.weight_table) && fw.weight_table.some(row => Array.isArray(row?.weights) && row.weights.length);
+  const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
+  const wtRows = Array.isArray(fw.weight_table) ? fw.weight_table : [];
+  const wtOk = wtRows.some(row => Array.isArray(row?.weights) && row.weights.some(isNum));
+  const arr2d = Array.isArray(fw.weights_array_2d) ? fw.weights_array_2d : [];
+  const arr2dOk = arr2d.some(row => Array.isArray(row) && row.some(isNum));
   if (flex && flex.ok === false) {
     expectedGaps.push(`PC si_flexenv_weights ApplyFlexEnv failed (${(flex.attempts || []).length} attempts)`);
   }
   if (apply && apply.ok === true) {
     pcNote += `; PC ApplyFlexEnv OK → ${apply.result}`;
     const env = fw.envelope || {};
-    if (env.classname === 'EnvelopeWeight') pcNote += `; EnvelopeWeight ${env.property || ''}`;
-    if (env.envelopop?.type === 'envelopop') pcNote += '; envelopop present';
+    const ewClass = env.classname || env.envelope_weight_classname;
+    const ewPath = env.property || env.envelope_weight;
+    if (ewClass === 'EnvelopeWeight' || ewPath) pcNote += `; EnvelopeWeight ${ewPath || ''}`;
+    if (env.envelopop?.type === 'envelopop' || env.envelopop_classname === 'Envelope' || env.envelopop) {
+      pcNote += '; envelopop present';
+    }
     if (Array.isArray(fw.deformers) && fw.deformers.length) pcNote += `; deformers [${fw.deformers.join(',')}]`;
-    // Softimage applied envelope; Direct must still create one
     if (!(r.envOk)) diffs.push('PC ApplyFlexEnv OK but Direct ApplyFlexEnv failed');
   }
   if (fw.errors?.length) expectedGaps.push(`PC si_flexenv_weights errors: ${fw.errors.join('; ')}`);
-  if (wtOk && !(r.weightSum != null)) {
-    diffs.push('PC flexenv weight_table has weights but Direct weightSum null');
-  }
-  if (!wtOk) {
-    // Desktop deep: rows exist with null weights + COM read errors — still LOCK
-    const rows = Array.isArray(fw.weight_table) ? fw.weight_table.length : 0;
-    const sampleErr = fw.weight_table?.find?.(row => row?.err0 || row?.err1)?.err0
-      || fw.weight_table?.find?.(row => row?.err1)?.err1
-      || 'unreadable';
+  if (wtOk || arr2dOk) {
+    // Softimage VBArray WIRE — numeric % weights (attested cube: [0,100,0] per point → bone)
+    const sample = (wtRows.find(row => Array.isArray(row?.weights) && row.weights.some(isNum))?.weights)
+      || arr2d.find(row => Array.isArray(row) && row.some(isNum));
+    pcNote += `; PC numeric weights WIRE sample=${JSON.stringify(sample)}`;
+    const vb = fw.vbarray_info || {};
+    if (vb.n_deformers != null && vb.n_points != null) {
+      pcNote += `; VBArray ${vb.n_deformers}×${vb.n_points}`;
+      if (fw.deformers?.length && vb.n_deformers !== fw.deformers.length) {
+        diffs.push(`PC vbarray n_deformers ${vb.n_deformers} != deformers ${fw.deformers.length}`);
+      }
+      if (wtRows.length && vb.n_points !== wtRows.length) {
+        diffs.push(`PC vbarray n_points ${vb.n_points} != weight_table ${wtRows.length}`);
+      }
+    }
+    const acc = fw.acceptance || {};
+    if (acc.has_nonzero === true) pcNote += '; acceptance has_nonzero';
+    if (acc.has_nonzero === false) diffs.push('PC acceptance.has_nonzero false with numeric table');
+    // Softimage % scale: each point weights sum to ~100 when fully assigned
+    const row0 = wtRows.find(row => Array.isArray(row?.weights) && row.weights.every(isNum));
+    if (row0) {
+      const sum = row0.weights.reduce((s, x) => s + x, 0);
+      if (Math.abs(sum - 100) > 1e-3 && Math.abs(sum - 1) > 1e-3) {
+        diffs.push(`PC Softimage weight row sum ${sum} (expected ~100% or ~1)`);
+      } else {
+        pcNote += `; PC row0 sum=${sum}`;
+      }
+    }
+    // Direct keeps unit-normalized weights (0–1); Softimage dump is % — both must exist
+    if (!(r.weightSum != null)) {
+      diffs.push('PC flexenv numeric weights present but Direct weightSum null');
+    }
+  } else {
+    const rows = wtRows.length;
+    const sampleErr = wtRows.find?.(row => row?.err0 || row?.err1)?.err0
+      || wtRows.find?.(row => row?.err1)?.err1
+      || (arr2d.length ? 'Weights.Array all null' : 'unreadable');
     expectedGaps.push(`PC si_flexenv_weights: ${rows} rows weights null (LOCK — ${sampleErr})`);
   }
   if (expectedGaps.length) pcNote += `; expected gaps: ${[...new Set(expectedGaps)].join('; ')}`;

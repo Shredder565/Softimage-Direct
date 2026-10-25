@@ -13,7 +13,7 @@ Softimage-pc progress: `docs/rea-ghidra-residual-progress.md`.
 | A5 | Model | PolyReduce QEM internals | `topologyop.dll` mesh-eval pin | **LOCK** (docs) unless DIFF | [polyreduce-rename-map.md](./polyreduce-rename-map.md) | rename map only |
 | B1 | Animate | Mixer weight / transition | weight=`actionclip.weight` + `siWeightPresets`; prefs=**display** | **WIRE** (this PR) | [mixer-clip-transitions.md](./mixer-clip-transitions.md) | SetDefaultWeight + FCurve sample |
 | B2 | Animate | PC mixer transitions | Desktop pass3 TW1 WIRE (`type=2`); empty without clip sel still LOCK | **WIRE** (TW1) / LOCK (no sel) | [mixer-clip-transitions.md](./mixer-clip-transitions.md) | AddTWTransition → TW# |
-| B3 | Animate | ApplyFlexEnv weights / Mode | Desktop deep: Apply OK + EnvelopeWeight; weight_table null | LOCK weights / **WIRE Mode** | [flexenv-headless-lock.md](./flexenv-headless-lock.md) | Mode SPDL fix; wait weight API |
+| B3 | Animate | ApplyFlexEnv weights / Mode | Desktop VBArray: numeric % Weights.Array | **WIRE** weights + Mode | [flexenv-headless-lock.md](./flexenv-headless-lock.md) | VBArray golden; Direct unit sum |
 | B4 | Animate | Fcurve handled-spline | **`gk10` GkStdFCurve** | **DONE** | [fcurve-handled-spline.md](./fcurve-handled-spline.md) | new cases only |
 | C1 | UI | MCP live HWND Enabled | GetEnabled + HWND paste | **LOCK** live; CanBeModified **WIRE** portable | [getenabled-deepen.md](./getenabled-deepen.md) | PutEnabled gate only |
 | C2–C6 | UI | PPG GDI / PE 394 / Send-to / ICE anchors | see [ui-lock-binary-pins.md](./ui-lock-binary-pins.md) | **LOCK** | binary pins | no invent |
