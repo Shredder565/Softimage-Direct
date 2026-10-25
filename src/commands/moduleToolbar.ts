@@ -26,10 +26,17 @@ const addNamedProp = (app: App, objs: X3DObject[], preset: string, type: string,
 
 const openView = (name: string) => window.dispatchEvent(new CustomEvent('openview', { detail: { name } }));
 
-const stubTool = (app: App, label: string) => {
-  app.logMsg('info', `${label}: tool armed (viewport interaction stub)`);
-  return null;
-};
+  /** Softimage Manipulation tools — harvest/commands_full: "Activate the … tool" + optional Clsid. */
+  const armTool = (app: App, label: string, clsid?: string) => {
+    const A = app as any;
+    A.armedTool = { label, clsid: clsid || null };
+    app.logMsg('info', clsid
+      ? `${label}: activated (Softimage Clsid ${clsid})`
+      : `${label}: activated`);
+    app.events.emit('selection');
+    return A.armedTool;
+  };
+  const stubTool = (app: App, label: string) => armTool(app, label);
 
 /** Softimage Render / Simulate / Hair leaves that were unmapped after PE menu import. */
 export function registerModuleToolbarCommands(app: App) {
@@ -263,11 +270,37 @@ export function registerModuleToolbarCommands(app: App) {
       return n;
     },
   });
+  // Softimage commands_full + harvest: MultiAttachRigidBodiesTool desc =
+  // "Attach rigid bodies together with a rigid constraint" (same as AttachRigidBodies).
+  // PE menu args Name=Hinge|BallSocket|Spring|Slider|Fixed — dump-attested, no invent solver.
   app.register({
     name: 'MultiAttachRigidBodiesTool', label: 'Multi Attach Rigid Bodies Tool', category: 'Simulation',
     args: [{ name: 'Name', default: 'Hinge' }, { name: 'Bodies', default: null }],
+    description: 'Attach rigid bodies together with a rigid constraint',
+    execute: (app, a) => app.run('AttachRigidBodies', { Name: a.Name || 'Hinge', Bodies: a.Bodies }),
+  });
+  // Softimage full-tab harvest: ExecuteCommand("Toggle Simulation", []) ACTIVE (no scene delta).
+  app.register({
+    name: 'Toggle Simulation',
+    label: 'Toggle Simulation',
+    category: 'Simulation',
+    args: [],
     undoable: false,
-    execute: (app, a) => stubTool(app, `Multi Constraint Tool (${a.Name || 'Hinge'})`),
+    execute(app) {
+      const A = app as any;
+      A.simulationEnabled = !A.simulationEnabled;
+      app.logMsg('info', `Simulation ${A.simulationEnabled ? 'ON' : 'OFF'}`);
+      app.events.emit('frame');
+      return A.simulationEnabled;
+    },
+  });
+  app.register({
+    name: 'ToggleSimulation',
+    label: 'Toggle Simulation',
+    category: 'Simulation',
+    args: [],
+    undoable: false,
+    execute: (app) => app.run('Toggle Simulation'),
   });
   app.register({
     name: 'CreateEnvironment', label: 'Create Environment', category: 'Simulation',
@@ -355,13 +388,21 @@ export function registerModuleToolbarCommands(app: App) {
   app.register({ name: 'ApplyHairDynamicsOp', label: 'Hair Dynamics Simulator', category: 'Simulation', args: [{ name: 'in_Objs', default: null }], execute: (app) => hairOn(app, 'Hair Dynamics') });
   app.register({ name: 'ApplyHairShader', label: 'Hair Shader', category: 'Rendering', args: [], execute: (app) => app.run('SIApplyShader', { PresetObj: 'Phong', InputObjs: app.selectedObjects }) });
 
+  // Softimage harvest/commands_full: Hair*Tool = "Activate the … tool" (+ Clsid from PE menu_commands).
+  // Brush stroke GDI stays LOCK (no invent). Operators ApplyHair* remain separate ACTIVE wires.
   const hairTools: [string, string][] = [
     ['HairScalingTool', 'Hair Scaling Tool'], ['HairBrushTool', 'Hair Brush'],
     ['HairRotateRootTool', 'Hair Rotate Root Tool'], ['HairRotateTipTool', 'Hair Rotate Tip Tool'], ['HairRotateCursorTool', 'Hair Rotate Cursor Tool'],
     ['HairStandOnEndTool', 'Hair Stand On End Tool'], ['HairPuffRootsTool', 'Hair Puff Roots'], ['HairClumpTool', 'Hair Clump Tool'],
   ];
   for (const [name, label] of hairTools) {
-    app.register({ name, label, category: 'Manipulation', args: [{ name: 'Clsid', default: '' }], undoable: false, execute: (app) => stubTool(app, label) });
+    app.register({
+      name, label, category: 'Manipulation',
+      args: [{ name: 'Clsid', default: '' }],
+      undoable: false,
+      description: `Activate the ${label}`,
+      execute: (app, a) => armTool(app, label, String(a.Clsid || '')),
+    });
   }
 
   // Modeling ApplyHair* ops from modules_hair.json / commands_full (tools above cover Scale/Rotate/Puff UI).

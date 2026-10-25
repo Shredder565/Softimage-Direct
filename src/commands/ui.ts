@@ -34,4 +34,36 @@ export function registerUICommands(app: App) {
   reg('OpenPreferences', 'Preferences', (_, a) => ev('openprefs', { page: a.Page }), [{ name: 'Page', default: '' }]);
   reg('SaveScene', 'Save Scene', () => ev('savescene'));
   reg('OpenScene', 'Open Scene', () => ev('openscene'));
+
+  // Softimage ToggleValue (commands_full Viewing) — harvest Hair ACTIVE via ScriptingName ToggleValue.
+  // ParamName e.g. objhair; toggles a boolean display flag bag (no invent camera bitmaps).
+  app.register({
+    name: 'ToggleValue',
+    label: 'ToggleValue',
+    category: 'Viewing',
+    args: [
+      { name: 'ParamName', default: '' },
+      { name: 'InputObjs', default: '' },
+    ],
+    undoable: false,
+    description: 'Toggle a boolean parameter value',
+    execute(app, a) {
+      const key = String(a.ParamName || '').split(',')[0].trim() || 'toggle';
+      const A = app as any;
+      A.viewToggles ??= {};
+      A.viewToggles[key] = !A.viewToggles[key];
+      app.logMsg('info', `ToggleValue ${key}: ${A.viewToggles[key] ? 'ON' : 'OFF'}`);
+      app.events.emit('frame');
+      return A.viewToggles[key];
+    },
+  });
+  // Softimage ExecuteCommand("Hair", []) ACTIVE → ToggleValue ParamName=objhair (commands_full).
+  app.register({
+    name: 'Hair',
+    label: 'Hair',
+    category: 'Viewing',
+    args: [],
+    undoable: false,
+    execute: (app) => app.run('ToggleValue', { ParamName: 'objhair', InputObjs: '*.camvis,Views.*.*.camvis' }),
+  });
 }

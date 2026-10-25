@@ -78,6 +78,20 @@ export function registerIceModuleCommands(app: App) {
     execute() { openView('ICE Tree'); },
   });
 
+  // Softimage full-tab harvest: CreateICENodeWizard [] ACTIVE (no scene delta; opens_hint null).
+  // No wizard PPG dump — register ACTIVE empty success; do not invent wizard body.
+  app.register({
+    name: 'CreateICENodeWizard',
+    label: 'Create ICE Node Wizard',
+    category: 'ICE',
+    args: [],
+    undoable: false,
+    execute(app) {
+      app.logMsg('info', 'CreateICENodeWizard (Softimage ACTIVE shell — wizard PPG LOCK / no invent)');
+      return null;
+    },
+  });
+
   app.register({
     name: 'CreateSimulatedICETree',
     label: 'Create Simulated ICETree',
