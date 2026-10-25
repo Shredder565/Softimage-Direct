@@ -26,6 +26,7 @@ import faceRobotTops from './data/si/face_robot_module_mcp_tops.json';
 import faceRobotStage1Chrome from './data/si/face_robot_stage1_chrome.json';
 import faceRobotControllerChrome from './data/si/face_robot_controller_chrome.json';
 import crowdfxModuleDump from './data/si/crowdfx_module.json';
+import crowdfxDesktopMenu from './data/si/crowdfx_desktop_menu.json';
 import { iceTree, renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
 import { faceRobotStage1View, faceRobotActPanelView } from './ui/faceRobotStage1';
 import { faceRobotControlPanelView } from './ui/faceRobotController';
@@ -364,12 +365,14 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
       menubarPresent: !!document.querySelector('#menubar .m[data-si-menu="Face Robot"]'),
       controlPanelHost: !!document.querySelector('.fr-controller'),
     },
-    // Softimage CrowdFX under ICE (PE 41644/41646/41645 + ICEOperators icecrowdfx* — compound leaves LOCK)
+    // Softimage CrowdFX under ICE (PE 41644/41646/41645 + Desktop ICE menubar tear-off DUMP_READY — compound leaves LOCK)
     crowdFxModule: {
       ...crowdFxModuleAudit(app),
       mcpTop: crowdfxModuleDump.mcp_top,
       mcpButtons: crowdfxModuleDump.buttons,
       peMenuIds: crowdfxModuleDump.pe_menu_ids,
+      desktopMenuDump: crowdfxDesktopMenu,
+      menubarIcePresent: !!document.querySelector('#menubar .m[data-si-menu="ICE"]'),
     },
     // Desktop polish #2 — manip / viewport prefs + default Camera pose (softimage-pc attested)
     viewportPolish: {

@@ -6,8 +6,24 @@
     "internal/softimage-pc-dumps/modules/modules_prefs_related.json",
     "internal/softimage-pc-dumps/menu_ice.txt",
     "internal/softimage-pc-dumps/sdk/siMenuAnchorPoints-render-simulate-ice-hair.txt",
-    "media/softimage-modules-tour/60-crowdfx-under-ice.png"
+    "media/softimage-modules-tour/60-crowdfx-under-ice.png",
+    "internal/softimage-pc-dumps/modules-gdi/deferred_gdi_harvest.json",
+    "media/softimage-modules-gdi/40-crowdfx-ice-menu.png",
+    "media/softimage-modules-gdi/40-crowdfx-desktop.png",
+    "src/data/si/crowdfx_desktop_menu.json"
   ],
+  "desktop_menu": {
+    "status": "DUMP_READY",
+    "host": "ICE",
+    "path": ["ICE", "CrowdFX"],
+    "buttons": ["Actors", "Crowd", "Simulation"],
+    "submenu_live": false,
+    "media": [
+      "media/softimage-modules-gdi/40-crowdfx-ice-menu.png",
+      "media/softimage-modules-gdi/40-crowdfx-desktop.png"
+    ],
+    "note": "Desktop menubar ICE tear-off reaches CrowdFX Actors/Crowd/Simulation; flyout compounds LOCK"
+  },
   "under_ice": true,
   "menu_id": 303,
   "module_select": "ICE",

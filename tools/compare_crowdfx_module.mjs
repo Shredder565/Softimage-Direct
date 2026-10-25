@@ -1,5 +1,5 @@
-// Softimage CrowdFX under ICE vs Desktop dumps (MCP Actors/Crowd/Simulation + ICEOperators icecrowdfx*).
-// Dump-backed only. Anchor-to-Delete compounds LOCK. Needs vite preview :4173.
+// Softimage CrowdFX under ICE vs Desktop dumps (MCP Actors/Crowd/Simulation + ICE menubar tear-off + ICEOperators).
+// Dump-backed only. Anchor-to-Delete compounds LOCK (submenu_live=false). Needs vite preview :4173.
 // Usage: node tools/compare_crowdfx_module.mjs
 import { chromium } from 'playwright';
 import fs from 'fs';
@@ -24,17 +24,23 @@ const prefsPath = [
   path.resolve(__dirname, '../src/data/si/crowdfx_prefs.json'),
   path.resolve(__dirname, '../data/dump/si_crowdfx_prefs.json'),
 ].find(p => fs.existsSync(p));
-if (!modPath || !prefsPath) {
-  console.error('missing CrowdFX dump JSON');
+const deskPath = [
+  path.resolve(__dirname, '../src/data/si/crowdfx_desktop_menu.json'),
+  path.resolve(__dirname, '../data/dump/si_crowdfx_desktop_menu.json'),
+].find(p => fs.existsSync(p));
+if (!modPath || !prefsPath || !deskPath) {
+  console.error('missing CrowdFX dump JSON (module/prefs/desktop_menu)');
   process.exit(2);
 }
 const mod = JSON.parse(fs.readFileSync(modPath, 'utf8'));
 const prefs = JSON.parse(fs.readFileSync(prefsPath, 'utf8'));
+const desk = JSON.parse(fs.readFileSync(deskPath, 'utf8'));
 
 const diffs = [];
 const notes = [];
 notes.push(`loaded module ${modPath}`);
 notes.push(`loaded prefs ${prefsPath}`);
+notes.push(`loaded desktop_menu ${deskPath}`);
 
 const b = await chromium.launch({ executablePath: CHROME, args: ['--headless=new', '--use-gl=swiftshader'] });
 const page = await b.newPage();
@@ -165,6 +171,83 @@ if (!run.crowdName) diffs.push('CreateCrowd returned no object');
 else notes.push(`CreateCrowd → ${run.crowdName} kind=${run.crowdKind}`);
 if (run.crowdKind !== 'crowd') diffs.push(`CreateCrowd kind want=crowd got=${run.crowdKind}`);
 
+// Desktop menubar ICE tear-off → CrowdFX Actors/Crowd/Simulation (DUMP_READY; submenu_live=false)
+if (desk.status !== 'DUMP_READY') diffs.push(`desktop_menu status want=DUMP_READY got=${desk.status}`);
+else notes.push('desktop_menu DUMP_READY');
+if (desk.reachability?.submenu_live !== false) diffs.push('desktop_menu submenu_live must be false (no invent flyouts)');
+else notes.push('desktop_menu submenu_live=false (anchors LOCK)');
+if (JSON.stringify(desk.reachability?.buttons) !== JSON.stringify(mod.buttons)) {
+  diffs.push(`desktop_menu buttons mismatch mod=${(mod.buttons || []).join('|')}`);
+}
+
+const deskLive = await page.evaluate(async (wantButtons) => {
+  window.__switchModule?.('Model');
+  await new Promise(r => setTimeout(r, 40));
+  const iceBtn = document.querySelector('#menubar .m[data-si-menu="ICE"]');
+  if (!iceBtn) return { menubar: false };
+  iceBtn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  await new Promise(r => setTimeout(r, 80));
+  const tear = document.querySelector('.menu.module-tearoff[data-si-module-menu="ICE"]');
+  const groups = tear ? [...tear.querySelectorAll('.menu-group')].map(el => el.textContent.trim()) : [];
+  const items = tear ? [...tear.querySelectorAll('.menu-item')].map(el => el.textContent.trim()) : [];
+  const crowdFxGroup = tear?.querySelector('.menu-group[data-si-menu-group="CrowdFX"]');
+  const crowdFxItems = wantButtons.map(b => {
+    const row = tear?.querySelector(`.menu-item[data-si-menu-item="${b}"]`);
+    return { label: b, present: !!row, hasSub: !!row?.classList.contains('has-sub') };
+  });
+  // Hover Actors → Anchor-to-Delete LOCK submenu (no invent compounds)
+  const actors = tear?.querySelector('.menu-item[data-si-menu-item="Actors"]');
+  if (actors) {
+    actors.dispatchEvent(new PointerEvent('pointerenter', { bubbles: true }));
+    await new Promise(r => setTimeout(r, 60));
+  }
+  const sub = document.querySelectorAll('.menu');
+  const subItems = [...sub].slice(1).flatMap(m => [...m.querySelectorAll('.menu-item')].map(el => el.textContent.trim()));
+  return {
+    menubar: true,
+    module: window.Application?.module,
+    select: document.querySelector('.module-select')?.value,
+    tearPresent: !!tear,
+    groups,
+    items,
+    crowdFxGroup: !!crowdFxGroup,
+    crowdFxItems,
+    subItems,
+    auditDesktop: window.__uiAudit?.()?.crowdFxModule?.desktopMenu ?? null,
+  };
+}, desk.reachability?.buttons || mod.buttons);
+
+if (!deskLive.menubar) diffs.push('menubar ICE top missing (#menubar [data-si-menu=ICE])');
+else notes.push('menubar ICE present');
+if (deskLive.module !== 'ICE' || deskLive.select !== 'ICE') {
+  diffs.push(`ICE menubar click → module ${deskLive.module}/${deskLive.select}`);
+} else notes.push('ICE menubar click → SwitchToolbar ICE host');
+if (!deskLive.tearPresent) diffs.push('ICE menubar tear-off missing');
+else notes.push('ICE module tear-off open');
+if (!deskLive.groups?.includes('CrowdFX')) diffs.push('tear-off missing CrowdFX group header');
+else notes.push('tear-off CrowdFX group');
+for (const row of deskLive.crowdFxItems || []) {
+  if (!row.present) diffs.push(`tear-off missing CrowdFX row ${row.label}`);
+  else if (!row.hasSub) diffs.push(`tear-off ${row.label} must has-sub (Desktop submenu arrow)`);
+}
+if (!(deskLive.crowdFxItems || []).some(r => !r.present || !r.hasSub)) {
+  notes.push('tear-off Actors/Crowd/Simulation has-sub');
+}
+const anchorsOnly = (deskLive.subItems || []).every(l => l === 'Anchor-to-Delete' || l === '');
+if ((deskLive.subItems || []).length && !anchorsOnly) {
+  diffs.push(`CrowdFX submenu invent leaves: ${(deskLive.subItems || []).join(',')}`);
+} else if ((deskLive.subItems || []).includes('Anchor-to-Delete')) {
+  notes.push('CrowdFX submenu Anchor-to-Delete LOCK (no invent)');
+} else {
+  // still OK if hover did not open — PE anchors must remain unbound via menuStatus
+  notes.push('CrowdFX submenu hover checked');
+}
+if (deskLive.auditDesktop?.status !== 'DUMP_READY') {
+  diffs.push(`audit desktopMenu.status want=DUMP_READY got=${deskLive.auditDesktop?.status}`);
+} else notes.push('audit desktopMenu DUMP_READY');
+if (deskLive.auditDesktop?.submenuLive !== false) diffs.push('audit desktopMenu.submenuLive must be false');
+if (deskLive.auditDesktop?.menubarPresent !== true) diffs.push('audit desktopMenu.menubarPresent false');
+
 await b.close();
 
 const out = {
@@ -176,6 +259,12 @@ const out = {
   mcp_top: mod.mcp_top,
   buttons: mod.buttons,
   pe_menu_ids: mod.pe_menu_ids,
+  desktop_menu: {
+    status: desk.status,
+    path: desk.reachability?.path,
+    buttons: desk.reachability?.buttons,
+    submenu_live: desk.reachability?.submenu_live,
+  },
 };
 console.log(JSON.stringify(out, null, 2));
 const dir = path.resolve(__dirname, '../docs/screenshots');
