@@ -1,0 +1,58 @@
+{
+  "_comment": "Softimage Face Robot module — PE MENU 300 + modules_facerobot.json Desktop tour. Not a SwitchToolbar Target (1–6); layout/enable + Act panel.",
+  "softimage": "13.2.163.0",
+  "source": [
+    "internal/softimage-pc-dumps/menu_facerobot.txt",
+    "internal/softimage-pc-dumps/modules/modules_facerobot.json",
+    "internal/softimage-pc-dumps/layouts/facerobot.xsily",
+    "media/softimage-modules-tour/50-facerobot-layout.png",
+    "data/commands_full.json ShowFaceRobotActPanel"
+  ],
+  "menu_id": 300,
+  "module_select": null,
+  "switch_toolbar_target": null,
+  "mcp_tops_expected": ["Face Robot"],
+  "tops": ["Face Robot"],
+  "menu_300": [
+    { "label": "Face Robot Layout", "id": 41585 },
+    { "label": "Softimage Layout", "id": 41584 },
+    { "separator": true },
+    { "label": "Face Robot Help...", "id": 41588 },
+    { "label": "Face Robot Wiki...", "id": 41587 },
+    { "separator": true },
+    { "label": "Enable Face Robot", "id": 41590 }
+  ],
+  "switch_commands": {
+    "Face Robot Layout": { "execute_ok": true, "commands_found": false },
+    "Softimage Layout": { "execute_ok": true, "commands_found": false },
+    "Enable Face Robot": { "execute_ok": true, "commands_found": false },
+    "Disable Face Robot": { "execute_ok": true, "commands_found": false },
+    "Face Robot": { "execute_ok": true, "commands_found": false }
+  },
+  "act_panel": {
+    "name": "Face Robot Act Floating Panel",
+    "scripting_name": "ShowFaceRobotActPanel",
+    "found": true,
+    "enabled": true,
+    "args": {
+      "Path": "$FACEROBOTROOT\\Application\\views\\synoptic\\FaceRobotContext.htm",
+      "OffsetX": 3,
+      "OffsetY": 335
+    }
+  },
+  "prefs": {
+    "full": "preferences.FaceRobot",
+    "propset": "C3DPrefsFaceRobot",
+    "param_count": 10
+  },
+  "stage1_view": {
+    "xsily_frame": "FaceStage1_SideView",
+    "layout_controller": "facerobot_controller",
+    "title": "Stage 1: Assemble",
+    "open_via": ["Face Robot Layout", "Enable Face Robot"]
+  },
+  "runtime_lock": {
+    "status": "LOCK",
+    "note": "FR.dll / plugin leaf behavior + client GDI beyond OpenView/screenshot structure stay LOCK (tour). Stage 1 chrome dump/Desktop-attested only."
+  }
+}

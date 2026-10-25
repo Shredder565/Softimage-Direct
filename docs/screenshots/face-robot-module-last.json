@@ -1,0 +1,39 @@
+{
+  "ok": true,
+  "diffs": [],
+  "notes": [
+    "loaded tops /workspace/src/data/si/face_robot_module_mcp_tops.json",
+    "softimage 13.2.163.0",
+    "MENU 300",
+    "FR tops OK: Face Robot",
+    "no SwitchToolbar Target (layout/enable path)",
+    "FR.dll runtime LOCK",
+    "showFaceRobotActPanel wired",
+    "enableFaceRobot wired",
+    "faceRobotLayout wired",
+    "disableFaceRobot wired",
+    "softimageLayout wired",
+    "preferences.FaceRobot / C3DPrefsFaceRobot page present",
+    "Face Robot menubar MENU 300 present",
+    "Stage1 defaultsize 50,50,290,720",
+    "Enable Face Robot → Stage 1 Assemble",
+    "title Stage 1: Assemble",
+    "Stage1 category=Face Robot",
+    "library tabs Heads/Parts/Actor/Custom/Type",
+    "heads list 7 Desktop-attested",
+    "log: Pick Objects before Diagnose",
+    "Scan grey until pick",
+    "faceRobotEnabled",
+    "Face Robot Layout OK",
+    "ShowFaceRobotActPanel OK",
+    "Act category=Face Robot",
+    "Act Path default from commands_full",
+    "Disable Face Robot OK",
+    "FROST still in module-select (additive)"
+  ],
+  "softimage": "13.2.163.0",
+  "menu_id": 300,
+  "tops": [
+    "Face Robot"
+  ]
+}
