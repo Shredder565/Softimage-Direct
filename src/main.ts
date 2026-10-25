@@ -38,6 +38,7 @@ import { viewManager, SI as ViewportSI, DEFAULT_CAMERA_POS, DEFAULT_CAMERA_INTER
 import { manipulatorHitboxAudit, MANIP_PE_MENUS } from './ui/manipulatorHitbox';
 import { applyRenderToolbarChrome, renderToolbarChromeAudit } from './ui/renderToolbarChrome';
 import { renderMcpFlyoutsAudit } from './ui/renderMcpFlyouts';
+import { directLockDesktopAudit } from './ui/directLockDesktop';
 applyPpgChrome();
 applyAnimChromeVars();
 applyRenderToolbarChrome();
@@ -270,6 +271,8 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     renderToolbarChrome: renderToolbarChromeAudit(),
     // PE menu 234 Render MCP flyouts (Desktop press-hold missed; menus.json already wired)
     renderMcpFlyouts: renderMcpFlyoutsAudit(),
+    // Softimage Desktop LOCK close 2026-10-25 — OM region params OK; HWND/PPG/OpenView LOCK (no invent)
+    directLockDesktop: directLockDesktopAudit(),
     // Softimage Render toolbar OM scripting names + RenderOptionsRegion SPDL (HWND crop LOCK)
     renderToolbarOm: renderToolbarOmAudit(app),
     // Softimage ICE module MENU 303 MCP tops + OpenICETreeView / xsivw shell (Anchor compounds LOCK)

@@ -1,0 +1,96 @@
+{
+  "meta": {
+    "softimage": "13.2.163.0",
+    "script": "si_direct_lock_desktop_close.js",
+    "purpose": "Desktop close remaining Direct LOCKs (OpenView / region / PPG checklist)",
+    "utc": "Sun, 25 Oct 2026 16:54:52 UTC",
+    "mode": "Desktop-GUI",
+    "wire_note": "Desktop 2026-10-25. region DUMP_READY = Passes.RenderOptions OM params only (already in deepen dumps). HWND crop chrome NOT measured \u2014 stay LOCK. PPG/InspectObj failed \u2014 no COLORREF. OpenView wrong-args \u2014 floating views LOCK. Do not invent."
+  },
+  "per": {
+    "animate.floating_views": "LOCK",
+    "animate.fcurve_mixer_client_paint": "PROBE",
+    "render.region_hwnd_crop": "DUMP_READY",
+    "ui.ppg_title_hover_gdi": "PROBE",
+    "ui.manipulator_hover_px": "LOCK",
+    "model.caphole_ppg_layout": "LOCK",
+    "model.curve_has_layout_false": "LOCK"
+  },
+  "honest": {
+    "render.region_hwnd_crop": {
+      "dump_label": "DUMP_READY",
+      "wire": "OM_PARAMS_ONLY",
+      "hwnd_crop_chrome": "LOCK",
+      "note": "region_params are Passes.RenderOptions (image W/H etc), not crop HWND pixels; all CreateRenderRegion cmds failed"
+    },
+    "ui.ppg_title_hover_gdi": {
+      "dump_label": "PROBE",
+      "wire": "NONE",
+      "status": "LOCK",
+      "note": "InspectObj failed Unexpected failure_$S_2006; no titlebar COLORREF sample"
+    },
+    "animate.floating_views": {
+      "dump_label": "LOCK",
+      "wire": "NONE",
+      "status": "LOCK",
+      "note": "OpenView all views: Wrong number of arguments or invalid property assignment"
+    },
+    "animate.fcurve_mixer_client_paint": {
+      "dump_label": "PROBE",
+      "wire": "NONE",
+      "status": "LOCK",
+      "note": "OpenView failed; no client paint screenshot"
+    },
+    "ui.manipulator_hover_px": {
+      "status": "LOCK"
+    },
+    "model.caphole_ppg_layout": {
+      "status": "LOCK"
+    },
+    "model.curve_has_layout_false": {
+      "status": "LOCK"
+    }
+  },
+  "region_params": {
+    "type": 1,
+    "user": true,
+    "renderer": "Mental Ray",
+    "outputdir": "[Project Path]/Render_Pictures",
+    "resolvedoutputdir": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\XSI_SAMPLES\\Render_Pictures",
+    "framepadding": 1,
+    "imageformatpreset": -16,
+    "imageaspectratio": 1.777778,
+    "imagewidth": 1920,
+    "imageheight": 1080,
+    "imagepixelratio": 1,
+    "imagelockaspectratio": true,
+    "framerangesource": 0,
+    "framestart": 1,
+    "frameend": 100,
+    "framestep": 1,
+    "frameset": "1-100",
+    "fieldenable": false,
+    "fieldorder": 0,
+    "fieldinterleave": false,
+    "motionblurshutterspeed": 0.5,
+    "motionblurshutteroffset": 0,
+    "motionblurshuttertype": 0,
+    "motionblurdeformation": true
+  },
+  "openview_errors": {
+    "Animation Mixer": "Wrong number of arguments or invalid property assignment",
+    "Animation Editor": "Wrong number of arguments or invalid property assignment",
+    "DopeSheet": "Wrong number of arguments or invalid property assignment",
+    "Keying Panel": "Wrong number of arguments or invalid property assignment",
+    "Fcurve Editor": "Wrong number of arguments or invalid property assignment",
+    "Animation Explorer": "Wrong number of arguments or invalid property assignment",
+    "Mixer": "Wrong number of arguments or invalid property assignment"
+  },
+  "screenshot_checklist_unfulfilled": [
+    "RenderRegion:crop_widget",
+    "RenderRegion:HWND_chrome",
+    "PPG:titlebar_idle",
+    "PPG:titlebar_hover",
+    "PPG:close_btn_hover"
+  ]
+}

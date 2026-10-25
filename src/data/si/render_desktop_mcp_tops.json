@@ -20,7 +20,11 @@
     "desktop_display": "current pass Name (Default_Pass on empty scene)",
     "note": "Softimage MCP replaces PE leaf text with live pass name"
   },
-  "hwnd_crop_chrome": { "status": "LOCK", "note": "tour MD landed 2026-10-25; HWND crop chrome still unmeasured — no invent" },
+  "hwnd_crop_chrome": {
+    "status": "LOCK",
+    "note": "Desktop lock-close 2026-10-25: region OM Dump_READY mislabel (Passes.RenderOptions only); HWND crop still unmeasured — no invent"
+  },
+
   "mcp_flyout_item_lists": {
     "status": "DONE",
     "source": "toolbarobj.dll RT_MENU 234 → src/data/menus.json + src/data/si/render_mcp_flyouts.json",

@@ -161,6 +161,13 @@ else {
   } else if ((ff.flyoutCount ?? 0) < 8) {
     fail.push(`renderMcpFlyouts expected ≥8 flyouts got ${ff.flyoutCount}`);
   } else ok.push(`Render MCP flyouts PE menu 234 (${ff.flyoutCount} buttons, Desktop press-hold gap CLOSED)`);
+  // Desktop LOCK close dump — region OM attested; HWND/PPG/OpenView stay LOCK (no invent)
+  const dld = audit.directLockDesktop;
+  if (!dld) fail.push('directLockDesktop missing from __uiAudit');
+  else if (!dld.ok) fail.push(`directLockDesktop audit failed: ${JSON.stringify(dld)}`);
+  else if (dld.regionHwndCrop !== 'LOCK' || dld.ppgColorref !== 'LOCK') {
+    fail.push(`directLockDesktop expected HWND/PPG LOCK got hwnd=${dld.regionHwndCrop} ppg=${dld.ppgColorref}`);
+  } else ok.push(`Desktop LOCK close dump (region OM ${dld.regionOmParamCount} keys, HWND+PPG+OpenView LOCK)`);
   // Softimage ≡ leaves: Lock Pivot / Volume / Edit Pivot must not fall through as "not implemented"
   const pePick = await p.evaluate(() => {
     const logs = [];
