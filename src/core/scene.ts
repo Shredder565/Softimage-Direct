@@ -765,6 +765,19 @@ export function makeSceneRenderOptions(): Property {
   ]);
   return p;
 }
+/**
+ * Softimage RenderOptionsRegion.spdl — unlock_render_region_probe / PE unlock.
+ * Param names + Softimage labels only. HWND crop chrome stays LOCK (defaults 0).
+ */
+export function makeRenderOptionsRegion(): Property {
+  return new Property('Render Region Options', 'RenderOptions', [
+    bool('UsePassOptions', true, 'Use Current Pass Options'),
+    num('RegionOffsetX', 0, 'Offset X', { readOnly: true }),
+    num('RegionOffsetY', 0, 'Offset Y', { readOnly: true }),
+    num('RegionWidth', 0, 'Width', { readOnly: true }),
+    num('RegionHeight', 0, 'Height', { readOnly: true }),
+  ]);
+}
 
 // ---------------------------------------------------------------- scene
 /** Softimage actionclip.weight FCurve key (ModifyWeightProc / gk10 via SetDefaultWeight). */
@@ -844,6 +857,8 @@ export class Scene extends Node {
   readonly groupList: Group[] = [];
   /** Softimage Passes.RenderOptions (SceneRenderProperty). */
   readonly renderOptions: Property;
+  /** Softimage RenderOptionsRegion.spdl OM — HWND crop chrome LOCK. */
+  readonly renderOptionsRegion: Property;
   constructor() {
     super('Scene', 'scene', 'scene', [str('Name', 'Untitled', 'Scene Name')]);
     this.root = new Model('Scene_Root');
@@ -853,6 +868,8 @@ export class Scene extends Node {
     this.root.addProperty(makeMixer());
     this.renderOptions = makeSceneRenderOptions();
     this.renderOptions.parent = this as any;
+    this.renderOptionsRegion = makeRenderOptionsRegion();
+    this.renderOptionsRegion.parent = this as any;
     this.addLayer('Layer_Default'); this.addPass('Default_Pass');
   }
   newMaterial(name: string, surface: Shader) { const m = new Material(this.uniqueName(name)); m.setSurface(surface); this.materials.push(m); return m; }

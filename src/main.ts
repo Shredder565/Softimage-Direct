@@ -11,6 +11,7 @@ import { registerConstraintCommands } from './commands/constraints';
 import { registerAnimCommands } from './commands/anim';
 import { registerRenderCommands } from './commands/render';
 import { registerModuleToolbarCommands } from './commands/moduleToolbar';
+import { registerRenderToolbarOmCommands, renderToolbarOmAudit } from './commands/renderToolbarOm';
 import { iceTree, renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
 import { frostGraphView, frostHairWizardView, frostOf, runFrostSmokeTests } from './frost';
 import { registerToolbarCommands, palettesView, toolbarView, newToolbar, customizeToolbars, openToolbarWindow, userToolbars } from './ui/toolbars';
@@ -57,6 +58,7 @@ registerConstraintCommands(app);
 registerAnimCommands(app);
 registerRenderCommands(app);
 registerModuleToolbarCommands(app);
+registerRenderToolbarOmCommands(app);
 registerToolbarCommands(app);
 (window as any).__siMessage = siMessage; (window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); (window as any).__getEnableParity = () => getEnableParity(app); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
 
@@ -256,6 +258,8 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     manipHitbox: manipulatorHitboxAudit(),
     // Unlock DUMP_READY render.toolbar_pixel_chrome — PE RT_MENU/BITMAP W/H; eye LOCK
     renderToolbarChrome: renderToolbarChromeAudit(),
+    // Softimage Render toolbar OM scripting names + RenderOptionsRegion SPDL (HWND crop LOCK)
+    renderToolbarOm: renderToolbarOmAudit(app),
     // Desktop polish #2 — manip / viewport prefs + default Camera pose (softimage-pc attested)
     viewportPolish: {
       ...(typeof (window as any).__vm?.viewportPolish === 'function' ? (window as any).__vm.viewportPolish() : {}),
