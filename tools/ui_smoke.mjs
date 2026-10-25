@@ -153,6 +153,14 @@ else {
   } else if (mh.interactiveHoverPx !== 'LOCK') {
     fail.push(`manipHitbox interactiveHoverPx expected LOCK got ${mh.interactiveHoverPx}`);
   } else ok.push(`manip hitbox PE menus+bitmap W/H (cell ${mh.toolbarCellWh.w}x${mh.toolbarCellWh.h}, hover LOCK)`);
+  // PE menu 234 Render MCP flyouts — Desktop press-hold missed; menus.json already wired
+  const ff = audit.renderMcpFlyouts;
+  if (!ff) fail.push('renderMcpFlyouts missing from __uiAudit');
+  else if (ff.status !== 'DONE' || (ff.mismatches && ff.mismatches.length)) {
+    fail.push(`renderMcpFlyouts PE mismatch: ${JSON.stringify(ff.mismatches)}`);
+  } else if ((ff.flyoutCount ?? 0) < 8) {
+    fail.push(`renderMcpFlyouts expected ≥8 flyouts got ${ff.flyoutCount}`);
+  } else ok.push(`Render MCP flyouts PE menu 234 (${ff.flyoutCount} buttons, Desktop press-hold gap CLOSED)`);
   // Softimage ≡ leaves: Lock Pivot / Volume / Edit Pivot must not fall through as "not implemented"
   const pePick = await p.evaluate(() => {
     const logs = [];
