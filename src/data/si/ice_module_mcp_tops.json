@@ -19,15 +19,28 @@
     "CrowdFX": ["Actors", "Crowd", "Simulation"]
   },
   "runtime_anchors": {
-    "status": "LOCK",
+    "status": "DUMP_READY",
     "pe_label": "Anchor-to-Delete",
-    "note": "MENU 303 Particle/Deform/Kinematics/CrowdFX leaves are PE placeholders filled at Softimage runtime by ICE Flow / CrowdFX plugins. Do not invent compound leaves. PE id 41646 collides with Render Regions Refresh Mode Interactive — ignore cmd map for Anchor-to-Delete."
+    "pe_leaf_count": 14,
+    "compound_names": "LOCK",
+    "attestation": "si/ice_pe_anchor_leaves.json",
+    "note": "closer95 DUMP_READY: PE MENU 303 Anchor-to-Delete leaf ids/trails + OM Create/Explode ICE Compound Node. Plugin compound *names* stay LOCK (still Anchor-to-Delete). PE id 41646 collides with Render Regions Refresh Mode Interactive — ignore cmd map for Anchor-to-Delete."
   },
   "sdk_anchors": {
     "siMenuTbICEParticlesCreateID": 320,
+    "siMenuTbICEParticlesOnEmissionID": 321,
+    "siMenuTbICEParticlesAfterEmissionID": 322,
+    "siMenuTbICEParticlesForceID": 323,
+    "siMenuTbICEParticlesCollisionID": 324,
+    "siMenuTbICEParticlesSimulationID": 325,
+    "siMenuTbICEParticlesModelLibraryID": 326,
     "siMenuTbICEDeformCreateID": 340,
+    "siMenuTbICEDeformSimulateID": 341,
     "siMenuTbICEKinematicsEffectsID": 360,
-    "siMenuTbICECrowdFXActorsID": 380
+    "siMenuTbICEKinematicsConstrainID": 361,
+    "siMenuTbICECrowdFXActorsID": 380,
+    "siMenuTbICECrowdFXSimulationID": 381,
+    "siMenuTbICECrowdFXCrowdID": 382
   },
   "ice_tree_view": {
     "xsivw": "icetree.xsivw",

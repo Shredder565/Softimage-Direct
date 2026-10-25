@@ -113,7 +113,7 @@ export function openMenu(app: App, items: MenuItem[], x: number, y: number, path
     } else {
       if (!enabled) row.classList.add('disabled');
       row.title = isRuntimeAnchor(it)
-        ? 'Softimage runtime Anchor-to-Delete (ICE Flow / CrowdFX) — LOCK, no invent compounds'
+        ? 'Softimage PE Anchor-to-Delete (MENU 303 DUMP_READY id/trail) — plugin compound names LOCK, no invent'
         : bound
           ? `${bound.cmd}(${bound.args.map(a => a[0] + (a[1] !== null && a[1] !== '' ? '=' + JSON.stringify(a[1]) : '')).join(', ')})${!supported ? '  — not implemented yet' : enabled ? '' : '  — disabled (selection/context)'}`
           : 'no command mapped (tool/toggle)';
@@ -121,7 +121,7 @@ export function openMenu(app: App, items: MenuItem[], x: number, y: number, path
       row.onclick = () => {
         if (isRuntimeAnchor(it)) {
           closeMenus();
-          app.logMsg('info', `${[...path, it.label].join(' > ')}: Softimage runtime plugin slot (LOCK)`);
+          app.logMsg('info', `${[...path, it.label].join(' > ')}: PE Anchor slot DUMP_READY (id ${it.id ?? '?'}); plugin compound name LOCK`);
           return;
         }
         if (!enabled) return;
@@ -230,7 +230,7 @@ export function runMenuPath(app: App, module: string, path: string, label: strin
       if (it.items) { const r = walk(it.items, [...p, it.label!]); if (r) return r; continue; }
       if (p.join(' > ') === path && it.label === label) {
         if (isRuntimeAnchor(it)) {
-          app.logMsg('info', `${[...p, label].join(' > ')}: Softimage runtime plugin slot (LOCK)`);
+          app.logMsg('info', `${[...p, label].join(' > ')}: PE Anchor slot DUMP_READY (id ${it.id ?? '?'}); plugin compound name LOCK`);
           return it;
         }
         runMenuItem(app, it, it.id !== undefined ? CMDS[String(it.id)] : undefined, [...p, label]);
