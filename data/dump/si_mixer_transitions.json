@@ -1,1 +1,203 @@
-{"meta":{"script":"si_desktop_pass2.js#mixer","softimage":"13.2.163.0","mode":"Desktop pass2","utc":"Sun, 25 Oct 2026 02:32:03 UTC"},"steps":[{"name":"key_null_A","ok":true,"param":"null.kine.local.posx"},{"name":"StoreAction_A","ok":true,"result":"Sources.Scene_Root.ActionA"},{"name":"StoreAction_B","ok":true,"result":"Sources.Scene_Root.ActionB"},{"name":"SelectClips","ok":true,"selected":["Mixer.Mixer_Anim_Track.ActionA_Clip","Mixer.Mixer_Anim_Track1.ActionB_Clip"]},{"name":"AddTransition","ok":true,"result":"null"},{"name":"Mixer_probe","ok":true,"n_transitions":0,"n_clips":4}],"clips":[{"name":"ActionA_Clip","full":"Mixer.Mixer_Anim_Track.ActionA_Clip","classname":"Clip","track":"Mixer_Anim_Track"},{"name":"ActionB_Clip","full":"Mixer.Mixer_Anim_Track1.ActionB_Clip","classname":"Clip","track":"Mixer_Anim_Track1"},{"name":"ActionA_Clip","full":"Mixer.Mixer_Anim_Track.ActionA_Clip","classname":"Clip","track":"(mix.Clips)"},{"name":"ActionB_Clip","full":"Mixer.Mixer_Anim_Track1.ActionB_Clip","classname":"Clip","track":"(mix.Clips)"}],"transition_list":[],"errors":[],"sources_probe":[],"clip_tries":[{"label":"A","i":0,"ok":true,"result":"Mixer.Mixer_Anim_Track.ActionA_Clip"},{"label":"B","i":0,"ok":true,"result":"Mixer.Mixer_Anim_Track1.ActionB_Clip"}],"mixer":{"name":"Mixer","full":"Mixer","classname":"Mixer","nested":[{"name":"Name","sn":"Name","classname":"Parameter","value":"Mixer"},{"name":"Hidden","sn":"Hidden","classname":"Parameter","value":false},{"name":"Active","sn":"Active","classname":"Parameter","value":true},{"name":"Start time","sn":"ContainerStart","classname":"Parameter","value":0.03333333333333333},{"name":"Duration","sn":"ContainerDuration","classname":"Parameter","value":1.6666666666666667},{"name":"Auto Transition","sn":"AutoTransition","classname":"Parameter","value":false}]}}
+{
+  "meta": {
+    "script": "si_desktop_pass3.js#mixer",
+    "softimage": "13.2.163.0",
+    "mode": "Desktop pass3 overlapping clips",
+    "utc": "Sun, 25 Oct 2026 02:35:33 UTC",
+    "wire_note": "TW1-complete golden: AddTransition(clipA,clipB)->Mixer.Transition; AddTWTransition->Mixer.TW1 with weight/type. Overwrite for wire #63 follow-up.",
+    "store_overwrite_utc": "2026-10-25T02:39:13Z",
+    "n_clips": 2,
+    "n_transitions": 1
+  },
+  "steps": [
+    {
+      "name": "key_A",
+      "ok": true
+    },
+    {
+      "name": "StoreAction_A",
+      "ok": true,
+      "result": "Sources.Scene_Root.ActionA"
+    },
+    {
+      "name": "StoreAction_B",
+      "ok": true,
+      "result": "Sources.Scene_Root.ActionB"
+    },
+    {
+      "name": "AddClip_A",
+      "ok": true,
+      "result": "Mixer.Mixer_Anim_Track.ActionA_Clip"
+    },
+    {
+      "name": "AddClip_B",
+      "ok": true,
+      "result": "Mixer.Mixer_Anim_Track1.ActionB_Clip"
+    },
+    {
+      "name": "SelectClips",
+      "ok": true,
+      "selected": [
+        "Mixer.Mixer_Anim_Track.ActionA_Clip",
+        "Mixer.Mixer_Anim_Track1.ActionB_Clip"
+      ]
+    },
+    {
+      "name": "Mixer_probe",
+      "ok": true,
+      "n_transitions": 1,
+      "n_clips": 2
+    }
+  ],
+  "clips": [
+    {
+      "name": "ActionA_Clip",
+      "full": "Mixer.Mixer_Anim_Track.ActionA_Clip",
+      "classname": "Clip",
+      "track": "Mixer_Anim_Track",
+      "track_full": "Mixer.Mixer_Anim_Track"
+    },
+    {
+      "name": "ActionB_Clip",
+      "full": "Mixer.Mixer_Anim_Track1.ActionB_Clip",
+      "classname": "Clip",
+      "track": "Mixer_Anim_Track1",
+      "track_full": "Mixer.Mixer_Anim_Track1"
+    }
+  ],
+  "transition_list": [
+    {
+      "name": "TW1",
+      "full": "Mixer.TW1",
+      "classname": "Transition",
+      "nested": {
+        "name": "TW1",
+        "full": "Mixer.TW1",
+        "classname": "Transition",
+        "nested": [
+          {
+            "name": "Transition Weight",
+            "sn": "weight",
+            "classname": "Parameter",
+            "value": 1
+          },
+          {
+            "name": "Transition Type",
+            "sn": "type",
+            "classname": "Parameter",
+            "value": 2
+          },
+          {
+            "name": "null_kine_local_posx",
+            "sn": "null_kine_local_posx",
+            "classname": "Parameter",
+            "value": 8
+          },
+          {
+            "name": "Active",
+            "sn": "active",
+            "classname": "Parameter",
+            "value": true
+          },
+          {
+            "name": "Name",
+            "sn": "Name",
+            "classname": "Parameter",
+            "value": "TW1"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "trans_attempts": [
+    {
+      "label": "AddTransition()",
+      "ok": false,
+      "error": ""
+    },
+    {
+      "label": "AddTransition(c0,c1)",
+      "ok": true,
+      "result": "Mixer.Transition"
+    },
+    {
+      "label": "AddTransition(clipA,clipB)",
+      "ok": true,
+      "result": "Mixer.Transition"
+    },
+    {
+      "label": "Commands.AddTransition",
+      "ok": true,
+      "result": "null"
+    },
+    {
+      "label": "AddBridgeTransitionFunc",
+      "ok": false,
+      "error": "Object doesn't support this property or method"
+    },
+    {
+      "label": "AddTWTransition",
+      "ok": true,
+      "result": "Mixer.TW1"
+    },
+    {
+      "label": "AddBridgeTransition",
+      "ok": false,
+      "error": "Unable to get property 'Execute' of undefined or null reference"
+    }
+  ],
+  "mixer": {
+    "name": "Mixer",
+    "full": "Mixer",
+    "classname": "Mixer",
+    "nested": [
+      {
+        "name": "Name",
+        "sn": "Name",
+        "classname": "Parameter",
+        "value": "Mixer"
+      },
+      {
+        "name": "Hidden",
+        "sn": "Hidden",
+        "classname": "Parameter",
+        "value": false
+      },
+      {
+        "name": "Active",
+        "sn": "Active",
+        "classname": "Parameter",
+        "value": true
+      },
+      {
+        "name": "Start time",
+        "sn": "ContainerStart",
+        "classname": "Parameter",
+        "value": 0.03333333333333333
+      },
+      {
+        "name": "Duration",
+        "sn": "ContainerDuration",
+        "classname": "Parameter",
+        "value": 1.6333333333333329
+      },
+      {
+        "name": "Auto Transition",
+        "sn": "AutoTransition",
+        "classname": "Parameter",
+        "value": false
+      }
+    ]
+  },
+  "acceptance": {
+    "has_clips": true,
+    "has_transition_objects": true,
+    "transition_names": [
+      "TW1"
+    ],
+    "addtransition_clippair_ok": true,
+    "addtwtransition_ok": true,
+    "commands_addtransition_null_is_expected": true
+  }
+}
