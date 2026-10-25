@@ -812,6 +812,7 @@ body.dock-picking, body.dock-picking * { cursor: crosshair !important; }
 .fr-stage-titlebar { display: flex; flex-direction: column; gap: 2px; padding: 4px 6px; background: linear-gradient(#3a3836, #2a2826); color: #e8e4e0; border-bottom: 1px solid #1a1816; }
 .fr-stage-title-text { font-weight: 700; font-size: 11px; }
 .fr-stage-title-url { font-size: 9px; color: #9a9693; word-break: break-all; }
+.fr-stage-path { font-size: 9px; color: #6a6663; word-break: break-all; margin-top: 2px; }
 .fr-stage-body { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; }
 .fr-stage-lock { padding: 8px; gap: 6px; }
 .fr-stage-type { font-weight: 700; }

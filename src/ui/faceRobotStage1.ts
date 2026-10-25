@@ -197,7 +197,8 @@ export function faceRobotActPanelView(app: App, host: HTMLElement, opts?: {
   faceRobotSynopticSlot(slotHost, {
     name: 'FaceRobotContext',
     path: String(path),
-    note: 'Contextual synoptic view shell (commands_full Path). Synoptic HTML / FR.dll body LOCK.',
+    pathStatus: 'DUMP_READY',
+    note: 'Contextual synoptic Path DUMP_READY (closer95/modules-gdi FaceRobotContext.htm). HTML / FR.dll body LOCK.',
   });
   app.logMsg('info', 'ShowFaceRobotActPanel');
 }

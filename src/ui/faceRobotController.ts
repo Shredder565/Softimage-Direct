@@ -1,5 +1,5 @@
 // Softimage Face Robot Control Panel — facerobot.xsily facerobot_controller tray (stages 1–6 + synoptic slots).
-// Dump/Desktop-attested structure only. Stage HTML / FR.dll / SideView bodies LOCK (except Stage 1 PNG chrome).
+// closer95 / modules-gdi DUMP_READY path index wired. Stage HTML / FR.dll / SideView bodies LOCK (except Stage 1 PNG chrome).
 import { App } from '../core/commands';
 import ctrl from '../data/si/face_robot_controller_chrome.json';
 import { faceRobotStage1View } from './faceRobotStage1';
@@ -12,22 +12,37 @@ const el = (tag: string, cls?: string, text?: string) => {
   return n;
 };
 
+type NestedFrame = {
+  name: string;
+  type: string;
+  url_blank?: string;
+  path?: string;
+  path_status?: string;
+  html_body?: string;
+};
+
 type StageDef = {
   index: number;
   frame: string;
   title_frame: string;
   title_url: string;
+  title_html_url?: string;
   blank_url: string;
+  sideframe_url?: string;
+  sideview_html_url?: string;
+  sideview_xsivw?: string;
+  path_status?: string;
   side_view_type: string;
   title_attested?: string;
   status: string;
+  html_body?: string;
   nested?: {
-    synoptic_tray?: { frames: { name: string; type: string; url_blank?: string }[] };
-    library?: { name: string; type: string };
-    browser_tray?: { frames: { name: string; type: string }[] };
-    mid?: { name: string; type: string };
+    synoptic_tray?: { frames: NestedFrame[] };
+    library?: NestedFrame;
+    browser_tray?: { frames: NestedFrame[] };
+    mid?: NestedFrame;
     ppg?: { name: string; type: string };
-    lower?: { name: string; type: string };
+    lower?: NestedFrame;
   };
 };
 
@@ -35,7 +50,12 @@ type CtrlChrome = typeof ctrl & {
   view: { name: string; category: string; defaultsize: number[]; active: number };
   stages: StageDef[];
   sizechild: number[];
-  synoptic: { act_panel: { path_default: string }; stage_frames: string[] };
+  synoptic: {
+    act_panel: { path_default: string; path_status?: string; html_body?: string };
+    stage_frames: string[];
+    stage_paths?: Record<string, string>;
+  };
+  views_index?: { status: string; n_files_indexed?: number; closer95_n_files?: number };
   lipsync_tray: { displayname: string; frames: { name: string; type: string; displayname: string }[]; status: string };
 };
 
@@ -70,13 +90,17 @@ function renderStageShell(app: App, host: HTMLElement, stage: StageDef) {
   wrap.dataset.siViewType = stage.side_view_type;
   wrap.dataset.siFrStatus = stage.status;
 
-  // Title netview shell — URL path only (no invent stage*_titleframe.html)
+  // Title netview shell — dump-attested titleframe Path (HTML body LOCK)
   const title = el('div', 'fr-stage-titlebar');
   const titleText = stage.title_attested ?? `Stage ${stage.index}`;
   title.append(
     el('span', 'fr-stage-title-text', titleText),
     el('span', 'fr-stage-title-url', stage.title_url),
   );
+  if (stage.title_html_url) {
+    title.appendChild(el('span', 'fr-stage-title-url', `title=${stage.title_html_url}`));
+  }
+  if (stage.path_status) title.dataset.siFrPathStatus = stage.path_status;
   wrap.appendChild(title);
 
   if (stage.index === 1 && stage.status === 'WIRED') {
@@ -85,6 +109,9 @@ function renderStageShell(app: App, host: HTMLElement, stage: StageDef) {
     // Stage 1 view already draws its own title; hide duplicate chrome title inside embedded view
     const innerTitle = body.querySelector('.fr-stage1-title') as HTMLElement | null;
     if (innerTitle) innerTitle.style.display = 'none';
+    if (stage.sideframe_url) {
+      body.appendChild(el('div', 'fr-stage-path', `sideframe=${stage.sideframe_url}`));
+    }
     wrap.appendChild(body);
     host.appendChild(wrap);
     return;
@@ -94,23 +121,30 @@ function renderStageShell(app: App, host: HTMLElement, stage: StageDef) {
   body.append(
     el('div', 'fr-stage-type', stage.side_view_type),
     el('div', 'fr-stage-frame', `frame=${stage.frame}`),
-    el('div', 'fr-stage-lock-note', 'SHELL_ONLY — SideView / titleframe HTML LOCK until Desktop/GDI harvest. No invent FR.dll.'),
+    el('div', 'fr-stage-lock-note', 'SHELL_ONLY — Path DUMP_READY (closer95). SideView / titleframe HTML body LOCK. No invent FR.dll.'),
   );
+  if (stage.sideframe_url) body.appendChild(el('div', 'fr-stage-path', `sideframe=${stage.sideframe_url}`));
+  if (stage.sideview_html_url) body.appendChild(el('div', 'fr-stage-path', `sideview=${stage.sideview_html_url}`));
+  if (stage.sideview_xsivw) body.appendChild(el('div', 'fr-stage-path', `xsivw=${stage.sideview_xsivw}`));
 
   const nested = stage.nested;
   if (nested?.synoptic_tray?.frames?.length) {
     const tray = el('div', 'fr-nested-tray');
-    tray.appendChild(el('div', 'fr-nested-label', 'Synoptic / netview tray (xsily)'));
+    tray.appendChild(el('div', 'fr-nested-label', 'Synoptic / netview tray (xsily + install Path)'));
     for (const f of nested.synoptic_tray.frames) {
       if (f.type === 'Synoptic View') {
         const slot = el('div', 'fr-nested-slot');
-        faceRobotSynopticSlot(slot, { name: f.name });
+        faceRobotSynopticSlot(slot, {
+          name: f.name,
+          path: f.path ?? chrome.synoptic?.stage_paths?.[f.name],
+          note: 'Synoptic Path DUMP_READY (closer95/modules-gdi). HTML / FR.dll body LOCK.',
+        });
         tray.appendChild(slot);
       } else {
         const row = el('div', 'fr-nested-netview');
         row.append(
           el('span', '', `${f.name} · ${f.type}`),
-          el('span', 'fr-nested-url', f.url_blank ?? ''),
+          el('span', 'fr-nested-url', f.path ?? f.url_blank ?? ''),
         );
         tray.appendChild(row);
       }
@@ -118,19 +152,31 @@ function renderStageShell(app: App, host: HTMLElement, stage: StageDef) {
     body.appendChild(tray);
   }
   if (nested?.library) {
-    body.appendChild(el('div', 'fr-nested-row', `${nested.library.name} · ${nested.library.type}`));
+    const row = el('div', 'fr-nested-row', `${nested.library.name} · ${nested.library.type}`);
+    if (nested.library.path) row.appendChild(el('span', 'fr-nested-url', nested.library.path));
+    body.appendChild(row);
   }
   if (nested?.browser_tray?.frames) {
     const tray = el('div', 'fr-nested-tray');
-    tray.appendChild(el('div', 'fr-nested-label', 'Browser tray (xsily)'));
+    tray.appendChild(el('div', 'fr-nested-label', 'Browser tray (xsily + install Path)'));
     for (const f of nested.browser_tray.frames) {
-      tray.appendChild(el('div', 'fr-nested-row', `${f.name} · ${f.type}`));
+      const row = el('div', 'fr-nested-row', `${f.name} · ${f.type}`);
+      if (f.path) row.appendChild(el('span', 'fr-nested-url', f.path));
+      tray.appendChild(row);
     }
     body.appendChild(tray);
   }
-  if (nested?.mid) body.appendChild(el('div', 'fr-nested-row', `${nested.mid.name} · ${nested.mid.type}`));
+  if (nested?.mid) {
+    const row = el('div', 'fr-nested-row', `${nested.mid.name} · ${nested.mid.type}`);
+    if (nested.mid.path) row.appendChild(el('span', 'fr-nested-url', nested.mid.path));
+    body.appendChild(row);
+  }
   if (nested?.ppg) body.appendChild(el('div', 'fr-nested-row', `${nested.ppg.name} · ${nested.ppg.type}`));
-  if (nested?.lower) body.appendChild(el('div', 'fr-nested-row', `${nested.lower.name} · ${nested.lower.type}`));
+  if (nested?.lower) {
+    const row = el('div', 'fr-nested-row', `${nested.lower.name} · ${nested.lower.type}`);
+    if (nested.lower.path) row.appendChild(el('span', 'fr-nested-url', nested.lower.path));
+    body.appendChild(row);
+  }
 
   wrap.appendChild(body);
   host.appendChild(wrap);

@@ -1,0 +1,629 @@
+{
+  "_comment": "Softimage Face Robot views path index \u2014 closer95 install scrape DUMP_READY + modules-gdi facerobot_synoptic_file_index. Paths/sizes only; HTML / FR.dll bodies LOCK (no invent).",
+  "softimage": "13.2.163.0",
+  "status": "DUMP_READY",
+  "source": [
+    "internal/softimage-pc-dumps/closer95/closer95_install_scrape.json face_robot (DUMP_READY, stages_seen facestage1\u20136, n_files=312, n_synoptic_htm=16)",
+    "internal/softimage-pc-dumps/closer95/facerobot_synoptic_file_index.txt (files_sample truncated @120; sizes match)",
+    "internal/softimage-pc-dumps/modules-gdi/facerobot_synoptic_file_index.txt (HTML/HTM/xsivw path+size; 0 mismatches vs closer95 sample)",
+    "internal/softimage-pc-dumps/layouts/facerobot.xsily titleframe/blank URLs"
+  ],
+  "closer95": {
+    "board_key": "face_robot.synoptic_html",
+    "status": "DUMP_READY",
+    "views_exists": true,
+    "synoptic_exists": true,
+    "n_files": 312,
+    "n_synoptic_htm": 16,
+    "stages_seen": [
+      "facestage1",
+      "facestage2",
+      "facestage3",
+      "facestage4",
+      "facestage5",
+      "facestage6"
+    ],
+    "note": "closer95 files_sample is first 120 of 312 (truncates mid-img/); titleframe + synoptic .htm recovered from modules-gdi index with size cross-check"
+  },
+  "blank": {
+    "rel": "FaceRobot/Application/views/blank.html",
+    "size": 69,
+    "path": "$FACEROBOTROOT\\Application\\views\\blank.html"
+  },
+  "synoptic_htm": {
+    "stage5select": {
+      "rel": "FaceRobot/Application/views/synoptic/Stage5Selection.htm",
+      "size": 12273,
+      "path": "$FACEROBOTROOT\\Application\\views\\synoptic\\Stage5Selection.htm",
+      "html_body": "LOCK"
+    },
+    "stage5cameras": {
+      "rel": "FaceRobot/Application/views/synoptic/Stage5Camera.htm",
+      "size": 2361,
+      "path": "$FACEROBOTROOT\\Application\\views\\synoptic\\Stage5Camera.htm",
+      "html_body": "LOCK"
+    },
+    "stage6regions": {
+      "rel": "FaceRobot/Application/views/synoptic/Stage6Regions.htm",
+      "size": 8159,
+      "path": "$FACEROBOTROOT\\Application\\views\\synoptic\\Stage6Regions.htm",
+      "html_body": "LOCK"
+    },
+    "FaceRobotContext": {
+      "rel": "FaceRobot/Application/views/synoptic/FaceRobotContext.htm",
+      "size": 16184,
+      "path": "$FACEROBOTROOT\\Application\\views\\synoptic\\FaceRobotContext.htm",
+      "html_body": "LOCK"
+    }
+  },
+  "stages": [
+    {
+      "index": 1,
+      "titleframe": {
+        "rel": "FaceRobot/Application/views/stage1_titleframe.html",
+        "size": 495,
+        "path": "$FACEROBOTROOT\\Application\\views\\stage1_titleframe.html"
+      },
+      "title_html": {
+        "rel": "FaceRobot/Application/views/stage1_title.html",
+        "size": 1704,
+        "path": "$FACEROBOTROOT\\Application\\views\\stage1_title.html"
+      },
+      "sideframe": {
+        "rel": "FaceRobot/Application/views/facestage1_sideframe.html",
+        "size": 502,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage1_sideframe.html"
+      },
+      "sideview_html": {
+        "rel": "FaceRobot/Application/views/facestage1_sideview.html",
+        "size": 23344,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage1_sideview.html"
+      },
+      "html_body": "LOCK",
+      "sideview_xsivw": {
+        "rel": "FaceRobot/Application/views/facestage1_sideview.xsivw",
+        "size": 870,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage1_sideview.xsivw"
+      }
+    },
+    {
+      "index": 2,
+      "titleframe": {
+        "rel": "FaceRobot/Application/views/stage2_titleframe.html",
+        "size": 495,
+        "path": "$FACEROBOTROOT\\Application\\views\\stage2_titleframe.html"
+      },
+      "title_html": {
+        "rel": "FaceRobot/Application/views/stage2_title.html",
+        "size": 1697,
+        "path": "$FACEROBOTROOT\\Application\\views\\stage2_title.html"
+      },
+      "sideframe": {
+        "rel": "FaceRobot/Application/views/facestage2_sideframe.html",
+        "size": 499,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage2_sideframe.html"
+      },
+      "sideview_html": {
+        "rel": "FaceRobot/Application/views/facestage2_sideview.html",
+        "size": 11931,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage2_sideview.html"
+      },
+      "html_body": "LOCK",
+      "sideview_xsivw": {
+        "rel": "FaceRobot/Application/views/facestage2_sideview.xsivw",
+        "size": 870,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage2_sideview.xsivw"
+      }
+    },
+    {
+      "index": 3,
+      "titleframe": {
+        "rel": "FaceRobot/Application/views/stage3_titleframe.html",
+        "size": 495,
+        "path": "$FACEROBOTROOT\\Application\\views\\stage3_titleframe.html"
+      },
+      "title_html": {
+        "rel": "FaceRobot/Application/views/stage3_title.html",
+        "size": 1722,
+        "path": "$FACEROBOTROOT\\Application\\views\\stage3_title.html"
+      },
+      "sideframe": {
+        "rel": "FaceRobot/Application/views/facestage3_sideframe.html",
+        "size": 497,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage3_sideframe.html"
+      },
+      "sideview_html": {
+        "rel": "FaceRobot/Application/views/facestage3_sideview.html",
+        "size": 15301,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage3_sideview.html"
+      },
+      "html_body": "LOCK",
+      "sideview_xsivw": {
+        "rel": "FaceRobot/Application/views/facestage3_sideview.xsivw",
+        "size": 870,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage3_sideview.xsivw"
+      }
+    },
+    {
+      "index": 4,
+      "titleframe": {
+        "rel": "FaceRobot/Application/views/stage4_titleframe.html",
+        "size": 495,
+        "path": "$FACEROBOTROOT\\Application\\views\\stage4_titleframe.html"
+      },
+      "title_html": {
+        "rel": "FaceRobot/Application/views/stage4_title.html",
+        "size": 1678,
+        "path": "$FACEROBOTROOT\\Application\\views\\stage4_title.html"
+      },
+      "sideframe": {
+        "rel": "FaceRobot/Application/views/facestage4_sideframe.html",
+        "size": 497,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage4_sideframe.html"
+      },
+      "sideview_html": {
+        "rel": "FaceRobot/Application/views/facestage4_sideview.html",
+        "size": 9446,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage4_sideview.html"
+      },
+      "html_body": "LOCK",
+      "sideview_xsivw": {
+        "rel": "FaceRobot/Application/views/facestage4_sideview.xsivw",
+        "size": 869,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage4_sideview.xsivw"
+      }
+    },
+    {
+      "index": 5,
+      "titleframe": {
+        "rel": "FaceRobot/Application/views/stage5_titleframe.html",
+        "size": 495,
+        "path": "$FACEROBOTROOT\\Application\\views\\stage5_titleframe.html"
+      },
+      "title_html": {
+        "rel": "FaceRobot/Application/views/stage5_title.html",
+        "size": 1682,
+        "path": "$FACEROBOTROOT\\Application\\views\\stage5_title.html"
+      },
+      "sideframe": {
+        "rel": "FaceRobot/Application/views/facestage5_sideframe.html",
+        "size": 497,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage5_sideframe.html"
+      },
+      "sideview_html": {
+        "rel": "FaceRobot/Application/views/facestage5_sideview.html",
+        "size": 3670,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage5_sideview.html"
+      },
+      "html_body": "LOCK",
+      "sideview_xsivw": {
+        "rel": "FaceRobot/Application/views/facestage5_sideview.xsivw",
+        "size": 874,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage5_sideview.xsivw"
+      }
+    },
+    {
+      "index": 6,
+      "titleframe": {
+        "rel": "FaceRobot/Application/views/stage6_titleframe.html",
+        "size": 495,
+        "path": "$FACEROBOTROOT\\Application\\views\\stage6_titleframe.html"
+      },
+      "title_html": {
+        "rel": "FaceRobot/Application/views/stage6_title.html",
+        "size": 1686,
+        "path": "$FACEROBOTROOT\\Application\\views\\stage6_title.html"
+      },
+      "sideframe": {
+        "rel": "FaceRobot/Application/views/facestage6_sideframe.html",
+        "size": 497,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage6_sideframe.html"
+      },
+      "sideview_html": {
+        "rel": "FaceRobot/Application/views/facestage6_sideview.html",
+        "size": 3236,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage6_sideview.html"
+      },
+      "html_body": "LOCK",
+      "sideview_xsivw": {
+        "rel": "FaceRobot/Application/views/facestage6_sideview.xsivw",
+        "size": 874,
+        "path": "$FACEROBOTROOT\\Application\\views\\facestage6_sideview.xsivw"
+      }
+    }
+  ],
+  "nested_view_html": {
+    "stage5display": {
+      "rel": "FaceRobot/Application/views/facestage5_displayframe.html",
+      "size": 500,
+      "path": "$FACEROBOTROOT\\Application\\views\\facestage5_displayframe.html",
+      "html_body": "LOCK"
+    },
+    "stage5export": {
+      "rel": "FaceRobot/Application/views/facestage5_exportframe.html",
+      "size": 499,
+      "path": "$FACEROBOTROOT\\Application\\views\\facestage5_exportframe.html",
+      "html_body": "LOCK"
+    },
+    "stage5library": {
+      "rel": "FaceRobot/Application/views/facestage5_libraryview.html",
+      "size": 3406,
+      "path": "$FACEROBOTROOT\\Application\\views\\facestage5_libraryview.html",
+      "html_body": "LOCK"
+    },
+    "stage5browser": {
+      "rel": "FaceRobot/Application/views/facestage5_browserview.html",
+      "size": 8672,
+      "path": "$FACEROBOTROOT\\Application\\views\\facestage5_browserview.html",
+      "html_body": "LOCK"
+    },
+    "stage5blink": {
+      "rel": "FaceRobot/Application/views/facestage5_blinkview.html",
+      "size": 3171,
+      "path": "$FACEROBOTROOT\\Application\\views\\facestage5_blinkview.html",
+      "html_body": "LOCK"
+    },
+    "stage5settings": {
+      "rel": "FaceRobot/Application/views/facestage5_settingsview.html",
+      "size": 5542,
+      "path": "$FACEROBOTROOT\\Application\\views\\facestage5_settingsview.html",
+      "html_body": "LOCK"
+    },
+    "stage5lower": {
+      "rel": "FaceRobot/Application/views/facestage5_lowersideview.html",
+      "size": 2041,
+      "path": "$FACEROBOTROOT\\Application\\views\\facestage5_lowersideview.html",
+      "html_body": "LOCK"
+    },
+    "stage6list": {
+      "rel": "FaceRobot/Application/views/facestage6_listframe.html",
+      "size": 497,
+      "path": "$FACEROBOTROOT\\Application\\views\\facestage6_listframe.html",
+      "html_body": "LOCK"
+    },
+    "stage6mid": {
+      "rel": "FaceRobot/Application/views/facestage6_midsideview.html",
+      "size": 589,
+      "path": "$FACEROBOTROOT\\Application\\views\\facestage6_midsideview.html",
+      "html_body": "LOCK"
+    },
+    "stage6lower": {
+      "rel": "FaceRobot/Application/views/facestage6_lowersideview.html",
+      "size": 6897,
+      "path": "$FACEROBOTROOT\\Application\\views\\facestage6_lowersideview.html",
+      "html_body": "LOCK"
+    }
+  },
+  "files": [
+    {
+      "rel": "FaceRobot/Application/views/synoptic/FaceRobotContext.htm",
+      "size": 16184,
+      "suffix": ".htm"
+    },
+    {
+      "rel": "FaceRobot/Application/views/synoptic/Stage5Camera.htm",
+      "size": 2361,
+      "suffix": ".htm"
+    },
+    {
+      "rel": "FaceRobot/Application/views/synoptic/Stage5Selection.htm",
+      "size": 12273,
+      "suffix": ".htm"
+    },
+    {
+      "rel": "FaceRobot/Application/views/synoptic/Stage6Regions.htm",
+      "size": 8159,
+      "suffix": ".htm"
+    },
+    {
+      "rel": "FaceRobot/Application/views/blank.html",
+      "size": 69,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage1_sideframe.html",
+      "size": 502,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage1_sideview.html",
+      "size": 23344,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage1_sideview.xsivw",
+      "size": 870,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage2_sideframe.html",
+      "size": 499,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage2_sideview.html",
+      "size": 11931,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage2_sideview.xsivw",
+      "size": 870,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage3_sideframe.html",
+      "size": 497,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage3_sideview.html",
+      "size": 15301,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage3_sideview.xsivw",
+      "size": 870,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage4_sideframe.html",
+      "size": 497,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage4_sideview.html",
+      "size": 9446,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage4_sideview.xsivw",
+      "size": 869,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_blinkframe.html",
+      "size": 503,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_blinkview.html",
+      "size": 3171,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_blinkview.xsivw",
+      "size": 871,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_browserframe.html",
+      "size": 505,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_browserview.html",
+      "size": 8672,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_browserview.xsivw",
+      "size": 875,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_displayframe.html",
+      "size": 500,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_displayview.html",
+      "size": 9317,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_exportframe.html",
+      "size": 499,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_exportview.html",
+      "size": 11435,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_libraryframe.html",
+      "size": 505,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_libraryview.html",
+      "size": 3406,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_libraryview.xsivw",
+      "size": 875,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_lowersideframe.html",
+      "size": 502,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_lowersideview.html",
+      "size": 2041,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_lowersideview.xsivw",
+      "size": 879,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_settingsframe.html",
+      "size": 506,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_settingsview.html",
+      "size": 5542,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_settingsview.xsivw",
+      "size": 877,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_sideframe.html",
+      "size": 497,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_sideview.html",
+      "size": 3670,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage5_sideview.xsivw",
+      "size": 874,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage6_listframe.html",
+      "size": 497,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage6_listview.html",
+      "size": 15271,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage6_lowersideframe.html",
+      "size": 502,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage6_lowersideview.html",
+      "size": 6897,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage6_lowersideview.xsivw",
+      "size": 879,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage6_midsideframe.html",
+      "size": 500,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage6_midsideview.html",
+      "size": 589,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage6_midsideview.xsivw",
+      "size": 875,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage6_sideframe.html",
+      "size": 497,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage6_sideview.html",
+      "size": 3236,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/facestage6_sideview.xsivw",
+      "size": 874,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/LipSyncEditor.xsivw",
+      "size": 973,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/netview_notoolbar.xsivw",
+      "size": 516,
+      "suffix": ".xsivw"
+    },
+    {
+      "rel": "FaceRobot/Application/views/stage1_title.html",
+      "size": 1704,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/stage1_titleframe.html",
+      "size": 495,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/stage2_title.html",
+      "size": 1697,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/stage2_titleframe.html",
+      "size": 495,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/stage3_title.html",
+      "size": 1722,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/stage3_titleframe.html",
+      "size": 495,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/stage4_title.html",
+      "size": 1678,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/stage4_titleframe.html",
+      "size": 495,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/stage5_title.html",
+      "size": 1682,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/stage5_titleframe.html",
+      "size": 495,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/stage6_title.html",
+      "size": 1686,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/stage6_titleframe.html",
+      "size": 495,
+      "suffix": ".html"
+    },
+    {
+      "rel": "FaceRobot/Application/views/XSI_Face_Calibration.xsivw",
+      "size": 1327,
+      "suffix": ".xsivw"
+    }
+  ],
+  "runtime_lock": {
+    "html_body": "LOCK",
+    "fr_dll": "LOCK",
+    "note": "Wire Path/size index only \u2014 do not invent or embed FR.dll / synoptic HTML bodies"
+  }
+}

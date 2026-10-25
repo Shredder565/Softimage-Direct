@@ -1,9 +1,13 @@
 {
-  "_comment": "Softimage Face Robot Control Panel — facerobot.xsily facerobot_controller tray + synoptic frames. Dump-attested structure only; stage HTML / FR.dll bodies LOCK.",
+  "_comment": "Softimage Face Robot Control Panel — facerobot.xsily facerobot_controller tray + closer95/modules-gdi views path index. Dump-attested paths only; stage HTML / FR.dll bodies LOCK.",
   "softimage": "13.2.163.0",
   "source": [
     "internal/softimage-pc-dumps/layouts/facerobot.xsily",
     "internal/softimage-pc-dumps/dialogs/layout-templates/facerobot.xsily",
+    "internal/softimage-pc-dumps/closer95/closer95_install_scrape.json face_robot.synoptic_html DUMP_READY",
+    "internal/softimage-pc-dumps/closer95/facerobot_synoptic_file_index.txt",
+    "internal/softimage-pc-dumps/modules-gdi/facerobot_synoptic_file_index.txt",
+    "src/data/si/face_robot_views_index.json",
     "media/softimage-modules-tour/50-facerobot-layout.png",
     "data/commands_full.json ShowFaceRobotActPanel"
   ],
@@ -25,67 +29,167 @@
       "frame": "stage1",
       "title_frame": "stage1title",
       "title_url": "$FACEROBOTROOT\\Application\\views\\stage1_titleframe.html",
+      "title_html_url": "$FACEROBOTROOT\\Application\\views\\stage1_title.html",
       "blank_url": "$FACEROBOTROOT\\Application\\views\\blank.html",
+      "sideframe_url": "$FACEROBOTROOT\\Application\\views\\facestage1_sideframe.html",
+      "sideview_html_url": "$FACEROBOTROOT\\Application\\views\\facestage1_sideview.html",
+      "sideview_xsivw": "$FACEROBOTROOT\\Application\\views\\facestage1_sideview.xsivw",
+      "path_status": "DUMP_READY",
+      "titleframe_size": 495,
       "side_view_type": "FaceStage1_SideView",
       "title_attested": "Stage 1 > Assemble",
       "desktop_chrome": "50-facerobot-layout.png",
-      "status": "WIRED"
+      "status": "WIRED",
+      "html_body": "LOCK"
     },
     {
       "index": 2,
       "frame": "stage2",
       "title_frame": "stage2title",
       "title_url": "$FACEROBOTROOT\\Application\\views\\stage2_titleframe.html",
+      "title_html_url": "$FACEROBOTROOT\\Application\\views\\stage2_title.html",
       "blank_url": "$FACEROBOTROOT\\Application\\views\\blank.html",
+      "sideframe_url": "$FACEROBOTROOT\\Application\\views\\facestage2_sideframe.html",
+      "sideview_html_url": "$FACEROBOTROOT\\Application\\views\\facestage2_sideview.html",
+      "sideview_xsivw": "$FACEROBOTROOT\\Application\\views\\facestage2_sideview.xsivw",
+      "path_status": "DUMP_READY",
+      "titleframe_size": 495,
       "side_view_type": "FaceStage2_SideView",
       "status": "SHELL_ONLY",
-      "note": "xsily frame type attested; SideView body LOCK until Desktop/GDI harvest"
+      "html_body": "LOCK",
+      "note": "Install path DUMP_READY (closer95/modules-gdi); SideView / titleframe HTML body LOCK — no invent FR.dll"
     },
     {
       "index": 3,
       "frame": "stage3",
       "title_frame": "stage3title",
       "title_url": "$FACEROBOTROOT\\Application\\views\\stage3_titleframe.html",
+      "title_html_url": "$FACEROBOTROOT\\Application\\views\\stage3_title.html",
       "blank_url": "$FACEROBOTROOT\\Application\\views\\blank.html",
+      "sideframe_url": "$FACEROBOTROOT\\Application\\views\\facestage3_sideframe.html",
+      "sideview_html_url": "$FACEROBOTROOT\\Application\\views\\facestage3_sideview.html",
+      "sideview_xsivw": "$FACEROBOTROOT\\Application\\views\\facestage3_sideview.xsivw",
+      "path_status": "DUMP_READY",
+      "titleframe_size": 495,
       "side_view_type": "FaceStage3_SideView",
-      "status": "SHELL_ONLY"
+      "status": "SHELL_ONLY",
+      "html_body": "LOCK"
     },
     {
       "index": 4,
       "frame": "stage4",
       "title_frame": "stage4title",
       "title_url": "$FACEROBOTROOT\\Application\\views\\stage4_titleframe.html",
+      "title_html_url": "$FACEROBOTROOT\\Application\\views\\stage4_title.html",
       "blank_url": "$FACEROBOTROOT\\Application\\views\\blank.html",
+      "sideframe_url": "$FACEROBOTROOT\\Application\\views\\facestage4_sideframe.html",
+      "sideview_html_url": "$FACEROBOTROOT\\Application\\views\\facestage4_sideview.html",
+      "sideview_xsivw": "$FACEROBOTROOT\\Application\\views\\facestage4_sideview.xsivw",
+      "path_status": "DUMP_READY",
+      "titleframe_size": 495,
       "side_view_type": "FaceStage4_SideView",
-      "status": "SHELL_ONLY"
+      "status": "SHELL_ONLY",
+      "html_body": "LOCK"
     },
     {
       "index": 5,
       "frame": "stage5",
       "title_frame": "stage5title",
       "title_url": "$FACEROBOTROOT\\Application\\views\\stage5_titleframe.html",
+      "title_html_url": "$FACEROBOTROOT\\Application\\views\\stage5_title.html",
       "blank_url": "$FACEROBOTROOT\\Application\\views\\blank.html",
+      "sideframe_url": "$FACEROBOTROOT\\Application\\views\\facestage5_sideframe.html",
+      "sideview_html_url": "$FACEROBOTROOT\\Application\\views\\facestage5_sideview.html",
+      "sideview_xsivw": "$FACEROBOTROOT\\Application\\views\\facestage5_sideview.xsivw",
+      "path_status": "DUMP_READY",
+      "titleframe_size": 495,
       "side_view_type": "FaceStage5_UpperSideView",
       "status": "SHELL_ONLY",
+      "html_body": "LOCK",
       "sizechild": [27, 47, 340, 60, 270, "*"],
       "nested": {
         "synoptic_tray": {
           "frames": [
-            { "name": "stage5select", "type": "Synoptic View" },
-            { "name": "stage5display", "type": "netview", "url_blank": "$FACEROBOTROOT\\Application\\views\\blank.html" },
-            { "name": "stage5cameras", "type": "Synoptic View" },
-            { "name": "stage5export", "type": "netview", "url_blank": "$FACEROBOTROOT\\Application\\views\\blank.html" }
+            {
+              "name": "stage5select",
+              "type": "Synoptic View",
+              "path": "$FACEROBOTROOT\\Application\\views\\synoptic\\Stage5Selection.htm",
+              "path_size": 12273,
+              "path_status": "DUMP_READY",
+              "html_body": "LOCK"
+            },
+            {
+              "name": "stage5display",
+              "type": "netview",
+              "url_blank": "$FACEROBOTROOT\\Application\\views\\blank.html",
+              "path": "$FACEROBOTROOT\\Application\\views\\facestage5_displayframe.html",
+              "path_size": 500,
+              "path_status": "DUMP_READY",
+              "html_body": "LOCK"
+            },
+            {
+              "name": "stage5cameras",
+              "type": "Synoptic View",
+              "path": "$FACEROBOTROOT\\Application\\views\\synoptic\\Stage5Camera.htm",
+              "path_size": 2361,
+              "path_status": "DUMP_READY",
+              "html_body": "LOCK"
+            },
+            {
+              "name": "stage5export",
+              "type": "netview",
+              "url_blank": "$FACEROBOTROOT\\Application\\views\\blank.html",
+              "path": "$FACEROBOTROOT\\Application\\views\\facestage5_exportframe.html",
+              "path_size": 499,
+              "path_status": "DUMP_READY",
+              "html_body": "LOCK"
+            }
           ]
         },
-        "library": { "name": "stage5library", "type": "FaceStage5_LibraryView" },
+        "library": {
+          "name": "stage5library",
+          "type": "FaceStage5_LibraryView",
+          "path": "$FACEROBOTROOT\\Application\\views\\facestage5_libraryview.html",
+          "path_size": 3406,
+          "path_status": "DUMP_READY",
+          "html_body": "LOCK"
+        },
         "browser_tray": {
           "frames": [
-            { "name": "stage5browser", "type": "FaceStage5_BrowserView" },
-            { "name": "stage5blink", "type": "FaceStage5_BlinkView" },
-            { "name": "stage5settings", "type": "FaceStage5_SettingsView" }
+            {
+              "name": "stage5browser",
+              "type": "FaceStage5_BrowserView",
+              "path": "$FACEROBOTROOT\\Application\\views\\facestage5_browserview.html",
+              "path_size": 8672,
+              "path_status": "DUMP_READY",
+              "html_body": "LOCK"
+            },
+            {
+              "name": "stage5blink",
+              "type": "FaceStage5_BlinkView",
+              "path": "$FACEROBOTROOT\\Application\\views\\facestage5_blinkview.html",
+              "path_size": 3171,
+              "path_status": "DUMP_READY",
+              "html_body": "LOCK"
+            },
+            {
+              "name": "stage5settings",
+              "type": "FaceStage5_SettingsView",
+              "path": "$FACEROBOTROOT\\Application\\views\\facestage5_settingsview.html",
+              "path_size": 5542,
+              "path_status": "DUMP_READY",
+              "html_body": "LOCK"
+            }
           ]
         },
-        "lower": { "name": "stage5lower", "type": "FaceStage5_LowerSideView" }
+        "lower": {
+          "name": "stage5lower",
+          "type": "FaceStage5_LowerSideView",
+          "path": "$FACEROBOTROOT\\Application\\views\\facestage5_lowersideview.html",
+          "path_size": 2041,
+          "path_status": "DUMP_READY",
+          "html_body": "LOCK"
+        }
       }
     },
     {
@@ -93,20 +197,56 @@
       "frame": "stage6",
       "title_frame": "stage6title",
       "title_url": "$FACEROBOTROOT\\Application\\views\\stage6_titleframe.html",
+      "title_html_url": "$FACEROBOTROOT\\Application\\views\\stage6_title.html",
       "blank_url": "$FACEROBOTROOT\\Application\\views\\blank.html",
+      "sideframe_url": "$FACEROBOTROOT\\Application\\views\\facestage6_sideframe.html",
+      "sideview_html_url": "$FACEROBOTROOT\\Application\\views\\facestage6_sideview.html",
+      "sideview_xsivw": "$FACEROBOTROOT\\Application\\views\\facestage6_sideview.xsivw",
+      "path_status": "DUMP_READY",
+      "titleframe_size": 495,
       "side_view_type": "FaceStage6_UpperSideView",
       "status": "SHELL_ONLY",
+      "html_body": "LOCK",
       "sizechild": [27, 51, 296, 28, "*", 150],
       "nested": {
         "synoptic_tray": {
           "frames": [
-            { "name": "stage6regions", "type": "Synoptic View" },
-            { "name": "stage6list", "type": "netview", "url_blank": "$FACEROBOTROOT\\Application\\views\\blank.html" }
+            {
+              "name": "stage6regions",
+              "type": "Synoptic View",
+              "path": "$FACEROBOTROOT\\Application\\views\\synoptic\\Stage6Regions.htm",
+              "path_size": 8159,
+              "path_status": "DUMP_READY",
+              "html_body": "LOCK"
+            },
+            {
+              "name": "stage6list",
+              "type": "netview",
+              "url_blank": "$FACEROBOTROOT\\Application\\views\\blank.html",
+              "path": "$FACEROBOTROOT\\Application\\views\\facestage6_listframe.html",
+              "path_size": 497,
+              "path_status": "DUMP_READY",
+              "html_body": "LOCK"
+            }
           ]
         },
-        "mid": { "name": "stage6mid", "type": "FaceStage6_MidSideView" },
+        "mid": {
+          "name": "stage6mid",
+          "type": "FaceStage6_MidSideView",
+          "path": "$FACEROBOTROOT\\Application\\views\\facestage6_midsideview.html",
+          "path_size": 589,
+          "path_status": "DUMP_READY",
+          "html_body": "LOCK"
+        },
         "ppg": { "name": "stage6ppg", "type": "property panel" },
-        "lower": { "name": "stage6lower", "type": "FaceStage6_LowerSideView" }
+        "lower": {
+          "name": "stage6lower",
+          "type": "FaceStage6_LowerSideView",
+          "path": "$FACEROBOTROOT\\Application\\views\\facestage6_lowersideview.html",
+          "path_size": 6897,
+          "path_status": "DUMP_READY",
+          "html_body": "LOCK"
+        }
       }
     }
   ],
@@ -126,6 +266,8 @@
       "view_type": "Synoptic View",
       "command": "ShowFaceRobotActPanel",
       "path_default": "$FACEROBOTROOT\\Application\\views\\synoptic\\FaceRobotContext.htm",
+      "path_size": 16184,
+      "path_status": "DUMP_READY",
       "OffsetX": 3,
       "OffsetY": 335,
       "html_body": "LOCK"
@@ -135,10 +277,24 @@
       "stage5cameras",
       "stage6regions"
     ],
-    "note": "Synoptic HTML / FR.dll body LOCK — wire Path + frame slots only"
+    "stage_paths": {
+      "stage5select": "$FACEROBOTROOT\\Application\\views\\synoptic\\Stage5Selection.htm",
+      "stage5cameras": "$FACEROBOTROOT\\Application\\views\\synoptic\\Stage5Camera.htm",
+      "stage6regions": "$FACEROBOTROOT\\Application\\views\\synoptic\\Stage6Regions.htm"
+    },
+    "note": "Synoptic Path DUMP_READY (closer95 install scrape + modules-gdi index). HTML / FR.dll body LOCK — wire Path + frame slots only"
+  },
+  "views_index": {
+    "status": "DUMP_READY",
+    "board_key": "face_robot.synoptic_html",
+    "data": "face_robot_views_index.json",
+    "n_files_indexed": 65,
+    "closer95_n_files": 312,
+    "closer95_n_synoptic_htm": 16,
+    "stages_seen": ["facestage1", "facestage2", "facestage3", "facestage4", "facestage5", "facestage6"]
   },
   "runtime_lock": {
     "status": "LOCK",
-    "note": "No invent FR.dll / stage*_titleframe.html / FaceRobotContext.htm / FaceStageN SideView client GDI beyond xsily structure + Stage 1 Desktop PNG"
+    "note": "No invent FR.dll / stage*_titleframe.html / FaceRobotContext.htm / FaceStageN SideView client GDI bodies — paths DUMP_READY from install scrape only"
   }
 }
