@@ -12,6 +12,7 @@ import { registerAnimCommands } from './commands/anim';
 import { registerRenderCommands } from './commands/render';
 import { registerModuleToolbarCommands } from './commands/moduleToolbar';
 import { iceTree, renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
+import { frostGraphView, frostOf, runFrostSmokeTests } from './frost';
 import { registerToolbarCommands, palettesView, toolbarView, newToolbar, customizeToolbars, openToolbarWindow, userToolbars } from './ui/toolbars';
 import { playbackPanel, animationPanel, timerange, layerManager, xsiExplorer, scriptHistory } from './ui/views';
 import { LayoutEngine, layoutByName, currentLayoutName, layoutNames, dockInto } from './ui/layout';
@@ -105,6 +106,7 @@ const SHELL: Record<string, (h: HTMLElement) => void> = {
   'Weight Paint Panel': h => weightPaintPanel(app, h), 'Preset Manager': h => presetManager(app, h),
   'Animation Mixer': h => animationMixer(app, h), 'Expression Editor': h => { animationEditor(app, h, 'fcurve'); },
   'ICE Tree': h => iceTree(app, h),
+  'FROST Graph': h => frostGraphView(app, h),
   'FX Tree': deferredView('FX Tree', 'Softimage Fx Tree (compositing) — UI frame wired; Render/FX evaluation deferred past UI+Model+Animation DoD.'),
   'Fx Viewer': deferredView('Fx Viewer', 'Softimage Fx Viewer — UI frame wired; compositing deferred.'),
   'Fx Paint Brush List': deferredView('Fx Paint Brush List', 'Softimage Fx brushes list — UI frame wired; compositing deferred.'),
@@ -280,6 +282,10 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
 };
 (window as any).__openView = (name: string) => openView(name);
 (window as any).__switchModule = (m: string) => { app.module = m as any; app.events.emit('module'); };
+// FROST P0 hooks (graph session + evaluator smoke)
+frostOf(app);
+(window as any).__frost = () => frostOf(app);
+(window as any).__frostSmoke = () => runFrostSmokeTests();
 
 // Auto-inspect (Interaction pref "Popup Property Editors on Node Creation"): a new node opens a floating property
 // editor, like Softimage's "Scene_Root : sphere (General)" window, rather than switching the MCP tray.

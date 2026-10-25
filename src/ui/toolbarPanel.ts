@@ -1,9 +1,11 @@
 // Toolbar Panel: the module dropdown (Model / Animate / ...) and the menu tree extracted from Softimage's
 // toolbarobj.dll. Leaf items dispatch to commands through the menu-id -> command map.
+// FROST is the 2026 FX successor module (not a Softimage PE extract).
 import { App } from '../core/commands';
 import menus from '../data/menus.json';
 import menuCommands from '../data/menu_commands.json';
 import { commandEnabled, commandSupported } from './cmdEnable';
+import { frostToolbar } from '../frost/ui';
 
 type MenuItem = { label?: string; id?: number; items?: MenuItem[]; separator?: boolean };
 const MENUS = menus as Record<string, MenuItem[]>;
@@ -14,9 +16,10 @@ export function toolbarPanel(app: App, host: HTMLElement) {
   const sel = document.createElement('select'); sel.className = 'module-select ' + app.module;
   // Softimage module heads. PE trees from toolbarobj.dll live in `src/data/menus.json`
   // (Model 204, Animate 237, Render 234, Simulate 205 Rigid/Soft/Cloth, ICE 303 Particles/CrowdFX, Hair 297).
-  for (const m of ['Model', 'Animate', 'Render', 'Simulate', 'ICE', 'Hair']) {
+  // FROST is the AfterImage 2026 successor surface (graph + hair/cloth wizards later).
+  for (const m of ['Model', 'Animate', 'Render', 'Simulate', 'ICE', 'Hair', 'FROST']) {
     const o = document.createElement('option'); o.value = m;
-    o.textContent = MENUS[m] ? m : `${m} (menu not in install data yet)`;
+    o.textContent = m === 'FROST' ? 'FROST' : MENUS[m] ? m : `${m} (menu not in install data yet)`;
     sel.appendChild(o);
   }
   sel.value = app.module;
@@ -27,6 +30,10 @@ export function toolbarPanel(app: App, host: HTMLElement) {
   const render = () => {
     root.className = 'toolbar-panel ' + app.module; sel.className = 'module-select ' + app.module; sel.value = app.module;
     scroll.innerHTML = '';
+    if (app.module === 'FROST') {
+      frostToolbar(app, scroll);
+      return;
+    }
     const tree = MENUS[app.module];
     if (!tree) {
       scroll.innerHTML = `<div class="view-placeholder">Softimage <b>${app.module}</b> toolbar menu is not in the in-tree PE extract yet. UI shell still switches modules; menu leaves land when install data is scraped or a local Softimage dump is uploaded.</div>`;
