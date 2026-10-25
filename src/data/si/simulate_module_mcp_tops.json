@@ -1,5 +1,5 @@
 {
-  "_comment": "Softimage Simulate module toolbar MCP tops — PE MENU 205 (toolbarobj.dll) + modules_simulate.json / menu_simulate.txt. Dump-attested only; flyout pixels LOCK. FROST cloth stays parallel.",
+  "_comment": "Softimage Simulate module toolbar MCP tops \u2014 PE MENU 205 (toolbarobj.dll) + modules_simulate.json / menu_simulate.txt. Dump-attested only; flyout pixels LOCK. FROST cloth stays parallel.",
   "softimage": "13.2.163.0",
   "source": [
     "internal/softimage-pc-dumps/modules/modules_simulate.json",
@@ -13,21 +13,63 @@
   "switch_toolbar_target": 5,
   "switch_command_name": "Switch to Simulate Toolbar",
   "keymap": "Ctrl+4",
-  "tops": ["Get", "Create", "Modify"],
+  "tops": [
+    "Get",
+    "Create",
+    "Modify"
+  ],
   "buttons": {
-    "Get": ["Primitive", "Force", "Property"],
-    "Create": ["Rigid Body", "Soft Body", "Cloth"],
-    "Modify": ["Rigid Body", "Shader", "Deform", "Soft Body", "Cloth"]
+    "Get": [
+      "Primitive",
+      "Force",
+      "Property"
+    ],
+    "Create": [
+      "Rigid Body",
+      "Soft Body",
+      "Cloth"
+    ],
+    "Modify": [
+      "Rigid Body",
+      "Shader",
+      "Deform",
+      "Soft Body",
+      "Cloth"
+    ]
   },
   "command_name_map": {
     "_note": "English probes Create/Apply Rigid|Soft Body were found=false in modules_simulate.json; Softimage Names are scripting names below (PE MENU 205 + commands_full).",
-    "Create Cloth": { "scriptingname": "SyCreateCloth", "category": "Custom", "addon": "Syflex30X50/cloth.vbs", "pe_create_cloth_from_selection": "ApplyCloth" },
-    "Apply Cloth": { "scriptingname": "ApplyCloth", "category": "Simulation", "pe_id": 41015 },
-    "Active Rigid Body": { "scriptingname": "CreateActiveRigidBody", "pe_id": 41283 },
-    "Passive Rigid Body": { "scriptingname": "CreatePassiveRigidBody", "pe_id": 41284 },
-    "Compound Rigid Body": { "scriptingname": "CreateCompoundRigidBody", "pe_id": 41467 },
-    "Soft Body From Selection": { "scriptingname": "ApplySoftBody", "pe_id": 40916 },
-    "Local Cloth Cluster": { "scriptingname": "AddClothClusters", "pe_id": 41053 }
+    "Create Cloth": {
+      "scriptingname": "SyCreateCloth",
+      "category": "Custom",
+      "addon": "Syflex30X50/cloth.vbs",
+      "pe_create_cloth_from_selection": "ApplyCloth"
+    },
+    "Apply Cloth": {
+      "scriptingname": "ApplyCloth",
+      "category": "Simulation",
+      "pe_id": 41015
+    },
+    "Active Rigid Body": {
+      "scriptingname": "CreateActiveRigidBody",
+      "pe_id": 41283
+    },
+    "Passive Rigid Body": {
+      "scriptingname": "CreatePassiveRigidBody",
+      "pe_id": 41284
+    },
+    "Compound Rigid Body": {
+      "scriptingname": "CreateCompoundRigidBody",
+      "pe_id": 41467
+    },
+    "Soft Body From Selection": {
+      "scriptingname": "ApplySoftBody",
+      "pe_id": 40916
+    },
+    "Local Cloth Cluster": {
+      "scriptingname": "AddClothClusters",
+      "pe_id": 41053
+    }
   },
   "preferences": {
     "simulation": {
@@ -59,10 +101,20 @@
   },
   "syflex_client_gdi": {
     "status": "LOCK",
-    "note": "No invent Syflex client GDI. SyCreateCloth registers dump Name only; PE Create Cloth From Selection uses ApplyCloth."
+    "note": "No invent Syflex client GDI. SyCreateCloth registers dump Name only; PE Create Cloth From Selection uses ApplyCloth. Await modules-gdi HWND harvest."
   },
   "panelswitcher": {
     "SIMULATE_MODULE": "ICE Tree",
-    "note": "panelswitcher.json Tree button: SIMULATE_MODULE → viewport C = ICE Tree (same as ICE_MODULE)."
+    "note": "panelswitcher.json Tree button: SIMULATE_MODULE \u2192 viewport C = ICE Tree (same as ICE_MODULE)."
+  },
+  "cloth_ppg": {
+    "status": "SPDL",
+    "chrome": "cloth_ppg_chrome.json",
+    "view_chrome": "simulate_view_chrome.json",
+    "propsets": [
+      "C3DClothProp",
+      "C3DClothOp"
+    ],
+    "note": "ApplyCloth wires C3DClothProp + C3DClothOp PPG tabs from Softimage SPDL dumps; Property Editor shell from propertyeditor.xsivw."
   }
 }

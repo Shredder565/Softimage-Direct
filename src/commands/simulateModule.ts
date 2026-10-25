@@ -1,8 +1,10 @@
 // Softimage Simulate module toolbar / prefs — dump-backed (modules_simulate.json + PE MENU 205).
-// FROST cloth (src/frost/) stays parallel. No invent Syflex client GDI.
+// Cloth PPG: C3DClothProp/C3DClothOp SPDL chrome. FROST cloth (src/frost/) stays parallel. No invent Syflex client GDI.
 import { App } from '../core/commands';
 import { pref } from '../ui/prefs';
 import simTops from '../data/si/simulate_module_mcp_tops.json';
+import simViewChrome from '../data/si/simulate_view_chrome.json';
+import { clothPpgAudit } from './clothPpg';
 
 /** Softimage Simulate module switcher + SyCreateCloth Name + audit helpers. */
 export function registerSimulateModuleCommands(app: App) {
@@ -72,6 +74,13 @@ export function simulateModuleAudit(app: App): Record<string, unknown> {
     cachefiletype: pref('C3DPrefsSimulation', 'cachefiletype'),
   };
   const A = app as any;
+  const view = simViewChrome as typeof simViewChrome & {
+    cloth_ppg?: { status: string };
+    syflex_client_gdi?: { status: string };
+    property_editor?: { defaultsize: number[] };
+    mcp_panel?: { tops: string[]; buttons: Record<string, string[]> };
+  };
+  const cloth = clothPpgAudit();
   return {
     softimage: tops.softimage,
     menuId: tops.menu_id,
@@ -80,7 +89,15 @@ export function simulateModuleAudit(app: App): Record<string, unknown> {
     buttons: tops.buttons,
     switchToolbarTarget: tops.switch_toolbar_target,
     flyoutPixels: tops.flyout_pixels?.status ?? 'LOCK',
-    syflexClientGdi: tops.syflex_client_gdi?.status ?? 'LOCK',
+    syflexClientGdi: view.syflex_client_gdi?.status ?? tops.syflex_client_gdi?.status ?? 'LOCK',
+    clothPpg: cloth.status,
+    clothPpgAudit: cloth,
+    simulateViewChrome: {
+      mcpTops: view.mcp_panel?.tops ?? tops.tops,
+      propertyEditorDefaultsize: view.property_editor?.defaultsize ?? [50, 50, 125, 265],
+      clothPpg: view.cloth_ppg?.status ?? 'SPDL',
+      syflexClientGdi: view.syflex_client_gdi?.status ?? 'LOCK',
+    },
     commandNameMap: tops.command_name_map ?? {},
     commandsWired: simCmds,
     syCreateCloth: app.commands.has('SyCreateCloth'),
