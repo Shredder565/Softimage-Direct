@@ -1,0 +1,37 @@
+{
+  "_comment": "Softimage GenOpInputsButtonsDisplay/Logic chrome — attested SPDL text/layout flags only (has_layout:false). Built from data/dump/si_genop_inputs_buttons.json.",
+  "softimage": "13.2.163.0",
+  "has_layout": false,
+  "source": "data/dump/si_genop_inputs_buttons.json",
+  "groups": [
+    {
+      "group": "Inputs",
+      "opts": ["continue", "30%"],
+      "items": [
+        { "button": "HideInputs", "label": "Hide/Unhide", "opts": ["continue"], "command": "HideGeneratorInputs" },
+        { "button": "DeleteInputs", "label": "Delete", "command": "DeleteGeneratorInputs" },
+        { "param": "syncwithinputspose" }
+      ]
+    },
+    {
+      "group": "Inputs' construction mode",
+      "items": [
+        { "param": "inputreadregion", "opts": ["NoLabel"] }
+      ]
+    }
+  ],
+  "inline_opdefs": [
+    "booleansrftopoop",
+    "CurveListToMesh",
+    "mergemesh",
+    "nurbstomesh",
+    "TransferAttributes",
+    "extractcrvseg",
+    "filletcrv",
+    "fitcrv",
+    "fitsrf",
+    "intersectsrf",
+    "mergecrv",
+    "blendcrv"
+  ]
+}

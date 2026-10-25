@@ -16,6 +16,7 @@ import type { V3 } from '../core/curves';
 import * as C from '../core/curves';
 import { FCurve } from '../core/animation';
 import { edgeKey, fromPolys, toPolys, splitEdges, weldPoints, dissolvePolygons, disconnectPolygons, sliceAxis, dicePolygons } from '../core/topology';
+import { floatingWindows } from '../ui/floating';
 
 const CURVE_PRESETS = ['Arc', 'Circle', 'Spiral', 'Square'];
 const SURF_PRESETS = ['Sphere', 'Torus', 'Cylinder', 'Cone', 'Disc', 'Grid', 'Cube'];
@@ -115,6 +116,58 @@ export function registerModelCommands(app: App) {
     },
   });
   app.register({ name: 'UIAssembleNurbsMesh', label: 'Assemble', category: 'Modeling', args: [], execute: (app) => app.run('ApplyGenOp', { PresetObj: 'MeshMerge', Target: 'NurbsSurface' }) });
+
+  // GenOpInputsButtons* chrome (attested SPDL): Hide/Unhide + Delete generator inputs; Delete closes PPG.
+  const genOpsOf = (app: App, arg: any): S2.GeneratorOperator[] => {
+    const raw = arg === undefined || arg === null || arg === '' ? app.selection : Array.isArray(arg) ? arg : [arg];
+    const out: S2.GeneratorOperator[] = [];
+    for (const x of raw) {
+      if (x instanceof S2.GeneratorOperator) out.push(x);
+      else if (x instanceof X3DObject) {
+        for (const op of x.primitive?.operators ?? []) if (op instanceof S2.GeneratorOperator) out.push(op);
+      } else if (x && typeof x === 'object' && Array.isArray((x as any).inputs) && (x as any).preset) {
+        out.push(x as unknown as S2.GeneratorOperator);
+      }
+    }
+    return out;
+  };
+  app.register({
+    name: 'HideGeneratorInputs', label: 'Hide Generator Inputs', category: 'Modeling',
+    args: [{ name: 'InputObjs', default: null }],
+    execute(app, a) {
+      for (const op of genOpsOf(app, a.InputObjs)) {
+        for (const i of op.inputs) {
+          const p = i.property('visibility')?.get('viewvis');
+          if (p) app.setParam(p, !p.value, 'Hide/Unhide');
+        }
+      }
+    },
+  });
+  app.register({
+    name: 'DeleteGeneratorInputs', label: 'Delete Generator Inputs', category: 'Modeling',
+    args: [{ name: 'InputObjs', default: null }],
+    execute(app, a) {
+      const ops = genOpsOf(app, a.InputObjs);
+      const doomed = new Set<X3DObject>();
+      for (const op of ops) {
+        const owner = op.owner?.() ?? null;
+        if (owner) app.run('FreezeModeling', { InputObjs: [owner] });
+        for (const i of op.inputs) doomed.add(i);
+      }
+      if (doomed.size) app.run('DeleteObj', { InputObjs: [...doomed] });
+      // Softimage GenOpInputsButtonsLogic: DeleteInputs_OnClicked → PPG.Close
+      for (const w of floatingWindows()) if (w.el.classList.contains('ppg-window')) w.close();
+    },
+  });
+  app.register({
+    name: 'SelectGeneratorInputs', label: 'Select Generator Inputs', category: 'Modeling',
+    args: [{ name: 'InputObjs', default: null }],
+    execute(app, a) {
+      const inputs: X3DObject[] = [];
+      for (const op of genOpsOf(app, a.InputObjs)) for (const i of op.inputs) if (!inputs.includes(i)) inputs.push(i);
+      if (inputs.length) app.select(inputs);
+    },
+  });
 
   // ------------------------------------------------------------ topology extensions (curve + mesh)
   const topoBase = app.commands.get('ApplyTopoOp')!; const topoCan = topoBase.canRun!, topoExec = topoBase.execute;

@@ -177,6 +177,10 @@ button, select, input { font-family: inherit; }
 .ppg-group-head .tri { width: 10px; font-size: 9px; } .ppg-group-head .spacer { flex: 1; } .ppg-group-pin { font-size: 9px; color: #666; }
 .ppg-group-body { padding: 2px 0 0 8px; }
 .ppg-hrow { display: flex; gap: 8px; align-items: center; } .ppg-hrow .ppg-row { flex: 1; min-width: 0; }
+.ppg-group-row { align-items: flex-start; flex-wrap: wrap; }
+.ppg-group-pct { min-width: 0; }
+.ppg-btn-row { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 2px 0 4px; }
+.ppg-spdl-btn { font-family: var(--dlg-font, var(--ppg-font)); font-size: var(--dlg-font-px, var(--ppg-font-pt)); min-width: var(--dlg-btn-w); min-height: var(--dlg-btn-h); padding: 1px 8px; cursor: pointer; background: linear-gradient(var(--btn-top), var(--btn-bot)); border: 1px solid var(--line); border-radius: 2px; color: var(--text); }
 .ppg-row { display: grid; grid-template-columns: 18px var(--ppg-label-w) 1fr; align-items: center; gap: var(--ppg-row-gap); margin: 2px 0; }
 .ppg-row label { color: var(--text); font-size: var(--ppg-font-pt); text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ppg-row.is-check { grid-template-columns: 18px 1fr 16px; } .ppg-row.is-check label { text-align: left; }

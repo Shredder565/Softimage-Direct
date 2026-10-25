@@ -142,25 +142,45 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
     }
     body.appendChild(box.el);
   };
-  const group = (name: string, pageKey: string) => {
+  const group = (name: string, pageKey: string, opts: string[] = []) => {
     const el = document.createElement('div'); el.className = 'ppg-group'; const key = pageKey + '/' + name;
     const head = document.createElement('div'); head.className = 'ppg-group-head'; head.innerHTML = `<span class="tri">${collapsed.has(key) ? '▸' : '▾'}</span><span>${name}</span><span class="spacer"></span><span class="ppg-group-pin">⇪</span>`;
     const bodyEl = document.createElement('div'); bodyEl.className = 'ppg-group-body'; if (collapsed.has(key)) bodyEl.style.display = 'none';
     head.onclick = () => { if (collapsed.has(key)) collapsed.delete(key); else collapsed.add(key); render(); };
-    el.append(head, bodyEl); return { el, body: bodyEl };
+    // Softimage Group opts from GenOpInputsButtonsDisplay: `continue, 30%` (attested; no invent GDI).
+    const go = parseLayoutOpts(opts);
+    if (go.widthPct) { el.style.flex = `0 0 ${go.widthPct}`; el.style.maxWidth = go.widthPct; el.classList.add('ppg-group-pct'); }
+    el.append(head, bodyEl); return { el, body: bodyEl, continue: opts.some(o => String(o).toLowerCase() === 'continue') };
   };
   const renderLayout = (nodes: LayoutNode[], set: ParamSet, into: HTMLElement, pageKey: string, allow?: Set<string>) => {
     const mute = set.get('mute'); if (mute && into === body && !allow) into.appendChild(muteRow(app, mute));
     const seen = new Set<string>();
     const walk = (ns: LayoutNode[], host: HTMLElement) => {
+      let rowHost: HTMLElement | null = null;
       for (const nd of ns) {
-        if (nd.param) {
+        if (nd.button) {
+          const btnHost = rowHost ?? host;
+          const wrap = btnHost.querySelector('.ppg-btn-row') as HTMLElement | null
+            ?? (() => { const r = document.createElement('div'); r.className = 'ppg-btn-row'; btnHost.appendChild(r); return r; })();
+          wrap.appendChild(spdlButton(app, nd, set));
+          if (nd.opts?.some(o => String(o).toLowerCase() === 'continue')) continue;
+          rowHost = null;
+        } else if (nd.param) {
           if (nd.param === '__name' || nd.param === 'Name') continue;
           const p = set.params.find(x => x.name.toLowerCase() === nd.param!.toLowerCase());
           if (p && p.name !== 'mute' && (!allow || allow.has(p.name.toLowerCase()))) { seen.add(p.name); host.appendChild(row(app, p, nd.opts, multiSet)); }
+          rowHost = null;
+        } else if (nd.row !== undefined) { const r = document.createElement('div'); r.className = 'ppg-hrow'; walk(nd.items ?? [], r); host.appendChild(r); rowHost = null; }
+        else {
+          const g = group(nd.group ?? nd.tab ?? '', pageKey, nd.opts ?? []);
+          walk(nd.items ?? [], g.body);
+          if (g.body.childElementCount) {
+            if (g.continue) {
+              if (!rowHost) { rowHost = document.createElement('div'); rowHost.className = 'ppg-hrow ppg-group-row'; host.appendChild(rowHost); }
+              rowHost.appendChild(g.el);
+            } else { host.appendChild(g.el); rowHost = null; }
+          }
         }
-        else if (nd.row !== undefined) { const r = document.createElement('div'); r.className = 'ppg-hrow'; walk(nd.items ?? [], r); host.appendChild(r); }
-        else { const g = group(nd.group ?? nd.tab ?? '', pageKey); walk(nd.items ?? [], g.body); if (g.body.childElementCount) host.appendChild(g.el); }
       }
     };
     walk(nodes, into);
@@ -199,6 +219,18 @@ function drawCurve(cv: HTMLCanvasElement, fc: FCurve, s: number, e: number, cur:
 }
 
 function muteRow(app: App, p: Parameter) { const r = document.createElement('div'); r.className = 'ppg-mute'; const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!p.value; cb.onchange = () => app.setParam(p, cb.checked); const l = document.createElement('label'); l.textContent = 'Mute'; r.append(cb, l); return r; }
+
+/** Softimage SPDL Button chrome (GenOp Hide/Unhide + Delete) — attested labels only; soft-dialog size tokens. */
+function spdlButton(app: App, nd: LayoutNode, set: ParamSet): HTMLElement {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'ppg-spdl-btn';
+  b.dataset.button = nd.button ?? '';
+  b.textContent = nd.label || nd.button || '';
+  const cmd = nd.command || (nd.button === 'HideInputs' ? 'HideGeneratorInputs' : nd.button === 'DeleteInputs' ? 'DeleteGeneratorInputs' : '');
+  b.onclick = () => { if (!cmd) return; app.run(cmd, { InputObjs: [set] }); };
+  return b;
+}
 function dotState(app: App, p: Parameter) { const fc = app.anim.fcurve(p); if (!fc || !fc.keys.length) return ''; return fc.hasKey(app.anim.frame) ? ' keyed' : ' animated'; }
 function fmtNum(v: any) { return typeof v === 'number' ? String(Math.round(v * 10000) / 10000) : String(v); }
 

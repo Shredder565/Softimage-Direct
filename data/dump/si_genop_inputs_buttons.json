@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "softimage": "13.2.163.0",
+    "sources": [
+      "internal/softimage-pc-dumps/unlock/unlock_model_animate.json#locks.model.genop_hide_delete_chrome",
+      "internal/softimage-pc-dumps/dialogs/genop-inputs-boolean-inline.json",
+      "internal/softimage-pc-dumps/dialogs/caphole-genop/raw/GenOpInputsButtonsDisplay.spdl",
+      "internal/softimage-pc-dumps/dialogs/caphole-genop/raw/GenOpInputsButtonsLogic.spdl"
+    ],
+    "note": "GenOp Hide/Delete PPG chrome from attested SPDL Button/Group text only. Fragment has_layout=false (no Layout{} grammar; no invent GDI HWND)."
+  },
+  "lock_id": "model.genop_hide_delete_chrome",
+  "status": "DUMP_READY",
+  "has_layout": false,
+  "spdl_files": [
+    "GenOpInputsButtonsDisplay.spdl",
+    "GenOpInputsButtonsLogic.spdl"
+  ],
+  "display": {
+    "file": "GenOpInputsButtonsDisplay.spdl",
+    "has_layout": false,
+    "groups": [
+      {
+        "name": "Inputs",
+        "opts": ["continue", "30%"],
+        "items": [
+          { "button": "HideInputs", "label": "Hide/Unhide", "opts": ["continue"], "command": "HideGeneratorInputs" },
+          { "button": "DeleteInputs", "label": "Delete", "command": "DeleteGeneratorInputs" },
+          { "param": "syncwithinputspose" }
+        ]
+      },
+      {
+        "name": "Inputs' construction mode",
+        "items": [
+          { "param": "inputreadregion", "opts": ["NoLabel"] }
+        ]
+      }
+    ]
+  },
+  "logic": {
+    "file": "GenOpInputsButtonsLogic.spdl",
+    "has_layout": false,
+    "handlers": {
+      "HideInputs_OnClicked": "HideGeneratorInputs",
+      "DeleteInputs_OnClicked": "DeleteGeneratorInputs",
+      "SelectInputs_OnClicked": "SelectGeneratorInputs",
+      "SelectOutputs_OnClicked": "SelectGeneratorOutputs"
+    },
+    "delete_closes_ppg": true
+  },
+  "inline_consumer_opdefs": [
+    "booleansrftopoop",
+    "CurveListToMesh",
+    "mergemesh",
+    "nurbstomesh",
+    "TransferAttributes",
+    "extractcrvseg",
+    "filletcrv",
+    "fitcrv",
+    "fitsrf",
+    "intersectsrf",
+    "mergecrv",
+    "blendcrv"
+  ]
+}

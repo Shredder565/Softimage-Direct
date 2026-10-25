@@ -144,5 +144,24 @@ for (const [f, key] of Object.entries(wired)) {
   else ok.push(`token spdl wired: ${f} → ${key}`);
 }
 
+// GenOp Hide/Delete chrome (DUMP_READY): attested Button text + has_layout:false; runtime siLayout prepends.
+{
+  const chrome = JSON.parse(fs.readFileSync(path.join(root, 'src/data/si/genop_inputs_buttons.json'), 'utf8'));
+  if (chrome.has_layout !== false) fail.push('genop chrome: expected has_layout:false');
+  else ok.push('genop chrome: has_layout:false');
+  const hide = chrome.groups?.find((g) => g.group === 'Inputs')?.items?.find((i) => i.button === 'HideInputs');
+  const del = chrome.groups?.find((g) => g.group === 'Inputs')?.items?.find((i) => i.button === 'DeleteInputs');
+  if (hide?.label !== 'Hide/Unhide') fail.push(`genop chrome: HideInputs label ${JSON.stringify(hide?.label)}`);
+  else ok.push('genop chrome: Hide/Unhide');
+  if (del?.label !== 'Delete') fail.push(`genop chrome: DeleteInputs label ${JSON.stringify(del?.label)}`);
+  else ok.push('genop chrome: Delete');
+  for (const key of chrome.inline_opdefs || []) {
+    const d = opdefs.ops[key];
+    if (!d) { fail.push(`genop inline opdef missing: ${key}`); continue; }
+    // Runtime compose is in siLayout; dump chrome file is the wire source of truth.
+    ok.push(`genop inline consumer: ${key}`);
+  }
+}
+
 console.log(JSON.stringify({ ok: ok.length, fail: fail.length, failures: fail, sample_ok: ok.slice(0, 12) }, null, 2));
 process.exit(fail.length ? 1 : 0);

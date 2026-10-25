@@ -77,6 +77,14 @@
     "extractcrvsegment.spdl": "extractcrvseg",
     "blendcrvop.spdl": "blendcrv",
     "mergecrv.spdl": "mergecrv",
-    "C3DMergeMeshOp.spdl": "mergemesh"
+    "C3DMergeMeshOp.spdl": "mergemesh",
+    "GenOpInputsButtonsDisplay.spdl": null,
+    "GenOpInputsButtonsLogic.spdl": null
+  },
+  "genop_hide_delete_chrome": {
+    "status": "DONE",
+    "has_layout": false,
+    "source": "src/data/si/genop_inputs_buttons.json",
+    "buttons": ["Hide/Unhide", "Delete"]
   }
 }
