@@ -14,5 +14,14 @@
     { "sn": "RegionHeight", "name": "Height", "type": "number", "default": 0, "caps": "ReadOnly", "class": "MetaData" }
   ],
   "create_defaults": { "Left": 0.1, "Right": 0.9, "Top": 0.1, "Bottom": 0.9 },
-  "hwnd_crop_chrome": { "status": "LOCK", "note": "null under XSIBATCH -processing; Desktop tour may unlock later" }
+  "hwnd_crop_chrome": {
+    "status": "LOCK",
+    "note": "Desktop 2026-10-25 direct_lock_desktop_close: dump labeled DUMP_READY but only Passes.RenderOptions OM (image W/H); CreateRenderRegion cmds failed; no crop HWND pixels — do not invent."
+  },
+  "desktop_close": {
+    "source": "data/dump/direct_lock_desktop_close.json",
+    "dump_label": "DUMP_READY",
+    "wire": "OM_PARAMS_ONLY"
+  }
 }
+

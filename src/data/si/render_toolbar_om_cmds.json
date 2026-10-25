@@ -33,6 +33,7 @@
   ],
   "region_hwnd_crop": {
     "status": "LOCK",
-    "note": "SPDL/OM region options + Softimage Left/Right/Top/Bottom fractions attested; HWND crop chrome null under headless — do not invent."
+    "note": "SPDL/OM region options + Softimage Left/Right/Top/Bottom fractions attested; Desktop 2026-10-25 dump DUMP_READY was Passes.RenderOptions OM only — HWND crop chrome still LOCK; do not invent."
   }
 }
+
