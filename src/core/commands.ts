@@ -47,7 +47,7 @@ export interface CommandDef {
 
 export interface UndoEntry { label: string; undo(): void; redo(): void; }
 
-type EventName = 'scene' | 'selection' | 'log' | 'undo' | 'module' | 'frame' | 'params' | 'inspect' | 'newscene';
+type EventName = 'scene' | 'selection' | 'log' | 'undo' | 'module' | 'frame' | 'params' | 'inspect' | 'newscene' | 'fr-stage';
 
 export class EventBus {
   private m = new Map<EventName, Set<(d?: any) => void>>();

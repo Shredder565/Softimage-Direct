@@ -1,0 +1,144 @@
+{
+  "_comment": "Softimage Face Robot Control Panel — facerobot.xsily facerobot_controller tray + synoptic frames. Dump-attested structure only; stage HTML / FR.dll bodies LOCK.",
+  "softimage": "13.2.163.0",
+  "source": [
+    "internal/softimage-pc-dumps/layouts/facerobot.xsily",
+    "internal/softimage-pc-dumps/dialogs/layout-templates/facerobot.xsily",
+    "media/softimage-modules-tour/50-facerobot-layout.png",
+    "data/commands_full.json ShowFaceRobotActPanel"
+  ],
+  "view": {
+    "name": "Face Robot Control Panel",
+    "displayname": "Face Robot Control Panel",
+    "xsily_switcher": "facerobot_controller",
+    "category": "Face Robot",
+    "defaultsize": [50, 50, 344, 720],
+    "xsily_column_sizechild": 344,
+    "buttonside": "bottom_inv",
+    "optionbutton": "container",
+    "active": 0
+  },
+  "sizechild": [290, 360, 360, 146, 290, 290],
+  "stages": [
+    {
+      "index": 1,
+      "frame": "stage1",
+      "title_frame": "stage1title",
+      "title_url": "$FACEROBOTROOT\\Application\\views\\stage1_titleframe.html",
+      "blank_url": "$FACEROBOTROOT\\Application\\views\\blank.html",
+      "side_view_type": "FaceStage1_SideView",
+      "title_attested": "Stage 1 > Assemble",
+      "desktop_chrome": "50-facerobot-layout.png",
+      "status": "WIRED"
+    },
+    {
+      "index": 2,
+      "frame": "stage2",
+      "title_frame": "stage2title",
+      "title_url": "$FACEROBOTROOT\\Application\\views\\stage2_titleframe.html",
+      "blank_url": "$FACEROBOTROOT\\Application\\views\\blank.html",
+      "side_view_type": "FaceStage2_SideView",
+      "status": "SHELL_ONLY",
+      "note": "xsily frame type attested; SideView body LOCK until Desktop/GDI harvest"
+    },
+    {
+      "index": 3,
+      "frame": "stage3",
+      "title_frame": "stage3title",
+      "title_url": "$FACEROBOTROOT\\Application\\views\\stage3_titleframe.html",
+      "blank_url": "$FACEROBOTROOT\\Application\\views\\blank.html",
+      "side_view_type": "FaceStage3_SideView",
+      "status": "SHELL_ONLY"
+    },
+    {
+      "index": 4,
+      "frame": "stage4",
+      "title_frame": "stage4title",
+      "title_url": "$FACEROBOTROOT\\Application\\views\\stage4_titleframe.html",
+      "blank_url": "$FACEROBOTROOT\\Application\\views\\blank.html",
+      "side_view_type": "FaceStage4_SideView",
+      "status": "SHELL_ONLY"
+    },
+    {
+      "index": 5,
+      "frame": "stage5",
+      "title_frame": "stage5title",
+      "title_url": "$FACEROBOTROOT\\Application\\views\\stage5_titleframe.html",
+      "blank_url": "$FACEROBOTROOT\\Application\\views\\blank.html",
+      "side_view_type": "FaceStage5_UpperSideView",
+      "status": "SHELL_ONLY",
+      "sizechild": [27, 47, 340, 60, 270, "*"],
+      "nested": {
+        "synoptic_tray": {
+          "frames": [
+            { "name": "stage5select", "type": "Synoptic View" },
+            { "name": "stage5display", "type": "netview", "url_blank": "$FACEROBOTROOT\\Application\\views\\blank.html" },
+            { "name": "stage5cameras", "type": "Synoptic View" },
+            { "name": "stage5export", "type": "netview", "url_blank": "$FACEROBOTROOT\\Application\\views\\blank.html" }
+          ]
+        },
+        "library": { "name": "stage5library", "type": "FaceStage5_LibraryView" },
+        "browser_tray": {
+          "frames": [
+            { "name": "stage5browser", "type": "FaceStage5_BrowserView" },
+            { "name": "stage5blink", "type": "FaceStage5_BlinkView" },
+            { "name": "stage5settings", "type": "FaceStage5_SettingsView" }
+          ]
+        },
+        "lower": { "name": "stage5lower", "type": "FaceStage5_LowerSideView" }
+      }
+    },
+    {
+      "index": 6,
+      "frame": "stage6",
+      "title_frame": "stage6title",
+      "title_url": "$FACEROBOTROOT\\Application\\views\\stage6_titleframe.html",
+      "blank_url": "$FACEROBOTROOT\\Application\\views\\blank.html",
+      "side_view_type": "FaceStage6_UpperSideView",
+      "status": "SHELL_ONLY",
+      "sizechild": [27, 51, 296, 28, "*", 150],
+      "nested": {
+        "synoptic_tray": {
+          "frames": [
+            { "name": "stage6regions", "type": "Synoptic View" },
+            { "name": "stage6list", "type": "netview", "url_blank": "$FACEROBOTROOT\\Application\\views\\blank.html" }
+          ]
+        },
+        "mid": { "name": "stage6mid", "type": "FaceStage6_MidSideView" },
+        "ppg": { "name": "stage6ppg", "type": "property panel" },
+        "lower": { "name": "stage6lower", "type": "FaceStage6_LowerSideView" }
+      }
+    }
+  ],
+  "lipsync_tray": {
+    "xsily": "lipsync_stow / lipsync_tray",
+    "displayname": "Lip Sync",
+    "optional": "hidden",
+    "frames": [
+      { "name": "lipsync", "displayname": "Lip Sync", "type": "Lip Sync" },
+      { "name": "mixer", "displayname": "Mixer", "type": "Animation Mixer" }
+    ],
+    "status": "SHELL_ONLY",
+    "note": "xsily optional=hidden; no invent Lip Sync body"
+  },
+  "synoptic": {
+    "act_panel": {
+      "view_type": "Synoptic View",
+      "command": "ShowFaceRobotActPanel",
+      "path_default": "$FACEROBOTROOT\\Application\\views\\synoptic\\FaceRobotContext.htm",
+      "OffsetX": 3,
+      "OffsetY": 335,
+      "html_body": "LOCK"
+    },
+    "stage_frames": [
+      "stage5select",
+      "stage5cameras",
+      "stage6regions"
+    ],
+    "note": "Synoptic HTML / FR.dll body LOCK — wire Path + frame slots only"
+  },
+  "runtime_lock": {
+    "status": "LOCK",
+    "note": "No invent FR.dll / stage*_titleframe.html / FaceRobotContext.htm / FaceStageN SideView client GDI beyond xsily structure + Stage 1 Desktop PNG"
+  }
+}
