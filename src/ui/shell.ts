@@ -264,7 +264,15 @@ export function imageClips(app: App, host: HTMLElement) {
 // ================================================================ Render Manager
 export function renderManager(app: App, host: HTMLElement) {
   const root = el('div', 'rendmgr'); host.appendChild(root);
-  const opts = { width: 640, height: 480, path: 'Render_Pictures/[Pass]_[Frame].png', frames: 'current' as 'current' | 'range', pass: app.scene.passes[0]?.name ?? 'Default_Pass' };
+  // Softimage Passes.RenderOptions defaults (si_render_prefs.json): 1920x1080, OutputDir Render_Pictures
+  const ro = () => app.scene.renderOptions;
+  const opts = {
+    width: Number(ro()?.val('ImageWidth') ?? 1920),
+    height: Number(ro()?.val('ImageHeight') ?? 1080),
+    path: 'Render_Pictures/[Pass]_[Framebuffer].png',
+    frames: 'current' as 'current' | 'range',
+    pass: app.scene.passes[0]?.name ?? 'Default_Pass',
+  };
   const render = () => { root.innerHTML = ''; root.appendChild(head(btn('Render Current Frame', 'Render the active camera at the output resolution', () => doRender(false)), btn('Render Pass', 'Render the pass frame range to a Flipbook', () => doRender(true)), btn('Preview', 'Render preview window', () => doRender(false))));
     const form = el('div', 'dlg');
     const row = (label: string, ctl: HTMLElement) => { const r = el('div', 'row'); r.append(el('label', '', label), ctl); form.appendChild(r); };
