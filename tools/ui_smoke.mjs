@@ -139,7 +139,20 @@ else {
   const tpe = audit.toolMenusPe;
   if (!tpe) fail.push('toolMenusPe missing from __uiAudit');
   else if (!tpe.ok) fail.push(`PE menus 530-532 mismatch: ${JSON.stringify(tpe.mismatches)}`);
-  else ok.push('PE tool menus 530-532 match Direct toolTranslate/Rotate/Scale');
+  else if (tpe.peSizes?.['530'] !== 250 || tpe.peSizes?.['531'] !== 256 || tpe.peSizes?.['532'] !== 256) {
+    fail.push(`PE menu resource sizes expected 250/256/256 got ${JSON.stringify(tpe.peSizes)}`);
+  } else ok.push('PE tool menus 530-532 match Direct toolTranslate/Rotate/Scale (sizes 250/256/256)');
+  // Unlock ui.manipulator_hitbox_px — menus + PE bitmap W/H; interactive hover LOCK
+  const mh = audit.manipHitbox ?? audit.viewportPolish?.manipHitbox;
+  if (!mh) fail.push('manipHitbox missing from __uiAudit');
+  else if (!mh.menusOk) fail.push(`manipHitbox menus pin failed: ${JSON.stringify(mh.menus)}`);
+  else if (!mh.toolbarCellOk || mh.toolbarCellWh?.w !== 24 || mh.toolbarCellWh?.h !== 24) {
+    fail.push(`manipHitbox toolbar cell expected 24x24: ${JSON.stringify(mh.toolbarCellWh)}`);
+  } else if ((mh.bitmapWhCount ?? 0) < 400) {
+    fail.push(`manipHitbox bitmapWhCount expected ≥400 got ${mh.bitmapWhCount}`);
+  } else if (mh.interactiveHoverPx !== 'LOCK') {
+    fail.push(`manipHitbox interactiveHoverPx expected LOCK got ${mh.interactiveHoverPx}`);
+  } else ok.push(`manip hitbox PE menus+bitmap W/H (cell ${mh.toolbarCellWh.w}x${mh.toolbarCellWh.h}, hover LOCK)`);
   // Softimage ≡ leaves: Lock Pivot / Volume / Edit Pivot must not fall through as "not implemented"
   const pePick = await p.evaluate(() => {
     const logs = [];
