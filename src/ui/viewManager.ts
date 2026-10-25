@@ -785,8 +785,9 @@ export function viewManager(app: App, host: HTMLElement) {
       const prim = t.obj.primitive!;
       if (!d.moved) { if (t.fresh) prim.removeOperator(t.op); }
       else app.record('Move Component', () => { if (t.fresh && !prim.operators.includes(t.op)) prim.addOperator(t.op); t.op.deltas.clear(); for (const [k, v] of after) t.op.deltas.set(k, v); prim.dirty = true; }, () => { t.op.deltas.clear(); for (const [k, v] of before) t.op.deltas.set(k, v); if (t.fresh) prim.removeOperator(t.op); prim.dirty = true; });
-      if (d.moved) { app.logMsg('cmd', `MoveComponent("${t.obj.name}", ${t.pts.length} points${app.proportional.on ? ', proportional' : ''})`); app.events.emit('scene'); }
-      sync(); return;
+      if (d.moved) { app.logMsg('cmd', `MoveComponent("${t.obj.name}", ${t.pts.length} points${app.proportional.on ? ', proportional' : ''})`); app.events.emit('scene'); sync(); return; }
+      // Softimage: click-without-drag in transform+component mode still runs pick / empty-area deselect below
+      sync();
     }
     if (!d.moved && d.button === 0 && !e.altKey) {
       const at = vpAt(e); if (!at) return; const vp = vps[at.i]; prepCam(vp, at.r);
@@ -796,6 +797,7 @@ export function viewManager(app: App, host: HTMLElement) {
       if (!pc && po && po.obj !== compTarget() && po.obj.primitive && geomPoints(po.obj.primitive.geom())) pc = pickComponent(vp, at, po.obj, po.hit, app.selMode as any); // Softimage: picking a component of another object switches to it
       if (pc) { if (pc.obj !== compTarget()) mode = 'replace'; app.selectComponents(pc.obj, pc.kind, [pc.item], mode); }
       else if (po && mode === 'replace' && po.obj !== compTarget()) { app.compSel = null; app.select([po.obj]); }
+      // Softimage: plain click on empty/grey viewport clears component selection; Shift (mode=add) keeps it
       else if (mode === 'replace' && compTarget()) app.selectComponents(compTarget()!, app.selMode as any, [], mode);
       return;
     }

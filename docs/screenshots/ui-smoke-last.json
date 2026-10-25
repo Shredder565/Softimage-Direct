@@ -1,5 +1,5 @@
 {
-  "ok": 56,
+  "ok": 58,
   "fail": 0,
   "note": 1,
   "okItems": [
@@ -25,6 +25,8 @@
     "rectRaycast=false shaded through-pick (C3DPrefsSelect)",
     "useManipulators=true",
     "plane handles drawn (plane:xy,plane:yz,plane:zx)",
+    "empty viewport click clears component selection (translate+point)",
+    "Shift+empty viewport click keeps component selection",
     "MCP PE bitmap hit-maps (48 hits, sections Select+Transform+Snap+Constrain+Edit)",
     "PPG shell chrome host=147 nav=71x25 tools=66x25 font=11pt",
     "Explorer+Prefs chrome rename=725 row=16 prefsHost=264 labelW=260",

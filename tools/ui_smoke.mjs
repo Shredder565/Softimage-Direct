@@ -196,6 +196,57 @@ else {
   const planes = (pol?.gizmoChildKinds ?? []).filter(k => String(k).startsWith('plane:'));
   if (planes.length < 3) fail.push(`plane handles missing on Translate gizmo (kinds=${JSON.stringify(pol?.gizmoChildKinds)})`);
   else ok.push(`plane handles drawn (${planes.join(',')})`);
+  // Softimage: after component select + translate tool, plain empty-viewport click clears components; Shift keeps them
+  const emptyDeselPrep = await p.evaluate(() => {
+    const A = window.Application;
+    try { A.run('NewScene'); A.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface' }); } catch { /* */ }
+    const o = A.selectedObjects?.[0] ?? [...(A.scene?.allObjects?.() ?? [])].find(x => x.primitive?.mesh?.());
+    if (!o) return { ok: false, reason: 'no mesh' };
+    A.setSelMode('point');
+    A.selectComponents(o, 'point', [0, 1, 2]);
+    const tool = window.__tool;
+    if (tool?.setMode) tool.setMode('translate');
+    else if (tool) tool.mode = 'translate';
+    A.events?.emit?.('selection');
+    return { ok: true, n: A.compSel?.points?.size ?? 0 };
+  });
+  if (!emptyDeselPrep?.ok || !(emptyDeselPrep.n > 0)) fail.push(`empty-deselect prep failed: ${JSON.stringify(emptyDeselPrep)}`);
+  else {
+    const canvas = await p.$('.vm canvas');
+    const bb = await canvas?.boundingBox();
+    if (!bb) fail.push('empty-deselect: no .vm canvas');
+    else {
+      // Camera viewport (top-right quad): click inside grey area, not the HTML letter/Camera/Display chrome
+      const ex = bb.x + bb.width - 24;
+      const ey = bb.y + bb.height * 0.5 - 24;
+      await p.mouse.click(ex, ey);
+      await p.waitForTimeout(120);
+      const afterPlain = await p.evaluate(() => ({
+        points: window.Application.compSel?.points?.size ?? 0,
+        selMode: window.Application.selMode,
+      }));
+      if (afterPlain.points !== 0) fail.push(`empty click should clear component sel, got points=${afterPlain.points}`);
+      else ok.push('empty viewport click clears component selection (translate+point)');
+      // Re-select and Shift+click empty → keep
+      await p.evaluate(() => {
+        const A = window.Application;
+        const o = A.selectedObjects?.[0] ?? A.compSel?.obj;
+        if (!o) return;
+        A.setSelMode('point');
+        A.selectComponents(o, 'point', [0, 1]);
+        const tool = window.__tool;
+        if (tool?.setMode) tool.setMode('translate');
+        else if (tool) tool.mode = 'translate';
+      });
+      await p.keyboard.down('Shift');
+      await p.mouse.click(ex, ey);
+      await p.keyboard.up('Shift');
+      await p.waitForTimeout(120);
+      const afterShift = await p.evaluate(() => window.Application.compSel?.points?.size ?? 0);
+      if (afterShift < 1) fail.push(`Shift+empty click should keep component sel, got points=${afterShift}`);
+      else ok.push('Shift+empty viewport click keeps component selection');
+    }
+  }
   // MCP section skins from mcp.dll RT_BITMAP + hit-maps (desktop polish track #3)
   const hm = audit.mcpHitmaps;
   if (!hm?.skinned) fail.push(`MCP not skinned with PE bitmaps: ${JSON.stringify(hm)}`);
