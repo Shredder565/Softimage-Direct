@@ -1,0 +1,41 @@
+{
+  "_comment": "Softimage ICE module toolbar MCP tops — PE MENU 303 (toolbarobj.dll) + softimage_menus_modules.json / menu_ice.txt. Desktop tour not required for this shell slice.",
+  "softimage": "13.2.163.0",
+  "source": [
+    "internal/softimage-pc-dumps/module-menu-ice.json",
+    "internal/softimage-pc-dumps/menu_ice.txt",
+    "internal/softimage-pc-dumps/module-menus-render-simulate-ice-hair.json",
+    "internal/softimage-pc-dumps/sdk/siMenuAnchorPoints-render-simulate-ice-hair.txt"
+  ],
+  "menu_id": 303,
+  "module_select": "ICE",
+  "switch_toolbar_target": 4,
+  "tops": ["Get", "Particles", "Deform", "Kinematics", "CrowdFX"],
+  "buttons": {
+    "Get": ["Primitive", "Property"],
+    "Particles": ["Create", "On Emission", "After Emission", "Force", "Collision", "Simulation", "Model Library"],
+    "Deform": ["Create", "Simulate"],
+    "Kinematics": ["Effects", "Constrain"],
+    "CrowdFX": ["Actors", "Crowd", "Simulation"]
+  },
+  "runtime_anchors": {
+    "status": "LOCK",
+    "pe_label": "Anchor-to-Delete",
+    "note": "MENU 303 Particle/Deform/Kinematics/CrowdFX leaves are PE placeholders filled at Softimage runtime by ICE Flow / CrowdFX plugins. Do not invent compound leaves. PE id 41646 collides with Render Regions Refresh Mode Interactive — ignore cmd map for Anchor-to-Delete."
+  },
+  "sdk_anchors": {
+    "siMenuTbICEParticlesCreateID": 320,
+    "siMenuTbICEDeformCreateID": 340,
+    "siMenuTbICEKinematicsEffectsID": 360,
+    "siMenuTbICECrowdFXActorsID": 380
+  },
+  "ice_tree_view": {
+    "xsivw": "icetree.xsivw",
+    "name": "ICE Tree",
+    "defaultsize": "50,50,850,550",
+    "category": "ICE",
+    "layout_default_pos": "120,532,1130,859",
+    "open_command": "OpenICETreeView"
+  },
+  "hwnd_chrome": { "status": "LOCK", "note": "await softimage-ice-tour.md / modules Desktop dumps" }
+}

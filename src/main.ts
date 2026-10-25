@@ -12,6 +12,9 @@ import { registerAnimCommands } from './commands/anim';
 import { registerRenderCommands } from './commands/render';
 import { registerModuleToolbarCommands } from './commands/moduleToolbar';
 import { registerRenderToolbarOmCommands, renderToolbarOmAudit } from './commands/renderToolbarOm';
+import { registerIceModuleCommands, iceModuleAudit } from './commands/iceModule';
+import iceViewChrome from './data/si/ice_view_chrome.json';
+import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import { iceTree, renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
 import { frostGraphView, frostHairWizardView, frostClothWizardView, frostOf, runFrostSmokeTests } from './frost';
 import { registerToolbarCommands, palettesView, toolbarView, newToolbar, customizeToolbars, openToolbarWindow, userToolbars } from './ui/toolbars';
@@ -59,6 +62,7 @@ registerAnimCommands(app);
 registerRenderCommands(app);
 registerModuleToolbarCommands(app);
 registerRenderToolbarOmCommands(app);
+registerIceModuleCommands(app);
 registerToolbarCommands(app);
 (window as any).__siMessage = siMessage; (window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); (window as any).__getEnableParity = () => getEnableParity(app); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
 // Softimage Command.GetEnabled analogue for harness / Script Editor probes
@@ -144,10 +148,11 @@ window.addEventListener('togglepanel', (e: any) => {
 const openView = (name: string) => {
   const key = 'view:' + name; const size = SI_VIEWS.find(v => v.name === name)?.defaultsize?.split(',').map(Number);
   const animSz = animViewDefaultSize(name);
+  const iceSz = (iceViewChrome as { views?: Record<string, { defaultsize?: number[] }> }).views?.[name]?.defaultsize;
   // Softimage .xsivw defaultsize is left,top,width,height. Script Editor uses C3DPrefsScriptEditor chrome tokens when present.
   const seTok = (PPG_CHROME as any).scriptEditor?.tokens;
-  let w = name === 'Mini Transform Panel' ? 200 : Math.max(320, size ? Math.min(900, size[2]) : (animSz ? Math.min(900, animSz[2]) : 420));
-  let h = size ? Math.min(700, size[3]) : (animSz ? Math.min(700, animSz[3]) : 400);
+  let w = name === 'Mini Transform Panel' ? 200 : Math.max(320, size ? Math.min(900, size[2]) : (iceSz ? Math.min(900, iceSz[2]) : (animSz ? Math.min(900, animSz[2]) : 420)));
+  let h = size ? Math.min(700, size[3]) : (iceSz ? Math.min(700, iceSz[3]) : (animSz ? Math.min(700, animSz[3]) : 400));
   if (name === 'Script Editor' && seTok) { w = seTok.floatDefaultWidthPx ?? w; h = seTok.floatDefaultHeightPx ?? h; }
   if (name === 'FROST Hair Wizard' || name === 'FROST Cloth Wizard') { w = 440; h = 620; }
   if (name === 'FROST Graph') { w = Math.max(w, 720); h = Math.max(h, 480); }
@@ -264,6 +269,15 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     renderToolbarChrome: renderToolbarChromeAudit(),
     // Softimage Render toolbar OM scripting names + RenderOptionsRegion SPDL (HWND crop LOCK)
     renderToolbarOm: renderToolbarOmAudit(app),
+    // Softimage ICE module MENU 303 MCP tops + OpenICETreeView / xsivw shell (Anchor compounds LOCK)
+    iceModule: {
+      ...iceModuleAudit(app),
+      mcpTops: iceModuleTops.tops,
+      mcpButtons: iceModuleTops.buttons,
+      moduleInSelect: (document.querySelector('.module-select') as HTMLSelectElement | null)
+        ? Array.from((document.querySelector('.module-select') as HTMLSelectElement).options).some(o => o.value === 'ICE')
+        : false,
+    },
     // Desktop polish #2 — manip / viewport prefs + default Camera pose (softimage-pc attested)
     viewportPolish: {
       ...(typeof (window as any).__vm?.viewportPolish === 'function' ? (window as any).__vm.viewportPolish() : {}),

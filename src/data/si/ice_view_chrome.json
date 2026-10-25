@@ -1,0 +1,34 @@
+{
+  "_comment": "Softimage ICE view chrome from install .xsivw + layout_default — dump-backed shell only (no invent compounds).",
+  "softimage": "13.2.163.0",
+  "source": [
+    "internal/softimage-pc-dumps/views/icetree.xsivw",
+    "internal/softimage-pc-dumps/views/iceattributeeditor.xsivw",
+    "src/data/si/layout_default.json viewdefaultpos"
+  ],
+  "views": {
+    "ICE Tree": {
+      "file": "icetree.xsivw",
+      "clsid": "{20281947-5CFF-450f-A9A1-1FBC9F7AD5E7}",
+      "defaultsize": [50, 50, 850, 550],
+      "layout_default_pos": [120, 532, 1130, 859],
+      "category": "ICE",
+      "supportedtypes": "6",
+      "maxinstances": "10000"
+    },
+    "ICE Attribute Editor": {
+      "file": "iceattributeeditor.xsivw",
+      "clsid": "{A705D500-E6A8-4181-A0EE-E6B2FC431ED7}",
+      "defaultsize": [50, 50, 900, 550],
+      "category": "ICE",
+      "supportedtypes": "6",
+      "maxinstances": "10000",
+      "status": "SHELL_ONLY",
+      "note": "View definition attested; editor body awaits Desktop/tour dump"
+    }
+  },
+  "toolbar_shell": {
+    "attested": ["Nodes", "Edit", "Update", "Frame"],
+    "note": "Softimage ICE Tree host chrome names (Nodes/Edit) match existing AfterImage shell; compound catalogs LOCK until tour/plugin dump"
+  }
+}
