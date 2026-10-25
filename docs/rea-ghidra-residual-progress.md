@@ -1,37 +1,30 @@
 # REA / Ghidra residual progress (softimage-pc)
 
-**Updated:** 2026-10-24  
-**Worker:** softimage-pc | Softimage 2015 SP2 | **No Desktop takeover**  
-**Inventory:** [rea-full-clone-residuals.md](./rea-full-clone-residuals.md) | index [ghidra/residual-index.md](./ghidra/residual-index.md)
+**Updated:** 2026-10-25 (pass 3)  
+**Worker:** softimage-pc + Direct wire sibling  
+**Inventory:** Project store `docs/rea-full-clone-residuals.md` | index [ghidra/residual-index.md](./ghidra/residual-index.md)
 
-## This pass - landed for wire sibling
+## Pass 3 — consume + wire
 
 | Residual | Artifact | Status |
 |----------|----------|--------|
-| **A1 CapHoleProc** | [ghidra/capholeproc-path.md](./ghidra/capholeproc-path.md) | **RE done** - VBS->ApplyICEOp("Cap Hole")+`Vertex_Index`; ICE only; no mesh CapHole DLL |
-| **B4 Fcurve handled-spline** | [ghidra/fcurve-handled-spline.md](./ghidra/fcurve-handled-spline.md) | **Formula confirmed** in `gk10.dll` (cubic Bezier Y + time->u); harness already DONE |
-| **B1 Mixer transitions** | [ghidra/mixer-clip-transitions.md](./ghidra/mixer-clip-transitions.md) | **Partial** - `nlehelper!SINleCreateTransitionTask`; `CXSITransitionCore` = OM only; curve eval host open |
-| **B3 ApplyFlexEnv** | [ghidra/applyflexenv-path.md](./ghidra/applyflexenv-path.md) + [ghidra/flexenv-headless-lock.md](./ghidra/flexenv-headless-lock.md) | **Path locked** - `deformop`/`C3DEnvelopOp`; XSIBATCH weights LOCK |
-| **A4 Bevel DAT_*** | [ghidra/bevel-dat-candidates.md](./ghidra/bevel-dat-candidates.md) | **Candidates dumped** - need ComputeBevelVectors xrefs |
-| **C1 GetEnabled** | [ghidra/getenabled-callpath.md](./getenabled-callpath.md) | Prior DONE - live HWND still LOCK |
+| **B3 FlexEnv Mode** | [ghidra/applyflexenv-path.md](./ghidra/applyflexenv-path.md) | **WIRE** — SPDL `autoassignmeth` 0=Distance, 1=Normal (default 1); #56 inverted → fixed |
+| **A1 CapHole Vertex_Index** | [ghidra/caphole-vertex-index-bind.md](./caphole-vertex-index-bind.md) | **DONE** — #54 bind confirmed (`Vertex_Index` username) |
+| **C1 GetEnabled deepen** | [ghidra/getenabled-deepen.md](./getenabled-deepen.md) | CanBeModified + PutEnabled portable; HWND matrix **LOCK** |
+| **B1 Mixer weight presets** | [ghidra/mixer-clip-transitions.md](./ghidra/mixer-clip-transitions.md) | **WIRE** — SetDefaultWeight / siWeightPresets; Exponential LOCK |
+| **UI LOCK pins** | [ghidra/ui-lock-binary-pins.md](./ui-lock-binary-pins.md) | Docs only (A3/C2–C6) |
+| **A4 Bevel DAT xrefs** | [ghidra/bevel-dat-xrefs.md](./ghidra/bevel-dat-xrefs.md) | Docs only until managecollisions golden |
+| **A5 PolyReduce rename** | [ghidra/polyreduce-rename-map.md](./ghidra/polyreduce-rename-map.md) | Docs only unless DIFF |
 
-## Ghidra project adds
+## Prior passes
 
-`Documents\SoftimageGhidra\Softimage2015SP2`: `gk10.dll`, `fcurve.dll`, `animationmixer.dll`, `deformop.dll`, `nlehelper.dll` (+ prior topologyop/mohelper/mcp/sicoresdk/?).
+| Residual | Status |
+|----------|--------|
+| A1 CapHoleProc ICE | DONE #54 |
+| B4 gk10 handled-spline | DONE harness |
+| B3 FlexEnv Animation region + canRun | DONE #56 (Mode enum corrected this PR) |
+| B1 Hermite transitionEase + Auto Transition | DONE #55 / main |
 
-Decomps: `internal/ghidra/decomp/gk10.dll__*`, `nlehelper.dll__*`, `deformop.dll__*`, `sicoresdk.dll__CXSITransitionCore__*`.  
-Strings: `internal/softimage-pc-dumps/re-exports/*`.  
-CapHole ports: `internal/softimage-pc-dumps/model/caphole-compound-ports.json`.
+## WIRE rows — closed or LOCK-proofed
 
-## Tooling notes
-
-- GhidraMCP GUI (`:8080`) down -> **analyzeHeadless** with quoted paths.  
-- REA MCP: set `GHIDRA_INSTALL_DIR=C:\Tools\ghidra_12.2_PUBLIC` in `~\.cursor\mcp.json` for next reconnect.  
-- Scripts: `Documents\SoftimageGhidra\scripts\DecompFcurveEval*.java`, `DecompAddrs.java`, `DecompNleTransition.java`, `DecompTransitionCore.java`.
-
-## Next (auto-continue)
-
-1. Pin transition curve/weight eval host (`clip_transitioncurves` -> DLL).  
-2. Bevel: xref `ComputeBevelVectors` -> DAT_*.  
-3. Optional PolyReduce cost rename (A5).  
-4. XSIBATCH ASCII only where not LOCK - no Desktop.
+Explicit: every WIRE row from the residuals inventory is **PR'd/merged**, **in this PR**, or **LOCK-proofed** with Softimage-attested blocker (no Desktop invent). Remaining work needs new goldens: A4 collide, C1 live HWND matrix.

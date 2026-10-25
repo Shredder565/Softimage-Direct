@@ -32,8 +32,9 @@ export function registerRiggingCommands(app: App) {
   app.register({
     name: 'ApplyFlexEnv', label: 'Set Envelope', category: 'Deformation|Envelope',
     description: 'Envelopes the selected meshes to the selected deformers (bones, nulls, chains). Softimage ApplyFlexEnv; PC weight goldens LOCK under XSIBATCH -processing (docs/ghidra/flexenv-headless-lock.md).',
-    // Softimage ApplyFlexEnv Mode: default assign/automatic (2); Mode 1 = alternate weighting path. DistanceWeighting truthy forces distance weights.
-    args: [{ name: 'ConnectionSet', default: '' }, { name: 'DeformerSet', default: '' }, { name: 'Mode', default: 2 }, { name: 'DistanceWeighting', default: 0 }],
+    // Softimage C3DEnvelopeAutoAssignOp2.spdl autoassignmeth: 0=Distance-based, 1=Normal-based (default 1).
+    // DistanceWeighting truthy forces distance path (autoassignmeth 0). docs/ghidra/applyflexenv-path.md
+    args: [{ name: 'ConnectionSet', default: '' }, { name: 'DeformerSet', default: '' }, { name: 'Mode', default: 1 }, { name: 'DistanceWeighting', default: 0 }],
     canRun: (a) => {
       const { meshes, deformers } = envTargets(app, a);
       return meshes.length > 0 && deformers.length > 0;
@@ -41,9 +42,9 @@ export function registerRiggingCommands(app: App) {
     execute(app, a) {
       const { meshes, deformers } = envTargets(app, a); if (!meshes.length) throw new Error('Set Envelope: select a polygon mesh and its deformers (bones, nulls or chains)'); if (!deformers.length) throw new Error('Set Envelope: pick the deformers (bones / nulls / chain roots) together with the mesh');
       const dist = Number(a.DistanceWeighting ?? 0);
-      const mode = Number(a.Mode ?? 2);
-      // Softimage: DistanceWeighting overrides Mode → distance weighting (Direct envelopop.weighting 0). Mode===1 → alternate (1); else automatic (0).
-      const weighting = dist ? 0 : mode === 1 ? 1 : 0;
+      const mode = Number(a.Mode ?? 1);
+      // SPDL: 0 Distance → envelopop.weighting 0; 1 Normal → weighting 1 (nearest stand-in). DistanceWeighting overrides → 0.
+      const weighting = dist ? 0 : mode === 0 ? 0 : 1;
       let last: Property | null = null;
       for (const o of meshes) {
         const prim = o.primitive!; const existing = envelopeOf(o);

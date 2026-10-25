@@ -14,11 +14,16 @@ Residual RE progress: [../rea-ghidra-residual-progress.md](../rea-ghidra-residua
 |-----|------|
 | [residual-index.md](./residual-index.md) | UI + Model + Animate residual → DLL → wire map |
 | [capholeproc-path.md](./capholeproc-path.md) | CapHoleProc → ApplyICEOp Cap Hole + Vertex_Index (no mesh CapHole DLL) |
+| [caphole-vertex-index-bind.md](./caphole-vertex-index-bind.md) | Cap Hole.xsicompound `Vertex_Index` username bind (confirmed #54) |
 | [fcurve-handled-spline.md](./fcurve-handled-spline.md) | `gk10` GkStdFCurve handled-spline cubic + time→u |
-| [mixer-clip-transitions.md](./mixer-clip-transitions.md) | `nlehelper` SINleCreateTransitionTask + follow-ups |
-| [applyflexenv-path.md](./applyflexenv-path.md) | ApplyFlexEnv / `C3DEnvelopOp` / deformop (binary path) |
+| [mixer-clip-transitions.md](./mixer-clip-transitions.md) | Weight = actionclip.weight + siWeightPresets; prefs display-only |
+| [applyflexenv-path.md](./applyflexenv-path.md) | ApplyFlexEnv / autoassignmeth 0=Distance 1=Normal |
 | [flexenv-headless-lock.md](./flexenv-headless-lock.md) | ApplyFlexEnv XSIBATCH `-processing` gap + Mode args |
 | [getenabled-callpath.md](./getenabled-callpath.md) | SR-28 CommandCore GetEnabled vs MCP grey |
+| [getenabled-deepen.md](./getenabled-deepen.md) | CanBeModified gate; HWND matrix LOCK |
+| [bevel-dat-xrefs.md](./bevel-dat-xrefs.md) | ComputeBevelVectors DAT_* pins (docs until collide golden) |
+| [polyreduce-rename-map.md](./polyreduce-rename-map.md) | Optional topologyop FUN renames (docs unless DIFF) |
+| [ui-lock-binary-pins.md](./ui-lock-binary-pins.md) | UI LOCK C2–C6 / A3 binary string pins |
 
 ## Checklist / prior RE
 

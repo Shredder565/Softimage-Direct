@@ -31,6 +31,16 @@ export interface CommandDef {
    * canRun stays the Softimage-style dynamic enable (selection/context).
    */
   supported?(args: Record<string, any>): boolean;
+  /**
+   * Softimage `CXSICommandCore::CanBeModified` gate for PutEnabled / definition mutators.
+   * Default true; false → putCommandEnabled fails (access denied), matching sicoresdk.
+   */
+  canBeModified?: boolean;
+  /**
+   * Optional Softimage Enabled bit override from PutEnabled (`!(flags&1)` model).
+   * When set, commandEnabled prefers this over canRun (matrix dump still wins).
+   */
+  enabledOverride?: boolean | null;
   execute(app: App, args: Record<string, any>): any;
 }
 

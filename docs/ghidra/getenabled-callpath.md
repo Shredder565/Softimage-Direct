@@ -28,6 +28,7 @@ Validates menu item then delegates to linked command `GetEnabled`.
 
 - `CommandDef.canRun` = dynamic enable flag (GetEnabled analogue).
 - Optional `supported` = static wire presence.
+- `CommandDef.canBeModified` + `putCommandEnabled` / cmd `PutEnabled` = Softimage PutEnabled gate (see [getenabled-deepen.md](./getenabled-deepen.md)).
 - MCP matrix overlay: XSIBATCH `Command.Enabled` bools; null → canRun (`mcpEnableMatrix.ts`).
 - Live HWND Enabled: **LOCK** until Script Editor paste JSON (no Desktop takeover).
 

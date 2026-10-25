@@ -1,51 +1,76 @@
-# Mixer clip transitions - RE note
+# Mixer clip transitions — RE note
 
-**Date:** 2026-10-24 (softimage-pc residual RE)  
-**Mode:** Headless Ghidra import/decomp + string hunt. No Softimage Desktop.
+**Date:** 2026-10-24 (updated 2026-10-25)  
+**Mode:** Headless Ghidra + SPDL/SDK. No Softimage Desktop.
 
 ## Softimage surface
 
 | Asset | Evidence |
 |-------|----------|
-| Prefs / propset | `animation_mixer.clip_transition`, `clip_transitioncurves`, `clip_timewarp`, `clip_weightcurve` |
-| Mixer UI DLL | `Application\bin\animationmixer.dll` - `CAnimMixerOpenGLClientWnd`, prefs keys |
-| OM cmds | `AddTransition`, `AddBridgeTransition`, `AddTWTransition`, mixer `autotransition` |
-| PC dump | `si_anim_mixer_deep.json`: nest names OK; **transitions often empty** without clip selection under XSIBATCH |
+| Prefs SPDL | `C3DPrefsAnimationMixer.spdl` — `clip_transition`, `clip_transitioncurves`, `clip_weightcurves`, `clip_timewarp` |
+| Mixer UI DLL | `animationmixer.dll` |
+| Create task | **`nlehelper.dll!SINleCreateTransitionTask`** @ `180008870` |
+| OM | `sicoresdk` `CXSITransitionCore` (GetStart/EndClip, GetTime, …) |
+| Bridge script | `action.vbs` `AddBridgeTransitionFunc` → **`AddTWTransition`** (timewarp; works with FCurves) |
+| PC dump | `si_anim_mixer_deep.json` — nest OK; transitions often empty under XSIBATCH (LOCK B2) |
 
-## Headless LOCK (PC dump only)
+## Critical: `clip_transitioncurves` / `clip_weightcurves` are **display**, not eval math
 
-Softimage cannot populate mixer Transitions collections under `-processing` without interactive clip selection (StoreAction null; AddBridgeTransition fails). **Direct implements transitions**; PC gap is dump-only LOCK (residuals B2).
+SPDL: Parameter `"clip_transitioncurves"` — **"Displays the transition curves for the clip"** — `VT_BOOL` default True.  
+Same family: `clip_weightcurves` displays weight curves only.
 
-## Create transition (binary) - RE proven
+Ghidra: `animationmixer.dll` UTF-16 prefs xrefs only prefs-load / UI bitflag helpers (`FUN_18001eda0` etc.).
 
-| DLL | Symbol | VA |
-|-----|--------|-----|
-| **`nlehelper.dll`** | `SINleCreateTransitionTask` | `180008870` |
+**Do not** treat these prefs keys as Softimage switches for weight math — they toggle mixer chrome drawing only.
+
+## Create path (binary)
 
 ```
 SINleCreateTransitionTask(I3DClip *from, I3DClip *to, ulong kind, I3DTransition **out)
 ```
 
-- `kind == 2` -> one CLSID path; else alternate - Bridge vs standard class (which number is Bridge not yet named).
-- Builds exec context, packs clips, sets "From" + second clip, creates transition object.
+- `kind == 2` vs other → Bridge vs standard CLSID.
+- `CXSITransitionCore` = OM accessors only (no weight formula).
 
-Decomp: `internal/ghidra/decomp/nlehelper.dll__SINleCreateTransitionTask.c`  
-`animationmixer.dll` **imports** this task (does not own create math).
+## Weight / curve eval — Softimage-attested host
+
+| Claim | Status |
+|-------|--------|
+| Prefs `clip_transitioncurves` = eval host | **False** (display bits only) |
+| Weight math in `CXSITransitionCore` | **Absent** (OM only) |
+| **Clip mix weight** | FCurve on **`clip.actionclip.weight`** |
+| Eval engine | **`gk10` `GkStdFCurve`** ([fcurve-handled-spline.md](./fcurve-handled-spline.md)) |
+| Presets | `action.vbs` `ModifyWeightProc` / `siWeightPresets` → Direct `SetDefaultWeight` |
+| Bridge | → `AddTWTransition` (timewarp + FCurves) |
+| PC dump of live transition weights | **LOCK** without clip selection (B2) |
+
+### `ModifyWeightProc` preset → keys (WIRE)
+
+From `Application\DSScripts\action.vbs`:
+
+| Preset | Keys (frame, value) | `SetCurveType` (gk10 FSKind) |
+|--------|---------------------|------------------------------|
+| `siWeightEaseIn` | lower→0, upper-1→1 | **3** (spline) |
+| `siWeightEaseOut` | lower→1, upper-1→0 | **3** |
+| `siWeightLinearEaseIn` | lower→0, upper-1→1 | **2** (linear) |
+| `siWeightLinearEaseOut` | lower→1, upper-1→0 | **2** |
+| `siWeightGaussian` | ends 0, mid 1 | **3** |
+| `siWeightGaussianReverse` | ends 1, mid 0 | **3** |
+| `siWeightSquare` / Reverse | step keys | **1** (constant) |
+| `siWeightConstant` | flat at Extra | **1** |
+| Exponential In/Out | **NOT IMPLEMENTED** in Softimage VBS — **LOCK** |
+
+Direct maps SetCurveType 1/2/3 → siInterpolation 0/1/3 when storing keys (`buildWeightPresetKeys` / `mapSetCurveTypeToInterp` in `src/core/mixer.ts`).
 
 ## Direct wire (landed)
 
-- `AddTransition` / `AddBridgeTransition` / `AddTWTransition` keep `kind` discriminant (`standard` / `bridge` / `timewarp`) matching Softimage OM surface until `kind==2` is named.
-- Mixer `autotransition`: `AddClip` inserts a standard transition when flag is on (same track).
-- `CXSITransitionCore` = OM shell only - **no** weight/curve eval there.
-
-## Weight / curve eval - still open
-
-Prefs imply non-linear fades when `clip_transitioncurves` is on. Direct: Hermite smoothstep (`transitionEase` in `src/core/mixer.ts`) until Softimage formula pinned.
-
-**Next RE:** string-xref `clip_transitioncurves` / transition weight fcurve host (action / gap / mixer eval DLL) - not TransitionCore. Do not invent Softimage curve math.
+- Transition create + Auto Transition + Hermite crossfade window (`transitionEase`) when overlapping weight FCurves are absent.
+- `SetDefaultWeight` / `ModifyWeight` write `MixerClip.weightKeys` (actionclip.weight).
+- `clipWeightsAt` samples weight FCurve via Direct `FCurve` (gk10-faithful hermite/linear/const).
+- `SetClipWeight` sets scalar and clears weight keys.
 
 ## Acceptance
 
-- `compare_mixer` stays OK.
-- No invent Softimage transition OM from null PC dumps.
-- Replace ease with Softimage formula only when decomp lands.
+- `compare_mixer` nest + EaseIn preset + Exponential LOCK stay OK.
+- No invent Softimage OM Transitions from null PC dumps.
+- Chrome prefs may drive curve glyph drawing — not the blend formula.
