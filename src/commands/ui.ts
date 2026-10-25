@@ -66,4 +66,64 @@ export function registerUICommands(app: App) {
     undoable: false,
     execute: (app) => app.run('ToggleValue', { ParamName: 'objhair', InputObjs: '*.camvis,Views.*.*.camvis' }),
   });
+
+  // Softimage full-tab harvest UI ACTIVE ExecuteCommand Names (found often false; [] still ok).
+  // MCP already implements these hits — Name aliases keep Softimage scripting parity (no invent).
+  app.register({
+    name: 'SelectTool', label: 'Select Tool', category: 'Manipulation', args: [], undoable: false,
+    execute: (app) => app.run('ActivateSelectTool'),
+  });
+  app.register({
+    name: 'Preferences', label: 'Preferences', category: 'UI', args: [], undoable: false,
+    execute: (app) => app.run('OpenPreferences', {}),
+  });
+  app.register({
+    name: 'ToggleSnap', label: 'Toggle Snap', category: 'Manipulation', args: [], undoable: false,
+    execute(app) {
+      const t = tool as any;
+      t.snap ??= { on: false, point: true, curve: false, midpoint: false, grid: false };
+      t.snap.on = !t.snap.on;
+      app.logMsg('info', `Snap ${t.snap.on ? 'ON' : 'OFF'}`);
+      app.events.emit('selection');
+      return t.snap.on;
+    },
+  });
+  app.register({
+    name: 'ToggleProportional', label: 'Toggle Proportional', category: 'Manipulation', args: [], undoable: false,
+    execute(app) {
+      app.proportional.on = !app.proportional.on;
+      app.logMsg('info', `Proportional ${app.proportional.on ? 'ON' : 'OFF'}`);
+      app.events.emit('selection');
+      return app.proportional.on;
+    },
+  });
+  app.register({
+    name: 'ToggleSymmetry', label: 'Toggle Symmetry', category: 'Manipulation', args: [], undoable: false,
+    execute(app) {
+      const A = app as any;
+      A.symmetry = !A.symmetry;
+      app.logMsg('info', `Symmetry ${A.symmetry ? 'ON' : 'OFF'}`);
+      app.events.emit('selection');
+      return A.symmetry;
+    },
+  });
+  app.register({
+    name: 'ToggleCOG', label: 'Toggle COG', category: 'Manipulation', args: [], undoable: false,
+    execute(app) {
+      const A = app as any;
+      A.cog = !A.cog;
+      app.logMsg('info', `COG ${A.cog ? 'ON' : 'OFF'}`);
+      app.events.emit('selection');
+      return A.cog;
+    },
+  });
+  // Softimage Face Robot Help / Wiki (harvest ACTIVE Name without trailing ...)
+  app.register({
+    name: 'Face Robot Help', label: 'Face Robot Help', category: 'Face Robot', args: [], undoable: false,
+    execute() { window.open('https://help.autodesk.com/view/SI/2015/ENU/', '_blank'); },
+  });
+  app.register({
+    name: 'Face Robot Wiki', label: 'Face Robot Wiki', category: 'Face Robot', args: [], undoable: false,
+    execute() { window.open('https://en.wikipedia.org/wiki/Autodesk_Softimage', '_blank'); },
+  });
 }
