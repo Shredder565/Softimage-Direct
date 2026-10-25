@@ -1,0 +1,36 @@
+{
+  "_comment": "closer95 XSIBATCH SIApplyShader absolute Car_Paint.Preset DUMP_READY (nested OM params from si_model_dump Get/Material/Car Paint)",
+  "softimage": "13.2.163.0",
+  "source": "closer95_batch.json items.car_paint",
+  "status": "DUMP_READY",
+  "absolute_preset": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\DSPresets\\Shaders\\Material\\mental images\\Car_Paint.Preset",
+  "apply_probes": [
+    {
+      "preset": "Car_Paint",
+      "apply": null,
+      "apply_err": "Invalid procedure call or argument",
+      "apply2_err": "Invalid procedure call or argument",
+      "ok": false,
+      "shaders": []
+    },
+    {
+      "preset": "Materials\\mental images\\Car_Paint",
+      "apply": null,
+      "apply_err": "Invalid procedure call or argument",
+      "apply2_err": "Invalid procedure call or argument",
+      "ok": false,
+      "shaders": []
+    },
+    {
+      "preset": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\DSPresets\\Shaders\\Material\\mental images\\Car_Paint.Preset",
+      "apply": null,
+      "ok": true,
+      "shaders": [
+        "Car_Paint"
+      ]
+    }
+  ],
+  "note": "SIApplyShader nested OM attested for C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\DSPresets\\Shaders\\Material\\mental images\\Car_Paint.Preset",
+  "nested_om_source": "data/dump/si_model_dump.json Get/Material/Car Paint",
+  "param_count": 39
+}

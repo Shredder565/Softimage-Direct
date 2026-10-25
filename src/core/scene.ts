@@ -151,7 +151,7 @@ export function makeConstant(name = 'Constant'): Shader {
     num('transp', 1, 'transp'),
   ]);
 }
-/** Absolute .Preset + SIApplyShader nested OM (unlock_render_mia_probe) — 77/101/49 params. */
+/** Absolute .Preset + SIApplyShader nested OM (unlock_render_mia_probe + closer95 Car_Paint) — 77/101/49/39 params. */
 export function makeMiaUnlockShader(shaderKey: string, name?: string): Shader | null {
   const defs = miaUnlockDefs(shaderKey);
   if (!defs) return null;

@@ -298,8 +298,8 @@ export function registerModelCommands(app: App) {
 
   // ------------------------------------------------------------ materials
   // Dump-backed stock illumination (materials_beyond_phong summary.ok).
-  // MR Architectural / mia_* / MetallicPaint: absolute .Preset + SIApplyShader UNLOCK (unlock_render_mia_probe).
-  // Car Paint / unproven short names stay LOCK invent.
+  // MR Architectural / mia_* / MetallicPaint / Car_Paint: absolute .Preset + SIApplyShader UNLOCK
+  // (unlock_render_mia_probe + closer95_batch Car_Paint). Softimage menu aliases + absolute path.
   const SHADERS: Record<string, (n: string) => Shader> = {
     Phong: makePhong,
     Lambert: makeLambert,
@@ -315,20 +315,15 @@ export function registerModelCommands(app: App) {
     'Toon Paint and Host': n => shader(n, 'Toon'), 'Toon Paint Highlight': n => shader(n, 'Toon'),
     'Toon Paint Rimlight': n => shader(n, 'Toon'), 'Toon Paint Rounded': n => shader(n, 'Toon'),
   };
-  const LOCK_MR = /^(Car Paint|Car_Paint)$/i;
   const sh = app.commands.get('SIApplyShader')!;
   sh.canRun = (a) => {
     const preset = String(a.PresetObj ?? '');
-    if (LOCK_MR.test(preset) || /Car_Paint\.Preset$/i.test(preset)) return false;
     if (isMiaUnlockPreset(preset)) return true;
     const leaf = preset.replace('Shaders\\Material\\', '').replace(/^Materials\\/, '');
-    if (LOCK_MR.test(leaf)) return false;
     return !!SHADERS[leaf];
   };
   sh.execute = (app, a) => {
     const preset = String(a.PresetObj ?? '');
-    if (LOCK_MR.test(preset) || /Car_Paint\.Preset$/i.test(preset))
-      throw new Error(`Shader ${preset} LOCK invent (Softimage headless ApplyShader FAIL — mental-ray-materials.md)`);
     const miaKey = resolveMiaUnlockKey(preset);
     let mk: ((n: string) => Shader) | undefined;
     let matSuffix: string;
@@ -337,8 +332,6 @@ export function registerModelCommands(app: App) {
       matSuffix = miaKey;
     } else {
       const leaf = preset.replace('Shaders\\Material\\', '').replace(/^Materials\\/, '');
-      if (LOCK_MR.test(leaf))
-        throw new Error(`Shader ${leaf} LOCK invent (Softimage headless ApplyShader FAIL — mental-ray-materials.md)`);
       mk = SHADERS[leaf];
       matSuffix = leaf.replace(/[^A-Za-z]/g, '');
       if (!mk) throw new Error(`Shader ${leaf} not available`);
@@ -494,8 +487,8 @@ function shader(name: string, type: string): Shader {
   const si = makeSiShader(type, name); if (si) return si;
   const s = new Shader(name, type, [color('ambient', [0.3, 0.3, 0.3], 'Ambient', { group: 'Illumination' }), color('diffuse', [0.7, 0.7, 0.7], 'Diffuse', { group: 'Illumination' })]);
   if (type !== 'Constant' && type !== 'Toon') { s.add(color('specular', [1, 1, 1], 'Specular', { group: 'Illumination' })); s.add(num('shiny', 50, 'Specular Decay', { min: 0, max: 200, group: 'Illumination' })); }
-  // Architectural is dump-unlocked via makeMiaUnlockShader — do not invent roughness/metalness here.
-  if (type === 'Cook-Torrance' || type === 'Strauss' || type === 'Car Paint') { s.add(num('roughness', 0.4, 'Roughness', { min: 0, max: 1, group: 'Illumination' })); s.add(num('metalness', type === 'Car Paint' ? 0.8 : 0.1, 'Metalness', { min: 0, max: 1, group: 'Illumination' })); }
+  // Architectural / Car_Paint are dump-unlocked via makeMiaUnlockShader — do not invent roughness/metalness here.
+  if (type === 'Cook-Torrance' || type === 'Strauss') { s.add(num('roughness', 0.4, 'Roughness', { min: 0, max: 1, group: 'Illumination' })); s.add(num('metalness', 0.1, 'Metalness', { min: 0, max: 1, group: 'Illumination' })); }
   if (type === 'Anisotropic') { s.add(num('anisotropy', 0.5, 'Anisotropy', { min: 0, max: 1, group: 'Illumination' })); }
   if (type === 'Toon') { s.add(int('steps', 3, 'Shading Steps', { min: 2, max: 8 })); s.add(color('inkcolor', [0, 0, 0], 'Ink Color')); }
   s.add(num('transparency', 0, 'Transparency', { min: 0, max: 1, group: 'Transparency/Reflection' })); s.add(num('reflectivity', 0, 'Reflectivity', { min: 0, max: 1, group: 'Transparency/Reflection' }));

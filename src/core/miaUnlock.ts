@@ -1,5 +1,6 @@
 // Softimage Mental Ray material unlock — absolute .Preset + SIApplyShader nested OM only
-// (unlock_render_mia_probe.json). Short-name FAIL / unproven presets stay LOCK invent.
+// (unlock_render_mia_probe.json + closer95 Car_Paint SIApplyShader). Short-name FAIL under
+// Softimage headless does not block Softimage menu aliases / absolute .Preset unlock.
 import mia from '../data/si/render_mia_unlock.json';
 import { num, int, bool, str, color, type ParamDef } from './params';
 
@@ -29,7 +30,7 @@ export function normalizePresetToken(preset: string): string {
   return base;
 }
 
-/** Resolve PresetObj to a dump-proven mia_* / Metallic shader key, or null if LOCK invent. */
+/** Resolve PresetObj to a dump-proven mia_* / Metallic / Car_Paint shader key, or null if LOCK invent. */
 export function resolveMiaUnlockKey(preset: string): string | null {
   const token = normalizePresetToken(preset);
   if (!token) return null;
@@ -42,7 +43,7 @@ export function resolveMiaUnlockKey(preset: string): string | null {
   if (presets[aliased]) return aliased;
   const hit = Object.keys(presets).find(k => k.toLowerCase() === aliased.toLowerCase());
   if (hit) return hit;
-  // Only after unlock miss — Car Paint etc.
+  // Only after unlock miss — residual short-name FAIL / unproven.
   if (MIA_STILL_LOCK.has(token.toLowerCase())) return null;
   return null;
 }
