@@ -13,6 +13,8 @@ Canonical inventory: Project store [`docs/rea-full-clone-residuals.md`](https://
 | [capholeproc-path.md](./capholeproc-path.md) | CapHoleProc → ApplyICEOp Cap Hole + Vertex_Index |
 | [mixer-clip-transitions.md](./mixer-clip-transitions.md) | animationmixer.dll transition / timewarp pins |
 | [flexenv-headless-lock.md](./flexenv-headless-lock.md) | ApplyFlexEnv XSIBATCH `-processing` gap + Mode args |
+| [applyflexenv-path.md](./applyflexenv-path.md) | softimage-pc: CapHoleProc-style FlexEnv VBS + deformop.dll pins |
+| [fcurve-handled-spline.md](./fcurve-handled-spline.md) | softimage-pc: gk10.dll GkStdFCurve Left/Right formula (harness #48 locked) |
 | [getenabled-callpath.md](./getenabled-callpath.md) | SR-28 CommandCore GetEnabled vs MCP grey |
 | [dll-priority.md](./dll-priority.md) | P0/P1 import order for residual RE |
 | [rea-notes.md](./rea-notes.md) | SPDL↔CLSID↔DLL registration (Bevel / PolyReduce) |
