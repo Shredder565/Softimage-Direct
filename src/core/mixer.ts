@@ -176,3 +176,19 @@ export function mixerDump(mix: Property) {
     relations: JSON.parse(mix.val('relations') || '[]'),
   };
 }
+
+/**
+ * Softimage PC nested Mixer parameter probe (si_anim_mixer_deep.json `mixer.nested`).
+ * Labels match Softimage Parameter.Name strings from XSIBATCH dump.
+ */
+export function mixerNestedSoftimage(mix: Property) {
+  syncMixer(mix);
+  return [
+    { name: 'Name', classname: 'Parameter', value: mix.val('Name') },
+    { name: 'Hidden', classname: 'Parameter', value: !!mix.val('Hidden') },
+    { name: 'Active', classname: 'Parameter', value: !!mix.val('Active') },
+    { name: 'Start time', classname: 'Parameter', value: mix.val('start') },
+    { name: 'Duration', classname: 'Parameter', value: mix.val('duration') },
+    { name: 'Auto Transition', classname: 'Parameter', value: !!mix.val('autotransition') },
+  ];
+}
