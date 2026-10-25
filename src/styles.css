@@ -633,6 +633,13 @@ body.dock-picking, body.dock-picking * { cursor: crosshair !important; }
 .frost-wiz-stats { padding: 4px 12px 8px; color: #9ab; border-top: 1px solid #2a2a2a; }
 
 /* Softimage Face Robot Stage 1 Assemble (50-facerobot-layout.png / facerobot.xsily) — Softimage grey chrome */
+/* Softimage Hair Panel — hairpanel.xsivw shell (900×115); client widgets LOCK */
+.hair-panel { display: flex; flex-direction: column; height: 100%; font: 11px Tahoma, "MS Sans Serif", sans-serif; background: #b0aca9; color: #1f1d1c; overflow: hidden; }
+.hair-panel-title { padding: 2px 6px; background: linear-gradient(#c8c4c1, #a8a4a1); border-bottom: 1px solid #7c7875; font-weight: 700; white-space: nowrap; }
+.hair-panel-meta { display: flex; flex-wrap: wrap; gap: 8px; padding: 2px 6px; color: #4a4644; font-size: 10px; border-bottom: 1px solid #8a8683; }
+.hair-panel-meta-row { white-space: nowrap; }
+.hair-panel .view-placeholder { flex: 1; margin: 0; border-left: none; padding: 4px 8px; font-size: 10px; }
+
 .fr-stage1 { display: flex; flex-direction: column; height: 100%; font: 11px Tahoma, "MS Sans Serif", sans-serif; background: #b0aca9; color: #1f1d1c; overflow: hidden; }
 .fr-stage1-title { display: flex; align-items: center; padding: 4px 6px; background: linear-gradient(#c8c4c1, #a8a4a1); border-bottom: 1px solid #7c7875; font-weight: 700; }
 .fr-stage1-title-text { flex: 1; }

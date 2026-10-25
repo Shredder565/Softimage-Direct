@@ -1,12 +1,14 @@
 {
-  "_comment": "Softimage Hair module toolbar MCP tops — PE MENU 297 (toolbarobj.dll) + menu_hair.txt + modules_hair.json Desktop tour. Dump-attested only. Hair Panel GDI LOCK (OpenView failed under -processing).",
+  "_comment": "Softimage Hair module toolbar MCP tops — PE MENU 297 (toolbarobj.dll) + menu_hair.txt + modules_hair.json Desktop tour. Dump-attested only. Hair Panel view shell from hairpanel.xsivw; client GDI LOCK.",
   "softimage": "13.2.163.0",
   "source": [
     "internal/softimage-pc-dumps/module-menu-hair.json",
     "internal/softimage-pc-dumps/menu_hair.txt",
     "internal/softimage-pc-dumps/modules/modules_hair.json",
+    "internal/softimage-pc-dumps/views/hairpanel.xsivw",
     "docs/softimage-hair-tour.md",
-    "media/softimage-modules-tour/20-hair-module.png"
+    "media/softimage-modules-tour/20-hair-module.png",
+    "media/softimage-modules-tour/22-hair-panel.png"
   ],
   "menu_id": 297,
   "module_select": "Hair",
@@ -61,9 +63,17 @@
     "ActivateTipSelTool"
   ],
   "hair_panel": {
-    "status": "LOCK",
+    "status": "SHELL",
     "openview": "Hair Panel",
-    "note": "OpenView failed under XSIBATCH -processing; Desktop shot 22-hair-panel.png only. Do not invent Hair Panel GDI chrome."
+    "xsivw": "hairpanel.xsivw",
+    "clsid": "{0E338020-8317-42C5-B48E-E8CABB3643E8}",
+    "defaultsize": "0,0,900,115",
+    "category": "General",
+    "supportedtypes": "6",
+    "maxinstances": "1",
+    "private": "true",
+    "client_gdi": "LOCK",
+    "note": "OpenView failed under XSIBATCH -processing; hairpanel.xsivw attests shell. Desktop 22-hair-panel.png — do not invent client GDI widgets."
   },
   "flyout_pixels": { "status": "LOCK", "note": "MCP press-hold flyout item pixel lists LOCK" }
 }

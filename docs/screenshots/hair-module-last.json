@@ -3,13 +3,16 @@
   "diffs": [],
   "notes": [
     "loaded tops /workspace/src/data/si/hair_module_mcp_tops.json",
+    "loaded chrome /workspace/src/data/si/hair_view_chrome.json",
     "softimage 13.2.163.0",
     "Hair in modulesExtracted",
     "Hair in module-select",
     "Hair tops OK: Create, Modify, Display",
     "Hair MCP buttons match dump",
-    "Hair Panel GDI LOCK",
+    "Hair Panel xsivw SHELL",
+    "Hair Panel client GDI LOCK",
     "flyout pixels LOCK",
+    "Hair Panel xsivw defaultsize 0,0,900,115",
     "ApplyHair* ops wired 20/20",
     "SwitchToolbar present",
     "live Hair toolbar 21 buttons",
@@ -18,7 +21,12 @@
     "FROST module still present",
     "SwitchToolbar Target=6 → Hair",
     "ApplyHairOp smoke OK (Hair-Default)",
-    "no invented Hair Panel shell"
+    "Hair Panel shell open 900x115",
+    "Hair Panel category=General",
+    "host dataset defaultsize 0,0,900,115",
+    "Hair Panel clsid matches xsivw",
+    "no invented Hair Panel client widgets",
+    "Hair Panel float height 115 within thin panel budget"
   ],
   "softimage": "13.2.163.0",
   "menu_id": 297,
@@ -26,5 +34,18 @@
     "Create",
     "Modify",
     "Display"
-  ]
+  ],
+  "hair_panel": {
+    "status": "SHELL",
+    "openview": "Hair Panel",
+    "xsivw": "hairpanel.xsivw",
+    "clsid": "{0E338020-8317-42C5-B48E-E8CABB3643E8}",
+    "defaultsize": "0,0,900,115",
+    "category": "General",
+    "supportedtypes": "6",
+    "maxinstances": "1",
+    "private": "true",
+    "client_gdi": "LOCK",
+    "note": "OpenView failed under XSIBATCH -processing; hairpanel.xsivw attests shell. Desktop 22-hair-panel.png — do not invent client GDI widgets."
+  }
 }

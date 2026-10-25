@@ -1,9 +1,10 @@
 // Softimage Hair module toolbar / ApplyHair* commands — dump-backed (MENU 297 + modules_hair.json).
-// Hair Panel GDI chrome stays LOCK (no invent). FROST Character Hair wizard remains parallel.
+// Hair Panel view shell from hairpanel.xsivw; client GDI LOCK (no invent). FROST Character Hair stays parallel.
 import { App } from '../core/commands';
 import { Property } from '../core/scene';
 import { str } from '../core/params';
 import hairTops from '../data/si/hair_module_mcp_tops.json';
+import hairViewChrome from '../data/si/hair_view_chrome.json';
 
 const addHairOp = (app: App, label: string, type: string) => {
   const o = app.selectedObjects[0];
@@ -16,6 +17,9 @@ const addHairOp = (app: App, label: string, type: string) => {
 
 /** Softimage Hair module switcher attestation + dump-gap ApplyHair* ops (Scale/Rotate/Puff/Clump). */
 export function registerHairModuleCommands(app: App) {
+  // Softimage OpenView("Hair Panel") — no separate Command Name in commands_full (unlike OpenICETreeView).
+  // View Shortcuts keymap name "Hair Panel" + SI_VIEWS / openview event open the xsivw shell.
+
   // commands_full Modeling ops attested in modules_hair.json — fill gaps not already in moduleToolbar.
   const gapOps: [string, string][] = [
     ['ApplyHairPuffOp', 'Hair Puff Operator'],
@@ -71,7 +75,7 @@ export function registerHairModuleCommands(app: App) {
   }
 }
 
-/** Audit for __uiAudit / compare_hair_module — dump-backed Hair MCP tops + ApplyHair* inventory. */
+/** Audit for __uiAudit / compare_hair_module — dump-backed Hair MCP tops + ApplyHair* + Hair Panel xsivw shell. */
 export function hairModuleAudit(app: App): Record<string, unknown> {
   const tops = hairTops as typeof hairTops & {
     tops: string[];
@@ -79,9 +83,20 @@ export function hairModuleAudit(app: App): Record<string, unknown> {
     switch_toolbar_target: number;
     apply_hair_ops: string[];
     hair_tools: string[];
-    hair_panel: { status: string };
+    hair_panel: {
+      status: string;
+      openview?: string;
+      defaultsize?: string;
+      category?: string;
+      client_gdi?: string;
+      clsid?: string;
+    };
     flyout_pixels: { status: string };
   };
+  const chrome = hairViewChrome as {
+    views: Record<string, { defaultsize: number[]; category: string; status?: string; client_gdi?: string; clsid?: string }>;
+  };
+  const panel = chrome.views['Hair Panel'];
   const applyWired = (tops.apply_hair_ops ?? []).filter(n => app.commands.has(n));
   const toolsWired = (tops.hair_tools ?? []).filter(n => app.commands.has(n));
   return {
@@ -97,7 +112,12 @@ export function hairModuleAudit(app: App): Record<string, unknown> {
     applyHairOpsCount: applyWired.length,
     applyHairOpsExpected: (tops.apply_hair_ops ?? []).length,
     hairToolsWired: toolsWired,
-    hairPanel: tops.hair_panel?.status ?? 'LOCK',
+    hairPanel: tops.hair_panel?.status ?? panel?.status ?? 'LOCK',
+    hairPanelClientGdi: tops.hair_panel?.client_gdi ?? panel?.client_gdi ?? 'LOCK',
+    hairPanelDefaultSize: panel?.defaultsize,
+    hairPanelCategory: panel?.category,
+    hairPanelClsid: panel?.clsid,
+    hairPanelOpenView: tops.hair_panel?.openview ?? 'Hair Panel',
     flyoutPixels: tops.flyout_pixels?.status ?? 'LOCK',
     switchToolbar: app.commands.has('SwitchToolbar'),
     currentModule: app.module,
