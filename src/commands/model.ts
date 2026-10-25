@@ -450,7 +450,17 @@ export class TopologyOperator2 extends Operator {
   apply(m: any) {
     if (!m || !m.positions || this.val('mute')) return m; const v = (n: string) => Number(this.val(n));
     switch (this.preset) {
-      case 'Bevel': { const rel = this.get('units') ? this.p('units', undefined, 1) === 1 : true; const w = this.get('ratio') ? this.p('ratio') * (rel ? 0.125 : 1) : v('amount'); return T2.bevelEdges(m, this.sel, w, Math.max(0, this.p('nbsubdivs', undefined, 0) | 0), !!this.val('miter'), rel); }
+      case 'Bevel': {
+        // Softimage Distance: always ×0.125 for chamfer width (grid_r08 Absolute 0.8 → inset 0.1).
+        // Relative (units=1) additionally × avg selected edge length inside bevelEdges.
+        // managecollisions gates the planar all-edge collide dual (grid_r08 ON); Absolute collide
+        // reach uses raw Distance SI so 0.8 clears half-cell on a 0.5 grid.
+        const rel = this.get('units') ? this.p('units', undefined, 1) === 1 : true;
+        const distance = this.get('ratio') ? this.p('ratio') : v('amount') / 0.125;
+        const w = this.get('ratio') ? distance * 0.125 : v('amount');
+        const mc = this.get('managecollisions') ? !!this.val('managecollisions') : false;
+        return T2.bevelEdges(m, this.sel, w, Math.max(0, this.p('nbsubdivs', undefined, 0) | 0), !!this.val('miter'), rel, mc, distance);
+      }
       case 'Bridge Polygons': return T2.bridgePolygons(m, this.sel, Math.max(1, this.p('subdivs', 'subdiv', 1)));
       case 'Cap Hole': return T2.capHoles(m, this.sel);
       case 'Quadrangulate': return T2.quadrangulate(m, this.sel);
