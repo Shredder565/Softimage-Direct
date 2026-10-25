@@ -12,6 +12,7 @@ import { FCurve } from '../core/animation';
 import { TEXTURE_NODES, MATERIAL_PRESETS } from '../core/shaders';
 import { openSiMenu, SI_MENUS } from './si';
 import { PRESET_MODELS } from '../commands/presets';
+import { animChrome, fcurveMenuLabels, mixerMenuLabels } from './animChrome';
 
 const el = (tag: string, cls = '', text = '') => { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; };
 const btn = (l: string, t: string, fn: (e: MouseEvent) => void) => { const b = el('button', 'xp-btn', l) as HTMLButtonElement; b.title = t; b.onclick = fn; return b; };
@@ -137,28 +138,56 @@ const CURVE_COLORS: Record<string, string> = { posx: '#ff5a5a', posy: '#5aff5a',
 export function animationEditor(app: App, host: HTMLElement, mode: 'fcurve' | 'dopesheet' = 'fcurve') {
   const root = el('div', 'fcv'); host.appendChild(root); const A = app.anim;
   let shown = new Set<Parameter>(); let selKeys = new Set<string>(); const key = (p: Parameter, t: number) => `${p.fullName}@${t}`;
-  const hd = head(menuBtn('Edit', () => [{ label: 'Select All Keys' }, { label: 'Deselect All' }, { separator: true }, { label: 'Delete Keys' }, { label: 'Set Key at Current Frame' }, { separator: true }, { label: 'Move Keys...' }, { label: 'Scale Keys...' }], (l) => edit(l)),
-    menuBtn('Curves', () => [{ label: 'Linear' }, { label: 'Spline' }, { label: 'Constant (step)' }], (l) => { for (const p of shown) { const fc = A.fcurve(p); if (fc) (fc as any).interp = l.startsWith('Lin') ? 'linear' : l.startsWith('Con') ? 'step' : 'spline'; } A.frame = A.frame; draw(); }),
-    menuBtn('View', () => [{ label: 'Frame All' }, { label: 'Frame Selection' }, { separator: true }, { label: 'Show Values' }, { label: 'Lock Parameters' }], (l) => { if (l.startsWith('Frame')) frameAll(); else if (l === 'Lock Parameters') lock = !lock; else showVals = !showVals; draw(); }),
+  // Softimage Animation Editor / DopeSheet menubar labels from PE dict chrome tokens
+  const menus = mode === 'fcurve' ? fcurveMenuLabels() : animChrome.menus.dopesheet;
+  const hd = head(menuBtn(menus[0] || 'Edit', () => [{ label: 'Select All Keys' }, { label: 'Deselect All' }, { separator: true }, { label: 'Delete Keys' }, { label: 'Set Key at Current Frame' }, { separator: true }, { label: 'Move Keys...' }, { label: 'Scale Keys...' }], (l) => edit(l)),
+    menuBtn(mode === 'fcurve' ? (menus[1] || 'Curves') : (menus[1] || 'View'), () => mode === 'fcurve' ? [{ label: 'Linear' }, { label: 'Spline' }, { label: 'Constant (step)' }] : [{ label: 'Frame All' }, { label: 'Frame Selection' }, { separator: true }, { label: 'Show Values' }], (l) => {
+      if (mode !== 'fcurve' || l.startsWith('Frame') || l === 'Show Values') { if (l.startsWith('Frame')) frameAll(); else if (l === 'Show Values') showVals = !showVals; draw(); return; }
+      for (const p of shown) { const fc = A.fcurve(p); if (fc) { fc.interp = l.startsWith('Lin') ? 1 : l.startsWith('Con') ? 0 : 3; for (const k of fc.keys) k.interp = fc.interp; } }
+      A.frame = A.frame; draw();
+    }),
+    menuBtn(menus[2] || 'View', () => [{ label: 'Frame All' }, { label: 'Frame Selection' }, { separator: true }, { label: 'Show Values' }, { label: 'Show Handles' }, { label: 'Lock Parameters' }], (l) => { if (l.startsWith('Frame')) frameAll(); else if (l === 'Lock Parameters') lock = !lock; else if (l === 'Show Handles') showHandles = !showHandles; else showVals = !showVals; draw(); }),
     btn(mode === 'fcurve' ? 'Dopesheet' : 'F-Curves', 'Switch editor', () => { root.remove(); animationEditor(app, host, mode === 'fcurve' ? 'dopesheet' : 'fcurve'); }), btn('Frame', 'Frame all', () => { frameAll(); draw(); }));
   const info = el('span', 'rt-title'); hd.appendChild(info); root.appendChild(hd);
   const body = el('div', 'fcv-body'); const list = el('div', 'fcv-list'); const wrap = el('div', 'fcv-canvas'); body.append(list, wrap); root.appendChild(body); const cv = canvasFill(wrap);
-  let lock = false, showVals = true; let view = { t0: A.startFrame - 2, t1: A.endFrame + 2, v0: -10, v1: 10 }; const LM = 36, TB = 16;
+  let lock = false, showVals = true, showHandles = true; let view = { t0: A.startFrame - 2, t1: A.endFrame + 2, v0: -10, v1: 10 };
+  const LM = animChrome.layout.fcv_label_margin, TB = animChrome.layout.fcv_ruler_h;
   const refreshList = () => { const ps = animParams(app); if (!lock) shown = new Set(ps); list.innerHTML = ''; for (const p of ps) { const r = el('div', 'fcv-row' + (shown.has(p) ? ' on' : '')); const sw = el('span', 'sw'); sw.style.background = CURVE_COLORS[p.name] ?? '#ffd34d'; r.append(sw, el('span', '', `${(p.owner as any).parent?.name ?? ''}.${p.label}`)); r.onclick = (e) => { if (e.shiftKey) { if (shown.has(p)) shown.delete(p); else shown.add(p); } else shown = new Set([p]); lock = true; refreshList(); draw(); }; list.appendChild(r); } info.textContent = `${ps.length} animated parameter(s)`; };
   const frameAll = () => { let lo = Infinity, hi = -Infinity, t0 = Infinity, t1 = -Infinity; for (const p of shown) for (const k of A.fcurve(p)?.keys ?? []) { lo = Math.min(lo, k.value); hi = Math.max(hi, k.value); t0 = Math.min(t0, k.time); t1 = Math.max(t1, k.time); } if (lo === Infinity) { lo = -10; hi = 10; t0 = A.startFrame; t1 = A.endFrame; } const pad = (hi - lo || 2) * 0.15; view = { t0: t0 - 2, t1: t1 + 2, v0: lo - pad, v1: hi + pad }; };
   const X = (t: number) => LM + (t - view.t0) / (view.t1 - view.t0) * (cv.clientWidth - LM - 6); const Y = (v: number) => TB + (1 - (v - view.v0) / (view.v1 - view.v0)) * (cv.clientHeight - TB - 6);
   const invX = (x: number) => view.t0 + (x - LM) / (cv.clientWidth - LM - 6) * (view.t1 - view.t0); const invY = (y: number) => view.v1 - (y - TB) / (cv.clientHeight - TB - 6) * (view.v1 - view.v0);
   const rows = () => [...shown];
-  const draw = () => { const g = ctx2(cv); const W = cv.clientWidth, H = cv.clientHeight; g.fillStyle = '#4a4a4a'; g.fillRect(0, 0, W, H);
-    const tstep = (view.t1 - view.t0) > 200 ? 50 : (view.t1 - view.t0) > 60 ? 10 : 5; g.strokeStyle = '#5c5c5c'; g.fillStyle = '#ccc';
+  const draw = () => { const g = ctx2(cv); const W = cv.clientWidth, H = cv.clientHeight; g.fillStyle = animChrome.colors.client_bg; g.fillRect(0, 0, W, H);
+    const tstep = (view.t1 - view.t0) > 200 ? 50 : (view.t1 - view.t0) > 60 ? 10 : 5; g.strokeStyle = animChrome.colors.grid; g.fillStyle = '#ccc';
     const vg = pref('C3DPrefsFCurveEditor', 'vert_grid_vis') !== false, hg = pref('C3DPrefsFCurveEditor', 'horz_grid_vis') !== false, hr = pref('C3DPrefsFCurveEditor', 'horz_ruler_vis') !== false, vr = pref('C3DPrefsFCurveEditor', 'vert_ruler_vis') !== false;
     for (let t = Math.ceil(view.t0 / tstep) * tstep; t <= view.t1; t += tstep) { const x = X(t); if (vg || mode !== 'fcurve') { g.beginPath(); g.moveTo(x, TB); g.lineTo(x, H); g.stroke(); } if (hr) g.fillText(String(t), x + 2, 10); }
     if (mode === 'fcurve') { const vstep = niceStep(view.v1 - view.v0); for (let v = Math.ceil(view.v0 / vstep) * vstep; v <= view.v1; v += vstep) { const y = Y(v); if (hg) { g.beginPath(); g.moveTo(LM, y); g.lineTo(W, y); g.stroke(); } if (vr) g.fillText(String(Math.round(v * 100) / 100), 2, y + 3); } g.strokeStyle = '#888'; g.beginPath(); g.moveTo(LM, Y(0)); g.lineTo(W, Y(0)); g.stroke(); }
     const rs = rows();
-    rs.forEach((p, ri) => { const fc = A.fcurve(p); if (!fc) return; const col = CURVE_COLORS[p.name] ?? '#ffd34d';
-      if (mode === 'fcurve') { g.strokeStyle = col; g.lineWidth = 1.2; g.beginPath(); for (let x = LM; x < W; x += 2) { const v = fc.eval(invX(x)); const y = Y(v); if (x === LM) g.moveTo(x, y); else g.lineTo(x, y); } g.stroke(); for (const k of fc.keys) { const x = X(k.time), y = Y(k.value); g.fillStyle = selKeys.has(key(p, k.time)) ? '#fff' : col; g.fillRect(x - 3, y - 3, 6, 6); if (showVals && selKeys.has(key(p, k.time))) { g.fillStyle = '#fff'; g.fillText(`${k.time}: ${Math.round(k.value * 1000) / 1000}`, x + 6, y - 6); } } }
+    rs.forEach((p, ri) => { const fc = A.fcurve(p); if (!fc) return; const col = CURVE_COLORS[p.name] ?? animChrome.colors.key_diamond;
+      if (mode === 'fcurve') {
+        g.strokeStyle = col; g.lineWidth = 1.2; g.beginPath();
+        for (let x = LM; x < W; x += 2) { const v = fc.eval(invX(x)); const y = Y(v); if (x === LM) g.moveTo(x, y); else g.lineTo(x, y); } g.stroke();
+        for (let ki = 0; ki < fc.keys.length; ki++) {
+          const k = fc.keys[ki]; const x = X(k.time), y = Y(k.value);
+          // Softimage Left/Right handle chrome (absolute handle Y at ±1/3 neighbor span)
+          if (showHandles && selKeys.has(key(p, k.time))) {
+            const prev = fc.keys[ki - 1], next = fc.keys[ki + 1];
+            g.strokeStyle = '#ccc'; g.fillStyle = '#eee';
+            if (next) {
+              const hx = X(k.time + (next.time - k.time) / 3), hy = Y(k.right ?? k.value);
+              g.beginPath(); g.moveTo(x, y); g.lineTo(hx, hy); g.stroke(); g.fillRect(hx - 2, hy - 2, 4, 4);
+            }
+            if (prev) {
+              const hx = X(k.time - (k.time - prev.time) / 3), hy = Y(k.left ?? k.value);
+              g.beginPath(); g.moveTo(x, y); g.lineTo(hx, hy); g.stroke(); g.fillRect(hx - 2, hy - 2, 4, 4);
+            }
+          }
+          g.fillStyle = selKeys.has(key(p, k.time)) ? '#fff' : col; g.fillRect(x - 3, y - 3, 6, 6);
+          if (showVals && selKeys.has(key(p, k.time))) { g.fillStyle = '#fff'; g.fillText(`${k.time}: ${Math.round(k.value * 1000) / 1000}`, x + 6, y - 6); }
+        }
+      }
       else { const y = TB + 8 + ri * 18; g.fillStyle = 'rgba(0,0,0,.15)'; g.fillRect(LM, y - 2, W - LM, 16); g.fillStyle = '#ddd'; g.fillText(p.label, 2, y + 10); for (const k of fc.keys) { const x = X(k.time); g.fillStyle = selKeys.has(key(p, k.time)) ? '#fff' : col; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 5, y + 6); g.lineTo(x, y + 12); g.lineTo(x - 5, y + 6); g.closePath(); g.fill(); } } });
-    g.fillStyle = '#ffd34d'; g.fillRect(X(A.frame) - 1, TB, 2, H - TB); g.fillText(String(A.frame), X(A.frame) + 3, H - 3); };
+    g.fillStyle = animChrome.colors.time_cursor; g.fillRect(X(A.frame) - 1, TB, 2, H - TB); g.fillText(String(A.frame), X(A.frame) + 3, H - 3); };
   const keyAt = (px: number, py: number): { p: Parameter; t: number } | null => { const rs = rows(); for (let ri = 0; ri < rs.length; ri++) { const p = rs[ri]; const fc = A.fcurve(p); if (!fc) continue; for (const k of fc.keys) { const x = X(k.time), y = mode === 'fcurve' ? Y(k.value) : TB + 8 + ri * 18 + 6; if (Math.abs(x - px) < 6 && Math.abs(y - py) < 7) return { p, t: k.time }; } } return null; };
   const edit = (l: string) => { if (l === 'Select All Keys') { selKeys.clear(); for (const p of shown) for (const k of A.fcurve(p)?.keys ?? []) selKeys.add(key(p, k.time)); } else if (l === 'Deselect All') selKeys.clear(); else if (l === 'Delete Keys') { for (const p of shown) for (const k of [...(A.fcurve(p)?.keys ?? [])]) if (selKeys.has(key(p, k.time))) app.run('RemoveKey', { InputObjs: p.fullName, Time: k.time }); selKeys.clear(); } else if (l === 'Set Key at Current Frame') { for (const p of shown) app.run('SaveKey', { InputObjs: p.fullName }); } else if (l === 'Move Keys...' || l === 'Scale Keys...') { const v = Number(prompt(l === 'Move Keys...' ? 'Offset (frames):' : 'Scale factor about the first selected key:', l === 'Move Keys...' ? '10' : '2') ?? NaN); if (!Number.isFinite(v)) return; for (const p of shown) { const fc = A.fcurve(p); if (!fc) continue; const sel = fc.keys.filter(k => selKeys.has(key(p, k.time))); if (!sel.length) continue; const t0 = sel[0].time; const old = fc.keys.map(k => ({ ...k })); app.record(l, () => { for (const k of sel) k.time = Math.round(l === 'Move Keys...' ? k.time + v : t0 + (k.time - t0) * v); fc.keys.sort((a, b) => a.time - b.time); }, () => { fc.keys = old; }); } selKeys.clear(); A.frame = A.frame; } draw(); };
   let drag: { sx: number; sy: number; mode: 'key' | 'pan' | 'box' | 'scrub'; start: Map<string, { t: number; v: number }>; keys: FCurve[] } | null = null;
@@ -303,37 +332,63 @@ export function animationMixer(app: App, host: HTMLElement) {
     return [...hostModel.properties.filter(p => p.type === 'actionsource'), ...app.scene.root.properties.filter(p => p.type === 'actionsource')];
   };
   const mix = () => (app.selectedObjects[0]?.model ?? app.scene.root).property('mixer') ?? app.scene.root.property('mixer');
+  // Softimage Animation Mixer menubar labels from XSIANIMATIONMIXER.dict / anim_chrome tokens
+  const mm = mixerMenuLabels();
   root.appendChild(head(
+    menuBtn(mm[0] || 'Edit', () => [{ label: 'Store Action' }, { label: 'Apply Action' }, { separator: true }, { label: 'Equalize Clips' }], (l) => {
+      if (l === 'Store Action') app.run('StoreAction', { Name: prompt('Action name:', 'Action') || 'Action', AddClip: true });
+      else if (l === 'Apply Action') app.run('ApplyAction');
+      else if (l === 'Equalize Clips') app.run('EqualizeClips');
+      render();
+    }),
+    menuBtn(mm[1] || 'View', () => [{ label: 'Refresh' }, { label: 'Frame All' }], () => render()),
+    menuBtn(mm[2] || 'Track', () => [{ label: 'Insert Animation Track' }, { label: 'Insert Shape Track' }], (l) => { app.logMsg('info', `Mixer: ${l}`); }),
+    menuBtn(mm[3] || 'Clip', () => [{ label: 'Add Transition' }, { label: 'Add Bridge Transition' }, { label: 'Create Compound' }], (l) => {
+      if (l === 'Add Transition') app.run('AddTransition');
+      else if (l === 'Add Bridge Transition') app.run('AddBridgeTransition');
+      else if (l === 'Create Compound') app.run('CreateCompound');
+      render();
+    }),
     btn('Store Action', 'Store selection animation as an action source on the model', () => { app.run('StoreAction', { Name: prompt('Action name:', 'Action') || 'Action', AddClip: true }); render(); }),
     btn('Apply', 'Apply the selected action source', () => { app.run('ApplyAction'); render(); }),
     btn('Refresh', '', () => render()),
   ));
-  const body = el('div', 'tb-items'); root.appendChild(body);
+  const tracksEl = el('div', 'mixer-tracks'); root.appendChild(tracksEl);
   const render = () => {
-    body.innerHTML = '';
+    tracksEl.innerHTML = '';
     const m = mix();
-    body.appendChild(el('div', 'hint', m ? `Mixer: ${m.val('Name') || 'Mixer'} · Active=${m.val('Active')} · Start=${m.val('start')} · Duration=${m.val('duration')}` : 'No Mixer on Scene_Root'));
+    tracksEl.appendChild(el('div', 'hint', m ? `Mixer: ${m.val('Name') || 'Mixer'} · Active=${m.val('Active')} · Start=${m.val('start')} · Duration=${m.val('duration')}` : 'No Mixer on Scene_Root'));
     const all = sources();
-    if (!all.length) body.appendChild(el('div', 'hint', 'No action sources. Store Action keeps current values / f-curves as a reusable source (Softimage Animation Mixer).'));
+    if (!all.length) tracksEl.appendChild(el('div', 'hint', 'No action sources. Store Action keeps current values / f-curves as a reusable source (Softimage Animation Mixer).'));
     for (const a of all) {
       const nKeys = (() => { try { return Object.keys(JSON.parse(a.val('fcurves') || '{}')).length; } catch { return 0; } })();
       const b = btn(`${a.name} (${a.val('items') || 0} params, ${nKeys} fcurves)`, 'Select / apply this action source', () => { app.select([a]); app.run('ApplyAction'); });
-      body.appendChild(b);
+      tracksEl.appendChild(b);
     }
     const clips: any[] = (m as any)?.clips ?? [];
+    const byTrack = new Map<number, any[]>();
+    for (const c of clips) { const t = c.track ?? 0; if (!byTrack.has(t)) byTrack.set(t, []); byTrack.get(t)!.push(c); }
     if (clips.length) {
-      body.appendChild(el('div', 'hint', `Clips on mixer tracks (${clips.length}):`));
-      for (const c of clips) body.appendChild(el('div', 'hint', `• [T${c.track ?? 0}] ${c.name} @ ${c.start} (${c.duration}f)`));
+      for (const [ti, list] of [...byTrack.entries()].sort((a, b) => a[0] - b[0])) {
+        const row = el('div', 'mixer-track-row');
+        row.appendChild(el('div', 'mixer-track-label', `Animation Track ${ti}`));
+        for (const c of list) {
+          const bar = el('div', 'mixer-clip-bar', `${c.name} · ${c.source ?? ''} @${c.start} (${c.duration}f)${c.mute ? ' [mute]' : ''}${c.additive ? ' [add]' : ''}`);
+          bar.onclick = () => app.run('SelectObj', { InputObjs: c.source });
+          row.appendChild(bar);
+        }
+        tracksEl.appendChild(row);
+      }
     }
     const transitions: any[] = (m as any)?.transitions ?? [];
     if (transitions.length) {
-      body.appendChild(el('div', 'hint', `Transitions (${transitions.length}):`));
-      for (const t of transitions) body.appendChild(el('div', 'hint', `• ${t.kind}: ${t.from} → ${t.to} (${t.length}f)`));
+      tracksEl.appendChild(el('div', 'hint', `Transitions (${transitions.length}):`));
+      for (const t of transitions) tracksEl.appendChild(el('div', 'hint', `• ${t.kind}: ${t.from} → ${t.to} (${t.length}f)`));
     }
     const compounds: any[] = (m as any)?.compounds ?? [];
     if (compounds.length) {
-      body.appendChild(el('div', 'hint', `Compounds (${compounds.length}):`));
-      for (const c of compounds) body.appendChild(el('div', 'hint', `• ${c.name}: [${(c.clips || []).join(', ')}] @ ${c.start}`));
+      tracksEl.appendChild(el('div', 'hint', `Compounds (${compounds.length}):`));
+      for (const c of compounds) tracksEl.appendChild(el('div', 'hint', `• ${c.name}: [${(c.clips || []).join(', ')}] @ ${c.start}`));
     }
     root.querySelector('.mixer-actions')?.remove();
     const actions = el('div', 'mixer-actions');
