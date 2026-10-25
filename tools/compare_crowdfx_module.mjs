@@ -1,6 +1,6 @@
-// Softimage CrowdFX under ICE vs Desktop dumps (MCP Actors/Crowd/Simulation + ICE menubar tear-off + ICEOperators).
-// Dump-backed only. Anchor-to-Delete compounds LOCK (submenu_live=false). Needs vite preview :4173.
-// Usage: node tools/compare_crowdfx_module.mjs
+// Softimage CrowdFX under ICE vs Desktop dumps (MCP Actors/Crowd/Simulation + ICE menubar tear-off + closer95 flyouts).
+// Dump-backed only. Anchor-to-Delete compounds LOCK (submenu_live=false); crowdfx.submenu_flyouts DUMP_READY.
+// Needs vite preview :4173. Usage: node tools/compare_crowdfx_module.mjs
 import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
@@ -28,19 +28,25 @@ const deskPath = [
   path.resolve(__dirname, '../src/data/si/crowdfx_desktop_menu.json'),
   path.resolve(__dirname, '../data/dump/si_crowdfx_desktop_menu.json'),
 ].find(p => fs.existsSync(p));
-if (!modPath || !prefsPath || !deskPath) {
-  console.error('missing CrowdFX dump JSON (module/prefs/desktop_menu)');
+const flyPath = [
+  path.resolve(__dirname, '../src/data/si/crowdfx_submenu_flyouts.json'),
+  path.resolve(__dirname, '../data/dump/si_crowdfx_submenu_flyouts.json'),
+].find(p => fs.existsSync(p));
+if (!modPath || !prefsPath || !deskPath || !flyPath) {
+  console.error('missing CrowdFX dump JSON (module/prefs/desktop_menu/submenu_flyouts)');
   process.exit(2);
 }
 const mod = JSON.parse(fs.readFileSync(modPath, 'utf8'));
 const prefs = JSON.parse(fs.readFileSync(prefsPath, 'utf8'));
 const desk = JSON.parse(fs.readFileSync(deskPath, 'utf8'));
+const fly = JSON.parse(fs.readFileSync(flyPath, 'utf8'));
 
 const diffs = [];
 const notes = [];
 notes.push(`loaded module ${modPath}`);
 notes.push(`loaded prefs ${prefsPath}`);
 notes.push(`loaded desktop_menu ${deskPath}`);
+notes.push(`loaded submenu_flyouts ${flyPath}`);
 
 const b = await chromium.launch({ executablePath: CHROME, args: ['--headless=new', '--use-gl=swiftshader'] });
 const page = await b.newPage();
@@ -171,11 +177,26 @@ if (!run.crowdName) diffs.push('CreateCrowd returned no object');
 else notes.push(`CreateCrowd → ${run.crowdName} kind=${run.crowdKind}`);
 if (run.crowdKind !== 'crowd') diffs.push(`CreateCrowd kind want=crowd got=${run.crowdKind}`);
 
-// Desktop menubar ICE tear-off → CrowdFX Actors/Crowd/Simulation (DUMP_READY; submenu_live=false)
+// Desktop menubar ICE tear-off → CrowdFX Actors/Crowd/Simulation (DUMP_READY; submenu_live=false compounds)
 if (desk.status !== 'DUMP_READY') diffs.push(`desktop_menu status want=DUMP_READY got=${desk.status}`);
 else notes.push('desktop_menu DUMP_READY');
-if (desk.reachability?.submenu_live !== false) diffs.push('desktop_menu submenu_live must be false (no invent flyouts)');
-else notes.push('desktop_menu submenu_live=false (anchors LOCK)');
+if (desk.reachability?.submenu_live !== false) diffs.push('desktop_menu submenu_live must be false (no invent compounds)');
+else notes.push('desktop_menu submenu_live=false (compounds LOCK)');
+if (desk.submenu_flyouts?.status !== 'DUMP_READY') {
+  diffs.push(`desktop_menu submenu_flyouts.status want=DUMP_READY got=${desk.submenu_flyouts?.status}`);
+} else notes.push('desktop_menu submenu_flyouts DUMP_READY (closer95)');
+if (desk.submenu_flyouts?.compound_leaves !== 'LOCK') {
+  diffs.push('desktop_menu submenu_flyouts.compound_leaves must be LOCK');
+} else notes.push('submenu_flyouts compound_leaves LOCK');
+if (desk.submenu_flyouts?.pe_leaf !== 'Anchor-to-Delete') {
+  diffs.push(`submenu_flyouts pe_leaf want=Anchor-to-Delete got=${desk.submenu_flyouts?.pe_leaf}`);
+}
+if (fly.status !== 'DUMP_READY' || fly.lock_id !== 'crowdfx.submenu_flyouts') {
+  diffs.push(`flyouts dump status/lock_id want=DUMP_READY/crowdfx.submenu_flyouts got=${fly.status}/${fly.lock_id}`);
+} else notes.push('crowdfx.submenu_flyouts dump DUMP_READY');
+if (fly.summary?.submenu_live_compounds !== false) diffs.push('flyouts submenu_live_compounds must be false');
+if ((fly.summary?.flyout_count ?? 0) !== 3) diffs.push(`flyouts flyout_count want=3 got=${fly.summary?.flyout_count}`);
+else notes.push('flyouts Actors/Crowd/Simulation × Anchor-to-Delete');
 if (JSON.stringify(desk.reachability?.buttons) !== JSON.stringify(mod.buttons)) {
   diffs.push(`desktop_menu buttons mismatch mod=${(mod.buttons || []).join('|')}`);
 }
@@ -246,7 +267,23 @@ if (deskLive.auditDesktop?.status !== 'DUMP_READY') {
   diffs.push(`audit desktopMenu.status want=DUMP_READY got=${deskLive.auditDesktop?.status}`);
 } else notes.push('audit desktopMenu DUMP_READY');
 if (deskLive.auditDesktop?.submenuLive !== false) diffs.push('audit desktopMenu.submenuLive must be false');
+if (deskLive.auditDesktop?.submenuFlyouts !== 'DUMP_READY') {
+  diffs.push(`audit desktopMenu.submenuFlyouts want=DUMP_READY got=${deskLive.auditDesktop?.submenuFlyouts}`);
+} else notes.push('audit desktopMenu.submenuFlyouts DUMP_READY');
 if (deskLive.auditDesktop?.menubarPresent !== true) diffs.push('audit desktopMenu.menubarPresent false');
+
+const flyAudit = await page.evaluate(() => window.__uiAudit?.()?.crowdFxModule?.submenuFlyouts ?? null);
+if (!flyAudit) diffs.push('audit submenuFlyouts missing');
+else {
+  if (flyAudit.status !== 'WIRED') diffs.push(`audit submenuFlyouts.status want=WIRED got=${flyAudit.status}`);
+  else notes.push('audit submenuFlyouts WIRED');
+  if (flyAudit.dumpStatus !== 'DUMP_READY') diffs.push(`audit submenuFlyouts.dumpStatus want=DUMP_READY got=${flyAudit.dumpStatus}`);
+  if (flyAudit.lockId !== 'crowdfx.submenu_flyouts') diffs.push(`audit submenuFlyouts.lockId mismatch`);
+  if ((flyAudit.flyoutCount ?? 0) !== 3) diffs.push(`audit submenuFlyouts.flyoutCount want=3 got=${flyAudit.flyoutCount}`);
+  if (flyAudit.compoundLeaves !== 'LOCK') diffs.push('audit submenuFlyouts.compoundLeaves must LOCK');
+  else notes.push('audit submenuFlyouts compounds LOCK');
+  if ((flyAudit.mismatches || []).length) diffs.push(`audit submenuFlyouts mismatches: ${flyAudit.mismatches.join(',')}`);
+}
 
 await b.close();
 
@@ -264,6 +301,13 @@ const out = {
     path: desk.reachability?.path,
     buttons: desk.reachability?.buttons,
     submenu_live: desk.reachability?.submenu_live,
+    submenu_flyouts: desk.submenu_flyouts?.status,
+  },
+  submenu_flyouts: {
+    lock_id: fly.lock_id,
+    status: fly.status,
+    flyout_count: fly.summary?.flyout_count,
+    compound_leaves: fly.summary?.compound_leaves,
   },
 };
 console.log(JSON.stringify(out, null, 2));

@@ -5,6 +5,7 @@
     "loaded module /workspace/src/data/si/crowdfx_module.json",
     "loaded prefs /workspace/src/data/si/crowdfx_prefs.json",
     "loaded desktop_menu /workspace/src/data/si/crowdfx_desktop_menu.json",
+    "loaded submenu_flyouts /workspace/src/data/si/crowdfx_submenu_flyouts.json",
     "softimage 13.2.163.0",
     "ICE host module present",
     "MCP top CrowdFX",
@@ -23,14 +24,21 @@
     "SwitchToolbar Target=4 → ICE (CrowdFX host)",
     "CreateCrowd → Crowd kind=crowd",
     "desktop_menu DUMP_READY",
-    "desktop_menu submenu_live=false (anchors LOCK)",
+    "desktop_menu submenu_live=false (compounds LOCK)",
+    "desktop_menu submenu_flyouts DUMP_READY (closer95)",
+    "submenu_flyouts compound_leaves LOCK",
+    "crowdfx.submenu_flyouts dump DUMP_READY",
+    "flyouts Actors/Crowd/Simulation × Anchor-to-Delete",
     "menubar ICE present",
     "ICE menubar click → SwitchToolbar ICE host",
     "ICE module tear-off open",
     "tear-off CrowdFX group",
     "tear-off Actors/Crowd/Simulation has-sub",
     "CrowdFX submenu Anchor-to-Delete LOCK (no invent)",
-    "audit desktopMenu DUMP_READY"
+    "audit desktopMenu DUMP_READY",
+    "audit desktopMenu.submenuFlyouts DUMP_READY",
+    "audit submenuFlyouts WIRED",
+    "audit submenuFlyouts compounds LOCK"
   ],
   "softimage": "13.2.163.0",
   "menu_id": 303,
@@ -56,6 +64,13 @@
       "Crowd",
       "Simulation"
     ],
-    "submenu_live": false
+    "submenu_live": false,
+    "submenu_flyouts": "DUMP_READY"
+  },
+  "submenu_flyouts": {
+    "lock_id": "crowdfx.submenu_flyouts",
+    "status": "DUMP_READY",
+    "flyout_count": 3,
+    "compound_leaves": "LOCK"
   }
 }

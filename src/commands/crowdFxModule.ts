@@ -7,6 +7,7 @@ import { bool, str } from '../core/params';
 import crowdfxModule from '../data/si/crowdfx_module.json';
 import crowdfxPrefs from '../data/si/crowdfx_prefs.json';
 import crowdfxDesktopMenu from '../data/si/crowdfx_desktop_menu.json';
+import { crowdFxSubmenuFlyoutsAudit } from '../ui/crowdFxSubmenuFlyouts';
 
 const addObject = (app: App, obj: X3DObject, parent?: X3DObject | null) => {
   const p = parent ?? app.scene.root;
@@ -343,8 +344,18 @@ export function crowdFxModuleAudit(app: App): Record<string, unknown> {
       runtime_anchors: string;
     };
     desktop_paths: Record<string, string>;
+    submenu_flyouts?: {
+      lock_id: string;
+      status: string;
+      desktop_board: string;
+      details: string;
+      media: string;
+      pe_leaf: string;
+      compound_leaves: string;
+    };
   };
   const iceMenubar = !!document.querySelector('#menubar .m[data-si-menu="ICE"]');
+  const fly = crowdFxSubmenuFlyoutsAudit();
   return {
     softimage: mod.softimage,
     menuId: mod.menu_id,
@@ -386,6 +397,13 @@ export function crowdFxModuleAudit(app: App): Record<string, unknown> {
       runtimeAnchors: desk.reachability?.runtime_anchors ?? 'LOCK',
       media: desk.desktop_paths,
       menubarPresent: iceMenubar,
+      submenuFlyouts: desk.submenu_flyouts?.status ?? 'LOCK',
+      submenuFlyoutsLockId: desk.submenu_flyouts?.lock_id ?? 'crowdfx.submenu_flyouts',
+      submenuFlyoutsDetails: desk.submenu_flyouts?.details,
+      submenuFlyoutsPeLeaf: desk.submenu_flyouts?.pe_leaf ?? 'Anchor-to-Delete',
+      submenuFlyoutsCompounds: desk.submenu_flyouts?.compound_leaves ?? 'LOCK',
     },
+    // closer95 crowdfx.submenu_flyouts DUMP_READY — PE Anchor-to-Delete only
+    submenuFlyouts: fly,
   };
 }

@@ -1,15 +1,20 @@
 {
-  "_comment": "Softimage CrowdFX Desktop menubar reachability under ICE — DUMP_READY harvest only. Actors/Crowd/Simulation visible on ICE module menu tear-off; submenu live flyouts not captured (LOCK, no invent).",
+  "_comment": "Softimage CrowdFX Desktop menubar under ICE — DUMP_READY harvest + closer95 submenu flyout DUMP_READY. Actors/Crowd/Simulation has-sub flyouts PE=Anchor-to-Delete; compound leaves LOCK (no invent).",
   "softimage": "13.2.163.0",
   "status": "DUMP_READY",
-  "utc": "2026-10-25T19:22:51Z",
+  "utc": "2026-10-25T22:10:58Z",
   "source": [
     "internal/softimage-pc-dumps/modules-gdi/deferred_gdi_harvest.json",
     "docs/softimage-modules-gdi-tour.md",
     "media/softimage-modules-gdi/40-crowdfx-ice-menu.png",
     "media/softimage-modules-gdi/40-crowdfx-desktop.png",
     "internal/softimage-pc-dumps/modules/modules_crowdfx.json",
-    "internal/softimage-pc-dumps/menu_ice.txt"
+    "internal/softimage-pc-dumps/menu_ice.txt",
+    "internal/softimage-pc-dumps/closer95/closer95_desktop.json",
+    "internal/softimage-pc-dumps/closer95/closer95_merged_board.json",
+    "docs/softimage-95pct-closer-tour.md",
+    "media/softimage-95pct-closer/30-crowdfx-menu-hover.png",
+    "src/data/si/crowdfx_submenu_flyouts.json"
   ],
   "host_module": "ICE",
   "menu_id": 303,
@@ -17,7 +22,8 @@
   "menubar_dx_attested": 420,
   "desktop_paths": {
     "ice_menu": "media/softimage-modules-gdi/40-crowdfx-ice-menu.png",
-    "desktop": "media/softimage-modules-gdi/40-crowdfx-desktop.png"
+    "desktop": "media/softimage-modules-gdi/40-crowdfx-desktop.png",
+    "submenu_flyout_hover": "media/softimage-95pct-closer/30-crowdfx-menu-hover.png"
   },
   "reachability": {
     "path": ["ICE", "CrowdFX"],
@@ -29,7 +35,17 @@
     },
     "submenu_live": false,
     "runtime_anchors": "LOCK",
-    "note": "ICE module menu tear-off lists CrowdFX Actors/Crowd/Simulation (Desktop menubar reachability). Submenu compound leaves not captured — keep Anchor-to-Delete LOCK."
+    "note": "ICE module menu tear-off lists CrowdFX Actors/Crowd/Simulation. Submenu compound leaves stay LOCK (PE Anchor-to-Delete only)."
+  },
+  "submenu_flyouts": {
+    "lock_id": "crowdfx.submenu_flyouts",
+    "status": "DUMP_READY",
+    "desktop_board": "DUMP_READY",
+    "details": "menu_candidates=1",
+    "media": "media/softimage-95pct-closer/30-crowdfx-menu-hover.png",
+    "pe_leaf": "Anchor-to-Delete",
+    "compound_leaves": "LOCK",
+    "note": "closer95 Desktop LIVE ICE menubar CrowdFX hover + PE MENU 303 flyouts; no invent compounds."
   },
   "sdk_anchors": {
     "siMenuTbICECrowdFXActorsID": 380,
