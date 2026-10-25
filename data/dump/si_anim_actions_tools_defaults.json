@@ -1,0 +1,365 @@
+{
+  "meta": {
+    "source": "si_anim_commands.json",
+    "softimage": "13.2.163.0"
+  },
+  "commands": {
+    "StoreAction": {
+      "category": "Animation Mixer",
+      "enabled": true,
+      "args": [
+        {
+          "name": "Model",
+          "default": ""
+        },
+        {
+          "name": "InputObj",
+          "default": ""
+        },
+        {
+          "name": "Mode",
+          "default": 1
+        },
+        {
+          "name": "Name",
+          "default": "StoredAction"
+        },
+        {
+          "name": "RemoveAnim",
+          "default": true
+        },
+        {
+          "name": "StartFrame",
+          "default": 0
+        },
+        {
+          "name": "EndFrame",
+          "default": 0
+        },
+        {
+          "name": "Consider Time",
+          "default": false
+        },
+        {
+          "name": "Ripple",
+          "default": false
+        },
+        {
+          "name": "AddClip",
+          "default": false
+        },
+        {
+          "name": "ClipOffset",
+          "default": 0
+        },
+        {
+          "name": "IncludeAnimLayers",
+          "default": false
+        }
+      ]
+    },
+    "ApplyAction": {
+      "category": "Animation Mixer",
+      "enabled": true,
+      "args": [
+        {
+          "name": "Source",
+          "default": null
+        },
+        {
+          "name": "Target",
+          "default": null
+        },
+        {
+          "name": "Consider Time",
+          "default": false
+        },
+        {
+          "name": "StartFrame",
+          "default": 0
+        },
+        {
+          "name": "EndFrame",
+          "default": 0
+        },
+        {
+          "name": "Ripple",
+          "default": false
+        },
+        {
+          "name": "RemoveLayerAnimation",
+          "default": false
+        }
+      ]
+    },
+    "RemoveAnimation": {
+      "category": "Animation",
+      "enabled": true,
+      "args": [
+        {
+          "name": "InputObjs",
+          "default": null
+        },
+        {
+          "name": "Time",
+          "default": null
+        },
+        {
+          "name": "StaticFCurves",
+          "default": false
+        },
+        {
+          "name": "BaseAnimation",
+          "default": true
+        },
+        {
+          "name": "LayerAnimation",
+          "default": true
+        },
+        {
+          "name": "SourceMask",
+          "default": ":siAnySource:siSourceType"
+        }
+      ]
+    },
+    "SaveKey": {
+      "category": "Animation",
+      "enabled": true,
+      "args": [
+        {
+          "name": "InputObjs",
+          "default": ".kine.local.rotx,.kine.local.roty,.kine.local.rotz"
+        },
+        {
+          "name": "Time",
+          "default": null
+        },
+        {
+          "name": "Value",
+          "default": null
+        },
+        {
+          "name": "Tolerance",
+          "default": null
+        },
+        {
+          "name": "Layer",
+          "default": null
+        },
+        {
+          "name": "ModifiedOnly",
+          "default": false
+        },
+        {
+          "name": "AutokeyScope",
+          "default": 0
+        },
+        {
+          "name": "Source",
+          "default": "FCurve"
+        }
+      ]
+    },
+    "RemoveKey": {
+      "category": "Animation",
+      "enabled": true,
+      "args": [
+        {
+          "name": "InputObjs",
+          "default": null
+        },
+        {
+          "name": "Time",
+          "default": null
+        },
+        {
+          "name": "Tolerance",
+          "default": -1
+        },
+        {
+          "name": "Layer",
+          "default": -1
+        }
+      ]
+    },
+    "ApplyFlexEnv": {
+      "category": "Deformation|Operator",
+      "enabled": true,
+      "args": [
+        {
+          "name": "ConnectionSet",
+          "default": ""
+        },
+        {
+          "name": "AssignNewDeformers",
+          "default": false
+        },
+        {
+          "name": "ConstructionMode",
+          "default": null
+        }
+      ]
+    },
+    "StoreShapeKey": {
+      "category": "Animation|Deformation",
+      "enabled": true,
+      "args": [
+        {
+          "name": "InputObj",
+          "default": null
+        },
+        {
+          "name": "Name",
+          "default": ""
+        },
+        {
+          "name": "RefMode",
+          "default": ":siShapeObjectReferenceMode:siShapeReferenceMode"
+        },
+        {
+          "name": "Frame",
+          "default": null
+        },
+        {
+          "name": "Duration",
+          "default": 0
+        },
+        {
+          "name": "Sampling",
+          "default": 0
+        },
+        {
+          "name": "Content",
+          "default": ":siShapeContentSecondaryShape:siShapeContent"
+        },
+        {
+          "name": "Force deform stripping",
+          "default": false
+        }
+      ]
+    },
+    "ApplyShapeKey": {
+      "category": "Animation|Deformation",
+      "enabled": true,
+      "args": [
+        {
+          "name": "InputObj",
+          "default": null
+        },
+        {
+          "name": "Compound",
+          "default": null
+        },
+        {
+          "name": "Track",
+          "default": null
+        },
+        {
+          "name": "Time",
+          "default": null
+        },
+        {
+          "name": "Duration",
+          "default": -1
+        },
+        {
+          "name": "Mode",
+          "default": 4
+        },
+        {
+          "name": "Name",
+          "default": ""
+        },
+        {
+          "name": "Overwrite",
+          "default": 0
+        }
+      ]
+    },
+    "AddTransition": {
+      "category": "Animation Mixer",
+      "enabled": true,
+      "args": [
+        {
+          "name": "From",
+          "default": null
+        },
+        {
+          "name": "To",
+          "default": null
+        },
+        {
+          "name": "Type",
+          "default": 0
+        },
+        {
+          "name": "Name",
+          "default": "Transition"
+        }
+      ]
+    },
+    "AddBridgeTransition": {
+      "category": "Animation Mixer",
+      "enabled": true,
+      "args": [
+        {
+          "name": "From",
+          "default": null
+        },
+        {
+          "name": "To",
+          "default": null
+        },
+        {
+          "name": "Name",
+          "default": "Bridge Transition"
+        }
+      ]
+    },
+    "CreateCompound": {
+      "category": "Animation Mixer",
+      "enabled": true,
+      "args": [
+        {
+          "name": "Model",
+          "default": null
+        },
+        {
+          "name": "InputObj",
+          "default": null
+        },
+        {
+          "name": "Compound",
+          "default": null
+        },
+        {
+          "name": "Track",
+          "default": null
+        },
+        {
+          "name": "Time",
+          "default": null
+        },
+        {
+          "name": "Name",
+          "default": ""
+        }
+      ]
+    },
+    "EqualizeClips": {
+      "category": "Animation Mixer",
+      "enabled": true,
+      "args": [
+        {
+          "name": "InputObj",
+          "default": null
+        }
+      ]
+    },
+    "InspectDevices": {
+      "category": "Devices",
+      "enabled": true,
+      "args": []
+    }
+  }
+}
