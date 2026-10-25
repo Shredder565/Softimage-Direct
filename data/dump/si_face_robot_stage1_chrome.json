@@ -1,0 +1,47 @@
+{
+  "_comment": "Softimage Face Robot Stage 1 Assemble chrome — Desktop OCR of 50-facerobot-layout.png + facerobot.xsily FaceStage1_SideView. Dump/Desktop-attested only.",
+  "softimage": "13.2.163.0",
+  "source": [
+    "media/softimage-modules-tour/50-facerobot-layout.png",
+    "internal/softimage-pc-dumps/layouts/facerobot.xsily",
+    "docs/softimage-modules-1to1-tour.md"
+  ],
+  "view": {
+    "name": "Face Robot Stage 1",
+    "title": "Stage 1 > Assemble",
+    "category": "Face Robot",
+    "defaultsize": [50, 50, 290, 720],
+    "xsily_sizechild_hint": "290 (facerobot_controller tray)",
+    "xsily_frame": "FaceStage1_SideView"
+  },
+  "act_panel": {
+    "name": "Face Robot Act Floating Panel",
+    "category": "Face Robot",
+    "defaultsize": [50, 50, 320, 280],
+    "view_type": "Synoptic View",
+    "path_default": "$FACEROBOTROOT\\Application\\views\\synoptic\\FaceRobotContext.htm",
+    "OffsetX": 3,
+    "OffsetY": 335
+  },
+  "library_section_label": "Library",
+  "library_tabs": ["Heads", "Parts", "Actor", "Custom", "Type"],
+  "library_path_attested": "C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Application\\FaceRobot\\Data\\Faces",
+  "heads_list_attested": [
+    "Baron Delux",
+    "Human Female 90281",
+    "Ivan",
+    "Kitty Hunting",
+    "Mr Fitness",
+    "Natasha",
+    "Rock Falcon"
+  ],
+  "tool_section_label": "Tools",
+  "tool_tabs": ["Face", "Eyes", "Mouth"],
+  "tool_buttons": ["Diagnose", "Freeze", "Hide"],
+  "tool_buttons_ocr_note": "Desktop OCR of 50-facerobot-layout.png Face tab row: Diagnose | Freeze | Hol→Hide. Replaces Stage-1 misread Deactive/Locate/Video/Manage.",
+  "log_default": "Pick Objects before Diagnose",
+  "type_field": { "label": "Type", "value": "" },
+  "exec_buttons": ["Pick Objects", "Scan"],
+  "grey_until_pick": ["Diagnose", "Scan"],
+  "pick_objects_enabled_when_fr_on": true
+}

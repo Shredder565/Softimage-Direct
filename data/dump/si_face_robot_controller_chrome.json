@@ -1,0 +1,24 @@
+{
+  "_comment": "Dump mirror — Softimage Face Robot Control Panel chrome from facerobot.xsily + Desktop Stage 1 PNG. See src/data/si/face_robot_controller_chrome.json.",
+  "softimage": "13.2.163.0",
+  "source": [
+    "internal/softimage-pc-dumps/layouts/facerobot.xsily",
+    "media/softimage-modules-tour/50-facerobot-layout.png"
+  ],
+  "view_name": "Face Robot Control Panel",
+  "xsily_switcher": "facerobot_controller",
+  "sizechild": [290, 360, 360, 146, 290, 290],
+  "column_sizechild": 344,
+  "stages": 6,
+  "side_view_types": [
+    "FaceStage1_SideView",
+    "FaceStage2_SideView",
+    "FaceStage3_SideView",
+    "FaceStage4_SideView",
+    "FaceStage5_UpperSideView",
+    "FaceStage6_UpperSideView"
+  ],
+  "synoptic_frames": ["stage5select", "stage5cameras", "stage6regions"],
+  "act_path": "$FACEROBOTROOT\\Application\\views\\synoptic\\FaceRobotContext.htm",
+  "runtime_lock": "LOCK"
+}

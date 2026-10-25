@@ -24,9 +24,11 @@ import simulateModuleTops from './data/si/simulate_module_mcp_tops.json';
 import simulateViewChrome from './data/si/simulate_view_chrome.json';
 import faceRobotTops from './data/si/face_robot_module_mcp_tops.json';
 import faceRobotStage1Chrome from './data/si/face_robot_stage1_chrome.json';
+import faceRobotControllerChrome from './data/si/face_robot_controller_chrome.json';
 import crowdfxModuleDump from './data/si/crowdfx_module.json';
 import { iceTree, renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
 import { faceRobotStage1View, faceRobotActPanelView } from './ui/faceRobotStage1';
+import { faceRobotControlPanelView } from './ui/faceRobotController';
 import { hairPanelView } from './ui/hairPanel';
 import hairViewChrome from './data/si/hair_view_chrome.json';
 import { frostGraphView, frostHairWizardView, frostClothWizardView, frostOf, runFrostSmokeTests } from './frost';
@@ -140,6 +142,7 @@ const SHELL: Record<string, (h: HTMLElement) => void> = {
   'ICE Tree': h => iceTree(app, h),
   'ICE Attribute Editor': h => iceAttributeEditorView(app, h),
   'Hair Panel': h => hairPanelView(app, h),
+  'Face Robot Control Panel': h => faceRobotControlPanelView(app, h),
   'Face Robot Stage 1': h => faceRobotStage1View(app, h),
   'Face Robot Act Floating Panel': h => faceRobotActPanelView(app, h, (app as any).__faceRobotActArgs),
   'FROST Graph': h => frostGraphView(app, h),
@@ -177,11 +180,13 @@ const openView = (name: string) => {
   const animSz = animViewDefaultSize(name);
   const iceSz = iceViewDefaultSize(name) ?? (iceViewChrome as { views?: Record<string, { defaultsize?: number[] }> }).views?.[name]?.defaultsize;
   const hairSz = (hairViewChrome as { views?: Record<string, { defaultsize?: number[] }> }).views?.[name]?.defaultsize;
-  const frSz = name === 'Face Robot Stage 1'
-    ? (faceRobotStage1Chrome as { view?: { defaultsize?: number[] } }).view?.defaultsize
-    : name === 'Face Robot Act Floating Panel'
-      ? (faceRobotStage1Chrome as { act_panel?: { defaultsize?: number[] } }).act_panel?.defaultsize
-      : undefined;
+  const frSz = name === 'Face Robot Control Panel'
+    ? (faceRobotControllerChrome as { view?: { defaultsize?: number[] } }).view?.defaultsize
+    : name === 'Face Robot Stage 1'
+      ? (faceRobotStage1Chrome as { view?: { defaultsize?: number[] } }).view?.defaultsize
+      : name === 'Face Robot Act Floating Panel'
+        ? (faceRobotStage1Chrome as { act_panel?: { defaultsize?: number[] } }).act_panel?.defaultsize
+        : undefined;
   // Softimage .xsivw defaultsize is left,top,width,height. Script Editor uses C3DPrefsScriptEditor chrome tokens when present.
   const seTok = (PPG_CHROME as any).scriptEditor?.tokens;
   let w = name === 'Mini Transform Panel' ? 200 : Math.max(320, size ? Math.min(900, size[2]) : (hairSz ? Math.min(900, hairSz[2]) : (frSz ? Math.min(900, frSz[2]) : (iceSz ? Math.min(900, iceSz[2]) : (animSz ? Math.min(900, animSz[2]) : 420)))));
@@ -192,6 +197,7 @@ const openView = (name: string) => {
   // Softimage icetree.xsivw / iceattributeeditor.xsivw defaultsize — prefer dump chrome over SI_VIEWS clamp.
   if (name === 'ICE Tree') { w = iceSz?.[2] ?? 850; h = iceSz?.[3] ?? 550; }
   if (name === 'ICE Attribute Editor') { w = iceSz?.[2] ?? 900; h = iceSz?.[3] ?? 550; }
+  if (name === 'Face Robot Control Panel') { w = frSz?.[2] ?? 344; h = frSz?.[3] ?? 720; }
   if (name === 'Face Robot Stage 1') { w = frSz?.[2] ?? 290; h = frSz?.[3] ?? 720; }
   if (name === 'Face Robot Act Floating Panel') { w = frSz?.[2] ?? 320; h = frSz?.[3] ?? 280; }
   if (name === 'FROST Hair Wizard' || name === 'FROST Cloth Wizard') { w = 440; h = 620; }
@@ -347,13 +353,16 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
         ? Array.from((document.querySelector('.module-select') as HTMLSelectElement).options).some(o => o.value === 'Simulate')
         : false,
     },
-    // Softimage Face Robot MENU 300 + Stage 1 Assemble + ShowFaceRobotActPanel (FR.dll LOCK; FROST stays parallel)
+    // Softimage Face Robot MENU 300 + Control Panel (xsily stages) + Stage 1 + Act synoptic (FR.dll HTML LOCK; FROST parallel)
     faceRobot: {
       ...faceRobotModuleAudit(app),
       mcpTops: faceRobotTops.tops,
       menu300: faceRobotTops.menu_300,
       stage1Chrome: faceRobotStage1Chrome.view,
+      controllerChrome: faceRobotControllerChrome.view,
+      controllerStages: faceRobotControllerChrome.stages?.length,
       menubarPresent: !!document.querySelector('#menubar .m[data-si-menu="Face Robot"]'),
+      controlPanelHost: !!document.querySelector('.fr-controller'),
     },
     // Softimage CrowdFX under ICE (PE 41644/41646/41645 + ICEOperators icecrowdfx* — compound leaves LOCK)
     crowdFxModule: {

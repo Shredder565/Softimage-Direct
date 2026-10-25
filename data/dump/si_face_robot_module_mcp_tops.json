@@ -48,11 +48,17 @@
   "stage1_view": {
     "xsily_frame": "FaceStage1_SideView",
     "layout_controller": "facerobot_controller",
-    "title": "Stage 1: Assemble",
+    "title": "Stage 1 > Assemble",
     "open_via": ["Face Robot Layout", "Enable Face Robot"]
+  },
+  "control_panel": {
+    "view_name": "Face Robot Control Panel",
+    "xsily_switcher": "facerobot_controller",
+    "stages": 6,
+    "chrome": "face_robot_controller_chrome.json"
   },
   "runtime_lock": {
     "status": "LOCK",
-    "note": "FR.dll / plugin leaf behavior + client GDI beyond OpenView/screenshot structure stay LOCK (tour). Stage 1 chrome dump/Desktop-attested only."
+    "note": "FR.dll / synoptic HTML / FaceStageN SideView bodies beyond xsily structure + Stage 1 Desktop PNG stay LOCK. No invent."
   }
 }
