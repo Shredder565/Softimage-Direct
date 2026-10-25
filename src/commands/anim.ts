@@ -424,7 +424,7 @@ export function registerAnimCommands(app: App) {
     for (let t = transitions.length - 1; t >= 0; t--) if (transitions[t].from === c.name || transitions[t].to === c.name) transitions.splice(t, 1);
     syncMixer(mix); app.events.emit('scene'); return c;
   } });
-  app.register({ name: 'AddTransition', label: 'Add Transition', category: 'Animation Mixer', args: [{ name: 'From', default: '' }, { name: 'To', default: '' }, { name: 'Length', default: 10 }, { name: 'Name', default: '' }], execute(app, a) {
+  app.register({ name: 'AddTransition', label: 'Add Transition', category: 'Animation Mixer', args: [{ name: 'From', default: '' }, { name: 'To', default: '' }, { name: 'Length', default: 10 }, { name: 'Name', default: 'Transition' }], execute(app, a) {
     const { mix, clips, transitions } = mixState(app);
     const from = a.From || clips[clips.length - 2]?.name; const to = a.To || clips[clips.length - 1]?.name;
     if (!from || !to) throw new Error('AddTransition: need two clips (From/To)');
