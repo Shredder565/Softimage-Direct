@@ -217,5 +217,29 @@
 "private": "true",
 "supportedtypes": "6",
 "category": "General"
+},
+{
+"file": "icetree.xsivw",
+"name": "ICE Tree",
+"clsid": "{20281947-5CFF-450f-A9A1-1FBC9F7AD5E7}",
+"defaultsize": "50,50,850,550",
+"maxinstances": "10000",
+"acceptfocus": "true",
+"private": "false",
+"supportedtypes": "6",
+"category": "ICE",
+"cmdmap": "{622466FB-AD3A-4E26-B293-1355E2D7ED8A}"
+},
+{
+"file": "iceattributeeditor.xsivw",
+"name": "ICE Attribute Editor",
+"clsid": "{A705D500-E6A8-4181-A0EE-E6B2FC431ED7}",
+"defaultsize": "50,50,900,550",
+"maxinstances": "10000",
+"acceptfocus": "true",
+"private": "false",
+"supportedtypes": "6",
+"category": "ICE",
+"cmdmap": "{00000000-0000-0000-0000-000000000000}"
 }
 ]

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="viewdefinition" xsi_version="3.0" syntax_version="1.0">
+	<viewdef clsid="{20281947-5CFF-450f-A9A1-1FBC9F7AD5E7}" name="ICE Tree">
+		<definition maxinstances="10000" 
+					acceptfocus="true" 
+					private="false" 
+					defaultsize="50,50,850,550" 
+					cmdmap="{622466FB-AD3A-4E26-B293-1355E2D7ED8A}" 
+					supportedtypes="6" 
+					category="ICE">
+		</definition>
+	</viewdef>
+</xsi_file>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xsi_file type="viewdefinition" xsi_version="3.0" syntax_version="1.0">
+	<viewdef clsid="{A705D500-E6A8-4181-A0EE-E6B2FC431ED7}" name="ICE Attribute Editor">
+		<definition maxinstances="10000" 
+					acceptfocus="true"
+					private="false" 
+					defaultsize="50,50,900,550" 
+					cmdmap="{00000000-0000-0000-0000-000000000000}" 
+					supportedtypes="6" 
+					category="ICE">
+		</definition>
+	</viewdef>
+</xsi_file>

@@ -583,6 +583,16 @@ body.dock-picking, body.dock-picking * { cursor: crosshair !important; }
 
 .rt-node.ice { width: 170px; } .rt-node.ice.selected { outline: 2px solid #ffd200; } .rt-port-row.right { justify-content: flex-end; margin-left: 0; margin-right: -5px; }
 .rt-port.scalar { background: #e0c060; } .rt-port.vector { background: #60b0e0; } .rt-port.bool { background: #e06060; } .rt-port.any { background: #bbb; } .rt-port.outp { cursor: pointer; } .rt-port.outp.pending { background: #ff5a5a; } .rt-link.ice { stroke: #9ad24a; }
+/* Softimage ICE Tree shell chrome — xsivw size vars; prefs region widths LOCK (dataset only). */
+.rtree.icetree { min-width: 0; }
+.ice-chrome-strip { display: flex; flex-wrap: wrap; gap: 4px; padding: 1px 4px; background: var(--anim-toolbar-bg, #b6b2af); border-bottom: 1px solid var(--line, #555); font: 9px Tahoma, Verdana, sans-serif; color: #333; }
+.ice-chrome-chip { padding: 0 3px; border: 1px solid #8a8886; background: #c9c6c2; }
+.rt-node.ice.collapsed { width: 120px; } .rt-node.ice.collapsed .rt-port-row { display: none; }
+.rt-node.ice.connections-only { width: 40px; } .rt-node.ice.connections-only .rt-node-type { display: none; }
+.ice-attr-editor { display: flex; flex-direction: column; height: 100%; font: 11px Tahoma, Verdana, sans-serif; background: var(--anim-panel-bg, #a9a7a5); overflow: hidden; }
+.ice-attr-title { padding: 4px 8px; font-weight: bold; background: linear-gradient(#6d6967, #4f4b49); color: #eee; }
+.ice-attr-meta { display: flex; flex-direction: column; gap: 2px; padding: 6px 8px; font-size: 10px; color: #333; }
+.ice-attr-meta-row { font-family: Consolas, "Courier New", monospace; }
 
 /* FROST graph (2026 FX module) */
 .rt-node.frost { width: 180px; } .rt-node.frost.selected { outline: 2px solid #7ec8e3; }

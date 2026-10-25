@@ -1,0 +1,109 @@
+{
+  "_comment": "Softimage ICE view chrome — xsivw + preferences.icetree dump-backed shell. Client GDI LOCK until Desktop ICE Tree HWND harvest (modules-tour 12-ice-tree.png is mislabelled Face Robot; modules-gdi/20-ice-tree.png index-only).",
+  "softimage": "13.2.163.0",
+  "source": [
+    "internal/softimage-pc-dumps/views/icetree.xsivw",
+    "internal/softimage-pc-dumps/views/iceattributeeditor.xsivw",
+    "internal/softimage-pc-dumps/views/rendertree.xsivw",
+    "src/data/si/layout_default.json viewdefaultpos",
+    "internal/softimage-pc-dumps/modules/modules_prefs_related.json",
+    "internal/ice-tree-gdi-desktop-attestation.md"
+  ],
+  "views": {
+    "ICE Tree": {
+      "file": "icetree.xsivw",
+      "clsid": "{20281947-5CFF-450f-A9A1-1FBC9F7AD5E7}",
+      "cmdmap": "{622466FB-AD3A-4E26-B293-1355E2D7ED8A}",
+      "cmdmap_note": "Same GUID as Render Tree viewdef/cmdmap — shared host chrome family",
+      "defaultsize": [50, 50, 850, 550],
+      "layout_default_pos": [120, 532, 1130, 859],
+      "category": "ICE",
+      "supportedtypes": "6",
+      "maxinstances": "10000",
+      "acceptfocus": "true",
+      "private": "false",
+      "status": "SHELL",
+      "client_gdi": "LOCK"
+    },
+    "ICE Attribute Editor": {
+      "file": "iceattributeeditor.xsivw",
+      "clsid": "{A705D500-E6A8-4181-A0EE-E6B2FC431ED7}",
+      "cmdmap": "{00000000-0000-0000-0000-000000000000}",
+      "defaultsize": [50, 50, 900, 550],
+      "category": "ICE",
+      "supportedtypes": "6",
+      "maxinstances": "10000",
+      "acceptfocus": "true",
+      "private": "false",
+      "status": "SHELL_ONLY",
+      "client_gdi": "LOCK",
+      "note": "View definition attested; editor body awaits Desktop/HWND harvest"
+    }
+  },
+  "toolbar_shell": {
+    "attested": ["Nodes", "Edit", "Update", "Frame"],
+    "desktop_png": "unattested",
+    "note": "Names match Softimage ICE Tree host (shared Render Tree cmdmap family). Compound catalogs LOCK. AfterImage New Tree removed — use ApplyICEOp / Nodes."
+  },
+  "prefs_layout": {
+    "status": "PREFS_ATTESTED_REGION_UNSEEN",
+    "source": "preferences.icetree / C3DPrefsICETree",
+    "apply_as_css_vars": false,
+    "preset_manager_size": 250,
+    "explorer_size": 150,
+    "leftcompoundbar_size": 100,
+    "rightcompoundbar_size": 100,
+    "create_node_mode": 0,
+    "create_node_mode_items": [
+      ["Create nodes as Expanded", 0],
+      ["Create nodes as Collapsed", 1],
+      ["Create nodes as Show Connections Only", 2]
+    ],
+    "offline_editing_mode": false,
+    "ice_selection_locked": true,
+    "allow_explorer_selection": false,
+    "allow_explorer_node_skipping": true,
+    "create_node_shortcutdelimiter": ":",
+    "note": "Prefs sizes attested; do not paint side-panel geometry until Desktop ICE Tree HWND shows matching regions."
+  },
+  "desktop_png_attestation": {
+    "policy": "dump/Desktop-attested only",
+    "utc": "2026-10-25",
+    "shots": {
+      "12-ice-tree.png": {
+        "claimed": "ICE Tree",
+        "actual": "Face Robot Stage1 Assemble + Simulate MCP",
+        "ice_tree_client": false,
+        "near_duplicate_of": "50-facerobot-layout.png"
+      },
+      "10-ice-module.png": {
+        "claimed": "key4 ICE",
+        "actual": "byte-identical baseline 00-softimage-baseline.png",
+        "ice_tree_client": false
+      },
+      "11-ice-after-dump.png": {
+        "claimed": "ICE after dump",
+        "actual": "Face Robot desktop + ICE MCP tops",
+        "ice_tree_client": false,
+        "attests": "ICE module MCP shelf only"
+      },
+      "13-ice-mcp-clean.png": {
+        "claimed": "ICE MCP clean",
+        "actual": "Simulate MCP + Explorer + User viewports",
+        "ice_tree_client": false
+      }
+    },
+    "modules_gdi_20_ice_tree": {
+      "index": "internal/softimage-pc-dumps/modules-gdi/desktop_screenshot_index.txt",
+      "file_present": false,
+      "hwnd_inventory_matched_children": 0
+    }
+  },
+  "client_gdi": {
+    "status": "LOCK",
+    "colors": null,
+    "toolbar_h_px": null,
+    "regions": null,
+    "note": "Await Softimage Desktop ICE Tree HWND harvest (OpenICETreeView success + crops)."
+  }
+}

@@ -14,6 +14,7 @@ import { openSiMenu, SI_MENUS } from './si';
 import { PRESET_MODELS } from '../commands/presets';
 import { animChrome, fcurveMenuLabels, mixerMenuLabels } from './animChrome';
 import iceViewChrome from '../data/si/ice_view_chrome.json';
+import { applyIceTreeChromeVars, iceToolbarShellLabels } from './iceTreeChrome';
 
 const el = (tag: string, cls = '', text = '') => { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; };
 const btn = (l: string, t: string, fn: (e: MouseEvent) => void) => { const b = el('button', 'xp-btn', l) as HTMLButtonElement; b.title = t; b.onclick = fn; return b; };
@@ -421,33 +422,91 @@ export function animationMixer(app: App, host: HTMLElement) {
 export { Property };
 
 // ================================================================ ICE Tree (node editor for ICETree operators)
-// Softimage icetree.xsivw attests name/category/defaultsize — compound catalogs stay dump-gated (no invent).
+// Softimage icetree.xsivw + preferences.icetree — shell chrome dump-backed; client GDI / compound catalogs LOCK.
 export function iceTree(app: App, host: HTMLElement) {
+  applyIceTreeChromeVars();
   const root = el('div', 'rtree icetree'); host.appendChild(root);
-  const iceDef = (iceViewChrome as { views?: Record<string, { category?: string; defaultsize?: number[] }> }).views?.['ICE Tree'];
+  type IceDef = {
+    category?: string; defaultsize?: number[]; clsid?: string; cmdmap?: string;
+    supportedtypes?: string; maxinstances?: string; private?: string; acceptfocus?: string;
+    status?: string; client_gdi?: string;
+  };
+  const iceDef = (iceViewChrome as { views?: Record<string, IceDef> }).views?.['ICE Tree'];
+  const prefs = (iceViewChrome as {
+    prefs_layout?: {
+      preset_manager_size?: number; explorer_size?: number;
+      leftcompoundbar_size?: number; rightcompoundbar_size?: number;
+      create_node_mode?: number; ice_selection_locked?: boolean;
+      allow_explorer_selection?: boolean; allow_explorer_node_skipping?: boolean;
+      create_node_shortcutdelimiter?: string; apply_as_css_vars?: boolean; status?: string;
+    };
+    client_gdi?: { status?: string };
+  });
+  const pl = prefs.prefs_layout;
   if (iceDef?.category) root.dataset.siCategory = iceDef.category;
   if (iceDef?.defaultsize) root.dataset.siDefaultsize = iceDef.defaultsize.join(',');
+  if (iceDef?.clsid) root.dataset.siClsid = iceDef.clsid;
+  if (iceDef?.cmdmap) root.dataset.siCmdmap = iceDef.cmdmap;
+  if (iceDef?.supportedtypes) root.dataset.siSupportedtypes = iceDef.supportedtypes;
+  if (iceDef?.maxinstances) root.dataset.siMaxinstances = iceDef.maxinstances;
+  if (iceDef?.private) root.dataset.siPrivate = iceDef.private;
+  if (iceDef?.acceptfocus) root.dataset.siAcceptfocus = iceDef.acceptfocus;
+  root.dataset.siStatus = iceDef?.status ?? 'SHELL';
+  root.dataset.siClientGdi = iceDef?.client_gdi ?? prefs.client_gdi?.status ?? 'LOCK';
+  if (pl) {
+    root.dataset.siPresetManagerSize = String(pl.preset_manager_size ?? '');
+    root.dataset.siExplorerSize = String(pl.explorer_size ?? '');
+    root.dataset.siLeftCompoundbarSize = String(pl.leftcompoundbar_size ?? '');
+    root.dataset.siRightCompoundbarSize = String(pl.rightcompoundbar_size ?? '');
+    root.dataset.siCreateNodeMode = String(pl.create_node_mode ?? 0);
+    root.dataset.siSelectionLocked = String(!!pl.ice_selection_locked);
+    root.dataset.siAllowExplorerSelection = String(!!pl.allow_explorer_selection);
+    root.dataset.siAllowExplorerNodeSkipping = String(!!pl.allow_explorer_node_skipping);
+    root.dataset.siShortcutDelimiter = pl.create_node_shortcutdelimiter ?? ':';
+    root.dataset.siPrefsLayoutStatus = pl.status ?? '';
+    root.dataset.siPrefsApplyCss = String(!!pl.apply_as_css_vars);
+  }
+  const createNodeMode = () => Number(root.dataset.siCreateNodeMode ?? pref('C3DPrefsICETree', 'create_node_mode') ?? 0);
   const treeOf = (): ICETreeOperator | null => { const sel = app.selection[app.selection.length - 1] as any; if (sel instanceof ICETreeOperator) return sel; const o: X3DObject | null = app.selectedObjects.find(x => x.primitive?.operators.some(op => op instanceof ICETreeOperator)) ?? (sel?.parent?.parent instanceof X3DObject ? sel.parent.parent : null); return (o?.primitive?.operators.slice().reverse().find((op: any) => op instanceof ICETreeOperator) as ICETreeOperator) ?? null; };
   const cats = ICE_CATEGORIES();
   const nodesMenu = () => [...[...cats.entries()].map(([c, types]) => ({ label: c, items: types.map(t => ({ label: t })) })), { separator: true }, { label: 'Compounds', items: ICE_PRESETS.map(p => ({ label: p })) }];
   const addNode = (type: string) => { let t = treeOf(); if (!t) { const o = app.selectedObjects.find(x => x.primitive?.mesh()); if (!o) { app.logMsg('error', 'ICE Tree: select a polygon mesh first'); return; } t = app.run('ApplyICEOp', { File: '', Target: o.fullName }) as ICETreeOperator; } if (ICE_PRESETS.includes(type)) { buildPreset(t, type); } else t.addNode(type, 40 + canvas.scrollLeft + Math.random() * 120, 40 + canvas.scrollTop + Math.random() * 120); app.events.emit('scene'); render(); };
-  const hd = head(menuBtn('Nodes', nodesMenu, (l) => addNode(l)), menuBtn('Edit', () => [{ label: 'Delete Selected Node' }, { label: 'Disconnect All' }, { label: 'Clear Tree' }, { separator: true }, { label: 'Mute' }, { label: 'Export Tree (.json)' }, { label: 'Import Tree (.json)' }], (l) => editTree(l)),
-    btn('Update', 'Refresh', () => render()), btn('Frame', 'Frame all nodes', () => { canvas.scrollLeft = 0; canvas.scrollTop = 0; }), btn('New Tree', 'Create an ICE tree on the selected object', () => { const o = app.selectedObjects.find(x => x.primitive?.mesh()); if (o) { app.run('ApplyICEOp', { File: '', Target: o.fullName }); render(); } else app.logMsg('error', 'Select a polygon mesh'); }));
+  // Softimage toolbar_shell.attested = Nodes/Edit/Update/Frame only (no invent New Tree).
+  const tb = iceToolbarShellLabels();
+  const hdKids: HTMLElement[] = [];
+  if (tb.includes('Nodes')) hdKids.push(menuBtn('Nodes', nodesMenu, (l) => addNode(l)));
+  if (tb.includes('Edit')) hdKids.push(menuBtn('Edit', () => [{ label: 'Delete Selected Node' }, { label: 'Disconnect All' }, { label: 'Clear Tree' }, { separator: true }, { label: 'Mute' }, { label: 'Export Tree (.json)' }, { label: 'Import Tree (.json)' }], (l) => editTree(l)));
+  if (tb.includes('Update')) hdKids.push(btn('Update', 'Refresh', () => render()));
+  if (tb.includes('Frame')) hdKids.push(btn('Frame', 'Frame all nodes', () => { canvas.scrollLeft = 0; canvas.scrollTop = 0; }));
+  const hd = head(...hdKids);
   const title = el('span', 'rt-title'); hd.appendChild(title); root.appendChild(hd);
+  // Prefs region sizes attested but HWND placement unseen — chrome strip only (no invent side panels).
+  const chromeStrip = el('div', 'ice-chrome-strip');
+  chromeStrip.append(
+    el('span', 'ice-chrome-chip', `explorer_size=${pl?.explorer_size ?? ''}`),
+    el('span', 'ice-chrome-chip', `preset_manager_size=${pl?.preset_manager_size ?? ''}`),
+    el('span', 'ice-chrome-chip', `L/R compoundbar=${pl?.leftcompoundbar_size ?? ''}/${pl?.rightcompoundbar_size ?? ''}`),
+    el('span', 'ice-chrome-chip', `client_gdi=${root.dataset.siClientGdi}`),
+  );
+  root.appendChild(chromeStrip);
   const canvas = el('div', 'rt-canvas'); root.appendChild(canvas); const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'rt-links'); canvas.appendChild(svg);
   let pending: { node: number; port: string } | null = null; let selected: number | null = null;
   const editTree = (l: string) => { const t = treeOf(); if (!t) return; if (l === 'Delete Selected Node' && selected !== null) t.removeNode(selected); else if (l === 'Disconnect All') { t.links = []; t.touch(); } else if (l === 'Clear Tree') { t.nodes = []; t.links = []; t.touch(); } else if (l === 'Mute') t.set('mute', !t.val('mute')); else if (l === 'Export Tree (.json)') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(t.toJSON(), null, 1)], { type: 'application/json' })); a.download = t.name + '.icetree.json'; a.click(); } else if (l === 'Import Tree (.json)') { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json'; inp.onchange = () => inp.files?.[0]?.text().then(x => { t.load(JSON.parse(x)); app.events.emit('scene'); render(); }); inp.click(); return; } app.events.emit('scene'); render(); };
   const render = () => {
     const t = treeOf(); canvas.querySelectorAll('.rt-node').forEach(n => n.remove()); svg.innerHTML = ''; title.textContent = t ? `${(t.parent as any)?.parent?.name ?? ''} : ${t.name} (${t.nodes.length} nodes)` : 'Select an object with an ICE tree (or Nodes > … to create one)'; if (!t) return;
+    const mode = createNodeMode(); // 0 Expanded / 1 Collapsed / 2 Connections only — C3DPrefsICETree
     const boxes = new Map<number, { el: HTMLElement; outs: Map<string, HTMLElement>; ins: Map<string, HTMLElement> }>();
     for (const n of t.nodes) {
-      const def = ICE_NODES[n.type]; const b = el('div', 'rt-node ice' + (n.id === selected ? ' selected' : '') + (n.type === 'Set Data' || n.type === 'Execute' ? ' material' : '')); b.style.left = n.x + 'px'; b.style.top = n.y + 'px';
-      const tt = el('div', 'rt-node-title', n.type === 'Get Data' || n.type === 'Set Data' ? `${n.type}: ${n.params.val('reference')}` : n.type); b.appendChild(tt); const vals = n.params.params.filter(p => p.name !== 'reference').slice(0, 3).map(p => `${p.name}=${Array.isArray(p.value) ? '[' + p.value.join(',') + ']' : typeof p.value === 'number' ? Math.round(p.value * 100) / 100 : p.value}`).join(' '); if (vals) b.appendChild(el('div', 'rt-node-type', vals));
+      const def = ICE_NODES[n.type]; const b = el('div', 'rt-node ice' + (n.id === selected ? ' selected' : '') + (n.type === 'Set Data' || n.type === 'Execute' ? ' material' : '') + (mode === 1 ? ' collapsed' : '') + (mode === 2 ? ' connections-only' : '')); b.style.left = n.x + 'px'; b.style.top = n.y + 'px';
+      const tt = el('div', 'rt-node-title', n.type === 'Get Data' || n.type === 'Set Data' ? `${n.type}: ${n.params.val('reference')}` : n.type); b.appendChild(tt);
+      if (mode === 0) { const vals = n.params.params.filter(p => p.name !== 'reference').slice(0, 3).map(p => `${p.name}=${Array.isArray(p.value) ? '[' + p.value.join(',') + ']' : typeof p.value === 'number' ? Math.round(p.value * 100) / 100 : p.value}`).join(' '); if (vals) b.appendChild(el('div', 'rt-node-type', vals)); }
       const ins = new Map<string, HTMLElement>(), outs = new Map<string, HTMLElement>();
-      for (const ip of def?.inputs ?? []) { const r = el('div', 'rt-port-row' + (t.links.some(l => l.to === n.id && l.toPort === ip.name) ? ' connected' : '')); const dot = el('div', 'rt-port in ' + ip.type); dot.title = `${ip.name} (${ip.type})`; r.append(dot, el('span', '', ip.name)); b.appendChild(r); ins.set(ip.name, dot);
-        dot.onclick = (e) => { e.stopPropagation(); if (pending) { t.connect(pending.node, pending.port, n.id, ip.name); pending = null; } else t.disconnect(n.id, ip.name); app.events.emit('scene'); render(); }; }
-      for (const op of def?.outputs ?? []) { const r = el('div', 'rt-port-row right'); const dot = el('div', 'rt-port outp ' + op.type); dot.title = `${op.name} (${op.type}) — click, then click an input`; r.append(el('span', '', op.name), dot); b.appendChild(r); outs.set(op.name, dot);
-        dot.onclick = (e) => { e.stopPropagation(); pending = pending && pending.node === n.id && pending.port === op.name ? null : { node: n.id, port: op.name }; canvas.querySelectorAll('.rt-port.outp').forEach(o => o.classList.remove('pending')); if (pending) dot.classList.add('pending'); }; }
+      if (mode !== 1) {
+        for (const ip of def?.inputs ?? []) { const r = el('div', 'rt-port-row' + (t.links.some(l => l.to === n.id && l.toPort === ip.name) ? ' connected' : '')); const dot = el('div', 'rt-port in ' + ip.type); dot.title = `${ip.name} (${ip.type})`; r.append(dot, mode === 2 ? el('span', '', '') : el('span', '', ip.name)); b.appendChild(r); ins.set(ip.name, dot);
+          dot.onclick = (e) => { e.stopPropagation(); if (pending) { t.connect(pending.node, pending.port, n.id, ip.name); pending = null; } else t.disconnect(n.id, ip.name); app.events.emit('scene'); render(); }; }
+        for (const op of def?.outputs ?? []) { const r = el('div', 'rt-port-row right'); const dot = el('div', 'rt-port outp ' + op.type); dot.title = `${op.name} (${op.type}) — click, then click an input`; r.append(mode === 2 ? el('span', '', '') : el('span', '', op.name), dot); b.appendChild(r); outs.set(op.name, dot);
+          dot.onclick = (e) => { e.stopPropagation(); pending = pending && pending.node === n.id && pending.port === op.name ? null : { node: n.id, port: op.name }; canvas.querySelectorAll('.rt-port.outp').forEach(o => o.classList.remove('pending')); if (pending) dot.classList.add('pending'); }; }
+      }
       b.onclick = () => { selected = n.id; app.select([n.params as any]); render(); }; b.ondblclick = () => app.events.emit('inspect', n.params);
       b.oncontextmenu = (e) => { e.preventDefault(); openSiMenu([{ label: 'Inspect' }, { label: 'Duplicate' }, { separator: true }, { label: 'Delete' }], e.clientX, e.clientY, (it) => { if (it.label === 'Inspect') app.events.emit('inspect', n.params); else if (it.label === 'Delete') { t.removeNode(n.id); app.events.emit('scene'); render(); } else if (it.label === 'Duplicate') { const d = t.addNode(n.type, n.x + 30, n.y + 30); for (const p of n.params.params) d.params.set(p.name, p.value); render(); } }); };
       let drag: { sx: number; sy: number; x: number; y: number } | null = null; tt.onpointerdown = (e) => { drag = { sx: e.clientX, sy: e.clientY, x: n.x, y: n.y }; tt.setPointerCapture(e.pointerId); }; tt.onpointermove = (e) => { if (!drag) return; n.x = Math.max(0, drag.x + e.clientX - drag.sx); n.y = Math.max(0, drag.y + e.clientY - drag.sy); b.style.left = n.x + 'px'; b.style.top = n.y + 'px'; drawLinks(); }; tt.onpointerup = () => { drag = null; };
