@@ -20,6 +20,19 @@
 
 ## Wire guidance (A4)
 
-- Default-cube harness already green — **no invent collide** without a PC golden that sets `managecollisions`.
+- Default-cube harness already green — **no invent collide** without a PC golden that **attests** `managecollisions` on the Bevel op.
 - If wiring collide later: use **1e-12** / **1e-6** / **1e-18** and **max-double sentinel** as attested.
-- Docs only until managecollisions golden.
+
+## PC dump `si_bevel_collide.json` (2026-10-25)
+
+| Field | Result |
+|-------|--------|
+| Path | `data/dump/si_bevel_collide.json` (from softimage-pc overnight) |
+| Softimage | 13.2.163.0 XSIBATCH |
+| Cases | collide on/off ratio 0.8 / many 0.6 / abs 0.5 |
+| `diff_summary.mesh_equal` | **true** (on/off bit-identical) |
+| `managecollisions` in dump | **null** |
+| `op_type` / lastOp | **geom** (`cube.polymsh.geom`) — Bevel op not last; overrides not applied |
+| Applied preset | `BevelComponent` |
+
+**Verdict:** Dump proves BevelComponent meshes for those edge selections, but does **not** attest a Softimage collide-on vs collide-off delta. Collide algorithm stays **LOCK** until a dump returns Bevel op params with `managecollisions` set. Harness: `tools/compare_bevel_collide.mjs`.
