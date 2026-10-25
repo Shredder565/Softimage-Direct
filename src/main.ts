@@ -34,6 +34,7 @@ import { animationLayerManager } from './ui/animLayerManager';
 import { viewManager, SI as ViewportSI, DEFAULT_CAMERA_POS, DEFAULT_CAMERA_INTEREST, DEFAULT_CAMERA_FOV } from './ui/viewManager';
 import { manipulatorHitboxAudit, MANIP_PE_MENUS } from './ui/manipulatorHitbox';
 import { applyRenderToolbarChrome, renderToolbarChromeAudit } from './ui/renderToolbarChrome';
+import { renderMcpFlyoutsAudit } from './ui/renderMcpFlyouts';
 applyPpgChrome();
 applyAnimChromeVars();
 applyRenderToolbarChrome();
@@ -262,6 +263,8 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     manipHitbox: manipulatorHitboxAudit(),
     // Unlock DUMP_READY render.toolbar_pixel_chrome — PE RT_MENU/BITMAP W/H; eye LOCK
     renderToolbarChrome: renderToolbarChromeAudit(),
+    // PE menu 234 Render MCP flyouts (Desktop press-hold missed; menus.json already wired)
+    renderMcpFlyouts: renderMcpFlyoutsAudit(),
     // Softimage Render toolbar OM scripting names + RenderOptionsRegion SPDL (HWND crop LOCK)
     renderToolbarOm: renderToolbarOmAudit(app),
     // Desktop polish #2 — manip / viewport prefs + default Camera pose (softimage-pc attested)

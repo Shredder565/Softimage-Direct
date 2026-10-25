@@ -1,0 +1,824 @@
+{
+  "meta": {
+    "softimage": "13.2.163.0",
+    "source": "internal/softimage-pc-dumps/menu_render.txt",
+    "pe": "toolbarobj.dll RT_MENU 234 (Render module)",
+    "lock_id": "render.mcp_flyout_item_lists",
+    "status": "DONE",
+    "note": "Press-hold Desktop tour failed; PE menu 234 supplies full flyout trees already wired in src/data/menus.json Render module. No invent. Audit: renderMcpFlyoutsAudit + ui_smoke.",
+    "desktop_tour": "media/render-desktop-tour/65-regions-hold*.png did not open press-menus"
+  },
+  "flyouts": {
+    "Get/Material": {
+      "section": "Get",
+      "button": "Material",
+      "id": null,
+      "leaf": false,
+      "items": [
+        {
+          "label": "Assign Material",
+          "id": 41314
+        },
+        {
+          "label": "UnAssign Material",
+          "id": 41324
+        },
+        {
+          "label": "Make Material Local",
+          "id": 41326
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Phong",
+          "id": 40932
+        },
+        {
+          "label": "Lambert",
+          "id": 40933
+        },
+        {
+          "label": "Blinn",
+          "id": 40934
+        },
+        {
+          "label": "Cook-Torrance",
+          "id": 40935
+        },
+        {
+          "label": "Strauss",
+          "id": 40936
+        },
+        {
+          "label": "Anisotropic",
+          "id": 40937
+        },
+        {
+          "label": "Constant",
+          "id": 41066
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "ICE Particle Volume",
+          "id": 41577
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Ambient Occlusion",
+          "id": 41576
+        },
+        {
+          "label": "Architectural",
+          "id": 41568
+        },
+        {
+          "label": "Car Paint",
+          "id": 41570
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Toon Host",
+          "id": 41145
+        },
+        {
+          "label": "Toon Paint",
+          "id": 41144
+        },
+        {
+          "label": "Toon Paint Ambient",
+          "id": 41183
+        },
+        {
+          "label": "Toon Paint and Host",
+          "id": 41143
+        },
+        {
+          "label": "Toon Paint Highlight",
+          "id": 41184
+        },
+        {
+          "label": "Toon Paint Rimlight",
+          "id": 41185
+        },
+        {
+          "label": "Toon Paint Rounded",
+          "id": 41186
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "More...",
+          "id": 40753
+        }
+      ],
+      "item_count": 27
+    },
+    "Get/Property": {
+      "section": "Get",
+      "button": "Property",
+      "id": null,
+      "leaf": false,
+      "items": [
+        {
+          "label": "Texture Projection",
+          "items": [
+            {
+              "label": "Create New Projection...",
+              "id": 40561
+            },
+            {
+              "label": "UV",
+              "id": 40970
+            },
+            {
+              "label": "Planar XY",
+              "id": 40971
+            },
+            {
+              "label": "Planar YZ",
+              "id": 40972
+            },
+            {
+              "label": "Planar XZ",
+              "id": 40973
+            },
+            {
+              "label": "Cylindrical",
+              "id": 40974
+            },
+            {
+              "label": "Spherical",
+              "id": 40975
+            },
+            {
+              "label": "Spatial",
+              "id": 40977
+            },
+            {
+              "label": "Cubic",
+              "id": 41300
+            },
+            {
+              "label": "Camera Projection",
+              "id": 40976
+            },
+            {
+              "label": "Unique UVs (polymesh)",
+              "id": 1900
+            },
+            {
+              "label": "Contour Stretch UVs",
+              "id": 1901
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "Connect to Projection",
+              "id": 33177
+            },
+            {
+              "label": "Connect to Support",
+              "id": 33176
+            },
+            {
+              "label": "Constrain Support to Bounding Box",
+              "id": 40203
+            }
+          ]
+        },
+        {
+          "label": "Texture Map",
+          "items": [
+            {
+              "label": "Texture Map",
+              "id": 41101
+            },
+            {
+              "label": "UV",
+              "id": 41102
+            },
+            {
+              "label": "XY",
+              "id": 41103
+            },
+            {
+              "label": "YZ",
+              "id": 41104
+            },
+            {
+              "label": "XZ",
+              "id": 41105
+            },
+            {
+              "label": "Cylindrical",
+              "id": 41106
+            },
+            {
+              "label": "Spherical",
+              "id": 41107
+            },
+            {
+              "label": "Camera",
+              "id": 41108
+            },
+            {
+              "label": "Cubic",
+              "id": 41301
+            },
+            {
+              "label": "Spatial",
+              "id": 41109
+            }
+          ]
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Color At Vertices Map",
+          "id": 40980
+        },
+        {
+          "label": "Render Map",
+          "id": 41095
+        },
+        {
+          "label": "Symmetry Map",
+          "id": 40591
+        },
+        {
+          "label": "User Data Map",
+          "items": [
+            {
+              "label": "New Template",
+              "id": 41177
+            },
+            {
+              "label": "New Template Parameter",
+              "id": 41179
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "New Templated Data Map",
+              "id": 41180
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "Set User Data Value",
+              "id": 41181
+            },
+            {
+              "label": "Edit User Data Value",
+              "id": 41182
+            }
+          ]
+        },
+        {
+          "label": "Weight Map",
+          "id": 40248
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "GATOR",
+          "id": 41333
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Map Paint Tools",
+          "items": [
+            {
+              "label": "Paint Tool",
+              "id": 40707
+            },
+            {
+              "label": "Paint Push Tool",
+              "id": 41038
+            },
+            {
+              "label": "Paint Vertex Color Tool",
+              "id": 41070
+            },
+            {
+              "label": "Brush Properties...",
+              "id": 40506
+            }
+          ]
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Ambient Lighting",
+          "id": 41594
+        },
+        {
+          "label": "Glow",
+          "id": 40793
+        },
+        {
+          "label": "Lens Flare",
+          "id": 40795
+        },
+        {
+          "label": "Motion Blur",
+          "id": 40770
+        },
+        {
+          "label": "User Motion",
+          "id": 41630
+        },
+        {
+          "label": "Volumic",
+          "id": 40796
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Annotation",
+          "id": 41067
+        },
+        {
+          "label": "Attribute Display",
+          "id": 40619
+        },
+        {
+          "label": "Display",
+          "id": 40614
+        },
+        {
+          "label": "Polygon Cluster Visibility",
+          "id": 41223
+        },
+        {
+          "label": "Geometry Approximation",
+          "id": 40615
+        },
+        {
+          "label": "Static KineState",
+          "id": 40623
+        },
+        {
+          "label": "Synoptic",
+          "id": 41096
+        },
+        {
+          "label": "Transform Setup",
+          "id": 33178
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Override",
+          "id": 40794
+        },
+        {
+          "label": "Store in Override",
+          "items": [
+            {
+              "label": "Materials",
+              "id": 40903
+            },
+            {
+              "label": "Visibility",
+              "id": 40913
+            },
+            {
+              "label": "Geometry Approximation",
+              "id": 40911
+            },
+            {
+              "label": "Selected Properties",
+              "id": 40912
+            }
+          ]
+        },
+        {
+          "label": "Delete Override",
+          "id": 41071
+        }
+      ],
+      "item_count": 32
+    },
+    "Modify/Projection": {
+      "section": "Modify",
+      "button": "Projection",
+      "id": null,
+      "leaf": false,
+      "items": [
+        {
+          "label": "Inspect Current UV",
+          "id": 41365
+        },
+        {
+          "label": "Inspect All UVs",
+          "id": 41364
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Swim",
+          "id": 41363
+        },
+        {
+          "label": "Stick",
+          "id": 41362
+        },
+        {
+          "label": "Reproject",
+          "id": 41366
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Edit Projection Tool",
+          "id": 41027
+        }
+      ],
+      "item_count": 8
+    },
+    "Render/Regions": {
+      "section": "Render",
+      "button": "Regions",
+      "id": null,
+      "leaf": false,
+      "items": [
+        {
+          "label": "Region Tool",
+          "id": 41496
+        },
+        {
+          "label": "Save Region Image As...",
+          "id": 40326
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Refresh",
+          "id": 40322
+        },
+        {
+          "label": "Hide/Unhide",
+          "id": 41492
+        },
+        {
+          "label": "Track Selection",
+          "id": 41494
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Refresh Mode",
+          "items": [
+            {
+              "label": "Interactive",
+              "id": 41646
+            },
+            {
+              "label": "Camera, Time and Region State",
+              "id": 41647
+            },
+            {
+              "label": "Manual",
+              "id": 41648
+            }
+          ]
+        },
+        {
+          "label": "Display",
+          "items": [
+            {
+              "label": "Alpha-Blended RGB",
+              "id": 41485
+            },
+            {
+              "label": "RGB Only",
+              "id": 41486
+            },
+            {
+              "label": "Alpha",
+              "id": 41487
+            },
+            {
+              "label": "Red",
+              "id": 41488
+            },
+            {
+              "label": "Green",
+              "id": 41489
+            },
+            {
+              "label": "Blue",
+              "id": 41490
+            }
+          ]
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "All Options...",
+          "id": 41550
+        },
+        {
+          "label": "Active Viewport Options...",
+          "id": 41551
+        }
+      ],
+      "item_count": 12
+    },
+    "Render/Render": {
+      "section": "Render",
+      "button": "Render",
+      "id": null,
+      "leaf": false,
+      "items": [
+        {
+          "label": "Current Pass",
+          "id": 41506
+        },
+        {
+          "label": "Selected Passes",
+          "id": 41517
+        },
+        {
+          "label": "All Passes",
+          "id": 41505
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Current Frame",
+          "id": 41573
+        },
+        {
+          "label": "Current Frame (All Passes)",
+          "id": 41574
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Scene Options...",
+          "id": 41507
+        },
+        {
+          "label": "Pass Options...",
+          "id": 41508
+        },
+        {
+          "label": "Renderer Options...",
+          "id": 41509
+        }
+      ],
+      "item_count": 10
+    },
+    "Render/Export": {
+      "section": "Render",
+      "button": "Export",
+      "id": null,
+      "leaf": false,
+      "items": [
+        {
+          "label": "Current Pass",
+          "id": 41510
+        },
+        {
+          "label": "Selected Passes",
+          "id": 41516
+        },
+        {
+          "label": "All Passes",
+          "id": 41511
+        },
+        {
+          "separator": true
+        },
+        {
+          "label": "Selected Object...",
+          "id": 41555
+        }
+      ],
+      "item_count": 5
+    },
+    "Render/Preview": {
+      "section": "Render",
+      "button": "Preview",
+      "id": 41523,
+      "leaf": true,
+      "items": [],
+      "item_count": 0
+    },
+    "Pass/Edit": {
+      "section": "Pass",
+      "button": "Edit",
+      "id": null,
+      "leaf": false,
+      "items": [
+        {
+          "label": "Edit Current Pass",
+          "id": 41520
+        },
+        {
+          "label": "New Pass",
+          "items": [
+            {
+              "label": "Empty",
+              "id": 40949
+            },
+            {
+              "label": "Based on Layers",
+              "id": 40950
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "RGBA Matte",
+              "id": 40941
+            },
+            {
+              "label": "White Matte",
+              "id": 40964
+            },
+            {
+              "label": "Isolate Matte",
+              "id": 41141
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "Depth",
+              "id": 40948
+            },
+            {
+              "label": "Shadow",
+              "id": 40943
+            },
+            {
+              "label": "Selective Shadow",
+              "id": 41142
+            },
+            {
+              "label": "Reflection",
+              "id": 40942
+            },
+            {
+              "label": "Refraction",
+              "id": 41041
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "Ambient",
+              "id": 40969
+            },
+            {
+              "label": "Ambient/Diffuse",
+              "id": 40968
+            },
+            {
+              "label": "Diffuse",
+              "id": 40967
+            },
+            {
+              "label": "Highlight",
+              "id": 40946
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "Image Based Lighting",
+              "id": 41221
+            },
+            {
+              "label": "Caustics",
+              "id": 40945
+            },
+            {
+              "label": "Global Illumination",
+              "id": 40947
+            },
+            {
+              "label": "Glow",
+              "id": 40944
+            },
+            {
+              "label": "Lens Flare",
+              "id": 40966
+            },
+            {
+              "label": "Volumic",
+              "id": 40965
+            },
+            {
+              "label": "Toon",
+              "id": 41140
+            },
+            {
+              "separator": true
+            },
+            {
+              "label": "More...",
+              "id": 40951
+            }
+          ]
+        },
+        {
+          "label": "Duplicate Current Pass",
+          "id": 41519
+        },
+        {
+          "label": "Delete Current Pass",
+          "id": 41518
+        }
+      ],
+      "item_count": 4
+    },
+    "Pass/Partition": {
+      "section": "Pass",
+      "button": "Partition",
+      "id": null,
+      "leaf": false,
+      "items": [
+        {
+          "label": "New Partition",
+          "id": 40300
+        },
+        {
+          "label": "Add to Partition",
+          "id": 40310
+        },
+        {
+          "label": "Remove from Partition",
+          "id": 40311
+        }
+      ],
+      "item_count": 3
+    }
+  },
+  "summary": {
+    "Get/Material": {
+      "item_count": 27,
+      "leaf": false
+    },
+    "Get/Property": {
+      "item_count": 32,
+      "leaf": false
+    },
+    "Modify/Projection": {
+      "item_count": 8,
+      "leaf": false
+    },
+    "Render/Regions": {
+      "item_count": 12,
+      "leaf": false
+    },
+    "Render/Render": {
+      "item_count": 10,
+      "leaf": false
+    },
+    "Render/Export": {
+      "item_count": 5,
+      "leaf": false
+    },
+    "Render/Preview": {
+      "item_count": 0,
+      "leaf": true
+    },
+    "Pass/Edit": {
+      "item_count": 4,
+      "leaf": false
+    },
+    "Pass/Partition": {
+      "item_count": 3,
+      "leaf": false
+    }
+  }
+}

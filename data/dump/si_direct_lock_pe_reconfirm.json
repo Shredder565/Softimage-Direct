@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "when": "2026-10-25",
+    "script": "direct-lock-close PE reconfirm",
+    "softimage": "13.2.163.0"
+  },
+  "locks": {
+    "model.caphole_ppg_layout": {
+      "status": "LOCK",
+      "evidence": [
+        "internal/softimage-pc-dumps/dialogs/caphole-spdl-pe-search.json \u2014 no CapHole*.spdl; ICE Cap Hole.xsicompound only",
+        "spdl-layout-index.json CapHole exact keys = []"
+      ],
+      "note": "No SPDL Layout to invent; CapHoleProc ICE path already DONE"
+    },
+    "model.curve_has_layout_false": {
+      "status": "LOCK",
+      "evidence": [
+        "spdl-layout-index: C3DArc/C3DCircle/C3DSpiral/C3DSquare has_layout=false",
+        "unlock_pe394_manip_curve: 989 SPDL scanned; curve_has_layout_false LOCK"
+      ],
+      "note": "Curve prim SPDLs attested has_layout false; do not invent Layout"
+    }
+  }
+}
