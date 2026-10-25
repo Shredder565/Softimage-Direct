@@ -3,7 +3,8 @@
 import * as THREE from 'three';
 import { makeAimRig } from './constraints';
 import { App, InteractiveTool } from '../core/commands';
-import { X3DObject, Model, Primitive, Property, makeDisplay, makeGeomApprox, makeSiOpProperty, makePhong, makeLambert, makeSiShader, Shader, Null, Camera, Light, Operator, makeTopologyOperator, TopologyOperator, MoveComponentOperator, mixerOf, syncMixer } from '../core/scene';
+import { X3DObject, Model, Primitive, Property, makeDisplay, makeGeomApprox, makeSiOpProperty, makePhong, makeLambert, makeSiShader, makeMiaUnlockShader, Shader, Null, Camera, Light, Operator, makeTopologyOperator, TopologyOperator, MoveComponentOperator, mixerOf, syncMixer } from '../core/scene';
+import { isMiaUnlockPreset, resolveMiaUnlockKey } from '../core/miaUnlock';
 import { topoDefs } from '../core/scene';
 import { siName } from '../core/opdefs';
 import * as S2 from '../core/scene2';
@@ -296,7 +297,9 @@ export function registerModelCommands(app: App) {
   for (const [name, label] of [['CreateSpine', 'Create Spine'], ['MakeTail', 'Create Tail'], ['MakeControlSplines', 'Create Control Splines']]) app.register({ name, label, category: 'Character Rigging', args: [], canRun: () => false, execute() { throw new Error(`${label} needs Softimage's rig preset files (not shipped)`); } });
 
   // ------------------------------------------------------------ materials
-  // Dump-backed stock illumination (materials_beyond_phong summary.ok). Architectural / mia_* / MetallicPaint LOCK invent.
+  // Dump-backed stock illumination (materials_beyond_phong summary.ok).
+  // MR Architectural / mia_* / MetallicPaint: absolute .Preset + SIApplyShader UNLOCK (unlock_render_mia_probe).
+  // Car Paint / unproven short names stay LOCK invent.
   const SHADERS: Record<string, (n: string) => Shader> = {
     Phong: makePhong,
     Lambert: makeLambert,
@@ -312,20 +315,36 @@ export function registerModelCommands(app: App) {
     'Toon Paint and Host': n => shader(n, 'Toon'), 'Toon Paint Highlight': n => shader(n, 'Toon'),
     'Toon Paint Rimlight': n => shader(n, 'Toon'), 'Toon Paint Rounded': n => shader(n, 'Toon'),
   };
-  const LOCK_MR = /^(Architectural|Architectural_MO|MetallicPaint|mia_Material|mia_Material_MultiOutput|mi_Metallic_Paint|Car Paint)$/i;
+  const LOCK_MR = /^(Car Paint|Car_Paint)$/i;
   const sh = app.commands.get('SIApplyShader')!;
   sh.canRun = (a) => {
-    const preset = String(a.PresetObj).replace('Shaders\\Material\\', '').replace(/^Materials\\/, '');
-    if (LOCK_MR.test(preset) || /mia_|mi_Metallic/i.test(preset)) return false;
-    return !!SHADERS[preset];
+    const preset = String(a.PresetObj ?? '');
+    if (LOCK_MR.test(preset) || /Car_Paint\.Preset$/i.test(preset)) return false;
+    if (isMiaUnlockPreset(preset)) return true;
+    const leaf = preset.replace('Shaders\\Material\\', '').replace(/^Materials\\/, '');
+    if (LOCK_MR.test(leaf)) return false;
+    return !!SHADERS[leaf];
   };
   sh.execute = (app, a) => {
-    const preset = String(a.PresetObj).replace('Shaders\\Material\\', '').replace(/^Materials\\/, '');
-    if (LOCK_MR.test(preset) || /mia_|mi_Metallic/i.test(preset))
+    const preset = String(a.PresetObj ?? '');
+    if (LOCK_MR.test(preset) || /Car_Paint\.Preset$/i.test(preset))
       throw new Error(`Shader ${preset} LOCK invent (Softimage headless ApplyShader FAIL — mental-ray-materials.md)`);
-    const mk = SHADERS[preset]; if (!mk) throw new Error(`Shader ${preset} not available`);
+    const miaKey = resolveMiaUnlockKey(preset);
+    let mk: ((n: string) => Shader) | undefined;
+    let matSuffix: string;
+    if (miaKey) {
+      mk = n => makeMiaUnlockShader(miaKey, n)!;
+      matSuffix = miaKey;
+    } else {
+      const leaf = preset.replace('Shaders\\Material\\', '').replace(/^Materials\\/, '');
+      if (LOCK_MR.test(leaf))
+        throw new Error(`Shader ${leaf} LOCK invent (Softimage headless ApplyShader FAIL — mental-ray-materials.md)`);
+      mk = SHADERS[leaf];
+      matSuffix = leaf.replace(/[^A-Za-z]/g, '');
+      if (!mk) throw new Error(`Shader ${leaf} not available`);
+    }
     const objs = app.targets(a.InputObjs); if (!objs.length) throw new Error('Select objects');
-    const mat = app.scene.newMaterial((objs[0].name) + '_' + preset.replace(/[^A-Za-z]/g, ''), mk(preset));
+    const mat = app.scene.newMaterial((objs[0].name) + '_' + matSuffix, mk(miaKey ?? matSuffix));
     for (const o of objs) { const old = o.material; app.record('Apply shader', () => o.setMaterial(mat), () => o.setMaterial(old)); }
     app.select([mat.surface!]); return mat;
   };
@@ -475,7 +494,8 @@ function shader(name: string, type: string): Shader {
   const si = makeSiShader(type, name); if (si) return si;
   const s = new Shader(name, type, [color('ambient', [0.3, 0.3, 0.3], 'Ambient', { group: 'Illumination' }), color('diffuse', [0.7, 0.7, 0.7], 'Diffuse', { group: 'Illumination' })]);
   if (type !== 'Constant' && type !== 'Toon') { s.add(color('specular', [1, 1, 1], 'Specular', { group: 'Illumination' })); s.add(num('shiny', 50, 'Specular Decay', { min: 0, max: 200, group: 'Illumination' })); }
-  if (type === 'Cook-Torrance' || type === 'Strauss' || type === 'Architectural' || type === 'Car Paint') { s.add(num('roughness', 0.4, 'Roughness', { min: 0, max: 1, group: 'Illumination' })); s.add(num('metalness', type === 'Car Paint' ? 0.8 : 0.1, 'Metalness', { min: 0, max: 1, group: 'Illumination' })); }
+  // Architectural is dump-unlocked via makeMiaUnlockShader — do not invent roughness/metalness here.
+  if (type === 'Cook-Torrance' || type === 'Strauss' || type === 'Car Paint') { s.add(num('roughness', 0.4, 'Roughness', { min: 0, max: 1, group: 'Illumination' })); s.add(num('metalness', type === 'Car Paint' ? 0.8 : 0.1, 'Metalness', { min: 0, max: 1, group: 'Illumination' })); }
   if (type === 'Anisotropic') { s.add(num('anisotropy', 0.5, 'Anisotropy', { min: 0, max: 1, group: 'Illumination' })); }
   if (type === 'Toon') { s.add(int('steps', 3, 'Shading Steps', { min: 2, max: 8 })); s.add(color('inkcolor', [0, 0, 0], 'Ink Color')); }
   s.add(num('transparency', 0, 'Transparency', { min: 0, max: 1, group: 'Transparency/Reflection' })); s.add(num('reflectivity', 0, 'Reflectivity', { min: 0, max: 1, group: 'Transparency/Reflection' }));

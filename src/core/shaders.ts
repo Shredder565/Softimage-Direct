@@ -12,7 +12,7 @@ export const SI_SHADERS = shaders as unknown as Record<string, SiShaderDef>;
 /** Material presets as Softimage ApplyShader / Get > Material names them → SPDL key.
  *  Softimage PC dump materials_beyond_phong.json: Cooktorrance (not hyphenated).
  *  Constant ApplyShader OM is dump-backed in makeConstant (not full phenolib SPDL).
- *  Architectural / mia_* / mi_Metallic_Paint: LOCK invent (headless ApplyShader FAIL). */
+ *  Architectural / mia_* / MetallicPaint: absolute .Preset + SIApplyShader UNLOCK (miaUnlock.ts). */
 export const MATERIAL_PRESETS: Record<string, string> = {
   Phong: 'material-phong',
   Lambert: 'material-lambert',
@@ -26,8 +26,10 @@ export const MATERIAL_PRESETS: Record<string, string> = {
 };
 /** Softimage stock illumination presets attested dump-ready (summary.ok). */
 export const DUMP_OK_MATERIAL_PRESETS = ['Phong', 'Blinn', 'Lambert', 'Constant', 'Cooktorrance', 'Strauss', 'Anisotropic'] as const;
-/** Headless FAIL — do not invent OM (mental-ray-materials.md). */
-export const LOCK_INVENT_MATERIAL_PRESETS = ['Architectural', 'Architectural_MO', 'MetallicPaint', 'mia_Material', 'mia_Material_MultiOutput', 'mi_Metallic_Paint'] as const;
+/** Absolute-preset SIApplyShader unlock (unlock_render_mia_probe) — nested OM wired. */
+export const UNLOCK_OK_MR_MATERIAL_PRESETS = ['Architectural', 'Architectural_MO', 'MetallicPaint', 'mia_Material', 'mia_Material_MultiOutput', 'mi_Metallic_Paint'] as const;
+/** Still LOCK invent — unproven / short-name FAIL under headless (Car Paint etc.). */
+export const LOCK_INVENT_MATERIAL_PRESETS = ['Car Paint', 'Car_Paint'] as const;
 /** Texture / utility nodes offered by the Render Tree "Nodes" menu. */
 export const TEXTURE_NODES: Record<string, string> = { 'Image': 'txt2d-image-explicit', 'Checkerboard': 'txt3d-checkerboard', 'Grid': 'txt2d-grid', 'Fractal': 'txt3d-fractal_v3', 'Marble': 'txt3d-marble', 'Wood': 'txt3d-wood', 'Cloud': 'txt3d-cloud', 'Gradient': 'txt2d-gradient_v2', 'Mix 2 Colors': 'sib_color_2mix', 'Color Math Basic': 'sib_color_math_basic', 'Scalar Math Basic': 'sib_scalar_math_basic', 'Invert': 'sib_color_invert', 'Bump Map Generator': 'sib_bumpmap_gen', 'Incidence': 'sib_incidence_v3', 'Environment': 'sib_environment', 'Vertex Color': 'sib_vertex_color_alpha', 'Gradient (color)': 'sib_color_gradient', 'HLS Adjust': 'sib_color_hls_adjust', 'Scalar to Color': 'sib_scalar_to_color', 'Texture Space Generator': 'sib_uvwgen' };
 

@@ -74,6 +74,9 @@
   --anim-cursor: #ffd34d;
   --fcv-list-w: 150px;
   --fcv-toolbar-h: 22px;
+  /* unlock render.toolbar_pixel_chrome — rendercore RT_BITMAP 105–108 attested 22×22 */
+  --render-tb-cell-w: 22px;
+  --render-tb-cell-h: 22px;
   --fcv-ruler-h: 16px;
   --fcv-label-m: 36px;
   --mixer-track-h: 22px;
@@ -124,6 +127,7 @@ button, select, input { font-family: inherit; }
 .tb-scroll { flex: 1; overflow-y: auto; padding: 0 4px 6px; }
 .tb-group { margin-top: 5px; padding: 2px 6px; font-weight: bold; color: #1a1a1a; border-radius: 2px; border: 1px solid #5a5a5a; font-size: 11px; }
 .Model .tb-group { background: var(--model); } .Animate .tb-group { background: var(--animate); } .Render .tb-group { background: var(--render); } .Simulate .tb-group { background: var(--simulate); } .ICE .tb-group { background: var(--ice); } .Hair .tb-group { background: var(--hair); }
+.toolbar-panel.Render .tb-btn { min-height: var(--render-tb-cell-h); }
 .tb-btn { display: block; width: 100%; text-align: center; margin: 3px 0 0; padding: 4px 8px; background: linear-gradient(var(--btn-top), var(--btn-bot)); color: var(--text); border: 1px solid #5f5b58; border-radius: 3px; cursor: pointer; font-size: 11px; position: relative; }
 .tb-btn:hover { background: linear-gradient(var(--btn-hover-top), var(--btn-hover-bot)); }
 .tb-btn::after { content: ''; position: absolute; right: 3px; bottom: 3px; border-style: solid; border-width: 0 0 7px 7px; border-color: transparent transparent #2a2a2a transparent; }

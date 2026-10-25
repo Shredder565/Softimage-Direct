@@ -95,7 +95,13 @@ function buildArgs(it: MenuItem, bound: { cmd: string; name: string; args: [stri
   if (['ApplyOp', 'ApplyTopoOp', 'ApplyGenOp', 'ApplyKinematicOp', 'ApplyPropVolumeOp', 'AddProp', 'GetPrimLight', 'GetPrimCamera', 'ApplyCns'].includes(bound.cmd)) { args.Preset = args.Preset ?? args.PresetObj; args.PresetObj = bound.name.replace(/ Op$/, ''); if (bound.cmd === 'GetPrimLight' || bound.cmd === 'GetPrimCamera' || bound.name === 'Apply Topology Operator' || bound.name === 'Apply Operator') args.PresetObj = it.label; if (bound.cmd === 'ApplyCns') { args.Preset = args.Preset ?? args.PresetObj ?? it.label; args.PresetObj = args.Preset; } }
   if (!bound.cmd || bound.cmd === 'ApplyShader') { /* handled by aliases */ }
   if (bound.cmd === 'AddProp' && path.includes('Texture Projection')) { args.Type = it.label; }
-  if (bound.cmd === 'SIApplyShader' || bound.cmd === 'ApplyShader') args.PresetObj = it.label;
+  // Softimage menu_commands already bind absolute / $XSI_DSPRESETS PresetObj for MR shaders
+  // (unlock_render_mia_probe). Keep dump-attested paths; only fall back to leaf label when unset.
+  if (bound.cmd === 'SIApplyShader' || bound.cmd === 'ApplyShader') {
+    const existing = args.PresetObj;
+    const pathLike = typeof existing === 'string' && (/[\\/]/.test(existing) || /\.Preset$/i.test(existing) || /\$XSI_DSPRESETS/i.test(existing));
+    if (!existing || existing === 'More...' || !pathLike) args.PresetObj = it.label;
+  }
   if (bound.cmd === 'GetPrimLight' && it.label === 'More...') args.PresetObj = 'Point';
   if (bound.cmd === 'AddProp' && !args.PresetObj) args.PresetObj = it.label;
   // Softimage toolbar enable can be module-context; commands may read `_module` from args.

@@ -33,12 +33,15 @@ const regionPath = dump('si_render_region.json');
 const fbPath = dump('si_render_framebuffer_enums.json');
 const deepenPath = dump('si_render_prefs_region_deepen.json');
 const beyondPath = dump('materials_beyond_phong.json');
+const miaUnlockPath = dump('si_render_mia_unlock.json') || dump('unlock_render_mia_probe.json');
+const wrapEnumPath = dump('si_render_wrap_enum.json') || dump('unlock_render_wrap_enum_probe.json');
+const toolbarChromePath = dump('si_render_toolbar_chrome.json');
 const catsPath = [
   path.resolve(__dirname, '../data/dump/si_preference_categories.json'),
   '/cursor/stores/self/internal/softimage-pc-dumps/unlock/unlock_all_remaining.json',
   '/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/unlock/unlock_all_remaining.json',
 ].find(p => fs.existsSync(p));
-for (const [n, p] of [['prefs', prefsPath], ['material', matPath], ['passes', passPath], ['region', regionPath], ['framebuffer', fbPath], ['beyond', beyondPath], ['preference_categories', catsPath]]) {
+for (const [n, p] of [['prefs', prefsPath], ['material', matPath], ['passes', passPath], ['region', regionPath], ['framebuffer', fbPath], ['beyond', beyondPath], ['preference_categories', catsPath], ['mia_unlock', miaUnlockPath], ['wrap_enum', wrapEnumPath], ['toolbar_chrome', toolbarChromePath]]) {
   if (!p) { console.error('missing dump ' + n); process.exit(2); }
 }
 
@@ -151,11 +154,32 @@ const r = await page.evaluate(() => {
   };
 
   const beyondOk = ['Phong', 'Blinn', 'Lambert', 'Constant', 'Cooktorrance', 'Strauss', 'Anisotropic'];
-  const beyondFail = ['Architectural', 'mia_Material', 'mi_Metallic_Paint'];
+  // unlock render.mia_architectural_metallic — absolute .Preset + Softimage aliases
+  const miaAbs = 'C:\\Program Files\\Autodesk\\Softimage 2015 SP2\\Data\\DSPresets\\Shaders\\Material\\mental images\\mia_Material.Preset';
+  const miaUnlockPresets = [
+    'Architectural',
+    'mia_Material',
+    'mia_Material_MultiOutput',
+    'mi_Metallic_Paint',
+    miaAbs,
+    '$XSI_DSPRESETS\\Shaders\\Material\\mental images\\mia_Material.Preset',
+  ];
+  // Still LOCK invent — Car Paint unproven under unlock dump
+  const beyondFail = ['Car Paint', 'Car_Paint'];
   const beyondSnaps = {};
   for (const p of beyondOk) beyondSnaps[p] = snapShader(p);
+  const miaSnaps = {};
+  for (const p of miaUnlockPresets) miaSnaps[p] = snapShader(p);
   const lockSnaps = {};
   for (const p of beyondFail) lockSnaps[p] = snapShader(p);
+
+  // wrapu/wrapv enum UI (C3DMaterial.spdl Combo)
+  const wrapParam = m?.params?.find?.(p => p.name === 'wrapu');
+  const wrapEnumItems = (wrapParam?.def?.items || []).map(it => ({ label: it.label, value: it.value }));
+
+  // render toolbar PE W/H audit
+  let renderToolbarChrome = null;
+  try { renderToolbarChrome = (window).__uiAudit?.()?.renderToolbarChrome ?? null; } catch (e) {}
 
   // Prefs rendering page via preferenceSets when available
   let renderPrefs = A.renderPrefs || null;
@@ -213,7 +237,10 @@ const r = await page.evaluate(() => {
     matType: m?.type, matLabels, matVals,
     shType: surf?.type, shVals, shLabels,
     phongConnections,
-    beyondSnaps, lockSnaps,
+    beyondSnaps, miaSnaps, lockSnaps,
+    wrapEnumItems,
+    wrapuType: wrapParam?.def?.type,
+    renderToolbarChrome,
     renderPrefs,
     preferenceCategories,
     sceneMat: A.scene.materials[0]?.name,
@@ -337,6 +364,21 @@ else notes.push('Material classname Material');
 if (Number(r.matVals.wrapu) !== 10497 || Number(r.matVals.wrapv) !== 10497)
   diffs.push(`Material wrap Direct ${r.matVals.wrapu}/${r.matVals.wrapv} PC 10497`);
 else notes.push('Material wrapu/wrapv=10497');
+// unlock render.wrapu_wrapv_enum_ui — Combo Clamp/Repeat from C3DMaterial.spdl
+const wrapDump = JSON.parse(fs.readFileSync(wrapEnumPath, 'utf8'));
+const wantWrapItems = (wrapDump.items || wrapDump.spdl_attested?.labels?.map((lab, i) => ({
+  label: lab,
+  value: lab === 'Clamp' ? 10496 : 10497,
+})) || [
+  { label: 'Clamp', value: 10496 },
+  { label: 'Repeat', value: 10497 },
+]);
+if (r.wrapuType !== 'enum') diffs.push(`Material.wrapu type ${r.wrapuType} want enum`);
+else notes.push('Material.wrapu type=enum');
+const gotWrap = JSON.stringify(r.wrapEnumItems || []);
+const wantWrap = JSON.stringify(wantWrapItems.map(it => ({ label: it.label, value: it.value })));
+if (gotWrap !== wantWrap) diffs.push(`Material.wrapu items ${gotWrap} want ${wantWrap}`);
+else notes.push('Material wrapu/wrapv Combo Clamp/Repeat OK');
 
 // Softimage connects surface/shadow/photon → shader.out (materials_beyond_phong)
 for (const port of ['surface', 'shadow', 'photon']) {
@@ -399,16 +441,65 @@ for (const label of pcOk) {
   if (snap.matLabels?.surface !== 'surface') diffs.push(`${label} Material.surface label ${snap.matLabels?.surface}`);
   notes.push(`${label} OM OK type=${snap.shType}`);
 }
-// LOCK invent: Softimage headless FAIL presets must not apply in Direct
-for (const label of ['Architectural', 'mia_Material', 'mi_Metallic_Paint']) {
+// unlock render.mia_architectural_metallic — absolute .Preset + SIApplyShader nested OM
+const miaUnlock = JSON.parse(fs.readFileSync(miaUnlockPath, 'utf8'));
+const miaPresets = miaUnlock.presets || {};
+const miaWant = {
+  Architectural: 'mia_Material',
+  mia_Material: 'mia_Material',
+  mia_Material_MultiOutput: 'mia_Material_MultiOutput',
+  mi_Metallic_Paint: 'mi_Metallic_Paint',
+};
+for (const [label, wantType] of Object.entries(miaWant)) {
+  const snap = r.miaSnaps?.[label];
+  if (!snap || snap.err) { diffs.push(`mia unlock ${label} err=${snap?.err}`); continue; }
+  if (!snap.canRun) diffs.push(`mia unlock ${label} canRun false`);
+  if (snap.shType !== wantType) diffs.push(`mia unlock ${label} shType ${snap.shType} want ${wantType}`);
+  const pcParams = miaPresets[wantType]?.params || Object.fromEntries((miaPresets[wantType]?.defs || []).map(d => [d.sn, d.type === 'color' ? d.value_rgba ?? d.value : d.value]));
+  const nParams = snap.vals ? Object.keys(snap.vals).length : 0;
+  const wantCount = miaPresets[wantType]?.param_count || miaPresets[wantType]?.defs?.length;
+  if (wantCount && nParams !== wantCount) diffs.push(`mia unlock ${label} param_count ${nParams} want ${wantCount}`);
+  // Key attested scalars from nested OM
+  for (const sn of ['diffuse_weight', 'reflectivity', 'mode', 'spec_weight', 'base_color'].filter(k => k in (pcParams || {}))) {
+    if (!(sn in snap.vals)) { diffs.push(`mia unlock ${label} missing ${sn}`); continue; }
+    if (!approxEq(snap.vals[sn], Array.isArray(pcParams[sn]) ? pcParams[sn].slice(0, 3) : pcParams[sn]))
+      diffs.push(`mia unlock ${label}.${sn} Direct=${JSON.stringify(snap.vals[sn])} PC=${JSON.stringify(pcParams[sn])}`);
+  }
+  notes.push(`mia unlock ${label} OK type=${snap.shType} n=${nParams}`);
+}
+// Absolute / $XSI_DSPRESETS paths must resolve to mia_Material
+for (const key of Object.keys(r.miaSnaps || {})) {
+  if (!/[\\/]|\.Preset|\$XSI_DSPRESETS/i.test(key)) continue;
+  const snap = r.miaSnaps[key];
+  if (snap?.err || snap?.shType !== 'mia_Material') diffs.push(`mia abs path ${key} → ${snap?.shType} err=${snap?.err}`);
+  else notes.push(`mia abs PresetObj OK → mia_Material`);
+}
+// LOCK invent: Car Paint still FAIL / unproven
+for (const label of ['Car Paint', 'Car_Paint']) {
   const snap = r.lockSnaps?.[label];
-  const pc = beyond.materials?.[label] || beyond.materials?.[label === 'mia_Material' ? 'Architectural' : label];
   if (snap?.canRun) diffs.push(`LOCK invent ${label} canRun true`);
   if (snap && !snap.err && snap.shType) diffs.push(`LOCK invent ${label} applied type=${snap.shType}`);
-  else notes.push(`LOCK invent ${label} (PC fail=${!(pc?.apply?.ok)})`);
+  else notes.push(`LOCK invent ${label}`);
 }
-if (pcFail?.length) notes.push(`PC FAIL LOCK ${pcFail.join(',')}`);
+if (pcFail?.length) notes.push(`PC FAIL (short-name era) ${pcFail.join(',')}`);
 notes.push(`beyond dump ${beyondPath}`);
+notes.push(`mia unlock dump ${miaUnlockPath}`);
+
+// unlock render.toolbar_pixel_chrome — PE BITMAP W/H only
+const tbDump = JSON.parse(fs.readFileSync(toolbarChromePath, 'utf8'));
+const tbAudit = r.renderToolbarChrome;
+if (!tbAudit) diffs.push('renderToolbarChrome audit missing');
+else {
+  if (tbAudit.toolbarCellWh?.w !== 22 || tbAudit.toolbarCellWh?.h !== 22)
+    diffs.push(`render toolbar cell ${JSON.stringify(tbAudit.toolbarCellWh)} want 22x22`);
+  else notes.push('render toolbar cell 22x22');
+  if (!tbAudit.toolbarCellOk) diffs.push('render toolbarCellOk false');
+  if (Number(tbAudit.bitmapWhCount) !== Number(tbDump.bitmapWhCount))
+    diffs.push(`render bitmapWhCount ${tbAudit.bitmapWhCount} want ${tbDump.bitmapWhCount}`);
+  else notes.push(`render bitmapWhCount=${tbAudit.bitmapWhCount}`);
+  if (tbAudit.eyeChromeBeyondWh !== 'LOCK') diffs.push(`render eye chrome status ${tbAudit.eyeChromeBeyondWh}`);
+  else notes.push('render eye chrome beyond W/H LOCK');
+}
 
 // ---- Region LOCK ----
 const regionFound = (region.probes || []).some(p => p.path?.includes('RenderRegion') && p.found);

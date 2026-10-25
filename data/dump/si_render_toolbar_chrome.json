@@ -1,0 +1,749 @@
+{
+  "_comment": "render.toolbar_pixel_chrome \u2014 PE RT_MENU/BITMAP W/H only (rendercore/rendertree). Eye chrome beyond W/H stays LOCK invent.",
+  "lock_id": "render.toolbar_pixel_chrome",
+  "status": "DUMP_READY",
+  "softimage": "13.2.163.0",
+  "source": "unlock_render_locks_pe.json locks.render.toolbar_pixel_chrome",
+  "note": "RT_MENU/BITMAP sizes scraped from render*/toolbar PEs; eye-level toolbar pixel chrome beyond W/H still LOCK invent",
+  "toolbarCellWh": {
+    "w": 22,
+    "h": 22,
+    "source": "rendercore.dll RT_BITMAP ids 105-108"
+  },
+  "menus": [
+    {
+      "pe": "rendercore.dll",
+      "id": 6,
+      "rva": 1320464,
+      "size": 784
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 102,
+      "rva": 1327872,
+      "size": 270
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 103,
+      "rva": 1321248,
+      "size": 346
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 104,
+      "rva": 1321600,
+      "size": 92
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 137,
+      "rva": 1280008,
+      "size": 368
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 141,
+      "rva": 1280376,
+      "size": 74
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 428,
+      "rva": 1280456,
+      "size": 376
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 429,
+      "rva": 1281240,
+      "size": 332
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 433,
+      "rva": 1282224,
+      "size": 1890
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 434,
+      "rva": 1281576,
+      "size": 648
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 435,
+      "rva": 1284120,
+      "size": 194
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 460,
+      "rva": 1284320,
+      "size": 336
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 469,
+      "rva": 1456128,
+      "size": 128
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 473,
+      "rva": 1456256,
+      "size": 170
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 474,
+      "rva": 1456432,
+      "size": 840
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 500,
+      "rva": 1284656,
+      "size": 370
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 507,
+      "rva": 1280832,
+      "size": 406
+    },
+    {
+      "pe": "toolbarobj.dll",
+      "id": 204,
+      "rva": 325840,
+      "size": 14638
+    },
+    {
+      "pe": "toolbarobj.dll",
+      "id": 205,
+      "rva": 340480,
+      "size": 6878
+    },
+    {
+      "pe": "toolbarobj.dll",
+      "id": 234,
+      "rva": 361536,
+      "size": 8220
+    },
+    {
+      "pe": "toolbarobj.dll",
+      "id": 237,
+      "rva": 347360,
+      "size": 14176
+    },
+    {
+      "pe": "toolbarobj.dll",
+      "id": 291,
+      "rva": 369760,
+      "size": 176
+    },
+    {
+      "pe": "toolbarobj.dll",
+      "id": 297,
+      "rva": 369936,
+      "size": 1862
+    },
+    {
+      "pe": "toolbarobj.dll",
+      "id": 300,
+      "rva": 373040,
+      "size": 242
+    },
+    {
+      "pe": "toolbarobj.dll",
+      "id": 303,
+      "rva": 373288,
+      "size": 5680
+    }
+  ],
+  "bitmaps_wh": [
+    {
+      "pe": "rendercore.dll",
+      "id": 105,
+      "rva": 1321696,
+      "size": 1538,
+      "w": 22,
+      "h": 22
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 106,
+      "rva": 1323240,
+      "size": 1538,
+      "w": 22,
+      "h": 22
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 107,
+      "rva": 1324784,
+      "size": 1538,
+      "w": 22,
+      "h": 22
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 108,
+      "rva": 1326328,
+      "size": 1538,
+      "w": 22,
+      "h": 22
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 142,
+      "rva": 1328968,
+      "size": 820,
+      "w": 17,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 143,
+      "rva": 1337840,
+      "size": 940,
+      "w": 19,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 144,
+      "rva": 1335952,
+      "size": 940,
+      "w": 19,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 145,
+      "rva": 1334064,
+      "size": 940,
+      "w": 19,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 146,
+      "rva": 1332680,
+      "size": 436,
+      "w": 11,
+      "h": 11
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 147,
+      "rva": 1332240,
+      "size": 436,
+      "w": 11,
+      "h": 11
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 148,
+      "rva": 1331416,
+      "size": 820,
+      "w": 17,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 149,
+      "rva": 1330192,
+      "size": 400,
+      "w": 11,
+      "h": 10
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 150,
+      "rva": 1329792,
+      "size": 400,
+      "w": 11,
+      "h": 10
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 151,
+      "rva": 1328144,
+      "size": 820,
+      "w": 17,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 152,
+      "rva": 1336896,
+      "size": 940,
+      "w": 19,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 153,
+      "rva": 1335008,
+      "size": 940,
+      "w": 19,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 154,
+      "rva": 1333120,
+      "size": 940,
+      "w": 19,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 155,
+      "rva": 1330592,
+      "size": 820,
+      "w": 17,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 156,
+      "rva": 1339728,
+      "size": 940,
+      "w": 19,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 157,
+      "rva": 1338784,
+      "size": 940,
+      "w": 19,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 158,
+      "rva": 1341496,
+      "size": 820,
+      "w": 17,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 159,
+      "rva": 1340672,
+      "size": 820,
+      "w": 17,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 160,
+      "rva": 1343144,
+      "size": 820,
+      "w": 17,
+      "h": 15
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 161,
+      "rva": 1342320,
+      "size": 820,
+      "w": 17,
+      "h": 15
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 423,
+      "rva": 1351424,
+      "size": 1768,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 424,
+      "rva": 1353192,
+      "size": 1768,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 425,
+      "rva": 1354960,
+      "size": 1768,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 426,
+      "rva": 1356728,
+      "size": 1768,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 430,
+      "rva": 1360264,
+      "size": 360,
+      "w": 5,
+      "h": 20
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 431,
+      "rva": 1360624,
+      "size": 1320,
+      "w": 5,
+      "h": 80
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 432,
+      "rva": 1361944,
+      "size": 360,
+      "w": 5,
+      "h": 20
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 436,
+      "rva": 1285032,
+      "size": 65578,
+      "w": 256,
+      "h": 64
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 437,
+      "rva": 1362304,
+      "size": 1768,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 438,
+      "rva": 1364072,
+      "size": 1768,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 439,
+      "rva": 1365840,
+      "size": 1768,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 440,
+      "rva": 1367608,
+      "size": 1768,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 441,
+      "rva": 1369376,
+      "size": 1768,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 442,
+      "rva": 1371144,
+      "size": 2632,
+      "w": 36,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 443,
+      "rva": 1373776,
+      "size": 2632,
+      "w": 36,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 444,
+      "rva": 1376408,
+      "size": 2632,
+      "w": 36,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 445,
+      "rva": 1379040,
+      "size": 2632,
+      "w": 36,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 446,
+      "rva": 1381672,
+      "size": 2632,
+      "w": 36,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 447,
+      "rva": 1384304,
+      "size": 2632,
+      "w": 36,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 448,
+      "rva": 1386936,
+      "size": 2632,
+      "w": 36,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 449,
+      "rva": 1389568,
+      "size": 2632,
+      "w": 36,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 450,
+      "rva": 1392200,
+      "size": 2632,
+      "w": 36,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 451,
+      "rva": 1394832,
+      "size": 2632,
+      "w": 36,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 454,
+      "rva": 1406344,
+      "size": 1770,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 455,
+      "rva": 1408120,
+      "size": 1770,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 456,
+      "rva": 1409896,
+      "size": 1770,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 457,
+      "rva": 1411672,
+      "size": 1770,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 458,
+      "rva": 1413448,
+      "size": 1770,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 462,
+      "rva": 1350616,
+      "size": 808,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 463,
+      "rva": 1358496,
+      "size": 1768,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 464,
+      "rva": 1397464,
+      "size": 1770,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 465,
+      "rva": 1399240,
+      "size": 1770,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 466,
+      "rva": 1401016,
+      "size": 1770,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 467,
+      "rva": 1402792,
+      "size": 1770,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 468,
+      "rva": 1404568,
+      "size": 1770,
+      "w": 24,
+      "h": 24
+    },
+    {
+      "pe": "rendertree.dll",
+      "id": 502,
+      "rva": 1415224,
+      "size": 9064,
+      "w": 125,
+      "h": 24
+    }
+  ],
+  "bitmapWhCount": 60,
+  "menuCount": 25,
+  "wh_histogram": [
+    {
+      "w": 24,
+      "h": 24,
+      "count": 20
+    },
+    {
+      "w": 36,
+      "h": 24,
+      "count": 10
+    },
+    {
+      "w": 17,
+      "h": 15,
+      "count": 8
+    },
+    {
+      "w": 19,
+      "h": 15,
+      "count": 8
+    },
+    {
+      "w": 22,
+      "h": 22,
+      "count": 4
+    },
+    {
+      "w": 11,
+      "h": 11,
+      "count": 2
+    },
+    {
+      "w": 11,
+      "h": 10,
+      "count": 2
+    },
+    {
+      "w": 5,
+      "h": 20,
+      "count": 2
+    },
+    {
+      "w": 5,
+      "h": 80,
+      "count": 1
+    },
+    {
+      "w": 256,
+      "h": 64,
+      "count": 1
+    },
+    {
+      "w": 16,
+      "h": 16,
+      "count": 1
+    },
+    {
+      "w": 125,
+      "h": 24,
+      "count": 1
+    }
+  ],
+  "bitmapWhSample": [
+    {
+      "pe": "rendercore.dll",
+      "id": 105,
+      "rva": 1321696,
+      "size": 1538,
+      "w": 22,
+      "h": 22
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 106,
+      "rva": 1323240,
+      "size": 1538,
+      "w": 22,
+      "h": 22
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 107,
+      "rva": 1324784,
+      "size": 1538,
+      "w": 22,
+      "h": 22
+    },
+    {
+      "pe": "rendercore.dll",
+      "id": 108,
+      "rva": 1326328,
+      "size": 1538,
+      "w": 22,
+      "h": 22
+    }
+  ],
+  "eyeChromeBeyondWh": {
+    "status": "LOCK",
+    "note": "No Softimage-attested eye-level toolbar pixel chrome under headless PE scrape beyond RT_BITMAP W/H."
+  }
+}
