@@ -38,6 +38,9 @@ export function applyPpgChrome(host?: HTMLElement | null): PpgChrome {
     set(el, '--ppg-float-title-bot', t.floatTitleGradient[1]);
     set(el, '--ppg-title-top', t.ppgTitleGradient[0]);
     set(el, '--ppg-title-bot', t.ppgTitleGradient[1]);
+    set(el, '--ppg-title-fg', (t as { ppgTitleText?: string }).ppgTitleText ?? '#E4E6EA');
+    set(el, '--ppg-chrome-face', (t as { ppgChromeFace?: string }).ppgChromeFace ?? '#ABA8A6');
+    set(el, '--ppg-chrome-mid', (t as { ppgChromeMid?: string }).ppgChromeMid ?? '#9E9B99');
     set(el, '--ppg-nav-w', `${PPG_CHROME.bitmaps.inspNav.peSize?.[0] ?? 71}px`);
     set(el, '--ppg-tools-w', `${PPG_CHROME.bitmaps.tools.peSize?.[0] ?? 66}px`);
     const xp = (PPG_CHROME as any).explorer?.tokens;
@@ -135,21 +138,48 @@ export function ppgChromeAudit(root?: ParentNode | Document): Record<string, unk
   const tools = ppg?.querySelector('.ppg-bmp.tools') as HTMLElement | null;
   const floatBar = document.querySelector('.ppg-float-bar') as HTMLElement | null;
   const cs = getComputedStyle(document.documentElement);
+  const tok = PPG_CHROME.tokens as {
+    rowLabelWidthPx: number;
+    titleBarHeightPx: number;
+    fontPtHost: number;
+    fontFamily: string;
+    ppgTitleGradient: string[];
+    ppgTitleText?: string;
+    ppgChromeFace?: string;
+    ppgChromeMid?: string;
+  };
+  const titleCr = (PPG_CHROME as { titleColorref?: { status?: string; wire?: string; hover?: { status?: string }; tokens?: Record<string, string> } }).titleColorref;
   return {
     softimage: PPG_CHROME.softimage,
     hostDialog: PPG_CHROME.canonicalHostDialog,
     bitmapMatch: PPG_CHROME.bitmapMatch,
     navSize: PPG_CHROME.bitmaps.inspNav.peSize,
     toolsSize: PPG_CHROME.bitmaps.tools.peSize,
-    tokensApplied: cs.getPropertyValue('--ppg-label-w').trim() === `${PPG_CHROME.tokens.rowLabelWidthPx}px`,
+    tokensApplied: cs.getPropertyValue('--ppg-label-w').trim() === `${tok.rowLabelWidthPx}px`,
     navW: nav ? nav.getBoundingClientRect().width : null,
     toolsW: tools ? tools.getBoundingClientRect().width : null,
     titleBarH: floatBar ? floatBar.getBoundingClientRect().height : null,
     expectNavW: PPG_CHROME.bitmaps.inspNav.peSize?.[0] ?? 71,
     expectToolsW: PPG_CHROME.bitmaps.tools.peSize?.[0] ?? 66,
-    expectTitleH: PPG_CHROME.tokens.titleBarHeightPx,
-    fontHost: PPG_CHROME.tokens.fontPtHost,
-    fontFamily: PPG_CHROME.tokens.fontFamily,
+    expectTitleH: tok.titleBarHeightPx,
+    fontHost: tok.fontPtHost,
+    fontFamily: tok.fontFamily,
+    titleColorref: {
+      status: titleCr?.status ?? null,
+      wire: titleCr?.wire ?? null,
+      hover: titleCr?.hover?.status ?? 'LOCK',
+      titleFill: tok.ppgTitleGradient?.[0] ?? null,
+      titleText: tok.ppgTitleText ?? null,
+      chromeFace: tok.ppgChromeFace ?? null,
+      chromeMid: tok.ppgChromeMid ?? null,
+      cssTitleTop: cs.getPropertyValue('--ppg-title-top').trim(),
+      cssTitleFg: cs.getPropertyValue('--ppg-title-fg').trim(),
+      cssChromeFace: cs.getPropertyValue('--ppg-chrome-face').trim(),
+      tokensApplied:
+        cs.getPropertyValue('--ppg-title-top').trim().toLowerCase() === String(tok.ppgTitleGradient?.[0] ?? '').toLowerCase() &&
+        cs.getPropertyValue('--ppg-title-fg').trim().toLowerCase() === String(tok.ppgTitleText ?? '').toLowerCase() &&
+        cs.getPropertyValue('--ppg-chrome-face').trim().toLowerCase() === String(tok.ppgChromeFace ?? '').toLowerCase(),
+    },
     hosts: Object.keys(PPG_CHROME.hosts),
     explorer: {
       renameId: (PPG_CHROME as any).explorer?.renameDialog?.id,

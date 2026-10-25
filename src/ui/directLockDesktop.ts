@@ -1,6 +1,6 @@
 // Softimage Desktop LOCK close dump (2026-10-25) — honest wire statuses.
-// Source: internal/softimage-pc-dumps/unlock/direct_lock_desktop_close.json
-// Region HWND crop closed by modules-gdi harvest; PPG COLORREF / OpenView stay LOCK — no invent.
+// Source: internal/softimage-pc-dumps/unlock/direct_lock_desktop_close.json (+ modules-gdi PPG COLORREF).
+// Region HWND crop closed by modules-gdi harvest; PPG hover / OpenView stay LOCK — no invent.
 // Anim Mixer/Editor/Fcurve client paint DONE via modules-gdi HWND PNG (anim_client_paint.json).
 import desk from '../data/si/direct_lock_desktop_close.json';
 
@@ -9,7 +9,9 @@ type Honest = {
   wire?: string;
   hwnd_crop_chrome?: string;
   status?: string;
+  hover?: string;
   note?: string;
+  openview?: string;
 };
 
 const D = desk as {
@@ -23,11 +25,11 @@ const D = desk as {
 /** Softimage Desktop Passes.RenderOptions keys attested in direct_lock_desktop_close (OM only). */
 export const DESKTOP_REGION_OM_KEYS = Object.keys(D.region_params);
 
-/** Compact audit — region HWND DUMP_READY; PPG/OpenView LOCK; Anim ExecCmd + client paint DONE. */
+/** Compact audit — region HWND DUMP_READY + PPG title COLORREF WIRED; PPG hover / OpenView LOCK; Anim ExecCmd + paint DONE. */
 export function directLockDesktopAudit(): Record<string, unknown> {
   const region = D.honest['render.region_hwnd_crop'];
   const ppg = D.honest['ui.ppg_title_hover_gdi'];
-  const views = D.honest['animate.floating_views'] as Honest & { openview?: string; wire?: string };
+  const views = D.honest['animate.floating_views'] as Honest;
   const paint = D.honest['animate.fcurve_mixer_client_paint'];
   const openviewFail =
     Object.keys(D.openview_errors).length > 0 &&
@@ -36,6 +38,10 @@ export function directLockDesktopAudit(): Record<string, unknown> {
     (views?.status === 'EXECCMD_DONE' || views?.wire === 'EXECCMD') &&
     (views?.openview ?? 'LOCK') === 'LOCK';
   const regionHwnd = region?.hwnd_crop_chrome ?? 'LOCK';
+  const ppgWired =
+    (ppg?.status === 'WIRED' || ppg?.wire === 'COLORREF_TITLE_CHROME') &&
+    (ppg?.hover ?? 'LOCK') === 'LOCK' &&
+    (ppg?.dump_label === 'DUMP_READY');
   return {
     softimage: D.meta.softimage,
     utc: D.meta.utc,
@@ -47,6 +53,8 @@ export function directLockDesktopAudit(): Record<string, unknown> {
     regionHwndCrop: regionHwnd,
     regionWire: region?.wire ?? 'NONE',
     ppgColorref: ppg?.status ?? 'LOCK',
+    ppgColorrefWire: ppg?.wire ?? 'NONE',
+    ppgHover: ppg?.hover ?? 'LOCK',
     floatingViews: views?.status ?? 'LOCK',
     floatingViewsOpenview: views?.openview ?? 'LOCK',
     floatingViewsWire: views?.wire ?? 'NONE',
@@ -56,7 +64,7 @@ export function directLockDesktopAudit(): Record<string, unknown> {
     ok:
       regionHwnd === 'DUMP_READY' &&
       (region?.wire ?? '') === 'HWND_CROP' &&
-      (ppg?.status ?? 'LOCK') === 'LOCK' &&
+      ppgWired &&
       openviewFail &&
       floatingExecDone &&
       (paint?.status ?? 'LOCK') === 'DONE' &&

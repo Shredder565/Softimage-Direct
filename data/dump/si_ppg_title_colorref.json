@@ -1,0 +1,69 @@
+{
+  "_comment": "Softimage PPG title/chrome COLORREF — Desktop DUMP_READY modules-gdi harvest. Dump-attested only; no invent. Hover stays LOCK (no titlebar_hover / close_btn_hover GetPixel).",
+  "softimage": "13.2.163.0",
+  "status": "DUMP_READY",
+  "wire": "COLORREF_TITLE_CHROME",
+  "hover": {
+    "status": "LOCK",
+    "note": "Harvest checklist PPG:titlebar_hover / PPG:close_btn_hover unfulfilled — no invent hover paint"
+  },
+  "source": {
+    "samples_txt": "internal/softimage-pc-dumps/modules-gdi/ppg_colorref_samples.txt",
+    "png": "media/softimage-modules-gdi/60-ppg-inspect-cube.png",
+    "titlebar_crop": "media/softimage-modules-gdi/60-ppg-titlebar-crop.png",
+    "harvest": "internal/softimage-pc-dumps/modules-gdi/deferred_gdi_harvest.json",
+    "tour": "docs/softimage-modules-gdi-tour.md",
+    "hwnd_win": [150, 150, 693, 256]
+  },
+  "samples": {
+    "PPG_Cube": [
+      {
+        "colorref": "0x00EAE6E4",
+        "rgb": [228, 230, 234],
+        "hex": "#E4E6EA",
+        "offset": [20, 12],
+        "role": "title_text"
+      },
+      {
+        "colorref": "0x00887360",
+        "rgb": [96, 115, 136],
+        "hex": "#607388",
+        "offset": [272, 14],
+        "role": "title_fill"
+      },
+      {
+        "colorref": "0x00999B9E",
+        "rgb": [158, 155, 153],
+        "hex": "#9E9B99",
+        "offset": [30, 45],
+        "role": "chrome_mid"
+      },
+      {
+        "colorref": "0x00A6A8AB",
+        "rgb": [171, 168, 166],
+        "hex": "#ABA8A6",
+        "offset": [272, 35],
+        "role": "chrome_face"
+      },
+      {
+        "colorref": "0x00A6A8AB",
+        "rgb": [171, 168, 166],
+        "hex": "#ABA8A6",
+        "offset": [30, 86],
+        "role": "chrome_face"
+      }
+    ]
+  },
+  "tokens": {
+    "titleFill": "#607388",
+    "titleText": "#E4E6EA",
+    "chromeFace": "#ABA8A6",
+    "chromeMid": "#9E9B99"
+  },
+  "notes": [
+    "COLORREF is 0x00BBGGRR; hex tokens are CSS #RRGGBB from dump RGB().",
+    "Title fill attested once — CSS top/bot gradient stops both use titleFill (no invent second stop).",
+    "PPG_AfterCreateCloth samples match title/chrome; cloth-titled PPG stays LOCK (generic Scene_Root).",
+    "RGB(38,38,93) AfterCreateCloth offset=(30,81) is not title/chrome — left unwired."
+  ]
+}

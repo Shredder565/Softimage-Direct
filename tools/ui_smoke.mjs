@@ -161,22 +161,29 @@ else {
   } else if ((ff.flyoutCount ?? 0) < 8) {
     fail.push(`renderMcpFlyouts expected ≥8 flyouts got ${ff.flyoutCount}`);
   } else ok.push(`Render MCP flyouts PE menu 234 (${ff.flyoutCount} buttons, Desktop press-hold gap CLOSED)`);
-  // Desktop LOCK close dump — region HWND DUMP_READY; PPG/OpenView LOCK; Anim ExecCmd + client paint DONE
+  // Desktop LOCK close — region HWND DUMP_READY + PPG COLORREF WIRED; hover/OpenView LOCK; Anim ExecCmd + paint DONE
   const dld = audit.directLockDesktop;
   if (!dld) fail.push('directLockDesktop missing from __uiAudit');
   else if (!dld.ok) fail.push(`directLockDesktop audit failed: ${JSON.stringify(dld)}`);
-  else if (dld.regionHwndCrop !== 'DUMP_READY' || dld.regionWire !== 'HWND_CROP' || dld.ppgColorref !== 'LOCK') {
-    fail.push(`directLockDesktop expected region HWND DUMP_READY/HWND_CROP + PPG LOCK got hwnd=${dld.regionHwndCrop} wire=${dld.regionWire} ppg=${dld.ppgColorref}`);
+  else if (dld.regionHwndCrop !== 'DUMP_READY' || dld.regionWire !== 'HWND_CROP') {
+    fail.push(`directLockDesktop expected region HWND DUMP_READY/HWND_CROP got hwnd=${dld.regionHwndCrop} wire=${dld.regionWire}`);
+  } else if (dld.ppgColorref !== 'WIRED' || dld.ppgHover !== 'LOCK' || dld.ppgColorrefWire !== 'COLORREF_TITLE_CHROME') {
+    fail.push(`directLockDesktop PPG expected WIRED/hover LOCK got ppg=${dld.ppgColorref} hover=${dld.ppgHover} wire=${dld.ppgColorrefWire}`);
   } else if (dld.floatingViews !== 'EXECCMD_DONE' || dld.floatingViewsOpenview !== 'LOCK') {
     fail.push(`directLockDesktop Anim ExecCmd expected EXECCMD_DONE/OpenView LOCK got ${dld.floatingViews}/${dld.floatingViewsOpenview}`);
   } else if (dld.fcurveMixerClientPaint !== 'DONE' || dld.fcurveMixerClientPaintWire !== 'HWND_PNG') {
     fail.push(`directLockDesktop client paint expected DONE/HWND_PNG got ${dld.fcurveMixerClientPaint}/${dld.fcurveMixerClientPaintWire}`);
-  } else ok.push(`Desktop LOCK close dump (region OM ${dld.regionOmParamCount} keys, HWND DUMP_READY, PPG LOCK, Anim ExecCmd+paint DONE)`);
+  } else ok.push(`Desktop LOCK close (region OM ${dld.regionOmParamCount} keys, HWND DUMP_READY, PPG COLORREF WIRED, Anim ExecCmd+paint DONE)`);
   // Softimage render.region_hwnd_crop — modules-gdi crop + DsNewRegionButtonCtrl + prefs colors
   const rrh = audit.renderRegionHwnd;
   if (!rrh) fail.push('renderRegionHwnd missing from __uiAudit');
   else if (!rrh.ok) fail.push(`renderRegionHwnd audit failed: ${JSON.stringify(rrh)}`);
   else ok.push(`Render region HWND crop DUMP_READY (${rrh.hwndCount}×${rrh.hwndCls}, crop ${rrh.cropPng?.[0]}x${rrh.cropPng?.[1]}, border ${rrh.borderCss})`);
+  // PPG title/chrome COLORREF from modules-gdi harvest (hover LOCK)
+  const pcr = audit.ppgTitleColorref;
+  if (!pcr) fail.push('ppgTitleColorref missing from __uiAudit');
+  else if (!pcr.ok) fail.push(`ppgTitleColorref audit failed: ${JSON.stringify(pcr)}`);
+  else ok.push(`PPG title/chrome COLORREF WIRED (fill #607388 text #E4E6EA face #ABA8A6; hover LOCK)`);
   // Softimage Anim editors ExecuteCommand([]) — open Mixer/Editor/Fcurve; client paint HWND_PNG DONE
   const aee = audit.animEditorsExecCmd;
   if (!aee) fail.push('animEditorsExecCmd missing from __uiAudit');
@@ -314,7 +321,11 @@ else {
   else if (!pc.tokensApplied) fail.push('ppgChrome CSS tokens not applied (--ppg-label-w)');
   else if (pc.expectNavW !== 71 || pc.expectToolsW !== 66) fail.push(`ppgChrome bitmap sizes expected 71×66 got nav=${pc.expectNavW} tools=${pc.expectToolsW}`);
   else if (pc.fontHost !== 11) fail.push(`ppgChrome fontHost expected 11 (uiut Arial) got ${pc.fontHost}`);
-  else ok.push(`PPG shell chrome host=${pc.hostDialog} nav=${pc.expectNavW}x25 tools=${pc.expectToolsW}x25 font=${pc.fontHost}pt`);
+  else if (pc.titleColorref?.status !== 'DUMP_READY' || pc.titleColorref?.hover !== 'LOCK' || !pc.titleColorref?.tokensApplied) {
+    fail.push(`ppgChrome titleColorref expected DUMP_READY/hover LOCK/tokensApplied got ${JSON.stringify(pc.titleColorref)}`);
+  } else if (pc.titleColorref?.titleFill !== '#607388' || pc.titleColorref?.titleText !== '#E4E6EA') {
+    fail.push(`ppgChrome title COLORREF mismatch: ${JSON.stringify(pc.titleColorref)}`);
+  } else ok.push(`PPG shell chrome host=${pc.hostDialog} nav=${pc.expectNavW}x25 tools=${pc.expectToolsW}x25 font=${pc.fontHost}pt title=#607388`);
   // Explorer + Preferences shell chrome (sceneexplorer 725 / props 264)
   const xp = pc.explorer;
   const pr = pc.preferences;
