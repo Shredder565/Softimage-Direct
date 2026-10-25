@@ -22,5 +22,5 @@
     "removed": 1,
     "deformersAfter": 1
   },
-  "pcNote": "PC dump /workspace/data/dump/si_anim_envelope_shape.json; expected gaps: PC ApplyFlexEnv failed headless (Direct still exercises envelope); flexenv_weights /workspace/data/dump/si_flexenv_weights.json; PC ApplyFlexEnv OK → cube.polymsh.cls.EnvelopWeightCls.Envelope_Weights.autoenvassign; EnvelopeWeight cube.polymsh.cls.EnvelopWeightCls.Envelope_Weights; envelopop present; deformers [bone]; expected gaps: PC ApplyFlexEnv failed headless (Direct still exercises envelope); PC si_flexenv_weights: 32 rows weights null (LOCK — String expected)"
+  "pcNote": "PC dump /workspace/data/dump/si_anim_envelope_shape.json; expected gaps: PC ApplyFlexEnv failed headless (Direct still exercises envelope); flexenv_weights /workspace/data/dump/si_flexenv_weights.json (Desktop pass4 Weights.Array); PC ApplyFlexEnv OK → cube.polymsh.cls.EnvelopWeightCls.Envelope_Weights.autoenvassign; EnvelopeWeight cube.polymsh.cls.EnvelopWeightCls.Envelope_Weights; envelopop present; deformers [root,bone,eff]; envelopop.Weights.Array probed as (deformer, element); expected gaps: PC ApplyFlexEnv failed headless (Direct still exercises envelope); PC si_flexenv_weights: 32 rows weights null (LOCK — Weights.Array all null)"
 }
