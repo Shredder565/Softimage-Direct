@@ -12,7 +12,8 @@ Desktop builds ship as **AfterImage** (Windows NSIS installer; no Softimage/Auto
 
 - [Releases](https://github.com/Shredder565/Softimage-Direct/releases) — all published versions
 - [Latest release](https://github.com/Shredder565/Softimage-Direct/releases/latest) — always the current stable
-- **Download:** [AfterImage-1.0.1-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.1/AfterImage-1.0.1-setup.exe)
+- **Download:** [AfterImage-1.0.2-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.2/AfterImage-1.0.2-setup.exe)
+- Prior: [AfterImage-1.0.1-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.1/AfterImage-1.0.1-setup.exe) · [AfterImage-1.0.0-setup.exe](https://github.com/Shredder565/Softimage-Direct/releases/download/v1.0.0/AfterImage-1.0.0-setup.exe)
 
 ## Run
 
@@ -28,7 +29,7 @@ Prefer the [Latest Releases](#latest-releases) download above. To build locally 
 
 ```
 npm ci
-npm run build:win   # → release/AfterImage-1.0.1-setup.exe
+npm run build:win   # → release/AfterImage-1.0.2-setup.exe
 ```
 
 Or use GitHub Actions (*Build AfterImage Windows installer*) / push a version tag. See [docs/PACKAGING.md](docs/PACKAGING.md).
