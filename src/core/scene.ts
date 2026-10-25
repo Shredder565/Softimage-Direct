@@ -131,33 +131,71 @@ export class Shader extends Node {
   connect(port: string, sh: Shader | null) { const old = this.inputs.get(port); if (old) old.parent = null; if (sh) { this.inputs.set(port, sh); sh.parent = this; } else this.inputs.delete(port); }
   explorerChildren(): Node[] { return [...this.inputs.values()]; }
 }
+/** Softimage ApplyShader Constant (materials_beyond_phong.json): color=[1,1,1,0], transp=1; Parameter.Name = sn.
+ *  Full phenolib material-constant.spdl is NOT what headless ApplyShader installs — dump wins. */
+export function makeConstant(name = 'Constant'): Shader {
+  return new Shader(name, 'Constant', [
+    color('color', [1, 1, 1], 'color'),
+    num('transp', 1, 'transp'),
+  ]);
+}
 /** A shader node from Softimage's own phenolib SPDL (material-phong, txt2d-image-explicit…) or a Get > Material preset name. */
 export function makeSiShader(key: string, name?: string): Shader | null {
-  const r = siShaderDefs(key); if (!r) return null;
+  const preset = String(key).replace(/^Shaders\\Material\\/, '').replace(/^Materials\\/, '');
+  if (preset === 'Constant') return makeConstant(name ?? 'Constant');
+  const r = siShaderDefs(preset); if (!r) return null;
   const s = new Shader(name ?? r.title, r.type, r.defs, r.spdl); if (r.layout) s.layout = r.layout; return s;
 }
 export function makePhong(name = 'Phong') { return makeSiShader('Phong', name)!; }
 export function makeLambert(name = 'Lambert') { return makeSiShader('Lambert', name)!; }
-/** Softimage Material OM (si_render_material_phong.json): classname Material; Parameter.Name labels attested. */
+/** Softimage Material OM (si_render_material_phong + materials_beyond_phong): classname Material; Parameter.Name labels attested.
+ *  Connection ports (surface/volume/…) are Parameter slots; Softimage wires surface/shadow/photon → shader.out. */
 export class Material extends Node {
   surface: Shader | null = null;
+  /** Softimage Material Parameter.Source connections: port → source ScriptName (usually 'out'). */
+  readonly portConnections = new Map<string, string>();
   constructor(name: string) {
     super(name, 'Material', 'material', [
+      // Connection Parameter.Name = sn (materials_beyond_phong.params_full)
+      str('surface', '', 'surface', { readOnly: true }),
+      str('volume', '', 'volume', { readOnly: true }),
+      str('environment', '', 'environment', { readOnly: true }),
+      str('contour', '', 'contour', { readOnly: true }),
+      str('displacement', '', 'displacement', { readOnly: true }),
+      str('shadow', '', 'shadow', { readOnly: true }),
+      str('photon', '', 'photon', { readOnly: true }),
+      str('photonvolume', '', 'photonvolume', { readOnly: true }),
+      str('normal', '', 'normal', { readOnly: true }),
+      str('lightmap', '', 'lightmap', { readOnly: true }),
+      str('realtime', '', 'realtime', { readOnly: true }),
+      str('material', '', 'material', { readOnly: true }),
       str('Name', name, 'Name', { readOnly: true }),
-      // Softimage PC dump: sn envmode / wrapu / wrapv Parameter.Name Mode / Wrap U / Wrap V (values attested, not invented)
+      // Softimage PC dump: sn envmode / wrapu / wrapv Parameter.Name Mode / Wrap U / Wrap V (raw ints LOCK — no invent wrap UI)
       int('envmode', 8448, 'Mode'),
       int('wrapu', 10497, 'Wrap U'),
       int('wrapv', 10497, 'Wrap V'),
       str('CAV', '', 'Vertex Color Property'),
       str('UV', '', 'UV Property'),
       int('TextureSel', 1, 'Texture Selection'),
+      str('TrackedShader', '', 'Shader', { readOnly: true }),
+      str('ImageClipName', '', 'Image Clip[2]'),
       bool('TextureOverriden', false, 'Overriden by Texture Editor Selection'),
       bool('alphamask', false, 'Use Alpha Mask'),
     ]);
   }
-  setSurface(s: Shader | null) { if (this.surface) this.surface.parent = null; this.surface = s; if (s) s.parent = this; }
+  setSurface(s: Shader | null) {
+    if (this.surface) this.surface.parent = null;
+    this.surface = s;
+    if (s) s.parent = this;
+    // Softimage dump connections_from_material: surface / shadow / photon → shader.out
+    this.portConnections.clear();
+    if (s) for (const port of ['surface', 'shadow', 'photon'] as const) this.portConnections.set(port, 'out');
+  }
   explorerChildren() { return this.surface ? [this.surface] : []; }
-  get diffuse(): [number, number, number] { return this.surface?.val('diffuse') ?? [0.7, 0.7, 0.7]; }
+  get diffuse(): [number, number, number] {
+    const d = this.surface?.val('diffuse') ?? this.surface?.val('color');
+    return (Array.isArray(d) ? d.slice(0, 3) : [0.7, 0.7, 0.7]) as [number, number, number];
+  }
 }
 
 // -------------------------------------------------------------- operators

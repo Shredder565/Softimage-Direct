@@ -243,12 +243,39 @@ export function registerModelCommands(app: App) {
   for (const [name, label] of [['CreateSpine', 'Create Spine'], ['MakeTail', 'Create Tail'], ['MakeControlSplines', 'Create Control Splines']]) app.register({ name, label, category: 'Character Rigging', args: [], canRun: () => false, execute() { throw new Error(`${label} needs Softimage's rig preset files (not shipped)`); } });
 
   // ------------------------------------------------------------ materials
+  // Dump-backed stock illumination (materials_beyond_phong summary.ok). Architectural / mia_* / MetallicPaint LOCK invent.
   const SHADERS: Record<string, (n: string) => Shader> = {
-    Phong: makePhong, Lambert: makeLambert, Blinn: n => shader(n, 'Blinn'), Constant: n => shader(n, 'Constant'), 'Cook-Torrance': n => shader(n, 'Cook-Torrance'), Strauss: n => shader(n, 'Strauss'), Anisotropic: n => shader(n, 'Anisotropic'),
-    Architectural: n => shader(n, 'Architectural'), 'Car Paint': n => shader(n, 'Car Paint'), 'Ambient Occlusion': n => shader(n, 'Ambient Occlusion'), 'Toon Host': n => shader(n, 'Toon'), 'Toon Paint': n => shader(n, 'Toon'), 'Toon Paint Ambient': n => shader(n, 'Toon'), 'Toon Paint and Host': n => shader(n, 'Toon'), 'Toon Paint Highlight': n => shader(n, 'Toon'), 'Toon Paint Rimlight': n => shader(n, 'Toon'), 'Toon Paint Rounded': n => shader(n, 'Toon'),
+    Phong: makePhong,
+    Lambert: makeLambert,
+    Blinn: n => shader(n, 'Blinn'),
+    Constant: n => shader(n, 'Constant'),
+    Cooktorrance: n => shader(n, 'Cooktorrance'),
+    'Cook-Torrance': n => shader(n, 'Cooktorrance'),
+    Strauss: n => shader(n, 'Strauss'),
+    Anisotropic: n => shader(n, 'Anisotropic'),
+    // Non-MR extras still SPDL/menu-backed (not in mia FAIL list)
+    'Ambient Occlusion': n => shader(n, 'Ambient Occlusion'),
+    'Toon Host': n => shader(n, 'Toon'), 'Toon Paint': n => shader(n, 'Toon'), 'Toon Paint Ambient': n => shader(n, 'Toon'),
+    'Toon Paint and Host': n => shader(n, 'Toon'), 'Toon Paint Highlight': n => shader(n, 'Toon'),
+    'Toon Paint Rimlight': n => shader(n, 'Toon'), 'Toon Paint Rounded': n => shader(n, 'Toon'),
   };
-  const sh = app.commands.get('SIApplyShader')!; sh.canRun = (a) => !!SHADERS[String(a.PresetObj).replace('Shaders\\Material\\', '')];
-  sh.execute = (app, a) => { const preset = String(a.PresetObj).replace('Shaders\\Material\\', ''); const mk = SHADERS[preset]; if (!mk) throw new Error(`Shader ${preset} not available`); const objs = app.targets(a.InputObjs); if (!objs.length) throw new Error('Select objects'); const mat = app.scene.newMaterial((objs[0].name) + '_' + preset.replace(/[^A-Za-z]/g, ''), mk(preset)); for (const o of objs) { const old = o.material; app.record('Apply shader', () => o.setMaterial(mat), () => o.setMaterial(old)); } app.select([mat.surface!]); return mat; };
+  const LOCK_MR = /^(Architectural|Architectural_MO|MetallicPaint|mia_Material|mia_Material_MultiOutput|mi_Metallic_Paint|Car Paint)$/i;
+  const sh = app.commands.get('SIApplyShader')!;
+  sh.canRun = (a) => {
+    const preset = String(a.PresetObj).replace('Shaders\\Material\\', '').replace(/^Materials\\/, '');
+    if (LOCK_MR.test(preset) || /mia_|mi_Metallic/i.test(preset)) return false;
+    return !!SHADERS[preset];
+  };
+  sh.execute = (app, a) => {
+    const preset = String(a.PresetObj).replace('Shaders\\Material\\', '').replace(/^Materials\\/, '');
+    if (LOCK_MR.test(preset) || /mia_|mi_Metallic/i.test(preset))
+      throw new Error(`Shader ${preset} LOCK invent (Softimage headless ApplyShader FAIL — mental-ray-materials.md)`);
+    const mk = SHADERS[preset]; if (!mk) throw new Error(`Shader ${preset} not available`);
+    const objs = app.targets(a.InputObjs); if (!objs.length) throw new Error('Select objects');
+    const mat = app.scene.newMaterial((objs[0].name) + '_' + preset.replace(/[^A-Za-z]/g, ''), mk(preset));
+    for (const o of objs) { const old = o.material; app.record('Apply shader', () => o.setMaterial(mat), () => o.setMaterial(old)); }
+    app.select([mat.surface!]); return mat;
+  };
   app.register({ name: 'MakeLocalMaterialsForHierarchy', label: 'Make Material Local', category: 'Rendering', args: [{ name: 'InputObj', default: '' }], execute(app, a) { for (const o of app.targets(a.InputObj)) { const src = o.material ?? app.scene.root.material!; const mat = app.scene.newMaterial(o.name + '_Mat', cloneShader(src.surface!)); const old = o.material; app.record('Make local', () => o.setMaterial(mat), () => o.setMaterial(old)); } } });
   app.commands.get('AssignMaterial')!.execute = (app, a) => { const mat = app.selection.find(n => n.kind === 'material') as any ?? (a.Material ? app.scene.materials.find(m => m.name === a.Material) : null) ?? app.scene.materials[app.scene.materials.length - 1]; if (!mat) throw new Error('No material to assign; select one in the Explorer (Materials scope)'); for (const o of app.targets(a.InputObjs)) { const old = o.material; app.record('Assign', () => o.setMaterial(mat), () => o.setMaterial(old)); } };
   app.register({ name: 'OpenMaterialLibrary', label: 'More materials...', category: 'Rendering', args: [], undoable: false, execute(app) { const sw = document.querySelector<HTMLElement>('.switcher[data-name=module_menu] .switcher-bar'); (sw?.children[1] as HTMLElement)?.click(); app.logMsg('info', 'Open the Explorer in the Materials scope to browse the material library'); } });
