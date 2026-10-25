@@ -13,8 +13,10 @@ import { registerRenderCommands } from './commands/render';
 import { registerModuleToolbarCommands } from './commands/moduleToolbar';
 import { registerRenderToolbarOmCommands, renderToolbarOmAudit } from './commands/renderToolbarOm';
 import { registerIceModuleCommands, iceModuleAudit } from './commands/iceModule';
+import { registerHairModuleCommands, hairModuleAudit, hairApplySmoke } from './commands/hairModule';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
+import hairModuleTops from './data/si/hair_module_mcp_tops.json';
 import { iceTree, renderTree, textureEditor, schematic, animationEditor, spreadsheet, pluginManager, netview, imageClips, renderManager, materialManager, materialPanel, weightPaintPanel, presetManager, animationMixer } from './ui/shell';
 import { frostGraphView, frostHairWizardView, frostClothWizardView, frostOf, runFrostSmokeTests } from './frost';
 import { registerToolbarCommands, palettesView, toolbarView, newToolbar, customizeToolbars, openToolbarWindow, userToolbars } from './ui/toolbars';
@@ -65,6 +67,7 @@ registerRenderCommands(app);
 registerModuleToolbarCommands(app);
 registerRenderToolbarOmCommands(app);
 registerIceModuleCommands(app);
+registerHairModuleCommands(app);
 registerToolbarCommands(app);
 (window as any).__siMessage = siMessage; (window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); (window as any).__getEnableParity = () => getEnableParity(app); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
 // Softimage Command.GetEnabled analogue for harness / Script Editor probes
@@ -284,6 +287,15 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
         ? Array.from((document.querySelector('.module-select') as HTMLSelectElement).options).some(o => o.value === 'ICE')
         : false,
     },
+    // Softimage Hair module MENU 297 MCP Create/Modify/Display + ApplyHair* (Hair Panel GDI LOCK)
+    hairModule: {
+      ...hairModuleAudit(app),
+      mcpTops: hairModuleTops.tops,
+      mcpButtons: hairModuleTops.buttons,
+      moduleInSelect: (document.querySelector('.module-select') as HTMLSelectElement | null)
+        ? Array.from((document.querySelector('.module-select') as HTMLSelectElement).options).some(o => o.value === 'Hair')
+        : false,
+    },
     // Desktop polish #2 — manip / viewport prefs + default Camera pose (softimage-pc attested)
     viewportPolish: {
       ...(typeof (window as any).__vm?.viewportPolish === 'function' ? (window as any).__vm.viewportPolish() : {}),
@@ -313,6 +325,7 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
 };
 (window as any).__openView = (name: string) => openView(name);
 (window as any).__switchModule = (m: string) => { app.module = m as any; app.events.emit('module'); };
+(window as any).__hairApplySmoke = () => hairApplySmoke(app);
 // FROST P0 hooks (graph session + evaluator smoke)
 frostOf(app);
 (window as any).__frost = () => frostOf(app);

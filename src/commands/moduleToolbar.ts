@@ -327,7 +327,10 @@ export function registerModuleToolbarCommands(app: App) {
     app.register({ name, label, category: 'Manipulation', args: [{ name: 'Clsid', default: '' }], undoable: false, execute: (app) => stubTool(app, label) });
   }
 
+  // Modeling ApplyHair* ops from modules_hair.json / commands_full (tools above cover Scale/Rotate/Puff UI).
   const hairOps: [string, string][] = [
+    ['ApplyHairPuffOp', 'Hair Puff'], ['ApplyHairClumpOp', 'Hair Clump'],
+    ['ApplyHairScaleOp', 'Hair Scale'], ['ApplyHairRotateOp', 'Hair Rotate'],
     ['ApplyHairCombNormalOp', 'Hair Comb Along Normal'], ['ApplyHairRecombOp', 'Hair Recomb'],
     ['ApplyHairCutOp', 'Hair Cut'], ['ApplyHairAttenuateOp', 'Hair Attenuate'],
     ['ApplyHairPopOp', 'Hair Pop'], ['ApplyHairPopSelectedOp', 'Hair Pop Selected'],
