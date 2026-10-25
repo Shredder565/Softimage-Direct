@@ -20,6 +20,11 @@ const PC_DUMP = [
   '/cursor/stores/self/internal/softimage-pc-dumps/anim/si_anim_envelope_shape.json',
   '/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/anim/si_anim_envelope_shape.json',
 ].find(p => fs.existsSync(p));
+const FLEXENV_WEIGHTS = [
+  path.resolve(__dirname, '../data/dump/si_flexenv_weights.json'),
+  '/cursor/stores/self/internal/softimage-pc-dumps/anim/si_flexenv_weights.json',
+  '/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/anim/si_flexenv_weights.json',
+].find(p => fs.existsSync(p));
 const FIXTURE = path.resolve(__dirname, '../data/dump/si_anim_envelope_shape_fixture.json');
 
 const b = await chromium.launch({ executablePath: CHROME, args: ['--headless=new', '--use-gl=swiftshader'] });
@@ -114,6 +119,22 @@ if (PC_DUMP) {
   if (expectedGaps.length) pcNote += `; expected gaps: ${expectedGaps.join('; ')}`;
 } else if (fs.existsSync(FIXTURE)) {
   pcNote = `fixture ${FIXTURE}`;
+}
+// Overnight ApplyFlexEnv weight probe (si_flexenv_weights.json) — LOCK when all attempts fail
+if (FLEXENV_WEIGHTS) {
+  const fw = JSON.parse(fs.readFileSync(FLEXENV_WEIGHTS, 'utf8'));
+  pcNote += `; flexenv_weights ${FLEXENV_WEIGHTS}`;
+  const flex = fw.steps?.find?.(s => s.name === 'ApplyFlexEnv');
+  const wtOk = Array.isArray(fw.weight_table) && fw.weight_table.some(row => Array.isArray(row?.weights) && row.weights.length);
+  if (flex && flex.ok === false) {
+    expectedGaps.push(`PC si_flexenv_weights ApplyFlexEnv failed (${(flex.attempts || []).length} attempts)`);
+  }
+  if (fw.errors?.length) expectedGaps.push(`PC si_flexenv_weights errors: ${fw.errors.join('; ')}`);
+  if (wtOk && !(r.weightSum != null)) {
+    diffs.push('PC flexenv weight_table has weights but Direct weightSum null');
+  }
+  if (!wtOk) expectedGaps.push('PC si_flexenv_weights: no weight rows (LOCK)');
+  if (expectedGaps.length) pcNote += `; expected gaps: ${[...new Set(expectedGaps)].join('; ')}`;
 }
 
 console.log(diffs.length ? 'DIFF' : 'OK', 'envelope + shape blend');
