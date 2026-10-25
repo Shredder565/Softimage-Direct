@@ -1,5 +1,5 @@
 {
-  "_comment": "Softimage ICE view chrome — xsivw + preferences.icetree dump-backed shell. Client GDI LOCK until Desktop ICE Tree HWND harvest (modules-tour 12-ice-tree.png is mislabelled Face Robot; modules-gdi/20-ice-tree.png index-only).",
+  "_comment": "Softimage ICE view chrome — xsivw + preferences.icetree shell + Desktop modules-gdi client GDI (Gate B). Tour 12-ice-tree.png is Face Robot mislabel — do not use.",
   "softimage": "13.2.163.0",
   "source": [
     "internal/softimage-pc-dumps/views/icetree.xsivw",
@@ -7,7 +7,14 @@
     "internal/softimage-pc-dumps/views/rendertree.xsivw",
     "src/data/si/layout_default.json viewdefaultpos",
     "internal/softimage-pc-dumps/modules/modules_prefs_related.json",
-    "internal/ice-tree-gdi-desktop-attestation.md"
+    "docs/softimage-modules-gdi-tour.md",
+    "internal/softimage-pc-dumps/modules-gdi/priority_ice_anim_live.json",
+    "internal/softimage-pc-dumps/modules-gdi/float_children_after_icetree.txt",
+    "internal/softimage-pc-dumps/modules-gdi/float_children_detail.txt",
+    "internal/softimage-pc-dumps/modules-gdi/ice_tree_mislabel_note.txt",
+    "media/softimage-modules-gdi/20-ice-tree.png",
+    "media/softimage-modules-gdi/20-ice-tree-desktop.png",
+    "media/softimage-modules-gdi/21-ice-attribute-editor.png"
   ],
   "views": {
     "ICE Tree": {
@@ -22,8 +29,10 @@
       "maxinstances": "10000",
       "acceptfocus": "true",
       "private": "false",
-      "status": "SHELL",
-      "client_gdi": "LOCK"
+      "status": "CLIENT_GDI",
+      "client_gdi": "DUMP_READY",
+      "hwnd_title": "ICE Tree",
+      "hwnd_child": "AfxWnd110u|ICE Tree"
     },
     "ICE Attribute Editor": {
       "file": "iceattributeeditor.xsivw",
@@ -35,20 +44,24 @@
       "maxinstances": "10000",
       "acceptfocus": "true",
       "private": "false",
-      "status": "SHELL_ONLY",
-      "client_gdi": "LOCK",
-      "note": "View definition attested; editor body awaits Desktop/HWND harvest"
+      "status": "CLIENT_GDI",
+      "client_gdi": "DUMP_READY",
+      "hwnd_title": "ICE Attribute Editor",
+      "toolbar_labels": ["All Attributes", "Edit", "ICE Tree"],
+      "body_static": "Update can't be done with more than one object selected",
+      "note": "Toolbar + DSGrid body message from Desktop HWND float_children_detail; leaf grid cells LOCK without attribute dump"
     }
   },
   "toolbar_shell": {
-    "attested": ["Nodes", "Edit", "Update", "Frame"],
-    "desktop_png": "unattested",
-    "note": "Names match Softimage ICE Tree host (shared Render Tree cmdmap family). Compound catalogs LOCK. AfterImage New Tree removed — use ApplyICEOp / Nodes."
+    "attested": ["Create", "Show", "Tools", "Nodes", "Compounds", "User Tools"],
+    "desktop_png": "media/softimage-modules-gdi/20-ice-tree.png",
+    "toolbar_text": ["Attr. Editor", "No Highlight"],
+    "note": "Menubar + Attr. Editor / No Highlight from Desktop 20-ice-tree.png. Icon bitmaps LOCK. Compound catalog leaves LOCK."
   },
   "prefs_layout": {
-    "status": "PREFS_ATTESTED_REGION_UNSEEN",
-    "source": "preferences.icetree / C3DPrefsICETree",
-    "apply_as_css_vars": false,
+    "status": "PREFS_ATTESTED_REGION_DESKTOP",
+    "source": "preferences.icetree / C3DPrefsICETree + Desktop 20-ice-tree.png regions",
+    "apply_as_css_vars": true,
     "preset_manager_size": 250,
     "explorer_size": 150,
     "leftcompoundbar_size": 100,
@@ -64,46 +77,122 @@
     "allow_explorer_selection": false,
     "allow_explorer_node_skipping": true,
     "create_node_shortcutdelimiter": ":",
-    "note": "Prefs sizes attested; do not paint side-panel geometry until Desktop ICE Tree HWND shows matching regions."
+    "note": "Prefs sizes applied as CSS region widths after Desktop HWND/PNG attests left palette + right explorer."
   },
   "desktop_png_attestation": {
     "policy": "dump/Desktop-attested only",
-    "utc": "2026-10-25",
+    "utc": "2026-10-25T19:11Z",
     "shots": {
       "12-ice-tree.png": {
         "claimed": "ICE Tree",
         "actual": "Face Robot Stage1 Assemble + Simulate MCP",
         "ice_tree_client": false,
-        "near_duplicate_of": "50-facerobot-layout.png"
+        "near_duplicate_of": "50-facerobot-layout.png",
+        "use_for_ice_tree_gdi": false
       },
-      "10-ice-module.png": {
-        "claimed": "key4 ICE",
-        "actual": "byte-identical baseline 00-softimage-baseline.png",
-        "ice_tree_client": false
+      "20-ice-tree.png": {
+        "path": "media/softimage-modules-gdi/20-ice-tree.png",
+        "status": "DUMP_READY",
+        "ice_tree_client": true,
+        "hwnd_title": "ICE Tree",
+        "png_px": [1010, 327],
+        "use_for_ice_tree_gdi": true
       },
-      "11-ice-after-dump.png": {
-        "claimed": "ICE after dump",
-        "actual": "Face Robot desktop + ICE MCP tops",
-        "ice_tree_client": false,
-        "attests": "ICE module MCP shelf only"
+      "20-ice-tree-desktop.png": {
+        "path": "media/softimage-modules-gdi/20-ice-tree-desktop.png",
+        "status": "DUMP_READY",
+        "ice_tree_client": true,
+        "note": "Desktop context with ICE Tree float"
       },
-      "13-ice-mcp-clean.png": {
-        "claimed": "ICE MCP clean",
-        "actual": "Simulate MCP + Explorer + User viewports",
-        "ice_tree_client": false
+      "21-ice-attribute-editor.png": {
+        "path": "media/softimage-modules-gdi/21-ice-attribute-editor.png",
+        "status": "DUMP_READY",
+        "ice_attr_client": true,
+        "png_px": [850, 500]
       }
     },
     "modules_gdi_20_ice_tree": {
-      "index": "internal/softimage-pc-dumps/modules-gdi/desktop_screenshot_index.txt",
-      "file_present": false,
-      "hwnd_inventory_matched_children": 0
+      "index": "internal/softimage-pc-dumps/modules-gdi/desktop_screenshot_index_priority2.txt",
+      "file_present": true,
+      "hwnd_title": "ICE Tree",
+      "status": "DUMP_READY"
     }
   },
   "client_gdi": {
-    "status": "LOCK",
-    "colors": null,
-    "toolbar_h_px": null,
-    "regions": null,
-    "note": "Await Softimage Desktop ICE Tree HWND harvest (OpenICETreeView success + crops)."
+    "status": "DUMP_READY",
+    "source": [
+      "media/softimage-modules-gdi/20-ice-tree.png",
+      "internal/softimage-pc-dumps/modules-gdi/float_children_after_icetree.txt",
+      "internal/softimage-pc-dumps/modules-gdi/priority_ice_anim_live.json"
+    ],
+    "hwnd": {
+      "float_id": "4458464",
+      "title": { "class": "AfxWnd110u", "text": "ICE Tree", "rect": [246, 692, 1254, 714], "h_px": 22 },
+      "client": { "class": "TrayClientWindowClass", "rect": [249, 714, 1251, 1014], "w_px": 1002, "h_px": 300 },
+      "child": { "name": "DS_ChildICE Tree", "rect": [249, 714, 1251, 1014] },
+      "toolbar_dialog": { "class": "#32770", "rect": [249, 714, 1251, 744], "h_px": 30 },
+      "menubar": { "class": "XSIPopupMenuWndClass", "text": "XSIMenuBar", "rect": [249, 714, 561, 735], "h_px": 21 }
+    },
+    "colors": {
+      "title_bg": "#8b8a8a",
+      "panel_bg": "#aba8a6",
+      "toolbar_bg": "#aba8a6",
+      "client_bg": "#aba8a6",
+      "canvas_bg": "#aba8a6",
+      "category_sel": "#ab956b",
+      "border": "#464646"
+    },
+    "toolbar_h_px": 30,
+    "title_h_px": 22,
+    "menubar_h_px": 21,
+    "regions": {
+      "preset_manager_w": 250,
+      "explorer_w": 150,
+      "leftcompoundbar_w": 100,
+      "rightcompoundbar_w": 100
+    },
+    "palette": {
+      "search_label": "Search",
+      "tabs": ["Task", "Tool"],
+      "task_categories_visible": [
+        "Favorites",
+        "All Nodes",
+        "Array",
+        "Array2d",
+        "Binary Flags",
+        "Color",
+        "Comment",
+        "Constant",
+        "Conversion",
+        "Curves"
+      ],
+      "node_leaves": "LOCK",
+      "note": "Category labels visible in 20-ice-tree.png Task tab; truncated node leaf names not invented."
+    },
+    "flyouts": "LOCK",
+    "icon_bitmaps": "LOCK",
+    "note": "Gate B client paint from Desktop DUMP_READY harvest. Tour 12-ice-tree.png excluded (Face Robot mislabel)."
+  },
+  "attr_client_gdi": {
+    "status": "DUMP_READY",
+    "source": [
+      "media/softimage-modules-gdi/21-ice-attribute-editor.png",
+      "internal/softimage-pc-dumps/modules-gdi/float_children_detail.txt"
+    ],
+    "hwnd": {
+      "title": { "class": "AfxWnd110u", "text": "ICE Attribute Editor", "rect": [51, 51, 899, 73], "h_px": 22 },
+      "client": { "rect": [54, 73, 896, 546], "w_px": 842, "h_px": 473 },
+      "toolbar_dialog": { "class": "#32770", "rect": [54, 73, 896, 99], "h_px": 26 },
+      "grid": { "class": "DSGrid", "rect": [54, 99, 896, 546] }
+    },
+    "toolbar_h_px": 26,
+    "toolbar_labels": ["All Attributes", "Edit", "ICE Tree"],
+    "body_static": "Update can't be done with more than one object selected",
+    "colors": {
+      "panel_bg": "#aba8a6",
+      "toolbar_bg": "#aba8a6",
+      "body_bg": "#aba8a6"
+    },
+    "grid_cells": "LOCK"
   }
 }

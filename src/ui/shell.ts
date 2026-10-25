@@ -14,7 +14,10 @@ import { openSiMenu, SI_MENUS } from './si';
 import { PRESET_MODELS } from '../commands/presets';
 import { animChrome, fcurveMenuLabels, mixerMenuLabels } from './animChrome';
 import iceViewChrome from '../data/si/ice_view_chrome.json';
-import { applyIceTreeChromeVars, iceToolbarShellLabels } from './iceTreeChrome';
+import {
+  applyIceTreeChromeVars, iceToolbarShellLabels, iceToolbarTextLabels,
+  icePaletteTabs, iceTaskCategoriesVisible,
+} from './iceTreeChrome';
 
 const el = (tag: string, cls = '', text = '') => { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; };
 const btn = (l: string, t: string, fn: (e: MouseEvent) => void) => { const b = el('button', 'xp-btn', l) as HTMLButtonElement; b.title = t; b.onclick = fn; return b; };
@@ -422,7 +425,7 @@ export function animationMixer(app: App, host: HTMLElement) {
 export { Property };
 
 // ================================================================ ICE Tree (node editor for ICETree operators)
-// Softimage icetree.xsivw + preferences.icetree — shell chrome dump-backed; client GDI / compound catalogs LOCK.
+// Softimage icetree.xsivw + preferences.icetree + Desktop modules-gdi client GDI (Gate B). Tour 12-ice-tree.png LOCK.
 export function iceTree(app: App, host: HTMLElement) {
   applyIceTreeChromeVars();
   const root = el('div', 'rtree icetree'); host.appendChild(root);
@@ -451,8 +454,8 @@ export function iceTree(app: App, host: HTMLElement) {
   if (iceDef?.maxinstances) root.dataset.siMaxinstances = iceDef.maxinstances;
   if (iceDef?.private) root.dataset.siPrivate = iceDef.private;
   if (iceDef?.acceptfocus) root.dataset.siAcceptfocus = iceDef.acceptfocus;
-  root.dataset.siStatus = iceDef?.status ?? 'SHELL';
-  root.dataset.siClientGdi = iceDef?.client_gdi ?? prefs.client_gdi?.status ?? 'LOCK';
+  root.dataset.siStatus = iceDef?.status ?? 'CLIENT_GDI';
+  root.dataset.siClientGdi = iceDef?.client_gdi ?? prefs.client_gdi?.status ?? 'DUMP_READY';
   if (pl) {
     root.dataset.siPresetManagerSize = String(pl.preset_manager_size ?? '');
     root.dataset.siExplorerSize = String(pl.explorer_size ?? '');
@@ -470,30 +473,107 @@ export function iceTree(app: App, host: HTMLElement) {
   const treeOf = (): ICETreeOperator | null => { const sel = app.selection[app.selection.length - 1] as any; if (sel instanceof ICETreeOperator) return sel; const o: X3DObject | null = app.selectedObjects.find(x => x.primitive?.operators.some(op => op instanceof ICETreeOperator)) ?? (sel?.parent?.parent instanceof X3DObject ? sel.parent.parent : null); return (o?.primitive?.operators.slice().reverse().find((op: any) => op instanceof ICETreeOperator) as ICETreeOperator) ?? null; };
   const cats = ICE_CATEGORIES();
   const nodesMenu = () => [...[...cats.entries()].map(([c, types]) => ({ label: c, items: types.map(t => ({ label: t })) })), { separator: true }, { label: 'Compounds', items: ICE_PRESETS.map(p => ({ label: p })) }];
+  const lockMenu = (label: string) => [{ label: `${label} leaves LOCK (no invent)` }];
   const addNode = (type: string) => { let t = treeOf(); if (!t) { const o = app.selectedObjects.find(x => x.primitive?.mesh()); if (!o) { app.logMsg('error', 'ICE Tree: select a polygon mesh first'); return; } t = app.run('ApplyICEOp', { File: '', Target: o.fullName }) as ICETreeOperator; } if (ICE_PRESETS.includes(type)) { buildPreset(t, type); } else t.addNode(type, 40 + canvas.scrollLeft + Math.random() * 120, 40 + canvas.scrollTop + Math.random() * 120); app.events.emit('scene'); render(); };
-  // Softimage toolbar_shell.attested = Nodes/Edit/Update/Frame only (no invent New Tree).
+  // Desktop 20-ice-tree.png menubar: Create Show Tools Nodes Compounds User Tools
   const tb = iceToolbarShellLabels();
-  const hdKids: HTMLElement[] = [];
-  if (tb.includes('Nodes')) hdKids.push(menuBtn('Nodes', nodesMenu, (l) => addNode(l)));
-  if (tb.includes('Edit')) hdKids.push(menuBtn('Edit', () => [{ label: 'Delete Selected Node' }, { label: 'Disconnect All' }, { label: 'Clear Tree' }, { separator: true }, { label: 'Mute' }, { label: 'Export Tree (.json)' }, { label: 'Import Tree (.json)' }], (l) => editTree(l)));
-  if (tb.includes('Update')) hdKids.push(btn('Update', 'Refresh', () => render()));
-  if (tb.includes('Frame')) hdKids.push(btn('Frame', 'Frame all nodes', () => { canvas.scrollLeft = 0; canvas.scrollTop = 0; }));
-  const hd = head(...hdKids);
-  const title = el('span', 'rt-title'); hd.appendChild(title); root.appendChild(hd);
-  // Prefs region sizes attested but HWND placement unseen — chrome strip only (no invent side panels).
-  const chromeStrip = el('div', 'ice-chrome-strip');
-  chromeStrip.append(
-    el('span', 'ice-chrome-chip', `explorer_size=${pl?.explorer_size ?? ''}`),
-    el('span', 'ice-chrome-chip', `preset_manager_size=${pl?.preset_manager_size ?? ''}`),
-    el('span', 'ice-chrome-chip', `L/R compoundbar=${pl?.leftcompoundbar_size ?? ''}/${pl?.rightcompoundbar_size ?? ''}`),
-    el('span', 'ice-chrome-chip', `client_gdi=${root.dataset.siClientGdi}`),
-  );
-  root.appendChild(chromeStrip);
-  const canvas = el('div', 'rt-canvas'); root.appendChild(canvas); const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'rt-links'); canvas.appendChild(svg);
+  const menubar = el('div', 'ice-menubar xp-head');
+  for (const label of tb) {
+    if (label === 'Nodes') menubar.appendChild(menuBtn('Nodes', nodesMenu, (l) => addNode(l)));
+    else if (label === 'Compounds') menubar.appendChild(menuBtn('Compounds', () => ICE_PRESETS.map(p => ({ label: p })), (l) => addNode(l)));
+    else menubar.appendChild(menuBtn(label, () => lockMenu(label), () => { /* flyout leaves LOCK */ }));
+  }
+  const title = el('span', 'rt-title'); menubar.appendChild(title); root.appendChild(menubar);
+  // Desktop toolbar text buttons (icon bitmaps LOCK)
+  const tbText = iceToolbarTextLabels();
+  const toolStrip = el('div', 'ice-toolbar-text xp-head');
+  for (const label of tbText) {
+    if (label === 'Attr. Editor') {
+      toolStrip.appendChild(btn('Attr. Editor', 'Open ICE Attribute Editor', () => {
+        window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'ICE Attribute Editor' } }));
+      }));
+    } else {
+      toolStrip.appendChild(btn(label, label, () => { /* highlight modes LOCK without enum dump */ }));
+    }
+  }
+  root.appendChild(toolStrip);
+
+  // Desktop region layout: left palette | canvas | right explorer (prefs sizes as CSS)
+  const body = el('div', 'ice-body');
+  const palette = el('div', 'ice-palette');
+  const searchRow = el('div', 'ice-palette-search');
+  searchRow.appendChild(el('span', 'ice-palette-search-label', 'Search'));
+  const searchInp = document.createElement('input'); searchInp.className = 'ice-palette-search-input'; searchInp.type = 'text'; searchRow.appendChild(searchInp);
+  palette.appendChild(searchRow);
+  const tabs = el('div', 'ice-palette-tabs');
+  let activeTab = icePaletteTabs()[0] ?? 'Task';
+  const tabBtns: HTMLButtonElement[] = [];
+  for (const tab of icePaletteTabs()) {
+    const b = el('button', 'ice-palette-tab' + (tab === activeTab ? ' on' : ''), tab) as HTMLButtonElement;
+    b.onclick = () => { activeTab = tab; tabBtns.forEach(x => x.classList.toggle('on', x.textContent === tab)); renderPalette(); };
+    tabBtns.push(b); tabs.appendChild(b);
+  }
+  palette.appendChild(tabs);
+  const catList = el('div', 'ice-palette-cats');
+  const nodeList = el('div', 'ice-palette-nodes');
+  palette.append(catList, nodeList);
+  let activeCat = iceTaskCategoriesVisible()[0] ?? 'All Nodes';
+  const renderPalette = () => {
+    catList.innerHTML = ''; nodeList.innerHTML = '';
+    const visible = iceTaskCategoriesVisible();
+    for (const c of visible) {
+      const row = el('div', 'ice-palette-cat' + (c === activeCat ? ' on' : ''), c);
+      row.onclick = () => { activeCat = c; renderPalette(); };
+      catList.appendChild(row);
+    }
+    // Node leaves from Softimage Task tab are LOCK (truncated in PNG). All Nodes → AfterImage ICE_NODES (already Softimage-derived).
+    if (activeTab === 'Task' && (activeCat === 'All Nodes' || activeCat === 'Favorites')) {
+      const types = activeCat === 'Favorites' ? ICE_PRESETS : Object.keys(ICE_NODES);
+      const q = searchInp.value.trim().toLowerCase();
+      for (const t of types) {
+        if (q && !t.toLowerCase().includes(q)) continue;
+        const row = el('div', 'ice-palette-node', t);
+        row.onclick = () => addNode(t);
+        nodeList.appendChild(row);
+      }
+    } else {
+      nodeList.appendChild(el('div', 'ice-palette-lock', 'node leaves LOCK (Desktop truncated; no invent)'));
+    }
+  };
+  searchInp.oninput = () => renderPalette();
+  renderPalette();
+
+  const canvas = el('div', 'rt-canvas ice-canvas');
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'rt-links'); canvas.appendChild(svg);
+
+  const explorer = el('div', 'ice-explorer');
+  const explorerHead = el('div', 'ice-explorer-head', 'Explorer');
+  const explorerTree = el('div', 'ice-explorer-tree');
+  explorer.append(explorerHead, explorerTree);
+  const renderExplorer = () => {
+    explorerTree.innerHTML = '';
+    const objs = app.scene.root.children;
+    if (!objs.length) { explorerTree.appendChild(el('div', 'ice-explorer-empty', '(empty)')); return; }
+    for (const o of objs) {
+      const row = el('div', 'ice-explorer-row', o.name);
+      if (o.primitive?.operators.some(op => op instanceof ICETreeOperator)) row.classList.add('has-ice');
+      row.onclick = () => { app.select([o]); };
+      explorerTree.appendChild(row);
+      const mesh = o.primitive?.mesh();
+      if (mesh) {
+        explorerTree.appendChild(el('div', 'ice-explorer-row child', 'Polygon Mesh'));
+        explorerTree.appendChild(el('div', 'ice-explorer-row child2', 'Geometry'));
+        if (o.material) explorerTree.appendChild(el('div', 'ice-explorer-row child2', o.material.name || 'Scene_Material'));
+      }
+    }
+  };
+
+  body.append(palette, canvas, explorer);
+  root.appendChild(body);
+
   let pending: { node: number; port: string } | null = null; let selected: number | null = null;
-  const editTree = (l: string) => { const t = treeOf(); if (!t) return; if (l === 'Delete Selected Node' && selected !== null) t.removeNode(selected); else if (l === 'Disconnect All') { t.links = []; t.touch(); } else if (l === 'Clear Tree') { t.nodes = []; t.links = []; t.touch(); } else if (l === 'Mute') t.set('mute', !t.val('mute')); else if (l === 'Export Tree (.json)') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(t.toJSON(), null, 1)], { type: 'application/json' })); a.download = t.name + '.icetree.json'; a.click(); } else if (l === 'Import Tree (.json)') { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json'; inp.onchange = () => inp.files?.[0]?.text().then(x => { t.load(JSON.parse(x)); app.events.emit('scene'); render(); }); inp.click(); return; } app.events.emit('scene'); render(); };
   const render = () => {
-    const t = treeOf(); canvas.querySelectorAll('.rt-node').forEach(n => n.remove()); svg.innerHTML = ''; title.textContent = t ? `${(t.parent as any)?.parent?.name ?? ''} : ${t.name} (${t.nodes.length} nodes)` : 'Select an object with an ICE tree (or Nodes > … to create one)'; if (!t) return;
+    const t = treeOf(); canvas.querySelectorAll('.rt-node').forEach(n => n.remove()); svg.innerHTML = ''; title.textContent = t ? `${(t.parent as any)?.parent?.name ?? ''} : ${t.name} (${t.nodes.length} nodes)` : 'Select an object with an ICE tree (or Nodes > … to create one)'; renderExplorer(); if (!t) return;
     const mode = createNodeMode(); // 0 Expanded / 1 Collapsed / 2 Connections only — C3DPrefsICETree
     const boxes = new Map<number, { el: HTMLElement; outs: Map<string, HTMLElement>; ins: Map<string, HTMLElement> }>();
     for (const n of t.nodes) {

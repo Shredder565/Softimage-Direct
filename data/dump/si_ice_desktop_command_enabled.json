@@ -44,12 +44,14 @@
     { "name": "Low level Apply ICE Operator", "scriptingname": "SIApplyICEOp", "enabled": true }
   ],
   "lock": {
-    "ice_tree_gdi_chrome": "LOCK",
-    "ice_tree_region_css": "LOCK",
+    "ice_tree_gdi_chrome": "DUMP_READY",
+    "ice_tree_region_css": "DUMP_READY",
     "mcp_flyout_item_lists": "LOCK",
     "anchor_to_delete_compounds": "LOCK",
+    "ice_tree_icon_bitmaps": "LOCK",
+    "ice_task_node_leaves": "LOCK",
     "openview_xsibatch": "OpenView ICE Tree failed under -processing",
-    "note": "Shell chrome from xsivw + prefs dump; client HWND/pixels await modules-gdi harvest. Tour 12-ice-tree.png is Face Robot mislabel."
+    "note": "Gate B client GDI + region CSS from modules-gdi/20-ice-tree.png + HWND dumps. Tour 12-ice-tree.png Face Robot mislabel excluded. Flyouts/icons/Task leaf names LOCK."
   }
 }
 

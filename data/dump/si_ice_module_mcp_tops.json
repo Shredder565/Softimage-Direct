@@ -38,8 +38,9 @@
     "clsid": "{20281947-5CFF-450f-A9A1-1FBC9F7AD5E7}",
     "cmdmap": "{622466FB-AD3A-4E26-B293-1355E2D7ED8A}",
     "open_command": "OpenICETreeView",
-    "status": "SHELL",
-    "client_gdi": "LOCK"
+    "status": "CLIENT_GDI",
+    "client_gdi": "DUMP_READY",
+    "desktop_png": "media/softimage-modules-gdi/20-ice-tree.png"
   },
   "ice_attribute_editor": {
     "xsivw": "iceattributeeditor.xsivw",
@@ -47,12 +48,15 @@
     "defaultsize": "50,50,900,550",
     "category": "ICE",
     "clsid": "{A705D500-E6A8-4181-A0EE-E6B2FC431ED7}",
-    "status": "SHELL_ONLY",
-    "client_gdi": "LOCK",
-    "openview": "ICE Attribute Editor"
+    "status": "CLIENT_GDI",
+    "client_gdi": "DUMP_READY",
+    "openview": "ICE Attribute Editor",
+    "desktop_png": "media/softimage-modules-gdi/21-ice-attribute-editor.png"
   },
   "hwnd_chrome": {
-    "status": "LOCK",
-    "note": "modules-tour 12-ice-tree.png mislabelled Face Robot; modules-gdi/20-ice-tree.png index-only (0 HWND). Prefs sizes attested but region CSS LOCK."
+    "status": "DUMP_READY",
+    "source": "internal/softimage-pc-dumps/modules-gdi/float_children_after_icetree.txt",
+    "ice_tree_hwnd_title": "ICE Tree",
+    "note": "Gate B: Desktop DUMP_READY harvest. Tour 12-ice-tree.png remains Face Robot mislabel — do not use. Flyouts/icon bitmaps/node leaves still LOCK."
   }
 }
