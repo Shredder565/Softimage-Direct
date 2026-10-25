@@ -1,0 +1,1623 @@
+{
+  "meta": {
+    "softimage": "13.2.163.0",
+    "script": "si_anim_hwnd_kit.js",
+    "mode": "Softimage Desktop Anim HWND kit",
+    "utc": "Sun, 25 Oct 2026 02:53:53 UTC",
+    "note": "Command.Enabled matrix + view open via Commands (OpenView API AVs Softimage on this PC)",
+    "phase": "complete",
+    "store_overwrite_utc": "2026-10-25T02:55:11Z",
+    "wire_note": "Anim HWND chrome kit for wire: enabled_matrix empty/keyed_null/mesh_skeleton + view_probe via Open* Commands (not OpenView API)."
+  },
+  "contexts": [
+    {
+      "id": "empty",
+      "selection": {
+        "count": 0,
+        "names": [],
+        "types": []
+      },
+      "commands": {
+        "SaveKey": {
+          "command": "SaveKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveKey": {
+          "command": "RemoveKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "CopyKey": {
+          "command": "CopyKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PasteKey": {
+          "command": "PasteKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "CutKey": {
+          "command": "CutKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SetKey": {
+          "command": "SetKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SaveKeyOnKeyable": {
+          "command": "SaveKeyOnKeyable",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveAllKeys": {
+          "command": "RemoveAllKeys",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlayForward": {
+          "command": "PlayForward",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlayBackwards": {
+          "command": "PlayBackwards",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackStop": {
+          "command": "PlaybackStop",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackFirstFrame": {
+          "command": "PlaybackFirstFrame",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackLastFrame": {
+          "command": "PlaybackLastFrame",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackNextFrame": {
+          "command": "PlaybackNextFrame",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackPreviousFrame": {
+          "command": "PlaybackPreviousFrame",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackNextKey": {
+          "command": "PlaybackNextKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackPreviousKey": {
+          "command": "PlaybackPreviousKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "StoreAction": {
+          "command": "StoreAction",
+          "found": true,
+          "enabled": true,
+          "description": "",
+          "error": null
+        },
+        "ApplyAction": {
+          "command": "ApplyAction",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "AddClip": {
+          "command": "AddClip",
+          "found": true,
+          "enabled": true,
+          "description": "Create and add clip to the given compound and track",
+          "error": null
+        },
+        "AddTransition": {
+          "command": "AddTransition",
+          "found": true,
+          "enabled": true,
+          "description": " ",
+          "error": null
+        },
+        "AddBridgeTransition": {
+          "command": "AddBridgeTransition",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "CreateCompound": {
+          "command": "CreateCompound",
+          "found": true,
+          "enabled": true,
+          "description": "Create a compound clip for clips or tracks",
+          "error": null
+        },
+        "EqualizeClips": {
+          "command": "EqualizeClips",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveClip": {
+          "command": "RemoveClip",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "MuteClip": {
+          "command": "MuteClip",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "ApplyFlexEnv": {
+          "command": "ApplyFlexEnv",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SIApplyFlexEnv": {
+          "command": "SIApplyFlexEnv",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "StoreShapeKey": {
+          "command": "StoreShapeKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "ApplyShapeKey": {
+          "command": "ApplyShapeKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenAnimationEditor": {
+          "command": "OpenAnimationEditor",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenAnimationMixer": {
+          "command": "OpenAnimationMixer",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenDopeSheet": {
+          "command": "OpenDopeSheet",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenFcurveEditor": {
+          "command": "OpenFcurveEditor",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenKeyingPanel": {
+          "command": "OpenKeyingPanel",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenPlaybackPanel": {
+          "command": "OpenPlaybackPanel",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenAnimationLayers": {
+          "command": "OpenAnimationLayers",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "CreateAnimationLayer": {
+          "command": "CreateAnimationLayer",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveAnimationLayer": {
+          "command": "RemoveAnimationLayer",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SetCurrentAnimationLayer": {
+          "command": "SetCurrentAnimationLayer",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlotAndApplyAction": {
+          "command": "PlotAndApplyAction",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlotShapeAnimationToActions": {
+          "command": "PlotShapeAnimationToActions",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SetKeyableAttributes": {
+          "command": "SetKeyableAttributes",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "KeyAllKeyable": {
+          "command": "KeyAllKeyable",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveUnusedKeyableAttributes": {
+          "command": "RemoveUnusedKeyableAttributes",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        }
+      },
+      "setup_ok": true,
+      "setup_error": null,
+      "hwnd_note": "Command.Enabled proxy; Desktop kit"
+    },
+    {
+      "id": "keyed_null",
+      "selection": {
+        "count": 1,
+        "names": [
+          "null"
+        ],
+        "types": [
+          "null"
+        ]
+      },
+      "commands": {
+        "SaveKey": {
+          "command": "SaveKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveKey": {
+          "command": "RemoveKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "CopyKey": {
+          "command": "CopyKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PasteKey": {
+          "command": "PasteKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "CutKey": {
+          "command": "CutKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SetKey": {
+          "command": "SetKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SaveKeyOnKeyable": {
+          "command": "SaveKeyOnKeyable",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveAllKeys": {
+          "command": "RemoveAllKeys",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlayForward": {
+          "command": "PlayForward",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlayBackwards": {
+          "command": "PlayBackwards",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackStop": {
+          "command": "PlaybackStop",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackFirstFrame": {
+          "command": "PlaybackFirstFrame",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackLastFrame": {
+          "command": "PlaybackLastFrame",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackNextFrame": {
+          "command": "PlaybackNextFrame",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackPreviousFrame": {
+          "command": "PlaybackPreviousFrame",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackNextKey": {
+          "command": "PlaybackNextKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackPreviousKey": {
+          "command": "PlaybackPreviousKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "StoreAction": {
+          "command": "StoreAction",
+          "found": true,
+          "enabled": true,
+          "description": "",
+          "error": null
+        },
+        "ApplyAction": {
+          "command": "ApplyAction",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "AddClip": {
+          "command": "AddClip",
+          "found": true,
+          "enabled": true,
+          "description": "Create and add clip to the given compound and track",
+          "error": null
+        },
+        "AddTransition": {
+          "command": "AddTransition",
+          "found": true,
+          "enabled": true,
+          "description": " ",
+          "error": null
+        },
+        "AddBridgeTransition": {
+          "command": "AddBridgeTransition",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "CreateCompound": {
+          "command": "CreateCompound",
+          "found": true,
+          "enabled": true,
+          "description": "Create a compound clip for clips or tracks",
+          "error": null
+        },
+        "EqualizeClips": {
+          "command": "EqualizeClips",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveClip": {
+          "command": "RemoveClip",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "MuteClip": {
+          "command": "MuteClip",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "ApplyFlexEnv": {
+          "command": "ApplyFlexEnv",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SIApplyFlexEnv": {
+          "command": "SIApplyFlexEnv",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "StoreShapeKey": {
+          "command": "StoreShapeKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "ApplyShapeKey": {
+          "command": "ApplyShapeKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenAnimationEditor": {
+          "command": "OpenAnimationEditor",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenAnimationMixer": {
+          "command": "OpenAnimationMixer",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenDopeSheet": {
+          "command": "OpenDopeSheet",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenFcurveEditor": {
+          "command": "OpenFcurveEditor",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenKeyingPanel": {
+          "command": "OpenKeyingPanel",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenPlaybackPanel": {
+          "command": "OpenPlaybackPanel",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenAnimationLayers": {
+          "command": "OpenAnimationLayers",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "CreateAnimationLayer": {
+          "command": "CreateAnimationLayer",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveAnimationLayer": {
+          "command": "RemoveAnimationLayer",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SetCurrentAnimationLayer": {
+          "command": "SetCurrentAnimationLayer",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlotAndApplyAction": {
+          "command": "PlotAndApplyAction",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlotShapeAnimationToActions": {
+          "command": "PlotShapeAnimationToActions",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SetKeyableAttributes": {
+          "command": "SetKeyableAttributes",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "KeyAllKeyable": {
+          "command": "KeyAllKeyable",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveUnusedKeyableAttributes": {
+          "command": "RemoveUnusedKeyableAttributes",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        }
+      },
+      "setup_ok": true,
+      "setup_error": null,
+      "hwnd_note": "Command.Enabled proxy; Desktop kit"
+    },
+    {
+      "id": "mesh_skeleton",
+      "selection": {
+        "count": 4,
+        "names": [
+          "cube",
+          "root",
+          "bone",
+          "eff"
+        ],
+        "types": [
+          "polymsh",
+          "root",
+          "bone",
+          "eff"
+        ]
+      },
+      "commands": {
+        "SaveKey": {
+          "command": "SaveKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveKey": {
+          "command": "RemoveKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "CopyKey": {
+          "command": "CopyKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PasteKey": {
+          "command": "PasteKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "CutKey": {
+          "command": "CutKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SetKey": {
+          "command": "SetKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SaveKeyOnKeyable": {
+          "command": "SaveKeyOnKeyable",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveAllKeys": {
+          "command": "RemoveAllKeys",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlayForward": {
+          "command": "PlayForward",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlayBackwards": {
+          "command": "PlayBackwards",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackStop": {
+          "command": "PlaybackStop",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackFirstFrame": {
+          "command": "PlaybackFirstFrame",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackLastFrame": {
+          "command": "PlaybackLastFrame",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackNextFrame": {
+          "command": "PlaybackNextFrame",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackPreviousFrame": {
+          "command": "PlaybackPreviousFrame",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackNextKey": {
+          "command": "PlaybackNextKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlaybackPreviousKey": {
+          "command": "PlaybackPreviousKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "StoreAction": {
+          "command": "StoreAction",
+          "found": true,
+          "enabled": true,
+          "description": "",
+          "error": null
+        },
+        "ApplyAction": {
+          "command": "ApplyAction",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "AddClip": {
+          "command": "AddClip",
+          "found": true,
+          "enabled": true,
+          "description": "Create and add clip to the given compound and track",
+          "error": null
+        },
+        "AddTransition": {
+          "command": "AddTransition",
+          "found": true,
+          "enabled": true,
+          "description": " ",
+          "error": null
+        },
+        "AddBridgeTransition": {
+          "command": "AddBridgeTransition",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "CreateCompound": {
+          "command": "CreateCompound",
+          "found": true,
+          "enabled": true,
+          "description": "Create a compound clip for clips or tracks",
+          "error": null
+        },
+        "EqualizeClips": {
+          "command": "EqualizeClips",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveClip": {
+          "command": "RemoveClip",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "MuteClip": {
+          "command": "MuteClip",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "ApplyFlexEnv": {
+          "command": "ApplyFlexEnv",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SIApplyFlexEnv": {
+          "command": "SIApplyFlexEnv",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "StoreShapeKey": {
+          "command": "StoreShapeKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "ApplyShapeKey": {
+          "command": "ApplyShapeKey",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenAnimationEditor": {
+          "command": "OpenAnimationEditor",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenAnimationMixer": {
+          "command": "OpenAnimationMixer",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenDopeSheet": {
+          "command": "OpenDopeSheet",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenFcurveEditor": {
+          "command": "OpenFcurveEditor",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenKeyingPanel": {
+          "command": "OpenKeyingPanel",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenPlaybackPanel": {
+          "command": "OpenPlaybackPanel",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "OpenAnimationLayers": {
+          "command": "OpenAnimationLayers",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "CreateAnimationLayer": {
+          "command": "CreateAnimationLayer",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveAnimationLayer": {
+          "command": "RemoveAnimationLayer",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SetCurrentAnimationLayer": {
+          "command": "SetCurrentAnimationLayer",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlotAndApplyAction": {
+          "command": "PlotAndApplyAction",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "PlotShapeAnimationToActions": {
+          "command": "PlotShapeAnimationToActions",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "SetKeyableAttributes": {
+          "command": "SetKeyableAttributes",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "KeyAllKeyable": {
+          "command": "KeyAllKeyable",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        },
+        "RemoveUnusedKeyableAttributes": {
+          "command": "RemoveUnusedKeyableAttributes",
+          "found": true,
+          "enabled": null,
+          "description": null,
+          "error": null
+        }
+      },
+      "setup_ok": true,
+      "setup_error": null,
+      "hwnd_note": "Command.Enabled proxy; Desktop kit"
+    }
+  ],
+  "enabled_matrix": {
+    "empty": {
+      "SaveKey": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveKey": {
+        "found": true,
+        "enabled": null
+      },
+      "CopyKey": {
+        "found": true,
+        "enabled": null
+      },
+      "PasteKey": {
+        "found": true,
+        "enabled": null
+      },
+      "CutKey": {
+        "found": true,
+        "enabled": null
+      },
+      "SetKey": {
+        "found": true,
+        "enabled": null
+      },
+      "SaveKeyOnKeyable": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveAllKeys": {
+        "found": true,
+        "enabled": null
+      },
+      "PlayForward": {
+        "found": true,
+        "enabled": null
+      },
+      "PlayBackwards": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackStop": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackFirstFrame": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackLastFrame": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackNextFrame": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackPreviousFrame": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackNextKey": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackPreviousKey": {
+        "found": true,
+        "enabled": null
+      },
+      "StoreAction": {
+        "found": true,
+        "enabled": true
+      },
+      "ApplyAction": {
+        "found": true,
+        "enabled": null
+      },
+      "AddClip": {
+        "found": true,
+        "enabled": true
+      },
+      "AddTransition": {
+        "found": true,
+        "enabled": true
+      },
+      "AddBridgeTransition": {
+        "found": true,
+        "enabled": null
+      },
+      "CreateCompound": {
+        "found": true,
+        "enabled": true
+      },
+      "EqualizeClips": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveClip": {
+        "found": true,
+        "enabled": null
+      },
+      "MuteClip": {
+        "found": true,
+        "enabled": null
+      },
+      "ApplyFlexEnv": {
+        "found": true,
+        "enabled": null
+      },
+      "SIApplyFlexEnv": {
+        "found": true,
+        "enabled": null
+      },
+      "StoreShapeKey": {
+        "found": true,
+        "enabled": null
+      },
+      "ApplyShapeKey": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenAnimationEditor": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenAnimationMixer": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenDopeSheet": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenFcurveEditor": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenKeyingPanel": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenPlaybackPanel": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenAnimationLayers": {
+        "found": true,
+        "enabled": null
+      },
+      "CreateAnimationLayer": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveAnimationLayer": {
+        "found": true,
+        "enabled": null
+      },
+      "SetCurrentAnimationLayer": {
+        "found": true,
+        "enabled": null
+      },
+      "PlotAndApplyAction": {
+        "found": true,
+        "enabled": null
+      },
+      "PlotShapeAnimationToActions": {
+        "found": true,
+        "enabled": null
+      },
+      "SetKeyableAttributes": {
+        "found": true,
+        "enabled": null
+      },
+      "KeyAllKeyable": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveUnusedKeyableAttributes": {
+        "found": true,
+        "enabled": null
+      }
+    },
+    "keyed_null": {
+      "SaveKey": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveKey": {
+        "found": true,
+        "enabled": null
+      },
+      "CopyKey": {
+        "found": true,
+        "enabled": null
+      },
+      "PasteKey": {
+        "found": true,
+        "enabled": null
+      },
+      "CutKey": {
+        "found": true,
+        "enabled": null
+      },
+      "SetKey": {
+        "found": true,
+        "enabled": null
+      },
+      "SaveKeyOnKeyable": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveAllKeys": {
+        "found": true,
+        "enabled": null
+      },
+      "PlayForward": {
+        "found": true,
+        "enabled": null
+      },
+      "PlayBackwards": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackStop": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackFirstFrame": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackLastFrame": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackNextFrame": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackPreviousFrame": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackNextKey": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackPreviousKey": {
+        "found": true,
+        "enabled": null
+      },
+      "StoreAction": {
+        "found": true,
+        "enabled": true
+      },
+      "ApplyAction": {
+        "found": true,
+        "enabled": null
+      },
+      "AddClip": {
+        "found": true,
+        "enabled": true
+      },
+      "AddTransition": {
+        "found": true,
+        "enabled": true
+      },
+      "AddBridgeTransition": {
+        "found": true,
+        "enabled": null
+      },
+      "CreateCompound": {
+        "found": true,
+        "enabled": true
+      },
+      "EqualizeClips": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveClip": {
+        "found": true,
+        "enabled": null
+      },
+      "MuteClip": {
+        "found": true,
+        "enabled": null
+      },
+      "ApplyFlexEnv": {
+        "found": true,
+        "enabled": null
+      },
+      "SIApplyFlexEnv": {
+        "found": true,
+        "enabled": null
+      },
+      "StoreShapeKey": {
+        "found": true,
+        "enabled": null
+      },
+      "ApplyShapeKey": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenAnimationEditor": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenAnimationMixer": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenDopeSheet": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenFcurveEditor": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenKeyingPanel": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenPlaybackPanel": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenAnimationLayers": {
+        "found": true,
+        "enabled": null
+      },
+      "CreateAnimationLayer": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveAnimationLayer": {
+        "found": true,
+        "enabled": null
+      },
+      "SetCurrentAnimationLayer": {
+        "found": true,
+        "enabled": null
+      },
+      "PlotAndApplyAction": {
+        "found": true,
+        "enabled": null
+      },
+      "PlotShapeAnimationToActions": {
+        "found": true,
+        "enabled": null
+      },
+      "SetKeyableAttributes": {
+        "found": true,
+        "enabled": null
+      },
+      "KeyAllKeyable": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveUnusedKeyableAttributes": {
+        "found": true,
+        "enabled": null
+      }
+    },
+    "mesh_skeleton": {
+      "SaveKey": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveKey": {
+        "found": true,
+        "enabled": null
+      },
+      "CopyKey": {
+        "found": true,
+        "enabled": null
+      },
+      "PasteKey": {
+        "found": true,
+        "enabled": null
+      },
+      "CutKey": {
+        "found": true,
+        "enabled": null
+      },
+      "SetKey": {
+        "found": true,
+        "enabled": null
+      },
+      "SaveKeyOnKeyable": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveAllKeys": {
+        "found": true,
+        "enabled": null
+      },
+      "PlayForward": {
+        "found": true,
+        "enabled": null
+      },
+      "PlayBackwards": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackStop": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackFirstFrame": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackLastFrame": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackNextFrame": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackPreviousFrame": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackNextKey": {
+        "found": true,
+        "enabled": null
+      },
+      "PlaybackPreviousKey": {
+        "found": true,
+        "enabled": null
+      },
+      "StoreAction": {
+        "found": true,
+        "enabled": true
+      },
+      "ApplyAction": {
+        "found": true,
+        "enabled": null
+      },
+      "AddClip": {
+        "found": true,
+        "enabled": true
+      },
+      "AddTransition": {
+        "found": true,
+        "enabled": true
+      },
+      "AddBridgeTransition": {
+        "found": true,
+        "enabled": null
+      },
+      "CreateCompound": {
+        "found": true,
+        "enabled": true
+      },
+      "EqualizeClips": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveClip": {
+        "found": true,
+        "enabled": null
+      },
+      "MuteClip": {
+        "found": true,
+        "enabled": null
+      },
+      "ApplyFlexEnv": {
+        "found": true,
+        "enabled": null
+      },
+      "SIApplyFlexEnv": {
+        "found": true,
+        "enabled": null
+      },
+      "StoreShapeKey": {
+        "found": true,
+        "enabled": null
+      },
+      "ApplyShapeKey": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenAnimationEditor": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenAnimationMixer": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenDopeSheet": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenFcurveEditor": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenKeyingPanel": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenPlaybackPanel": {
+        "found": true,
+        "enabled": null
+      },
+      "OpenAnimationLayers": {
+        "found": true,
+        "enabled": null
+      },
+      "CreateAnimationLayer": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveAnimationLayer": {
+        "found": true,
+        "enabled": null
+      },
+      "SetCurrentAnimationLayer": {
+        "found": true,
+        "enabled": null
+      },
+      "PlotAndApplyAction": {
+        "found": true,
+        "enabled": null
+      },
+      "PlotShapeAnimationToActions": {
+        "found": true,
+        "enabled": null
+      },
+      "SetKeyableAttributes": {
+        "found": true,
+        "enabled": null
+      },
+      "KeyAllKeyable": {
+        "found": true,
+        "enabled": null
+      },
+      "RemoveUnusedKeyableAttributes": {
+        "found": true,
+        "enabled": null
+      }
+    }
+  },
+  "view_probe": [
+    {
+      "name": "Animation Mixer",
+      "open_ok": false,
+      "via": null,
+      "error": "Invalid argument specified._$S_2028_$E_",
+      "result": null
+    },
+    {
+      "name": "Animation Editor",
+      "open_ok": false,
+      "via": null,
+      "error": "Invalid argument specified._$S_2028_$E_",
+      "result": null
+    },
+    {
+      "name": "DopeSheet",
+      "open_ok": false,
+      "via": null,
+      "error": "Invalid argument specified._$S_2028_$E_",
+      "result": null
+    },
+    {
+      "name": "Keying Panel",
+      "open_ok": false,
+      "via": null,
+      "error": "Invalid argument specified._$S_2028_$E_",
+      "result": null
+    },
+    {
+      "name": "Playback Panel",
+      "open_ok": false,
+      "via": null,
+      "error": "Invalid argument specified._$S_2028_$E_",
+      "result": null
+    },
+    {
+      "name": "Animation Layers",
+      "open_ok": false,
+      "via": null,
+      "error": "Invalid argument specified._$S_2028_$E_",
+      "result": null
+    }
+  ],
+  "screenshot_checklist": [
+    "Anim Editor",
+    "Animation Mixer",
+    "DopeSheet",
+    "Keying Panel",
+    "Playback Panel",
+    "Animation Layers"
+  ],
+  "errors": [],
+  "acceptance": {
+    "has_enabled_matrix": true,
+    "contexts": [
+      "empty",
+      "keyed_null",
+      "mesh_skeleton"
+    ],
+    "n_views_opened": 0,
+    "openview_api_avoided": true
+  }
+}

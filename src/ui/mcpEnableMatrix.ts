@@ -11,6 +11,8 @@ export type McpSelContext =
   | 'single_mesh'
   | 'multi_mesh'
   | 'single_null'
+  | 'keyed_null'
+  | 'mesh_skeleton'
   | 'mesh_points_attempt'
   | 'single_camera'
   | 'single_light'
@@ -81,15 +83,24 @@ export function mcpSelectionContext(app: App): McpSelContext {
 /** Context fallbacks when an expanded dump key is not yet in the matrix. */
 function contextFallbacks(ctx: McpSelContext): McpSelContext[] {
   switch (ctx) {
+    case 'single_null':
+      // Desktop Anim HWND: keyed_null (null + keys) attested mixer cmds
+      return [ctx, 'keyed_null', 'empty'];
+    case 'keyed_null':
+      return [ctx, 'single_null', 'empty'];
+    case 'mesh_skeleton':
+      return [ctx, 'multi_mixed', 'multi_mesh', 'empty'];
     case 'single_camera':
     case 'single_light':
-      return [ctx, 'single_null', 'empty'];
+      return [ctx, 'single_null', 'keyed_null', 'empty'];
     case 'parented_child':
-      return [ctx, 'single_null', 'single_mesh', 'empty'];
+      return [ctx, 'single_null', 'keyed_null', 'single_mesh', 'empty'];
     case 'group_selected':
-      return [ctx, 'multi_mesh', 'empty'];
+      return [ctx, 'multi_mesh', 'mesh_skeleton', 'empty'];
     case 'multi_mixed':
-      return [ctx, 'multi_mesh', 'empty'];
+      return [ctx, 'mesh_skeleton', 'multi_mesh', 'empty'];
+    case 'multi_mesh':
+      return [ctx, 'mesh_skeleton', 'empty'];
     default:
       return [ctx];
   }
@@ -151,6 +162,7 @@ export function hwndButtonEnabled(app: App, button: string): boolean | null {
 }
 
 export function mcpMatrixMeta() {
+  const animHwnd = (M.meta as { anim_hwnd_overlay?: unknown }).anim_hwnd_overlay;
   return {
     softimage: M.meta.softimage ?? null,
     source: M.meta.source ?? null,
@@ -162,5 +174,6 @@ export function mcpMatrixMeta() {
     contexts: Object.keys(M.contexts),
     aliases: { ...ALIASES },
     hasHwndOverlay: !!M.hwnd_buttons && Object.keys(M.hwnd_buttons).length > 0,
+    hasAnimHwndOverlay: !!animHwnd,
   };
 }

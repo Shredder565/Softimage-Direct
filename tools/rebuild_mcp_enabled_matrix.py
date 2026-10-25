@@ -63,6 +63,39 @@ def find_hwnd() -> Path | None:
     return None
 
 
+STORE_ANIM = Path(
+    "/cursor/stores/bc-0bd1d332-4e49-4056-9894-1b21507c9f95/internal/softimage-pc-dumps/anim"
+)
+
+
+def find_anim_hwnd() -> Path | None:
+    for p in (STORE_ANIM / "si_anim_hwnd_chrome.json", DUMP / "si_anim_hwnd_chrome.json"):
+        if p.exists():
+            return p
+    return None
+
+
+def merge_command_enabled_contexts(out: dict, bool_attested: set[str], dump: dict) -> None:
+    """Merge Softimage Command.Enabled bools from a contexts[] dump (attested only)."""
+    for c in dump.get("contexts") or []:
+        cid = c.get("id")
+        if not cid:
+            continue
+        block = out["contexts"].setdefault(cid, {"selection": c.get("selection"), "commands": {}})
+        if c.get("selection") is not None:
+            block["selection"] = c["selection"]
+        cmds_map = block.setdefault("commands", {})
+        for name, info in (c.get("commands") or {}).items():
+            en = info.get("enabled") if isinstance(info, dict) else info
+            if en is True or en is False:
+                if name not in cmds_map or cmds_map[name] is None:
+                    cmds_map[name] = bool(en)
+                    bool_attested.add(name)
+            elif name not in cmds_map:
+                cmds_map[name] = None
+    out["bool_attested"] = sorted(bool_attested)
+
+
 def main() -> int:
     full = load_json(find_matrix())
     xsibatch = full.get("xsibatch_command_enabled_matrix") or {}
@@ -140,16 +173,7 @@ def main() -> int:
                     continue
                 row = c.get("buttons") or {}
                 buttons[cid] = {k: (None if v is None else bool(v)) for k, v in row.items()}
-                # Merge Command.Enabled bools into matrix contexts (attested only)
-                block = out["contexts"].setdefault(cid, {"selection": c.get("selection"), "commands": {}})
-                cmds_map = block.setdefault("commands", {})
-                for name, info in (c.get("commands") or {}).items():
-                    en = info.get("enabled") if isinstance(info, dict) else info
-                    if en is True or en is False:
-                        if name not in cmds_map or cmds_map[name] is None:
-                            cmds_map[name] = bool(en)
-                            bool_attested.add(name)
-            out["bool_attested"] = sorted(bool_attested)
+            merge_command_enabled_contexts(out, bool_attested, hwnd)
         if isinstance(buttons, dict) and buttons:
             out["hwnd_buttons"] = buttons
             out["meta"]["hwnd_source"] = str(hwnd_path.name)
@@ -166,8 +190,53 @@ def main() -> int:
                 "null_button_cells": sum(1 for row in buttons.values() for v in row.values() if v is None),
             }
 
+    anim_hwnd_path = find_anim_hwnd()
+    if anim_hwnd_path:
+        anim = load_json(anim_hwnd_path)
+        merge_command_enabled_contexts(out, bool_attested, anim)
+        def seed_ctx(src: str, dst: str, sel: dict) -> None:
+            src_cmds = (out["contexts"].get(src) or {}).get("commands") or {}
+            dst_cmds = out["contexts"].setdefault(dst, {"selection": sel, "commands": {}}).setdefault("commands", {})
+            for name, en in src_cmds.items():
+                if (en is True or en is False) and (name not in dst_cmds or dst_cmds[name] is None):
+                    dst_cmds[name] = bool(en)
+                    bool_attested.add(name)
+
+        # keyed_null → single_null; mesh_skeleton → multi_mesh/multi_mixed
+        seed_ctx("keyed_null", "single_null", {"count": 1})
+        seed_ctx("mesh_skeleton", "multi_mesh", {"count": 4})
+        seed_ctx("mesh_skeleton", "multi_mixed", {"count": 4})
+        out["bool_attested"] = sorted(bool_attested)
+        em = anim.get("enabled_matrix") or {}
+        out["meta"]["anim_hwnd_overlay"] = {
+            "source": str(anim_hwnd_path),
+            "softimage": (anim.get("meta") or {}).get("softimage"),
+            "mode": (anim.get("meta") or {}).get("mode"),
+            "utc": (anim.get("meta") or {}).get("utc"),
+            "wire_note": (anim.get("meta") or {}).get("wire_note"),
+            "note": (anim.get("meta") or {}).get("note"),
+            "contexts": list(em.keys()) or (anim.get("acceptance") or {}).get("contexts"),
+            "attested_command_bools": sum(
+                1
+                for ctx in em.values()
+                for v in ctx.values()
+                if isinstance(v, dict) and (v.get("enabled") is True or v.get("enabled") is False)
+            ),
+            "null_command_cells": sum(
+                1 for ctx in em.values() for v in ctx.values() if isinstance(v, dict) and v.get("enabled") is None
+            ),
+            "openview_api_avoided": (anim.get("acceptance") or {}).get("openview_api_avoided"),
+            "openview_av": (anim.get("acceptance") or {}).get("openview_av_after_commands"),
+            "n_views_opened": (anim.get("acceptance") or {}).get("n_views_opened"),
+            "view_probe_lock": "Open* Commands failed / OpenView API avoided — no invent view chrome",
+            "screenshot_checklist": anim.get("screenshot_checklist"),
+        }
+
     OUT.write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
-    print(f"wrote {OUT} contexts={list(contexts)} bools={sorted(bool_attested)} cmds={len(cmds)} hwnd={bool(out.get('hwnd_buttons'))}")
+    print(
+        f"wrote {OUT} contexts={list(out['contexts'])} bools={len(out['bool_attested'])} cmds={len(cmds)} "
+        f"hwnd={bool(out.get('hwnd_buttons'))} anim_hwnd={bool(out['meta'].get('anim_hwnd_overlay'))}"
+    )
 
     if MENUS.exists():
         menus = load_json(MENUS)

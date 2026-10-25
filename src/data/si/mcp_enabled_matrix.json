@@ -25,6 +25,37 @@
       ],
       "attested_button_bools": 16,
       "null_button_cells": 40
+    },
+    "anim_hwnd_overlay": {
+      "source": "data/dump/si_anim_hwnd_chrome.json",
+      "softimage": "13.2.163.0",
+      "mode": "Softimage Desktop Anim HWND kit",
+      "utc": "Sun, 25 Oct 2026 02:53:53 UTC",
+      "phase": "complete",
+      "wire_note": "Anim HWND chrome kit for wire: enabled_matrix empty/keyed_null/mesh_skeleton + view_probe via Open* Commands (not OpenView API).",
+      "note": "Command.Enabled matrix + view open via Commands (OpenView API AVs Softimage on this PC)",
+      "contexts": [
+        "empty",
+        "keyed_null",
+        "mesh_skeleton"
+      ],
+      "attested_command_bools": 12,
+      "null_command_cells": 123,
+      "openview_api_avoided": true,
+      "n_views_opened": 0,
+      "view_probe_lock": "Open* Commands failed Invalid argument; OpenView API avoided \u2014 no invent view chrome",
+      "screenshot_checklist": [
+        "Anim Editor",
+        "Animation Mixer",
+        "DopeSheet",
+        "Keying Panel",
+        "Playback Panel",
+        "Animation Layers"
+      ],
+      "screenshots": [
+        "docs/screenshots/overnight-desktop/si-anim-hwnd-chrome.png",
+        "docs/screenshots/overnight-desktop/si-anim-desktop-fullscreen.png"
+      ]
     }
   },
   "contexts": {
@@ -307,7 +338,35 @@
         "UnlockAnimationLayer": true,
         "siCreateRetargetMapping": true,
         "siWriteRetargetComponentData": true,
-        "siWriteRetargetMapping": true
+        "siWriteRetargetMapping": true,
+        "CopyKey": null,
+        "PasteKey": null,
+        "CutKey": null,
+        "PlayBackwards": null,
+        "PlaybackStop": null,
+        "ApplyFlexEnv": null,
+        "SIApplyFlexEnv": null,
+        "OpenAnimationEditor": null,
+        "OpenAnimationMixer": null,
+        "OpenDopeSheet": null,
+        "OpenFcurveEditor": null,
+        "OpenKeyingPanel": null,
+        "OpenPlaybackPanel": null,
+        "OpenAnimationLayers": null,
+        "CreateAnimationLayer": null,
+        "KeyAllKeyable": null,
+        "RemoveAllKeys": null,
+        "PlaybackFirstFrame": null,
+        "PlaybackLastFrame": null,
+        "PlaybackNextFrame": null,
+        "PlaybackPreviousFrame": null,
+        "PlaybackNextKey": null,
+        "PlaybackPreviousKey": null,
+        "RemoveClip": null,
+        "MuteClip": null,
+        "RemoveAnimationLayer": null,
+        "PlotShapeAnimationToActions": null,
+        "RemoveUnusedKeyableAttributes": null
       }
     },
     "single_mesh": {
@@ -679,7 +738,11 @@
         "DeselectAll": null,
         "ToggleVisibility": null,
         "HideObj": null,
-        "UnhideAll": null
+        "UnhideAll": null,
+        "StoreAction": true,
+        "AddClip": true,
+        "AddTransition": true,
+        "CreateCompound": true
       }
     },
     "single_null": {
@@ -1471,7 +1534,133 @@
         "DeselectAll": null,
         "ToggleVisibility": null,
         "HideObj": null,
-        "UnhideAll": null
+        "UnhideAll": null,
+        "StoreAction": true,
+        "AddClip": true,
+        "AddTransition": true,
+        "CreateCompound": true
+      }
+    },
+    "keyed_null": {
+      "selection": {
+        "count": 1,
+        "names": [
+          "null"
+        ],
+        "types": [
+          "null"
+        ]
+      },
+      "commands": {
+        "SaveKey": null,
+        "RemoveKey": null,
+        "CopyKey": null,
+        "PasteKey": null,
+        "CutKey": null,
+        "SetKey": null,
+        "PlayForward": null,
+        "PlayBackwards": null,
+        "PlaybackStop": null,
+        "StoreAction": true,
+        "AddClip": true,
+        "AddTransition": true,
+        "ApplyFlexEnv": null,
+        "SIApplyFlexEnv": null,
+        "StoreShapeKey": null,
+        "OpenAnimationEditor": null,
+        "OpenAnimationMixer": null,
+        "OpenDopeSheet": null,
+        "OpenFcurveEditor": null,
+        "OpenKeyingPanel": null,
+        "OpenPlaybackPanel": null,
+        "OpenAnimationLayers": null,
+        "CreateAnimationLayer": null,
+        "KeyAllKeyable": null,
+        "SaveKeyOnKeyable": null,
+        "RemoveAllKeys": null,
+        "PlaybackFirstFrame": null,
+        "PlaybackLastFrame": null,
+        "PlaybackNextFrame": null,
+        "PlaybackPreviousFrame": null,
+        "PlaybackNextKey": null,
+        "PlaybackPreviousKey": null,
+        "ApplyAction": null,
+        "AddBridgeTransition": null,
+        "CreateCompound": true,
+        "EqualizeClips": null,
+        "RemoveClip": null,
+        "MuteClip": null,
+        "ApplyShapeKey": null,
+        "RemoveAnimationLayer": null,
+        "SetCurrentAnimationLayer": null,
+        "PlotAndApplyAction": null,
+        "PlotShapeAnimationToActions": null,
+        "SetKeyableAttributes": null,
+        "RemoveUnusedKeyableAttributes": null
+      }
+    },
+    "mesh_skeleton": {
+      "selection": {
+        "count": 4,
+        "names": [
+          "cube",
+          "root",
+          "bone",
+          "eff"
+        ],
+        "types": [
+          "polymsh",
+          "root",
+          "bone",
+          "eff"
+        ]
+      },
+      "commands": {
+        "SaveKey": null,
+        "RemoveKey": null,
+        "CopyKey": null,
+        "PasteKey": null,
+        "CutKey": null,
+        "SetKey": null,
+        "SaveKeyOnKeyable": null,
+        "RemoveAllKeys": null,
+        "PlayForward": null,
+        "PlayBackwards": null,
+        "PlaybackStop": null,
+        "PlaybackFirstFrame": null,
+        "PlaybackLastFrame": null,
+        "PlaybackNextFrame": null,
+        "PlaybackPreviousFrame": null,
+        "PlaybackNextKey": null,
+        "PlaybackPreviousKey": null,
+        "StoreAction": true,
+        "ApplyAction": null,
+        "AddClip": true,
+        "AddTransition": true,
+        "AddBridgeTransition": null,
+        "CreateCompound": true,
+        "EqualizeClips": null,
+        "RemoveClip": null,
+        "MuteClip": null,
+        "ApplyFlexEnv": null,
+        "SIApplyFlexEnv": null,
+        "StoreShapeKey": null,
+        "ApplyShapeKey": null,
+        "OpenAnimationEditor": null,
+        "OpenAnimationMixer": null,
+        "OpenDopeSheet": null,
+        "OpenFcurveEditor": null,
+        "OpenKeyingPanel": null,
+        "OpenPlaybackPanel": null,
+        "OpenAnimationLayers": null,
+        "CreateAnimationLayer": null,
+        "RemoveAnimationLayer": null,
+        "SetCurrentAnimationLayer": null,
+        "PlotAndApplyAction": null,
+        "PlotShapeAnimationToActions": null,
+        "SetKeyableAttributes": null,
+        "KeyAllKeyable": null,
+        "RemoveUnusedKeyableAttributes": null
       }
     }
   },
