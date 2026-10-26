@@ -20,9 +20,13 @@ Requirements: Visual Studio 2019+ (or Build Tools) with **Desktop development wi
 
 ```bat
 cd Softimage-Direct\native
+build-softimage-pc.bat
+REM or pick a generator your VS install provides:
 cmake -S . -B build -G "Visual Studio 17 2022" -A x64
 cmake --build build --config Release
 ```
+
+CI and `build-softimage-pc.bat` try **VS 2026 → 2022 → 2019 → default** so GitHub `windows-latest` (VS 2026) and softimage-pc both work.
 
 Run:
 

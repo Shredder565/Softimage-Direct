@@ -23,9 +23,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configure CMake (VS 2022 x64)
+      # windows-latest may be VS 2022 or VS 2026; try newest generator first.
+      - name: Configure CMake (MSVC x64)
         working-directory: native
-        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+        shell: pwsh
+        run: |
+          $gens = @(
+            'Visual Studio 18 2026',
+            'Visual Studio 17 2022',
+            'Visual Studio 16 2019'
+          )
+          $ok = $false
+          foreach ($g in $gens) {
+            Write-Host "Trying generator: $g"
+            if (Test-Path build) { Remove-Item -Recurse -Force build }
+            cmake -S . -B build -G $g -A x64
+            if ($LASTEXITCODE -eq 0) { $ok = $true; break }
+          }
+          if (-not $ok) {
+            Write-Host "Falling back to default CMake generator (-A x64)"
+            if (Test-Path build) { Remove-Item -Recurse -Force build }
+            cmake -S . -B build -A x64
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
 
       - name: Build Release
         working-directory: native

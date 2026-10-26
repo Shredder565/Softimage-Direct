@@ -14,11 +14,19 @@ if not defined VisualStudioVersion (
   echo NOTE: If cl.exe is missing, run this from an MSVC developer command prompt.
 )
 
-cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+cmake -S . -B build -G "Visual Studio 18 2026" -A x64
 if errorlevel 1 (
-  echo VS 2022 generator failed — trying VS 2019...
-  cmake -S . -B build -G "Visual Studio 16 2019" -A x64
-  if errorlevel 1 exit /b 1
+  echo VS 2026 generator failed — trying VS 2022...
+  cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+  if errorlevel 1 (
+    echo VS 2022 generator failed — trying VS 2019...
+    cmake -S . -B build -G "Visual Studio 16 2019" -A x64
+    if errorlevel 1 (
+      echo Named generators failed — trying default CMake generator...
+      cmake -S . -B build -A x64
+      if errorlevel 1 exit /b 1
+    )
+  )
 )
 
 cmake --build build --config Release
