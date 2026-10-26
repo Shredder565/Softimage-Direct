@@ -716,6 +716,58 @@ export function registerAnimCommands(app: App) {
     for (const o of del) { const p = o.parentObj ?? app.scene.root; app.record('Delete Anchor', () => p.removeChild(o), () => p.addChild(o)); }
     app.select([]); return del.length;
   } });
+
+  // WR-16 — MOTOR CDKMotionTransform.64 attested RegisterCommand-like Names (strings dump) + RegisterMenu Names.
+  // Dump paths: behavioral/strings/CDKMotionTransform.64_strings.json · packaging Tag Rig / Rig to Rig / Mocap to Rig / Load|Save Motion.
+  // No invent retarget/mocap solver — property-tag / log shells only.
+  const motorCmd = (name: string, label: string, kind: string) => {
+    if (app.commands.has(name)) return;
+    app.register({
+      name,
+      label,
+      category: 'Animation',
+      args: [{ name: 'File', default: '' }, { name: 'InputObjs', default: '' }],
+      undoable: false,
+      execute(app, a) {
+        const o = (a.InputObjs ? app.targets(a.InputObjs)[0] : null) ?? app.selectedObjects[0];
+        if (o) {
+          let p = o.properties.find(x => x.type === 'motor' && x.val('kind') === kind);
+          if (!p) {
+            p = new Property(name, 'motor', [str('kind', kind, 'MOTOR Kind', { readOnly: true }), str('file', String(a.File || ''), 'File')]);
+            app.record(label, () => o.addProperty(p!), () => o.removeProperty(p!));
+          } else if (a.File) {
+            app.setParam(p.get('file')!, String(a.File));
+          }
+          app.select([p]);
+          app.logMsg('info', `${name} — CDKMotionTransform RegisterCommand shell`);
+          return p;
+        }
+        app.logMsg('info', `${name} — CDKMotionTransform shell (select rig/null); File=${a.File || ''}`);
+        return null;
+      },
+    });
+  };
+  motorCmd('ApplyTagsToRig', 'Tag Rig', 'tag_rig');
+  motorCmd('ImportC3DFile', 'Import C3D File', 'import_c3d');
+  motorCmd('SetStructureFile', 'Set Structure File', 'structure_file');
+  motorCmd('SetTagValue', 'Set Tag Value', 'tag_value');
+  // RegisterMenu Name aliases (packaging / Anchor tour MOTOR menu Names) → attested cmds.
+  const motorAlias = (name: string, label: string, target: string) => {
+    if (app.commands.has(name)) return;
+    app.register({
+      name,
+      label,
+      category: 'Animation',
+      args: [{ name: 'File', default: '' }, { name: 'InputObjs', default: '' }],
+      undoable: false,
+      execute: (app, a) => app.run(target, a),
+    });
+  };
+  motorAlias('TagRig', 'Tag Rig', 'ApplyTagsToRig');
+  motorAlias('RigToRig', 'Rig to Rig', 'ApplyTagsToRig');
+  motorAlias('MocapToRig', 'Mocap to Rig', 'ImportC3DFile');
+  motorAlias('LoadMotion', 'Load Motion', 'ImportC3DFile');
+  motorAlias('SaveMotion', 'Save Motion', 'SetStructureFile');
   app.register({ name: 'CreateHierarchyFromBiped', label: 'Create Hierarchy from Biped', category: 'Animation', args: [], execute(app) {
     return app.run('CreateSkeletonFromGuide');
   } });

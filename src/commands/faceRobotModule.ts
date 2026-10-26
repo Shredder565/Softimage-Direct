@@ -174,6 +174,49 @@ export function registerFaceRobotModuleCommands(app: App) {
     });
   }
 
+  // WR-16 — remaining FaceRobot / AnimationRig RegisterCommand Names from script_register_hosts.json.
+  // Name registration only; FR.dll / plugin JS execute bodies stay LOCK (no invent).
+  const frHostShells = [
+    'fr_AddBlinkKeys', 'fr_SaveAdjustPanelKeys', 'fr_PrintAdjustPanelKeys', 'fr_RestoreAdjustPanelKeys',
+    'fr_MakeSamplers', 'fr_MakeROM', 'fr_GetROM', 'fr_LoadSamplers', 'fr_SaveSamplers', 'fr_BuildAnimationRig',
+    'ExportAnimationRig', 'fr_ExportAnimationRig', 'fr_MakeShape', 'fr_ShapeExport', 'fr_FilterCntrlColl',
+    'fr_ResetRetarget2', 'fr_CheckAsymmetricalControls', 'fr_ReplaceNeutralPoses', 'fr_TransferProperties',
+    'StoreShapeGoal', 'fr_GetGameSmoothMap', 'fr_ApplyGameSmoothFromMap', 'fr_CopyEyelashes',
+    'fr_TransferEyelashEnvelope', 'ClipDeformers', 'UndoGameSmooth', 'GameExport', 'fr_GameExport',
+    'fr_GameMesh', 'fr_GameEnvelopes', 'fr_GameNormalMaps', 'fr_GameNormalsGenerate', 'fr_GameMasks',
+    'fr_GameShaders', 'SetPropertyDisplay', 'fr_GetGameFaceFromProperty', 'fr_FolderExists', 'fr_GetCentroid',
+    'fr_GetFile', 'fr_GetResolvedDNAPath', 'fr_GetGlobalPos', 'fr_SetOffsetMap', 'fr_SetOffsetMap2',
+    'fr_IsCollection', 'fr_ToCollection', 'fr_KeyAllControls', 'fr_KeySelControls', 'fr_ResetPaths',
+    'fr_SelectAllControls', 'fr_GetControls', 'fr_ResetSel', 'fr_ResetAll', 'fr_PoseAll', 'fr_PoseSel',
+    'fr_SetPickPoints', 'fr_GetPickPoints', 'fr_StoreEnvelope', 'fr_RestoreEnvelope', 'fr_GetPointsAsText',
+    'fr_StorePP', 'fr_RestorePP', 'fr_ApplyType', 'fr_ResetRetarget', 'fr_IsRetargeted', 'CleanSources',
+    'EmptyBackups', 'logv', 'loga', 'logc', 'logt', 'suma', 'fr_InitNeck', 'fr_InitNose', 'fr_ImportSpeech',
+    'fr_LoadVisemePose', 'fr_SaveVisemePose', 'fr_CopyVisemeLibrary', 'fr_CreateVisemeVariation',
+    'fr_CreateVisemeShape', 'fr_ImportVisemes', 'fr_PrepareForPhonemes', 'fr_EditVisemes', 'fr_AddLipSync',
+    'EyelashTool', 'fr_MakeEyelashMeshes', 'fr_RigEyelashes', 'fr_GetEyelashes', 'fr_GetPolymesh',
+    'fr_GetFRPolymesh', 'fr_CapAllHoles', 'PaintGameExport', 'ParseDNAFile', 'GetDNAFile', 'LogDNA',
+    'PlotGlobal', 'PlotFaceRobot', 'fr_AddEyeBalls', 'fr_AddEyeSocket', 'fr_AddMouthInterior',
+    'fr_PickEyeProximity', 'fr_PickMouthProximity', 'fr_StabilizeC3D', 'AddToGroup_tongue',
+    'GetCompounds_tongue', 'fr_SetupTongueMaps', 'fr_BuildTongueAfterSolve', 'fr_ScaleTongueMesh',
+    'fr_IsHeadMesh', 'GetTongueMarkers', 'fr_FitTongueAfterSolveStage', 'fr_SolveTongueAfterSolveStage',
+    'GetTongueScale', 'fr_GetKeyed_safe', 'AddUserKeyword', 'GetKeyed', 'GetKeyed2', 'FilterKeyed',
+    'SetControlKeys', 'MirrorControls', 'ImportAnimationRig', 'fr_ImportAnimationRig', 'fr_BuildEyesConstraint',
+  ] as const;
+  for (const name of frHostShells) {
+    if (app.commands.has(name)) continue;
+    app.register({
+      name,
+      label: name,
+      category: 'Custom',
+      args: [],
+      undoable: false,
+      execute(app) {
+        app.logMsg('info', `${name} — FaceRobot script_register_hosts RegisterCommand shell; plugin body LOCK`);
+        return null;
+      },
+    });
+  }
+
   // commands_full: fr_GetCurrentStage — returns current Control Panel stage (1–6)
   if (!app.commands.has('fr_GetCurrentStage')) {
     app.register({
@@ -365,6 +408,10 @@ export function faceRobotModuleAudit(app: App): Record<string, unknown> {
     frDiagnose: app.commands.has('fr_Diagnose'),
     frCleanMeshModel: app.commands.has('fr_CleanMeshModel'),
     frDiagnoseStatus: 'DUMP_READY',
+    scriptRegisterHostsFrShells: [
+      'fr_AddBlinkKeys', 'StoreShapeGoal', 'PlotFaceRobot', 'ImportAnimationRig', 'GameExport', 'EyelashTool',
+    ].filter(n => app.commands.has(n)),
+    wr16FrHostShellsPartial: true,
     showFaceRobotActPanel: app.commands.has('ShowFaceRobotActPanel'),
     enableFaceRobot: app.commands.has('Enable Face Robot'),
     faceRobotLayout: app.commands.has('Face Robot Layout'),
