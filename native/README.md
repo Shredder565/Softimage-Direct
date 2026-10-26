@@ -47,10 +47,10 @@ cmake -S . -B build -G "Visual Studio 16 2019" -A x64
 cmake --build build --config RelWithDebInfo
 ```
 
-## Windows CI
+## Windows CI / GitHub Release
 
 Workflow: `.github/workflows/build-native-windows.yml`  
-Builds the native target on `windows-latest` when `native/**` changes. Does **not** replace the Electron NSIS installer workflow.
+Builds on `windows-latest` (PR / main / `v*` tags / published release). On tag or release, attaches **`AfterImageNative-win-x64.zip`** to the GitHub Release next to the Electron NSIS installer. Does **not** replace or embed into the NSIS workflow.
 
 ## Spec sources (Project store; not vendored Softimage)
 
