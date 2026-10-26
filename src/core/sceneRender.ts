@@ -262,8 +262,36 @@ export function resolveSoftimageMoviePath(
   return `${dir}/${norm || `${passName}_${fbName}`}.${movieExt}`;
 }
 
-/** Flipbook popup must not ingest full-res Softimage ranges (FrameEnd default 100 → OOM). */
-export const FLIPBOOK_MAX_FRAMES = 48;
+/**
+ * Softimage Flipbook is a viewer subset — Softimage writes full plates to disk.
+ * Cap Flipbook preview count AND downscale (see SEQUENCE_PREVIEW_MAX_EDGE).
+ * Post-1.0.22 freeze: encoding FrameEnd=100 at 1920×1080 into data URLs ≈ 1.1 GB + 14s sync.
+ */
+export const FLIPBOOK_MAX_FRAMES = 16;
+/** Max edge for sequence Flipbook thumbs (Softimage path plates stay Softimage-named). */
+export const SEQUENCE_PREVIEW_MAX_EDGE = 480;
+
+export function scaleToMaxEdge(width: number, height: number, maxEdge: number): { w: number; h: number } {
+  const w = Math.max(1, Math.floor(width));
+  const h = Math.max(1, Math.floor(height));
+  const m = Math.max(w, h);
+  if (m <= maxEdge) return { w, h };
+  const s = maxEdge / m;
+  return { w: Math.max(1, Math.round(w * s)), h: Math.max(1, Math.round(h * s)) };
+}
+
+/** Tiny valid PNG for Softimage path attestation beyond Flipbook subset (no heap bomb). */
+export function softimagePathAttestationDataUrl(frame: number): string {
+  const n = ((Math.floor(frame) % 200) + 40) & 255;
+  const rgba = new Uint8Array(8 * 8 * 4);
+  for (let i = 0; i < rgba.length; i += 4) {
+    rgba[i] = n;
+    rgba[i + 1] = 60;
+    rgba[i + 2] = 90;
+    rgba[i + 3] = 255;
+  }
+  return pngBytesToDataUrl(encodePngRGBA(8, 8, rgba));
+}
 
 export function resolvePasses(app: App, passesArg: string | null | undefined): Pass[] {
   const all = app.scene.passes;
@@ -308,7 +336,10 @@ function movieFormatFor(pass: Pass, override?: string | null): string {
   return movieFmt;
 }
 
-/** Capture one frame to a PNG/JPEG data URL via viewport WebGL, or software fallback. */
+/** Reuse one WebGLRenderer across sequence frames (new-per-frame was a main-thread hitch). */
+let _captureGl: { r: any; w: number; h: number } | null = null;
+
+/** Capture one frame to a PNG data URL via viewport WebGL, or software fallback. */
 export function captureFrameDataUrl(app: App, width: number, height: number, frame: number): string {
   const w = Math.max(1, Math.floor(width));
   const h = Math.max(1, Math.floor(height));
@@ -318,9 +349,14 @@ export function captureFrameDataUrl(app: App, width: number, height: number, fra
     const three = g.__three;
     const cam = g.__activeCamera;
     if (three?.scene && cam && THREE?.WebGLRenderer) {
-      const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
-      r.setSize(w, h);
-      r.shadowMap.enabled = true;
+      if (!_captureGl || _captureGl.w !== w || _captureGl.h !== h) {
+        try { _captureGl?.r?.dispose?.(); } catch { /* ignore */ }
+        const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+        r.setSize(w, h);
+        r.shadowMap.enabled = true;
+        _captureGl = { r, w, h };
+      }
+      const r = _captureGl.r;
       const c = cam.clone();
       if (c.aspect !== undefined) { c.aspect = w / h; c.updateProjectionMatrix?.(); }
       const prev = app.anim.frame;
@@ -329,7 +365,6 @@ export function captureFrameDataUrl(app: App, width: number, height: number, fra
       r.render(three.scene, c);
       const url = r.domElement.toDataURL('image/png');
       app.anim.frame = prev;
-      r.dispose();
       if (url?.startsWith('data:image')) return url;
     }
   } catch {
@@ -463,10 +498,17 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
     let count = 0;
     let lastResolved = '';
     const passPlates: RenderedFile[] = [];
+    // Softimage: full plates on disk. AfterImage: still = full-res; sequence = Flipbook thumbs
+    // + Softimage-path attestation for the rest (avoids sync main-thread OOM / UI freeze).
+    const preview = multi ? scaleToMaxEdge(w, h, SEQUENCE_PREVIEW_MAX_EDGE) : { w, h };
     for (let f = f0; f <= f1; f += step) {
       if (count >= maxFrames) break;
       app.anim.frame = f;
-      const dataUrl = captureFrameDataUrl(app, w, h, f);
+      const dataUrl = !multi
+        ? captureFrameDataUrl(app, w, h, f)
+        : count < FLIPBOOK_MAX_FRAMES
+          ? captureFrameDataUrl(app, preview.w, preview.h, f)
+          : softimagePathAttestationDataUrl(f);
       const path = resolveSoftimageResolvedFilename(
         outputDir, filenameTpl, f, padding, plateFormat, pass.name, fb.name,
       );
@@ -551,7 +593,7 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
     if (opts.openPreview !== false) previewStill(pictureFiles[0].dataUrl, pictureFiles[0].path, pictureFiles[0].format);
   } else if (ok && mode === 'sequence') {
     const name = (pictureFiles[0]?.path.split('/').pop() || 'pass').replace(/\.\d+\.[^.]+$/, '');
-    // Softimage writes full range to disk; Flipbook loads from files. Cap popup payload to avoid OOM (FrameEnd=100).
+    // Softimage Flipbook viewer subset — thumbs only; never stringify full-res×N into document.write.
     const flip = pictureFiles.slice(0, FLIPBOOK_MAX_FRAMES).filter(f => f.dataUrl.startsWith('data:image'));
     if (typeof window !== 'undefined' && flip.length) {
       window.dispatchEvent(new CustomEvent('flipbook-frames', {
@@ -561,11 +603,12 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
           format: moviePath ? format : (pictureFiles[0]?.format ?? 'pic'),
           totalFrames: pictureFiles.length,
           moviePath,
+          previewMaxEdge: SEQUENCE_PREVIEW_MAX_EDGE,
         },
       }));
     }
     if (pictureFiles.length > FLIPBOOK_MAX_FRAMES) {
-      app.logMsg('info', `Flipbook shows ${FLIPBOOK_MAX_FRAMES}/${pictureFiles.length} plates; full Softimage sequence in Render_Pictures (__siRenderPictures)`);
+      app.logMsg('info', `Flipbook shows ${FLIPBOOK_MAX_FRAMES}/${pictureFiles.length} preview plates (≤${SEQUENCE_PREVIEW_MAX_EDGE}px); Softimage paths for full range in Render_Pictures (__siRenderPictures)`);
     }
     if (moviePath) app.logMsg('info', `Movie sidecar → ${moviePath} (.${format}; Softimage plates .pic)`);
   }

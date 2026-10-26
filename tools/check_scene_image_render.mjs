@@ -45,6 +45,16 @@ else notes.push('sceneRender resolveSoftimageMoviePath present');
 if (!/FLIPBOOK_MAX_FRAMES/.test(core))
   diffs.push('sceneRender missing Flipbook frame cap (OOM guard)');
 else notes.push('sceneRender Flipbook capped');
+if (!/SEQUENCE_PREVIEW_MAX_EDGE/.test(core) || !/softimagePathAttestationDataUrl/.test(core))
+  diffs.push('sceneRender missing sequence preview / path-attestation freeze guards');
+else notes.push('sceneRender sequence preview + Softimage path attestation (post-1.0.22 freeze)');
+if (/FLIPBOOK_MAX_FRAMES\s*=\s*48/.test(core))
+  diffs.push('FLIPBOOK_MAX_FRAMES still 48 — must be ≤16 for Flipbook heap safety');
+else notes.push('FLIPBOOK_MAX_FRAMES ≤16');
+const viewExtras = fs.readFileSync(path.join(root, 'src/ui/viewExtras.ts'), 'utf8');
+if (/JSON\.stringify\(frames\)/.test(viewExtras))
+  diffs.push('viewExtras Flipbook must not JSON.stringify frame data URLs into document.write');
+else notes.push('viewExtras Flipbook injects frames without JSON.stringify embed');
 if (!/MovieCreate/.test(core) || !/wantsMovieContainer|emitMovie/.test(core))
   diffs.push('sceneRender must gate movie sidecar on MovieCreate / movie override');
 else notes.push('sceneRender MovieCreate gates .mp4 sidecar');

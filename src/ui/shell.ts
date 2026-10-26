@@ -429,7 +429,7 @@ export function renderManager(app: App, host: HTMLElement) {
     }
     form.appendChild(btn('New Pass', 'Create a render pass', () => { app.run('CreatePass', { Name: 'Pass' }); render(); }));
     root.appendChild(form);
-    root.appendChild(el('div', 'hint', `Softimage still/sequence plates → Render_Pictures/[Pass]_[Framebuffer].FRAME.pic (dump Format=pic). MovieCreate / Output Format .${DEFAULT_RENDER_OUTPUT_FORMAT} → movie sidecar (no .mov). Pass range Flipbook capped; full plates in __siRenderPictures.`));
+    root.appendChild(el('div', 'hint', `Softimage still/sequence plates → Render_Pictures/[Pass]_[Framebuffer].FRAME.pic (dump Format=pic). MovieCreate / Output Format .${DEFAULT_RENDER_OUTPUT_FORMAT} → movie sidecar (no .mov). Sequence Flipbook = preview thumbs (capped); Softimage paths for full range in __siRenderPictures.`));
   };
   const doRender = (range: boolean) => {
     const pass = app.scene.passes.find(p => p.name === opts.pass);
