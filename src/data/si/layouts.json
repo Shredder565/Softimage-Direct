@@ -2694,7 +2694,7 @@
 "splitter": "none",
 "sizes": [
 "*",
-"48"
+"32"
 ],
 "optional": null,
 "children": [
@@ -2707,7 +2707,7 @@
 "splitter": "movable",
 "sizes": [
 "*",
-"135"
+"88"
 ],
 "optional": null,
 "children": [
@@ -2719,7 +2719,7 @@
 "orientation": "horizontal",
 "splitter": "none",
 "sizes": [
-"299",
+"71",
 "*"
 ],
 "optional": null,
@@ -2837,8 +2837,8 @@
 "sizes": [
 "79",
 "*",
-"26",
-"22"
+"17",
+"15"
 ],
 "optional": null,
 "children": [
@@ -2913,11 +2913,11 @@
 "active": 0,
 "buttonsize": null,
 "sizes": [
-"283",
-"334",
-"52",
-"90",
-"91"
+"189",
+"223",
+"35",
+"60",
+"61"
 ],
 "optional": null,
 "children": [
@@ -3127,7 +3127,7 @@
 "splitter": "none",
 "sizes": [
 "*",
-"48"
+"32"
 ],
 "optional": null,
 "children": [
@@ -3140,7 +3140,7 @@
 "splitter": "movable",
 "sizes": [
 "*",
-"135"
+"88"
 ],
 "optional": null,
 "children": [
@@ -3152,7 +3152,7 @@
 "orientation": "horizontal",
 "splitter": "none",
 "sizes": [
-"299",
+"71",
 "*"
 ],
 "optional": null,
@@ -3270,8 +3270,8 @@
 "sizes": [
 "79",
 "*",
-"26",
-"22"
+"17",
+"15"
 ],
 "optional": null,
 "children": [
@@ -3346,11 +3346,11 @@
 "active": 0,
 "buttonsize": null,
 "sizes": [
-"283",
-"334",
-"52",
-"90",
-"91"
+"189",
+"223",
+"35",
+"60",
+"61"
 ],
 "optional": null,
 "children": [

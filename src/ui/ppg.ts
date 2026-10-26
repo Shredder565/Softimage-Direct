@@ -6,7 +6,7 @@ import { TEXTURE_NODES } from '../core/shaders';
 import type { FCurve } from '../core/animation';
 import { Parameter, ParamSet } from '../core/params';
 import type { LayoutNode } from '../core/opdefs';
-import { applyPpgChrome, pe394StubChrome, renderPe394Stub, PPG_CHROME } from './ppgChrome';
+import { applyPpgChrome, PPG_CHROME } from './ppgChrome';
 import { dispatchPpgOnChanged, dispatchPpgOnInit } from './ppgLogic';
 
 export function propertyEditor(app: App, host: HTMLElement, target?: () => Node | undefined) {
@@ -96,13 +96,10 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
     const n = current();
     tabs.innerHTML = ''; body.innerHTML = '';
     if (!n) {
-      // XSI.exe RT_DIALOG 394 stub chrome (title + TODO string only — no invent Layout).
-      const stub = pe394StubChrome();
-      title.textContent = stub.title;
+      // Softimage Layout PPG with no selection: blank Property Page chrome.
+      // WR-LOOK-07 — do not surface PE 394 "TODO: layout property page" in Softimage Layout a11y.
+      title.textContent = 'Property Page';
       body.replaceChildren();
-      const host = document.createElement('div');
-      renderPe394Stub(host);
-      body.appendChild(host);
       return;
     }
     const obj = n instanceof X3DObject ? n : (n as any).parentObj ?? n.parent;

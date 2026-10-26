@@ -90,6 +90,21 @@
   --si-region-border: #ffff00;
   --si-region-handle: #0000ff;
   --si-region-scale-bar: #ffffff;
+  /* Softimage Layout HWND chrome (softimage-pc render-freeze harvest; applySoftimageLayoutHwndChrome) */
+  --si-menubar-h: 14px;
+  --si-status-h: 13px;
+  --si-module-menu-w: 71px;
+  --si-toolbar-panel-w: 70px;
+  --si-module-btn-w: 68px;
+  --si-module-btn-h: 19px;
+  --si-mcp-w: 88px;
+  --si-timeline-h: 17px;
+  --si-timerange-h: 15px;
+  --si-bottom-row-h: 32px;
+  --si-vp-head-h: 16px;
+  --si-mcp-tray-btn-w: 44px;
+  --si-mcp-tray-btn-h: 23px;
+  --si-panel-switcher-w: 173px;
   --fcv-ruler-h: 16px;
   --fcv-label-m: 36px;
   --mixer-track-h: 22px;
@@ -105,10 +120,11 @@
 html, body { height: 100%; margin: 0; background: var(--bg); overflow: hidden; }
 button, select, input { font-family: inherit; }
 #app { height: 100%; display: flex; flex-direction: column; }
-#menubar { height: 22px; background: linear-gradient(#cfcbc8, #b8b4b1); display: flex; align-items: center; gap: 2px; padding: 0 6px; border-bottom: 1px solid var(--line); font-size: 11px; }
-#menubar .logo { font-weight: bold; color: #2c2c2c; margin-right: 10px; background: #f2f0ee; padding: 1px 4px; border: 1px solid #777; border-radius: 2px; font-size: 10px; }
-#menubar span.m { padding: 2px 8px; cursor: default; } #menubar span.m:hover { background: #8c88a0; color: #fff; }
-#menubar .right { margin-left: auto; color: var(--muted); font-size: 10px; }
+/* Softimage single menubar row — HWND menubar_h=14; Electron OS menu hidden (WR-LOOK-00) */
+#menubar { height: var(--si-menubar-h); min-height: var(--si-menubar-h); background: linear-gradient(#cfcbc8, #b8b4b1); display: flex; align-items: center; gap: 1px; padding: 0 4px; border-bottom: 1px solid var(--line); font-size: 11px; line-height: var(--si-menubar-h); }
+#menubar .logo { font-weight: bold; color: #2c2c2c; margin-right: 6px; background: #f2f0ee; padding: 0 3px; border: 1px solid #777; border-radius: 1px; font-size: 10px; line-height: 12px; }
+#menubar span.m { padding: 0 6px; cursor: default; height: 100%; display: inline-flex; align-items: center; } #menubar span.m:hover { background: #8c88a0; color: #fff; }
+#menubar .right { margin-left: auto; color: var(--muted); font-size: 10px; letter-spacing: 0; white-space: pre; }
 #root { flex: 1; min-height: 0; }
 .frameset { width: 100%; height: 100%; position: relative; gap: 3px; }
 .frame { width: 100%; height: 100%; min-width: 0; min-height: 0; background: var(--panel); border: 1px solid var(--line); border-top-color: var(--line2); border-left-color: var(--line2); overflow: hidden; display: flex; flex-direction: column; }
@@ -135,13 +151,15 @@ button, select, input { font-family: inherit; }
 
 /* toolbar panel */
 .toolbar-panel { display: flex; flex-direction: column; height: 100%; }
-.module-select { margin: 4px 4px 2px; padding: 3px 4px; font-weight: bold; color: #1a1a1a; border: 1px solid #5a5a5a; border-radius: 2px; font-size: 12px; }
+/* Softimage module header — purple Model / blue Render (HWND module_btn 68×19) */
+.module-select { margin: 2px 2px 1px; padding: 0 2px; height: var(--si-module-btn-h); min-height: var(--si-module-btn-h); font-weight: bold; color: #1a1a1a; border: 1px solid #5a5a5a; border-radius: 1px; font-size: 11px; box-sizing: border-box; }
 .module-select.Model { background: var(--model); } .module-select.Animate { background: var(--animate); } .module-select.Render { background: var(--render); } .module-select.Simulate { background: var(--simulate); } .module-select.ICE { background: var(--ice); } .module-select.Hair { background: var(--hair); } .module-select.FROST { background: var(--frost); }
 .tb-scroll { flex: 1; overflow-y: auto; padding: 0 4px 6px; }
 .tb-group { margin-top: 5px; padding: 2px 6px; font-weight: bold; color: #1a1a1a; border-radius: 2px; border: 1px solid #5a5a5a; font-size: 11px; }
 .Model .tb-group { background: var(--model); } .Animate .tb-group { background: var(--animate); } .Render .tb-group { background: var(--render); } .Simulate .tb-group { background: var(--simulate); } .ICE .tb-group { background: var(--ice); } .Hair .tb-group { background: var(--hair); } .FROST .tb-group { background: var(--frost); }
-.toolbar-panel.Render .tb-btn { min-height: var(--render-tb-cell-h); }
-.tb-btn { display: block; width: 100%; text-align: center; margin: 3px 0 0; padding: 4px 8px; background: linear-gradient(var(--btn-top), var(--btn-bot)); color: var(--text); border: 1px solid #5f5b58; border-radius: 3px; cursor: pointer; font-size: 11px; position: relative; }
+.toolbar-panel.Render .tb-btn { min-height: var(--si-module-btn-h); }
+/* Softimage beveled MCP/module stack buttons (HWND Button ~68×19) */
+.tb-btn { display: block; width: 100%; text-align: center; margin: 2px 0 0; padding: 1px 4px; height: var(--si-module-btn-h); min-height: var(--si-module-btn-h); line-height: calc(var(--si-module-btn-h) - 4px); background: linear-gradient(var(--btn-top), var(--btn-bot)); color: var(--text); border: 1px solid var(--line); border-top-color: #e0dcd9; border-left-color: #e0dcd9; border-radius: 1px; cursor: pointer; font-size: 10px; position: relative; box-sizing: border-box; }
 .tb-btn:hover { background: linear-gradient(var(--btn-hover-top), var(--btn-hover-bot)); }
 .tb-btn:disabled, .tb-btn.disabled { color: #9a9a9a; cursor: default; opacity: 0.65; }
 .tb-btn:disabled:hover, .tb-btn.disabled:hover { background: linear-gradient(var(--btn-top), var(--btn-bot)); }
@@ -271,8 +289,9 @@ button, select, input { font-family: inherit; }
 .vp-labels { position: absolute; inset: 0; pointer-events: none; }
 .vp-label { pointer-events: none; position: absolute; border: 1px solid #2a2a2a; box-sizing: border-box; }
 .vp-label.active { border-color: var(--accent); }
-.vp-head { pointer-events: auto; position: absolute; top: 0; left: 0; right: 0; height: 18px; background: var(--vp-head); display: flex; align-items: center; gap: 6px; padding: 0 4px; font-size: 10px; color: #e8e8e8; }
-.vp-head b { color: var(--accent); } .vp-head select { background: #4a4a4a; color: #eee; border: 1px solid #222; font-size: 10px; }
+/* Softimage viewport letter badges / eye-cam / mode chrome — HWND viewport_head_h=16 */
+.vp-head { pointer-events: auto; position: absolute; top: 0; left: 0; right: 0; height: var(--si-vp-head-h); background: var(--vp-head); display: flex; align-items: center; gap: 3px; padding: 0 3px; font-size: 10px; color: #e8e8e8; box-sizing: border-box; }
+.vp-head b { color: var(--accent); font-size: 11px; min-width: 10px; text-align: center; } .vp-head select { background: #4a4a4a; color: #eee; border: 1px solid #222; font-size: 10px; }
 .vp-head .spacer { flex: 1; }
 .rubber { position: absolute; border: 1px dashed #ffd34d; background: rgba(255,211,77,.08); pointer-events: none; z-index: 4; }
 .tool-hint { position: absolute; left: 50%; top: 24px; transform: translateX(-50%); background: rgba(30,30,30,.85); color: #ffd34d; padding: 3px 10px; border-radius: 3px; font-size: 11px; z-index: 6; pointer-events: none; }
@@ -386,9 +405,9 @@ button, select, input { font-family: inherit; }
 
 
 /* ---- Viewport header (Softimage view menus) ---- */
-.vp-menu-btn { pointer-events: auto; background: linear-gradient(#5a5a5a, #3e3e3e); color: #ececec; border: 1px solid #222; border-radius: 2px; font-size: 10px; height: 15px; padding: 0 5px; cursor: pointer; display: inline-flex; align-items: center; gap: 2px; }
+.vp-menu-btn { pointer-events: auto; background: linear-gradient(#5a5a5a, #3e3e3e); color: #ececec; border: 1px solid #222; border-radius: 1px; font-size: 9px; height: calc(var(--si-vp-head-h) - 3px); padding: 0 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 1px; box-sizing: border-box; }
 .vp-menu-btn:hover { background: linear-gradient(#6c6c6c, #4c4c4c); }
-.vp-names { position: absolute; inset: 18px 0 0 0; pointer-events: none; }
+.vp-names { position: absolute; inset: var(--si-vp-head-h) 0 0 0; pointer-events: none; }
 .vp-name { position: absolute; color: #f2f2f2; font-size: 10px; text-shadow: 0 0 2px #000; white-space: nowrap; }
 .menu-accel { float: right; margin-left: 24px; color: #666; }
 .menu-item .menu-accel { color: #777; } .menu-item:hover .menu-accel { color: #e8e8e8; }
@@ -417,11 +436,11 @@ button, select, input { font-family: inherit; }
 .ps-btn { width: 26px; height: 26px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(var(--btn-top), var(--btn-bot)); border: 1px solid var(--line); border-radius: 3px; cursor: pointer; font-size: 9px; }
 .ps-btn:hover { background: linear-gradient(var(--btn-hover-top), var(--btn-hover-bot)); }
 
-/* ---- Status bar ---- */
-#statusbar { height: 18px; background: linear-gradient(#c9c5c2, #b4b0ad); border-top: 1px solid var(--line); display: flex; align-items: center; font-size: 10px; padding: 0 6px; color: var(--text); }
+/* ---- Status bar — Softimage msctls_statusbar32 h=13 (WR-LOOK-05) ---- */
+#statusbar { height: var(--si-status-h); min-height: var(--si-status-h); background: linear-gradient(#c9c5c2, #b4b0ad); border-top: 1px solid var(--line); display: flex; align-items: center; font-size: 10px; line-height: var(--si-status-h); padding: 0 4px; color: var(--text); box-sizing: border-box; }
 #statusbar .sb-tool { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-#statusbar .sb-right { display: flex; gap: 14px; }
-#statusbar .sb-hint i { font-style: normal; font-weight: bold; background: #5d5a58; color: #f4f2f0; padding: 0 3px; border-radius: 2px; margin-right: 3px; font-size: 9px; }
+#statusbar .sb-right { display: flex; gap: 10px; }
+#statusbar .sb-hint i { font-style: normal; font-weight: bold; background: #5d5a58; color: #f4f2f0; padding: 0 2px; border-radius: 1px; margin-right: 2px; font-size: 9px; }
 
 /* ---- Floating windows / Preferences ---- */
 .ppg-float.minimized .ppg-float-body, .ppg-float.minimized .prefs-foot { display: none; }
@@ -611,7 +630,7 @@ body.dock-picking, body.dock-picking * { cursor: crosshair !important; }
 .docked-head { display: flex; gap: 4px; align-items: center; background: #3a5a8c; color: #fff; font-size: 11px; padding: 1px 4px; } .docked-head span:first-child { flex: 1; }
 .docked-body { flex: 1; min-height: 0; overflow: auto; position: relative; }
 
-#menubar .cmode { margin-left: auto; margin-right: 8px; font: 11px Tahoma, Verdana, sans-serif; background: #f2f0ee; border: 1px solid #777; height: 17px; }
+#menubar .cmode { margin-left: auto; margin-right: 6px; font: 10px Tahoma, Verdana, sans-serif; background: #f2f0ee; border: 1px solid #777; height: calc(var(--si-menubar-h) - 2px); }
 #menubar .right { margin-left: 0 !important; }
 
 .rt-node.ice { width: 170px; } .rt-node.ice.selected { outline: 2px solid #ffd200; } .rt-port-row.right { justify-content: flex-end; margin-left: 0; margin-right: -5px; }

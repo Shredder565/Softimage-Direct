@@ -1,0 +1,43 @@
+{
+  "source": "internal/softimage-pc-dumps/render-freeze/softimage_child_hwnds_solo.json + softimage_hwnd_interesting.json",
+  "host": "softimage-pc Softimage 2015 SP2 Softimage Layout",
+  "when_utc": "2026-10-26T16:50Z",
+  "policy": "Dump-attested HWND metrics only. Softimage-faithful original AfterImage chrome. No Softimage paste.",
+  "main": {
+    "title_prefix": "Autodesk Softimage 2015 SP2",
+    "menubar_h": 14,
+    "status_h": 13,
+    "module_menu_w": 71,
+    "toolbar_panel_w": 70,
+    "module_btn_w": 68,
+    "module_btn_h": 19,
+    "mcp_w": 88,
+    "selection_panel_h": 189,
+    "transform_panel_h": 223,
+    "snap_panel_h": 35,
+    "constraint_panel_h": 60,
+    "edit_panel_h": 61,
+    "timeline_h": 17,
+    "timerange_h": 15,
+    "bottom_row_h": 32,
+    "panel_switcher_w": 173,
+    "playback_panel_w": 291,
+    "animation_panel_w": 256,
+    "viewport_head_h": 16,
+    "mcp_tray_btn_w": 44,
+    "mcp_tray_btn_h": 23
+  },
+  "colors_sampled": {
+    "note": "Softimage Layout light warm-gray (styles.css Softimage 2015 scheme + Softimage Desktop screenshots)",
+    "bg": "#aca8a5",
+    "bg2": "#b6b2af",
+    "vp_bg": "#7f7f7f",
+    "vp_head": "#3b3b3b",
+    "btn_top": "#c9c5c2",
+    "btn_bot": "#adaaa7",
+    "line": "#7c7875",
+    "render_header": "#8aa0b8",
+    "model_header": "#a28aac",
+    "accent": "#e8b84a"
+  }
+}

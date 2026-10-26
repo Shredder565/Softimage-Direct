@@ -229,7 +229,7 @@ export function menubar(app: App, host: HTMLElement) {
       case 'Merge...': ev('mergescene'); return;
       case 'New Project...': {
         const n = prompt('New project name', projectName());
-        if (n) { setProject(n); app.logMsg('info', `Project: ${n}`); const r = document.querySelector('#menubar .right'); if (r) r.textContent = `Project: ${n}    Scene: …`; }
+        if (n) { setProject(n); app.logMsg('info', `Project: ${n}`); const r = document.querySelector('#menubar .right'); if (r) r.textContent = `Project: ${n}     Scene: Untitled`; }
         return;
       }
       case 'Project Manager...': {
@@ -289,6 +289,7 @@ export function menubar(app: App, host: HTMLElement) {
   const cm = document.createElement('select'); cm.className = 'cmode'; cm.title = 'Construction mode: which region of the construction history new operators go into';
   for (const [v, l] of [['modeling', 'Modeling'], ['shape', 'Shape Modeling'], ['animation', 'Animation'], ['secondaryshape', 'Secondary Shape Modeling']]) { const o = document.createElement('option'); o.value = v; o.textContent = l; cm.appendChild(o); }
   cm.value = construction.mode; cm.onchange = () => app.run('SetConstructionMode', { Mode: cm.value }); app.events.on('module', () => { cm.value = construction.mode; }); bar.appendChild(cm);
-  const right = document.createElement('span'); right.className = 'right'; right.textContent = `Project: ${projectName()} · Softimage-Direct`; bar.appendChild(right);
+  // Softimage Desktop Project/Scene spacing (HWND title: five spaces between clusters).
+  const right = document.createElement('span'); right.className = 'right'; right.textContent = `Project: ${projectName()}     Scene: Untitled`; bar.appendChild(right);
   host.appendChild(bar);
 }
