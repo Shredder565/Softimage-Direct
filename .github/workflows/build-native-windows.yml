@@ -6,14 +6,16 @@ on:
     paths:
       - 'native/**'
       - '.github/workflows/build-native-windows.yml'
+  # No paths filter on push — tag bumps (packaging-only) must still build + attach native zip.
   push:
     branches: [main]
-    paths:
-      - 'native/**'
-      - '.github/workflows/build-native-windows.yml'
+    tags:
+      - 'v*'
+  release:
+    types: [published]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-native:
@@ -51,6 +53,17 @@ jobs:
         working-directory: native
         run: cmake --build build --config Release --parallel
 
+      - name: Stage release zip
+        shell: pwsh
+        run: |
+          $stage = "native/dist/AfterImageNative-win-x64"
+          New-Item -ItemType Directory -Force -Path "$stage/data" | Out-Null
+          Copy-Item "native/build/Release/AfterImageNative.exe" "$stage/AfterImageNative.exe"
+          Copy-Item "native/build/Release/data/commands_attested.json" "$stage/data/commands_attested.json"
+          if (Test-Path "native/dist/AfterImageNative-win-x64.zip") { Remove-Item "native/dist/AfterImageNative-win-x64.zip" -Force }
+          Compress-Archive -Path "$stage\*" -DestinationPath "native/dist/AfterImageNative-win-x64.zip"
+          Get-ChildItem native/dist | Format-Table Name, Length
+
       - name: Upload AfterImageNative.exe
         uses: actions/upload-artifact@v4
         with:
@@ -58,4 +71,14 @@ jobs:
           path: |
             native/build/Release/AfterImageNative.exe
             native/build/Release/data/commands_attested.json
+            native/dist/AfterImageNative-win-x64.zip
           if-no-files-found: error
+
+      - name: Attach native zip to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: native/dist/AfterImageNative-win-x64.zip
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

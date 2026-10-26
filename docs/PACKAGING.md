@@ -10,7 +10,7 @@ Distribution is **binary-only / closed source**: the NSIS installer does not gra
 AfterImage-<version>-setup.exe
 ```
 
-Example for the current `package.json` version: **`AfterImage-1.0.21-setup.exe`**.
+Example for the current `package.json` version: **`AfterImage-1.0.22-setup.exe`**.
 
 ## Local / CI build (Windows)
 
@@ -41,13 +41,24 @@ Workflow: [`.github/workflows/build-windows.yml`](../.github/workflows/build-win
 Triggers:
 
 - **Manual:** Actions → *Build AfterImage Windows installer* → *Run workflow*
-- **Tag:** `git tag v1.0.21 && git push origin v1.0.21` — builds and attaches the exe to the GitHub Release for that tag
+- **Tag:** `git tag v1.0.22 && git push origin v1.0.22` — builds and attaches the exe to the GitHub Release for that tag
 - **Release published:** same attach step
 
 Download:
 
 1. Open the workflow run → *Artifacts* → `AfterImage-…-setup`
 2. Or open the GitHub Release for `vX.Y.Z` and download `AfterImage-X.Y.Z-setup.exe`
+
+## Native Win32 shell (Phase 1) — separate release asset
+
+`native/` is a Softimage-faithful **original** C++/Win32 scaffold (`AfterImageNative.exe`). It is **not** bundled inside the Electron NSIS installer, but **is** attached to GitHub Releases as `AfterImageNative-win-x64.zip` on `v*` tags (alongside `AfterImage-*-setup.exe`).
+
+| Build | How |
+|-------|-----|
+| softimage-pc / local MSVC | `cd native && build-softimage-pc.bat` → `native/build/Release/AfterImageNative.exe` (see [`native/README.md`](../native/README.md)) |
+| GitHub Actions | *Build AfterImage Native (Win32)* → artifact `AfterImageNative-win-x64`; on tag/`release` also attaches `AfterImageNative-win-x64.zip` to the GitHub Release |
+
+Zip contents: `AfterImageNative.exe` + `data/commands_attested.json`.
 
 ## Softimage branding note
 
