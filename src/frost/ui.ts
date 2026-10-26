@@ -6,6 +6,7 @@ import { FROST_NODES, frostCategories } from './nodes';
 import { frostOf } from './session';
 import { FROST_PRESETS } from './presets';
 import { aliveCount, aliveStrandCount, aliveClothVerts } from './evaluator';
+import { FROST_MODULE_TABS } from './experimentalRender';
 
 const el = (tag: string, cls = '', text = '') => {
   const e = document.createElement(tag);
@@ -283,12 +284,53 @@ export function frostToolbar(app: App, host: HTMLElement) {
     b.onclick = fn;
     return b;
   };
+
+  // Softimage-density module tab strip — tab 7 = Experimental Render (2026 additive).
+  const tabs = el('div', 'frost-tabs');
+  const tabActions: Record<string, () => void> = {
+    graph: () => window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'FROST Graph' } })),
+    particles: () => { frost.loadRecipe(); app.logMsg('info', 'FROST: loaded Emit→Simulate recipe'); },
+    hair: () => window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'FROST Hair Wizard' } })),
+    cloth: () => window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'FROST Cloth Wizard' } })),
+    cache: () => {
+      frost.bakeClothCache();
+      app.logMsg('info', 'FROST Cache: cloth cache bake requested (scrub without re-sim for baked frames)');
+    },
+    library: () => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([frost.toJSON()], { type: 'application/json' }));
+      a.download = 'frost-graph.json';
+      a.click();
+      app.logMsg('info', 'FROST Library: exported frost-graph JSON');
+    },
+    'experimental-render': () => {
+      window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'FROST Experimental Render' } }));
+    },
+  };
+  let activeTab = String((frost as any).activeModuleTab ?? 'graph');
+  for (const t of FROST_MODULE_TABS) {
+    const b = el('button', 'frost-tab' + (t.id === activeTab ? ' active' : ''), `${t.index}. ${t.label}`) as HTMLButtonElement;
+    b.title = t.id === 'experimental-render'
+      ? 'Tab 7 — Experimental Render (2026 hybrid / path-trace; not Softimage 1:1)'
+      : `FROST tab ${t.index}: ${t.label}`;
+    b.dataset.frostTab = t.id;
+    b.onclick = () => {
+      activeTab = t.id;
+      (frost as any).activeModuleTab = t.id;
+      tabs.querySelectorAll('.frost-tab').forEach(x => x.classList.toggle('active', (x as HTMLElement).dataset.frostTab === t.id));
+      tabActions[t.id]?.();
+    };
+    tabs.appendChild(b);
+  }
+  wrap.append(el('div', 'tb-group', 'FROST'), tabs);
+
   wrap.append(
-    el('div', 'tb-group', 'FROST'),
     mk('Hair Wizard', 'Character hair easy-path (scalp → look)', () => {
+      (frost as any).activeModuleTab = 'hair';
       window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'FROST Hair Wizard' } }));
     }),
     mk('Cloth Wizard', 'Character cloth easy-path (garment → cache)', () => {
+      (frost as any).activeModuleTab = 'cloth';
       window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'FROST Cloth Wizard' } }));
     }),
     mk('Character Hair', 'Load hair recipe with defaults', () => {
@@ -301,6 +343,10 @@ export function frostToolbar(app: App, host: HTMLElement) {
     }),
     mk('Graph Editor', 'Open FROST Graph view', () => window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'FROST Graph' } }))),
     mk('Emit→Simulate', 'Load default particle recipe', () => { frost.loadRecipe(); app.logMsg('info', 'FROST: loaded Emit→Simulate recipe'); }),
+    mk('Exp. Render', 'FROST tab 7 — Experimental Render (2026 hybrid / path-trace)', () => {
+      (frost as any).activeModuleTab = 'experimental-render';
+      window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'FROST Experimental Render' } }));
+    }),
     mk('Reset Sim', 'Clear particles/strands/cloth and re-evaluate', () => { frost.reset(); frost.tick(app.anim.frame); app.events.emit('scene'); }),
     mk('Export JSON', 'Download frost-graph IR', () => {
       const a = document.createElement('a');
@@ -309,7 +355,7 @@ export function frostToolbar(app: App, host: HTMLElement) {
       a.click();
     }),
   );
-  const hint = el('div', 'frost-tb-hint', 'Hair / Cloth Wizards for character FX · Graph for particles/TD recipes. Play the timeline to advance sim.');
+  const hint = el('div', 'frost-tb-hint', 'Tabs 1–6: Graph / Particles / Hair / Cloth / Cache / Library · Tab 7: Experimental Render (2026). Softimage Render tab unchanged.');
   wrap.appendChild(hint);
   host.appendChild(wrap);
 }

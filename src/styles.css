@@ -781,6 +781,36 @@ body.dock-picking, body.dock-picking * { cursor: crosshair !important; }
 .frost-stats { padding: 3px 8px; font: 11px Tahoma, Verdana, sans-serif; color: #ddd; background: #3a3a3a; border-top: 1px solid #222; }
 .frost-tb { display: flex; flex-direction: column; gap: 2px; padding: 2px 0 8px; }
 .frost-tb-hint { margin: 8px 6px; font: 11px Tahoma, Verdana, sans-serif; color: #333; line-height: 1.35; }
+.frost-tabs { display: flex; flex-wrap: wrap; gap: 1px; margin: 2px 4px 6px; padding: 2px; background: #9a9690; border: 1px solid #6a6660; }
+.frost-tab { font: 10px Tahoma, "MS Sans Serif", sans-serif; padding: 3px 6px; background: #c4c0b8; color: #1f1d1c; border: 1px solid #7c7875; cursor: pointer; white-space: nowrap; }
+.frost-tab:hover { background: #d4d0c8; }
+.frost-tab.active { background: #ece8e0; border-bottom-color: #ece8e0; font-weight: 700; }
+.frost-tab[data-frost-tab="experimental-render"] { color: #5a3020; }
+.frost-tab[data-frost-tab="experimental-render"].active { background: #e8d8c8; color: #3a1810; }
+
+/* FROST Experimental Render (tab 7) */
+.frost-xr { display: flex; flex-direction: column; height: 100%; background: #3d3d3d; color: #eee; font: 11px Tahoma, Verdana, sans-serif; }
+.frost-xr-head { padding: 10px 12px 6px; background: linear-gradient(180deg, #6b5a4a, #5e3f2f); border-bottom: 1px solid #3a2e1e; }
+.frost-xr-title { font: 600 14px Tahoma, Verdana, sans-serif; }
+.frost-xr-sub { opacity: 0.85; margin-top: 2px; }
+.frost-xr-banner { margin: 0; padding: 6px 10px; background: #5a4030; color: #f0d8c0; border-bottom: 1px solid #3a2818; font: 10px Tahoma, Verdana, sans-serif; line-height: 1.35; }
+.frost-xr-body { flex: 1; overflow: auto; padding: 10px 12px; }
+.frost-xr-row { display: flex; flex-direction: column; gap: 3px; margin: 0 0 10px; }
+.frost-xr-row label { color: #ccc; }
+.frost-xr-select, .frost-xr-range, .frost-xr-num { width: 100%; background: #2a2a2a; color: #eee; border: 1px solid #111; padding: 3px; }
+.frost-xr-num { width: 72px; }
+.frost-xr-samp { display: flex; align-items: center; gap: 8px; }
+.frost-xr-samp .frost-xr-range { flex: 1; }
+.frost-xr-val { color: #9fd; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.frost-xr-check { display: flex; align-items: center; gap: 6px; margin: 6px 0; }
+.frost-xr-label { margin: 8px 0 4px; color: #ccc; font-weight: 600; }
+.frost-xr-aovs { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-bottom: 4px; }
+.frost-xr-aov { display: flex; align-items: center; gap: 4px; min-width: 100px; }
+.frost-xr-hint { margin: 0 0 10px; color: #9ab; line-height: 1.35; font-size: 10px; }
+.frost-xr-frames { display: flex; align-items: center; gap: 4px; }
+.frost-xr-foot { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; border-top: 1px solid #222; background: #383838; }
+.frost-xr-primary { background: #8a5a3a !important; color: #fff !important; }
+.frost-xr-stats { padding: 4px 12px 8px; color: #c4a484; border-top: 1px solid #2a2a2a; font-size: 10px; }
 
 /* FROST Character Hair / Cloth Wizard */
 .frost-wiz { display: flex; flex-direction: column; height: 100%; background: #3d3d3d; color: #eee; font: 11px Tahoma, Verdana, sans-serif; }

@@ -32,7 +32,7 @@ import { faceRobotStage1View, faceRobotActPanelView } from './ui/faceRobotStage1
 import { faceRobotControlPanelView } from './ui/faceRobotController';
 import { hairPanelView } from './ui/hairPanel';
 import hairViewChrome from './data/si/hair_view_chrome.json';
-import { frostGraphView, frostHairWizardView, frostClothWizardView, frostOf, runFrostSmokeTests } from './frost';
+import { frostGraphView, frostHairWizardView, frostClothWizardView, frostExperimentalRenderView, frostOf, runFrostSmokeTests } from './frost';
 import { registerToolbarCommands, palettesView, toolbarView, newToolbar, customizeToolbars, openToolbarWindow, userToolbars } from './ui/toolbars';
 import { playbackPanel, animationPanel, timerange, layerManager, xsiExplorer, scriptHistory } from './ui/views';
 import { LayoutEngine, layoutByName, currentLayoutName, layoutNames, dockInto } from './ui/layout';
@@ -156,6 +156,7 @@ const SHELL: Record<string, (h: HTMLElement) => void> = {
   'FROST Graph': h => frostGraphView(app, h),
   'FROST Hair Wizard': h => frostHairWizardView(app, h),
   'FROST Cloth Wizard': h => frostClothWizardView(app, h),
+  'FROST Experimental Render': h => frostExperimentalRenderView(app, h),
   'FX Tree': deferredView('FX Tree', 'Softimage Fx Tree (compositing) — UI frame wired; Render/FX evaluation deferred past UI+Model+Animation DoD.'),
   'Fx Viewer': deferredView('Fx Viewer', 'Softimage Fx Viewer — UI frame wired; compositing deferred.'),
   'Fx Paint Brush List': deferredView('Fx Paint Brush List', 'Softimage Fx brushes list — UI frame wired; compositing deferred.'),
@@ -210,6 +211,7 @@ const openView = (name: string) => {
   if (name === 'Face Robot Act Floating Panel') { w = frSz?.[2] ?? 320; h = frSz?.[3] ?? 280; }
   if (name === 'FROST Hair Wizard' || name === 'FROST Cloth Wizard') { w = 440; h = 620; }
   if (name === 'FROST Graph') { w = Math.max(w, 720); h = Math.max(h, 480); }
+  if (name === 'FROST Experimental Render') { w = 460; h = 640; }
   const builders: Record<string, (host: HTMLElement) => void> = {
     'Explorer': h => explorerView(app, h), 'Property Editor': h => propertyEditor(app, h), 'Script Editor': h => scriptLog(app, h), 'Script History View': h => scriptHistory(app, h),
     'Keying Panel': h => keyingPanel(app, h), 'Layer Control': h => layerControl(app, h), 'Main Shelf': h => mainShelf(app, h), 'Toolbar Panel': h => toolbarPanel(app, h), 'Command Line': h => commandLine(app, h),

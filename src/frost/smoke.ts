@@ -28,6 +28,7 @@ import {
   settleCloth,
   packClothWireframe,
 } from './clothSim';
+import { runFrostExperimentalSmoke } from './experimentalRender';
 
 export interface FrostSmokeResult {
   ok: boolean;
@@ -294,6 +295,17 @@ export function runFrostSmokeTests(): FrostSmokeResult {
 
     const rt = parseFrostGraph(serializeFrostGraph(g));
     assert(rt.nodes.length === g.nodes.length && rt.links.length === g.links.length, 'cloth IR round-trip', failures, checks);
+  }
+
+  // FROST tab 7 — Experimental Render (2026 hybrid / path-trace)
+  {
+    const xr = runFrostExperimentalSmoke();
+    if (xr.ok) {
+      assert(true, `experimental render smoke (${xr.checks} checks)`, failures, checks);
+    } else {
+      for (const f of xr.failures) failures.push(`experimental-render: ${f}`);
+      assert(false, 'experimental render smoke', failures, checks);
+    }
   }
 
   return { ok: failures.length === 0, failures, checks };
