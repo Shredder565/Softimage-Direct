@@ -1,16 +1,23 @@
 {
-  "_comment": "Softimage Simulate cloth PPG chrome from SPDL dumps (C3DClothProp/C3DClothOp). Dump-attested only; Syflex client GDI LOCK. FROST cloth stays parallel.",
+  "_comment": "Softimage Simulate cloth PPG chrome from SPDL dumps (C3DClothProp/C3DClothOp + syCloth.spdl). Dump-attested only; Syflex client GDI LOCK. FROST cloth stays parallel.",
   "softimage": "13.2.163.0",
   "source": [
     "internal/softimage-pc-dumps/dialogs/spdl-layouts-model-ui.json",
     "internal/softimage-pc-dumps/dialogs/spdl-layout-index.json",
     "internal/softimage-pc-dumps/views/propertyeditor.xsivw",
     "internal/softimage-pc-dumps/modules/modules_simulate.json",
-    "media/softimage-modules-tour/30-simulate-module.png"
+    "media/softimage-modules-tour/30-simulate-module.png",
+    "internal/softimage-pc-dumps/true-95pct/true95_install_scrape.json (syCloth.spdl Layout Default + param names)"
   ],
   "syflex_client_gdi": {
     "status": "LOCK",
-    "note": "No HWND/pixel Syflex client harvest (modules-gdi absent). Do not invent."
+    "note": "No titled Hair/Syflex client HWND; syCloth.spdl Layout Default DUMP_READY for PPG params. Do not invent GDI."
+  },
+  "sycloth_ppg": {
+    "status": "DUMP_READY",
+    "file": "Addons/Syflex30X50/Application/spdl/syCloth.spdl",
+    "layout_name": "Default",
+    "note": "true-95pct unlock install scrape — Layout Default + Parameter names; runtime titled PPG PARTIAL"
   },
   "flyout_pixels": {
     "status": "LOCK",
@@ -63,6 +70,69 @@
     "note": "MCP panel chrome already wired (#99); this JSON re-attests for Syflex/cloth PPG deepen."
   },
   "propsets": {
+    "syCloth": {
+      "file": "syCloth.spdl",
+      "propset": "syCloth",
+      "label": "syCloth",
+      "n_params": 15,
+      "has_layout": true,
+      "layout_groups": ["Default"],
+      "param_sns": [
+        "syCloth",
+        "Update",
+        "Active",
+        "FirstFrame",
+        "Precision",
+        "SubSampling",
+        "Cache",
+        "ClearCache",
+        "ModifMassMap",
+        "ModifSpringMap",
+        "SaveState",
+        "IniP",
+        "IniV",
+        "Istate",
+        "ClothType"
+      ],
+      "params": [
+        { "sn": "syCloth", "label": "syCloth", "type": "bool", "default": true },
+        { "sn": "Update", "label": "Update", "type": "bool", "default": true },
+        { "sn": "Active", "label": "Active", "type": "bool", "default": true },
+        { "sn": "FirstFrame", "label": "First Frame", "type": "int", "default": 1 },
+        { "sn": "Precision", "label": "Precision", "type": "double", "default": 0.01 },
+        { "sn": "SubSampling", "label": "Sub Sampling", "type": "int", "default": 1 },
+        { "sn": "Cache", "label": "Cache", "type": "bool", "default": false },
+        { "sn": "ClearCache", "label": "Clear Cache", "type": "bool", "default": false },
+        { "sn": "ModifMassMap", "label": "Modif Mass Map", "type": "bool", "default": false },
+        { "sn": "ModifSpringMap", "label": "Modif Spring Map", "type": "bool", "default": false },
+        { "sn": "SaveState", "label": "Save State", "type": "bool", "default": false },
+        { "sn": "IniP", "label": "Ini P", "type": "bool", "default": false },
+        { "sn": "IniV", "label": "Ini V", "type": "bool", "default": false },
+        { "sn": "Istate", "label": "Istate", "type": "bool", "default": false },
+        { "sn": "ClothType", "label": "Cloth Type", "type": "int", "default": 0 }
+      ],
+      "layout": [
+        {
+          "tab": "Default",
+          "items": [
+            { "param": "Active" },
+            { "param": "Update" },
+            { "param": "FirstFrame" },
+            { "param": "Precision" },
+            { "param": "SubSampling" },
+            { "param": "Cache" },
+            { "param": "ClearCache" },
+            { "param": "ClothType" },
+            { "param": "ModifMassMap" },
+            { "param": "ModifSpringMap" },
+            { "param": "SaveState" },
+            { "param": "IniP" },
+            { "param": "IniV" },
+            { "param": "Istate" }
+          ]
+        }
+      ]
+    },
     "C3DClothProp": {
       "file": "C3DClothProp.spdl",
       "propset": "C3DClothProp",

@@ -19,21 +19,53 @@ export class CurveGeomOperator extends Operator {
   constructor(readonly preset: string, defs: any[]) { super('Geometry', 'crvgeom', defs); }
   apply(): CurveData {
     const v = (n: string) => Number(this.val(n));
+    // true-95pct unlock: Softimage Generic PPG SN (startangle/endangle/subdivu) — SPDL Layout ABSENT.
     switch (this.preset) {
       case 'Circle': return C.circleCurve(v('radius'));
-      case 'Arc': return C.arcCurve(v('radius'), v('start'), v('end'), v('cvs'));
-      case 'Spiral': return C.spiralCurve(v('startradius'), v('endradius'), v('height'), v('revolutions'), v('cvs'));
+      case 'Arc': {
+        const start = this.get('startangle') ? v('startangle') : v('start');
+        const end = this.get('endangle') ? v('endangle') : v('end');
+        const cvs = this.get('subdivu') ? Math.max(4, v('subdivu') | 0) : (this.get('cvs') ? v('cvs') : 8);
+        return C.arcCurve(v('radius'), start, end, cvs);
+      }
+      case 'Spiral': {
+        const cvs = this.get('subdivu') ? Math.max(4, v('subdivu') | 0) : (this.get('cvs') ? v('cvs') : 48);
+        let revs = this.get('revolutions') ? v('revolutions') : 3;
+        if (this.get('startangle') && this.get('endangle')) {
+          revs = Math.max(0.1, Math.abs(v('endangle') - v('startangle')) / 360);
+        }
+        return C.spiralCurve(v('startradius'), v('endradius'), v('height'), revs, cvs);
+      }
       case 'Square': return C.squareCurve(v('length'));
     }
     return C.makeCurve([[0, 0, 0], [4, 0, 0]], 1);
   }
 }
 export function makeCurveGeomOperator(preset: string) {
+  // Softimage true-95pct unlock dump Generic PPG param SNs (has_layout ABSENT — do not invent Layout).
   switch (preset) {
-    case 'Circle': return new CurveGeomOperator(preset, [num('radius', 4, 'Radius', { min: 0.01 })]);
-    case 'Arc': return new CurveGeomOperator(preset, [num('radius', 4, 'Radius', { min: 0.01 }), num('start', 0, 'Start Angle', { min: -360, max: 360 }), num('end', 180, 'End Angle', { min: -360, max: 360 }), int('cvs', 8, 'Nb Control Points', { min: 4, max: 64 })]);
-    case 'Spiral': return new CurveGeomOperator(preset, [num('startradius', 1, 'Start Radius', { min: 0 }), num('endradius', 4, 'End Radius', { min: 0 }), num('height', 8, 'Height'), num('revolutions', 3, 'Revolutions', { min: 0.1, max: 50 }), int('cvs', 48, 'Nb Control Points', { min: 4, max: 400 })]);
-    default: return new CurveGeomOperator('Square', [num('length', 8, 'Length', { min: 0.01 })]);
+    case 'Circle': return new CurveGeomOperator(preset, [
+      int('subdivu', 16, 'Subdiv U', { min: 4, max: 400 }),
+      num('radius', 4, 'Radius', { min: 0.01 }),
+    ]);
+    case 'Arc': return new CurveGeomOperator(preset, [
+      int('subdivu', 16, 'Subdiv U', { min: 4, max: 64 }),
+      num('radius', 4, 'Radius', { min: 0.01 }),
+      num('startangle', 0, 'Start Angle', { min: -360, max: 360 }),
+      num('endangle', 90, 'End Angle', { min: -360, max: 360 }),
+    ]);
+    case 'Spiral': return new CurveGeomOperator(preset, [
+      int('subdivu', 16, 'Subdiv U', { min: 4, max: 400 }),
+      num('height', 1, 'Height'),
+      num('startangle', 0, 'Start Angle', { min: -3600, max: 3600 }),
+      num('endangle', 540, 'End Angle', { min: -3600, max: 3600 }),
+      num('startradius', 4, 'Start Radius', { min: 0 }),
+      num('endradius', 2, 'End Radius', { min: 0 }),
+    ]);
+    default: return new CurveGeomOperator('Square', [
+      int('subdivu', 16, 'Subdiv U', { min: 4, max: 400 }),
+      num('length', 8, 'Length', { min: 0.01 }),
+    ]);
   }
 }
 /** A curve drawn by hand or frozen: holds its CVs directly. */

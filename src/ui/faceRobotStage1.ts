@@ -125,8 +125,9 @@ export function faceRobotStage1View(app: App, host: HTMLElement) {
     b.onclick = () => {
       if (b.disabled) return;
       if (lab === 'Diagnose') {
+        // true-95pct: fr_Diagnose ACTIVE after FaceRobot workgroup (arg_count 0).
         if (app.commands.has('fr_Diagnose')) app.run('fr_Diagnose');
-        else app.logMsg('info', 'Face Robot: Diagnose (shell — fr_Diagnose LOCK)');
+        else app.logMsg('info', 'Face Robot: Diagnose (fr_Diagnose missing)');
         return;
       }
       app.logMsg('info', `Face Robot Stage 1: ${lab} (${toolTab}) — FR plugin LOCK`);
@@ -164,7 +165,10 @@ export function faceRobotStage1View(app: App, host: HTMLElement) {
   };
   scan.onclick = () => {
     if (scan.disabled) return;
-    app.logMsg('info', 'Face Robot: Scan (shell — FR.dll LOCK)');
+    // Softimage PreparationTools Scan UI path: fr_Diagnose then fr_CleanMeshModel(1) (true-95pct unlock dump).
+    if (app.commands.has('fr_Diagnose')) app.run('fr_Diagnose');
+    if (app.commands.has('fr_CleanMeshModel')) app.run('fr_CleanMeshModel', { Mode: 1 });
+    else app.logMsg('info', 'Face Robot: Scan (fr_CleanMeshModel missing)');
   };
   exec.append(pick, scan);
   root.appendChild(exec);

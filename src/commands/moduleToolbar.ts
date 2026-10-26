@@ -80,13 +80,39 @@ export function registerModuleToolbarCommands(app: App) {
     name: 'InspectAllUVs', label: 'Inspect All UVs', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }],
     undoable: false, execute(app) { openView('Texture Editor'); app.logMsg('info', 'Inspect All UVs → Texture Editor'); },
   });
-  // Softimage remaining-audit-gaps dump: EditUVProjectionTool / Edit Projection Tool = FAIL (absent).
-  // Keep a no-op shell so menus do not crash; Gap = Softimage FAIL — no invent.
+  // true-95pct unlock tour: EditUVProjectionTool Commands Name FAIL — leave unwired (canRun false).
+  // Wire attested UVW fuzzy Names/arity instead (HealUVW, ReprojectUVW, …). Do not invent tool body.
   app.register({
     name: 'EditUVProjectionTool', label: 'Edit Projection Tool', category: 'Texturing', args: [],
     undoable: false, canRun: () => false,
-    execute() { throw new Error('EditUVProjectionTool: Softimage Commands entry absent (remaining-audit-gaps dump FAIL)'); },
+    execute() { throw new Error('EditUVProjectionTool: Softimage Commands entry absent (true-95pct unlock FAIL)'); },
   });
+  // Softimage true-95pct unlock fuzzy UVW ACTIVE set (do not invent EditUVProjectionTool).
+  // Arity from true95_unlock_dump.json EditUVProjectionTool.fuzzy.
+  for (const u of [
+    { name: 'HealUVW', label: 'Heal UVW', args: 2 },
+    { name: 'MatchUVW', label: 'Match UVW', args: 3 },
+    { name: 'CycleUVW', label: 'Cycle UVW', args: 3 },
+    { name: 'FlipUVW', label: 'Flip UVW', args: 3 },
+    { name: 'CopyUVW', label: 'Copy UVW', args: 2 },
+    { name: 'PasteUVW', label: 'Paste UVW', args: 3 },
+    { name: 'FreezeUVWTransformation', label: 'Freeze UVW transformation', args: 1 },
+    { name: 'RelaxUVW', label: 'Relax UVW', args: 2 },
+    { name: 'IslandHealUVW', label: 'Island Heal UVW', args: 5 },
+  ] as const) {
+    if (app.commands.has(u.name)) continue;
+    const argDefs = Array.from({ length: u.args }, (_, i) => ({ name: i === 0 ? 'InputObjs' : `Arg${i}`, default: i === 0 ? '' : null }));
+    app.register({
+      name: u.name, label: u.label, category: 'Texturing', args: argDefs,
+      execute(app, a) {
+        const objs = app.targets(a.InputObjs);
+        if (!objs.length && u.args) throw new Error(`Select an object with UVs (${u.name})`);
+        for (const o of objs) addNamedProp(app, [o], u.label, u.name.toLowerCase());
+        app.logMsg('info', `${u.label} (true-95pct UVW DUMP_READY arity ${u.args})`);
+        return null;
+      },
+    });
+  }
   app.register({
     name: 'OpenRenderTree', label: 'Open Render Tree', category: 'Rendering', args: [],
     undoable: false, execute() { openView('Render Tree'); },
@@ -218,8 +244,9 @@ export function registerModuleToolbarCommands(app: App) {
   app.register({ name: 'AddToPartition', label: 'Add Object to Partition', category: 'Rendering', args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], execute(app) { app.logMsg('info', `Add to partition: ${app.selectedObjects.map(o => o.name).join(', ') || '(nothing selected)'}`); } });
   app.register({ name: 'RemoveFromPartition', label: 'Remove Object from Partition', category: 'Rendering', args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], execute(app) { app.logMsg('info', `Remove from partition: ${app.selectedObjects.map(o => o.name).join(', ') || '(nothing selected)'}`); } });
 
-  // Softimage true-95pct + stub-tools: RenderPass args×6; RenderPasses SN args×5;
-  // Name "Render Current Pass" → SN RenderPasses args×1. Format=pic; ResolvedFilename={file}.{frame}.pic.
+  // Softimage true-95pct unlock + PIC deepen (#130): RenderPass args×6; RenderPasses SN args×5;
+  // Name "Render Current Pass" → SN RenderPasses args×1; Format=pic; ResolvedFilename={file}.{frame}.pic.
+  // Do not treat empty RenderPasses as Render Current Frame (separate SN args×0).
   app.register({
     name: 'RenderPass', label: 'Render Pass', category: 'Rendering',
     args: [
@@ -245,7 +272,8 @@ export function registerModuleToolbarCommands(app: App) {
     name: 'Render Current Pass', label: 'Render Current Pass', category: 'Rendering',
     args: [{ name: 'Passes', default: 'Passes.Current' }], undoable: false,
     description: 'Render selected passes',
-    execute: (app, a) => app.run('RenderPasses', { Passes: a.Passes ?? 'Passes.Current' }),
+    // Softimage catalog: ScriptingName RenderPasses, arg_count 1 — Framebuffer Format=pic.
+    execute: (app, a) => executeRenderPass(app, { Passes: a.Passes ?? 'Passes.Current' }),
   });
   app.register({
     name: 'RenderSelectedPasses', label: 'Render Selected Passes', category: 'Rendering',

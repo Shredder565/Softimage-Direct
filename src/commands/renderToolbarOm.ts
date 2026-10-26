@@ -21,6 +21,7 @@ type RrState = {
   open: boolean;
 };
 
+// Softimage SwitchToolbar Target: 1–6 dump map; true-95pct unlock attests Target **7** → Hair (ACTIVE invoke OK).
 const TOOLBAR_TARGET: Record<number, App['module']> = {
   1: 'Model',
   2: 'Animate',
@@ -28,6 +29,7 @@ const TOOLBAR_TARGET: Record<number, App['module']> = {
   4: 'ICE',
   5: 'Simulate',
   6: 'Hair',
+  7: 'Hair',
 };
 
 const createDefaults = (regionSpdl as { create_defaults?: Record<string, number> }).create_defaults
@@ -308,7 +310,7 @@ export function registerRenderToolbarOmCommands(app: App) {
     execute() { openView('Render Manager'); },
   });
 
-  // Softimage SwitchToolbar Target: 1 Model … 3 Render … 6 Hair (commands_full).
+  // Softimage SwitchToolbar Target: 1 Model … 6 Hair; true-95pct unlock SwitchToolbar(7) → Hair DUMP_READY.
   app.register({
     name: 'SwitchToolbar',
     label: 'Switch to Render Toolbar',
@@ -320,7 +322,7 @@ export function registerRenderToolbarOmCommands(app: App) {
       const mod = TOOLBAR_TARGET[t] ?? 'Render';
       app.module = mod;
       app.events.emit('module');
-      app.logMsg('info', `SwitchToolbar → ${mod}`);
+      app.logMsg('info', `SwitchToolbar(${t}) → ${mod}`);
       return mod;
     },
   });

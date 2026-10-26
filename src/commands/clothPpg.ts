@@ -63,6 +63,15 @@ export function makeClothProperty(name = 'Cloth'): Property {
   return p;
 }
 
+/** Softimage Syflex syCloth.spdl Layout Default — true-95pct unlock install scrape DUMP_READY. */
+export function makeSyClothProperty(name = 'syCloth'): Property {
+  const set = CHROME.propsets.syCloth;
+  if (!set) throw new Error('syCloth propset missing from cloth_ppg_chrome.json');
+  const p = new Property(name, 'sycloth', toDefs(set.params));
+  p.layout = set.layout as any;
+  return p;
+}
+
 /** Softimage C3DClothOp operator chrome on the construction stack (pass-through geom; no invent solver). */
 export function makeClothOperator(): Operator {
   const set = CHROME.propsets.C3DClothOp;
@@ -82,6 +91,11 @@ export function applyClothToObjects(app: App, objs: X3DObject[]): Property | nul
       const clothProp = prop;
       app.record('Apply Cloth', () => o.addProperty(clothProp), () => o.removeProperty(clothProp));
     }
+    // true-95pct: also attach syCloth.spdl Layout Default PPG (DUMP_READY param names).
+    if (!o.properties.some(x => x.type === 'sycloth') && CHROME.propsets.syCloth) {
+      const sy = makeSyClothProperty('syCloth');
+      app.record('Add syCloth', () => o.addProperty(sy), () => o.removeProperty(sy));
+    }
     const prim = o.primitive;
     if (prim && !prim.operators.some(op => op.type === 'clothop')) {
       const op = makeClothOperator();
@@ -96,6 +110,7 @@ export function applyClothToObjects(app: App, objs: X3DObject[]): Property | nul
 export function clothPpgAudit(): Record<string, unknown> {
   const prop = CHROME.propsets.C3DClothProp;
   const op = CHROME.propsets.C3DClothOp;
+  const sy = CHROME.propsets.syCloth;
   const pe = CHROME.property_editor_shell;
   return {
     status: 'SPDL',
@@ -109,6 +124,10 @@ export function clothPpgAudit(): Record<string, unknown> {
     clothOpParamSns: op.params.map(p => p.sn),
     layoutGroupsProp: prop.layout_groups ?? ['General', 'Presets'],
     layoutGroupsOp: op.layout_groups ?? ['Simulation', 'Collisions', 'Stitching', 'Forces'],
+    syClothStatus: (CHROME as any).sycloth_ppg?.status ?? (sy ? 'DUMP_READY' : 'LOCK'),
+    syClothLayout: sy?.layout_groups ?? ['Default'],
+    syClothParamSns: sy?.param_sns ?? sy?.params?.map(p => p.sn) ?? [],
+    syClothParamCount: sy?.params?.length ?? 0,
     propertyEditorDefaultsize: pe?.defaultsize ?? [50, 50, 125, 265],
     syflexClientGdi: CHROME.syflex_client_gdi?.status ?? 'LOCK',
     frostUntouched: true,

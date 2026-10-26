@@ -26,7 +26,7 @@
     { "scripting_name": "MakeRendererLocalToPass", "label": "Make Renderer Local to Pass", "category": "Custom", "args": [] },
     { "scripting_name": "MakePassRendererGlobal", "label": "Make Pass Renderer Global", "category": "Custom", "args": [] },
     { "scripting_name": "UpdateRenderManager", "label": "Update Render Manager", "category": "Custom", "args": [] },
-    { "scripting_name": "SwitchToolbar", "label": "Switch to Render Toolbar", "category": "Toolbar", "args": ["Target"], "defaults": { "Target": 3 }, "target_map": { "1": "Model", "2": "Animate", "3": "Render", "4": "ICE", "5": "Simulate", "6": "Hair" } },
+    { "scripting_name": "SwitchToolbar", "label": "Switch to Render Toolbar", "category": "Toolbar", "args": ["Target"], "defaults": { "Target": 3 }, "target_map": { "1": "Model", "2": "Animate", "3": "Render", "4": "ICE", "5": "Simulate", "6": "Hair", "7": "Hair" } },
     { "scripting_name": "DisconnectAndDeleteShaders", "label": "RendertreeDeleteShaders", "category": "Rendering", "args": ["Shaders"] },
     { "scripting_name": "DisconnectAndDeleteOrUnnestShaders", "label": "RendertreeDeleteOrUnnestShaders", "category": "Rendering", "args": ["Shaders", "Containers"] },
     { "scripting_name": "ToggleCurrentLayerProperty", "label": "Rendering Visibility of Current Layer", "category": "Layer", "args": ["PropName"], "defaults": { "PropName": "rendvis" } }

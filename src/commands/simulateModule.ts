@@ -31,7 +31,7 @@ export function registerSimulateModuleCommands(app: App) {
       args: [{ name: 'Target', default: 5 }],
       undoable: false,
       execute(app, a) {
-        const map: Record<number, App['module']> = { 1: 'Model', 2: 'Animate', 3: 'Render', 4: 'ICE', 5: 'Simulate', 6: 'Hair' };
+        const map: Record<number, App['module']> = { 1: 'Model', 2: 'Animate', 3: 'Render', 4: 'ICE', 5: 'Simulate', 6: 'Hair', 7: 'Hair' };
         const mod = map[Number(a.Target)] ?? 'Simulate';
         app.module = mod;
         app.events.emit('module');

@@ -150,16 +150,25 @@ export function registerFaceRobotModuleCommands(app: App) {
     },
   });
 
-  // Thin Diagnose stub so Stage 1 Diagnose button can call Softimage scripting name when present
-  if (!app.commands.has('fr_Diagnose')) {
+  // true-95pct unlock: fr_Diagnose ACTIVE args×0 after FaceRobot workgroup (PreparationTools.js RegisterCommand).
+  // Empty Softimage invoke may 2028 without scene prep — shell MATCH Softimage arity; FR.dll body stays LOCK.
+  const frPrepShells: { name: string; args: { name: string; default: unknown }[]; note: string }[] = [
+    { name: 'fr_Diagnose', args: [], note: 'PreparationTools.js RegisterCommand; arg_count 0' },
+    { name: 'fr_Freeze', args: [], note: 'PreparationTools.js; arg_count 0' },
+    { name: 'fr_Holes', args: [], note: 'PreparationTools.js; arg_count 0' },
+    { name: 'fr_CleanMeshModel', args: [{ name: 'Mode', default: 1 }], note: 'PreparationTools.js; arg_count 1 (Scan path)' },
+  ];
+  for (const shell of frPrepShells) {
+    if (app.commands.has(shell.name)) continue;
     app.register({
-      name: 'fr_Diagnose',
-      label: 'fr_Diagnose',
+      name: shell.name,
+      label: shell.name,
       category: 'Custom',
-      args: [],
+      args: shell.args,
       undoable: false,
-      execute(app) {
-        app.logMsg('info', 'fr_Diagnose — PreparationTools.js shell (FR plugin LOCK)');
+      execute(app, a) {
+        const detail = shell.args.length ? JSON.stringify(a ?? {}) : '';
+        app.logMsg('info', `${shell.name}${detail ? ' ' + detail : ''} — ${shell.note}; FR.dll body LOCK`);
         return null;
       },
     });
@@ -344,12 +353,18 @@ export function faceRobotModuleAudit(app: App): Record<string, unknown> {
       ...layoutCmds,
       'FaceRobot',
       'fr_Diagnose',
+      'fr_Freeze',
+      'fr_Holes',
+      'fr_CleanMeshModel',
       'fr_GetCurrentStage',
       'fr_SwitchFaceLayout',
       'fr_ToggleFaceLayout',
       'fr_SetAltLayout',
       'fr_ObjectView',
     ].filter(n => app.commands.has(n)),
+    frDiagnose: app.commands.has('fr_Diagnose'),
+    frCleanMeshModel: app.commands.has('fr_CleanMeshModel'),
+    frDiagnoseStatus: 'DUMP_READY',
     showFaceRobotActPanel: app.commands.has('ShowFaceRobotActPanel'),
     enableFaceRobot: app.commands.has('Enable Face Robot'),
     faceRobotLayout: app.commands.has('Face Robot Layout'),

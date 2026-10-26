@@ -1,0 +1,43 @@
+{
+  "_comment": "Softimage curve prim Generic PPG geom params — true-95pct unlock dump. SPDL has_layout ABSENT; InspectObj Generic PPG only. Do not invent Layout.",
+  "softimage": "13.2.163.0",
+  "source": "internal/softimage-pc-dumps/true-95pct/true95_unlock_dump.json model.curve_has_layout",
+  "status": "DUMP_READY",
+  "spdl_layout": "ABSENT",
+  "prims": {
+    "Arc": {
+      "geom": "NurbsCurve",
+      "params": [
+        { "sn": "subdivu", "label": "Subdiv U", "type": "int", "default": 16 },
+        { "sn": "radius", "label": "Radius", "type": "double", "default": 4 },
+        { "sn": "startangle", "label": "Start Angle", "type": "double", "default": 0 },
+        { "sn": "endangle", "label": "End Angle", "type": "double", "default": 90 }
+      ]
+    },
+    "Circle": {
+      "geom": "NurbsCurve",
+      "params": [
+        { "sn": "subdivu", "label": "Subdiv U", "type": "int", "default": 16 },
+        { "sn": "radius", "label": "Radius", "type": "double", "default": 4 }
+      ]
+    },
+    "Spiral": {
+      "geom": "NurbsCurve",
+      "params": [
+        { "sn": "subdivu", "label": "Subdiv U", "type": "int", "default": 16 },
+        { "sn": "height", "label": "Height", "type": "double", "default": 1 },
+        { "sn": "startangle", "label": "Start Angle", "type": "double", "default": 0 },
+        { "sn": "endangle", "label": "End Angle", "type": "double", "default": 540 },
+        { "sn": "startradius", "label": "Start Radius", "type": "double", "default": 4 },
+        { "sn": "endradius", "label": "End Radius", "type": "double", "default": 2 }
+      ]
+    },
+    "Square": {
+      "geom": "NurbsCurve",
+      "params": [
+        { "sn": "subdivu", "label": "Subdiv U", "type": "int", "default": 16 },
+        { "sn": "length", "label": "Length", "type": "double", "default": 8 }
+      ]
+    }
+  }
+}

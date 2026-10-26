@@ -13,6 +13,7 @@
   "menu_id": 297,
   "module_select": "Hair",
   "switch_toolbar_target": 6,
+  "switch_toolbar_targets": [6, 7],
   "switch_command": "Switch to Hair Toolbar",
   "keymap": { "key": "2", "mods": ["ctrl"] },
   "tops": ["Create", "Modify", "Display"],
@@ -63,7 +64,7 @@
     "ActivateTipSelTool"
   ],
   "hair_panel": {
-    "status": "SHELL",
+    "status": "DUMP_READY_PARTIAL",
     "openview": "Hair Panel",
     "xsivw": "hairpanel.xsivw",
     "clsid": "{0E338020-8317-42C5-B48E-E8CABB3643E8}",
@@ -72,8 +73,8 @@
     "supportedtypes": "6",
     "maxinstances": "1",
     "private": "true",
-    "client_gdi": "LOCK",
-    "note": "OpenView failed under XSIBATCH -processing; hairpanel.xsivw attests shell. Desktop 22-hair-panel.png — do not invent client GDI widgets."
+    "client_gdi": "PARTIAL",
+    "note": "true-95pct: viewdef + SwitchToolbar(7) DUMP_READY; titled Hair HWND enum = 0 (PARTIAL). Do not invent client GDI widgets."
   },
   "flyout_pixels": { "status": "LOCK", "note": "MCP press-hold flyout item pixel lists LOCK" }
 }
