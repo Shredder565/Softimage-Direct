@@ -91,10 +91,56 @@ export function installViewExtras(C: Ctx) {
   const pickRoto = (vp: VPX) => { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*'; inp.onchange = () => { const f = inp.files?.[0]; if (!f) return; const url = URL.createObjectURL(f); new THREE.TextureLoader().load(url, t => { t.colorSpace = THREE.SRGBColorSpace; const x = X(vp); x.roto = t; x.rotoUrl = f.name; vp.flags['Rotoscope'] = true; x.disp.set('rotoenable', true); C.setDisplay(vp, 'Rotoscope'); C.needs(); }); }; inp.click(); };
 
   // ---------------------------------------------------------------- capture / flipbook
-  const grab = (vp: VPX, r: Rect): string => { const c = document.createElement('canvas'); c.width = r.w; c.height = r.h; const src = renderer.domElement; const s = window.devicePixelRatio || 1; c.getContext('2d')!.drawImage(src, r.x * s, r.y * s, r.w * s, r.h * s, 0, 0, r.w, r.h); return c.toDataURL('image/png'); };
+  // Softimage Flipbook viewer subset — never JSON.stringify multi‑MB data URLs into document.write (1.0.22 freeze).
+  const FLIP_CAP = 16;
+  const FLIP_EDGE = 480;
+  const grab = (vp: VPX, r: Rect, maxEdge = 0): string => {
+    let dw = r.w, dh = r.h;
+    if (maxEdge > 0 && Math.max(dw, dh) > maxEdge) {
+      const s = maxEdge / Math.max(dw, dh);
+      dw = Math.max(1, Math.round(dw * s));
+      dh = Math.max(1, Math.round(dh * s));
+    }
+    const c = document.createElement('canvas'); c.width = dw; c.height = dh;
+    const src = renderer.domElement; const s = window.devicePixelRatio || 1;
+    c.getContext('2d')!.drawImage(src, r.x * s, r.y * s, r.w * s, r.h * s, 0, 0, dw, dh);
+    return c.toDataURL('image/png');
+  };
   let captureReq: { vp: VPX; frames: string[]; f: number; end: number } | null = null;
-  const capture = (vp: VPX) => { const A = app.anim; const all = confirm(`Capture viewport ${vp.name}: OK = frames ${A.startFrame}–${A.endFrame} to a Flipbook, Cancel = the current frame only`); captureReq = { vp, frames: [], f: all ? A.startFrame : A.frame, end: all ? A.endFrame : A.frame }; A.frame = captureReq.f; C.needs(); };
-  const flipbook = (frames: string[], name: string) => { const w = window.open('', '_blank'); if (!w) { app.logMsg('error', 'Flipbook: popup blocked'); return; } w.document.write(`<title>Flipbook – ${name}</title><body style="margin:0;background:#333;color:#ddd;font:12px Tahoma"><div style="padding:4px"><button id=p>▶</button> <input id=s type=range min=0 max=${frames.length - 1} value=0 style="width:300px"> <span id=f>1 / ${frames.length}</span> <a id=d download="${name}_0001.png" href="${frames[0]}">save frame</a></div><img id=i src="${frames[0]}"><script>const F=${JSON.stringify(frames)};let i=0,t=null;const img=document.getElementById('i'),s=document.getElementById('s'),f=document.getElementById('f'),d=document.getElementById('d');function show(k){i=k;img.src=F[i];s.value=i;f.textContent=(i+1)+' / '+F.length;d.href=F[i];d.download='${name}_'+String(i+1).padStart(4,'0')+'.png';}s.oninput=()=>show(+s.value);document.getElementById('p').onclick=()=>{if(t){clearInterval(t);t=null;}else t=setInterval(()=>show((i+1)%F.length),1000/${app.anim.fps});};</script></body>`); w.document.close(); };
+  const capture = (vp: VPX) => {
+    const A = app.anim;
+    const all = confirm(`Capture viewport ${vp.name}: OK = frames ${A.startFrame}–${A.endFrame} to a Flipbook, Cancel = the current frame only`);
+    let f0 = all ? A.startFrame : A.frame;
+    let f1 = all ? A.endFrame : A.frame;
+    if (f1 < f0) [f0, f1] = [f1, f0];
+    if (all && f1 - f0 + 1 > FLIP_CAP) {
+      f1 = f0 + FLIP_CAP - 1;
+      app.logMsg('info', `Flipbook capture capped to ${FLIP_CAP} frames (Softimage viewer subset)`);
+    }
+    captureReq = { vp, frames: [], f: f0, end: f1 };
+    A.frame = captureReq.f;
+    C.needs();
+  };
+  const flipbook = (frames: string[], name: string) => {
+    const w = window.open('', '_blank');
+    if (!w) { app.logMsg('error', 'Flipbook: popup blocked'); return; }
+    const n = Math.max(0, frames.length - 1);
+    // Shell only — inject frame array via window handle (no JSON embed / document.write OOM).
+    w.document.write(
+      `<title>Flipbook – ${name}</title><body style="margin:0;background:#333;color:#ddd;font:12px Tahoma">` +
+      `<div style="padding:4px"><button id=p>▶</button> <input id=s type=range min=0 max=${n} value=0 style="width:300px"> ` +
+      `<span id=f>1 / ${frames.length}</span> <a id=d download="${name}_0001.png" href="#">save frame</a></div><img id=i>` +
+      `<script>let F=[],i=0,t=null;const img=document.getElementById('i'),s=document.getElementById('s'),` +
+      `f=document.getElementById('f'),d=document.getElementById('d');` +
+      `function show(k){if(!F.length)return;i=k;img.src=F[i];s.value=i;f.textContent=(i+1)+' / '+F.length;` +
+      `d.href=F[i];d.download='${name}_'+String(i+1).padStart(4,'0')+'.png';}` +
+      `s.oninput=()=>show(+s.value);document.getElementById('p').onclick=()=>{if(t){clearInterval(t);t=null;}` +
+      `else t=setInterval(()=>show((i+1)%F.length),1000/${app.anim.fps});};` +
+      `window.__setFlipbookFrames=function(fr){F=fr||[];s.max=Math.max(0,F.length-1);show(0);};</script></body>`,
+    );
+    w.document.close();
+    try { (w as any).__setFlipbookFrames?.(frames); } catch { /* popup may block script */ }
+  };
   window.addEventListener('flipbook', () => capture(vps[C.active()]));
   window.addEventListener('flipbook-frames', (e: any) => flipbook(e.detail.frames, e.detail.name));
 
@@ -232,7 +278,18 @@ export function installViewExtras(C: Ctx) {
   const afterRender = (vp: VPX, r: Rect) => {
     const x = X(vp); const now = performance.now(); x.frames++; if (now - x.lastT > 500) { x.fps = x.frames * 1000 / (now - x.lastT); x.frames = 0; x.lastT = now; }
     if (x.region && !x.regionImg && x.region.w > 4) { const q = x.region; const c = document.createElement('canvas'); c.width = q.w; c.height = q.h; const s = devicePixelRatio || 1; const g = c.getContext('2d')!; g.drawImage(renderer.domElement, (r.x + q.x) * s, (r.y + q.y) * s, q.w * s, q.h * s, 0, 0, q.w, q.h); g.fillStyle = 'rgba(0,0,0,.08)'; g.fillRect(0, 0, q.w, q.h); x.regionImg = c; }
-    if (captureReq && captureReq.vp === vp) { captureReq.frames.push(grab(vp, r)); if (captureReq.f >= captureReq.end) { const fr = captureReq.frames; const name = `${vp.name}_capture`; captureReq = null; if (fr.length === 1) { const a = document.createElement('a'); a.href = fr[0]; a.download = name + '.png'; a.click(); app.logMsg('info', `Captured ${name}.png`); } else flipbook(fr, name); } else { captureReq.f++; app.anim.frame = captureReq.f; C.needs(); } }
+    if (captureReq && captureReq.vp === vp) {
+      // Single frame = full grab; Softimage Flipbook range = downscaled thumbs (avoid OOM).
+      const useEdge = captureReq.end > captureReq.f || captureReq.frames.length > 0 ? FLIP_EDGE : 0;
+      captureReq.frames.push(grab(vp, r, useEdge));
+      if (captureReq.f >= captureReq.end) {
+        const fr = captureReq.frames; const name = `${vp.name}_capture`; captureReq = null;
+        if (fr.length === 1) {
+          const a = document.createElement('a'); a.href = fr[0]; a.download = name + '.png'; a.click();
+          app.logMsg('info', `Captured ${name}.png`);
+        } else flipbook(fr, name);
+      } else { captureReq.f++; app.anim.frame = captureReq.f; C.needs(); }
+    }
   };
   const afterFrame = () => drawOverlay();
   const isolated = (vp: VPX, o: X3DObject) => { const x = vp.x; return !x?.isolate || x.isolate.has(o); };

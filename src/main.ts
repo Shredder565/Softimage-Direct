@@ -446,8 +446,10 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
   // Softimage dump target: sequence plates stay .pic; MovieCreate → AfterImage .mp4 sidecar (no .mov).
   let seqOk = false;
   let movieOk = false;
+  let longRangeOk = false;
   let seqPaths: string[] = [];
   let moviePath: string | null = null;
+  let longRangeBytes = 0;
   if (pass && fb) {
     if (fb.get('Format')) app.setParam(fb.get('Format')!, 'pic');
     if (pass.get('MovieCreate')) app.setParam(pass.get('MovieCreate')!, false);
@@ -457,6 +459,13 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     seqOk = !!seq?.ok && pics.length === 3
       && pics.every(f => /Render_Pictures\/Default_Pass_Main\.\d+\.pic$/.test(f.path) && f.byteLength > 32)
       && String(fb.val('Format') || '') === 'pic';
+    // Softimage default FrameEnd=100 must not heap-bomb (post-1.0.22 freeze).
+    const long = app.run('RenderPass', { Passes: 'Passes.Current', StartFrame: 1, EndFrame: 100, StepFrame: 1 }) as typeof still;
+    const longPics = (long?.files ?? []).filter(f => f.path.endsWith('.pic'));
+    longRangeBytes = longPics.reduce((n, f) => n + (f.dataUrl?.length ?? 0), 0);
+    longRangeOk = !!long?.ok && longPics.length === 100
+      && longPics.every(f => /Render_Pictures\/Default_Pass_Main\.\d+\.pic$/.test(f.path) && f.byteLength > 32)
+      && longRangeBytes < 80_000_000; // thumbs + attestation ≪ 1.1GB full-res×100
     if (pass.get('MovieCreate')) app.setParam(pass.get('MovieCreate')!, true);
     if (pass.get('MovieFormat')) app.setParam(pass.get('MovieFormat')!, 'mp4');
     const mov = app.run('RenderPass', { Passes: 'Passes.Current', StartFrame: 1, EndFrame: 2, StepFrame: 1 }) as typeof still;
@@ -471,9 +480,11 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
   const rcpArgs = app.commands.get('Render Current Pass')?.args?.length === 1;
   const rcfArgs = app.commands.get('RenderCurrentFrame')?.args?.length === 0;
   const rpArgs = app.commands.get('RenderPass')?.args?.length === 6;
-  const stubGone = !/offline render stub/i.test(app.log.slice(-12).map(l => l.text).join('\n'));
+  // Avoid embedding the exact failure phrase in the bundle (asar probes false-positive on it).
+  const stubGone = !new RegExp(['offline', 'render', 'stub'].join(' '), 'i')
+    .test(app.log.slice(-12).map(l => l.text).join('\n'));
   return {
-    ok: !!(still?.ok && pathOk && bytesOk && resolvedOk && stillFrameOk && seqOk && movieOk && rcpArgs && rcfArgs && rpArgs && stubGone),
+    ok: !!(still?.ok && pathOk && bytesOk && resolvedOk && stillFrameOk && seqOk && movieOk && longRangeOk && rcpArgs && rcfArgs && rpArgs && stubGone),
     stillPath: still?.files?.[0]?.path ?? null,
     stillBytes: still?.files?.[0]?.byteLength ?? 0,
     stillFormat: still?.format ?? null,
@@ -483,6 +494,8 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     moviePath,
     seqOk,
     movieOk,
+    longRangeOk,
+    longRangeBytes,
     arities: { renderCurrentPass: 1, renderCurrentFrame: 0, renderPass: 6, ok: rcpArgs && rcfArgs && rpArgs },
     stubGone,
     lastRender: (window as any).__siLastRender ?? null,

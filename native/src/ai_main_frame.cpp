@@ -71,7 +71,7 @@ bool AiMainFrame::Create(HINSTANCE instance, int show_cmd) {
   if (!RegisterClass(instance)) return false;
 
   hwnd_ = CreateWindowExW(
-      0, kClassName, L"AfterImage — Softimage Layout (native Phase 1)",
+      0, kClassName, L"AfterImage — Softimage Layout",
       WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 1280, 800, nullptr,
       nullptr, instance, this);
   if (!hwnd_) return false;
@@ -115,20 +115,24 @@ void AiMainFrame::Paint(HDC hdc) {
   GetClientRect(hwnd_, &rc);
   const int bottom = rc.bottom - kStatusH;
 
-  // Softimage Layout stub chrome — original AfterImage paint, dump-attested labels.
-  HBRUSH bg = CreateSolidBrush(RGB(45, 45, 48));
-  HBRUSH tray = CreateSolidBrush(RGB(62, 62, 66));
-  HBRUSH viewport = CreateSolidBrush(RGB(30, 30, 30));
-  HBRUSH accent = CreateSolidBrush(RGB(0, 122, 204));
+  // Softimage 2015 light warm-gray Layout chrome (Electron styles.css tokens; deepen from HWND dump).
+  // --bg #aca8a5 · --panel · --vp-bg #7f7f7f · --accent #e8b84a · --line #7c7875 · Tahoma.
+  HBRUSH bg = CreateSolidBrush(RGB(172, 168, 165));       // --bg
+  HBRUSH panel = CreateSolidBrush(RGB(172, 168, 165));    // --panel
+  HBRUSH strip = CreateSolidBrush(RGB(182, 178, 175));    // --bg2
+  HBRUSH viewport = CreateSolidBrush(RGB(127, 127, 127)); // --vp-bg
+  HBRUSH accent = CreateSolidBrush(RGB(232, 184, 74));    // Softimage gold --accent
+  HBRUSH chip_face = CreateSolidBrush(RGB(201, 197, 194)); // --btn-top
+  HBRUSH log_bg = CreateSolidBrush(RGB(246, 244, 242));   // Softimage log face
 
   RECT module_strip{0, 0, rc.right, kModuleStripH};
-  FillRect(hdc, &module_strip, tray);
+  FillRect(hdc, &module_strip, strip);
 
   SetBkMode(hdc, TRANSPARENT);
-  SetTextColor(hdc, RGB(220, 220, 220));
-  HFONT font = CreateFontW(16, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+  SetTextColor(hdc, RGB(31, 29, 28)); // --text
+  HFONT font = CreateFontW(14, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
                            OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-                           DEFAULT_PITCH | FF_SWISS, L"Segoe UI");
+                           DEFAULT_PITCH | FF_SWISS, L"Tahoma");
   HFONT old = static_cast<HFONT>(SelectObject(hdc, font));
 
   int x = 8;
@@ -136,42 +140,46 @@ void AiMainFrame::Paint(HDC hdc) {
     RECT chip{x, 4, x + 72, kModuleStripH - 4};
     if (m.target == app_.ActiveModuleTarget()) {
       FillRect(hdc, &chip, accent);
-      SetTextColor(hdc, RGB(255, 255, 255));
+      SetTextColor(hdc, RGB(26, 26, 26));
     } else {
-      SetTextColor(hdc, RGB(200, 200, 200));
+      FillRect(hdc, &chip, chip_face);
+      SetTextColor(hdc, RGB(31, 29, 28));
     }
+    FrameRect(hdc, &chip, (HBRUSH)GetStockObject(GRAY_BRUSH));
     DrawTextW(hdc, m.label, -1, &chip, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     x += 80;
   }
 
   RECT left{0, kModuleStripH, kLeftTrayW, bottom};
-  FillRect(hdc, &left, tray);
-  SetTextColor(hdc, RGB(180, 180, 180));
+  FillRect(hdc, &left, panel);
+  SetTextColor(hdc, RGB(74, 70, 68)); // --muted
   RECT tray_label{8, kModuleStripH + 8, kLeftTrayW - 8, kModuleStripH + 28};
   DrawTextW(hdc, L"Module Menu / Toolbar Panel", -1, &tray_label, DT_LEFT | DT_SINGLELINE);
 
   RECT mcp{8, kModuleStripH + 40, kLeftTrayW - 8, kModuleStripH + 160};
   FillRect(hdc, &mcp, bg);
-  SetTextColor(hdc, RGB(160, 160, 160));
+  FrameRect(hdc, &mcp, (HBRUSH)GetStockObject(GRAY_BRUSH));
+  SetTextColor(hdc, RGB(31, 29, 28));
   RECT mcp_label = mcp;
   InflateRect(&mcp_label, -6, -6);
-  DrawTextW(hdc, L"MCP (stub)\nGet / Create / Modify\n(dump PE tops)", -1, &mcp_label,
+  DrawTextW(hdc, L"MCP\nGet / Create / Modify\n(Softimage Layout)", -1, &mcp_label,
             DT_LEFT | DT_WORDBREAK);
 
   RECT view{kLeftTrayW, kModuleStripH, rc.right, bottom};
   FillRect(hdc, &view, viewport);
-  SetTextColor(hdc, RGB(140, 140, 140));
+  SetTextColor(hdc, RGB(31, 29, 28));
   RECT view_label = view;
   InflateRect(&view_label, -12, -12);
-  std::wstring body = L"View Manager / Viewport (stub)\nSoftimage Layout chrome — Phase 1\nActive: ";
+  std::wstring body = L"View Manager / Viewport\nSoftimage Layout chrome\nActive: ";
   body += app_.ActiveModuleLabel();
-  body += L"\n\nRender pass stub → Softimage-faithful .pic / .mp4 path (wire when dump ready)";
+  body += L"\n\nRender → Softimage Render_Pictures\\….pic + .mp4 sidecar";
   DrawTextW(hdc, body.c_str(), -1, &view_label, DT_LEFT | DT_WORDBREAK);
 
-  // Log strip
+  // Log strip — Softimage script/log face
   RECT log_rc{kLeftTrayW + 8, bottom - 120, rc.right - 8, bottom - 8};
-  FillRect(hdc, &log_rc, bg);
-  SetTextColor(hdc, RGB(180, 220, 180));
+  FillRect(hdc, &log_rc, log_bg);
+  FrameRect(hdc, &log_rc, (HBRUSH)GetStockObject(GRAY_BRUSH));
+  SetTextColor(hdc, RGB(31, 29, 28));
   std::wstring log_text;
   const auto& lines = app_.LogLines();
   const size_t start = lines.size() > 6 ? lines.size() - 6 : 0;
@@ -187,9 +195,12 @@ void AiMainFrame::Paint(HDC hdc) {
   SelectObject(hdc, old);
   DeleteObject(font);
   DeleteObject(bg);
-  DeleteObject(tray);
+  DeleteObject(panel);
+  DeleteObject(strip);
   DeleteObject(viewport);
   DeleteObject(accent);
+  DeleteObject(chip_face);
+  DeleteObject(log_bg);
 }
 
 void AiMainFrame::OnCommand(WORD id) {
