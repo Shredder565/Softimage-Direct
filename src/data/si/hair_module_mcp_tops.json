@@ -1,5 +1,5 @@
 {
-  "_comment": "Softimage Hair module toolbar MCP tops — PE MENU 297 (toolbarobj.dll) + menu_hair.txt + modules_hair.json Desktop tour. Dump-attested only. Hair Panel view shell from hairpanel.xsivw; client GDI LOCK.",
+  "_comment": "Softimage Hair module toolbar MCP tops — PE MENU 297 (toolbarobj.dll) + menu_hair.txt + modules_hair.json Desktop tour. Dump-attested only. Hair Panel xsivw MATCH; floating titled HWND Softimage-absent (hair-panel-hwnd dump).",
   "softimage": "13.2.163.0",
   "source": [
     "internal/softimage-pc-dumps/module-menu-hair.json",
@@ -64,7 +64,7 @@
     "ActivateTipSelTool"
   ],
   "hair_panel": {
-    "status": "DUMP_READY_PARTIAL",
+    "status": "MATCH",
     "openview": "Hair Panel",
     "xsivw": "hairpanel.xsivw",
     "clsid": "{0E338020-8317-42C5-B48E-E8CABB3643E8}",
@@ -73,8 +73,9 @@
     "supportedtypes": "6",
     "maxinstances": "1",
     "private": "true",
-    "client_gdi": "PARTIAL",
-    "note": "true-95pct: viewdef + SwitchToolbar(7) DUMP_READY; titled Hair HWND enum = 0 (PARTIAL). Do not invent client GDI widgets."
+    "client_gdi": "SOFTIMAGE_ABSENT_FLOAT",
+    "floating_titled_hwnd": "ABSENT",
+    "note": "hair-panel-hwnd dump: private=true docks; OpenView OK; EnumWindows Hair=0. MATCH xsivw + SwitchToolbar(7); Softimage-absent float — no invent."
   },
   "flyout_pixels": { "status": "LOCK", "note": "MCP press-hold flyout item pixel lists LOCK" }
 }

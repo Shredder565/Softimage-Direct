@@ -456,8 +456,12 @@ export function registerModelCommands2(app: App) {
   });
   app.register({ name: 'Copy', label: 'Copy', category: 'Edit', args: [], undoable: false, execute(app) { if (app.compSel) return app.run('CopyUserNormals', {}); (app as any).clipboard = app.selectedObjects.slice(); return app.selectedObjects.length; } });
   app.register({ name: 'Paste', label: 'Paste', category: 'Edit', args: [], execute(app) { if (app.compSel && normalClipboard.length) return app.run('PasteUserNormals', {}); const objs: X3DObject[] = (app as any).clipboard ?? []; if (objs.length) return app.run('Duplicate', { InputObjs: objs }); return null; } });
-  // Softimage SetUserNormalsSettings / "Set User Normals Settings" = FAIL in stub-tools dump — keep inspect shell only; Gap = Softimage FAIL.
-  app.register({ name: 'SetUserNormalsSettings', label: 'User Normals Settings', category: 'Modeling', args: [], execute(app) { const o = meshObj(app); const p = normalsProp(app, o)!; app.events.emit('inspect', p); return p; } });
+  // Softimage SetUserNormalsSettings / "Set User Normals Settings" = FAIL in stub-tools dump — leave unwired (canRun false); no invent.
+  app.register({
+    name: 'SetUserNormalsSettings', label: 'User Normals Settings', category: 'Modeling', args: [],
+    canRun: () => false,
+    execute() { throw new Error('SetUserNormalsSettings: Softimage Commands entry absent (stub-tools FAIL)'); },
+  });
   app.register({ name: 'TweakNormalsTool', label: 'Tweak User Normals Tool', category: 'Modeling', args: [{ name: 'Clsid', default: '{D0DDA3E5-A9BE-449F-AB49-5EDB120DE5A4}' }], undoable: false, description: 'Activate the Tweak Normals tool', execute(app) {
     const o = meshObj(app); const p = normalsProp(app, o)!; const map: Map<number, V3> = (p as any).normals; const comp = computedNormals(o.primitive!.mesh()!);
     const tool: InteractiveTool & { onPaint?: any } = { name: 'Tweak User Normals', prompt: 'Tweak User Normals: drag on a point to tilt its normal (Enter/right-click to finish)', pickKind: 'point', onClick: (_p, pick) => { if (pick && pick.kind === 'point') { const i = pick.item as number; const n = map.get(i) ?? comp[i]; const t: V3 = [n[0] + 0.3, n[1], n[2]]; const l = Math.hypot(...t); map.set(i, [t[0] / l, t[1] / l, t[2] / l]); app.events.emit('scene'); } }, onFinish() { app.setTool(null); }, onCancel() { } };
@@ -529,8 +533,14 @@ export function registerModelCommands2(app: App) {
     execute: (app) => armPaint(app, 'color'),
   });
   (app as any).brushProps = brush;
-  // Softimage "Brush Properties" Name = FAIL in stub-tools dump — keep inspect helper; Gap = Softimage FAIL.
-  app.register({ name: 'BrushProperties', label: 'Brush Properties', category: 'Property', args: [], undoable: false, execute(app) { app.events.emit('inspect', brush()); return brush(); } });
+  // Softimage "Brush Properties" Name = FAIL in stub-tools dump — leave unwired (canRun false); no invent.
+  app.register({
+    name: 'BrushProperties', label: 'Brush Properties', category: 'Property', args: [], undoable: false,
+    canRun: () => false,
+    execute() { throw new Error('Brush Properties: Softimage Commands entry absent (stub-tools FAIL)'); },
+  });
+  // Internal brush PPG helper (not a Softimage Commands Name) — used by paint tools only.
+  (app as any).inspectBrushProperties = () => { const b = brush(); app.events.emit('inspect', b); return b; };
   // Move Point tool op factory used by Paint Push (creates/returns the top MoveComponent op)
   app.register({ name: 'MovePointTool', label: 'Move Point', category: 'Modeling', args: [{ name: 'InputObjs', default: '' }, { name: 'Create', default: false }], undoable: false, execute(app, a) { const o = app.targets(a.InputObjs)[0] ?? meshObj(app); const prim = o.primitive!; const top: any = prim.operators[prim.operators.length - 1]; if (top && top.deltas) return top; const op = new MoveComponentOperator(); app.record('Move Component', () => prim.addOperator(op), () => prim.removeOperator(op)); return op; } });
   // ---- GetPrim: Stand-in and Geometry Shader primitives
