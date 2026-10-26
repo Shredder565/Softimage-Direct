@@ -522,9 +522,18 @@ export function registerModuleToolbarCommands(app: App) {
       return null;
     },
   });
-  // Softimage HairTransferMap / HairCopyStyle / TransferMap = FAIL in stub-tools dump — keep shells; Gap = Softimage FAIL.
-  app.register({ name: 'HairTransferMap', label: 'Hair Transfer Map', category: 'Modeling', args: [], execute: (app) => stubTool(app, 'Hair Transfer Map') });
-  app.register({ name: 'HairCopyStyle', label: 'Hair Copy Style', category: 'Modeling', args: [], execute: (app) => stubTool(app, 'Hair Copy Style') });
+  // Softimage HairTransferMap / TransferMap = FAIL in stub-tools dump — leave unwired (canRun false); no invent.
+  app.register({
+    name: 'HairTransferMap', label: 'Hair Transfer Map', category: 'Modeling', args: [],
+    canRun: () => false,
+    execute() { throw new Error('HairTransferMap: Softimage Commands entry absent (stub-tools FAIL)'); },
+  });
+  // Softimage HairCopyStyle Name FAIL — menu leaf remapped to CopyStyle ACTIVE (args×2). Keep SN alias for scripts.
+  app.register({
+    name: 'HairCopyStyle', label: 'Hair Copy Style', category: 'Modeling', args: [],
+    canRun: () => false,
+    execute() { throw new Error('HairCopyStyle: Softimage Commands entry absent (stub-tools FAIL); use CopyStyle'); },
+  });
   // Softimage CopyStyle ACTIVE Simulation args×2 (TargetHairObject, ModelHairStyleObject) — arm shell, no invent style transfer.
   app.register({
     name: 'CopyStyle', label: 'CopyStyle', category: 'Simulation',

@@ -1,5 +1,6 @@
 // Softimage Hair Panel view shell — hairpanel.xsivw dump tokens only.
-// Client GDI body stays LOCK (no invent). FROST Character Hair wizard remains parallel.
+// Floating titled HWND Softimage-absent (private=true docks; EnumWindows Hair=0) — no invent float chrome.
+// FROST Character Hair wizard remains parallel.
 import { App } from '../core/commands';
 import hairViewChrome from '../data/si/hair_view_chrome.json';
 
@@ -23,7 +24,7 @@ type HairViewDef = {
   note?: string;
 };
 
-/** Softimage OpenView("Hair Panel") — xsivw shell chrome; body awaits Desktop/GDI harvest. */
+/** Softimage OpenView("Hair Panel") — xsivw shell chrome; float HWND Softimage-absent MATCH. */
 export function hairPanelView(_app: App, host: HTMLElement) {
   const root = el('div', 'hair-panel');
   host.appendChild(root);

@@ -1,9 +1,11 @@
 {
-  "_comment": "Softimage Hair Panel view chrome from install hairpanel.xsivw — dump-backed shell only. Client GDI body LOCK until modules-gdi HWND harvest (Desktop 22-hair-panel.png labels OpenView attempt; no invent widgets).",
+  "_comment": "Softimage Hair Panel view chrome from install hairpanel.xsivw — dump-backed shell. Floating titled HWND Softimage-absent (private=true docks; EnumWindows Hair=0). Do not invent float chrome.",
   "softimage": "13.2.163.0",
   "source": [
     "internal/softimage-pc-dumps/views/hairpanel.xsivw",
     "data/si/views/hairpanel.xsivw",
+    "docs/softimage-hair-panel-hwnd-dump.md",
+    "internal/softimage-pc-dumps/hair-hwnd/hair_panel_hwnd_exhaust.json",
     "media/softimage-modules-tour/22-hair-panel.png",
     "docs/softimage-hair-tour.md"
   ],
@@ -17,10 +19,11 @@
       "maxinstances": "1",
       "acceptfocus": "true",
       "private": "true",
-      "status": "DUMP_READY_PARTIAL",
-      "client_gdi": "PARTIAL",
+      "status": "MATCH",
+      "client_gdi": "SOFTIMAGE_ABSENT_FLOAT",
+      "floating_titled_hwnd": "ABSENT",
       "switch_toolbar_targets": [6, 7],
-      "note": "true-95pct unlock: hairpanel.xsivw + SwitchToolbar(7) DUMP_READY; Desktop EnumWindows titled Hair = 0 HWND (PARTIAL). Do not invent floating panel chrome."
+      "note": "hair-panel-hwnd dump: viewdef private=true docks; OpenView OK; EnumWindows titled Hair=0. MATCH xsivw shell + SwitchToolbar(7); Softimage-absent float chrome — no invent."
     }
   }
 }

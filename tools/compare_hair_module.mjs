@@ -69,11 +69,13 @@ else {
   }
   if (!diffs.some(d => d.startsWith('Hair buttons'))) notes.push('Hair MCP buttons match dump');
 
-  if (audit.hairModule.hairPanel !== 'SHELL') diffs.push(`Hair Panel status want=SHELL got=${audit.hairModule.hairPanel}`);
-  else notes.push('Hair Panel xsivw SHELL');
+  // Softimage-absent float HWND (hair-panel-hwnd dump): xsivw + SwitchToolbar(7) MATCH; no invent float chrome.
+  if (audit.hairModule.hairPanel !== 'MATCH') diffs.push(`Hair Panel status want=MATCH got=${audit.hairModule.hairPanel}`);
+  else notes.push('Hair Panel xsivw MATCH (Softimage-absent float)');
 
-  if (audit.hairModule.hairPanelClientGdi !== 'LOCK') diffs.push('Hair Panel client GDI must stay LOCK');
-  else notes.push('Hair Panel client GDI LOCK');
+  if (audit.hairModule.hairPanelClientGdi !== 'SOFTIMAGE_ABSENT_FLOAT') {
+    diffs.push(`Hair Panel client GDI want=SOFTIMAGE_ABSENT_FLOAT got=${audit.hairModule.hairPanelClientGdi}`);
+  } else notes.push('Hair Panel float HWND Softimage-absent');
 
   if (audit.hairModule.flyoutPixels !== 'LOCK') diffs.push('flyout pixels must stay LOCK');
   else notes.push('flyout pixels LOCK');

@@ -1,5 +1,5 @@
 // Softimage Hair module toolbar / ApplyHair* commands — dump-backed (MENU 297 + modules_hair.json).
-// Hair Panel view shell from hairpanel.xsivw; client GDI LOCK (no invent). FROST Character Hair stays parallel.
+// Hair Panel xsivw shell + SwitchToolbar(7) MATCH; floating titled HWND Softimage-absent (no invent). FROST Character Hair stays parallel.
 import { App } from '../core/commands';
 import { Property } from '../core/scene';
 import { str } from '../core/params';
