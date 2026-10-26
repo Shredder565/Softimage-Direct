@@ -145,10 +145,18 @@ export function registerModelCommands2(app: App) {
       app.select([target]); return target;
     };
   });
-  // ---- ICE: ApplyICEOp creates an ICE Tree operator (File = factory compound; Cap Hole = CapHoleProc Cap_Hole:ICETree)
+  // ---- ICE: ApplyICEOp — Softimage remaining-audit-gaps dump ACTIVE (PARTIAL invoke).
+  // Softimage args×4: File, Target, Input, ConnectType (empty [] → Softimage 2028). Footprints menu id 41557.
   wrap(app, 'ApplyICEOp', (def) => {
+    def.category = 'Edit';
+    def.description = 'Applies an ICE operator';
     def.canRun = (a: any) => !a.File || ICE_PRESETS.includes(a.File) || a.File === 'ICETree' || /^Cap\s*Hole$/i.test(String(a.File || ''));
-    def.args = [{ name: 'File', default: '' }, { name: 'Target', default: '' }, { name: 'Input', default: '' }];
+    def.args = [
+      { name: 'File', default: '' },
+      { name: 'Target', default: null },
+      { name: 'Input', default: '' },
+      { name: 'ConnectType', default: ':siUnspecified:siBranchFlag' },
+    ];
     def.execute = (app: App, a: any) => {
       // Softimage ApplyICEOp targets polymesh or point cloud (Desktop GeneratePointCloudWithICE*).
       const isIceHost = (x: any) => !!x?.primitive && (!!x.primitive.mesh() || x.type === 'pointcloud' || /point\s*cloud/i.test(String(x.type || '')));
@@ -162,6 +170,29 @@ export function registerModelCommands2(app: App) {
       if (a.File && a.File !== 'ICETree') buildPreset(op, String(a.File));
       return addOp(app, o, op);
     };
+  });
+  // Softimage Name "Apply ICE Operator" / "Footprints" → ApplyICEOp SN (dump ACTIVE). No invent footprint compound bytes.
+  const iceOpArgs = [
+    { name: 'File', default: '' },
+    { name: 'Target', default: null },
+    { name: 'Input', default: '' },
+    { name: 'ConnectType', default: ':siUnspecified:siBranchFlag' },
+  ];
+  app.register({
+    name: 'Apply ICE Operator', label: 'Apply ICE Operator', category: 'Edit', args: iceOpArgs,
+    description: 'Applies an ICE operator',
+    execute: (app, a) => app.run('ApplyICEOp', a),
+  });
+  app.register({
+    name: 'Footprints', label: 'Footprints', category: 'Deformation',
+    args: [
+      { name: 'File', default: 'Footprints' },
+      { name: 'Target', default: null },
+      { name: 'Input', default: '' },
+      { name: 'ConnectType', default: ':siUnspecified:siBranchFlag' },
+    ],
+    description: 'Applies a footprint deformation',
+    execute: (app, a) => app.run('ApplyICEOp', { ...a, File: a.File || 'Footprints' }),
   });
   app.register({ name: 'CreateICETree', label: 'Create ICE Tree', category: 'ICE', args: [{ name: 'InputObjs', default: '' }], execute: (app, a) => app.run('ApplyICEOp', { File: '', Target: a.InputObjs }) });
   app.register({ name: 'ApplyICECompound', label: 'Apply ICE Compound', category: 'ICE', args: [{ name: 'Compound', default: 'Turbulize Mesh' }, { name: 'InputObjs', default: '' }], execute: (app, a) => app.run('ApplyICEOp', { File: a.Compound, Target: a.InputObjs }) });

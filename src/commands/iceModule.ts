@@ -120,10 +120,12 @@ export function registerIceModuleCommands(app: App) {
     execute: (app, a) => app.run('ApplyICEOp', { File: a.File || '', Target: a.Target, Input: a.Inputs, ConnectType: a.ConnectType }),
   });
 
+  // Softimage remaining-audit-gaps dump: SIApplyICEOp ACTIVE (fuzzy) args×5 — Mode default 4.
   app.register({
     name: 'SIApplyICEOp',
     label: 'Low level Apply ICE Operator',
     category: 'Edit',
+    description: 'Applies an ICE operator',
     args: [
       { name: 'File', default: '' },
       { name: 'Target', default: null },
