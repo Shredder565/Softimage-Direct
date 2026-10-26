@@ -1,5 +1,6 @@
 // Softimage CrowdFX ICE menubar submenu flyouts — closer95 DUMP_READY + PE MENU 303.
-// Desktop LIVE hover attempt + menu_candidates attested; PE leaf = Anchor-to-Delete only (no invent compounds).
+// Desktop LIVE hover attempt + menu_candidates attested; PE leaf = Anchor-to-Delete insertion marker;
+// factory RegisterMenu Names DUMP_READY (softimage-anchor-compounds-ghidra-tour).
 // data/dump/si_crowdfx_submenu_flyouts.json → src/data/si/crowdfx_submenu_flyouts.json.
 import flyouts from '../data/si/crowdfx_submenu_flyouts.json';
 import menus from '../data/menus.json';
@@ -10,8 +11,9 @@ type FlyMeta = {
   button: string;
   pe_menu_id: number;
   item_count: number;
-  items: { label: string; id: number }[];
+  items: { label: string; id?: number }[];
   compound_leaves: string;
+  factory_menu_names?: string[];
 };
 
 const FLY = flyouts as {
@@ -48,28 +50,33 @@ function findCrowdFxButton(button: string): MenuItem | undefined {
   return undefined;
 }
 
-/** Compact audit — PE Anchor-to-Delete flyouts match menus.json ICE CrowdFX; compounds LOCK. */
+/** Compact audit — PE Anchor-to-Delete insertion marker + nested factory_menu_names DUMP_READY. */
 export function crowdFxSubmenuFlyoutsAudit(): Record<string, unknown> {
   const mismatches: string[] = [];
   const checked: { key: string; pe: number; wired: number; leaf: string | null }[] = [];
   for (const [key, meta] of Object.entries(FLY.flyouts)) {
     const node = findCrowdFxButton(meta.button);
     const kids = node?.items ?? [];
-    const wired = kids.length;
-    const leaf = kids[0]?.label ?? null;
-    const peId = kids[0]?.id;
-    checked.push({ key, pe: meta.item_count, wired, leaf });
+    const anchor = kids.find(k => (k.label ?? '') === 'Anchor-to-Delete') ?? kids[0];
+    const fillLabels = (anchor?.items ?? []).map(c => c.label ?? '').filter(Boolean);
+    const wantFills = meta.factory_menu_names
+      ?? (meta.items ?? []).map(i => i.label).filter(l => l !== 'Anchor-to-Delete');
+    const leaf = anchor?.label ?? null;
+    const peId = anchor?.id;
+    checked.push({ key, pe: meta.pe_menu_id, wired: fillLabels.length, leaf });
     if (!node) mismatches.push(`${key}:missing`);
-    else if (wired !== meta.item_count) mismatches.push(`${key}:pe=${meta.item_count}/wired=${wired}`);
-    else if (leaf !== 'Anchor-to-Delete') mismatches.push(`${key}:leaf=${leaf}`);
-    else if (peId !== meta.pe_menu_id) mismatches.push(`${key}:id want=${meta.pe_menu_id} got=${peId}`);
-    else if (meta.compound_leaves !== 'LOCK') mismatches.push(`${key}:compounds must LOCK`);
+    else if (kids.length !== 1 || leaf !== 'Anchor-to-Delete') {
+      mismatches.push(`${key}:leaf want=Anchor-to-Delete nest got=${kids.map(k => k.label).join('|')}`);
+    } else if (peId !== meta.pe_menu_id) mismatches.push(`${key}:id want=${meta.pe_menu_id} got=${peId}`);
+    else if (JSON.stringify(fillLabels) !== JSON.stringify(wantFills)) {
+      mismatches.push(`${key}:fills want=${wantFills.length} got=${fillLabels.length}`);
+    } else if (meta.compound_leaves !== 'DUMP_READY') mismatches.push(`${key}:compounds want DUMP_READY`);
   }
   const ok = mismatches.length === 0
     && FLY.status === 'DUMP_READY'
     && FLY.desktop.board === 'DUMP_READY'
-    && FLY.summary.compound_leaves === 'LOCK'
-    && FLY.summary.submenu_live_compounds === false;
+    && FLY.summary.compound_leaves === 'DUMP_READY'
+    && FLY.summary.submenu_live_compounds === true;
   return {
     lockId: FLY.lock_id,
     status: ok ? 'WIRED' : 'MISMATCH',

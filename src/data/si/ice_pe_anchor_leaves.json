@@ -68,8 +68,9 @@
     ]
   },
   "unbound_plugin_compounds": {
-    "status": "LOCK",
+    "status": "DUMP_READY",
     "pe_label": "Anchor-to-Delete",
-    "note": "Softimage runtime plugins replace Anchor-to-Delete with particle/CrowdFX compound names. closer95 did not capture live flyout compound names — do not invent."
+    "attestation": "si/anchor_factory_menu_fills.json",
+    "note": "Softimage-anchor-compounds-ghidra-tour: factory_menu_names DUMP_READY (ICEfxBuilder.vbs / CrowdFX_Plugin.py / MOTOR Ghidra). PE label is insertion marker; 0 *Anchor*.xsicompound."
   }
 }

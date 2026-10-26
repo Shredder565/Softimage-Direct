@@ -1,5 +1,5 @@
 {
-  "_comment": "Softimage CrowdFX Desktop menubar under ICE — DUMP_READY harvest + closer95 submenu flyout DUMP_READY. Actors/Crowd/Simulation has-sub flyouts PE=Anchor-to-Delete; compound leaves LOCK (no invent).",
+  "_comment": "Softimage CrowdFX Desktop menubar under ICE \u2014 DUMP_READY harvest + Anchor factory fills DUMP_READY.",
   "softimage": "13.2.163.0",
   "status": "DUMP_READY",
   "utc": "2026-10-25T22:10:58Z",
@@ -26,16 +26,23 @@
     "submenu_flyout_hover": "media/softimage-95pct-closer/30-crowdfx-menu-hover.png"
   },
   "reachability": {
-    "path": ["ICE", "CrowdFX"],
-    "buttons": ["Actors", "Crowd", "Simulation"],
+    "path": [
+      "ICE",
+      "CrowdFX"
+    ],
+    "buttons": [
+      "Actors",
+      "Crowd",
+      "Simulation"
+    ],
     "pe_menu_ids": {
       "Actors": 41644,
       "Crowd": 41646,
       "Simulation": 41645
     },
-    "submenu_live": false,
-    "runtime_anchors": "LOCK",
-    "note": "ICE module menu tear-off lists CrowdFX Actors/Crowd/Simulation. Submenu compound leaves stay LOCK (PE Anchor-to-Delete only)."
+    "submenu_live": true,
+    "runtime_anchors": "DUMP_READY",
+    "note": "ICE module menu tear-off lists CrowdFX Actors/Crowd/Simulation. PE Anchor-to-Delete insertion marker + CrowdFX_Plugin.py factory_menu_names DUMP_READY."
   },
   "submenu_flyouts": {
     "lock_id": "crowdfx.submenu_flyouts",
@@ -44,7 +51,7 @@
     "details": "menu_candidates=1",
     "media": "media/softimage-95pct-closer/30-crowdfx-menu-hover.png",
     "pe_leaf": "Anchor-to-Delete",
-    "compound_leaves": "LOCK",
+    "compound_leaves": "DUMP_READY",
     "note": "closer95 Desktop LIVE ICE menubar CrowdFX hover + PE MENU 303 flyouts; no invent compounds."
   },
   "sdk_anchors": {

@@ -75,8 +75,8 @@ else {
   }
   if (!diffs.some(d => d.startsWith('peMenuIds'))) notes.push(`PE ids Actors=${mod.pe_menu_ids.Actors} Crowd=${mod.pe_menu_ids.Crowd} Simulation=${mod.pe_menu_ids.Simulation}`);
 
-  if (audit.crowdFxModule.runtimeAnchors !== 'LOCK') diffs.push('runtime Anchors must stay LOCK');
-  else notes.push('Anchor-to-Delete LOCK');
+  if (audit.crowdFxModule.runtimeAnchors !== 'DUMP_READY') diffs.push(`runtime Anchors want DUMP_READY (got ${audit.crowdFxModule.runtimeAnchors})`);
+  else notes.push('Anchor-to-Delete factory fills DUMP_READY');
 
   if (!audit.crowdFxModule.createCrowd) diffs.push('CreateCrowd not registered');
   else notes.push('CreateCrowd wired');
@@ -148,10 +148,14 @@ for (const [sub, id] of Object.entries(mod.pe_menu_ids || {})) {
   const got = live.bySub[sub];
   if (!got) diffs.push(`live Anchor missing under CrowdFX > ${sub}`);
   else if (got.id !== id) diffs.push(`live ${sub} id want=${id} got=${got.id}`);
-  else if (got.cmd !== null || got.impl) diffs.push(`CrowdFX ${sub} Anchor must not map cmd (got cmd=${got.cmd} impl=${got.impl})`);
+  else if (got.cmd && got.cmd !== 'AnchorFactoryMenuItem') {
+    diffs.push(`CrowdFX ${sub} Anchor must not map RenderRegion cmd (got cmd=${got.cmd} impl=${got.impl})`);
+  } else if (!got.impl) {
+    diffs.push(`CrowdFX ${sub} Anchor factory fill want implemented`);
+  }
 }
 if (!diffs.some(d => d.includes('Anchor') || d.includes('id want'))) {
-  notes.push('CrowdFX PE Anchors unbound (41644/41646/41645)');
+  notes.push('CrowdFX PE Anchors factory fills DUMP_READY (41644/41646/41645)');
 }
 
 // SwitchToolbar Target=4 then CreateCrowd
@@ -177,26 +181,26 @@ if (!run.crowdName) diffs.push('CreateCrowd returned no object');
 else notes.push(`CreateCrowd → ${run.crowdName} kind=${run.crowdKind}`);
 if (run.crowdKind !== 'crowd') diffs.push(`CreateCrowd kind want=crowd got=${run.crowdKind}`);
 
-// Desktop menubar ICE tear-off → CrowdFX Actors/Crowd/Simulation (DUMP_READY; submenu_live=false compounds)
+// Desktop menubar ICE tear-off → CrowdFX Actors/Crowd/Simulation (DUMP_READY + factory fills)
 if (desk.status !== 'DUMP_READY') diffs.push(`desktop_menu status want=DUMP_READY got=${desk.status}`);
 else notes.push('desktop_menu DUMP_READY');
-if (desk.reachability?.submenu_live !== false) diffs.push('desktop_menu submenu_live must be false (no invent compounds)');
-else notes.push('desktop_menu submenu_live=false (compounds LOCK)');
+if (desk.reachability?.submenu_live !== true) diffs.push('desktop_menu submenu_live want=true (factory fills DUMP_READY)');
+else notes.push('desktop_menu submenu_live=true (factory fills)');
 if (desk.submenu_flyouts?.status !== 'DUMP_READY') {
   diffs.push(`desktop_menu submenu_flyouts.status want=DUMP_READY got=${desk.submenu_flyouts?.status}`);
 } else notes.push('desktop_menu submenu_flyouts DUMP_READY (closer95)');
-if (desk.submenu_flyouts?.compound_leaves !== 'LOCK') {
-  diffs.push('desktop_menu submenu_flyouts.compound_leaves must be LOCK');
-} else notes.push('submenu_flyouts compound_leaves LOCK');
+if (desk.submenu_flyouts?.compound_leaves !== 'DUMP_READY') {
+  diffs.push(`desktop_menu submenu_flyouts.compound_leaves want=DUMP_READY got=${desk.submenu_flyouts?.compound_leaves}`);
+} else notes.push('submenu_flyouts compound_leaves DUMP_READY');
 if (desk.submenu_flyouts?.pe_leaf !== 'Anchor-to-Delete') {
   diffs.push(`submenu_flyouts pe_leaf want=Anchor-to-Delete got=${desk.submenu_flyouts?.pe_leaf}`);
 }
 if (fly.status !== 'DUMP_READY' || fly.lock_id !== 'crowdfx.submenu_flyouts') {
   diffs.push(`flyouts dump status/lock_id want=DUMP_READY/crowdfx.submenu_flyouts got=${fly.status}/${fly.lock_id}`);
 } else notes.push('crowdfx.submenu_flyouts dump DUMP_READY');
-if (fly.summary?.submenu_live_compounds !== false) diffs.push('flyouts submenu_live_compounds must be false');
+if (fly.summary?.submenu_live_compounds !== true) diffs.push('flyouts submenu_live_compounds want=true');
 if ((fly.summary?.flyout_count ?? 0) !== 3) diffs.push(`flyouts flyout_count want=3 got=${fly.summary?.flyout_count}`);
-else notes.push('flyouts Actors/Crowd/Simulation × Anchor-to-Delete');
+else notes.push('flyouts Actors/Crowd/Simulation × Anchor factory fills');
 if (JSON.stringify(desk.reachability?.buttons) !== JSON.stringify(mod.buttons)) {
   diffs.push(`desktop_menu buttons mismatch mod=${(mod.buttons || []).join('|')}`);
 }
@@ -254,19 +258,23 @@ for (const row of deskLive.crowdFxItems || []) {
 if (!(deskLive.crowdFxItems || []).some(r => !r.present || !r.hasSub)) {
   notes.push('tear-off Actors/Crowd/Simulation has-sub');
 }
-const anchorsOnly = (deskLive.subItems || []).every(l => l === 'Anchor-to-Delete' || l === '');
-if ((deskLive.subItems || []).length && !anchorsOnly) {
-  diffs.push(`CrowdFX submenu invent leaves: ${(deskLive.subItems || []).join(',')}`);
+const fillNames = new Set(
+  Object.values(fly.flyouts || {}).flatMap(f => (f.factory_menu_names || []).concat(['Anchor-to-Delete', ''])),
+);
+const invent = (deskLive.subItems || []).filter(l => !fillNames.has(l));
+if (invent.length) {
+  diffs.push(`CrowdFX submenu invent leaves: ${invent.join(',')}`);
+} else if ((deskLive.subItems || []).some(l => l && l !== 'Anchor-to-Delete')) {
+  notes.push('CrowdFX submenu factory fills DUMP_READY');
 } else if ((deskLive.subItems || []).includes('Anchor-to-Delete')) {
-  notes.push('CrowdFX submenu Anchor-to-Delete LOCK (no invent)');
+  notes.push('CrowdFX submenu Anchor-to-Delete + factory fills');
 } else {
-  // still OK if hover did not open — PE anchors must remain unbound via menuStatus
   notes.push('CrowdFX submenu hover checked');
 }
 if (deskLive.auditDesktop?.status !== 'DUMP_READY') {
   diffs.push(`audit desktopMenu.status want=DUMP_READY got=${deskLive.auditDesktop?.status}`);
 } else notes.push('audit desktopMenu DUMP_READY');
-if (deskLive.auditDesktop?.submenuLive !== false) diffs.push('audit desktopMenu.submenuLive must be false');
+if (deskLive.auditDesktop?.submenuLive !== true) diffs.push('audit desktopMenu.submenuLive want=true');
 if (deskLive.auditDesktop?.submenuFlyouts !== 'DUMP_READY') {
   diffs.push(`audit desktopMenu.submenuFlyouts want=DUMP_READY got=${deskLive.auditDesktop?.submenuFlyouts}`);
 } else notes.push('audit desktopMenu.submenuFlyouts DUMP_READY');
@@ -280,8 +288,8 @@ else {
   if (flyAudit.dumpStatus !== 'DUMP_READY') diffs.push(`audit submenuFlyouts.dumpStatus want=DUMP_READY got=${flyAudit.dumpStatus}`);
   if (flyAudit.lockId !== 'crowdfx.submenu_flyouts') diffs.push(`audit submenuFlyouts.lockId mismatch`);
   if ((flyAudit.flyoutCount ?? 0) !== 3) diffs.push(`audit submenuFlyouts.flyoutCount want=3 got=${flyAudit.flyoutCount}`);
-  if (flyAudit.compoundLeaves !== 'LOCK') diffs.push('audit submenuFlyouts.compoundLeaves must LOCK');
-  else notes.push('audit submenuFlyouts compounds LOCK');
+  if (flyAudit.compoundLeaves !== 'DUMP_READY') diffs.push(`audit submenuFlyouts.compoundLeaves want=DUMP_READY got=${flyAudit.compoundLeaves}`);
+  else notes.push('audit submenuFlyouts compounds DUMP_READY');
   if ((flyAudit.mismatches || []).length) diffs.push(`audit submenuFlyouts mismatches: ${flyAudit.mismatches.join(',')}`);
 }
 

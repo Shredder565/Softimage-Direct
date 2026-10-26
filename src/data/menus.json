@@ -3810,7 +3810,24 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41522
+              "id": 41522,
+              "items": [
+                {
+                  "label": "Tag Rig"
+                },
+                {
+                  "label": "Rig to Rig"
+                },
+                {
+                  "label": "Mocap to Rig"
+                },
+                {
+                  "label": "Load Motion"
+                },
+                {
+                  "label": "Save Motion"
+                }
+              ]
             }
           ]
         }
@@ -6941,7 +6958,75 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41609
+              "id": 41609,
+              "items": [
+                {
+                  "label": "Basic Emission"
+                },
+                {
+                  "label": "Rigid Bodies"
+                },
+                {
+                  "label": "Blast"
+                },
+                {
+                  "label": "Splash from Surface Collision"
+                },
+                {
+                  "label": "Trail at Surface Intersection"
+                },
+                {
+                  "label": "Basic Fire"
+                },
+                {
+                  "label": "Cigarette Smoke"
+                },
+                {
+                  "label": "Falling Leaves"
+                },
+                {
+                  "label": "Bubbles"
+                },
+                {
+                  "label": "Volume Emission"
+                },
+                {
+                  "label": "Mesh Advection"
+                },
+                {
+                  "label": "Pouring Liquid"
+                },
+                {
+                  "label": "Jello"
+                },
+                {
+                  "label": "Sticky Paste"
+                },
+                {
+                  "label": "Surface Tension"
+                },
+                {
+                  "label": "Throw Breakable Structure"
+                },
+                {
+                  "label": "Throw Elastic Clusters"
+                },
+                {
+                  "label": "Strands Trails"
+                },
+                {
+                  "label": "Growing Strands"
+                },
+                {
+                  "label": "Dynamic Strands"
+                },
+                {
+                  "label": "Surface from Point Cloud"
+                },
+                {
+                  "label": "Lagoa Fluid Shaper"
+                }
+              ]
             }
           ]
         },
@@ -6950,7 +7035,63 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41610
+              "id": 41610,
+              "items": [
+                {
+                  "label": "Set Age Limit"
+                },
+                {
+                  "label": "Limit Time Range"
+                },
+                {
+                  "label": "Randomize Mass"
+                },
+                {
+                  "label": "Randomize Size"
+                },
+                {
+                  "label": "Randomize Color"
+                },
+                {
+                  "label": "Randomize Direction"
+                },
+                {
+                  "label": "Randomize Speed"
+                },
+                {
+                  "label": "Offset Emitter"
+                },
+                {
+                  "label": "Emit from Weightmap"
+                },
+                {
+                  "label": "Use Instance Geometry"
+                },
+                {
+                  "label": "Color Gradient XYZ"
+                },
+                {
+                  "label": "Color Gradient Axis"
+                },
+                {
+                  "label": "Lagoa Resolution to Substeps"
+                },
+                {
+                  "label": "Create Strands"
+                },
+                {
+                  "label": "Segment Size Mode"
+                },
+                {
+                  "label": "Turbulize"
+                },
+                {
+                  "label": "Bend"
+                },
+                {
+                  "label": "Curl"
+                }
+              ]
             }
           ]
         },
@@ -6959,7 +7100,120 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41611
+              "id": 41611,
+              "items": [
+                {
+                  "label": "Align on Velocity"
+                },
+                {
+                  "label": "Align to Camera"
+                },
+                {
+                  "label": "Turbulize Velocity"
+                },
+                {
+                  "label": "Roll Particles"
+                },
+                {
+                  "label": "Spin Particles"
+                },
+                {
+                  "label": "Stick to Location"
+                },
+                {
+                  "label": "Control Instance Animation"
+                },
+                {
+                  "label": "Add Curl Noise"
+                },
+                {
+                  "label": "Modify Color"
+                },
+                {
+                  "label": "Modify Color at Age Limit"
+                },
+                {
+                  "label": "Spawn Trails"
+                },
+                {
+                  "label": "Kill Particles"
+                },
+                {
+                  "label": "Delete At Age Limit"
+                },
+                {
+                  "label": "Add State"
+                },
+                {
+                  "label": "Particle Age Trigger"
+                },
+                {
+                  "label": "Particle Reached Age Limit Trigger"
+                },
+                {
+                  "label": "Particle Velocity Trigger"
+                },
+                {
+                  "label": "Particle Position Trigger"
+                },
+                {
+                  "label": "Every Nth Particle Trigger"
+                },
+                {
+                  "label": "Random Probability Trigger"
+                },
+                {
+                  "label": "Particle ID Trigger"
+                },
+                {
+                  "label": "Distance to Surface Trigger"
+                },
+                {
+                  "label": "Inside Geometry Trigger"
+                },
+                {
+                  "label": "Visibility From Camera Trigger"
+                },
+                {
+                  "label": "Weightmap Value Trigger"
+                },
+                {
+                  "label": "Color From Gradient Data"
+                },
+                {
+                  "label": "Transform Constraint"
+                },
+                {
+                  "label": "Substep Data to Strands"
+                },
+                {
+                  "label": "Delete by Density"
+                },
+                {
+                  "label": "Advect Points"
+                },
+                {
+                  "label": "Density Color Gradient"
+                },
+                {
+                  "label": "Duplicate and Stretch"
+                },
+                {
+                  "label": "Point Duplicator"
+                },
+                {
+                  "label": "Velocity Color Gradient"
+                },
+                {
+                  "label": "Generate Strand Trails"
+                },
+                {
+                  "label": "Constrain Strand Length"
+                },
+                {
+                  "label": "Align To Particle Trajectory"
+                }
+              ]
             }
           ]
         },
@@ -6968,7 +7222,48 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41614
+              "id": 41614,
+              "items": [
+                {
+                  "label": "Gravity"
+                },
+                {
+                  "label": "Drag"
+                },
+                {
+                  "label": "Wind"
+                },
+                {
+                  "label": "Point"
+                },
+                {
+                  "label": "Coagulate"
+                },
+                {
+                  "label": "Neighboring"
+                },
+                {
+                  "label": "Null Controller"
+                },
+                {
+                  "label": "Inspect Gravity..."
+                },
+                {
+                  "label": "Inspect Air Density..."
+                },
+                {
+                  "label": "Damp Air"
+                },
+                {
+                  "label": "Nail Null"
+                },
+                {
+                  "label": "Volume"
+                },
+                {
+                  "label": "Wind"
+                }
+              ]
             }
           ]
         },
@@ -6977,7 +7272,63 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41613
+              "id": 41613,
+              "items": [
+                {
+                  "label": "Bounce off Surface"
+                },
+                {
+                  "label": "Slide on Surface"
+                },
+                {
+                  "label": "Stick to Surface"
+                },
+                {
+                  "label": "Flow around Surface"
+                },
+                {
+                  "label": "Flow along Curve"
+                },
+                {
+                  "label": "Align to Surface"
+                },
+                {
+                  "label": "Delete by Volume"
+                },
+                {
+                  "label": "Delete on Collision"
+                },
+                {
+                  "label": "Spawn on Collision"
+                },
+                {
+                  "label": "Add Passive Body"
+                },
+                {
+                  "label": "Remove Passive Body"
+                },
+                {
+                  "label": "Set Collision Data"
+                },
+                {
+                  "label": "Add Geometry"
+                },
+                {
+                  "label": "Add Collide Capsule"
+                },
+                {
+                  "label": "Add Collide Mesh"
+                },
+                {
+                  "label": "Add Collide Plane"
+                },
+                {
+                  "label": "Add Collide Self"
+                },
+                {
+                  "label": "Add Collide Sphere"
+                }
+              ]
             }
           ]
         },
@@ -6986,7 +7337,36 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41603
+              "id": 41603,
+              "items": [
+                {
+                  "label": "Inspect Emitter..."
+                },
+                {
+                  "label": "Inspect Simulation Root..."
+                },
+                {
+                  "label": "Inspect Simulation Node..."
+                },
+                {
+                  "label": "Inspect Environment"
+                },
+                {
+                  "label": "Set Initial State"
+                },
+                {
+                  "label": "Remove Initial State"
+                },
+                {
+                  "label": "Save Cache on Selection"
+                },
+                {
+                  "label": "Load Cache from Selection"
+                },
+                {
+                  "label": "Cache Manager..."
+                }
+              ]
             }
           ]
         },
@@ -6995,7 +7375,48 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41621
+              "id": 41621,
+              "items": [
+                {
+                  "label": "Layered Fumes"
+                },
+                {
+                  "label": "Polymesh to Dust"
+                },
+                {
+                  "label": "Asteroid Impacts"
+                },
+                {
+                  "label": "Particle Spawning Fireworks"
+                },
+                {
+                  "label": "Candle"
+                },
+                {
+                  "label": "Cigarette"
+                },
+                {
+                  "label": "Lagoa Flexible Structure"
+                },
+                {
+                  "label": "Lagoa Mesh Hanging"
+                },
+                {
+                  "label": "Lagoa Inelastic"
+                },
+                {
+                  "label": "Lagoa Simulate Mesh"
+                },
+                {
+                  "label": "Dynamic Hair"
+                },
+                {
+                  "label": "Particle Strands Fish"
+                },
+                {
+                  "label": "Particle Strands Seaweed"
+                }
+              ]
             }
           ]
         }
@@ -7009,7 +7430,36 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41616
+              "id": 41616,
+              "items": [
+                {
+                  "label": "Bend"
+                },
+                {
+                  "label": "Deform by Curve"
+                },
+                {
+                  "label": "Sculpt"
+                },
+                {
+                  "label": "Transform Mesh"
+                },
+                {
+                  "label": "Turbulize Mesh"
+                },
+                {
+                  "label": "Smooth"
+                },
+                {
+                  "label": "Lagoa Fluid Shaper"
+                },
+                {
+                  "label": "Subframe Deformation"
+                },
+                {
+                  "label": "Deformer Template"
+                }
+              ]
             }
           ]
         },
@@ -7018,7 +7468,18 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41626
+              "id": 41626,
+              "items": [
+                {
+                  "label": "Lagoa Cloth Mesh"
+                },
+                {
+                  "label": "Syflex Cloth"
+                },
+                {
+                  "label": "Footprints"
+                }
+              ]
             }
           ]
         }
@@ -7032,7 +7493,15 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41629
+              "id": 41629,
+              "items": [
+                {
+                  "label": "Transform Objects by Particles"
+                },
+                {
+                  "label": "Remove Particles Constraint"
+                }
+              ]
             }
           ]
         },
@@ -7041,7 +7510,27 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41628
+              "id": 41628,
+              "items": [
+                {
+                  "label": "Orientation"
+                },
+                {
+                  "label": "Pose"
+                },
+                {
+                  "label": "Position"
+                },
+                {
+                  "label": "to Closest Surface"
+                },
+                {
+                  "label": "Turret"
+                },
+                {
+                  "label": "Look At"
+                }
+              ]
             }
           ]
         }
@@ -7055,7 +7544,21 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41644
+              "id": 41644,
+              "items": [
+                {
+                  "label": "Import Model"
+                },
+                {
+                  "label": "Get From Scene"
+                },
+                {
+                  "label": "Default Pedestrian"
+                },
+                {
+                  "label": "Inspect Actor Proxies..."
+                }
+              ]
             }
           ]
         },
@@ -7064,7 +7567,51 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41646
+              "id": 41646,
+              "items": [
+                {
+                  "label": "Draw Directional Emitter"
+                },
+                {
+                  "label": "Add Emitter(s) From Selection"
+                },
+                {
+                  "label": "Add Goal"
+                },
+                {
+                  "label": "Draw Wall"
+                },
+                {
+                  "label": "Add Terrain"
+                },
+                {
+                  "label": "Add Path"
+                },
+                {
+                  "label": "Set As Current Crowd"
+                },
+                {
+                  "label": "Select Current Crowd"
+                },
+                {
+                  "label": "Show/Hide Emitters"
+                },
+                {
+                  "label": "Show/Hide Walls"
+                },
+                {
+                  "label": "Show/Hide PolyMesh Copies"
+                },
+                {
+                  "label": "Export Crowd as FBX (Geometry Pointcache)"
+                },
+                {
+                  "label": "Export Crowd as FBX (Null Rig)"
+                },
+                {
+                  "label": "Export Crowd as FBX (Null Rig and Geometry)"
+                }
+              ]
             }
           ]
         },
@@ -7073,7 +7620,36 @@
           "items": [
             {
               "label": "Anchor-to-Delete",
-              "id": 41645
+              "id": 41645,
+              "items": [
+                {
+                  "label": "New Crowd with Collision Avoidance"
+                },
+                {
+                  "label": "New Basic Crowd"
+                },
+                {
+                  "label": "New Pedestrian Crowd"
+                },
+                {
+                  "label": "New Stadium Crowd"
+                },
+                {
+                  "label": "Select Crowd Simulation Tree"
+                },
+                {
+                  "label": "Inspect Crowd Simulation Tree"
+                },
+                {
+                  "label": "Inspect Emitter..."
+                },
+                {
+                  "label": "Inspect Init. Animations..."
+                },
+                {
+                  "label": "Inspect Init. Collision Avoidance..."
+                }
+              ]
             }
           ]
         }

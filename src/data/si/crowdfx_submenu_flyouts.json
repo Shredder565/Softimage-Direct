@@ -1,5 +1,5 @@
 {
-  "_comment": "Softimage CrowdFX ICE menubar submenu flyouts — closer95 Desktop LIVE DUMP_READY + PE MENU 303. Dump-attested only; compound plugin leaves stay LOCK (Anchor-to-Delete).",
+  "_comment": "Softimage CrowdFX ICE menubar submenu flyouts \u2014 closer95 + anchor Ghidra tour factory_menu_names DUMP_READY. PE Anchor-to-Delete is insertion marker.",
   "softimage": "13.2.163.0",
   "lock_id": "crowdfx.submenu_flyouts",
   "status": "DUMP_READY",
@@ -22,8 +22,15 @@
     "screenshot": "media/softimage-95pct-closer/30-crowdfx-menu-hover.png",
     "screenshot_note": "ICE menu CrowdFX hover attempt",
     "menubar_dx_attested": 420,
-    "path": ["ICE", "CrowdFX"],
-    "buttons": ["Actors", "Crowd", "Simulation"],
+    "path": [
+      "ICE",
+      "CrowdFX"
+    ],
+    "buttons": [
+      "Actors",
+      "Crowd",
+      "Simulation"
+    ],
     "hwnd_note": "CROWDFX MENU CANDIDATES listed 1 top window matching Afx:/Menu filter during ICE menubar click+hover (see desktop_hwnd_notes.txt)"
   },
   "pe": {
@@ -39,9 +46,32 @@
       "pe_menu_id": 41644,
       "sdk_anchor": "siMenuTbICECrowdFXActorsID",
       "sdk_id": 380,
-      "item_count": 1,
-      "items": [{ "label": "Anchor-to-Delete", "id": 41644 }],
-      "compound_leaves": "LOCK"
+      "item_count": 5,
+      "items": [
+        {
+          "label": "Anchor-to-Delete",
+          "id": 41644
+        },
+        {
+          "label": "Import Model"
+        },
+        {
+          "label": "Get From Scene"
+        },
+        {
+          "label": "Default Pedestrian"
+        },
+        {
+          "label": "Inspect Actor Proxies..."
+        }
+      ],
+      "compound_leaves": "DUMP_READY",
+      "factory_menu_names": [
+        "Import Model",
+        "Get From Scene",
+        "Default Pedestrian",
+        "Inspect Actor Proxies..."
+      ]
     },
     "CrowdFX/Crowd": {
       "section": "CrowdFX",
@@ -49,9 +79,72 @@
       "pe_menu_id": 41646,
       "sdk_anchor": "siMenuTbICECrowdFXCrowdID",
       "sdk_id": 382,
-      "item_count": 1,
-      "items": [{ "label": "Anchor-to-Delete", "id": 41646 }],
-      "compound_leaves": "LOCK"
+      "item_count": 15,
+      "items": [
+        {
+          "label": "Anchor-to-Delete",
+          "id": 41646
+        },
+        {
+          "label": "Draw Directional Emitter"
+        },
+        {
+          "label": "Add Emitter(s) From Selection"
+        },
+        {
+          "label": "Add Goal"
+        },
+        {
+          "label": "Draw Wall"
+        },
+        {
+          "label": "Add Terrain"
+        },
+        {
+          "label": "Add Path"
+        },
+        {
+          "label": "Set As Current Crowd"
+        },
+        {
+          "label": "Select Current Crowd"
+        },
+        {
+          "label": "Show/Hide Emitters"
+        },
+        {
+          "label": "Show/Hide Walls"
+        },
+        {
+          "label": "Show/Hide PolyMesh Copies"
+        },
+        {
+          "label": "Export Crowd as FBX (Geometry Pointcache)"
+        },
+        {
+          "label": "Export Crowd as FBX (Null Rig)"
+        },
+        {
+          "label": "Export Crowd as FBX (Null Rig and Geometry)"
+        }
+      ],
+      "compound_leaves": "DUMP_READY",
+      "factory_menu_names": [
+        "Draw Directional Emitter",
+        "Add Emitter(s) From Selection",
+        "Add Goal",
+        "Draw Wall",
+        "Add Terrain",
+        "Add Path",
+        "Set As Current Crowd",
+        "Select Current Crowd",
+        "Show/Hide Emitters",
+        "Show/Hide Walls",
+        "Show/Hide PolyMesh Copies",
+        "Export Crowd as FBX (Geometry Pointcache)",
+        "Export Crowd as FBX (Null Rig)",
+        "Export Crowd as FBX (Null Rig and Geometry)"
+      ]
     },
     "CrowdFX/Simulation": {
       "section": "CrowdFX",
@@ -59,16 +152,62 @@
       "pe_menu_id": 41645,
       "sdk_anchor": "siMenuTbICECrowdFXSimulationID",
       "sdk_id": 381,
-      "item_count": 1,
-      "items": [{ "label": "Anchor-to-Delete", "id": 41645 }],
-      "compound_leaves": "LOCK"
+      "item_count": 10,
+      "items": [
+        {
+          "label": "Anchor-to-Delete",
+          "id": 41645
+        },
+        {
+          "label": "New Crowd with Collision Avoidance"
+        },
+        {
+          "label": "New Basic Crowd"
+        },
+        {
+          "label": "New Pedestrian Crowd"
+        },
+        {
+          "label": "New Stadium Crowd"
+        },
+        {
+          "label": "Select Crowd Simulation Tree"
+        },
+        {
+          "label": "Inspect Crowd Simulation Tree"
+        },
+        {
+          "label": "Inspect Emitter..."
+        },
+        {
+          "label": "Inspect Init. Animations..."
+        },
+        {
+          "label": "Inspect Init. Collision Avoidance..."
+        }
+      ],
+      "compound_leaves": "DUMP_READY",
+      "factory_menu_names": [
+        "New Crowd with Collision Avoidance",
+        "New Basic Crowd",
+        "New Pedestrian Crowd",
+        "New Stadium Crowd",
+        "Select Crowd Simulation Tree",
+        "Inspect Crowd Simulation Tree",
+        "Inspect Emitter...",
+        "Inspect Init. Animations...",
+        "Inspect Init. Collision Avoidance..."
+      ]
     }
   },
   "summary": {
     "flyout_count": 3,
-    "leaf_labels": ["Anchor-to-Delete"],
-    "compound_leaves": "LOCK",
-    "submenu_live_compounds": false,
-    "note": "closer95 crowdfx.submenu_flyouts DUMP_READY wires ICE menubar has-sub flyout path; PE leaf is Anchor-to-Delete only — no invent CrowdFX compounds."
+    "leaf_labels": [
+      "Anchor-to-Delete"
+    ],
+    "compound_leaves": "DUMP_READY",
+    "submenu_live_compounds": true,
+    "note": "Anchor-to-Delete PE insertion marker + CrowdFX_Plugin.py factory_menu_names DUMP_READY (softimage-anchor-compounds-ghidra-tour).",
+    "factory_fill_status": "DUMP_READY"
   }
 }

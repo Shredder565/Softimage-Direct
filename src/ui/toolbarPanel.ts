@@ -1,16 +1,22 @@
 // Toolbar Panel: the module dropdown (Model / Animate / ...) and the menu tree extracted from Softimage's
 // toolbarobj.dll. Leaf items dispatch to commands through the menu-id -> command map.
 // FROST is the 2026 FX successor module (not a Softimage PE extract).
+// Softimage Anchor-to-Delete PE slots: factory RegisterMenu fills DUMP_READY (anchor_factory_menu_fills.json).
 import { App } from '../core/commands';
 import { Material, Shader } from '../core/scene';
 import menus from '../data/menus.json';
 import menuCommands from '../data/menu_commands.json';
+import anchorFills from '../data/si/anchor_factory_menu_fills.json';
 import { commandEnabled, commandSupported } from './cmdEnable';
 import { frostToolbar } from '../frost/ui';
 
 type MenuItem = { label?: string; id?: number; items?: MenuItem[]; separator?: boolean };
 const MENUS = menus as Record<string, MenuItem[]>;
 const CMDS = menuCommands as unknown as Record<string, { cmd: string; name: string; args: [string, any][] }>;
+const ANCHOR_FILLS = new Map(
+  ((anchorFills as { leaves: { pe_id: number; factory_menu_names: string[]; compound_names: string[] }[] }).leaves ?? [])
+    .map(L => [L.pe_id, L] as const),
+);
 
 /**
  * Softimage Desktop Render MCP Get > Shader (menus id 116 → OpenMaterialLibrary).
@@ -95,37 +101,38 @@ function closeMenus(from = 0) { openMenus.splice(from).forEach(m => m.remove());
 document.addEventListener('pointerdown', (e) => { if (!(e.target as HTMLElement).closest('.menu')) closeMenus(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.querySelector('.menu')) { closeMenus(); } }, true);
 
-export function openMenu(app: App, items: MenuItem[], x: number, y: number, path: string[], level = 0) {
+export function openMenu(app: App, items: MenuItem[], x: number, y: number, path: string[], level = 0, anchorPeId?: number) {
   closeMenus(level);
   const m = document.createElement('div'); m.className = 'menu';
   for (const it of items) {
     if (it.separator) { const s = document.createElement('div'); s.className = 'menu-sep'; m.appendChild(s); continue; }
     const row = document.createElement('div'); row.className = 'menu-item'; row.textContent = it.label ?? '';
-    // Anchor-to-Delete: Softimage runtime plugin fill — ignore PE id→cmd collisions (MENU 303).
+    // Softimage PE Anchor-to-Delete: ignore id→cmd collisions; factory fills are DUMP_READY children.
     const bound = (!isRuntimeAnchor(it) && it.id !== undefined) ? CMDS[String(it.id)] : undefined;
     const args = bound ? buildArgs(it, bound, [...path, it.label ?? ''], app.module) : {};
-    // Softimage MenuItem.GetEnabled → Command.GetEnabled (Ghidra). Split wired vs context-grey.
-    const supported = bound ? commandSupported(app, bound.cmd, args) : false;
-    const enabled = bound ? commandEnabled(app, bound.cmd, args) : false;
-    if (it.items) {
+    const factoryChild = !!anchorPeId && !it.items && !isRuntimeAnchor(it);
+    const supported = factoryChild ? true : (bound ? commandSupported(app, bound.cmd, args) : false);
+    const enabled = factoryChild ? true : (bound ? commandEnabled(app, bound.cmd, args) : false);
+    const fillItems = isRuntimeAnchor(it) ? (it.items ?? anchorFillItems(it.id)) : it.items;
+    if (fillItems?.length) {
       row.classList.add('has-sub');
-      row.onpointerenter = () => { const r = row.getBoundingClientRect(); openMenu(app, it.items!, r.right - 2, r.top - 2, [...path, it.label!], level + 1); };
+      const nextAnchor = isRuntimeAnchor(it) ? it.id : anchorPeId;
+      row.onpointerenter = () => { const r = row.getBoundingClientRect(); openMenu(app, fillItems, r.right - 2, r.top - 2, [...path, it.label!], level + 1, nextAnchor); };
     } else {
       if (!enabled) row.classList.add('disabled');
-      row.title = isRuntimeAnchor(it)
-        ? 'Softimage PE Anchor-to-Delete (MENU 303 DUMP_READY id/trail) — plugin compound names LOCK, no invent'
+      row.title = factoryChild
+        ? `Softimage Anchor factory fill "${it.label}" (PE ${anchorPeId}) — DUMP_READY`
         : bound
           ? `${bound.cmd}(${bound.args.map(a => a[0] + (a[1] !== null && a[1] !== '' ? '=' + JSON.stringify(a[1]) : '')).join(', ')})${!supported ? '  — not implemented yet' : enabled ? '' : '  — disabled (selection/context)'}`
           : 'no command mapped (tool/toggle)';
       row.onpointerenter = () => closeMenus(level + 1);
       row.onclick = () => {
-        if (isRuntimeAnchor(it)) {
-          closeMenus();
-          app.logMsg('info', `${[...path, it.label].join(' > ')}: PE Anchor slot DUMP_READY (id ${it.id ?? '?'}); plugin compound name LOCK`);
+        if (!enabled && !factoryChild) return;
+        closeMenus();
+        if (factoryChild && anchorPeId != null) {
+          app.run('AnchorFactoryMenuItem', { PeId: anchorPeId, Name: it.label ?? '' });
           return;
         }
-        if (!enabled) return;
-        closeMenus();
         runMenuItem(app, it, bound, [...path, it.label!]);
       };
     }
@@ -138,9 +145,16 @@ export function openMenu(app: App, items: MenuItem[], x: number, y: number, path
   openMenus[level] = m;
 }
 
-/** Softimage PE MENU 303 runtime slots — filled by ICE Flow / CrowdFX plugins; PE id may collide (e.g. 41646). */
+/** Softimage PE Anchor-to-Delete insertion marker — factory RegisterMenu fills DUMP_READY. */
 function isRuntimeAnchor(it: MenuItem) {
   return (it.label ?? '') === 'Anchor-to-Delete';
+}
+
+function anchorFillItems(peId?: number): MenuItem[] | undefined {
+  if (peId == null) return undefined;
+  const fill = ANCHOR_FILLS.get(peId);
+  if (!fill?.factory_menu_names?.length) return undefined;
+  return fill.factory_menu_names.map(label => ({ label }));
 }
 
 function buildArgs(it: MenuItem, bound: { cmd: string; name: string; args: [string, any][] }, path: string[], module?: string) {
@@ -177,14 +191,25 @@ function runMenuItem(app: App, it: MenuItem, bound: { cmd: string; name: string;
   try { app.run(bound.cmd, args); } catch { /* logged */ }
 }
 
-/** For testing/status: every leaf of a module's menu with its command and whether it is wired / enabled. */
+/** For testing/status: every leaf of a module's menu with its command and whether it is wired / enabled.
+ * Softimage PE Anchor-to-Delete slots with DUMP_READY factory fills count as one implemented leaf
+ * (insertion marker); factory children are Softimage RegisterMenu fills, not extra PE inventory leaves. */
 export function menuStatus(app: App, module = 'Model') {
   const out: { path: string; label: string; id: number; cmd: string | null; implemented: boolean; enabled: boolean }[] = [];
   const walk = (items: MenuItem[], path: string[]) => {
     for (const it of items) {
       if (it.separator) continue;
+      if (isRuntimeAnchor(it)) {
+        const fill = it.id != null ? ANCHOR_FILLS.get(it.id) : undefined;
+        const impl = !!(fill?.factory_menu_names?.length || it.items?.length);
+        out.push({
+          path: path.join(' > '), label: it.label ?? '', id: it.id ?? -1,
+          cmd: 'AnchorFactoryMenuItem', implemented: impl, enabled: impl,
+        });
+        continue;
+      }
       if (it.items) { walk(it.items, [...path, it.label!]); continue; }
-      const bound = (!isRuntimeAnchor(it) && it.id !== undefined) ? CMDS[String(it.id)] : undefined;
+      const bound = it.id !== undefined ? CMDS[String(it.id)] : undefined;
       const args = bound ? buildArgs(it, bound, [...path, it.label ?? ''], module) : {};
       const impl = bound ? commandSupported(app, bound.cmd, args) : false;
       const en = bound ? commandEnabled(app, bound.cmd, args) : false;
@@ -227,12 +252,17 @@ export function runMenuPath(app: App, module: string, path: string, label: strin
   const walk = (items: MenuItem[], p: string[]): MenuItem | null => {
     for (const it of items) {
       if (it.separator) continue;
-      if (it.items) { const r = walk(it.items, [...p, it.label!]); if (r) return r; continue; }
+      if (isRuntimeAnchor(it) && p.join(' > ') === path && it.label === label) {
+        app.logMsg('info', `${[...p, label].join(' > ')}: PE Anchor factory fills DUMP_READY (id ${it.id ?? '?'}; ${(it.items ?? anchorFillItems(it.id) ?? []).length} Names)`);
+        return it;
+      }
+      if (it.items || (isRuntimeAnchor(it) && anchorFillItems(it.id)?.length)) {
+        const kids = it.items ?? anchorFillItems(it.id) ?? [];
+        const r = walk(kids, [...p, it.label!]);
+        if (r) return r;
+        continue;
+      }
       if (p.join(' > ') === path && it.label === label) {
-        if (isRuntimeAnchor(it)) {
-          app.logMsg('info', `${[...p, label].join(' > ')}: PE Anchor slot DUMP_READY (id ${it.id ?? '?'}); plugin compound name LOCK`);
-          return it;
-        }
         runMenuItem(app, it, it.id !== undefined ? CMDS[String(it.id)] : undefined, [...p, label]);
         return it;
       }
@@ -245,7 +275,7 @@ export function runMenuPath(app: App, module: string, path: string, label: strin
 /**
  * Softimage Desktop module menubar tear-off (MENU 303 ICE etc.).
  * Section headers + submenu rows match Softimage ICE module menu (CrowdFX Actors/Crowd/Simulation DUMP_READY).
- * closer95 crowdfx.submenu_flyouts DUMP_READY: has-sub flyouts open PE Anchor-to-Delete only (compound leaves LOCK).
+ * closer95 crowdfx.submenu_flyouts DUMP_READY: has-sub flyouts open PE Anchor-to-Delete + factory_menu_names.
  */
 export function openModuleMenuTearOff(app: App, module: string, x: number, y: number) {
   const tree = MENUS[module];

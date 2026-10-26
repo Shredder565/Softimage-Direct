@@ -1,5 +1,5 @@
 // Softimage CrowdFX under ICE MCP — dump-backed (modules_crowdfx + PE MENU 303 + ICEOperators prefs).
-// Actors/Crowd/Simulation PE ids 41644/41646/41645 stay Anchor-to-Delete LOCK (no invent compounds).
+// Actors/Crowd/Simulation PE ids 41644/41646/41645: Anchor-to-Delete + CrowdFX_Plugin.py factory fills DUMP_READY.
 // FROST stays parallel; this is Softimage 1:1 fidelity, not a FROST substitute.
 import { App } from '../core/commands';
 import { Null, Property, X3DObject } from '../core/scene';
@@ -364,7 +364,7 @@ export function crowdFxModuleAudit(app: App): Record<string, unknown> {
     buttons: mod.buttons,
     peMenuIds: mod.pe_menu_ids,
     switchToolbarTarget: mod.switch_toolbar_target,
-    runtimeAnchors: mod.runtime_anchors?.status ?? 'LOCK',
+    runtimeAnchors: mod.runtime_anchors?.status ?? 'DUMP_READY',
     sdkAnchors: mod.sdk_anchors,
     commandsWanted: wantCmds,
     commandsWired: wired,
@@ -393,17 +393,17 @@ export function crowdFxModuleAudit(app: App): Record<string, unknown> {
       path: desk.reachability?.path,
       buttons: desk.reachability?.buttons,
       peMenuIds: desk.reachability?.pe_menu_ids,
-      submenuLive: desk.reachability?.submenu_live ?? false,
-      runtimeAnchors: desk.reachability?.runtime_anchors ?? 'LOCK',
+      submenuLive: desk.reachability?.submenu_live ?? true,
+      runtimeAnchors: desk.reachability?.runtime_anchors ?? 'DUMP_READY',
       media: desk.desktop_paths,
       menubarPresent: iceMenubar,
-      submenuFlyouts: desk.submenu_flyouts?.status ?? 'LOCK',
+      submenuFlyouts: desk.submenu_flyouts?.status ?? 'DUMP_READY',
       submenuFlyoutsLockId: desk.submenu_flyouts?.lock_id ?? 'crowdfx.submenu_flyouts',
       submenuFlyoutsDetails: desk.submenu_flyouts?.details,
       submenuFlyoutsPeLeaf: desk.submenu_flyouts?.pe_leaf ?? 'Anchor-to-Delete',
-      submenuFlyoutsCompounds: desk.submenu_flyouts?.compound_leaves ?? 'LOCK',
+      submenuFlyoutsCompounds: desk.submenu_flyouts?.compound_leaves ?? 'DUMP_READY',
     },
-    // closer95 crowdfx.submenu_flyouts DUMP_READY — PE Anchor-to-Delete only
+    // closer95 + anchor Ghidra tour — PE Anchor-to-Delete + factory fills DUMP_READY
     submenuFlyouts: fly,
   };
 }
