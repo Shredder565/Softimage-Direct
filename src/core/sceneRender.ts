@@ -440,10 +440,11 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
       files.push(file);
       count++;
     }
-    // Softimage OM: Framebuffer.ResolvedFilename (RenderFramebuffer.spdl / true-95pct)
+    // Softimage OM (true-95pct / #130): ResolvedFilename + Format=pic after still write
     if (lastResolved && fb.get('ResolvedFilename')) {
-      app.setParam(fb.get('ResolvedFilename')!, lastResolved);
+      app.setParam(fb.get('ResolvedFilename')!, lastResolved.replace(/\//g, '\\'));
     }
+    if (fb.get('Format')) fb.set('Format', format || 'pic');
     app.anim.frame = prev;
   }
 

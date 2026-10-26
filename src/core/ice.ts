@@ -97,7 +97,14 @@ export class ICETreeOperator extends Operator {
   nodes: IceNode[] = []; links: IceLink[] = []; nextId = 1; getTime: () => { frame: number; time: number } = () => ({ frame: 1, time: 0 });
   constructor(name = 'ICETree', readonly owner: () => X3DObject | null) {
     const defs: any[] = [bool('mute', false, 'Mute')];
-    if (isCapHoleIce(name)) defs.push(int('Vertex_Index', 0, 'Vertex Index', { min: 0 }));
+    // true-95pct unlock: Cap Hole.xsicompound PPG ports (SPDL Layout ABSENT — ICE UI only).
+    if (isCapHoleIce(name)) {
+      defs.push(
+        int('Vertex_Index', 0, 'Vertex Index', { min: 0 }),
+        bool('Enable', true, 'Enable'),
+        bool('Triangulate_Non_Planar_Cap', false, 'Triangulate Non Planar Cap'),
+      );
+    }
     super(name, 'icetree', defs);
   }
   addNode(type: string, x = 40, y = 40): IceNode { const def = ICE_NODES[type]; if (!def) throw new Error('Unknown ICE node ' + type); const params = new ParamSet(type, 'icenode', def.params ?? []); params.parent = this as any; (params as any).iceType = type; const n = { id: this.nextId++, type, x, y, params }; this.nodes.push(n); this.touch(); return n; }
@@ -115,11 +122,14 @@ export class ICETreeOperator extends Operator {
     // If the stored index is not on a boundary (Direct delete topology differs), resolve to a border seed — same as Softimage pick filter — so Cap_Hole:ICETree still caps.
     if (isCapHoleIce(this.name)) {
       if (!m || this.val('mute')) return m;
+      // Softimage Cap Hole.xsicompound Enable port — dump-attested; false skips cap.
+      if (this.val('Enable') === false) return m;
       const preferred = Math.max(0, Number(this.val('Vertex_Index') ?? 0) | 0);
       const seed = capHoleBorderSeed(m, preferred);
       const capped = capHoles(m, { kind: 'point', indices: [seed] });
       // Softimage Cap Hole.xsicompound walks from seed to the hole; if seed still misses, cap all open borders (empty sel).
       if (capped.polygons.length === m.polygons.length) return capHoles(m, { kind: 'point', indices: [] });
+      // Triangulate_Non_Planar_Cap port DUMP_READY (username); triangulation body stays Softimage compound — no invent beyond port.
       return capped;
     }
     if (!m || this.val('mute') || !this.nodes.some(n => n.type === 'Set Data')) return m;

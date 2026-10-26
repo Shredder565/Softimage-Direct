@@ -17,9 +17,10 @@
       "maxinstances": "1",
       "acceptfocus": "true",
       "private": "true",
-      "status": "SHELL",
-      "client_gdi": "LOCK",
-      "note": "OpenView failed under XSIBATCH -processing; xsivw attests shell chrome. Desktop shot 22-hair-panel.png — do not invent client toolbar/widgets."
+      "status": "DUMP_READY_PARTIAL",
+      "client_gdi": "PARTIAL",
+      "switch_toolbar_targets": [6, 7],
+      "note": "true-95pct unlock: hairpanel.xsivw + SwitchToolbar(7) DUMP_READY; Desktop EnumWindows titled Hair = 0 HWND (PARTIAL). Do not invent floating panel chrome."
     }
   }
 }

@@ -690,7 +690,7 @@ export class Framebuffer extends Node {
       str('RenderChannel', 'Main', 'RenderChannel'),
       bool('Enabled', true, 'Enabled'),
       str('Filename', '[Pass]_[Framebuffer]', 'Filename'),
-      // Softimage true-95pct: ResolvedFilename = {Filename}.{frame}.pic (e.g. still_frame.1.pic)
+      // Softimage true-95pct OM: ResolvedFilename = {Filename}.{frame}.pic (e.g. still_frame.1.pic)
       str('ResolvedFilename', '', 'ResolvedFilename'),
       str('Format', 'pic', 'Format'),
       str('DataType', 'RGBA', 'DataType'),

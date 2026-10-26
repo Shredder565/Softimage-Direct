@@ -445,7 +445,35 @@ export function registerModelCommands(app: App) {
   };
   app.register({ name: 'CreateProjection', label: 'Create Texture Projection', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }, { name: 'Type', default: 'Planar XY' }], execute: (app, a) => projection(app, a.Type, app.targets(a.InputObjs)) });
   app.register({ name: 'CreateTextureSupport', label: 'Create Texture Support', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }, { name: 'Type', default: 'Planar XY' }], execute: (app, a) => projection(app, a.Type, app.targets(a.InputObjs), true) });
-  app.register({ name: 'Create2DMapWithProjection', label: 'Create Texture Map', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }, { name: 'Type', default: 'Planar XY' }], execute: (app, a) => projection(app, a.Type, app.targets(a.InputObjs)) });
+  // Softimage true-95pct unlock: Name "Create 2D Texture Map with UV Projection" SN Create2DMapWithProjection args×6
+  // (si_model_dump: InputObjs, Name, Propagation, Type, Support, Connected).
+  app.register({
+    name: 'Create2DMapWithProjection', label: 'Create 2D Texture Map with UV Projection', category: 'Texturing',
+    args: [
+      { name: 'InputObjs', default: '' },
+      { name: 'Name', default: 'Texture_Map' },
+      { name: 'Propagation', default: ':siDefaultPropagation:siPropagationType' },
+      { name: 'Type', default: ':siTxtPlanarXY:siTxtCreationType' },
+      { name: 'Support', default: null },
+      { name: 'Connected', default: false },
+    ],
+    execute: (app, a) => {
+      const typeRaw = String(a.Type ?? 'Planar XY');
+      const typeMap: Record<string, string> = {
+        ':siTxtUV:siTxtCreationType': 'UV',
+        ':siTxtPlanarXY:siTxtCreationType': 'Planar XY',
+        ':siTxtPlanarYZ:siTxtCreationType': 'Planar YZ',
+        ':siTxtPlanarXZ:siTxtCreationType': 'Planar XZ',
+        ':siTxtCylindrical:siTxtCreationType': 'Cylindrical',
+        ':siTxtSpherical:siTxtCreationType': 'Spherical',
+        ':siTxtCamera:siTxtCreationType': 'Camera Projection',
+        ':siTxtCubic:siTxtCreationType': 'Cubic',
+        ':siTxtSpatial:siTxtCreationType': 'Spatial',
+      };
+      const kind = typeMap[typeRaw] ?? (typeRaw.replace(/^:siTxt|:siTxtCreationType$/g, '') || 'Planar XY');
+      return projection(app, kind, app.targets(a.InputObjs));
+    },
+  });
   app.register({ name: 'GenerateUniqueUVs', label: 'Unique UVs', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }], execute: (app, a) => projection(app, 'Unique UVs', app.targets(a.InputObjs), false) });
   app.register({ name: 'GenerateUVSetByContourStretching', label: 'Contour Stretch UVs', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }], execute(app, a) { const objs = app.targets(a.InputObjs); const p = projection(app, 'Planar XZ', objs, false); for (const o of objs) { const pp = o.property('uvprojection'); const m = o.primitive?.mesh(); if (pp && m) (pp as any).uvs = relaxUVs(m, sampleUVs(o)!, 40); } return p; } });
   app.register({ name: 'ConnectToProjection', label: 'Connect to Projection', category: 'Texturing', args: [], execute(app) { app.logMsg('info', 'Image textures use the object\'s latest Texture_Projection automatically in this build'); } });
