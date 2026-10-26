@@ -79,9 +79,12 @@ export function registerModuleToolbarCommands(app: App) {
     name: 'InspectAllUVs', label: 'Inspect All UVs', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }],
     undoable: false, execute(app) { openView('Texture Editor'); app.logMsg('info', 'Inspect All UVs → Texture Editor'); },
   });
+  // Softimage remaining-audit-gaps dump: EditUVProjectionTool / Edit Projection Tool = FAIL (absent).
+  // Keep a no-op shell so menus do not crash; Gap = Softimage FAIL — no invent.
   app.register({
     name: 'EditUVProjectionTool', label: 'Edit Projection Tool', category: 'Texturing', args: [],
-    undoable: false, execute: (app) => stubTool(app, 'Edit Projection Tool'),
+    undoable: false, canRun: () => false,
+    execute() { throw new Error('EditUVProjectionTool: Softimage Commands entry absent (remaining-audit-gaps dump FAIL)'); },
   });
   app.register({
     name: 'OpenRenderTree', label: 'Open Render Tree', category: 'Rendering', args: [],
