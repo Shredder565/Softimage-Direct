@@ -185,20 +185,46 @@ export function padFrame(frame: number, padding: number): string {
 }
 
 /**
- * Softimage picture path: OutputDir / Filename.FRAME.ext
- * Dump-attested still: Format=pic → …/Render_Pictures/Default_Pass_Main.1.pic (framepadding=1).
+ * Softimage ResolvedFilename (true-95pct + desktop tour).
+ * Pattern: `{Filename}.{frame}.{ext}` with Format=pic → `.pic`.
+ * Absolute Filename (dump: …\still_frame) stays absolute → still_frame.1.pic.
+ * Relative / token Filename joins OutputDir → Render_Pictures/Default_Pass_Main.1.pic.
  */
+export function resolveSoftimageResolvedFilename(
+  outputDir: string,
+  filename: string,
+  frame: number,
+  padding: number,
+  format: string,
+  passName = 'Default_Pass',
+  fbName = 'Main',
+): string {
+  const ext = writeExtensionFor(format);
+  const frameStr = padFrame(frame, padding);
+  const raw = String(filename || '[Pass]_[Framebuffer]');
+  const expanded = expandRenderTokens(raw, passName, fbName)
+    .replace(/\.(png|mp4|avi|pic|exr|tif|tiff|jpg|jpeg|mov)$/i, '');
+  const norm = expanded.replace(/\\/g, '/');
+  const absolute = /^[a-zA-Z]:\//.test(norm) || norm.startsWith('//');
+  if (absolute) return `${norm}.${frameStr}.${ext}`;
+  // Relative path that already includes directories (no OutputDir prefix doubling)
+  if (norm.includes('/')) return `${norm.replace(/^\//, '')}.${frameStr}.${ext}`;
+  const dir = expandRenderTokens(outputDir || '[Project Path]\\Render_Pictures', '', '').replace(/\/$/, '') || 'Render_Pictures';
+  const base = norm || 'Pass_Main';
+  return `${dir}/${base}.${frameStr}.${ext}`;
+}
+
+/** @deprecated alias — Softimage name is ResolvedFilename */
 export function resolvePicturePath(
   outputDir: string,
   filename: string,
   frame: number,
   padding: number,
   format: string,
+  passName = 'Default_Pass',
+  fbName = 'Main',
 ): string {
-  const dir = expandRenderTokens(outputDir || '[Project Path]/Render_Pictures', '', '').replace(/\/$/, '') || 'Render_Pictures';
-  const base = expandRenderTokens(filename || '[Pass]_[Framebuffer]', 'Pass', 'Main').replace(/\.(png|mp4|avi|pic|exr|tif|tiff|jpg|jpeg|mov)$/i, '');
-  const ext = writeExtensionFor(format);
-  return `${dir}/${base}.${padFrame(frame, padding)}.${ext}`;
+  return resolveSoftimageResolvedFilename(outputDir, filename, frame, padding, format, passName, fbName);
 }
 
 /**
@@ -390,15 +416,19 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
     format = multi ? sequenceFormatFor(pass, opts.formatOverride) : stillFormatFor(pass, fb, opts.formatOverride);
     if (format === 'mov') format = DEFAULT_RENDER_OUTPUT_FORMAT;
 
+    // Softimage Framebuffer.Filename — absolute (still_frame dump) or token template.
     const filenameTpl = String(fb.val('Filename') ?? '[Pass]_[Framebuffer]');
-    const filename = expandRenderTokens(filenameTpl, pass.name, fb.name);
     const prev = app.anim.frame;
     let count = 0;
+    let lastResolved = '';
     for (let f = f0; f <= f1; f += step) {
       if (count >= maxFrames) break;
       app.anim.frame = f;
       const dataUrl = captureFrameDataUrl(app, w, h, f);
-      const path = resolvePicturePath(outputDir, filename, f, padding, format);
+      const path = resolveSoftimageResolvedFilename(
+        outputDir, filenameTpl, f, padding, format, pass.name, fb.name,
+      );
+      lastResolved = path;
       const file: RenderedFile = {
         path,
         frame: f,
@@ -409,6 +439,10 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
       storePicture(path, file);
       files.push(file);
       count++;
+    }
+    // Softimage OM: Framebuffer.ResolvedFilename (RenderFramebuffer.spdl / true-95pct)
+    if (lastResolved && fb.get('ResolvedFilename')) {
+      app.setParam(fb.get('ResolvedFilename')!, lastResolved);
     }
     app.anim.frame = prev;
   }

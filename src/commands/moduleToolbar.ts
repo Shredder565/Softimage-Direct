@@ -218,8 +218,8 @@ export function registerModuleToolbarCommands(app: App) {
   app.register({ name: 'AddToPartition', label: 'Add Object to Partition', category: 'Rendering', args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], execute(app) { app.logMsg('info', `Add to partition: ${app.selectedObjects.map(o => o.name).join(', ') || '(nothing selected)'}`); } });
   app.register({ name: 'RemoveFromPartition', label: 'Remove Object from Partition', category: 'Rendering', args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], execute(app) { app.logMsg('info', `Remove from partition: ${app.selectedObjects.map(o => o.name).join(', ') || '(nothing selected)'}`); } });
 
-  // Softimage stub-tools dump ACTIVE — RenderPass args×6 / RenderPasses args×5 (commands_full).
-  // Picture output: dump-attested Render_Pictures/[Pass]_[Framebuffer].FRAME.pic (desktop tour).
+  // Softimage true-95pct + stub-tools: RenderPass args×6; RenderPasses SN args×5;
+  // Name "Render Current Pass" → SN RenderPasses args×1. Format=pic; ResolvedFilename={file}.{frame}.pic.
   app.register({
     name: 'RenderPass', label: 'Render Pass', category: 'Rendering',
     args: [
@@ -241,10 +241,11 @@ export function registerModuleToolbarCommands(app: App) {
     execute: (app, a) => executeRenderPass(app, a),
   });
   app.register({
+    // Softimage true-95pct: Name args=1 → SN RenderPasses (do not treat as RenderCurrentFrame).
     name: 'Render Current Pass', label: 'Render Current Pass', category: 'Rendering',
     args: [{ name: 'Passes', default: 'Passes.Current' }], undoable: false,
     description: 'Render selected passes',
-    execute: (app, a) => app.run('RenderPasses', a),
+    execute: (app, a) => app.run('RenderPasses', { Passes: a.Passes ?? 'Passes.Current' }),
   });
   app.register({
     name: 'RenderSelectedPasses', label: 'Render Selected Passes', category: 'Rendering',

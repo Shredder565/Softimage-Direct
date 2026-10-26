@@ -415,26 +415,46 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
 (window as any).__animEditorsExecCmdSmoke = () => animEditorsExecCmdSmoke(app);
 (window as any).__switchModule = (m: string) => { app.module = m as any; app.events.emit('module'); };
 (window as any).__hairApplySmoke = () => hairApplySmoke(app);
-/** Softimage picture-output smoke: RenderCurrentFrame → Render_Pictures/…FRAME.pic (desktop tour). */
+/** Softimage picture-output smoke: true-95pct ResolvedFilename + Render Current Pass arity. */
 (window as any).__sceneImageRenderSmoke = () => {
   const pass = app.scene.passes[app.scene.passes.length - 1];
+  const fb = pass?.framebuffers?.[0];
   if (pass?.get('FrameStart') && pass?.get('FrameEnd')) {
     app.setParam(pass.get('FrameStart')!, 1);
     app.setParam(pass.get('FrameEnd')!, 1);
   }
   app.anim.frame = 1;
   const still = app.run('RenderCurrentFrame') as { ok?: boolean; files?: { path: string; byteLength: number; dataUrl: string }[]; format?: string; mode?: string };
-  const passOne = app.run('RenderPass', { Passes: 'Passes.Current', StartFrame: 1, EndFrame: 1 }) as typeof still;
   const pathOk = !!still?.files?.[0]?.path?.match(/Render_Pictures\/Default_Pass_Main\.1\.pic$/);
   const bytesOk = (still?.files?.[0]?.byteLength ?? 0) > 32 && !!still?.files?.[0]?.dataUrl?.startsWith('data:image');
-  const passOk = !!passOne?.ok && (passOne.files?.[0]?.byteLength ?? 0) > 32;
-  const stubGone = !/offline render stub/i.test(app.log.slice(-8).map(l => l.text).join('\n'));
+  const resolvedOk = !!fb && String(fb.val('ResolvedFilename') || '').endsWith('Default_Pass_Main.1.pic');
+  // true-95pct: custom Filename → still_frame.1.pic
+  let stillFrameOk = false;
+  let stillFramePath: string | null = null;
+  if (fb?.get('Filename')) {
+    app.setParam(fb.get('Filename')!, 'still_frame');
+    if (fb.get('Format')) app.setParam(fb.get('Format')!, 'pic');
+    const rcp = app.run('Render Current Pass', { Passes: 'Passes.Current' }) as typeof still;
+    // Clamp: Render Current Pass uses pass frame range — force single frame for smoke via RenderPass.
+    const one = app.run('RenderPass', { Passes: 'Passes.Current', StartFrame: 1, EndFrame: 1 }) as typeof still;
+    stillFramePath = one?.files?.[0]?.path ?? rcp?.files?.[0]?.path ?? null;
+    stillFrameOk = !!stillFramePath?.endsWith('still_frame.1.pic')
+      && String(fb.val('ResolvedFilename') || '').endsWith('still_frame.1.pic')
+      && (one?.files?.[0]?.byteLength ?? 0) > 32;
+    app.setParam(fb.get('Filename')!, '[Pass]_[Framebuffer]');
+  }
+  const rcpArgs = app.commands.get('Render Current Pass')?.args?.length === 1;
+  const rcfArgs = app.commands.get('RenderCurrentFrame')?.args?.length === 0;
+  const rpArgs = app.commands.get('RenderPass')?.args?.length === 6;
+  const stubGone = !/offline render stub/i.test(app.log.slice(-12).map(l => l.text).join('\n'));
   return {
-    ok: !!(still?.ok && pathOk && bytesOk && passOk && stubGone),
+    ok: !!(still?.ok && pathOk && bytesOk && resolvedOk && stillFrameOk && rcpArgs && rcfArgs && rpArgs && stubGone),
     stillPath: still?.files?.[0]?.path ?? null,
     stillBytes: still?.files?.[0]?.byteLength ?? 0,
     stillFormat: still?.format ?? null,
-    passPath: passOne?.files?.[0]?.path ?? null,
+    resolvedFilename: fb ? String(fb.val('ResolvedFilename') ?? '') : null,
+    stillFramePath,
+    arities: { renderCurrentPass: 1, renderCurrentFrame: 0, renderPass: 6, ok: rcpArgs && rcfArgs && rpArgs },
     stubGone,
     lastRender: (window as any).__siLastRender ?? null,
   };
