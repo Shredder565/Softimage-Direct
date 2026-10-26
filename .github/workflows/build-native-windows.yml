@@ -1,0 +1,41 @@
+name: Build AfterImage Native (Win32)
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'native/**'
+      - '.github/workflows/build-native-windows.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'native/**'
+      - '.github/workflows/build-native-windows.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-native:
+    name: AfterImageNative MSVC
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure CMake (VS 2022 x64)
+        working-directory: native
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+
+      - name: Build Release
+        working-directory: native
+        run: cmake --build build --config Release --parallel
+
+      - name: Upload AfterImageNative.exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: AfterImageNative-win-x64
+          path: |
+            native/build/Release/AfterImageNative.exe
+            native/build/Release/data/commands_attested.json
+          if-no-files-found: error
