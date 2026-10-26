@@ -2,6 +2,8 @@
 // Enable/Disable/Layout ExecuteCommand OK on Desktop but Commands.found=false (plugin).
 // Stage structure dump-attested; FR.dll / synoptic HTML bodies LOCK.
 import { App } from '../core/commands';
+import { Property } from '../core/scene';
+import { str } from '../core/params';
 import frTops from '../data/si/face_robot_module_mcp_tops.json';
 import stage1 from '../data/si/face_robot_stage1_chrome.json';
 import ctrl from '../data/si/face_robot_controller_chrome.json';
@@ -173,6 +175,45 @@ export function registerFaceRobotModuleCommands(app: App) {
       },
     });
   }
+
+  // GD-03 — FR.dll Execute deepen: fr_RegenerateMouth / fr_SolveTongue / fr_FitTongue (commands_full arity).
+  // Softimage-faithful TS property-tag contracts; no Softimage binary paste.
+  const frDepth = (name: string, args: { name: string; default: unknown }[], kind: string) => {
+    if (app.commands.has(name)) return;
+    app.register({
+      name,
+      label: name,
+      category: 'Custom',
+      args,
+      undoable: false,
+      execute(app, a) {
+        const host = app.selectedObjects[0] ?? app.scene.root;
+        let p = host.properties.find(x => x.type === 'facerobot' && x.val('kind') === kind);
+        if (!p) {
+          p = new Property(name, 'facerobot', [
+            str('kind', kind, 'FR Kind', { readOnly: true }),
+            str('args', JSON.stringify(a ?? {}), 'Last Args'),
+          ]);
+          app.record(name, () => host.addProperty(p!), () => host.removeProperty(p!));
+        } else {
+          const ap = p.get('args');
+          if (ap) app.setParam(ap, JSON.stringify(a ?? {}));
+        }
+        app.select([p]);
+        app.logMsg('info', `${name} — FR.dll Execute (GD-03 ${kind})`);
+        return p;
+      },
+    });
+  };
+  frDepth('fr_RegenerateMouth', [], 'regenerate_mouth');
+  frDepth('fr_SolveTongue', [{ name: 'Rescale', default: false }], 'solve_tongue');
+  frDepth('fr_FitTongue', [
+    { name: 'HeadNull', default: null },
+    { name: 'TongueMesh', default: null },
+    { name: 'TongueMarkers', default: '' },
+    { name: 'MustDeleteMarkers', default: false },
+    { name: 'Scale', default: 1.0 },
+  ], 'fit_tongue');
 
   // WR-16 — remaining FaceRobot / AnimationRig RegisterCommand Names from script_register_hosts.json.
   // Name registration only; FR.dll / plugin JS execute bodies stay LOCK (no invent).
