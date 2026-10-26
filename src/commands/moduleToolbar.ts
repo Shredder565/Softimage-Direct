@@ -86,13 +86,27 @@ export function registerModuleToolbarCommands(app: App) {
     name: 'InspectAllUVs', label: 'Inspect All UVs', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }],
     undoable: false, execute(app) { openView('Texture Editor'); app.logMsg('info', 'Inspect All UVs → Texture Editor'); },
   });
-  // Softimage-absent MATCH: EditUVProjectionTool Name FAIL (100pct-remaining + true-95pct).
-  // UVW fuzzy Names/arity already MATCH. Grey tool leaf — Softimage parity (no invent tool body).
+  // WR-10 — Softimage PE label "Edit Projection" (toolbarobj UTF-16). Scripting name EditUVProjectionTool ABSENT.
+  // Softimage-absent MATCH for SN; open Texture Editor under PE label only (no invent tool Clsid).
   app.register({
-    name: 'EditUVProjectionTool', label: 'Edit Projection Tool', category: 'Texturing', args: [],
+    name: 'EditUVProjectionTool', label: 'Edit Projection', category: 'Texturing', args: [],
     undoable: false, canRun: () => false,
-    execute() { throw new Error('EditUVProjectionTool: Softimage Commands entry absent (Softimage-absent MATCH)'); },
+    description: 'Softimage PE Edit Projection — scripting name ABSENT (behavioral tour WR-10)',
+    execute() { throw new Error('EditUVProjectionTool: Softimage Commands entry absent (Softimage-absent MATCH); use Texture Editor / UVW fuzzy cmds'); },
   });
+  // Softimage PE-friendly alias — opens Texture Editor (attested OpenTextureEditor path), not invent SN.
+  if (!app.commands.has('Edit Projection')) {
+    app.register({
+      name: 'Edit Projection', label: 'Edit Projection', category: 'Texturing', args: [],
+      undoable: false,
+      execute(app) {
+        openView('Texture Editor');
+        const p = app.selectedObjects[0]?.property('uvprojection');
+        if (p) app.events.emit('inspect', p);
+        app.logMsg('info', 'Edit Projection → Texture Editor (PE label; Softimage EditUVProjectionTool SN ABSENT)');
+      },
+    });
+  }
   // Softimage true-95pct unlock fuzzy UVW ACTIVE set (do not invent EditUVProjectionTool).
   // Arity from true95_unlock_dump.json EditUVProjectionTool.fuzzy.
   for (const u of [
@@ -470,14 +484,46 @@ export function registerModuleToolbarCommands(app: App) {
       return n;
     },
   });
-  // Softimage commands_full + harvest: MultiAttachRigidBodiesTool desc =
-  // "Attach rigid bodies together with a rigid constraint" (same as AttachRigidBodies).
-  // PE menu args Name=Hinge|BallSocket|Spring|Slider|Fixed — dump-attested, no invent solver.
+  // WR-09 — Softimage MultiAttachRigidBodiesTool (commands_full Name=Hinge|BallSocket|Spring|Slider|Fixed).
+  // Pick-two-bodies → AttachRigidBodies; same Softimage Name args — no invent solver.
   app.register({
     name: 'MultiAttachRigidBodiesTool', label: 'Multi Attach Rigid Bodies Tool', category: 'Simulation',
-    args: [{ name: 'Name', default: 'Hinge' }, { name: 'Bodies', default: null }],
+    args: [{ name: 'Name', default: 'BallSocket' }, { name: 'Bodies', default: null }],
     description: 'Attach rigid bodies together with a rigid constraint',
-    execute: (app, a) => app.run('AttachRigidBodies', { Name: a.Name || 'Hinge', Bodies: a.Bodies }),
+    canRun: (a) => {
+      if (a?.Bodies) return true;
+      return app.selectedObjects.length >= 1;
+    },
+    execute(app, a) {
+      const kind = String(a.Name || 'BallSocket');
+      const named = a.Bodies ? app.targets(a.Bodies) : [];
+      const bodies = named.length >= 2 ? named : app.selectedObjects;
+      if (bodies.length >= 2) {
+        app.select(bodies.slice(0, 2));
+        return app.run('AttachRigidBodies', { Name: kind, Bodies: bodies.slice(0, 2).map(o => o.name).join(',') });
+      }
+      // Softimage multi-attach tool: arm pick until two rigid bodies selected.
+      const A = app as any;
+      A.armedTool = { label: 'Multi Attach Rigid Bodies Tool', clsid: null, multiAttach: kind, picks: [...bodies] };
+      app.setTool({
+        name: 'Multi Attach Rigid Bodies Tool',
+        prompt: `MultiAttach (${kind}): pick two rigid bodies`,
+        onClick() { /* selection-driven via events */ },
+        onFinish() { app.setTool(null); },
+        onCancel() { app.setTool(null); A.armedTool = null; },
+      });
+      const tryAttach = () => {
+        const picks = app.selectedObjects;
+        if (picks.length < 2) return;
+        app.setTool(null);
+        A.armedTool = null;
+        app.run('AttachRigidBodies', { Name: kind, Bodies: picks.slice(0, 2).map(o => o.name).join(',') });
+        off();
+      };
+      const off = app.events.on('selection', tryAttach);
+      app.logMsg('info', `MultiAttachRigidBodiesTool (${kind}): pick two bodies`);
+      return A.armedTool;
+    },
   });
   // Softimage full-tab harvest: ExecuteCommand("Toggle Simulation", []) ACTIVE (no scene delta).
   app.register({
@@ -588,20 +634,60 @@ export function registerModuleToolbarCommands(app: App) {
   app.register({ name: 'ApplyHairDynamicsOp', label: 'Hair Dynamics Simulator', category: 'Simulation', args: [{ name: 'in_Objs', default: null }], execute: (app) => hairOn(app, 'Hair Dynamics') });
   app.register({ name: 'ApplyHairShader', label: 'Hair Shader', category: 'Rendering', args: [], execute: (app) => app.run('SIApplyShader', { PresetObj: 'Phong', InputObjs: app.selectedObjects }) });
 
-  // Softimage harvest/commands_full: Hair*Tool = "Activate the … tool" (+ Clsid from PE menu_commands).
-  // Brush stroke GDI stays LOCK (no invent). Operators ApplyHair* remain separate ACTIVE wires.
-  const hairTools: [string, string][] = [
-    ['HairScalingTool', 'Hair Scaling Tool'], ['HairBrushTool', 'Hair Brush'],
-    ['HairRotateRootTool', 'Hair Rotate Root Tool'], ['HairRotateTipTool', 'Hair Rotate Tip Tool'], ['HairRotateCursorTool', 'Hair Rotate Cursor Tool'],
-    ['HairStandOnEndTool', 'Hair Stand On End Tool'], ['HairPuffRootsTool', 'Hair Puff Roots'], ['HairClumpTool', 'Hair Clump Tool'],
+  // WR-08 — Softimage Hair*Tool Clsid from commands_full (Manipulation). Brush stroke GDI LOCK (no invent).
+  // HairBrushTool attested in hair_module_mcp_tops / PE; Clsid ABSENT from commands_full — arm without invent GUID.
+  const hairTools: [string, string, string][] = [
+    ['HairScalingTool', 'Hair Scaling Tool', '{B3672C3B-31D5-4A34-A6D1-3B5D019D405F}'],
+    ['HairBrushTool', 'Hair Brush', ''],
+    ['HairRotateRootTool', 'Hair Rotate Root Tool', '{825FCD04-4E50-4938-8DE1-258DB92CF19E}'],
+    ['HairRotateTipTool', 'Hair Rotate Tip Tool', '{B962F218-EB16-11D5-A2E0-08003658D403}'],
+    ['HairRotateCursorTool', 'Hair Rotate Cursor Tool', '{657CF6B6-E2CF-11D5-A2DD-08003658D403}'],
+    ['HairStandOnEndTool', 'Hair Stand On End Tool', '{9F91CAC4-0CFF-420A-881D-2C68F99FAB7C}'],
+    ['HairPuffRootsTool', 'Hair Puff Roots', '{481ADB88-E2CF-11D5-A2DD-08003658D403}'],
+    ['HairClumpTool', 'Hair Clump Tool', '{AA0B2DFF-4B7E-42DE-AB2E-2F77F084D99B}'],
   ];
-  for (const [name, label] of hairTools) {
+  const hasHairSel = () => app.selectedObjects.some(o => o.properties.some(p => p.type === 'hair') || /hair/i.test(o.name));
+  for (const [name, label, clsidDefault] of hairTools) {
     app.register({
       name, label, category: 'Manipulation',
-      args: [{ name: 'Clsid', default: '' }],
+      args: [{ name: 'Clsid', default: clsidDefault }],
       undoable: false,
       description: `Activate the ${label}`,
-      execute: (app, a) => armTool(app, label, String(a.Clsid || '')),
+      // WR-07 — Softimage GetEnabled: Manipulation tools enable with selection (CXSICommandCore callback).
+      canRun: () => app.selectedObjects.length > 0 || hasHairSel(),
+      execute(app, a) {
+        const clsid = String(a.Clsid || clsidDefault || '');
+        const armed = armTool(app, label, clsid);
+        // Softimage HairPrimitive accessors attested (GetRenderHairAccessor) — tag armed hair tool for viewport.
+        (app as any).armedHairTool = { name, label, clsid: clsid || null };
+        const opMap: Record<string, string> = {
+          HairScalingTool: 'ApplyHairScaleOp',
+          HairClumpTool: 'ApplyHairClumpOp',
+          HairPuffRootsTool: 'ApplyHairPuffOp',
+          HairRotateRootTool: 'ApplyHairRotateOp',
+          HairRotateTipTool: 'ApplyHairRotateOp',
+          HairRotateCursorTool: 'ApplyHairRotateOp',
+          HairStandOnEndTool: 'ApplyHairCombNormalOp',
+          HairBrushTool: 'ApplyHairCombOp',
+        };
+        const applyHairStroke = (obj: X3DObject | null | undefined) => {
+          if (!obj) return;
+          const hair = obj.properties.find(p => p.type === 'hair');
+          if (!hair) return;
+          const op = opMap[name];
+          if (op && app.commands.has(op)) {
+            try { app.run(op, { InputObjs: obj.fullName }); } catch { /* logged */ }
+          }
+        };
+        app.setTool({
+          name: label,
+          prompt: `${label}: click/drag on hair (Softimage Clsid ${clsid || 'PE-only'})`,
+          onClick(_p, pick) { applyHairStroke(pick?.obj); },
+          onFinish() { app.setTool(null); },
+          onCancel() { app.setTool(null); (app as any).armedHairTool = null; },
+        });
+        return armed;
+      },
     });
   }
 
