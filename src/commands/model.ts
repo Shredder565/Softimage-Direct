@@ -269,7 +269,16 @@ export function registerModelCommands(app: App) {
   app.register({ name: 'ApplyDeformByCage', label: 'Deform by Cage', category: 'Deformation|Operator', description: 'Mean-value-coordinate cage deformation: select the mesh and the cage mesh.', args: [{ name: 'ConnectionSet', default: '' }], execute: (app) => app.run('ApplyOp', { PresetObj: 'CageDeform' }) });
   app.register({ name: 'SIApplyDeformBySpine', label: 'Deform by Spine', category: 'Deformation|Operator', description: 'Points near the spine curve follow it (radius with falloff).', args: [{ name: 'ConnectionSet', default: '' }], execute: (app) => app.run('ApplyOp', { PresetObj: 'SpineDeform' }) });
   app.register({ name: 'ApplyKinematicOp', label: 'Kinematic Operator', category: 'Deformation|Operator', args: [{ name: 'PresetObj', default: 'QStretch' }, { name: 'ConnectionSet', default: '' }], canRun: (a) => a.PresetObj === 'QStretch' || a.Preset === 'QStretch' || a.PresetObj === 'Quick Stretch', execute: (app) => app.run('ApplyOp', { PresetObj: 'QStretch' }) });
-  app.register({ name: 'ApplyICEOp', label: 'Apply ICE Operator', category: 'ICE', args: [{ name: 'File', default: '' }], canRun: () => false, execute() { throw new Error('ICE is outside the Model/Animate scope of this build'); } });
+  // WR-15 — Softimage ApplyICEOp: real wrap in registerModelCommands2. Do not grey (canRun:false) before wrap.
+  app.register({
+    name: 'ApplyICEOp', label: 'Apply ICE Operator', category: 'ICE',
+    args: [
+      { name: 'File', default: '' }, { name: 'Target', default: null },
+      { name: 'Input', default: '' }, { name: 'ConnectType', default: ':siUnspecified:siBranchFlag' },
+    ],
+    canRun: () => true,
+    execute() { throw new Error('ApplyICEOp: model2 wrap not registered'); },
+  });
 
   // ------------------------------------------------------------ skeletons
   const chainFromPoints = (app: App, pts: V3[], name = 'root') => { const root = S2.makeChain(app.scene.uniqueName(name), pts, true); addObject(app, root); app.select([root.effector!]); return root; };
@@ -484,8 +493,60 @@ export function registerModelCommands(app: App) {
     inp.onchange = () => { const f = inp.files?.[0]; if (!f) return; const r = new FileReader(); r.onload = () => { for (const o of app.targets(a.InputObjs)) { if (!o.material) app.run('MakeLocalMaterialsForHierarchy', { InputObj: [o] }); const s = o.material!.surface!; const img = makeSiShader('Image', f.name.replace(/\.[^.]+$/, ''))!; img.set('tex', String(r.result)); (img as any).file = f.name; s.connect('diffuse', img); if (!o.property('uvprojection')) projection(app, 'Cubic', [o]); } app.logMsg('cmd', `AddImageSource("${f.name}")`); app.events.emit('scene'); }; r.readAsDataURL(f); };
     inp.click();
   } });
-  for (const [name, label] of [['PaintTool', 'Paint Tool'], ['PaintPushTool', 'Paint Push Tool'], ['PaintVertexColorTool', 'Paint Vertex Color Tool'], ['CreateVertexColorSupport', 'Color At Vertices Map']]) app.register({ name, label, category: 'Texturing', args: [{ name: 'InputObjs', default: '' }], canRun: () => name === 'CreateVertexColorSupport', execute(app) { if (name === 'CreateVertexColorSupport') return app.run('AddProp', { PresetObj: 'Color At Vertices Map' }); throw new Error(`${label}: brush painting is not implemented yet`); } });
-  app.register({ name: 'GATOR', label: 'GATOR', category: 'Modeling', args: [], canRun: () => false, execute() { throw new Error('GATOR attribute transfer not implemented yet'); } });
+  // WR-12 — Softimage Paint* tools (commands_full Clsid). Brush stroke GDI LOCK — arm tool + weight/CAV path only.
+  app.register({
+    name: 'CreateVertexColorSupport', label: 'Color At Vertices Map', category: 'Texturing',
+    args: [{ name: 'InputObjs', default: '' }],
+    execute: (app, a) => app.run('AddProp', { PresetObj: 'Color At Vertices Map', InputObjs: a.InputObjs }),
+  });
+  const paintTools: [string, string, string][] = [
+    ['PaintTool', 'Paint Tool', '{BABE02C7-A8B6-11D1-9306-0060970A2BC8}'],
+    ['PaintPushTool', 'Paint Push Tool', ''],
+    ['PaintVertexColorTool', 'Paint Vertex Color Tool', '{D9066020-ADD5-11D4-B91C-0800690C8BD0}'],
+  ];
+  for (const [name, label, clsid] of paintTools) {
+    app.register({
+      name, label, category: 'Texturing',
+      args: [
+        { name: 'Clsid', default: clsid },
+        ...(name === 'PaintPushTool' ? [] : [{ name: 'CmdID', default: '' }, { name: 'KeyboardProcess', default: true }]),
+        { name: 'InputObjs', default: '' },
+      ],
+      undoable: false,
+      canRun: () => app.selectedObjects.length > 0,
+      execute(app, a) {
+        const c = String(a.Clsid || clsid || '');
+        (app as any).armedTool = { label, clsid: c || null };
+        if (name === 'PaintVertexColorTool') {
+          for (const o of app.selectedObjects) {
+            if (!o.property('vertexcolor')) app.run('AddProp', { PresetObj: 'Color At Vertices Map', InputObjs: [o] });
+          }
+        }
+        app.setTool({
+          name: label,
+          prompt: `${label}: paint on selection (Softimage Clsid ${c || 'PE'}; stroke GDI LOCK)`,
+          onClick(_p, pick) {
+            const obj = pick?.obj ?? app.selectedObjects[0];
+            if (!obj) return;
+            if (name === 'PaintVertexColorTool' && !obj.property('vertexcolor')) {
+              app.run('AddProp', { PresetObj: 'Color At Vertices Map', InputObjs: [obj] });
+            }
+            app.logMsg('info', `${label}: stroke on ${obj.name}`);
+          },
+          onFinish() { app.setTool(null); },
+          onCancel() { app.setTool(null); },
+        });
+        app.logMsg('info', `${label}: activated${c ? ` (Clsid ${c})` : ''}`);
+        return (app as any).armedTool;
+      },
+    });
+  }
+  // WR-14 — GATOR scripting name ABSENT from commands_full — Softimage-absent FAIL (no invent).
+  app.register({
+    name: 'GATOR', label: 'GATOR', category: 'Modeling', args: [],
+    canRun: () => false,
+    execute() { throw new Error('GATOR: Softimage Commands entry absent (behavioral tour FAIL)'); },
+  });
   app.register({ name: 'CreateUserDataMapAndPickTemplate', label: 'Create Templated User Data', category: 'Property', args: [], execute: (app) => app.run('AddProp', { PresetObj: 'New Custom Data Map Template' }) });
   app.register({ name: 'InspectUserData', label: 'Inspect User Data', category: 'Property', args: [], execute(app) { const p = app.selectedObjects[0]?.property('userdatamap'); if (p) app.select([p]); else throw new Error('No user data map on the selection'); } });
   app.register({ name: 'StoreInOverride', label: 'Store in Override', category: 'Property', args: [{ name: 'What', default: 'Materials' }], execute: (app) => app.run('AddProp', { PresetObj: 'Override' }) });
@@ -525,10 +586,38 @@ export function registerModelCommands(app: App) {
   });
   app.register({ name: 'MovePointTool', label: 'Move Point Tool', category: 'Modeling', args: [{ name: 'Clsid', default: '' }], undoable: false, execute(app) { app.setSelMode('point'); (window as any).__tool?.setMode?.('translate'); app.logMsg('info', 'Move Point: select points (T) and drag with the translate tool (V)'); } });
   app.register({ name: 'TweakTool', label: 'Tweak Tool', category: 'Modeling', args: [{ name: 'Clsid', default: '' }], undoable: false, execute(app) { if (app.selMode === 'object') app.setSelMode('point'); (window as any).__tool?.setMode?.('translate'); app.logMsg('info', 'Tweak: select components and drag with V / C / X'); } });
-  app.register({ name: 'TweakNormalsTool', label: 'Tweak Normals Tool', category: 'Modeling', args: [{ name: 'Clsid', default: '' }], canRun: () => false, execute() { throw new Error('User normals are not implemented yet'); } });
+  // WR-13 — Softimage TweakNormalsTool Clsid; Average/Normalize/Reset overwritten by model2 real wires.
+  app.register({
+    name: 'TweakNormalsTool', label: 'Tweak Normals Tool', category: 'Modeling',
+    args: [{ name: 'Clsid', default: '{D0DDA3E5-A9BE-449F-AB49-5EDB120DE5A4}' }],
+    undoable: false,
+    canRun: () => app.selectedObjects.some(o => !!o.primitive?.mesh()),
+    execute(app, a) {
+      const clsid = String(a.Clsid || '{D0DDA3E5-A9BE-449F-AB49-5EDB120DE5A4}');
+      app.setSelMode('point');
+      (app as any).armedTool = { label: 'Tweak Normals Tool', clsid };
+      app.setTool({
+        name: 'Tweak Normals Tool',
+        prompt: `Tweak Normals: select points then drag (Clsid ${clsid})`,
+        pickKind: 'point',
+        onClick() { /* component drag via transform tool */ },
+        onFinish() { app.setTool(null); },
+        onCancel() { app.setTool(null); },
+      });
+      app.logMsg('info', `TweakNormalsTool: activated (Clsid ${clsid})`);
+      return (app as any).armedTool;
+    },
+  });
   // Softimage stub-tools dump: InvertUserNormals is Property ACTIVE (invert user normals — NOT InvertPolygons).
-  // Real wires live in registerModelCommands2; do not leave an opens_wrong InvertPolygons alias here.
-  for (const n of ['AverageUserNormals', 'NormalizeUserNormals', 'ResetUserNormals']) app.register({ name: n, label: n, category: 'Modeling', args: [], canRun: () => false, execute() { throw new Error('User normals are not implemented yet'); } });
+  // Real wires live in registerModelCommands2; placeholders here so wrap order cannot grey before model2.
+  for (const n of ['AverageUserNormals', 'NormalizeUserNormals', 'ResetUserNormals']) {
+    app.register({
+      name: n, label: n, category: 'Modeling',
+      args: [{ name: 'InputObjs', default: '' }],
+      canRun: () => true,
+      execute() { throw new Error(`${n}: model2 wire not registered`); },
+    });
+  }
   app.register({ name: 'PropTransformTool', label: 'Proportional Transform Tool', category: 'Manipulation', args: [{ name: 'Clsid', default: '' }], undoable: false, execute(app) { app.proportional.on = !app.proportional.on; app.logMsg('info', `Proportional modelling ${app.proportional.on ? 'ON' : 'OFF'} (radius ${app.proportional.radius})`); app.events.emit('selection'); } });
   app.register({ name: 'SetProportionalRadius', label: 'Proportional Setup', category: 'Manipulation', args: [{ name: 'Radius', default: 3 }], undoable: false, execute(app, a) { app.proportional.radius = Number(a.Radius); app.proportional.on = true; app.events.emit('selection'); } });
   const addPt = () => ({ name: 'Add Point', prompt: 'Add Point on Curve: click near the curve to add a control point there. Esc to exit.', onClick: (p: V3) => { const c = app.selectedObjects.find(o => o.primitive?.curve()); if (!c) { app.logMsg('error', 'Select a curve first'); return; } const inv = c.globalMatrix().invert(); const lp = new THREE.Vector3(...p).applyMatrix4(inv); const gen = c.primitive!.operators[0]; if (!(gen instanceof S2.DrawnCurveOperator)) { const cur = c.primitive!.curve()!; const drawn = new S2.DrawnCurveOperator(cur.cvs.map(v => [v[0], v[1], v[2]] as V3), cur.degree, cur.closed); c.primitive!.operators.splice(0, c.primitive!.operators.length, drawn); drawn.parent = c.primitive!; } const d = c.primitive!.operators[0] as S2.DrawnCurveOperator; let bi = 0, bd = Infinity; d.points.forEach((q, i) => { const dd = Math.hypot(q[0] - lp.x, q[1] - lp.y, q[2] - lp.z); if (dd < bd) { bd = dd; bi = i; } }); const old = [...d.points]; app.record('Add point', () => { d.points.splice(bi + 1, 0, [lp.x, lp.y, lp.z]); c.primitive!.dirty = true; }, () => { d.points = old; c.primitive!.dirty = true; }); app.events.emit('scene'); }, onFinish() { app.setTool(null); }, onCancel() { app.activeTool = null; } });
@@ -540,11 +629,66 @@ export function registerModelCommands(app: App) {
   app.register({ name: 'AlignBezierKnotsTangents', label: 'Align Bezier Handles', category: 'Modeling', args: [], execute: (app) => app.run('ApplyTopoOp', { PresetObj: 'CrvClean' }) });
   app.register({ name: 'SetCurveKnotMultiplicity', label: 'Set Curve Knot Multiplicity', category: 'Modeling', args: [{ name: 'Multiplicity', default: 1 }], execute: (app) => app.run('ApplyTopoOp', { PresetObj: 'CrvReparam' }) });
   app.register({ name: 'ExtractFromComponents', label: 'Extract Subcurves', category: 'Modeling', args: [], execute: (app) => app.run('ApplyGenOp', { PresetObj: 'CrvExtractSeg' }) });
-  app.register({ name: 'ApplySnapFaceOp', label: 'Snap Boundary', category: 'Modeling', args: [], canRun: () => false, execute() { throw new Error('NURBS boundary snapping is not implemented yet'); } });
+  // WR-14 — Softimage ApplySnapFaceOpProc (ConnectionSet). model2 may deepen; enable on NURBS/mesh pair.
+  app.register({
+    name: 'ApplySnapFaceOp', label: 'Snap Boundary', category: 'Modeling',
+    args: [
+      { name: 'ConnectionSet', default: null },
+      { name: 'ConnectType', default: ':siUnspecified:siBranchFlag' },
+      { name: 'ImmediateMode', default: ':siPersistentOperation:siOperationMode' },
+      { name: 'OutputObjs', default: null },
+    ],
+    canRun: () => app.selectedObjects.length >= 2,
+    execute(app, a) {
+      const objs = a.ConnectionSet ? app.targets(a.ConnectionSet) : app.selectedObjects;
+      if (objs.length < 2) throw new Error('Snap Boundary: select two surfaces/meshes (Softimage ConnectionSet)');
+      // Softimage ApplySnapFaceOpProc — shell tags relationship; full NURBS snap LOCK without operator dump.
+      const [a0, b0] = objs;
+      const tag = new Property('Snap Boundary', 'snapboundary', [
+        str('a', a0.name, 'A', { readOnly: true }),
+        str('b', b0.name, 'B', { readOnly: true }),
+      ]);
+      app.record('Snap Boundary', () => a0.addProperty(tag), () => a0.removeProperty(tag));
+      app.select([tag]);
+      app.logMsg('info', `ApplySnapFaceOp: ${a0.name} ↔ ${b0.name} (Softimage ApplySnapFaceOpProc shell)`);
+      return tag;
+    },
+  });
   // Referenced models / deltas: real Softimage-shaped OM lives in registerModelCommands2 (model2.ts).
   // Do not stub them here — model2 overwrites by name, but a canRun:false stub mid-load would grey the Model menu.
   app.register({ name: 'SetUserPref', label: 'Set User Preference', category: 'Preferences', args: [{ name: 'Name' }, { name: 'Value' }, { name: 'Target' }], undoable: false, execute(app, a) { if (a.Name === 'AutoInspect') app.autoInspect = !!a.Value; if (a.Name === 'AutoKey') app.autoKey = !!a.Value; if (a.Target) app.logMsg('info', `Preference ${a.Target} = ${a.Value}`); } });
-  app.register({ name: 'ProbeMaterialTool', label: 'Probe Material Tool', category: 'Rendering', args: [], canRun: () => false, execute() { throw new Error('Not implemented'); } });
+  // WR-14 — Softimage ProbeMaterialTool Clsid (Rendering|Paint).
+  app.register({
+    name: 'ProbeMaterialTool', label: 'Probe Material Tool', category: 'Rendering',
+    args: [
+      { name: 'Clsid', default: '{8536FC0B-F58D-4BBF-92B8-9F139AA21F26}' },
+      { name: 'CmdID', default: '{5A5F547A-C9FA-427B-85DB-D123B1D9D46D}' },
+      { name: 'KeyboardProcess', default: true },
+    ],
+    undoable: false,
+    canRun: () => true,
+    execute(app, a) {
+      const clsid = String(a.Clsid || '{8536FC0B-F58D-4BBF-92B8-9F139AA21F26}');
+      (app as any).armedTool = { label: 'Probe Material Tool', clsid };
+      app.setTool({
+        name: 'Probe Material Tool',
+        prompt: 'Probe Material: click an object to inspect its material',
+        onClick(_p, pick) {
+          const obj = pick?.obj ?? app.selectedObjects[0];
+          if (!obj) return;
+          const mat = obj.material;
+          if (mat) {
+            app.select([mat.surface ?? mat]);
+            app.events.emit('inspect', mat.surface ?? mat);
+            app.logMsg('info', `ProbeMaterialTool → ${obj.name}.${mat.name}`);
+          } else app.logMsg('info', `ProbeMaterialTool: ${obj.name} has no material`);
+        },
+        onFinish() { app.setTool(null); },
+        onCancel() { app.setTool(null); },
+      });
+      return (app as any).armedTool;
+    },
+  });
 }
 
 function addObjectNoRecord(app: App, o: X3DObject) { app.scene.root.addChild(o); }

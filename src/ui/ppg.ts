@@ -7,6 +7,7 @@ import type { FCurve } from '../core/animation';
 import { Parameter, ParamSet } from '../core/params';
 import type { LayoutNode } from '../core/opdefs';
 import { applyPpgChrome, pe394StubChrome, renderPe394Stub, PPG_CHROME } from './ppgChrome';
+import { dispatchPpgOnChanged, dispatchPpgOnInit } from './ppgLogic';
 
 export function propertyEditor(app: App, host: HTMLElement, target?: () => Node | undefined) {
   applyPpgChrome();
@@ -83,7 +84,11 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
     for (const n of sel) { if (n === current()) continue; const q = findByPath(n, path); if (q && q !== p && q.def.type === p.def.type) out.push(q); }
     return out;
   };
-  const multiSet = (p: Parameter, v: any, label?: string) => { for (const q of siblings(p)) app.setParam(q, v, label); };
+  // Softimage genppg `_OnChanged` after PPG edits (WR-06) — attested event name only.
+  const multiSet = (p: Parameter, v: any, label?: string) => {
+    for (const q of siblings(p)) app.setParam(q, v, label);
+    dispatchPpgOnChanged(app, p);
+  };
   let currentPage: Page | undefined;
   const pageParams = (): Parameter[] => { const pg = currentPage; if (!pg) return []; if (pg.kind === 'geom-shape') return (pg.set as GeomOperator).shapeParams; if (pg.kind === 'geom-geometry') return (pg.set as GeomOperator).geometryParams; return pg.set.params.filter(p => p.animatable); };
 
@@ -208,7 +213,22 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
   };
   let lastNode: Node | undefined;
   const upd = () => { lockB.classList.toggle('on', !!state.locked); recB.classList.toggle('on', state.recycle); renderSel(); };
-  const renderSel = () => { const n = current(); if (n !== lastNode) { activeTab = ''; lastNode = n; if (n && state.history[state.hi] !== n) { state.history = state.history.slice(0, state.hi + 1); state.history.push(n); state.hi = state.history.length - 1; } } lastKeys = n ? pages(n).map(p => p.key).join('|') : ''; render(); };
+  const renderSel = () => {
+    const n = current();
+    if (n !== lastNode) {
+      activeTab = '';
+      lastNode = n;
+      if (n && state.history[state.hi] !== n) {
+        state.history = state.history.slice(0, state.hi + 1);
+        state.history.push(n);
+        state.hi = state.history.length - 1;
+      }
+      // Softimage GenPpg OnInit when inspected node opens (WR-06).
+      dispatchPpgOnInit(app, n ?? null);
+    }
+    lastKeys = n ? pages(n).map(p => p.key).join('|') : '';
+    render();
+  };
   upd();
   app.events.on('selection', renderSel); app.events.on('scene', refresh); app.events.on('params', refresh); app.events.on('frame', refresh);
   return { lock: (n: Node | null) => { state.locked = n; upd(); }, state };
