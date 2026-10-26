@@ -348,7 +348,7 @@ else {
   if (!sd?.tokensApplied || sd.fontPt !== 8 || sd.btnWDlu !== 50 || sd.btnHDlu !== 14 || sd.btnMinW !== 75 || sd.btnMinH !== 22) {
     fail.push(`softDialog chrome expected 8pt / 50×14 DLU → 75×22px, got ${JSON.stringify(sd)}`);
   } else ok.push(`Soft-dialog chrome fontPt=${sd.fontPt} OK/Cancel DLU=${sd.btnWDlu}x${sd.btnHDlu} px=${sd.btnMinW}x${sd.btnMinH}`);
-  // XSI.exe RT_DIALOG 394 Property Page stub (title + TODO string; no invent Layout)
+  // XSI.exe RT_DIALOG 394 PE metrics stay attested; Softimage Layout must NOT show TODO stub (WR-LOOK-07).
   const pe394 = pc.propertyPage394;
   if (
     !pe394?.tokensApplied ||
@@ -364,12 +364,23 @@ else {
     pe394.fontPt !== 8 ||
     !Array.isArray(pe394.menus) ||
     !pe394.menus.includes('PPG_CONTEXT_MENU') ||
-    !pe394.menus.includes('PPG_ANIM_CONTEXT_MENU') ||
-    !pe394.stubInDom ||
-    pe394.stubDomText !== 'TODO: layout property page'
+    !pe394.menus.includes('PPG_ANIM_CONTEXT_MENU')
   ) {
-    fail.push(`propertyPage394 stub chrome expected dialog 394 / TODO stub, got ${JSON.stringify(pe394)}`);
-  } else ok.push(`PE394 Property Page stub id=${pe394.dialogId} rva=${pe394.rva} ${pe394.widthDlu}x${pe394.heightDlu}dlu stub="${pe394.stubText}"`);
+    fail.push(`propertyPage394 PE tokens expected dialog 394 / TODO string pin, got ${JSON.stringify(pe394)}`);
+  } else if (pe394.stubInDom || pe394.stubDomText) {
+    fail.push(`WR-LOOK-07 Softimage Layout must not surface PE394 TODO stub in DOM, got stubInDom=${pe394.stubInDom} text=${pe394.stubDomText}`);
+  } else ok.push(`PE394 tokens id=${pe394.dialogId} ${pe394.widthDlu}x${pe394.heightDlu}dlu; Softimage Layout TODO stub hidden`);
+
+  // Softimage Layout HWND chrome (softimage-pc render-freeze → 1.0.24 WR-LOOK-00..07)
+  const siHwnd = audit.softimageLayoutHwnd;
+  const siLook = audit.softimageExactLook;
+  if (!siHwnd || siHwnd.moduleMenuW !== 71 || siHwnd.mcpW !== 88 || siHwnd.timelineH !== 17 || siHwnd.timerangeH !== 15 || siHwnd.menubarH !== 14 || siHwnd.statusH !== 13) {
+    fail.push(`softimageLayoutHwnd expected ModuleMenu=71 MCP=88 TL=17/15 menubar=14 status=13, got ${JSON.stringify(siHwnd)}`);
+  } else if (!siLook || siLook.menubarH !== '14px' || siLook.statusH !== '13px' || siLook.mcpW !== '88px' || siLook.timelineH !== '17px' || siLook.timerangeH !== '15px') {
+    fail.push(`softimageExactLook CSS vars expected Softimage HWND px, got ${JSON.stringify(siLook)}`);
+  } else if (!siLook.projectScene || !siLook.layoutTodoStubGone) {
+    fail.push(`softimageExactLook Project/Scene spacing + TODO stub gone, got ${JSON.stringify(siLook)}`);
+  } else ok.push(`Softimage Layout HWND chrome menubar=${siLook.menubarH} status=${siLook.statusH} mcp=${siLook.mcpW} tl=${siLook.timelineH}/${siLook.timerangeH}`);
 
   // Animate chrome — #47 PE base + xsivw 485×550 / KP 160×480 + PNG glyph extras
   const ac = audit.animChrome;

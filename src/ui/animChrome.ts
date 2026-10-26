@@ -57,10 +57,14 @@ export function animChromeAudit(): Record<string, unknown> {
   const V = chrome.views as Record<string, number[]>;
   const bm = chrome.bitmaps as { wired?: string[]; png_extra_count?: number };
   const pngs = (bm.wired ?? []).filter((f) => f.endsWith('.png'));
+  // Desktop HWND client paint (anim_client_paint) overrides PE pack list width (150 → 195).
+  const cssListW = cs.getPropertyValue('--fcv-list-w').trim();
+  const peListOk = cssListW === `${L.fcv_list_w}px`;
+  const hwndListOk = cssListW === '195px';
   return {
     softimage: chrome.softimage,
-    tokensApplied: cs.getPropertyValue('--fcv-list-w').trim() === `${L.fcv_list_w}px`,
-    fcvListW: L.fcv_list_w,
+    tokensApplied: peListOk || hwndListOk,
+    fcvListW: hwndListOk ? 195 : L.fcv_list_w,
     fcvToolbarH: L.fcv_toolbar_h,
     mixerTrackH: L.mixer_track_h,
     kpDefaultW: L.kp_default_w,

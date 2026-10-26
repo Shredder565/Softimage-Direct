@@ -61,6 +61,8 @@ import { directLockDesktopAudit } from './ui/directLockDesktop';
 import { ppgTitleColorrefAudit } from './ui/ppgTitleColorref';
 import { animEditorsExecCmdAudit, animEditorsExecCmdSmoke } from './ui/animEditorsExecCmd';
 import { applyAnimClientPaintVars, animClientPaintAudit } from './ui/animClientPaint';
+import { applySoftimageLayoutHwndChrome, softimageLayoutHwndAudit } from './ui/softimageLayoutHwndChrome';
+applySoftimageLayoutHwndChrome();
 applyPpgChrome();
 applyAnimChromeVars();
 applyAnimClientPaintVars();
@@ -397,6 +399,18 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     ppgChrome: ppgChromeAudit(),
     // Animate chrome (PE pack #47 + xsivw / PNG glyph extras)
     animChrome: animChromeAudit(),
+    // Softimage Layout HWND chrome (softimage-pc render-freeze harvest → 1.0.24 WR-LOOK-00..07)
+    softimageLayoutHwnd: softimageLayoutHwndAudit(),
+    softimageExactLook: {
+      menubarH: getComputedStyle(document.documentElement).getPropertyValue('--si-menubar-h').trim(),
+      statusH: getComputedStyle(document.documentElement).getPropertyValue('--si-status-h').trim(),
+      mcpW: getComputedStyle(document.documentElement).getPropertyValue('--si-mcp-w').trim(),
+      timelineH: getComputedStyle(document.documentElement).getPropertyValue('--si-timeline-h').trim(),
+      timerangeH: getComputedStyle(document.documentElement).getPropertyValue('--si-timerange-h').trim(),
+      projectScene: (document.querySelector('#menubar .right')?.textContent || '').includes('     Scene:'),
+      layoutTodoStubGone: !Array.from(document.querySelectorAll('#root, .ppg')).some(el => (el.textContent || '').includes('TODO: layout property page')),
+      documentTitle: document.title,
+    },
   };
 };
 (window as any).__menubarStatus = () => menubarStatus();
@@ -524,7 +538,13 @@ app.events.on('newscene', () => { for (const f of floatingWindows()) f.close(); 
 // ---- Scene save / open: the scene is stored as its command script (what the Script Log shows), replayed on open.
 let sceneName = 'Untitled'; let sceneStart = 0;
 const sceneScript = () => app.log.slice(sceneStart).filter(l => l.kind === 'cmd').map(l => l.text).join('\n');
-const updateTitle = () => { const r = document.querySelector('#menubar .right'); if (r) r.textContent = `Project: Softimage-Direct    Scene: ${sceneName}`; };
+/** Softimage Desktop title density: Project / Scene with five-space clusters (HWND dump). */
+const softimageCaption = () => `AfterImage     Project: Softimage-Direct     Scene: ${sceneName}`;
+const updateTitle = () => {
+  const r = document.querySelector('#menubar .right');
+  if (r) r.textContent = `Project: Softimage-Direct     Scene: ${sceneName}`;
+  document.title = softimageCaption();
+};
 window.addEventListener('savescene', (e: any) => {
   let name = sceneName; if (e.detail?.as || name === 'Untitled') { name = prompt('Scene name', name === 'Untitled' ? 'Scene' : name) ?? ''; if (!name) return; }
   const text = sceneScript(); try { localStorage.setItem('si.scene.' + name, text); const rec = JSON.parse(localStorage.getItem('si.recent') ?? '[]').filter((n: string) => n !== name); rec.unshift(name); localStorage.setItem('si.recent', JSON.stringify(rec.slice(0, 10))); } catch { /* ignore */ }
