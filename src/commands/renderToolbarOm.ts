@@ -3,6 +3,7 @@
 import { App } from '../core/commands';
 import inventory from '../data/si/render_toolbar_om_cmds.json';
 import regionSpdl from '../data/si/render_options_region.json';
+import { executeRenderPass } from '../core/sceneRender';
 
 type RrState = {
   visible: boolean;
@@ -67,9 +68,6 @@ export function getSiRenderRegion(): RrState {
 export function registerRenderToolbarOmCommands(app: App) {
   const rr = getSiRenderRegion();
   const openView = (name: string) => window.dispatchEvent(new CustomEvent('openview', { detail: { name } }));
-  const renderLog = (a: App, what: string) => {
-    a.logMsg('info', `${what} (offline render stub — use Softimage for frames)`);
-  };
 
   // ——— Region create / close (Softimage fractions; no HWND crop invent) ———
   app.register({
@@ -236,7 +234,14 @@ export function registerRenderToolbarOmCommands(app: App) {
     category: 'Rendering',
     args: [{ name: 'Passes', default: 'Passes.Current' }, { name: 'FrameSet', default: '' }, { name: 'Verbose', default: '' }],
     undoable: false,
-    execute: (app, a) => renderLog(app, `Render Passes FrameSet ${a.FrameSet || '(pass frames)'}`),
+    execute: (app, a) => {
+      // Softimage FrameSet on pass; when empty use Pass FrameStart/End (dump-attested).
+      if (a.FrameSet) {
+        const pass = app.scene.passes[app.scene.passes.length - 1];
+        if (pass?.get('FrameSet')) app.setParam(pass.get('FrameSet')!, String(a.FrameSet));
+      }
+      return executeRenderPass(app, { Passes: a.Passes ?? 'Passes.Current' });
+    },
   });
   app.register({
     name: 'ExportRenderArchiveFrameSet',
@@ -259,7 +264,7 @@ export function registerRenderToolbarOmCommands(app: App) {
       { name: 'DisposeRendering', default: true },
     ],
     undoable: false,
-    execute: (app) => app.run('RenderPass', { Passes: 'Passes.Current' }),
+    execute: (app, a) => executeRenderPass(app, a),
   });
   app.register({
     name: 'CopyRenderOptions',
