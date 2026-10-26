@@ -1,0 +1,474 @@
+{
+  "source": "behavioral/proof/softimage_command_registry_slice.json + wanted_commands.txt",
+  "policy": "dump-attested Names and arg tables only; original AfterImage handlers; no Softimage code",
+  "layout_modules": [
+    {
+      "target": 1,
+      "label": "Model"
+    },
+    {
+      "target": 2,
+      "label": "Animate"
+    },
+    {
+      "target": 3,
+      "label": "Render"
+    },
+    {
+      "target": 4,
+      "label": "ICE"
+    },
+    {
+      "target": 5,
+      "label": "Simulate"
+    },
+    {
+      "target": 6,
+      "label": "Hair"
+    }
+  ],
+  "menubar_tops": [
+    "File",
+    "Edit",
+    "View",
+    "Display",
+    "Window",
+    "Help"
+  ],
+  "module_strip": [
+    "Model",
+    "Animate",
+    "Render",
+    "Simulate",
+    "ICE",
+    "Hair"
+  ],
+  "render_attested": {
+    "still_format": "pic",
+    "still_path_example": "Render_Pictures/Default_Pass_Main.1.pic",
+    "movie_default": "mp4",
+    "movie_no": "mov",
+    "chain_source": "behavioral/proof/render_command_chain.json"
+  },
+  "commands": [
+    {
+      "name": "RenderPass",
+      "scripting_name": "RenderPass",
+      "category": "Rendering",
+      "description": "Render the specified pass (current pass if not specified)",
+      "args": [
+        {
+          "name": "Passes",
+          "default": "Passes.Current"
+        },
+        {
+          "name": "PresetObj",
+          "default": null
+        },
+        {
+          "name": "StartFrame",
+          "default": null
+        },
+        {
+          "name": "EndFrame",
+          "default": null
+        },
+        {
+          "name": "StepFrame",
+          "default": null
+        },
+        {
+          "name": "DisposeRendering",
+          "default": true
+        }
+      ]
+    },
+    {
+      "name": "RenderPasses",
+      "scripting_name": "RenderPasses",
+      "category": "Rendering",
+      "description": "Render a the list of passes, or current pass if none specified, at the current frame",
+      "args": [
+        {
+          "name": "Passes",
+          "default": "Passes.Current"
+        },
+        {
+          "name": "StartFrame",
+          "default": null
+        },
+        {
+          "name": "EndFrame",
+          "default": null
+        },
+        {
+          "name": "StepFrame",
+          "default": null
+        },
+        {
+          "name": "Verbose",
+          "default": ":siRenderVerbosityDefault:siRenderVerbosity"
+        }
+      ]
+    },
+    {
+      "name": "RenderSelectedPasses",
+      "scripting_name": "RenderSelectedPasses",
+      "category": "Rendering",
+      "description": "Render selected passes",
+      "args": [
+        {
+          "name": "Passes",
+          "default": null
+        }
+      ]
+    },
+    {
+      "name": "RenderAllPasses",
+      "scripting_name": "RenderAllPasses",
+      "category": "Rendering",
+      "description": "Render all passes",
+      "args": [
+        {
+          "name": "Passes",
+          "default": "Passes.List.*"
+        },
+        {
+          "name": "StartFrame",
+          "default": null
+        },
+        {
+          "name": "EndFrame",
+          "default": null
+        },
+        {
+          "name": "StepFrame",
+          "default": null
+        },
+        {
+          "name": "Verbose",
+          "default": ":siRenderVerbosityDefault:siRenderVerbosity"
+        }
+      ]
+    },
+    {
+      "name": "RenderCurrentFrame",
+      "scripting_name": "RenderCurrentFrame",
+      "category": "Custom",
+      "description": "",
+      "args": []
+    },
+    {
+      "name": "RenderCurrentFrameAllPasses",
+      "scripting_name": "RenderCurrentFrameAllPasses",
+      "category": "Custom",
+      "description": "",
+      "args": []
+    },
+    {
+      "name": "RenderPreview",
+      "scripting_name": "RenderPreview",
+      "category": "",
+      "description": "",
+      "args": []
+    },
+    {
+      "name": "ExportRenderArchive",
+      "scripting_name": "ExportRenderArchive",
+      "category": "Rendering",
+      "description": "Export a list of passes to a render archive, or the current pass if none specified",
+      "args": [
+        {
+          "name": "Passes",
+          "default": "Passes.Current"
+        },
+        {
+          "name": "StartFrame",
+          "default": null
+        },
+        {
+          "name": "EndFrame",
+          "default": null
+        },
+        {
+          "name": "StepFrame",
+          "default": null
+        },
+        {
+          "name": "Verbose",
+          "default": ":siRenderVerbosityDefault:siRenderVerbosity"
+        }
+      ]
+    },
+    {
+      "name": "ExportRenderArchiveAllPasses",
+      "scripting_name": "ExportRenderArchiveAllPasses",
+      "category": "Rendering",
+      "description": "Export All Passes to Render Archives",
+      "args": [
+        {
+          "name": "Passes",
+          "default": "Passes.List.*"
+        }
+      ]
+    },
+    {
+      "name": "ExportObjectRenderArchive",
+      "scripting_name": "ExportObjectRenderArchive",
+      "category": "Rendering",
+      "description": "Export an object and all its children to a render archive, or the current selection if none specified",
+      "args": [
+        {
+          "name": "InputObj",
+          "default": null
+        },
+        {
+          "name": "FileName",
+          "default": ""
+        },
+        {
+          "name": "StartFrame",
+          "default": null
+        },
+        {
+          "name": "EndFrame",
+          "default": null
+        },
+        {
+          "name": "StepFrame",
+          "default": null
+        },
+        {
+          "name": "MultiFrame",
+          "default": false
+        },
+        {
+          "name": "DisplayProxy",
+          "default": true
+        }
+      ]
+    },
+    {
+      "name": "RenderRegionTool",
+      "scripting_name": "RenderRegionTool",
+      "category": "Rendering",
+      "description": "Create a region for interactive rendering",
+      "args": [
+        {
+          "name": "Clsid",
+          "default": "{70F24601-A6F1-11D1-9C1A-00A0243F0F55}"
+        },
+        {
+          "name": "KeyboardProcess",
+          "default": true
+        }
+      ]
+    },
+    {
+      "name": "EditUVProjectionTool",
+      "scripting_name": "EditUVProjectionTool",
+      "category": "",
+      "description": "",
+      "args": []
+    },
+    {
+      "name": "HairTransferMap",
+      "scripting_name": "HairTransferMap",
+      "category": "",
+      "description": "",
+      "args": []
+    },
+    {
+      "name": "HairCopyStyle",
+      "scripting_name": "HairCopyStyle",
+      "category": "",
+      "description": "",
+      "args": []
+    },
+    {
+      "name": "HairScalingTool",
+      "scripting_name": "HairScalingTool",
+      "category": "Manipulation",
+      "description": "Activate the Hair Scaling tool",
+      "args": [
+        {
+          "name": "Clsid",
+          "default": "{B3672C3B-31D5-4A34-A6D1-3B5D019D405F}"
+        }
+      ]
+    },
+    {
+      "name": "HairBrushTool",
+      "scripting_name": "HairBrushTool",
+      "category": "",
+      "description": "",
+      "args": []
+    },
+    {
+      "name": "HairRotateRootTool",
+      "scripting_name": "HairRotateRootTool",
+      "category": "Manipulation",
+      "description": "Activate the Hair Rotate Root tool",
+      "args": [
+        {
+          "name": "Clsid",
+          "default": "{825FCD04-4E50-4938-8DE1-258DB92CF19E}"
+        }
+      ]
+    },
+    {
+      "name": "HairClumpTool",
+      "scripting_name": "HairClumpTool",
+      "category": "Manipulation",
+      "description": "Activate the Hair Clump tool",
+      "args": [
+        {
+          "name": "Clsid",
+          "default": "{AA0B2DFF-4B7E-42DE-AB2E-2F77F084D99B}"
+        }
+      ]
+    },
+    {
+      "name": "MultiAttachRigidBodiesTool",
+      "scripting_name": "MultiAttachRigidBodiesTool",
+      "category": "Simulation",
+      "description": "Attach rigid bodies together with a rigid constraint",
+      "args": [
+        {
+          "name": "Name",
+          "default": "BallSocket"
+        },
+        {
+          "name": "Bodies",
+          "default": null
+        }
+      ]
+    },
+    {
+      "name": "GATOR",
+      "scripting_name": "GATOR",
+      "category": "",
+      "description": "",
+      "args": []
+    },
+    {
+      "name": "PaintTool",
+      "scripting_name": "PaintTool",
+      "category": "Paint",
+      "description": "Activate the paint tool",
+      "args": [
+        {
+          "name": "Clsid",
+          "default": "{BABE02C7-A8B6-11D1-9306-0060970A2BC8}"
+        },
+        {
+          "name": "CmdID",
+          "default": "{0B553B32-8F88-11D2-85D6-00C04F8EDF15}"
+        },
+        {
+          "name": "KeyboardProcess",
+          "default": true
+        }
+      ]
+    },
+    {
+      "name": "SetUserNormalsSettings",
+      "scripting_name": "SetUserNormalsSettings",
+      "category": "",
+      "description": "",
+      "args": []
+    },
+    {
+      "name": "TweakNormalsTool",
+      "scripting_name": "TweakNormalsTool",
+      "category": "Modeling|Deformation",
+      "description": "Activate the Tweak Normals tool",
+      "args": [
+        {
+          "name": "Clsid",
+          "default": "{D0DDA3E5-A9BE-449F-AB49-5EDB120DE5A4}"
+        }
+      ]
+    },
+    {
+      "name": "ProbeMaterialTool",
+      "scripting_name": "ProbeMaterialTool",
+      "category": "Rendering|Paint",
+      "description": "Activate the Probe Material Tool",
+      "args": [
+        {
+          "name": "Clsid",
+          "default": "{8536FC0B-F58D-4BBF-92B8-9F139AA21F26}"
+        },
+        {
+          "name": "CmdID",
+          "default": "{5A5F547A-C9FA-427B-85DB-D123B1D9D46D}"
+        },
+        {
+          "name": "KeyboardProcess",
+          "default": true
+        }
+      ]
+    },
+    {
+      "name": "ApplySnapFaceOp",
+      "scripting_name": "ApplySnapFaceOp",
+      "category": "Operator",
+      "description": "",
+      "args": [
+        {
+          "name": "ConnectionSet",
+          "default": null
+        },
+        {
+          "name": "ConnectType",
+          "default": ":siUnspecified:siBranchFlag"
+        },
+        {
+          "name": "ImmediateMode",
+          "default": ":siPersistentOperation:siOperationMode"
+        },
+        {
+          "name": "OutputObjs",
+          "default": null
+        }
+      ]
+    },
+    {
+      "name": "ApplyICEOp",
+      "scripting_name": "ApplyICEOp",
+      "category": "Deformation",
+      "description": "Applies a footprint deformation",
+      "args": [
+        {
+          "name": "File",
+          "default": "Footprints"
+        },
+        {
+          "name": "Target",
+          "default": null
+        },
+        {
+          "name": "Input",
+          "default": ""
+        },
+        {
+          "name": "ConnectType",
+          "default": ":siUnspecified:siBranchFlag"
+        }
+      ]
+    },
+    {
+      "name": "SwitchToolbar",
+      "scripting_name": "SwitchToolbar",
+      "category": "Toolbar",
+      "description": "Switch Softimage Layout module toolbar (Target 1-6)",
+      "args": [
+        {
+          "name": "Target",
+          "default": 1
+        }
+      ]
+    }
+  ]
+}

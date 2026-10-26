@@ -1,0 +1,61 @@
+name: Build AfterImage Native (Win32)
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'native/**'
+      - '.github/workflows/build-native-windows.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'native/**'
+      - '.github/workflows/build-native-windows.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-native:
+    name: AfterImageNative MSVC
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # windows-latest may be VS 2022 or VS 2026; try newest generator first.
+      - name: Configure CMake (MSVC x64)
+        working-directory: native
+        shell: pwsh
+        run: |
+          $gens = @(
+            'Visual Studio 18 2026',
+            'Visual Studio 17 2022',
+            'Visual Studio 16 2019'
+          )
+          $ok = $false
+          foreach ($g in $gens) {
+            Write-Host "Trying generator: $g"
+            if (Test-Path build) { Remove-Item -Recurse -Force build }
+            cmake -S . -B build -G $g -A x64
+            if ($LASTEXITCODE -eq 0) { $ok = $true; break }
+          }
+          if (-not $ok) {
+            Write-Host "Falling back to default CMake generator (-A x64)"
+            if (Test-Path build) { Remove-Item -Recurse -Force build }
+            cmake -S . -B build -A x64
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+
+      - name: Build Release
+        working-directory: native
+        run: cmake --build build --config Release --parallel
+
+      - name: Upload AfterImageNative.exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: AfterImageNative-win-x64
+          path: |
+            native/build/Release/AfterImageNative.exe
+            native/build/Release/data/commands_attested.json
+          if-no-files-found: error
