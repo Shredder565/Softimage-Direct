@@ -2,7 +2,7 @@
   "name": "afterimage",
   "productName": "AfterImage",
   "version": "1.0.22",
-  "description": "AfterImage - clean-room Softimage-faithful 3D modeling and animation",
+  "description": "AfterImage - clean-room Softimage-faithful 3D modeling and animation (Electron + native dual track)",
   "author": "AfterImage",
   "license": "UNLICENSED",
   "private": true,
