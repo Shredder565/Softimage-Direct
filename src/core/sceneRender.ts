@@ -229,16 +229,41 @@ export function resolvePicturePath(
 
 /**
  * Softimage Framebuffer Format → file extension (dump-attested pic).
- * Movie sequence formats (mp4/avi) still emit per-frame .png plates for Flipbook; container .mp4 stays the Pass MovieFormat default.
+ * Per-frame picture plates always use still Format (pic default). Movie container (.mp4 product / avi dump)
+ * is a separate Pass MovieCreate/MovieFileName path — never the plate extension.
  */
 export function writeExtensionFor(format: string): string {
   const f = extensionForFormat(format);
-  if (isMovieOutputFormat(f)) return 'png';
+  if (isMovieOutputFormat(f)) return 'pic'; // Softimage still plates stay .pic even when Pass MovieFormat is mp4/avi
   if (f === 'tif' || f === 'tiff') return 'tif';
   if (f === 'jpeg') return 'jpg';
   if (f === 'pic' || f === 'exr' || f === 'png' || f === 'jpg') return f;
   return 'pic'; // Softimage Framebuffer default
 }
+
+/** Softimage Pass MovieFileName → AfterImage movie leaf (.mp4 product; never .mov). */
+export function resolveSoftimageMoviePath(
+  outputDir: string,
+  movieFileName: string,
+  movieFormat: string,
+  passName = 'Default_Pass',
+  fbName = 'Main',
+): string {
+  const ext = extensionForFormat(movieFormat === 'mov' ? DEFAULT_RENDER_OUTPUT_FORMAT : movieFormat);
+  const movieExt = isMovieOutputFormat(ext) ? ext : DEFAULT_RENDER_OUTPUT_FORMAT;
+  const raw = String(movieFileName || '[Pass]_[Framebuffer]');
+  const expanded = expandRenderTokens(raw, passName, fbName)
+    .replace(/\.(png|mp4|avi|pic|exr|tif|tiff|jpg|jpeg|mov)$/i, '');
+  const norm = expanded.replace(/\\/g, '/');
+  const absolute = /^[a-zA-Z]:\//.test(norm) || norm.startsWith('//');
+  if (absolute) return `${norm}.${movieExt}`;
+  if (norm.includes('/')) return `${norm.replace(/^\//, '')}.${movieExt}`;
+  const dir = expandRenderTokens(outputDir || '[Project Path]\\Render_Pictures', '', '').replace(/\/$/, '') || 'Render_Pictures';
+  return `${dir}/${norm || `${passName}_${fbName}`}.${movieExt}`;
+}
+
+/** Flipbook popup must not ingest full-res Softimage ranges (FrameEnd default 100 → OOM). */
+export const FLIPBOOK_MAX_FRAMES = 48;
 
 export function resolvePasses(app: App, passesArg: string | null | undefined): Pass[] {
   const all = app.scene.passes;
@@ -254,27 +279,33 @@ function mainFramebuffer(pass: Pass): Framebuffer {
   return pass.framebuffers.find(f => f.name === 'Main') ?? pass.framebuffers[0] ?? pass.addFramebuffer('Main');
 }
 
-function stillFormatFor(pass: Pass, fb: Framebuffer, override?: string | null): string {
-  if (override && acceptsRenderOutputFormat(override) && override !== 'mov') {
-    // Sequence UI may pass mp4 — for a still write use Framebuffer Format (Softimage picture).
-    if (isMovieOutputFormat(override)) {
-      const fbFmt = String(fb.val('Format') ?? 'pic');
-      return acceptsRenderOutputFormat(fbFmt) ? fbFmt : 'png';
-    }
+/**
+ * Softimage still / per-frame plate Format — Framebuffer.Format (dump default pic).
+ * Movie overrides (mp4/avi) never become plate Format; Softimage MovieCreate is separate.
+ */
+function stillFormatFor(_pass: Pass, fb: Framebuffer, override?: string | null): string {
+  if (override && acceptsRenderOutputFormat(override) && override !== 'mov' && !isMovieOutputFormat(override)) {
     return override;
   }
-  const movieCreate = !!pass.val('MovieCreate');
-  const movieFmt = String(pass.val('MovieFormat') ?? DEFAULT_RENDER_OUTPUT_FORMAT);
-  if (movieCreate && isMovieOutputFormat(movieFmt)) return movieFmt;
   const fbFmt = String(fb.val('Format') ?? 'pic');
-  return acceptsRenderOutputFormat(fbFmt) ? fbFmt : 'pic';
+  return acceptsRenderOutputFormat(fbFmt) && !isMovieOutputFormat(fbFmt) ? fbFmt : 'pic';
 }
 
-function sequenceFormatFor(pass: Pass, override?: string | null): string {
-  if (override && acceptsRenderOutputFormat(override) && override !== 'mov') return override;
+/**
+ * Whether Softimage Pass should also emit a movie container beside picture plates.
+ * Dump: MovieCreate bool; AfterImage product MovieFormat default mp4 (no mov).
+ * Render Manager formatOverride=mp4 on a range implies movie sidecar (product).
+ */
+function wantsMovieContainer(pass: Pass, override?: string | null): boolean {
+  if (override && isMovieOutputFormat(override) && override !== 'mov') return true;
+  return !!pass.val('MovieCreate');
+}
+
+function movieFormatFor(pass: Pass, override?: string | null): string {
+  if (override && isMovieOutputFormat(override) && override !== 'mov') return override;
   const movieFmt = String(pass.val('MovieFormat') ?? DEFAULT_RENDER_OUTPUT_FORMAT);
-  if (isMovieOutputFormat(movieFmt) || acceptsRenderOutputFormat(movieFmt)) return movieFmt === 'mov' ? DEFAULT_RENDER_OUTPUT_FORMAT : movieFmt;
-  return DEFAULT_RENDER_OUTPUT_FORMAT;
+  if (movieFmt === 'mov' || !isMovieOutputFormat(movieFmt)) return DEFAULT_RENDER_OUTPUT_FORMAT;
+  return movieFmt;
 }
 
 /** Capture one frame to a PNG/JPEG data URL via viewport WebGL, or software fallback. */
@@ -360,29 +391,33 @@ function storePicture(path: string, file: RenderedFile) {
 
 /**
  * Render Softimage Pass picture output (still or sequence).
- * Still → real image write (download + virtual Render_Pictures). Sequence → frames + Flipbook; format default mp4.
+ * Dump: per-frame plates → Render_Pictures/[Pass]_[Framebuffer].FRAME.pic (Format=pic).
+ * MovieCreate / movie formatOverride → AfterImage .mp4 sidecar (product; no .mov) beside plates.
+ * Still → download + preview. Sequence → virtual Render_Pictures + capped Flipbook (avoid OOM).
  */
 export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): SceneRenderResult {
   const passList = resolvePasses(app, opts.passes);
   if (!passList.length) {
     const err = 'No render pass in scene';
     app.logMsg('error', err);
-    const fail: SceneRenderResult = { ok: false, files: [], width: 0, height: 0, format: 'png', passNames: [], mode: 'still', outputDir: '', error: err };
+    const fail: SceneRenderResult = { ok: false, files: [], width: 0, height: 0, format: 'pic', passNames: [], mode: 'still', outputDir: '', error: err };
     (app as any).lastRender = fail;
     (globalThis as any).__siLastRender = fail;
     return fail;
   }
 
   const ro = app.scene.renderOptions;
-  const outputDir = String(ro?.val('OutputDir') ?? '[Project Path]/Render_Pictures');
+  // Softimage dump: OutputDir=[Project Path]\Render_Pictures
+  const outputDir = String(ro?.val('OutputDir') ?? '[Project Path]\\Render_Pictures');
   const padding = Number(ro?.val('FramePadding') ?? 1);
   const files: RenderedFile[] = [];
   const passNames: string[] = [];
   const maxFrames = Math.max(1, opts.maxFrames ?? 300);
   let width = Math.max(1, Math.floor(Number(opts.width ?? ro?.val('ImageWidth') ?? 1920)));
   let height = Math.max(1, Math.floor(Number(opts.height ?? ro?.val('ImageHeight') ?? 1080)));
-  let format = 'png';
+  let format = 'pic';
   let mode: 'still' | 'sequence' = 'still';
+  let moviePath: string | null = null;
 
   for (const pass of passList) {
     passNames.push(pass.name);
@@ -415,7 +450,11 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
 
     const multi = f0 !== f1;
     mode = multi ? 'sequence' : 'still';
-    format = multi ? sequenceFormatFor(pass, opts.formatOverride) : stillFormatFor(pass, fb, opts.formatOverride);
+    // Softimage plates always use Framebuffer Format (pic). Movie is Pass MovieCreate / product mp4 sidecar.
+    const plateFormat = stillFormatFor(pass, fb, opts.formatOverride);
+    const emitMovie = multi && wantsMovieContainer(pass, opts.formatOverride);
+    const movieFmt = emitMovie ? movieFormatFor(pass, opts.formatOverride) : plateFormat;
+    format = emitMovie ? movieFmt : plateFormat;
     if (format === 'mov') format = DEFAULT_RENDER_OUTPUT_FORMAT;
 
     // Softimage Framebuffer.Filename — absolute (still_frame dump) or token template.
@@ -423,35 +462,75 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
     const prev = app.anim.frame;
     let count = 0;
     let lastResolved = '';
+    const passPlates: RenderedFile[] = [];
     for (let f = f0; f <= f1; f += step) {
       if (count >= maxFrames) break;
       app.anim.frame = f;
       const dataUrl = captureFrameDataUrl(app, w, h, f);
       const path = resolveSoftimageResolvedFilename(
-        outputDir, filenameTpl, f, padding, format, pass.name, fb.name,
+        outputDir, filenameTpl, f, padding, plateFormat, pass.name, fb.name,
       );
       lastResolved = path;
       const file: RenderedFile = {
         path,
         frame: f,
-        format,
+        format: plateFormat,
         dataUrl,
         byteLength: dataUrlByteLength(dataUrl),
       };
       storePicture(path, file);
       files.push(file);
+      passPlates.push(file);
       count++;
     }
-    // Softimage OM (true-95pct / #130): ResolvedFilename + Format=pic after still write
+
+    if (emitMovie && passPlates.length) {
+      const movieTpl = String(pass.val('MovieFileName') ?? '[Pass]_[Framebuffer]');
+      moviePath = resolveSoftimageMoviePath(outputDir, movieTpl, movieFmt, pass.name, fb.name);
+      // AfterImage product .mp4 path — Softimage movie codec bytes not dump-attested; plates are Softimage .pic.
+      // Store a Softimage-faithful path entry referencing plate sequence (no invent MPEG bitstream).
+      const movieManifest = JSON.stringify({
+        kind: 'afterimage-movie-sidecar/v1',
+        format: movieFmt,
+        path: moviePath,
+        softimage: { MovieCreate: true, MovieFileName: movieTpl, MovieFormat: movieFmt },
+        plates: passPlates.map(p => ({ path: p.path, frame: p.frame })),
+      });
+      const Buf = (globalThis as any).Buffer as { from(s: string): { toString(enc: string): string } } | undefined;
+      const b64 = Buf
+        ? Buf.from(movieManifest).toString('base64')
+        : btoa(movieManifest);
+      const movieFile: RenderedFile = {
+        path: moviePath,
+        frame: passPlates[0]!.frame,
+        format: movieFmt,
+        dataUrl: `data:application/json;base64,${b64}`,
+        byteLength: movieManifest.length,
+      };
+      storePicture(moviePath, movieFile);
+      files.push(movieFile);
+      if (pass.get('MovieCreate')) app.setParam(pass.get('MovieCreate')!, true);
+      if (pass.get('MovieFormat') && movieFmt !== 'mov') app.setParam(pass.get('MovieFormat')!, movieFmt);
+    }
+
+    // Softimage OM (true-95pct / #130): ResolvedFilename after write; Format stays Softimage still Format (pic) — never movie.
     if (lastResolved && fb.get('ResolvedFilename')) {
       app.setParam(fb.get('ResolvedFilename')!, lastResolved.replace(/\//g, '\\'));
     }
-    if (fb.get('Format')) fb.set('Format', format || 'pic');
+    if (fb.get('Format') && !isMovieOutputFormat(plateFormat)) {
+      fb.set('Format', plateFormat || 'pic');
+    }
     app.anim.frame = prev;
-    app.events.emit('OnEndRenderPass', { pass: pass.name, frames: count, resolved: lastResolved });
+    app.events.emit('OnEndRenderPass', {
+      pass: pass.name,
+      frames: count,
+      resolved: lastResolved,
+      movie: moviePath,
+    });
   }
 
-  const ok = files.length > 0 && files.every(f => f.byteLength > 32 && f.dataUrl.startsWith('data:image'));
+  const pictureFiles = files.filter(f => !isMovieOutputFormat(f.format));
+  const ok = pictureFiles.length > 0 && pictureFiles.every(f => f.byteLength > 32 && f.dataUrl.startsWith('data:image'));
   const result: SceneRenderResult = {
     ok,
     files,
@@ -466,21 +545,34 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
   (app as any).lastRender = result;
   (globalThis as any).__siLastRender = result;
 
-  if (ok && mode === 'still' && files[0]) {
-    const leaf = files[0].path.split('/').pop() || files[0].path;
-    if (opts.download !== false) downloadDataUrl(files[0].dataUrl, leaf);
-    if (opts.openPreview !== false) previewStill(files[0].dataUrl, files[0].path, format);
+  if (ok && mode === 'still' && pictureFiles[0]) {
+    const leaf = pictureFiles[0].path.split('/').pop() || pictureFiles[0].path;
+    if (opts.download !== false) downloadDataUrl(pictureFiles[0].dataUrl, leaf);
+    if (opts.openPreview !== false) previewStill(pictureFiles[0].dataUrl, pictureFiles[0].path, pictureFiles[0].format);
   } else if (ok && mode === 'sequence') {
-    const name = (files[0]?.path.split('/').pop() || 'pass').replace(/\.\d+\.[^.]+$/, '');
-    if (typeof window !== 'undefined') {
+    const name = (pictureFiles[0]?.path.split('/').pop() || 'pass').replace(/\.\d+\.[^.]+$/, '');
+    // Softimage writes full range to disk; Flipbook loads from files. Cap popup payload to avoid OOM (FrameEnd=100).
+    const flip = pictureFiles.slice(0, FLIPBOOK_MAX_FRAMES).filter(f => f.dataUrl.startsWith('data:image'));
+    if (typeof window !== 'undefined' && flip.length) {
       window.dispatchEvent(new CustomEvent('flipbook-frames', {
-        detail: { frames: files.map(f => f.dataUrl), name, format },
+        detail: {
+          frames: flip.map(f => f.dataUrl),
+          name,
+          format: moviePath ? format : (pictureFiles[0]?.format ?? 'pic'),
+          totalFrames: pictureFiles.length,
+          moviePath,
+        },
       }));
     }
+    if (pictureFiles.length > FLIPBOOK_MAX_FRAMES) {
+      app.logMsg('info', `Flipbook shows ${FLIPBOOK_MAX_FRAMES}/${pictureFiles.length} plates; full Softimage sequence in Render_Pictures (__siRenderPictures)`);
+    }
+    if (moviePath) app.logMsg('info', `Movie sidecar → ${moviePath} (.${format}; Softimage plates .pic)`);
   }
 
   if (ok) {
-    app.logMsg('info', `Rendered ${files.length} frame(s) → ${files[0]?.path ?? '(none)'} (${width}x${height}, .${format})`);
+    const head = pictureFiles[0]?.path ?? files[0]?.path ?? '(none)';
+    app.logMsg('info', `Rendered ${pictureFiles.length} plate(s) → ${head} (${width}x${height}, .${pictureFiles[0]?.format ?? format}${moviePath ? ` + ${moviePath}` : ''})`);
   } else {
     app.logMsg('error', result.error || 'Render failed');
   }

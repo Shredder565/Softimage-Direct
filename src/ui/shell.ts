@@ -371,7 +371,7 @@ export function renderManager(app: App, host: HTMLElement) {
     root.innerHTML = '';
     root.appendChild(head(
       btn('Render Current Frame', 'Render the active camera at the output resolution', () => doRender(false)),
-      btn('Render Pass', 'Render the pass frame range to a Flipbook', () => doRender(true)),
+      btn('Render Pass', 'Render Softimage pass frame range to Render_Pictures (.pic plates)', () => doRender(true)),
       btn('Preview', 'Render preview window', () => doRender(false)),
     ));
     const form = el('div', 'dlg');
@@ -391,7 +391,10 @@ export function renderManager(app: App, host: HTMLElement) {
     fmtSel.value = opts.format;
     fmtSel.onchange = () => {
       opts.format = extensionForFormat(fmtSel.value);
-      opts.path = pathFor(opts.format);
+      // Softimage still path always .pic plates; movie format is Pass MovieFormat sidecar (.mp4 product).
+      opts.path = isMovieOutputFormat(opts.format)
+        ? `Render_Pictures/[Pass]_[Framebuffer].${opts.format}`
+        : pathFor(opts.format === 'pic' ? 'pic' : opts.format);
       syncPassMovie(opts.format);
       render();
     };
@@ -426,17 +429,24 @@ export function renderManager(app: App, host: HTMLElement) {
     }
     form.appendChild(btn('New Pass', 'Create a render pass', () => { app.run('CreatePass', { Name: 'Pass' }); render(); }));
     root.appendChild(form);
-    root.appendChild(el('div', 'hint', `Softimage picture path Render_Pictures/[Pass]_[Framebuffer].FRAME.pic (dump). Default sequence format .${DEFAULT_RENDER_OUTPUT_FORMAT} (no .mov). Still writes image bytes; pass range opens Flipbook.`));
+    root.appendChild(el('div', 'hint', `Softimage still/sequence plates → Render_Pictures/[Pass]_[Framebuffer].FRAME.pic (dump Format=pic). MovieCreate / Output Format .${DEFAULT_RENDER_OUTPUT_FORMAT} → movie sidecar (no .mov). Pass range Flipbook capped; full plates in __siRenderPictures.`));
   };
   const doRender = (range: boolean) => {
+    const pass = app.scene.passes.find(p => p.name === opts.pass);
+    // Softimage: picture plates always; MovieCreate when user picked a movie Output Format for a range.
+    if (range && pass?.get('MovieCreate') && isMovieOutputFormat(opts.format)) {
+      app.setParam(pass.get('MovieCreate')!, true);
+      if (pass.get('MovieFormat')) app.setParam(pass.get('MovieFormat')!, opts.format === 'mov' ? DEFAULT_RENDER_OUTPUT_FORMAT : opts.format);
+    }
     renderScenePasses(app, {
       passes: opts.pass || 'Passes.Current',
       currentFrameOnly: !range,
+      // Still: Softimage Framebuffer Format (pic). Range+mp4: movie sidecar + Softimage .pic plates.
       formatOverride: opts.format,
       width: opts.width,
       height: opts.height,
-      download: true,
-      openPreview: true,
+      download: !range,
+      openPreview: !range,
     });
   };
   syncPassMovie(opts.format);
