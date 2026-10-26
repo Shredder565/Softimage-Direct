@@ -772,7 +772,8 @@ export class Pass extends Node {
 export function makeSceneRenderOptions(): Property {
   const p = new Property('Scene Render Options', 'SceneRenderProperty', [
     str('Renderer', 'Mental Ray', 'Renderer'),
-    str('OutputDir', '[Project Path]/Render_Pictures', 'OutputDir'),
+    // Softimage Passes.RenderOptions OutputDir (render-desktop tour): [Project Path]\Render_Pictures
+    str('OutputDir', '[Project Path]\\Render_Pictures', 'OutputDir'),
     int('FramePadding', 1, 'FramePadding'),
     int('ImageFormatPreset', -16, 'ImageFormatPreset'),
     num('ImageAspectRatio', 1.777778, 'ImageAspectRatio'),

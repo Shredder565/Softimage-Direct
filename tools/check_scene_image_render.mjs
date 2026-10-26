@@ -39,6 +39,22 @@ else notes.push('sceneRender encodePngRGBA present');
 if (!/writeExtensionFor/.test(core) || !/return 'pic'/.test(core))
   diffs.push('writeExtensionFor must keep Softimage pic default');
 else notes.push('writeExtensionFor keeps Softimage .pic');
+if (!/resolveSoftimageMoviePath/.test(core))
+  diffs.push('sceneRender missing Softimage MovieFileName → .mp4 path helper');
+else notes.push('sceneRender resolveSoftimageMoviePath present');
+if (!/FLIPBOOK_MAX_FRAMES/.test(core))
+  diffs.push('sceneRender missing Flipbook frame cap (OOM guard)');
+else notes.push('sceneRender Flipbook capped');
+if (!/MovieCreate/.test(core) || !/wantsMovieContainer|emitMovie/.test(core))
+  diffs.push('sceneRender must gate movie sidecar on MovieCreate / movie override');
+else notes.push('sceneRender MovieCreate gates .mp4 sidecar');
+// Softimage OutputDir template must keep backslash (dump: [Project Path]\Render_Pictures)
+if (!/\[Project Path\]\\\\Render_Pictures/.test(core) && !/\[Project Path\]\\Render_Pictures/.test(core))
+  diffs.push('sceneRender OutputDir fallback missing Softimage \\\\Render_Pictures');
+else notes.push('sceneRender OutputDir Softimage [Project Path]\\\\Render_Pictures');
+if (/fb\.set\('Format',\s*format/.test(core))
+  diffs.push('must not overwrite Framebuffer Format with movie/result format');
+else notes.push('Framebuffer Format not overwritten by movie format');
 
 // Softimage true-95pct command arities (true95_supplemental.json)
 const rcp = modToolbar.match(/name:\s*'Render Current Pass'[\s\S]*?args:\s*(\[[\s\S]*?\])/);
@@ -76,7 +92,8 @@ function padFrame(frame, padding) {
 }
 function writeExtensionFor(format) {
   const f = String(format || 'pic').replace(/^\./, '').toLowerCase();
-  if (f === 'mp4' || f === 'avi') return 'png';
+  // Softimage plates stay .pic even when Pass MovieFormat is mp4/avi (movie is sidecar).
+  if (f === 'mp4' || f === 'avi') return 'pic';
   if (f === 'tif' || f === 'tiff') return 'tif';
   if (f === 'jpeg') return 'jpg';
   if (f === 'pic' || f === 'exr' || f === 'png' || f === 'jpg') return f;
@@ -128,6 +145,33 @@ else notes.push('true-95pct still_frame.1.pic ResolvedFilename OK');
 const stillRel = resolveSoftimageResolvedFilename('Render_Pictures', 'still_frame', 1, 1, 'pic');
 if (stillRel !== 'Render_Pictures/still_frame.1.pic') diffs.push(`relative still_frame path ${stillRel}`);
 else notes.push('relative still_frame.1.pic OK');
+
+// Softimage plates stay .pic when format hint is mp4 (movie sidecar separate)
+const plateUnderMovie = resolveSoftimageResolvedFilename(
+  '[Project Path]\\Render_Pictures', 'Default_Pass_Main', 1, 1, 'mp4',
+);
+if (plateUnderMovie !== pathDump) diffs.push(`mp4 plate ext must stay Softimage .pic got ${plateUnderMovie}`);
+else notes.push('MovieFormat mp4 still writes Softimage .pic plate path');
+
+// Softimage MovieFileName → AfterImage .mp4 (product; no .mov)
+function resolveSoftimageMoviePath(outputDir, movieFileName, movieFormat, passName = 'Default_Pass', fbName = 'Main') {
+  let movieExt = String(movieFormat || 'mp4').replace(/^\./, '').toLowerCase();
+  if (movieExt === 'mov') movieExt = 'mp4';
+  if (movieExt !== 'mp4' && movieExt !== 'avi') movieExt = 'mp4';
+  const expanded = expandRenderTokens(movieFileName || '[Pass]_[Framebuffer]', passName, fbName)
+    .replace(/\.(png|mp4|avi|pic|exr|tif|tiff|jpg|jpeg|mov)$/i, '');
+  const norm = expanded.replace(/\\/g, '/');
+  const dir = expandRenderTokens(outputDir || '[Project Path]\\Render_Pictures', '', '').replace(/\/$/, '') || 'Render_Pictures';
+  return `${dir}/${norm || `${passName}_${fbName}`}.${movieExt}`;
+}
+const moviePath = resolveSoftimageMoviePath(
+  '[Project Path]\\Render_Pictures', '[Pass]_[Framebuffer]', 'mp4', 'Default_Pass', 'Main',
+);
+if (moviePath !== 'Render_Pictures/Default_Pass_Main.mp4') diffs.push(`movie path got ${moviePath}`);
+else notes.push('Softimage MovieFileName → Render_Pictures/Default_Pass_Main.mp4');
+const noMov = resolveSoftimageMoviePath('[Project Path]\\Render_Pictures', 'shot', 'mov');
+if (noMov !== 'Render_Pictures/shot.mp4') diffs.push(`mov must remap to mp4 got ${noMov}`);
+else notes.push('never emit .mov (remap to .mp4)');
 
 // PNG encode smoke via esbuild-free: spawn tsc not required — re-implement encode check by importing after vite? 
 // Prefer running TypeScript through node --experimental if available; else check encode exists + write tiny PNG with zlib store duplicated here.
