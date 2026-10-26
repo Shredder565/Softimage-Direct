@@ -68,8 +68,64 @@ const resolveNodeType = (preset: string): { type: string; compound?: string } =>
 const emptyPointCloud = (app: App) =>
   app.run('GetPrim', { PresetObj: 'EmptyPointCloud', Name: '' }) as X3DObject;
 
+/** Softimage ICEFlowBuilder RegisterCommand Names — behavioral/proof/script_register_hosts.json (WR-16). */
+const ICEFLOW_HOST_CMDS = [
+  'ICEFlow_AddConstraint',
+  'ICEFlow_AddExecuteCompound',
+  'ICEFlow_AddSyflexForceCompound',
+  'ICEFlow_AddForces',
+  'ICEFlow_AddStateItem',
+  'ICEFLowCommonTools',
+  'ICEFlow_ConstraintToParticles',
+  'ICEFlow_RemoveConstraintToParticles',
+  'ICEFlow_CreateParticles',
+  'ICEFlow_CreateParticlesFromPreset',
+  'ICEFlow_DeleteInitParticles',
+  'ICEFlow_LagoaAddPassiveBody',
+  'ICEFlow_AddPassiveBodies',
+  'ICEFlow_RemovePassiveBodies',
+  'ICEFlow_SetCollisionDataOnly',
+  'ICEFlow_AddLagoaExecuteCompound',
+  'ICEFlow_CachedSimPostEffect',
+  'ICEFlow_AddLagoaTransformConstraint',
+  'ICEFlow_LagoaResolutionToSubsteps',
+  'ICEFlow_LagoaCacheCloud',
+  'ICEFlowSetEmissionFilterMap',
+  'ICEFlow_VaryingInputValue',
+] as const;
+
 /** Softimage ICE module switcher + Desktop tour HIGH toolbar / graph commands. */
 export function registerIceModuleCommands(app: App) {
+  // WR-16 — ICEFlowBuilder plugin RegisterCommand shells (no invent compound bodies).
+  // Syflex deepen: ICEFlow_AddSyflexForceCompound only (script_register_hosts); SyCreateCloth/syCloth PPG already wired.
+  for (const name of ICEFLOW_HOST_CMDS) {
+    if (app.commands.has(name)) continue;
+    app.register({
+      name,
+      label: name,
+      category: 'ICE',
+      args: [{ name: 'File', default: '' }, { name: 'Target', default: null }],
+      undoable: false,
+      execute(app, a) {
+        const file = String(a.File || '');
+        if (file && app.commands.has('ApplyICEOp')) {
+          try {
+            return app.run('ApplyICEOp', { File: file, Target: a.Target });
+          } catch {
+            /* fall through to shell log */
+          }
+        }
+        if (name === 'ICEFlow_CreateParticles' || name === 'ICEFlow_CreateParticlesFromPreset') {
+          if (app.commands.has('GeneratePointCloudWithICETemplate')) {
+            return app.run('GeneratePointCloudWithICETemplate', { File: file || '', Inputs: '' });
+          }
+        }
+        app.logMsg('info', `${name} — ICEFlowBuilder RegisterCommand shell; compound/plugin body LOCK`);
+        return null;
+      },
+    });
+  }
+
   // Softimage Anchor-to-Delete factory RegisterMenu Name (ICEFlow / CrowdFX / MOTOR) — dump-attested only.
   app.register({
     name: 'AnchorFactoryMenuItem',
@@ -463,6 +519,7 @@ export function iceModuleAudit(app: App): Record<string, unknown> {
   const attr = chrome.views['ICE Attribute Editor'];
   const high = Object.keys(en);
   const wired = high.filter(n => app.commands.has(n));
+  const iceFlowWired = ICEFLOW_HOST_CMDS.filter(n => app.commands.has(n));
   const prefSets = (window as any).__prefSets as Map<string, { params: { name: string; value: unknown }[] }> | undefined;
   const iceTreeSet = prefSets?.get('C3DPrefsICETree');
   const iceOpsSet = prefSets?.get('C3DPrefsICEOperators');
@@ -519,6 +576,10 @@ export function iceModuleAudit(app: App): Record<string, unknown> {
     highEnabled: en,
     highWiredCount: wired.length,
     highExpectedCount: high.length,
+    iceFlowHostCmds: [...ICEFLOW_HOST_CMDS],
+    iceFlowHostWired: iceFlowWired,
+    iceFlowHostWiredCount: iceFlowWired.length,
+    iceFlowAddSyflexForce: app.commands.has('ICEFlow_AddSyflexForceCompound'),
     openICETreeView: app.commands.has('OpenICETreeView'),
     createSimulatedICETree: app.commands.has('CreateSimulatedICETree'),
     applyICETemplate: app.commands.has('ApplyICETemplate'),

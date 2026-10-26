@@ -246,6 +246,125 @@ export function registerCrowdFxModuleCommands(app: App) {
     },
   });
 
+  // WR-16 — remaining CrowdFX_Plugin.py RegisterCommand Names (script_register_hosts.json).
+  // Softimage scripting names strip spaces (Create Crowd → CreateCrowd); labels keep RegisterCommand text.
+  const crowdNull = (script: string, label: string, kind: string, extras: Parameters<typeof crowdProp>[2] = []) => {
+    ensure({
+      name: script,
+      label,
+      category: 'Custom',
+      args: [],
+      execute(app) {
+        const n = new Null(app.scene.uniqueName(script));
+        n.addProperty(crowdProp(script, kind, extras));
+        addObject(app, n);
+        app.select([n]);
+        app.logMsg('info', `${script} — CrowdFX_Plugin.py RegisterCommand`);
+        return n;
+      },
+    });
+  };
+  const crowdPropOnSel = (script: string, label: string, kind: string) => {
+    ensure({
+      name: script,
+      label,
+      category: 'Custom',
+      args: [{ name: 'inProp', default: null }],
+      execute(app, a) {
+        const o = a.inProp ? app.scene.find(String(a.inProp)) : app.selectedObjects[0];
+        if (!o) throw new Error(`Select a CrowdFX object for ${label}`);
+        let p = o.properties.find(x => x.type === 'crowdfx' && x.val('kind') === kind);
+        if (!p) {
+          p = crowdProp(script, kind);
+          app.record(label, () => o.addProperty(p!), () => o.removeProperty(p!));
+        }
+        app.select([p]);
+        app.logMsg('info', `${script} — CrowdFX_Plugin.py RegisterCommand`);
+        return p;
+      },
+    });
+  };
+  const crowdLog = (script: string, label: string) => {
+    ensure({
+      name: script,
+      label,
+      category: 'Custom',
+      args: [],
+      undoable: false,
+      execute(app) {
+        app.logMsg('info', `${script} — CrowdFX_Plugin.py RegisterCommand shell`);
+        return null;
+      },
+    });
+  };
+
+  crowdNull('CreatePedestrianCrowd', 'Create Pedestrian Crowd', 'pedestrian_crowd', [str('behavior', 'Pedestrian', 'Behavior Preset')]);
+  crowdNull('CreateStadiumCrowd', 'Create Stadium Crowd', 'stadium_crowd', [str('behavior', 'Stadium', 'Behavior Preset')]);
+  ensure({
+    name: 'SetAsCurrentCrowd',
+    label: 'Set As Current Crowd',
+    category: 'Custom',
+    args: [],
+    undoable: false,
+    execute(app) {
+      const o = app.selectedObjects.find(x => x.properties.some(p => p.type === 'crowdfx' && String(p.val('kind')).includes('crowd')))
+        ?? app.selectedObjects[0];
+      if (!o) throw new Error('Select a Crowd');
+      (app as any).__crowdFxCurrent = o.name;
+      app.logMsg('info', `SetAsCurrentCrowd → ${o.name}`);
+      return o;
+    },
+  });
+  crowdLog('GetAnimationSource', 'Get Animation Source');
+  crowdLog('GetMultipleAnimationSources', 'Get Multiple Animation Sources');
+  crowdLog('ExportCrowd', 'Export Crowd');
+  crowdPropOnSel('CrowdAddPedestrianMoveSourceParams', 'Crowd Add Pedestrian Move Source Params', 'pedestrian_move_params');
+  crowdPropOnSel('CrowdAddStadiumMoveSourceParams', 'Crowd Add Stadium Move Source Params', 'stadium_move_params');
+  ensure({
+    name: 'AddCrowdEmitterFromSelection',
+    label: 'Add Crowd Emitter From Selection',
+    category: 'Custom',
+    args: [],
+    execute(app) {
+      const src = app.selectedObjects[0];
+      if (!src) throw new Error('Select geometry for Crowd Emitter From Selection');
+      const n = new Null(app.scene.uniqueName('CrowdEmitterFromSel'));
+      n.addProperty(crowdProp('CrowdEmitterFromSelection', 'emitter_from_sel', [
+        str('source', src.name, 'Source', { readOnly: true }),
+      ]));
+      addObject(app, n);
+      app.select([n]);
+      return n;
+    },
+  });
+  crowdNull('AddGoal', 'Add Goal', 'goal');
+  crowdNull('CreateWall', 'Create Wall', 'wall');
+  crowdNull('AddTerrain', 'Add Terrain', 'terrain');
+  crowdNull('AddCrowdPath', 'Add Crowd Path', 'path');
+  ensure({
+    name: 'InitCrowdAndDrawEmitter',
+    label: 'Init Crowd And Draw Emitter',
+    category: 'Custom',
+    args: [],
+    execute(app) {
+      if (!app.commands.has('CreateCrowd')) throw new Error('CreateCrowd missing');
+      app.run('CreateCrowd', { BehaviorPreset: 'Basic' });
+      return app.run('CreateCrowdEmitter');
+    },
+  });
+  ensure({
+    name: 'InitCrowdAndDrawWall',
+    label: 'Init Crowd And Draw Wall',
+    category: 'Custom',
+    args: [],
+    execute(app) {
+      if (!app.commands.has('CreateCrowd')) throw new Error('CreateCrowd missing');
+      app.run('CreateCrowd', { BehaviorPreset: 'Basic' });
+      return app.run('CreateWall');
+    },
+  });
+  crowdNull('CacheCrowdSimulation', 'Cache Crowd Simulation', 'sim_cache');
+
   // ——— Behavior / BVH actor I/O (bvrexport.dll) — file dialogs stay stubs ———
   ensure({
     name: 'BvrLoadActor',
@@ -370,6 +489,22 @@ export function crowdFxModuleAudit(app: App): Record<string, unknown> {
     commandsWired: wired,
     commandsWiredCount: wired.length,
     createCrowd: app.commands.has('CreateCrowd'),
+    createPedestrianCrowd: app.commands.has('CreatePedestrianCrowd'),
+    createStadiumCrowd: app.commands.has('CreateStadiumCrowd'),
+    setAsCurrentCrowd: app.commands.has('SetAsCurrentCrowd'),
+    addGoal: app.commands.has('AddGoal'),
+    createWall: app.commands.has('CreateWall'),
+    cacheCrowdSimulation: app.commands.has('CacheCrowdSimulation'),
+    scriptRegisterHostsCrowdWired: [
+      'CreateCrowd', 'CreatePedestrianCrowd', 'CreateStadiumCrowd', 'SetAsCurrentCrowd',
+      'AddActorSource', 'RemoveActorProxy', 'GetAnimationSource', 'GetMultipleAnimationSources',
+      'ExportCrowd', 'CrowdAddPedestrianMoveSourceParams', 'CrowdSetupPedestrianActor',
+      'CrowdAddStadiumMoveSourceParams', 'CrowdSetupStadiumActor', 'CreateCrowdEmitter',
+      'CreateCrowdStadiumEmitter', 'AddCrowdEmitterFromSelection', 'AddGoal', 'CreateWall',
+      'AddTerrain', 'AddCrowdPath', 'CreateCrowdFromGeometry', 'AddActorProxyAnimations',
+      'InitCrowdAndDrawEmitter', 'InitCrowdAndDrawWall', 'CacheCrowdSimulation', 'CacheActorCopies',
+      'GLSLActorEnvelopeLinkICEAttributes', 'GLSLActorEnvelopeUpdateDefines',
+    ].filter(n => app.commands.has(n)),
     iceOperatorsPrefs: iceOpsLive,
     simulationPrefs: simLive,
     icetreePrefs: iceTreeLive,
