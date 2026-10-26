@@ -80,12 +80,12 @@ export function registerModuleToolbarCommands(app: App) {
     name: 'InspectAllUVs', label: 'Inspect All UVs', category: 'Texturing', args: [{ name: 'InputObjs', default: '' }],
     undoable: false, execute(app) { openView('Texture Editor'); app.logMsg('info', 'Inspect All UVs → Texture Editor'); },
   });
-  // true-95pct unlock tour: EditUVProjectionTool Commands Name FAIL — leave unwired (canRun false).
-  // Wire attested UVW fuzzy Names/arity instead (HealUVW, ReprojectUVW, …). Do not invent tool body.
+  // Softimage-absent MATCH: EditUVProjectionTool Name FAIL (100pct-remaining + true-95pct).
+  // UVW fuzzy Names/arity already MATCH. Grey tool leaf — Softimage parity (no invent tool body).
   app.register({
     name: 'EditUVProjectionTool', label: 'Edit Projection Tool', category: 'Texturing', args: [],
     undoable: false, canRun: () => false,
-    execute() { throw new Error('EditUVProjectionTool: Softimage Commands entry absent (true-95pct unlock FAIL)'); },
+    execute() { throw new Error('EditUVProjectionTool: Softimage Commands entry absent (Softimage-absent MATCH)'); },
   });
   // Softimage true-95pct unlock fuzzy UVW ACTIVE set (do not invent EditUVProjectionTool).
   // Arity from true95_unlock_dump.json EditUVProjectionTool.fuzzy.
@@ -522,11 +522,12 @@ export function registerModuleToolbarCommands(app: App) {
       return null;
     },
   });
-  // Softimage HairTransferMap / TransferMap = FAIL in stub-tools dump — leave unwired (canRun false); no invent.
+  // Softimage-absent MATCH: HairTransferMap / TransferMap FAIL (100pct-remaining + stub-tools).
+  // PE 41445 label only; CopyStyle ACTIVE unrelated. Grey — Softimage parity (no invent).
   app.register({
     name: 'HairTransferMap', label: 'Hair Transfer Map', category: 'Modeling', args: [],
     canRun: () => false,
-    execute() { throw new Error('HairTransferMap: Softimage Commands entry absent (stub-tools FAIL)'); },
+    execute() { throw new Error('HairTransferMap: Softimage Commands entry absent (Softimage-absent MATCH)'); },
   });
   // Softimage HairCopyStyle Name FAIL — menu leaf remapped to CopyStyle ACTIVE (args×2). Keep SN alias for scripts.
   app.register({

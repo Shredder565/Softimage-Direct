@@ -517,12 +517,12 @@ export function registerModelCommands(app: App) {
   compTool('SplitPolygonTool', 'Split Polygon Tool', 'point', 'Split Polygon: click two points of a polygon to split it. Esc to exit.', (picks) => { if (picks.length < 2) return false; const [a, b] = picks; if (a.obj !== b.obj) return true; const op = new TopologyOperator2('Connect Points', { kind: 'point', indices: [Number(a.item), Number(b.item)] }); addTopo(a.obj, op, 'Split Polygon'); return true; });
   compTool('WeldPointTool', 'Weld Point Tool', 'point', 'Weld Point: click a point, then the point to weld it to. Esc to exit.', (picks) => { if (picks.length < 2) return false; const [a, b] = picks; if (a.obj !== b.obj) return true; const op = new TopologyOperator2('Weld Points', { kind: 'point', indices: [Number(b.item), Number(a.item)] }); addTopo(a.obj, op, 'Weld Point'); return true; });
   compTool('AddPolygonTool', 'Add Polygon Tool', 'point', 'Add Polygon: click 3 or more points, then Enter (Right-click) to make the polygon.', () => false);
-  // Softimage KnifeTool / "Knife Tool" = FAIL in stub-tools dump — leave unwired (canRun false); no invent.
+  // Softimage KnifeTool / "Knife Tool" ABSENT — PE Knife Tool → Slice Polygons Tool (model2). Keep grey SN.
   app.register({
     name: 'KnifeTool', label: 'Knife Tool', category: 'Modeling|Drawing',
     args: [{ name: 'Clsid', default: '' }], undoable: false, canRun: () => false,
-    execute() { throw new Error('KnifeTool: Softimage Commands entry absent (stub-tools FAIL)'); },
-  })
+    execute() { throw new Error('KnifeTool: Softimage Commands entry absent; use Slice Polygons Tool'); },
+  });
   app.register({ name: 'MovePointTool', label: 'Move Point Tool', category: 'Modeling', args: [{ name: 'Clsid', default: '' }], undoable: false, execute(app) { app.setSelMode('point'); (window as any).__tool?.setMode?.('translate'); app.logMsg('info', 'Move Point: select points (T) and drag with the translate tool (V)'); } });
   app.register({ name: 'TweakTool', label: 'Tweak Tool', category: 'Modeling', args: [{ name: 'Clsid', default: '' }], undoable: false, execute(app) { if (app.selMode === 'object') app.setSelMode('point'); (window as any).__tool?.setMode?.('translate'); app.logMsg('info', 'Tweak: select components and drag with V / C / X'); } });
   app.register({ name: 'TweakNormalsTool', label: 'Tweak Normals Tool', category: 'Modeling', args: [{ name: 'Clsid', default: '' }], canRun: () => false, execute() { throw new Error('User normals are not implemented yet'); } });

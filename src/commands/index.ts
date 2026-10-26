@@ -334,7 +334,23 @@ export function registerBuiltins(app: App) {
   app.register({ name: 'SelectChildNodes', label: 'Select Children', category: 'Selection', args: [{ name: 'InputObjs', default: '' }], undoable: false, execute(app, a) { const s: X3DObject[] = []; for (const o of app.targets(a.InputObjs)) { s.push(o); s.push(...o.descendants()); } app.select(s); } });
 
   // ------------------------------------------------------------------ misc
-  app.register({ name: 'InspectObj', label: 'Inspect Object', category: 'Property|Edit', args: [{ name: 'InputObjs', default: '' }], undoable: false, execute(app, a) { if (a.InputObjs) app.select(app.targets(a.InputObjs)); app.events.emit('selection'); } });
+  // Softimage InspectObj arity ×5 (InputObjs/Keywords/Title/Mode/Throw) — attested via
+  // "Inspect User Normal Editing Preferences" SN InspectObj (100pct-remaining tour).
+  app.register({
+    name: 'InspectObj', label: 'Inspect Object', category: 'Property|Edit',
+    args: [
+      { name: 'InputObjs', default: '' },
+      { name: 'Keywords', default: null },
+      { name: 'Title', default: null },
+      { name: 'Mode', default: null },
+      { name: 'Throw', default: null },
+    ],
+    undoable: false,
+    execute(app, a) {
+      if (a.InputObjs) app.select(app.targets(a.InputObjs));
+      app.events.emit('selection');
+    },
+  });
   app.register({ name: 'Undo', label: 'Undo', category: 'Edit', args: [], undoable: false, execute(app) { app.undo(); } });
   app.register({ name: 'Redo', label: 'Redo', category: 'Edit', args: [], undoable: false, execute(app) { app.redo(); } });
   app.register({ name: 'NewScene', label: 'New Scene', category: 'File', args: [{ name: 'Confirm', default: false }], undoable: false, execute(app) {

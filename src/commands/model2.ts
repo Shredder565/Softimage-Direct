@@ -456,11 +456,40 @@ export function registerModelCommands2(app: App) {
   });
   app.register({ name: 'Copy', label: 'Copy', category: 'Edit', args: [], undoable: false, execute(app) { if (app.compSel) return app.run('CopyUserNormals', {}); (app as any).clipboard = app.selectedObjects.slice(); return app.selectedObjects.length; } });
   app.register({ name: 'Paste', label: 'Paste', category: 'Edit', args: [], execute(app) { if (app.compSel && normalClipboard.length) return app.run('PasteUserNormals', {}); const objs: X3DObject[] = (app as any).clipboard ?? []; if (objs.length) return app.run('Duplicate', { InputObjs: objs }); return null; } });
-  // Softimage SetUserNormalsSettings / "Set User Normals Settings" = FAIL in stub-tools dump — leave unwired (canRun false); no invent.
+  // Softimage PE Settings… (40891) → Commands Name "Inspect User Normal Editing Preferences"
+  // SN InspectObj args×5 (100pct-remaining tour / supplement). SetUserNormalsSettings Name ABSENT.
+  app.register({
+    name: 'Inspect User Normal Editing Preferences',
+    label: 'Inspect User Normal Editing Preferences',
+    category: 'Property',
+    args: [
+      { name: 'InputObjs', default: null },
+      { name: 'Keywords', default: null },
+      { name: 'Title', default: null },
+      { name: 'Mode', default: null },
+      { name: 'Throw', default: null },
+    ],
+    description: 'Inspect User Normal Editing Preferences',
+    undoable: false,
+    execute(app) {
+      let prefs = (app as any).userNormalEditingPreferences as Property | undefined;
+      if (!prefs) {
+        prefs = new Property('User Normal Editing Preferences', 'usernormalprefs', [
+          num('length', 1, 'Display Length', { min: 0 }),
+          bool('show', true, 'Show in Viewports'),
+          bool('bleed', false, 'Bleed Selection'),
+        ]);
+        (app as any).userNormalEditingPreferences = prefs;
+      }
+      app.events.emit('inspect', prefs);
+      return prefs;
+    },
+  });
+  // Softimage SetUserNormalsSettings Name ABSENT (sicommands.dll) — keep grey; menu remapped to Inspect Name above.
   app.register({
     name: 'SetUserNormalsSettings', label: 'User Normals Settings', category: 'Modeling', args: [],
     canRun: () => false,
-    execute() { throw new Error('SetUserNormalsSettings: Softimage Commands entry absent (stub-tools FAIL)'); },
+    execute() { throw new Error('SetUserNormalsSettings: Softimage Commands entry absent; use Inspect User Normal Editing Preferences'); },
   });
   app.register({ name: 'TweakNormalsTool', label: 'Tweak User Normals Tool', category: 'Modeling', args: [{ name: 'Clsid', default: '{D0DDA3E5-A9BE-449F-AB49-5EDB120DE5A4}' }], undoable: false, description: 'Activate the Tweak Normals tool', execute(app) {
     const o = meshObj(app); const p = normalsProp(app, o)!; const map: Map<number, V3> = (p as any).normals; const comp = computedNormals(o.primitive!.mesh()!);
@@ -533,13 +562,18 @@ export function registerModelCommands2(app: App) {
     execute: (app) => armPaint(app, 'color'),
   });
   (app as any).brushProps = brush;
-  // Softimage "Brush Properties" Name = FAIL in stub-tools dump — leave unwired (canRun false); no invent.
+  // Softimage 100pct-remaining tour: Brush Properties… → scene object type BrushProperties PPG
+  // (C3DGAPBrushProp.spdl PropertySet C3DGAPBrushProperties + Layout Default). Commands tool Name ABSENT —
+  // wire Inspect/PPG path only (PE 40506); do not invent a Commands tool body.
   app.register({
     name: 'BrushProperties', label: 'Brush Properties', category: 'Property', args: [], undoable: false,
-    canRun: () => false,
-    execute() { throw new Error('Brush Properties: Softimage Commands entry absent (stub-tools FAIL)'); },
+    description: 'Inspect Brush Properties PPG (Softimage scene BrushProperties / C3DGAPBrushProp.spdl)',
+    execute(app) {
+      const b = brush();
+      app.events.emit('inspect', b);
+      return b;
+    },
   });
-  // Internal brush PPG helper (not a Softimage Commands Name) — used by paint tools only.
   (app as any).inspectBrushProperties = () => { const b = brush(); app.events.emit('inspect', b); return b; };
   // Move Point tool op factory used by Paint Push (creates/returns the top MoveComponent op)
   app.register({ name: 'MovePointTool', label: 'Move Point', category: 'Modeling', args: [{ name: 'InputObjs', default: '' }, { name: 'Create', default: false }], undoable: false, execute(app, a) { const o = app.targets(a.InputObjs)[0] ?? meshObj(app); const prim = o.primitive!; const top: any = prim.operators[prim.operators.length - 1]; if (top && top.deltas) return top; const op = new MoveComponentOperator(); app.record('Move Component', () => prim.addOperator(op), () => prim.removeOperator(op)); return op; } });
@@ -630,6 +664,34 @@ export function registerModelCommands2(app: App) {
   nameAlias('Split Polygon Tool', 'SplitPolygonTool');
   nameAlias('Add Vertex Tool', 'AddVertexTool');
   nameAlias('Split Edge Tool', 'SplitEdgeTool');
+  // Softimage 100pct-remaining tour: PE Knife Tool (41295) → Commands Name "Slice Polygons Tool"
+  // (empty SN, args×1 Clsid). KnifeTool / "Knife Tool" strings ABSENT from Commands + sicommands.dll.
+  app.register({
+    name: 'Slice Polygons Tool', label: 'Slice Polygons Tool', category: 'Modeling|Drawing',
+    args: [{ name: 'Clsid', default: '' }], undoable: false,
+    description: 'Softimage Slice Polygons Tool (Knife) — PE Knife Tool leaf',
+    execute(app) {
+      app.setSelMode('polygon');
+      const tool: InteractiveTool = {
+        name: 'Slice Polygons Tool',
+        prompt: 'Slice Polygons Tool (Knife): select polygons, then apply Slice Polygons (or Esc to exit)',
+        pickKind: 'polygon',
+        onClick() { /* arm only — plane slice via ApplyTopoOp SlicePolygons */ },
+        onFinish() { app.setTool(null); },
+        onCancel() { app.setTool(null); },
+      };
+      app.setTool(tool);
+      (app as any).armedTool = { label: 'Slice Polygons Tool', clsid: null };
+      app.logMsg('info', 'Slice Polygons Tool: activated (Softimage Knife PE → Slice Polygons Tool Name)');
+      return tool;
+    },
+  });
+  // Softimage KnifeTool Name ABSENT — keep grey for SN audit; menu remapped to Slice Polygons Tool.
+  app.register({
+    name: 'KnifeTool', label: 'Knife Tool', category: 'Modeling|Drawing',
+    args: [{ name: 'Clsid', default: '' }], undoable: false, canRun: () => false,
+    execute() { throw new Error('KnifeTool: Softimage Commands entry absent; use Slice Polygons Tool'); },
+  });
   app.register({
     name: 'Paint Tool', label: 'Paint Tool', category: 'Paint',
     args: [{ name: 'Clsid', default: '{BABE02C7-A8B6-11D1-9306-0060970A2BC8}' }],

@@ -54,7 +54,7 @@ export const ACTIONS: Record<string, Action> = {
   'Rectangle Select Tool': () => setMode('select'), 'Raycast Select Tool': () => setMode('select'),
   'Set Filter to Object': (app) => app.setSelMode('object'), 'Set Filter to Point': (app) => app.setSelMode('point'), 'Set Filter to Edge': (app) => app.setSelMode('edge'), 'Set Filter to Polygon': (app) => app.setSelMode('polygon'),
   'Move Component Tool': (app) => app.run('TweakTool'), 'Escape Pick Session': (app) => { if (app.activeTool) { app.activeTool.onCancel(); app.activeTool = null; app.events.emit('selection'); } else { setMode('select'); app.setSelMode('object'); } },
-  'Add Edge Tool': (app) => app.run('Knife'), 'Split Edge Tool': (app) => app.run('SplitEdge'), 'Slice Polygons Tool': (app) => app.run('ApplyTopoOp', { PresetObj: 'SlicePolygons' }),
+  'Add Edge Tool': (app) => app.run('Knife'), 'Split Edge Tool': (app) => app.run('SplitEdge'), 'Slice Polygons Tool': (app) => app.run('Slice Polygons Tool'),
   'Add Vertex Tool': (app) => app.run('ApplyTopoOp', { PresetObj: 'AddVertex' }), 'Add Polygon Tool': (app) => app.run('ApplyTopoOp', { PresetObj: 'AddPolygon' }),
   'Parent Tool': (app) => app.run('ParentObj'), 'Cut Hierarchical Link': (app) => app.run('CutObj'),
   'Duplicate/Extrude Single': (app) => app.run('Duplicate'), 'Duplicate Single w/o Options': (app) => app.run('Duplicate'), 'Duplicate Tool': (app) => app.run('Duplicate'),
