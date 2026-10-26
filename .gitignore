@@ -4,3 +4,4 @@ release/
 *.tmp.mjs
 node_modules
 __pycache__/
+shot-render-smoke/

@@ -1,7 +1,6 @@
 // Shell views that were placeholders: Render Tree, Texture Editor, Schematic, Animation Editor (F-curves) and
 // Dopesheet, Spreadsheet, Plugin Manager, Netview, Image Clip / Sources, Render Manager, Material Manager & Panel,
 // Weight Paint Panel, Preset Manager. Each is compact but functional and uses the data the clone already keeps.
-import * as THREE from 'three';
 import { App } from '../core/commands';
 import { pref } from './prefs';
 import { sampleUVs, sampleOffsets, relaxUVs } from '../core/texturing';
@@ -19,6 +18,7 @@ import {
   isMovieOutputFormat,
   resolutionPresetFor,
 } from '../core/renderOutput';
+import { renderScenePasses } from '../core/sceneRender';
 import { openSiMenu, SI_MENUS } from './si';
 import { PRESET_MODELS } from '../commands/presets';
 import { animChrome, fcurveMenuLabels, mixerMenuLabels } from './animChrome';
@@ -426,42 +426,18 @@ export function renderManager(app: App, host: HTMLElement) {
     }
     form.appendChild(btn('New Pass', 'Create a render pass', () => { app.run('CreatePass', { Name: 'Pass' }); render(); }));
     root.appendChild(form);
-    root.appendChild(el('div', 'hint', `Renderer: viewport shading (three.js). Default output .${DEFAULT_RENDER_OUTPUT_FORMAT} (no .mov). Still formats download as PNG preview; a pass range opens a Flipbook.`));
+    root.appendChild(el('div', 'hint', `Softimage picture path Render_Pictures/[Pass]_[Framebuffer].FRAME.pic (dump). Default sequence format .${DEFAULT_RENDER_OUTPUT_FORMAT} (no .mov). Still writes image bytes; pass range opens Flipbook.`));
   };
   const doRender = (range: boolean) => {
-    const three = (window as any).__three; if (!three?.scene) { app.logMsg('error', 'No viewport to render from'); return; }
-    const cam = (window as any).__activeCamera as THREE.Camera | undefined; if (!cam) { app.logMsg('error', 'No active camera'); return; }
-    const fmt = extensionForFormat(opts.format);
-    const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
-    r.setSize(opts.width, opts.height); r.shadowMap.enabled = true;
-    const c = cam.clone() as any; if (c.aspect !== undefined) { c.aspect = opts.width / opts.height; c.updateProjectionMatrix(); }
-    const pass = app.scene.passes.find(p => p.name === opts.pass);
-    const frames: string[] = []; const A = app.anim;
-    const f0 = range && pass ? Number(pass.val('FrameStart')) : A.frame;
-    const f1 = range && pass ? Number(pass.val('FrameEnd')) : A.frame;
-    const cur = A.frame;
-    for (let f = f0; f <= f1; f++) {
-      if (range) { A.frame = f; three.needs?.(); }
-      r.render(three.scene, c); frames.push(r.domElement.toDataURL('image/png'));
-      if (frames.length > 300) break;
-    }
-    if (range) A.frame = cur; r.dispose();
-    const extRe = /\.(png|mp4|avi|pic|exr|tif|tiff|jpg|jpeg|mov)$/i;
-    const name = opts.path.replace('[Pass]', opts.pass).replace('[Frame]', String(f0).padStart(4, '0')).split('/').pop()!.replace(extRe, '');
-    const stillExt = fmt === 'jpg' || fmt === 'jpeg' ? 'jpg' : (isMovieOutputFormat(fmt) ? 'png' : (fmt === 'pic' || fmt === 'exr' || fmt === 'tif' ? 'png' : fmt));
-    if (frames.length === 1) {
-      const file = `${name}.${stillExt}`;
-      const w = window.open('', '_blank');
-      if (w) {
-        w.document.write(`<title>${name}</title><body style="margin:0;background:#222;text-align:center"><a download="${file}" href="${frames[0]}" style="color:#ddd;font:12px Tahoma">save ${file}</a> <span style="color:#888;font:11px Tahoma">output format ${fmt}</span><br><img src="${frames[0]}"></body>`);
-        w.document.close();
-      } else {
-        const a = document.createElement('a'); a.href = frames[0]; a.download = file; a.click();
-      }
-    } else {
-      window.dispatchEvent(new CustomEvent('flipbook-frames', { detail: { frames, name, format: fmt } }));
-    }
-    app.logMsg('info', `Rendered ${frames.length} frame(s) at ${opts.width}x${opts.height} (.${fmt})`);
+    renderScenePasses(app, {
+      passes: opts.pass || 'Passes.Current',
+      currentFrameOnly: !range,
+      formatOverride: opts.format,
+      width: opts.width,
+      height: opts.height,
+      download: true,
+      openPreview: true,
+    });
   };
   syncPassMovie(opts.format);
   render(); app.events.on('scene', render);

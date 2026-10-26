@@ -6,6 +6,7 @@ import { Null, Property, X3DObject } from '../core/scene';
 import { bool, num, str } from '../core/params';
 import { getSiRenderRegion } from './renderToolbarOm';
 import { applyClothToObjects } from './clothPpg';
+import { executeRenderCurrentFrame, executeRenderPass, renderScenePasses } from '../core/sceneRender';
 
 const addObject = (app: App, obj: X3DObject, parent?: X3DObject | null) => {
   const p = parent ?? app.scene.root;
@@ -217,8 +218,8 @@ export function registerModuleToolbarCommands(app: App) {
   app.register({ name: 'AddToPartition', label: 'Add Object to Partition', category: 'Rendering', args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], execute(app) { app.logMsg('info', `Add to partition: ${app.selectedObjects.map(o => o.name).join(', ') || '(nothing selected)'}`); } });
   app.register({ name: 'RemoveFromPartition', label: 'Remove Object from Partition', category: 'Rendering', args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], execute(app) { app.logMsg('info', `Remove from partition: ${app.selectedObjects.map(o => o.name).join(', ') || '(nothing selected)'}`); } });
 
-  const renderLog = (app: App, what: string) => { app.logMsg('info', `${what} (offline render stub — use Softimage for frames)`); };
   // Softimage stub-tools dump ACTIVE — RenderPass args×6 / RenderPasses args×5 (commands_full).
+  // Picture output: dump-attested Render_Pictures/[Pass]_[Framebuffer].FRAME.pic (desktop tour).
   app.register({
     name: 'RenderPass', label: 'Render Pass', category: 'Rendering',
     args: [
@@ -227,7 +228,7 @@ export function registerModuleToolbarCommands(app: App) {
       { name: 'StepFrame', default: null }, { name: 'DisposeRendering', default: true },
     ],
     undoable: false, description: 'Render the specified pass (current pass if not specified)',
-    execute: (app) => renderLog(app, 'Render Pass'),
+    execute: (app, a) => executeRenderPass(app, a),
   });
   app.register({
     name: 'RenderPasses', label: 'Render Passes', category: 'Rendering',
@@ -237,17 +238,34 @@ export function registerModuleToolbarCommands(app: App) {
       { name: 'Verbose', default: ':siRenderVerbosityDefault:siRenderVerbosity' },
     ],
     undoable: false, description: 'Render a the list of passes, or current pass if none specified',
-    execute: (app, a) => renderLog(app, a.Passes === 'Passes.Current' ? 'Render Current Pass' : 'Render Passes'),
+    execute: (app, a) => executeRenderPass(app, a),
   });
   app.register({
     name: 'Render Current Pass', label: 'Render Current Pass', category: 'Rendering',
     args: [{ name: 'Passes', default: 'Passes.Current' }], undoable: false,
+    description: 'Render selected passes',
     execute: (app, a) => app.run('RenderPasses', a),
   });
-  app.register({ name: 'RenderSelectedPasses', label: 'Render Selected Passes', category: 'Rendering', args: [], undoable: false, execute: (app) => renderLog(app, 'Render Selected Passes') });
-  app.register({ name: 'RenderAllPasses', label: 'Render All Passes', category: 'Rendering', args: [], undoable: false, execute: (app) => renderLog(app, 'Render All Passes') });
-  app.register({ name: 'RenderCurrentFrame', label: 'Render Current Frame', category: 'Rendering', args: [], undoable: false, execute: (app) => renderLog(app, 'Render Current Frame') });
-  app.register({ name: 'RenderCurrentFrameAllPasses', label: 'Render Current Frame All Passes', category: 'Rendering', args: [], undoable: false, execute: (app) => renderLog(app, 'Render Current Frame (All Passes)') });
+  app.register({
+    name: 'RenderSelectedPasses', label: 'Render Selected Passes', category: 'Rendering',
+    args: [], undoable: false,
+    execute: (app) => renderScenePasses(app, { passes: 'Passes.Current' }),
+  });
+  app.register({
+    name: 'RenderAllPasses', label: 'Render All Passes', category: 'Rendering',
+    args: [], undoable: false,
+    execute: (app) => renderScenePasses(app, { passes: 'Passes.List.*' }),
+  });
+  app.register({
+    name: 'RenderCurrentFrame', label: 'Render Current Frame', category: 'Rendering',
+    args: [], undoable: false,
+    execute: (app) => executeRenderCurrentFrame(app, false),
+  });
+  app.register({
+    name: 'RenderCurrentFrameAllPasses', label: 'Render Current Frame All Passes', category: 'Rendering',
+    args: [], undoable: false,
+    execute: (app) => executeRenderCurrentFrame(app, true),
+  });
   app.register({ name: 'RenderPreview', label: 'Render Preview', category: 'Rendering', args: [], undoable: false, execute() { openView('Render Manager'); } });
   app.register({ name: 'OpenRenderingPreferences', label: 'Open Rendering Preferences', category: 'Rendering', args: [], undoable: false, execute() { window.dispatchEvent(new CustomEvent('openprefs', { detail: { page: 'Rendering' } })); } });
   app.register({ name: 'InspectCurrentPass', label: 'Inspect Current Pass', category: 'Rendering', args: [], undoable: false, execute(app) { const p = app.scene.passes[app.scene.passes.length - 1]; if (p) app.logMsg('info', `Current pass: ${p.name}`); openView('Render Manager'); } });

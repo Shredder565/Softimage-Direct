@@ -415,6 +415,30 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
 (window as any).__animEditorsExecCmdSmoke = () => animEditorsExecCmdSmoke(app);
 (window as any).__switchModule = (m: string) => { app.module = m as any; app.events.emit('module'); };
 (window as any).__hairApplySmoke = () => hairApplySmoke(app);
+/** Softimage picture-output smoke: RenderCurrentFrame → Render_Pictures/…FRAME.pic (desktop tour). */
+(window as any).__sceneImageRenderSmoke = () => {
+  const pass = app.scene.passes[app.scene.passes.length - 1];
+  if (pass?.get('FrameStart') && pass?.get('FrameEnd')) {
+    app.setParam(pass.get('FrameStart')!, 1);
+    app.setParam(pass.get('FrameEnd')!, 1);
+  }
+  app.anim.frame = 1;
+  const still = app.run('RenderCurrentFrame') as { ok?: boolean; files?: { path: string; byteLength: number; dataUrl: string }[]; format?: string; mode?: string };
+  const passOne = app.run('RenderPass', { Passes: 'Passes.Current', StartFrame: 1, EndFrame: 1 }) as typeof still;
+  const pathOk = !!still?.files?.[0]?.path?.match(/Render_Pictures\/Default_Pass_Main\.1\.pic$/);
+  const bytesOk = (still?.files?.[0]?.byteLength ?? 0) > 32 && !!still?.files?.[0]?.dataUrl?.startsWith('data:image');
+  const passOk = !!passOne?.ok && (passOne.files?.[0]?.byteLength ?? 0) > 32;
+  const stubGone = !/offline render stub/i.test(app.log.slice(-8).map(l => l.text).join('\n'));
+  return {
+    ok: !!(still?.ok && pathOk && bytesOk && passOk && stubGone),
+    stillPath: still?.files?.[0]?.path ?? null,
+    stillBytes: still?.files?.[0]?.byteLength ?? 0,
+    stillFormat: still?.format ?? null,
+    passPath: passOne?.files?.[0]?.path ?? null,
+    stubGone,
+    lastRender: (window as any).__siLastRender ?? null,
+  };
+};
 // FROST P0 hooks (graph session + evaluator smoke)
 frostOf(app);
 (window as any).__frost = () => frostOf(app);
