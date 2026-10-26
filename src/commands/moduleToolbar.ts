@@ -2,11 +2,17 @@
 // Scripting names and args follow Softimage's registry (data/commands_full.json);
 // menu id → command wiring lives in src/data/menu_commands.json (PC dump / command-map derived).
 import { App } from '../core/commands';
-import { Null, Property, X3DObject } from '../core/scene';
+import { Null, Partition, Property, X3DObject } from '../core/scene';
 import { bool, num, str } from '../core/params';
 import { getSiRenderRegion } from './renderToolbarOm';
 import { applyClothToObjects } from './clothPpg';
 import { executeRenderCurrentFrame, executeRenderPass, renderScenePasses } from '../core/sceneRender';
+import {
+  exportObjectRenderArchive,
+  exportRenderArchive,
+  exportRenderArchiveAllPasses,
+  resolveSelectedOrCurrentPasses,
+} from '../core/renderArchive';
 
 const addObject = (app: App, obj: X3DObject, parent?: X3DObject | null) => {
   const p = parent ?? app.scene.root;
@@ -122,19 +128,25 @@ export function registerModuleToolbarCommands(app: App) {
     undoable: false, execute() { openView('Texture Editor'); },
   });
 
-  // ——— Render region (Softimage scripting names; HWND crop LOCK — see renderToolbarOm) ———
-  // full-tab harvest: RenderRegionTool / CreateRenderRegion / ToggleRenderRegion ACTIVE with [].
+  // ——— Render region (WR-04) — Softimage RenderRegionTool Clsid + prior HWND crop dumps ———
+  // Registry: Clsid={70F24601-A6F1-11D1-9C1A-00A0243F0F55}. Keymap "Render Region Tool" → renderregion.
   const rr = getSiRenderRegion();
+  const REGION_CLSID = '{70F24601-A6F1-11D1-9C1A-00A0243F0F55}';
   app.register({
     name: 'RenderRegionTool',
     label: 'Render Region Tool',
     category: 'Rendering',
-    args: [{ name: 'Clsid', default: '' }, { name: 'Viewport', default: '' }],
+    args: [{ name: 'Clsid', default: REGION_CLSID }, { name: 'KeyboardProcess', default: true }],
     undoable: false,
     description: 'Create a region for interactive rendering',
-    execute(app) {
-      // Softimage description: create interactive region — same OM path as RenderRegionCreate.
-      return app.run('RenderRegionCreate', {});
+    execute(app, a) {
+      const clsid = String(a.Clsid || REGION_CLSID);
+      armTool(app, 'Render Region Tool', clsid);
+      // Softimage Manipulation tool: arm viewport drag (viewExtras renderregion listener).
+      window.dispatchEvent(new CustomEvent('renderregion'));
+      // Also ensure OM region exists with dump-attested create defaults when first armed.
+      if (!rr.open) app.run('RenderRegionCreate', {});
+      return { label: 'Render Region Tool', clsid };
     },
   });
   app.register({
@@ -153,9 +165,48 @@ export function registerModuleToolbarCommands(app: App) {
     undoable: false,
     execute: (app) => app.run('RenderRegionToggleVisibility', {}),
   });
-  app.register({ name: 'RenderRegionSave', label: 'Save Render Region To File', category: 'Rendering', args: [{ name: 'FileName', default: null }], undoable: false, execute(app, a) { app.logMsg('info', `Render region save${a.FileName ? ': ' + a.FileName : ' (pick a path in Softimage)'}`); } });
-  app.register({ name: 'RenderRegionRefresh', label: 'Refresh Render Region', category: 'Rendering', args: [{ name: 'Viewport', default: '' }], undoable: false, execute(app) { app.logMsg('info', 'Render region refreshed'); app.events.emit('frame'); } });
-  app.register({ name: 'RenderRegionToggleVisibility', label: 'Show/Hide Render Region', category: 'Rendering', args: [{ name: 'Viewport', default: '' }], undoable: false, execute(app) { rr.visible = !rr.visible; app.logMsg('info', `Render region ${rr.visible ? 'shown' : 'hidden'}`); } });
+  app.register({
+    name: 'RenderRegionSave', label: 'Save Render Region To File', category: 'Rendering',
+    args: [{ name: 'FileName', default: null }], undoable: false,
+    execute(app, a) {
+      // Softimage Save Render Region — capture viewport region plate (viewExtras regionImg) when present.
+      const g = globalThis as any;
+      const vps = g.__viewports as { regionImg?: HTMLCanvasElement }[] | undefined;
+      const canvas = vps?.map(v => (v as any).regionImg).find(Boolean) as HTMLCanvasElement | undefined;
+      const name = String(a.FileName || 'RenderRegion.png');
+      if (canvas && typeof document !== 'undefined') {
+        const url = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = name.endsWith('.png') ? name : `${name}.png`;
+        link.click();
+        app.logMsg('info', `Render region saved → ${link.download}`);
+        return link.download;
+      }
+      // Fallback: still of current frame cropped via full still (region fractions already on OM).
+      const still = renderScenePasses(app, { passes: 'Passes.Current', currentFrameOnly: true, download: true, openPreview: false });
+      app.logMsg('info', `Render region save (still fallback): ${still.files[0]?.path ?? name}`);
+      return still;
+    },
+  });
+  app.register({
+    name: 'RenderRegionRefresh', label: 'Refresh Render Region', category: 'Rendering',
+    args: [{ name: 'Viewport', default: '' }], undoable: false,
+    execute(app) {
+      window.dispatchEvent(new CustomEvent('renderregion-refresh'));
+      app.logMsg('info', 'Render region refreshed');
+      app.events.emit('frame');
+    },
+  });
+  app.register({
+    name: 'RenderRegionToggleVisibility', label: 'Show/Hide Render Region', category: 'Rendering',
+    args: [{ name: 'Viewport', default: '' }], undoable: false,
+    execute(app) {
+      rr.visible = !rr.visible;
+      window.dispatchEvent(new CustomEvent('renderregion-toggle'));
+      app.logMsg('info', `Render region ${rr.visible ? 'shown' : 'hidden'}`);
+    },
+  });
   app.register({ name: 'RenderRegionToggleSelectionTracking', label: 'Toggle Selection Tracking for Render Region', category: 'Rendering', args: [{ name: 'Viewport', default: '' }], undoable: false, execute(app) { rr.track = !rr.track; app.logMsg('info', `Render region track selection ${rr.track ? 'ON' : 'OFF'}`); } });
   app.register({
     name: 'RenderRegionSetRefreshMode', label: 'Set Refresh Mode for Render Region', category: 'Rendering',
@@ -225,28 +276,63 @@ export function registerModuleToolbarCommands(app: App) {
       return p;
     },
   });
+  // WR-05 — Softimage SICreatePartition / AddToPartition / RemoveFromPartition on Pass.partitions.
+  const resolvePartitionTarget = (app: App, target: unknown): Partition | null => {
+    if (target instanceof Partition) return target;
+    const name = target != null && target !== '' ? String(target) : '';
+    const pass = app.scene.passes[app.scene.passes.length - 1];
+    if (!pass) return null;
+    if (name) return pass.partitions.find(p => p.name === name) ?? null;
+    const fromSel = app.selection.find((n): n is Partition => n instanceof Partition);
+    return fromSel ?? pass.partitions[pass.partitions.length - 1] ?? null;
+  };
   app.register({
     name: 'CreatePartition', label: 'New Partition', category: 'Rendering',
     args: [{ name: 'Target', default: '' }, { name: 'Name', default: 'Partition' }, { name: 'InputObjs', default: '' }],
     execute(app, a) {
-      const pass = app.scene.passes[app.scene.passes.length - 1];
+      const passName = String(a.Target || '');
+      const pass = (passName && app.scene.passes.find(p => p.name === passName))
+        || app.scene.passes[app.scene.passes.length - 1];
       if (!pass) throw new Error('No current pass');
-      const host = app.scene.root;
-      const p = new Property(app.scene.uniqueName(a.Name || 'Partition'), 'partition', [
-        bool('enabled', true, 'Enabled'),
-        str('pass', pass.name, 'Pass', { readOnly: true }),
-      ]);
-      app.record('Partition', () => host.addProperty(p), () => host.removeProperty(p));
+      const p = pass.addPartition(app.scene.uniqueName(a.Name || 'Partition'));
+      const objs = app.targets(a.InputObjs);
+      for (const o of objs) p.members.add(o);
       app.select([p]);
+      app.events.emit('scene');
+      app.logMsg('info', `CreatePartition → ${pass.name}.${p.name} (${objs.length} member(s))`);
       return p;
     },
   });
-  app.register({ name: 'AddToPartition', label: 'Add Object to Partition', category: 'Rendering', args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], execute(app) { app.logMsg('info', `Add to partition: ${app.selectedObjects.map(o => o.name).join(', ') || '(nothing selected)'}`); } });
-  app.register({ name: 'RemoveFromPartition', label: 'Remove Object from Partition', category: 'Rendering', args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], execute(app) { app.logMsg('info', `Remove from partition: ${app.selectedObjects.map(o => o.name).join(', ') || '(nothing selected)'}`); } });
+  app.register({
+    name: 'AddToPartition', label: 'Add Object to Partition', category: 'Rendering',
+    args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }],
+    execute(app, a) {
+      const part = resolvePartitionTarget(app, a.Target);
+      if (!part) throw new Error('AddToPartition: no partition Target');
+      const objs = app.targets(a.InputObjs);
+      if (!objs.length) throw new Error('AddToPartition: select objects');
+      for (const o of objs) part.members.add(o);
+      app.events.emit('scene');
+      app.logMsg('info', `AddToPartition → ${part.name}: ${objs.map(o => o.name).join(', ')}`);
+      return part;
+    },
+  });
+  app.register({
+    name: 'RemoveFromPartition', label: 'Remove Object from Partition', category: 'Rendering',
+    args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }],
+    execute(app, a) {
+      const part = resolvePartitionTarget(app, a.Target);
+      if (!part) throw new Error('RemoveFromPartition: no partition Target');
+      const objs = app.targets(a.InputObjs);
+      for (const o of objs) part.members.delete(o);
+      app.events.emit('scene');
+      app.logMsg('info', `RemoveFromPartition → ${part.name}: ${objs.map(o => o.name).join(', ') || '(none)'}`);
+      return part;
+    },
+  });
 
-  // Softimage true-95pct unlock + PIC deepen (#130): RenderPass args×6; RenderPasses SN args×5;
-  // Name "Render Current Pass" → SN RenderPasses args×1; Format=pic; ResolvedFilename={file}.{frame}.pic.
-  // Do not treat empty RenderPasses as Render Current Frame (separate SN args×0).
+  // WR-01/02 — Softimage RenderPass(es)/CurrentFrame + OnBegin/OnEndRenderPass (sceneRender).
+  // true-95pct: Format=pic; ResolvedFilename; do not conflate empty RenderPasses with CurrentFrame.
   app.register({
     name: 'RenderPass', label: 'Render Pass', category: 'Rendering',
     args: [
@@ -268,51 +354,80 @@ export function registerModuleToolbarCommands(app: App) {
     execute: (app, a) => executeRenderPass(app, a),
   });
   app.register({
-    // Softimage true-95pct: Name args=1 → SN RenderPasses (do not treat as RenderCurrentFrame).
     name: 'Render Current Pass', label: 'Render Current Pass', category: 'Rendering',
     args: [{ name: 'Passes', default: 'Passes.Current' }], undoable: false,
     description: 'Render selected passes',
-    // Softimage catalog: ScriptingName RenderPasses, arg_count 1 — Framebuffer Format=pic.
     execute: (app, a) => executeRenderPass(app, { Passes: a.Passes ?? 'Passes.Current' }),
   });
   app.register({
     name: 'RenderSelectedPasses', label: 'Render Selected Passes', category: 'Rendering',
-    args: [], undoable: false,
-    execute: (app) => renderScenePasses(app, { passes: 'Passes.Current' }),
+    args: [{ name: 'Passes', default: null }], undoable: false,
+    execute(app, a) {
+      if (a.Passes) return executeRenderPass(app, { Passes: a.Passes });
+      // Softimage: selected Pass explorer nodes, else Passes.Current (registry Collection).
+      const passes = resolveSelectedOrCurrentPasses(app);
+      const key = passes.length === 1
+        ? (passes[0]!.name || 'Passes.Current')
+        : passes.map(p => p.name).join(',');
+      return renderScenePasses(app, { passes: key || 'Passes.Current' });
+    },
   });
   app.register({
     name: 'RenderAllPasses', label: 'Render All Passes', category: 'Rendering',
-    args: [], undoable: false,
-    execute: (app) => renderScenePasses(app, { passes: 'Passes.List.*' }),
+    args: [
+      { name: 'Passes', default: 'Passes.List.*' }, { name: 'StartFrame', default: null },
+      { name: 'EndFrame', default: null }, { name: 'StepFrame', default: null },
+      { name: 'Verbose', default: ':siRenderVerbosityDefault:siRenderVerbosity' },
+    ],
+    undoable: false,
+    execute: (app, a) => executeRenderPass(app, { ...a, Passes: a.Passes ?? 'Passes.List.*' }),
   });
   app.register({
     name: 'RenderCurrentFrame', label: 'Render Current Frame', category: 'Rendering',
     args: [], undoable: false,
+    description: 'Softimage RenderCurrentFrame_Execute — Start=End=PlayControl.Current',
     execute: (app) => executeRenderCurrentFrame(app, false),
   });
   app.register({
     name: 'RenderCurrentFrameAllPasses', label: 'Render Current Frame All Passes', category: 'Rendering',
     args: [], undoable: false,
+    description: 'Softimage RenderCurrentFrameAllPasses_Execute — all passes at current frame',
     execute: (app) => executeRenderCurrentFrame(app, true),
   });
   app.register({ name: 'RenderPreview', label: 'Render Preview', category: 'Rendering', args: [], undoable: false, execute() { openView('Render Manager'); } });
   app.register({ name: 'OpenRenderingPreferences', label: 'Open Rendering Preferences', category: 'Rendering', args: [], undoable: false, execute() { window.dispatchEvent(new CustomEvent('openprefs', { detail: { page: 'Rendering' } })); } });
   app.register({ name: 'InspectCurrentPass', label: 'Inspect Current Pass', category: 'Rendering', args: [], undoable: false, execute(app) { const p = app.scene.passes[app.scene.passes.length - 1]; if (p) app.logMsg('info', `Current pass: ${p.name}`); openView('Render Manager'); } });
   app.register({ name: 'InspectRendererOptions', label: 'Inspect Renderer Options', category: 'Rendering', args: [], undoable: false, execute() { window.dispatchEvent(new CustomEvent('openprefs', { detail: { page: 'Rendering' } })); } });
-  // Softimage ExportRenderArchive* ACTIVE — attested arg counts (commands_full). Offline archive bytes LOCK.
+  // WR-03 — Softimage Export*RenderArchive registry args; Softimage .mi ABSENT → AfterImage JSON package.
   app.register({
     name: 'ExportRenderArchive', label: 'Export Selected Passes to Render Archive', category: 'Rendering',
-    args: [{ name: 'Passes', default: null }], undoable: false,
-    description: 'Export the selected passes to a render archive',
-    execute: (app, a) => app.logMsg('info', `Export render archive: ${a.Passes ?? 'stub'}`),
+    args: [
+      { name: 'Passes', default: 'Passes.Current' }, { name: 'StartFrame', default: null },
+      { name: 'EndFrame', default: null }, { name: 'StepFrame', default: null },
+      { name: 'Verbose', default: ':siRenderVerbosityDefault:siRenderVerbosity' },
+    ],
+    undoable: false,
+    description: 'Export a list of passes to a render archive, or the current pass if none specified',
+    execute: (app, a) => exportRenderArchive(app, a),
   });
   app.register({
     name: 'ExportRenderArchiveAllPasses', label: 'Export All Passes to Render Archives', category: 'Rendering',
     args: [{ name: 'Passes', default: 'Passes.List.*' }], undoable: false,
     description: 'Export All Passes to Render Archives',
-    execute: (app, a) => app.logMsg('info', `Export all passes archive: ${a.Passes}`),
+    execute: (app, a) => exportRenderArchiveAllPasses(app, a),
   });
-  app.register({ name: 'ExportObjectRenderArchive', label: 'Export an Object to a Render Archive', category: 'Rendering', args: [], undoable: false, execute: (app) => app.logMsg('info', 'Export object render archive: stub') });
+  app.register({
+    name: 'ExportObjectRenderArchive', label: 'Export an Object to a Render Archive', category: 'Rendering',
+    args: [
+      { name: 'InputObj', default: null }, { name: 'FileName', default: '' },
+      { name: 'StartFrame', default: null }, { name: 'EndFrame', default: null },
+      { name: 'StepFrame', default: null }, { name: 'MultiFrame', default: false },
+      { name: 'DisplayProxy', default: true },
+    ],
+    undoable: false,
+    description: 'Export an object and all its children to a render archive, or the current selection if none specified',
+    execute: (app, a) => exportObjectRenderArchive(app, a),
+  });
 
   // ——— Simulate: rigid / soft / cloth ———
   const rbProp = (app: App, passive: boolean) => {

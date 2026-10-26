@@ -47,7 +47,8 @@ export interface CommandDef {
 
 export interface UndoEntry { label: string; undo(): void; redo(): void; }
 
-type EventName = 'scene' | 'selection' | 'log' | 'undo' | 'module' | 'frame' | 'params' | 'inspect' | 'newscene' | 'fr-stage';
+// Softimage.XSIOM OnBeginRenderPass / OnEndRenderPass attested in behavioral tour (WR-01).
+type EventName = 'scene' | 'selection' | 'log' | 'undo' | 'module' | 'frame' | 'params' | 'inspect' | 'newscene' | 'fr-stage' | 'OnBeginRenderPass' | 'OnEndRenderPass';
 
 export class EventBus {
   private m = new Map<EventName, Set<(d?: any) => void>>();

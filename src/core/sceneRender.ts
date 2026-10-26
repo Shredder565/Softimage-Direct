@@ -386,6 +386,8 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
 
   for (const pass of passList) {
     passNames.push(pass.name);
+    // Softimage.XSIOM / sicoresdk: OnBeginRenderPass / OnEndRenderPass (string-attested OM events).
+    app.events.emit('OnBeginRenderPass', { pass: pass.name });
     const fb = mainFramebuffer(pass);
     const w = Math.max(1, Math.floor(Number(opts.width ?? pass.val('ImageWidth') ?? width)));
     const h = Math.max(1, Math.floor(Number(opts.height ?? pass.val('ImageHeight') ?? height)));
@@ -446,6 +448,7 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
     }
     if (fb.get('Format')) fb.set('Format', format || 'pic');
     app.anim.frame = prev;
+    app.events.emit('OnEndRenderPass', { pass: pass.name, frames: count, resolved: lastResolved });
   }
 
   const ok = files.length > 0 && files.every(f => f.byteLength > 32 && f.dataUrl.startsWith('data:image'));

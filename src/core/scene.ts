@@ -671,6 +671,8 @@ export class Group extends Node {
 }
 /** Softimage Partition under a Pass (Background_Objects / Background_Lights). viewvis=2 is Softimage default (siInherited). */
 export class Partition extends Node {
+  /** Softimage partition membership (AddToPartition / RemoveFromPartition). */
+  readonly members = new Set<X3DObject>();
   constructor(name: string) {
     super(name, 'Partition', 'folder', [
       str('Name', name, 'Name', { readOnly: true }),
@@ -681,6 +683,7 @@ export class Partition extends Node {
       int('viewplaybackvis', 2, 'View Playback Visibility'),
     ]);
   }
+  explorerChildren(): Node[] { return [...this.members]; }
 }
 /** Softimage Framebuffer on a Pass (Default_Pass.Main). Dump: si_render_framebuffer_enums + true-95pct RenderFramebuffer.spdl. */
 export class Framebuffer extends Node {
