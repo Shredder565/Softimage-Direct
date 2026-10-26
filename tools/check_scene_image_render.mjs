@@ -1,7 +1,10 @@
 // Softimage-faithful scene still-image render checks (no Softimage invent).
-// Dump-attested path: Render_Pictures/Default_Pass_Main.1.pic (desktop_tour_commands / render-desktop tour).
-// 1) Static: RenderPass/RenderCurrentFrame no longer offline stubs.
-// 2) Node: path + PNG encode + software still write via sceneRender.
+// Dump-attested:
+//   Render_Pictures/Default_Pass_Main.1.pic (desktop tour)
+//   true-95pct ResolvedFilename = {Filename}.{frame}.pic → still_frame.1.pic (Format=pic)
+//   Render Current Pass → SN RenderPasses args 1; RenderCurrentFrame args 0; RenderPass args 6
+// 1) Static: stubs gone + Softimage arities + ResolvedFilename helper
+// 2) Node: path + PNG encode + still write
 // 3) Optional Playwright: __sceneImageRenderSmoke when UI_SMOKE_URL / preview up.
 import fs from 'fs';
 import path from 'path';
@@ -24,14 +27,33 @@ else diffs.push('moduleToolbar missing sceneRender execute hooks');
 if (/execute:\s*\(app\)\s*=>\s*renderLog/.test(om) || /offline render stub/.test(om))
   diffs.push('renderToolbarOm still stubs render');
 else notes.push('renderToolbarOm: no offline stub');
-if (!/resolvePicturePath/.test(core) || !/Default_Pass_Main\.1\.pic/.test(core))
+if (!/resolveSoftimageResolvedFilename|resolvePicturePath/.test(core) || !/Default_Pass_Main\.1\.pic/.test(core))
   diffs.push('sceneRender missing Softimage picture path attestation');
 else notes.push('sceneRender documents Softimage Default_Pass_Main.1.pic');
+if (!/still_frame\.1\.pic/.test(core)) diffs.push('sceneRender missing true-95pct still_frame.1.pic attestation');
+else notes.push('sceneRender documents true-95pct still_frame.1.pic');
+if (!/ResolvedFilename/.test(core)) diffs.push('sceneRender missing ResolvedFilename sync');
+else notes.push('sceneRender syncs ResolvedFilename');
 if (!/encodePngRGBA/.test(core)) diffs.push('sceneRender missing encodePngRGBA');
 else notes.push('sceneRender encodePngRGBA present');
 if (!/writeExtensionFor/.test(core) || !/return 'pic'/.test(core))
   diffs.push('writeExtensionFor must keep Softimage pic default');
 else notes.push('writeExtensionFor keeps Softimage .pic');
+
+// Softimage true-95pct command arities (true95_supplemental.json)
+const rcp = modToolbar.match(/name:\s*'Render Current Pass'[\s\S]*?args:\s*(\[[\s\S]*?\])/);
+const rcf = modToolbar.match(/name:\s*'RenderCurrentFrame'[\s\S]*?args:\s*(\[[\s\S]*?\])/);
+const rp = modToolbar.match(/name:\s*'RenderPass'[\s\S]*?args:\s*(\[[\s\S]*?\])/);
+const countArgs = (block) => block ? (block.match(/\{\s*name:/g) || []).length : -1;
+if (countArgs(rcp?.[1]) !== 1) diffs.push(`Render Current Pass args want 1 got ${countArgs(rcp?.[1])}`);
+else notes.push('Render Current Pass args×1 → SN RenderPasses');
+if (countArgs(rcf?.[1]) !== 0) diffs.push(`RenderCurrentFrame args want 0 got ${countArgs(rcf?.[1])}`);
+else notes.push('RenderCurrentFrame args×0');
+if (countArgs(rp?.[1]) !== 6) diffs.push(`RenderPass args want 6 got ${countArgs(rp?.[1])}`);
+else notes.push('RenderPass args×6');
+if (!/ResolvedFilename/.test(fs.readFileSync(path.join(root, 'src/core/scene.ts'), 'utf8')))
+  diffs.push('Framebuffer missing ResolvedFilename OM param');
+else notes.push('Framebuffer ResolvedFilename OM param');
 
 // Node runtime: path + still write (software fallback, no WebGL).
 const srUrl = pathToFileURL(path.join(root, 'src/core/sceneRender.ts')).href;
@@ -60,11 +82,19 @@ function writeExtensionFor(format) {
   if (f === 'pic' || f === 'exr' || f === 'png' || f === 'jpg') return f;
   return 'pic';
 }
-function resolvePicturePath(outputDir, filename, frame, padding, format) {
+function resolveSoftimageResolvedFilename(outputDir, filename, frame, padding, format, passName = 'Default_Pass', fbName = 'Main') {
+  const ext = writeExtensionFor(format);
+  const frameStr = padFrame(frame, padding);
+  const expanded = expandRenderTokens(filename || '[Pass]_[Framebuffer]', passName, fbName)
+    .replace(/\.(png|mp4|avi|pic|exr|tif|tiff|jpg|jpeg|mov)$/i, '');
+  const norm = expanded.replace(/\\/g, '/');
+  const absolute = /^[a-zA-Z]:\//.test(norm) || norm.startsWith('//');
+  if (absolute) return `${norm}.${frameStr}.${ext}`;
+  if (norm.includes('/')) return `${norm.replace(/^\//, '')}.${frameStr}.${ext}`;
   const dir = expandRenderTokens(outputDir || '[Project Path]\\Render_Pictures', '', '').replace(/\/$/, '') || 'Render_Pictures';
-  const base = expandRenderTokens(filename || '[Pass]_[Framebuffer]', 'Pass', 'Main').replace(/\.(png|mp4|avi|pic|exr|tif|tiff|jpg|jpeg|mov)$/i, '');
-  return `${dir}/${base}.${padFrame(frame, padding)}.${writeExtensionFor(format)}`;
+  return `${dir}/${norm || 'Pass_Main'}.${frameStr}.${ext}`;
 }
+const resolvePicturePath = resolveSoftimageResolvedFilename;
 
 const resolved = resolvePicturePath(
   '[Project Path]\\Render_Pictures',
@@ -88,6 +118,16 @@ const tok = expandRenderTokens('[Pass]_[Framebuffer]', 'Default_Pass', 'Main');
 const resolved3 = resolvePicturePath('[Project Path]\\Render_Pictures', tok, 1, 1, 'pic');
 if (resolved3 !== pathDump) diffs.push(`token path mismatch: ${resolved3}`);
 else notes.push('token expand → Default_Pass_Main.1.pic');
+
+// true-95pct: Filename absolute …\still_frame → ResolvedFilename …\still_frame.1.pic
+const stillAbs = 'C:\\Users\\neil\\Documents\\softimage_dump_factory\\true-95pct\\still_frame';
+const stillResolved = resolveSoftimageResolvedFilename('[Project Path]\\Render_Pictures', stillAbs, 1, 1, 'pic');
+const stillWant = 'C:/Users/neil/Documents/softimage_dump_factory/true-95pct/still_frame.1.pic';
+if (stillResolved !== stillWant) diffs.push(`still_frame ResolvedFilename got ${stillResolved} want ${stillWant}`);
+else notes.push('true-95pct still_frame.1.pic ResolvedFilename OK');
+const stillRel = resolveSoftimageResolvedFilename('Render_Pictures', 'still_frame', 1, 1, 'pic');
+if (stillRel !== 'Render_Pictures/still_frame.1.pic') diffs.push(`relative still_frame path ${stillRel}`);
+else notes.push('relative still_frame.1.pic OK');
 
 // PNG encode smoke via esbuild-free: spawn tsc not required — re-implement encode check by importing after vite? 
 // Prefer running TypeScript through node --experimental if available; else check encode exists + write tiny PNG with zlib store duplicated here.
@@ -148,11 +188,16 @@ else {
   const outDir = path.join(root, 'shot-render-smoke');
   fs.mkdirSync(outDir, { recursive: true });
   const outFile = path.join(outDir, 'Default_Pass_Main.1.pic');
-  // Softimage path leaf; PNG payload until Softimage PIC codec dump (true-95pct) lands.
+  // Softimage path leaf (.pic). Dump did not ship Softimage PIC magic bytes — path Softimage-exact; PNG display payload.
   fs.writeFileSync(outFile, png);
+  const stillFile = path.join(outDir, 'still_frame.1.pic');
+  fs.writeFileSync(stillFile, png);
   if (!fs.existsSync(outFile) || fs.statSync(outFile).size < 40)
     diffs.push('failed to write still image file');
   else notes.push(`wrote still ${outFile} (${fs.statSync(outFile).size} bytes)`);
+  if (!fs.existsSync(stillFile) || fs.statSync(stillFile).size < 40)
+    diffs.push('failed to write still_frame.1.pic');
+  else notes.push(`wrote true-95pct leaf ${stillFile}`);
 }
 
 // Optional browser smoke

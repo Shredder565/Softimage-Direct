@@ -682,7 +682,7 @@ export class Partition extends Node {
     ]);
   }
 }
-/** Softimage Framebuffer on a Pass (Default_Pass.Main). Dump: si_render_framebuffer_enums.json */
+/** Softimage Framebuffer on a Pass (Default_Pass.Main). Dump: si_render_framebuffer_enums + true-95pct RenderFramebuffer.spdl. */
 export class Framebuffer extends Node {
   constructor(name = 'Main') {
     super(name, 'Framebuffer', 'property', [
@@ -690,6 +690,8 @@ export class Framebuffer extends Node {
       str('RenderChannel', 'Main', 'RenderChannel'),
       bool('Enabled', true, 'Enabled'),
       str('Filename', '[Pass]_[Framebuffer]', 'Filename'),
+      // Softimage true-95pct: ResolvedFilename = {Filename}.{frame}.pic (e.g. still_frame.1.pic)
+      str('ResolvedFilename', '', 'ResolvedFilename'),
       str('Format', 'pic', 'Format'),
       str('DataType', 'RGBA', 'DataType'),
       int('BitDepth', 3, 'BitDepth'),
