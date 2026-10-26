@@ -1,5 +1,5 @@
 {
-  "_comment": "Softimage CrowdFX under ICE MCP \u2014 Desktop modules_crowdfx.json + PE MENU 303 Actors/Crowd/Simulation (41644/41646/41645). Dump-backed only; Anchor-to-Delete compounds LOCK (no invent).",
+  "_comment": "Softimage CrowdFX under ICE MCP \u2014 Desktop modules_crowdfx.json + PE MENU 303 Actors/Crowd/Simulation (41644/41646/41645). Dump-backed only; Anchor-to-Delete + factory_menu_names DUMP_READY.",
   "softimage": "13.2.163.0",
   "source": [
     "internal/softimage-pc-dumps/modules/modules_crowdfx.json",
@@ -18,16 +18,23 @@
   "desktop_menu": {
     "status": "DUMP_READY",
     "host": "ICE",
-    "path": ["ICE", "CrowdFX"],
-    "buttons": ["Actors", "Crowd", "Simulation"],
-    "submenu_live": false,
+    "path": [
+      "ICE",
+      "CrowdFX"
+    ],
+    "buttons": [
+      "Actors",
+      "Crowd",
+      "Simulation"
+    ],
+    "submenu_live": true,
     "submenu_flyouts": "DUMP_READY",
     "media": [
       "media/softimage-modules-gdi/40-crowdfx-ice-menu.png",
       "media/softimage-modules-gdi/40-crowdfx-desktop.png",
       "media/softimage-95pct-closer/30-crowdfx-menu-hover.png"
     ],
-    "note": "Desktop menubar ICE tear-off reaches CrowdFX Actors/Crowd/Simulation; closer95 crowdfx.submenu_flyouts DUMP_READY (PE Anchor-to-Delete); compound leaves LOCK"
+    "note": "Desktop menubar ICE tear-off reaches CrowdFX Actors/Crowd/Simulation; closer95 crowdfx.submenu_flyouts DUMP_READY (PE Anchor-to-Delete + CrowdFX_Plugin.py factory fills)"
   },
   "under_ice": true,
   "menu_id": 303,
@@ -46,9 +53,11 @@
     "Simulation": 41645
   },
   "runtime_anchors": {
-    "status": "LOCK",
+    "status": "DUMP_READY",
     "pe_label": "Anchor-to-Delete",
-    "note": "MENU 303 CrowdFX Actors/Crowd/Simulation leaves are PE placeholders filled at Softimage runtime by CrowdFX plugins. Do not invent compound leaves. PE id 41646 collides with Render Regions Refresh Mode Interactive \u2014 ignore cmd map for Anchor-to-Delete."
+    "compound_names": "DUMP_READY",
+    "attestation": "si/anchor_factory_menu_fills.json",
+    "note": "MENU 303 CrowdFX Anchors + CrowdFX_Plugin.py factory fills DUMP_READY. PE id 41646 RenderRegion collision \u2014 ignore cmd map for Anchor."
   },
   "sdk_anchors": {
     "siMenuTbICECrowdFXActorsID": 380,

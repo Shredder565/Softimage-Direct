@@ -22,9 +22,9 @@
     "status": "DUMP_READY",
     "pe_label": "Anchor-to-Delete",
     "pe_leaf_count": 14,
-    "compound_names": "LOCK",
-    "attestation": "si/ice_pe_anchor_leaves.json",
-    "note": "closer95 DUMP_READY: PE MENU 303 Anchor-to-Delete leaf ids/trails + OM Create/Explode ICE Compound Node. Plugin compound *names* stay LOCK (still Anchor-to-Delete). PE id 41646 collides with Render Regions Refresh Mode Interactive — ignore cmd map for Anchor-to-Delete."
+    "compound_names": "DUMP_READY",
+    "attestation": "si/anchor_factory_menu_fills.json",
+    "note": "closer95 PE ids + softimage-anchor-compounds-ghidra-tour factory_menu_names DUMP_READY (ICEfxBuilder/CrowdFX/MOTOR). PE id 41646 collides with Render Regions — ignore cmd map for Anchor-to-Delete."
   },
   "sdk_anchors": {
     "siMenuTbICEParticlesCreateID": 320,

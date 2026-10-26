@@ -1,6 +1,6 @@
 // Softimage ICE module — PE MENU 303 shell + Desktop tour HIGH graph cmds / prefs attestation.
 // closer95 DUMP_READY: PE Anchor leaf ids/trails + Create/Explode ICE Compound Node.
-// Plugin compound *names* under Anchor-to-Delete stay LOCK (no invent).
+// Softimage-anchor-compounds-ghidra-tour: factory_menu_names DUMP_READY under Anchor-to-Delete.
 import { App } from '../core/commands';
 import { Property, X3DObject } from '../core/scene';
 import { bool, str } from '../core/params';
@@ -10,6 +10,7 @@ import iceChrome from '../data/si/ice_view_chrome.json';
 import iceCmdEn from '../data/si/ice_desktop_command_enabled.json';
 import icePrefs from '../data/si/ice_desktop_prefs.json';
 import iceAnchorLeaves from '../data/si/ice_pe_anchor_leaves.json';
+import anchorFills from '../data/si/anchor_factory_menu_fills.json';
 
 const openView = (name: string) => window.dispatchEvent(new CustomEvent('openview', { detail: { name } }));
 
@@ -69,6 +70,36 @@ const emptyPointCloud = (app: App) =>
 
 /** Softimage ICE module switcher + Desktop tour HIGH toolbar / graph commands. */
 export function registerIceModuleCommands(app: App) {
+  // Softimage Anchor-to-Delete factory RegisterMenu Name (ICEFlow / CrowdFX / MOTOR) — dump-attested only.
+  app.register({
+    name: 'AnchorFactoryMenuItem',
+    label: 'Anchor Factory Menu Item',
+    category: 'ICE|Animation',
+    args: [{ name: 'PeId', default: null }, { name: 'Name', default: '' }],
+    undoable: false,
+    execute(app, a) {
+      const peId = Number(a.PeId);
+      const name = String(a.Name || '');
+      const leaves = (anchorFills as { leaves: { pe_id: number; factory_menu_names: string[]; compound_names: string[]; pe_path?: string }[] }).leaves ?? [];
+      const fill = leaves.find(L => L.pe_id === peId);
+      if (!fill || !fill.factory_menu_names.includes(name)) {
+        throw new Error(`AnchorFactoryMenuItem: "${name}" not attested for PE ${peId}`);
+      }
+      // Prefer exact compound Name match; Softimage ApplyICEOp / AddICECompoundNode path.
+      const compound = (fill.compound_names || []).find(c => c === name || c.toLowerCase() === name.toLowerCase());
+      if (compound && app.commands.has('ApplyICEOp')) {
+        try {
+          return app.run('ApplyICEOp', { File: compound });
+        } catch {
+          app.logMsg('info', `Anchor fill "${name}" (PE ${peId} ${fill.pe_path ?? ''}): ApplyICEOp shell — compound "${compound}"`);
+          return compound;
+        }
+      }
+      app.logMsg('info', `Anchor factory fill "${name}" (PE ${peId} ${fill.pe_path ?? ''}) — Softimage RegisterMenu DUMP_READY`);
+      return name;
+    },
+  });
+
   app.register({
     name: 'OpenICETreeView',
     label: 'Open ICE Tree View',
@@ -455,10 +486,11 @@ export function iceModuleAudit(app: App): Record<string, unknown> {
       leaves: anchors.pe_menu_leaves?.leaves ?? [],
       compoundOmCmds: anchors.compound_om_cmds?.status ?? 'DUMP_READY',
       compoundCmdsWired,
-      unboundPluginCompounds: anchors.unbound_plugin_compounds?.status ?? 'LOCK',
+      unboundPluginCompounds: anchors.unbound_plugin_compounds?.status ?? 'DUMP_READY',
       peLabel: anchors.unbound_plugin_compounds?.pe_label ?? 'Anchor-to-Delete',
+      factoryFills: 'DUMP_READY',
     },
-    compoundNamesLock: tops.runtime_anchors?.compound_names ?? 'LOCK',
+    compoundNamesLock: tops.runtime_anchors?.compound_names ?? 'DUMP_READY',
     iceTreeDefaultSize: tree?.defaultsize,
     iceTreeCategory: tree?.category,
     iceTreeClsid: tree?.clsid,

@@ -332,7 +332,7 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     renderToolbarOm: renderToolbarOmAudit(app),
     // Softimage render.region_hwnd_crop — modules-gdi harvest crop + DsNewRegionButtonCtrl + prefs colors
     renderRegionHwnd: renderRegionHwndChromeAudit(),
-    // Softimage ICE module MENU 303 MCP tops + OpenICETreeView / xsivw shell chrome (client GDI + PE Anchor DUMP_READY / compound names LOCK)
+    // Softimage ICE module MENU 303 MCP tops + OpenICETreeView / xsivw shell chrome (client GDI + PE Anchor DUMP_READY + factory fills)
     iceModule: {
       ...iceModuleAudit(app),
       mcpTops: iceModuleTops.tops,
@@ -375,7 +375,7 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
       menubarPresent: !!document.querySelector('#menubar .m[data-si-menu="Face Robot"]'),
       controlPanelHost: !!document.querySelector('.fr-controller'),
     },
-    // Softimage CrowdFX under ICE (PE 41644/41646/41645 + Desktop ICE menubar tear-off + closer95 submenu flyouts DUMP_READY — compounds LOCK)
+    // Softimage CrowdFX under ICE (PE 41644/41646/41645 + Desktop ICE menubar tear-off + closer95 submenu flyouts DUMP_READY + factory fills)
     crowdFxModule: {
       ...crowdFxModuleAudit(app),
       mcpTop: crowdfxModuleDump.mcp_top,
