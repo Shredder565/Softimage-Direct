@@ -768,6 +768,125 @@ export function registerAnimCommands(app: App) {
   motorAlias('MocapToRig', 'Mocap to Rig', 'ImportC3DFile');
   motorAlias('LoadMotion', 'Load Motion', 'ImportC3DFile');
   motorAlias('SaveMotion', 'Save Motion', 'SetStructureFile');
+
+  // GD-04 — CDKMotionTransform.64.dll Execute: Retarget / PlotRetargetMotion / SaveMotorFile (commands_full arity).
+  // Softimage error strings attest required args; no invent retarget solver — property-tag + validation contract.
+  if (!app.commands.has('Retarget')) {
+    app.register({
+      name: 'Retarget', label: 'Retarget', category: 'Custom',
+      // Softimage catalog typo strarttime preserved (commands_full).
+      args: [
+        { name: 'sourcemodel', default: null },
+        { name: 'targetmodel', default: null },
+        { name: 'strarttime', default: null },
+        { name: 'endtime', default: null },
+      ],
+      undoable: false,
+      execute(app, a) {
+        if (a.sourcemodel == null || a.sourcemodel === '') throw new Error('Retarget command missing source model.');
+        if (a.targetmodel == null || a.targetmodel === '') throw new Error('Retarget command missing destination model.');
+        if (a.strarttime == null || a.strarttime === '') throw new Error('Retarget command missing start frame.');
+        if (a.endtime == null || a.endtime === '') throw new Error('Retarget command missing end frame.');
+        const src = app.scene.find(String(a.sourcemodel)) ?? app.selectedObjects[0];
+        const dst = app.scene.find(String(a.targetmodel)) ?? app.selectedObjects[1];
+        if (!src) throw new Error('Retarget command invalid source model.');
+        if (!dst) throw new Error('Retarget command invalid destination model.');
+        const host = dst;
+        let p = host.properties.find(x => x.type === 'motor' && x.val('kind') === 'retarget');
+        if (!p) {
+          p = new Property('Retarget', 'motor', [
+            str('kind', 'retarget', 'MOTOR Kind', { readOnly: true }),
+            str('source', src.name, 'Source Model'),
+            str('target', dst.name, 'Target Model'),
+            str('start', String(a.strarttime), 'Start'),
+            str('end', String(a.endtime), 'End'),
+          ]);
+          app.record('Retarget', () => host.addProperty(p!), () => host.removeProperty(p!));
+        }
+        app.select([p]);
+        app.logMsg('info', `Retarget ${src.name} → ${dst.name} [${a.strarttime}..${a.endtime}] — GD-04`);
+        return p;
+      },
+    });
+  }
+  if (!app.commands.has('PlotRetargetMotion')) {
+    app.register({
+      name: 'PlotRetargetMotion', label: 'Plot Retarget Motion', category: 'Custom',
+      args: [
+        { name: 'model', default: null },
+        { name: 'preserve', default: null },
+        { name: 'inflection', default: null },
+        { name: 'interval', default: null },
+        { name: 'step', default: null },
+        { name: 'start', default: null },
+        { name: 'end', default: null },
+      ],
+      undoable: false,
+      execute(app, a) {
+        if (a.model == null || a.model === '') throw new Error('PlotRetargetMotion command missing target model.');
+        if (a.preserve == null || a.preserve === '') throw new Error('PlotRetargetMotion command missing preserve.');
+        if (a.inflection == null || a.inflection === '') throw new Error('PlotRetargetMotion command missing inflection.');
+        if (a.interval == null || a.interval === '') throw new Error('PlotRetargetMotion command missing interval.');
+        if (a.step == null || a.step === '') throw new Error('PlotRetargetMotion command missing step.');
+        if (a.start == null || a.start === '') throw new Error('PlotRetargetMotion command missing start.');
+        if (a.end == null || a.end === '') throw new Error('PlotRetargetMotion command missing end.');
+        const model = app.scene.find(String(a.model)) ?? app.selectedObjects[0];
+        if (!model) throw new Error('PlotRetargetMotion command invalid target model.');
+        let p = model.properties.find(x => x.type === 'motor' && x.val('kind') === 'plot_retarget');
+        if (!p) {
+          p = new Property('PlotRetargetMotion', 'motor', [
+            str('kind', 'plot_retarget', 'MOTOR Kind', { readOnly: true }),
+            str('preserve', String(a.preserve), 'Preserve'),
+            str('inflection', String(a.inflection), 'Inflection'),
+            str('interval', String(a.interval), 'Interval'),
+            str('step', String(a.step), 'Step'),
+            str('start', String(a.start), 'Start'),
+            str('end', String(a.end), 'End'),
+          ]);
+          app.record('PlotRetargetMotion', () => model.addProperty(p!), () => model.removeProperty(p!));
+        }
+        app.select([p]);
+        app.logMsg('info', `PlotRetargetMotion ${model.name} — GD-04`);
+        return p;
+      },
+    });
+  }
+  if (!app.commands.has('SaveMotorFile')) {
+    app.register({
+      name: 'SaveMotorFile', label: 'Save Motor File', category: 'Custom',
+      args: [
+        { name: 'model', default: null },
+        { name: 'motorfile', default: null },
+        { name: 'start', default: null },
+        { name: 'end', default: null },
+      ],
+      undoable: false,
+      execute(app, a) {
+        if (a.model == null || a.model === '') throw new Error('SaveMotorFile command missing source model.');
+        if (a.motorfile == null || a.motorfile === '') throw new Error('SaveMotorFile command missing motorfile.');
+        if (a.start == null || a.start === '') throw new Error('SaveMotorFile command missing start frame.');
+        if (a.end == null || a.end === '') throw new Error('SaveMotorFile command missing end frame.');
+        const model = app.scene.find(String(a.model)) ?? app.selectedObjects[0];
+        if (!model) throw new Error('SaveMotorFile command invalid source model.');
+        let p = model.properties.find(x => x.type === 'motor' && x.val('kind') === 'save_motor_file');
+        if (!p) {
+          p = new Property('SaveMotorFile', 'motor', [
+            str('kind', 'save_motor_file', 'MOTOR Kind', { readOnly: true }),
+            str('file', String(a.motorfile), 'Motor File'),
+            str('start', String(a.start), 'Start'),
+            str('end', String(a.end), 'End'),
+          ]);
+          app.record('SaveMotorFile', () => model.addProperty(p!), () => model.removeProperty(p!));
+        } else {
+          const f = p.get('file');
+          if (f) app.setParam(f, String(a.motorfile));
+        }
+        app.select([p]);
+        app.logMsg('info', `SaveMotorFile ${model.name} → ${a.motorfile} — GD-04`);
+        return p;
+      },
+    });
+  }
   app.register({ name: 'CreateHierarchyFromBiped', label: 'Create Hierarchy from Biped', category: 'Animation', args: [], execute(app) {
     return app.run('CreateSkeletonFromGuide');
   } });

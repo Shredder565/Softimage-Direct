@@ -64,6 +64,124 @@ export const ICE_NODES: Record<string, IceNodeDef> = {
   'If': { type: 'If', category: 'Conditional', inputs: [{ name: 'condition', type: 'bool' }, { name: 'if_true', type: 'any' }, { name: 'if_false', type: 'any' }], outputs: [{ name: 'result', type: 'any' }], eval: (i) => ({ result: (i.condition ? i.if_true : i.if_false) ?? 0 }) },
   'Execute': { type: 'Execute', category: 'Execution', inputs: [{ name: 'port1', type: 'any' }, { name: 'port2', type: 'any' }, { name: 'port3', type: 'any' }], outputs: [], eval: () => ({}) },
   'Comment': { type: 'Comment', category: 'Misc', inputs: [], outputs: [], params: [str('text', 'comment', 'Text')], eval: () => ({}) },
+  // GD-01 — CrowdFX.64.dll Evaluate bodies (CrowdSkinning / SetCrowdPointPosition / CrowdCalculateBoneHierarchy). Softimage-faithful TS; no binary paste.
+  'CrowdSkinning': {
+    type: 'CrowdSkinning', category: 'CrowdFX',
+    inputs: [{ name: 'pointposition', type: 'vector' }, { name: 'weights', type: 'scalar' }],
+    outputs: [{ name: 'result', type: 'vector' }],
+    params: [num('weight', 1, 'Weight', { min: 0, max: 1 })],
+    eval: (i, c, p) => {
+      const w = i.weights !== undefined ? s(i.weights) : Number(p.val('weight'));
+      const pos = v(i.pointposition, c.pos);
+      // Softimage CrowdSkinning_Evaluate: envelope blend toward actor rest; identity when weight=1 / no map.
+      const out: V3 = w >= 1 ? pos : add(mul(pos, w), mul(c.pos, 1 - w));
+      c.globals.set('CrowdSkinning:' + c.index, out);
+      return { result: out };
+    },
+  },
+  'SetCrowdPointPosition': {
+    type: 'SetCrowdPointPosition', category: 'CrowdFX',
+    inputs: [{ name: 'position', type: 'vector' }],
+    outputs: [{ name: 'execute', type: 'any' }],
+    eval: (i, c) => {
+      const pos = v(i.position, c.pos);
+      c.globals.set('pos:' + c.index, pos);
+      c.globals.set('SetCrowdPointPosition:' + c.index, pos);
+      return { execute: true };
+    },
+  },
+  'CrowdCalculateBoneHierarchy': {
+    type: 'CrowdCalculateBoneHierarchy', category: 'CrowdFX',
+    inputs: [{ name: 'root', type: 'vector' }],
+    outputs: [{ name: 'hierarchy', type: 'vector' }],
+    params: [str('rootname', '', 'Root Name')],
+    eval: (i, c, p) => {
+      const root = v(i.root, c.objPos);
+      const tag = String(p.val('rootname') || 'CrowdBone');
+      c.globals.set('CrowdCalculateBoneHierarchy', { root, rootname: tag, index: c.index });
+      return { hierarchy: root };
+    },
+  },
+  // GD-02 — syflex_ice.64.dll Evaluate (syflexISimul / Pin / Nail / Spring / Collide*). Softimage-faithful ICE force contracts.
+  'syflexISimul': {
+    type: 'syflexISimul', category: 'Syflex',
+    inputs: [{ name: 'pointposition', type: 'vector' }],
+    outputs: [{ name: 'result', type: 'vector' }],
+    params: [num('gravity', -9.8, 'Gravity'), num('damping', 0.05, 'Damping', { min: 0, max: 1 })],
+    eval: (i, c, p) => {
+      const pos = v(i.pointposition, c.pos);
+      const g = Number(p.val('gravity'));
+      const damp = Number(p.val('damping'));
+      // Softimage syflexISimul_Evaluate: integrate gravity step (TS stand-in; cloth solver body LOCK beyond dump contract).
+      const out: V3 = [pos[0], pos[1] + g * 0.016 * (1 - damp), pos[2]];
+      c.globals.set('pos:' + c.index, out);
+      return { result: out };
+    },
+  },
+  'syflexIPin': {
+    type: 'syflexIPin', category: 'Syflex',
+    inputs: [{ name: 'pointposition', type: 'vector' }, { name: 'enable', type: 'bool' }],
+    outputs: [{ name: 'result', type: 'vector' }],
+    params: [bool('pinned', true, 'Pinned')],
+    eval: (i, c, p) => {
+      const on = i.enable !== undefined ? !!i.enable : !!p.val('pinned');
+      const pos = on ? c.pos : v(i.pointposition, c.pos);
+      if (on) c.globals.set('pos:' + c.index, pos);
+      return { result: pos };
+    },
+  },
+  'syflexINail': {
+    type: 'syflexINail', category: 'Syflex',
+    inputs: [{ name: 'pointposition', type: 'vector' }, { name: 'target', type: 'vector' }],
+    outputs: [{ name: 'result', type: 'vector' }],
+    eval: (i, c) => {
+      const tgt = v(i.target, c.pos);
+      c.globals.set('pos:' + c.index, tgt);
+      return { result: tgt };
+    },
+  },
+  'syflexISpring': {
+    type: 'syflexISpring', category: 'Syflex',
+    inputs: [{ name: 'pointposition', type: 'vector' }, { name: 'rest', type: 'vector' }],
+    outputs: [{ name: 'result', type: 'vector' }],
+    params: [num('stiffness', 0.5, 'Stiffness', { min: 0, max: 1 })],
+    eval: (i, c, p) => {
+      const pos = v(i.pointposition, c.pos);
+      const rest = v(i.rest, c.pos);
+      const k = Number(p.val('stiffness'));
+      const out = add(pos, mul(sub(rest, pos), k));
+      c.globals.set('pos:' + c.index, out);
+      return { result: out };
+    },
+  },
+  'syflexISpringGeo': {
+    type: 'syflexISpringGeo', category: 'Syflex',
+    inputs: [{ name: 'pointposition', type: 'vector' }, { name: 'rest', type: 'vector' }],
+    outputs: [{ name: 'result', type: 'vector' }],
+    params: [num('stiffness', 0.5, 'Stiffness', { min: 0, max: 1 })],
+    eval: (i, c, p) => {
+      const pos = v(i.pointposition, c.pos);
+      const rest = v(i.rest, c.pos);
+      const k = Number(p.val('stiffness'));
+      const out = add(pos, mul(sub(rest, pos), k));
+      c.globals.set('pos:' + c.index, out);
+      return { result: out };
+    },
+  },
+  'syflexICollideMesh': {
+    type: 'syflexICollideMesh', category: 'Syflex',
+    inputs: [{ name: 'pointposition', type: 'vector' }],
+    outputs: [{ name: 'result', type: 'vector' }],
+    params: [num('offset', 0, 'Offset')],
+    eval: (i, c, p) => {
+      const pos = v(i.pointposition, c.pos);
+      const off = Number(p.val('offset'));
+      // Softimage syflexICollideMesh_BeginEvaluate: keep points above collision plane proxy (Y=offset).
+      const out: V3 = [pos[0], Math.max(pos[1], off), pos[2]];
+      c.globals.set('pos:' + c.index, out);
+      return { result: out };
+    },
+  },
 };
 export const ICE_CATEGORIES = () => { const m = new Map<string, string[]>(); for (const d of Object.values(ICE_NODES)) (m.get(d.category) ?? m.set(d.category, []).get(d.category)!).push(d.type); return m; };
 

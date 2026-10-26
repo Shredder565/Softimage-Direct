@@ -365,6 +365,41 @@ export function registerCrowdFxModuleCommands(app: App) {
   });
   crowdNull('CacheCrowdSimulation', 'Cache Crowd Simulation', 'sim_cache');
 
+  // GD-01 — CrowdFX.64.dll Evaluate deepen: CrowdSkinning / SetCrowdPointPosition / CrowdCalculateBoneHierarchy.
+  // Softimage ICE node Names (not Commands catalog); wire via AddICENode onto Crowd/actor ICE Tree.
+  const crowdIceEval = (script: string, label: string, kind: string) => {
+    ensure({
+      name: script,
+      label,
+      category: 'Custom',
+      args: [{ name: 'Target', default: null }, { name: 'Container', default: null }],
+      execute(app, a) {
+        const o = (a.Target ? app.scene.find(String(a.Target)) : null)
+          ?? app.selectedObjects.find(x => x.properties.some(p => p.type === 'crowdfx'))
+          ?? app.selectedObjects[0];
+        if (!o) throw new Error(`Select a CrowdFX object for ${label}`);
+        let p = o.properties.find(x => x.type === 'crowdfx' && x.val('kind') === kind);
+        if (!p) {
+          p = crowdProp(script, kind, [str('evaluate', script, 'Evaluate', { readOnly: true })]);
+          app.record(label, () => o.addProperty(p!), () => o.removeProperty(p!));
+        }
+        if (app.commands.has('AddICENode')) {
+          try {
+            app.run('AddICENode', { PresetObj: script, Container: a.Container ?? o.fullName });
+          } catch {
+            /* ICE Tree optional — property tag still Softimage Evaluate surface */
+          }
+        }
+        app.select([p]);
+        app.logMsg('info', `${script} — CrowdFX.64.dll Evaluate (GD-01)`);
+        return p;
+      },
+    });
+  };
+  crowdIceEval('CrowdSkinning', 'Crowd Skinning', 'skinning_evaluate');
+  crowdIceEval('SetCrowdPointPosition', 'Set Crowd Point Position', 'set_point_position');
+  crowdIceEval('CrowdCalculateBoneHierarchy', 'Crowd Calculate Bone Hierarchy', 'bone_hierarchy_evaluate');
+
   // ——— Behavior / BVH actor I/O (bvrexport.dll) — file dialogs stay stubs ———
   ensure({
     name: 'BvrLoadActor',
@@ -504,6 +539,7 @@ export function crowdFxModuleAudit(app: App): Record<string, unknown> {
       'AddTerrain', 'AddCrowdPath', 'CreateCrowdFromGeometry', 'AddActorProxyAnimations',
       'InitCrowdAndDrawEmitter', 'InitCrowdAndDrawWall', 'CacheCrowdSimulation', 'CacheActorCopies',
       'GLSLActorEnvelopeLinkICEAttributes', 'GLSLActorEnvelopeUpdateDefines',
+      'CrowdSkinning', 'SetCrowdPointPosition', 'CrowdCalculateBoneHierarchy',
     ].filter(n => app.commands.has(n)),
     iceOperatorsPrefs: iceOpsLive,
     simulationPrefs: simLive,

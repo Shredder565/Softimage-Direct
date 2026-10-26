@@ -723,29 +723,74 @@ export function registerModuleToolbarCommands(app: App) {
       return null;
     },
   });
-  // Softimage-absent MATCH: HairTransferMap / TransferMap FAIL (100pct-remaining + stub-tools).
-  // PE 41445 label only; CopyStyle ACTIVE unrelated. Grey — Softimage parity (no invent).
+  // WR-11 Transfer Map = FAIL_ABSENT (ghidra-depth tour): XSIBATCH 2710 Commands — HairTransferMap/TransferMap ABSENT.
+  // PE 41445 UTF-16 label only. Softimage-absent MATCH grey — do NOT invent HairTransferMap.
   app.register({
     name: 'HairTransferMap', label: 'Hair Transfer Map', category: 'Modeling', args: [],
     canRun: () => false,
-    execute() { throw new Error('HairTransferMap: Softimage Commands entry absent (Softimage-absent MATCH)'); },
+    execute() { throw new Error('HairTransferMap: Softimage Commands entry absent (WR-11 FAIL_ABSENT MATCH)'); },
   });
-  // Softimage HairCopyStyle Name FAIL — menu leaf remapped to CopyStyle ACTIVE (args×2). Keep SN alias for scripts.
+  // Softimage HairCopyStyle Name ABSENT — menu PE 41446 binds ACTIVE CopyStyle (WIRE_READY). Keep SN alias for scripts.
   app.register({
     name: 'HairCopyStyle', label: 'Hair Copy Style', category: 'Modeling', args: [],
     canRun: () => false,
-    execute() { throw new Error('HairCopyStyle: Softimage Commands entry absent (stub-tools FAIL); use CopyStyle'); },
+    execute() { throw new Error('HairCopyStyle: Softimage Commands entry absent (WR-11); use CopyStyle'); },
   });
-  // Softimage CopyStyle ACTIVE Simulation args×2 (TargetHairObject, ModelHairStyleObject) — arm shell, no invent style transfer.
+  // WR-11 Copy Style = WIRE_READY via ACTIVE CopyStyle (Simulation args×2). Description attests Hair binding.
+  // Softimage: copies hair style props from ModelHairStyleObject → TargetHairObject (no invent Transfer Map).
   app.register({
     name: 'CopyStyle', label: 'CopyStyle', category: 'Simulation',
     args: [{ name: 'TargetHairObject', default: null }, { name: 'ModelHairStyleObject', default: null }],
     description: 'Copies a hair style from one object to another',
     execute(app, a) {
-      const tgt = a.TargetHairObject ?? app.selectedObjects[0]?.name ?? '';
-      const src = a.ModelHairStyleObject ?? app.selectedObjects[1]?.name ?? '';
-      app.logMsg('info', `CopyStyle: ${src || '(source)'} → ${tgt || '(target)'} (hair style transfer shell)`);
-      return stubTool(app, 'CopyStyle');
+      const resolve = (ref: unknown, fallback: X3DObject | undefined): X3DObject | null => {
+        if (ref && typeof ref === 'object' && 'name' in (ref as object)) return ref as X3DObject;
+        if (ref != null && String(ref) !== '') return app.scene.find(String(ref)) ?? null;
+        return fallback ?? null;
+      };
+      const tgt = resolve(a.TargetHairObject, app.selectedObjects[0]);
+      const src = resolve(a.ModelHairStyleObject, app.selectedObjects[1] ?? app.selectedObjects[0]);
+      if (!src) throw new Error('CopyStyle: select or pass ModelHairStyleObject (source hair style)');
+      if (!tgt) throw new Error('CopyStyle: select or pass TargetHairObject (destination)');
+      if (src === tgt) throw new Error('CopyStyle: TargetHairObject and ModelHairStyleObject must differ');
+      const hairish = (p: Property) => p.type === 'hair' || /^hair/i.test(p.type) || /^ApplyHair/i.test(p.name) || /^Hair /i.test(p.name);
+      const styleProps = src.properties.filter(hairish);
+      if (!styleProps.length) throw new Error(`CopyStyle: ${src.name} has no hair style properties`);
+      const added: Property[] = [];
+      const prior: { prop: Property; name: string; old: unknown }[] = [];
+      for (const sp of styleProps) {
+        const existing = tgt.properties.find(x => x.type === sp.type && x.name === sp.name);
+        if (existing) {
+          for (const p of sp.params) {
+            const ep = existing.get(p.name);
+            if (ep && !ep.def.readOnly) prior.push({ prop: existing, name: p.name, old: ep.value });
+          }
+        } else {
+          const defs = sp.params.map(p => ({ ...p.def, value: p.value }));
+          added.push(new Property(sp.name, sp.type, defs));
+        }
+      }
+      app.record('CopyStyle', () => {
+        for (const np of added) tgt.addProperty(np);
+        for (const sp of styleProps) {
+          const dest = tgt.properties.find(x => x.type === sp.type && x.name === sp.name);
+          if (!dest) continue;
+          for (const p of sp.params) {
+            const ep = dest.get(p.name);
+            if (ep && !ep.def.readOnly) app.setParam(ep, p.value);
+          }
+        }
+      }, () => {
+        for (const { prop, name, old } of prior) {
+          const ep = prop.get(name);
+          if (ep) app.setParam(ep, old);
+        }
+        for (const np of added) tgt.removeProperty(np);
+      });
+      const copied = styleProps.map(sp => tgt.properties.find(x => x.type === sp.type && x.name === sp.name)).filter(Boolean) as Property[];
+      if (copied.length) app.select(copied);
+      app.logMsg('info', `CopyStyle: ${src.name} → ${tgt.name} (${copied.length} hair style prop(s))`);
+      return false;
     },
   });
   app.register({ name: 'HairDisplayStyle', label: 'Hair Display Style', category: 'Viewing', args: [], undoable: false, execute: (app) => app.logMsg('info', 'Hair display style toggled') });
