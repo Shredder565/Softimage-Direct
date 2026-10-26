@@ -4,6 +4,7 @@ import { App } from '../core/commands';
 import inventory from '../data/si/render_toolbar_om_cmds.json';
 import regionSpdl from '../data/si/render_options_region.json';
 import { executeRenderPass } from '../core/sceneRender';
+import { exportRenderArchiveFrameSet } from '../core/renderArchive';
 
 type RrState = {
   visible: boolean;
@@ -251,7 +252,8 @@ export function registerRenderToolbarOmCommands(app: App) {
     category: 'Rendering',
     args: [{ name: 'Passes', default: 'Passes.Current' }, { name: 'FrameSet', default: '' }, { name: 'Verbose', default: '' }],
     undoable: false,
-    execute: (app, a) => app.logMsg('info', `Export render archive frameset: ${a.FrameSet || 'stub'}`),
+    // WR-03 — Softimage ExportRenderArchiveFrameSet; Softimage .mi ABSENT → AfterImage JSON package.
+    execute: (app, a) => exportRenderArchiveFrameSet(app, a),
   });
   app.register({
     name: 'SIRenderPass',
@@ -327,14 +329,14 @@ export function registerRenderToolbarOmCommands(app: App) {
     },
   });
 
-  // Softimage Desktop tour: Create New Output Framebuffer on a Pass (ScriptingName CreateFramebuffer)
+  // WR-05 — Softimage CreateFramebuffer / SICreateFramebuffer; Filename pattern from Rendering.vbs flipbook path.
   app.register({
     name: 'CreateFramebuffer',
     label: 'Create New Output Framebuffer on a Pass',
     category: 'Rendering',
     args: [
       { name: 'Pass', default: '' },
-      { name: 'Name', default: 'Framebuffer' },
+      { name: 'Name', default: 'Main' },
     ],
     undoable: true,
     execute(app, a) {
@@ -343,9 +345,18 @@ export function registerRenderToolbarOmCommands(app: App) {
         || app.scene.passes[app.scene.passes.length - 1]
         || app.scene.passes[0];
       if (!pass) { app.logMsg('error', 'CreateFramebuffer: no pass'); return; }
-      const fb = pass.addFramebuffer(String(a.Name || 'Framebuffer'));
+      const fbName = String(a.Name || 'Main');
+      const existing = pass.framebuffers.find(f => f.name === fbName);
+      if (existing) {
+        app.logMsg('info', `CreateFramebuffer: ${pass.name}.${fbName} already exists`);
+        return existing;
+      }
+      const fb = pass.addFramebuffer(fbName);
+      // Softimage Framebuffer.GetResolvedPath / Filename token template (Rendering.vbs attested).
+      if (fb.get('Filename')) app.setParam(fb.get('Filename')!, '[Pass]_[Framebuffer]');
+      if (fb.get('Format')) app.setParam(fb.get('Format')!, 'pic');
       app.events.emit('scene');
-      app.logMsg('info', `CreateFramebuffer → ${pass.name}.${fb.name}`);
+      app.logMsg('info', `CreateFramebuffer → ${pass.name}.${fb.name} Format=pic Filename=[Pass]_[Framebuffer]`);
       return fb;
     },
   });
