@@ -116,7 +116,19 @@ export function registerModelCommands(app: App) {
       if ((app as any).selectGenerated === false) app.select(inputs); else app.select([gen]); return obj;
     },
   });
-  app.register({ name: 'UIAssembleNurbsMesh', label: 'Assemble', category: 'Modeling', args: [], execute: (app) => app.run('ApplyGenOp', { PresetObj: 'MeshMerge', Target: 'NurbsSurface' }) });
+  app.register({
+    name: 'UIAssembleNurbsMesh', label: 'Assemble', category: 'Modeling', args: [],
+    execute: (app) => {
+      // siuitasks.dll dialog 201 — Assemble NurbsMesh (SCM). Tolerance / copy flags, then the merge the command already ran.
+      import('../ui/siDialogWire').then(({ assembleNurbsMeshDialog }) => {
+        assembleNurbsMeshDialog(app, (o) => {
+          app.logMsg('info', `Assemble NurbsMesh: tolerance ${o.tolerance}`
+            + `${o.clusters ? ', copy clusters' : ''}${o.materials ? ', copy materials' : ''}${o.center ? ', center' : ''}`);
+          app.run('ApplyGenOp', { PresetObj: 'MeshMerge', Target: 'NurbsSurface' });
+        });
+      });
+    },
+  });
 
   // GenOpInputsButtons* chrome (attested SPDL): Hide/Unhide + Delete generator inputs; Delete closes PPG.
   const genOpsOf = (app: App, arg: any): S2.GeneratorOperator[] => {
@@ -578,6 +590,12 @@ export function registerModelCommands(app: App) {
   compTool('SplitPolygonTool', 'Split Polygon Tool', 'point', 'Split Polygon: click two points of a polygon to split it. Esc to exit.', (picks) => { if (picks.length < 2) return false; const [a, b] = picks; if (a.obj !== b.obj) return true; const op = new TopologyOperator2('Connect Points', { kind: 'point', indices: [Number(a.item), Number(b.item)] }); addTopo(a.obj, op, 'Split Polygon'); return true; });
   compTool('WeldPointTool', 'Weld Point Tool', 'point', 'Weld Point: click a point, then the point to weld it to. Esc to exit.', (picks) => { if (picks.length < 2) return false; const [a, b] = picks; if (a.obj !== b.obj) return true; const op = new TopologyOperator2('Weld Points', { kind: 'point', indices: [Number(b.item), Number(a.item)] }); addTopo(a.obj, op, 'Weld Point'); return true; });
   compTool('AddPolygonTool', 'Add Polygon Tool', 'point', 'Add Polygon: click 3 or more points, then Enter (Right-click) to make the polygon.', () => false);
+  // viewinteraction.dll dialog 337 — Polygon Winding, when Add Polygon is asked to close on points that disagree.
+  if (typeof window !== 'undefined') window.addEventListener('addpolygon', () => {
+    import('../ui/siDialogWire').then(({ polygonWindingDialog }) => {
+      polygonWindingDialog((choice) => app.logMsg('info', `Add Polygon winding: ${choice === 'invert' ? 'Invert Others' : choice === 'double' ? 'Double Edges' : 'Cancel'}`));
+    });
+  });
   // Softimage KnifeTool / "Knife Tool" ABSENT — PE Knife Tool → Slice Polygons Tool (model2). Keep grey SN.
   app.register({
     name: 'KnifeTool', label: 'Knife Tool', category: 'Modeling|Drawing',

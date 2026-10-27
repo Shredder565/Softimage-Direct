@@ -101,6 +101,25 @@ export function viewManager(app: App, host: HTMLElement) {
     const b = document.createElement('b'); b.textContent = 'ABCD'[vps.length]; b.title = 'Viewport ' + 'ABCD'[vps.length];
     const mbtn = (text: string, title: string, icon?: string) => { const x = document.createElement('button'); x.className = 'vp-menu-btn'; if (icon && hasIcon(icon)) x.appendChild(siIcon(icon, 0.5)); else x.textContent = text; x.title = title; return x; };
     const viewBtn = mbtn(name, 'View menu: cameras and orthographic views'); const camBtn = mbtn('📷', 'Camera menu', 'camera'); const eyeBtn = mbtn('👁', 'Visibility menu (Shift+S)');
+    // vm.dll MENU 290 — Mute / Solo on the viewport badge (the camera menu's Mute/Solo leaves).
+    b.oncontextmenu = (e) => {
+      e.preventDefault(); e.stopPropagation();
+      const x = XT.extra(vp as any);
+      openSiMenu(SI_MENUS.vmMuteSolo ?? [], e.clientX, e.clientY, (it) => XT.cameraMenu(vp as any, it.label ?? ''), {
+        checked: (it) => it.label === 'Mute' ? !!x.muted : it.label === 'Solo' ? !!x.solo : undefined,
+      });
+    };
+    // viewinteraction.dll MENU 349 — curve direct manipulation, on a selected curve.
+    head.oncontextmenu = (e) => {
+      const curve = app.selectedObjects.some(o => o.type === 'crvlist' || o.primitive?.type === 'crvlist');
+      if (!curve) return;
+      e.preventDefault(); e.stopPropagation();
+      openSiMenu(SI_MENUS.toolCurveDirectManip ?? [], e.clientX, e.clientY, (it) => {
+        const l = it.label ?? '';
+        if (l === 'Translate Manipulator') tool.setMode('translate');
+        else app.logMsg('info', `Curve direct manip: ${l}`);
+      });
+    };
     const sp = document.createElement('div'); sp.className = 'spacer';
     const dispBtn = mbtn(kind === 'persp' ? 'Shaded' : 'Wireframe', 'Display mode'); const stereoBtn = mbtn('◐', 'Stereo menu'); const cubeBtn = mbtn('⌂', 'ViewCube menu');
     const vlabels = document.createElement('div'); vlabels.className = 'vp-names';

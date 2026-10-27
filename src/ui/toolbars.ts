@@ -6,6 +6,13 @@ import { App } from '../core/commands';
 import { runScriptLine, SI_MENUS, openSiMenu } from './si';
 import { openFloating } from './floating';
 import { X3DObject, makeDisplay } from '../core/scene';
+import {
+  addScriptCommandDialog, changeIconDialog, customizeButtonDialog, customizeScriptButtonDialog,
+  customizeSpacerDialog, popupMenuButtonDialog, scriptButtonTypeDialog, ScriptButton,
+} from './siDialogWire';
+import icons from '../data/si/icons.json';
+
+const BITMAP_NAMES = Object.keys((icons as { icons: Record<string, unknown> }).icons).sort();
 
 export const WIRE_COLORS: Record<string, [number, number, number]> = { Red: [1, 0, 0], 'Light Green': [0.5, 1, 0.5], Blue: [0, 0.3, 1], Orange: [1, 0.5, 0], Green: [0, 0.7, 0], Purple: [0.5, 0, 1], Fuschia: [1, 0, 0.7], Gold: [0.85, 0.65, 0.1], Teal: [0, 0.6, 0.6], Pink: [1, 0.6, 0.8], Yellow: [1, 1, 0], Brown: [0.5, 0.3, 0.1] };
 const DISPLAY_TYPES: Record<string, number> = { 'Bounding Box': 0, Wireframe: 1, 'Hidden Line': 3, Constant: 5, Shaded: 7, Textured: 9, Default: 8 };
@@ -28,29 +35,89 @@ export function palettesView(app: App, host: HTMLElement) {
   const custom = document.createElement('input'); custom.type = 'color'; custom.title = 'Custom wire colour'; custom.onchange = () => { const v = custom.value; app.run('SetWireColorRGB', { R: parseInt(v.slice(1, 3), 16) / 255, G: parseInt(v.slice(3, 5), 16) / 255, B: parseInt(v.slice(5, 7), 16) / 255 }); }; root.appendChild(custom);
   head('Display Types');
   for (const name of Object.keys(DISPLAY_TYPES)) { const b = document.createElement('button'); b.className = 'xp-btn wide'; b.textContent = name; b.title = 'Set Object Display to ' + name; b.onclick = () => app.run('SetObjectDisplay' + name.replace(/ /g, '')); root.appendChild(b); }
+  // Palettes.xsitb ships with the install: a read-only toolbar, so it gets XSI.exe MENU 345.
+  root.classList.add('tb-readonly');
+  root.oncontextmenu = (e) => {
+    e.preventDefault();
+    const items: TbItem[] = [
+      ...Object.keys(WIRE_COLORS).map(n => ({ type: 'command' as const, label: n, name: 'SetWireColor' + n.replace(/ /g, '') })),
+      { type: 'command', label: 'Default', name: 'SetWireColorDefault' },
+      ...Object.keys(DISPLAY_TYPES).map(n => ({ type: 'command' as const, label: n, name: 'SetObjectDisplay' + n.replace(/ /g, '') })),
+    ];
+    readOnlyToolbarMenu(app, 'Palettes', items, e.clientX, e.clientY);
+  };
 }
 
 // ---------------------------------------------------------------- custom toolbars / shelves (user data)
-export type TbItem = { type: 'command' | 'script' | 'separator'; label: string; name?: string; script?: string; tooltip?: string; lang?: string };
-export type Toolbar = { name: string; kind: 'toolbar' | 'shelf'; tabs: { label: string; items: TbItem[] }[] };
+export type TbItem = { type: 'command' | 'script' | 'separator'; label: string; name?: string; script?: string; tooltip?: string; lang?: string; bitmap?: string; w?: number; h?: number };
+/** `view` carries the XSI.exe 245 toolbar menu flags; `readOnly` drives the XSI.exe 345 menu. */
+export type Toolbar = { name: string; kind: 'toolbar' | 'shelf'; tabs: { label: string; items: TbItem[] }[]; readOnly?: boolean; view?: { textOnly?: boolean; thumbOnly?: boolean; thumbSize?: 'Small' | 'Normal'; titlebar?: boolean } };
 export function userToolbars(): Toolbar[] { try { return JSON.parse(localStorage.getItem('si.toolbars') ?? '[]'); } catch { return []; } }
 export function saveToolbars(t: Toolbar[]) { localStorage.setItem('si.toolbars', JSON.stringify(t)); window.dispatchEvent(new CustomEvent('toolbarschanged')); }
 export function toolbarByName(name: string) { let t = userToolbars().find(x => x.name === name); if (!t && name === 'Scripts') { t = { name: 'Scripts', kind: 'toolbar', tabs: [{ label: 'DS Toolbar', items: [] }] }; saveToolbars([...userToolbars(), t]); } return t; }
 export function newToolbar(app: App, kind: 'toolbar' | 'shelf') { const n = prompt(`New custom ${kind} name:`, kind === 'shelf' ? 'MyShelf' : 'MyToolbar'); if (!n) return null; const all = userToolbars(); if (all.some(t => t.name === n)) { app.logMsg('error', `A toolbar named "${n}" already exists`); return null; } const t: Toolbar = { name: n, kind, tabs: [{ label: kind === 'shelf' ? 'Tab 1' : 'DS Toolbar', items: [] }] }; saveToolbars([...all, t]); openToolbarWindow(app, n); return t; }
 export function openToolbarWindow(app: App, name: string) { openFloating(name, (body) => toolbarView(app, body, name), { w: 220, h: 360, key: 'toolbar:' + name }); }
 
-/** The Add Script Command dialog (XSI.exe 319) as a small form: button name, script text, tooltip. */
-function addScriptDialog(app: App, tb: Toolbar, tab: number, existing?: TbItem): Promise<TbItem | null> {
+const asTbItem = (b: ScriptButton): TbItem => ({ type: 'script', label: b.label, script: b.script, tooltip: b.tooltip, lang: b.lang, bitmap: b.bitmap, w: b.w, h: b.h });
+
+/**
+ * Softimage's script-button flow, on its own templates: XSI.exe 159 picks the button kind, then
+ * XSI.exe 406 (Customize Button, script commands) or XSI.exe 319 (Add Script Command, external file).
+ */
+function addScriptDialog(app: App, existing?: TbItem): Promise<TbItem | null> {
   return new Promise(resolve => {
-    openFloating(existing ? 'Edit Script Command' : 'Add Script Command', (body, win) => {
-      body.innerHTML = `<div class="dlg"><label>Command / Button Name</label><input class="nm"><label>Scripting Language</label><select class="lang"><option>JScript</option><option>VBScript</option><option>Python</option></select><label>Script Command</label><textarea class="src" rows="8" spellcheck="false"></textarea><label>Tooltip</label><input class="tip"><div class="dlg-btns"><button class="ok">OK</button><button class="cancel">Cancel</button></div></div>`;
-      const nm = body.querySelector<HTMLInputElement>('.nm')!, src = body.querySelector<HTMLTextAreaElement>('.src')!, tip = body.querySelector<HTMLInputElement>('.tip')!, lang = body.querySelector<HTMLSelectElement>('.lang')!;
-      nm.value = existing?.label ?? 'Script'; src.value = existing?.script ?? 'CreatePrim "Sphere", "MeshSurface"'; tip.value = existing?.tooltip ?? ''; lang.value = existing?.lang ?? 'JScript';
-      for (const el of [nm, src, tip]) el.onkeydown = e => e.stopPropagation();
-      body.querySelector<HTMLButtonElement>('.ok')!.onclick = () => { const it: TbItem = { type: 'script', label: nm.value.trim() || 'Script', script: src.value, tooltip: tip.value, lang: lang.value }; win.close(); resolve(it); };
-      body.querySelector<HTMLButtonElement>('.cancel')!.onclick = () => { win.close(); resolve(null); };
-    }, { w: 320, h: 330 });
-    void tb; void tab; void app;
+    const script = (it?: TbItem) => customizeScriptButtonDialog(app, it ?? {}, b => resolve(asTbItem(b)));
+    if (existing) { script(existing); return; }
+    scriptButtonTypeDialog(kind => {
+      if (kind === 'script') script();
+      else addScriptCommandDialog(app, {}, b => resolve(asTbItem(b)));
+    });
+  });
+}
+
+/** XSI.exe MENU 345 — the contextual menu a read-only (factory) toolbar shows. */
+export function readOnlyToolbarMenu(app: App, name: string, items: TbItem[], x: number, y: number) {
+  openSiMenu(SI_MENUS.toolbarReadOnlyMenu ?? [], x, y, (it) => {
+    if (it.label !== 'Make Local Copy') return;
+    const copy = `${name} (local)`;
+    if (userToolbars().some(t => t.name === copy)) { app.logMsg('error', `A toolbar named "${copy}" already exists`); return; }
+    saveToolbars([...userToolbars(), { name: copy, kind: 'toolbar', tabs: [{ label: 'DS Toolbar', items: items.map(i => ({ ...i })) }] }]);
+    openToolbarWindow(app, copy);
+  }, { checked: it => it.label === 'Read-Only Toolbar' ? true : undefined, enabled: it => it.label !== 'Read-Only Toolbar' });
+}
+
+/** XSI.exe MENU 245 — a writable toolbar's own contextual menu: Save / Save As / Rename / display flags. */
+export function toolbarChromeMenu(app: App, tb: Toolbar, x: number, y: number, save: () => void) {
+  const v = (tb.view ??= {});
+  openSiMenu(SI_MENUS.toolbarMenu ?? [], x, y, (it, path) => {
+    if (path[path.length - 2] === 'Thumbnail Size') { v.thumbSize = it.label as 'Small' | 'Normal'; save(); return; }
+    switch (it.label) {
+      case 'Save': save(); app.logMsg('info', `Toolbar "${tb.name}" saved`); return;
+      case 'Save As': {
+        const n = prompt('Save toolbar as:', tb.name + '_copy');
+        if (!n) return;
+        saveToolbars([...userToolbars().filter(t => t.name !== n), { ...tb, name: n, readOnly: false }]);
+        openToolbarWindow(app, n);
+        return;
+      }
+      case 'Rename': {
+        const n = prompt('Rename toolbar:', tb.name);
+        if (!n || n === tb.name) return;
+        const all = userToolbars().filter(t => t.name !== tb.name);
+        saveToolbars([...all, { ...tb, name: n }]);
+        return;
+      }
+      case 'Thumbnail Only': v.thumbOnly = !v.thumbOnly; if (v.thumbOnly) v.textOnly = false; save(); return;
+      case 'Text Only': v.textOnly = !v.textOnly; if (v.textOnly) v.thumbOnly = false; save(); return;
+      case 'Display Titlebar': v.titlebar = !v.titlebar; save(); return;
+      case 'Customize Toolbar...': customizeToolbars(app, tb.name); return;
+    }
+  }, {
+    checked: it => it.label === 'Thumbnail Only' ? !!v.thumbOnly
+      : it.label === 'Text Only' ? !!v.textOnly
+        : it.label === 'Display Titlebar' ? !!v.titlebar
+          : it.label === 'Small' || it.label === 'Normal' ? (v.thumbSize ?? 'Normal') === it.label
+            : undefined,
   });
 }
 
@@ -59,19 +126,82 @@ export function toolbarView(app: App, host: HTMLElement, name: string) {
   let active = 0;
   const render = () => {
     root.innerHTML = ''; const tb = toolbarByName(name); if (!tb) { root.textContent = `Toolbar "${name}" not found`; return; }
+    // XSI.exe 245 display flags
+    root.className = 'user-toolbar'
+      + (tb.view?.textOnly ? ' tb-text-only' : '') + (tb.view?.thumbOnly ? ' tb-thumb-only' : '')
+      + (tb.view?.thumbSize === 'Small' ? ' tb-thumb-small' : '') + (tb.readOnly ? ' tb-readonly' : '');
+    if (tb.view?.titlebar) { const t = document.createElement('div'); t.className = 'tb-titlebar'; t.textContent = tb.name; root.appendChild(t); }
     const tabs = document.createElement('div'); tabs.className = 'switcher-bar top';
     if (tb.kind === 'shelf') { tb.tabs.forEach((t, i) => { const b = document.createElement('button'); b.className = 'switcher-btn' + (i === active ? ' active' : ''); b.textContent = t.label; b.onclick = () => { active = i; render(); }; b.oncontextmenu = (e) => { e.preventDefault(); const n = prompt('Rename tab:', t.label); if (n) { t.label = n; save(tb); } }; tabs.appendChild(b); }); const add = document.createElement('button'); add.className = 'switcher-btn'; add.textContent = '+'; add.title = 'New tab'; add.onclick = () => { tb.tabs.push({ label: 'Tab ' + (tb.tabs.length + 1), items: [] }); active = tb.tabs.length - 1; save(tb); }; tabs.appendChild(add); root.appendChild(tabs); }
     const tab = tb.tabs[Math.min(active, tb.tabs.length - 1)];
     const list = document.createElement('div'); list.className = 'tb-items'; root.appendChild(list);
+    // XSI.exe MENU 244 — the contextual menu of one toolbar button (attested names only).
+    const buttonMenu = (it: TbItem, i: number, x: number, y: number) => {
+      openSiMenu(SI_MENUS.toolButtonMenu ?? [], x, y, async (m) => {
+        switch (m.label) {
+          case 'Remove Button': tab.items.splice(i, 1); save(tb); return;
+          case 'Remove Command': if (it.type === 'command') { tab.items.splice(i, 1); save(tb); } return;
+          case 'Customize Button...':
+            if (it.type === 'separator') customizeSpacerDialog({ w: it.w ?? 0, h: it.h ?? 0 }, s => { it.w = s.w; it.h = s.h; save(tb); });
+            else customizeButtonDialog(it, v => {
+              if (v.label) it.label = v.label;
+              it.w = v.w; it.h = v.h;
+              // XSI.exe 316 Change Icon: a bitmap name Softimage's own icon sheet does not carry gets picked
+              // from the sheet rather than stored as a dangling name.
+              if (v.bitmap && !BITMAP_NAMES.includes(v.bitmap.toLowerCase())) changeIconDialog(BITMAP_NAMES, v.bitmap, n => { it.bitmap = n; save(tb); });
+              else it.bitmap = v.bitmap;
+              save(tb);
+            });
+            return;
+          case 'Edit Script...': {
+            if (it.type !== 'script') return;
+            const r = await addScriptDialog(app, it);
+            if (r) { tab.items[i] = r; save(tb); }
+            return;
+          }
+          case 'Edit Command...':
+            if (it.type === 'command') addScriptCommandDialog(app, { label: it.label, tooltip: it.tooltip }, b => { it.label = b.label; it.tooltip = b.tooltip; save(tb); });
+            return;
+        }
+      }, {
+        enabled: (m) => m.label === 'Remove Command' || m.label === 'Edit Command...' ? it.type === 'command'
+          : m.label === 'Edit Script...' ? it.type === 'script' : true,
+      });
+    };
     tab.items.forEach((it, i) => {
-      if (it.type === 'separator') { const h = document.createElement('div'); h.className = 'tb-group'; h.textContent = it.label; list.appendChild(h); return; }
+      if (it.type === 'separator') {
+        const h = document.createElement('div'); h.className = 'tb-group'; h.textContent = it.label;
+        // XSI.exe 327 Customize Popup Menu Button — the order of the items this group pops up.
+        h.oncontextmenu = (e) => {
+          e.preventDefault();
+          const from = i + 1;
+          const until = tab.items.findIndex((x, j) => j > i && x.type === 'separator');
+          const to = until < 0 ? tab.items.length : until;
+          const names = tab.items.slice(from, to).map(x => x.label);
+          popupMenuButtonDialog(names, order => {
+            const kept = order.map(l => tab.items.slice(from, to).find(x => x.label === l)!).filter(Boolean);
+            tab.items.splice(from, to - from, ...kept);
+            save(tb);
+          });
+        };
+        list.appendChild(h); return;
+      }
       const b = document.createElement('button'); b.className = 'xp-btn wide'; b.textContent = it.label; b.title = it.tooltip || (it.type === 'command' ? it.name ?? '' : (it.script ?? '').split('\n')[0]);
+      if (it.w) b.style.width = it.w + 'px';
+      if (it.h) b.style.height = it.h + 'px';
       b.onclick = () => { try { if (it.type === 'command') app.run(it.name!); else for (const line of (it.script ?? '').split(/\r?\n/)) { const l = line.trim(); if (!l || /^(\/\/|')/.test(l)) continue; runScriptLine(app, l); } } catch (e: any) { app.logMsg('error', String(e?.message ?? e)); } };
-      b.oncontextmenu = (e) => { e.preventDefault(); openSiMenu([{ label: 'Edit...' }, { label: 'Move Up' }, { label: 'Move Down' }, { separator: true }, { label: 'Remove' }], e.clientX, e.clientY, async (m) => { if (m.label === 'Remove') { tab.items.splice(i, 1); save(tb); } else if (m.label === 'Move Up' && i > 0) { [tab.items[i - 1], tab.items[i]] = [tab.items[i], tab.items[i - 1]]; save(tb); } else if (m.label === 'Move Down' && i < tab.items.length - 1) { [tab.items[i + 1], tab.items[i]] = [tab.items[i], tab.items[i + 1]]; save(tb); } else if (m.label === 'Edit...') { if (it.type === 'script') { const r = await addScriptDialog(app, tb, active, it); if (r) { tab.items[i] = r; save(tb); } } else { const n = prompt('Button label:', it.label); if (n) { it.label = n; save(tb); } } } }); };
+      b.oncontextmenu = (e) => { e.preventDefault(); buttonMenu(it, i, e.clientX, e.clientY); };
       list.appendChild(b);
     });
+    // XSI.exe MENU 245 — the toolbar's own contextual menu (read-only toolbars get MENU 345 instead).
+    list.oncontextmenu = (e) => {
+      if ((e.target as HTMLElement) !== list) return;
+      e.preventDefault();
+      if (tb.readOnly) { readOnlyToolbarMenu(app, tb.name, tab.items, e.clientX, e.clientY); return; }
+      toolbarChromeMenu(app, tb, e.clientX, e.clientY, () => save(tb));
+    };
     const foot = document.createElement('div'); foot.className = 'tb-foot';
-    const addS = document.createElement('button'); addS.className = 'xp-btn'; addS.textContent = '+ Script'; addS.title = 'Add Script Command'; addS.onclick = async () => { const it = await addScriptDialog(app, tb, active); if (it) { tab.items.push(it); save(tb); } };
+    const addS = document.createElement('button'); addS.className = 'xp-btn'; addS.textContent = '+ Script'; addS.title = 'Add Script Command'; addS.onclick = async () => { const it = await addScriptDialog(app); if (it) { tab.items.push(it); save(tb); } };
     const addC = document.createElement('button'); addC.className = 'xp-btn'; addC.textContent = '+ Command'; addC.title = 'Customize Toolbars: add commands'; addC.onclick = () => customizeToolbars(app, name);
     const addSep = document.createElement('button'); addSep.className = 'xp-btn'; addSep.textContent = '+ Group'; addSep.onclick = () => { const n = prompt('Group header:', 'Group'); if (n) { tab.items.push({ type: 'separator', label: n }); save(tb); } };
     foot.append(addS, addC, addSep); root.appendChild(foot);

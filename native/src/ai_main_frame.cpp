@@ -237,10 +237,47 @@ void AiMainFrame::Paint(HDC hdc) {
   DeleteObject(log_bg);
 }
 
+void AiMainFrame::ShowPaneContextMenu(int x, int y) {
+  // Names are the uiut.dll MENU 246 popups (Context / Relationship / Splitter Contextual)
+  // and MENU 163 (Split Horizontally / Split Vertically). The shell logs the pick; it has no frame tree.
+  HMENU menu = CreatePopupMenu();
+  HMENU context = CreatePopupMenu();
+  AppendMenuW(context, MF_STRING, kCmdPaneSplitH, L"Split Horizontally");
+  AppendMenuW(context, MF_STRING, kCmdPaneSplitV, L"Split Vertically");
+  AppendMenuW(context, MF_SEPARATOR, 0, nullptr);
+  AppendMenuW(context, MF_STRING, kCmdPaneRemoveView, L"Remove View");
+  AppendMenuW(context, MF_STRING, kCmdPaneDelete, L"Delete Pane");
+  AppendMenuW(menu, MF_POPUP, reinterpret_cast<UINT_PTR>(context), L"Context");
+
+  HMENU relationship = CreatePopupMenu();
+  AppendMenuW(relationship, MF_STRING, kCmdPaneRelationships, L"Set Relationships...");
+  AppendMenuW(menu, MF_POPUP, reinterpret_cast<UINT_PTR>(relationship), L"Relationship");
+
+  HMENU splitter = CreatePopupMenu();
+  AppendMenuW(splitter, MF_STRING, kCmdPaneNoSplit, L"No Splitter");
+  AppendMenuW(splitter, MF_STRING, kCmdPaneFixed, L"Fixed Splitter");
+  AppendMenuW(splitter, MF_STRING, kCmdPaneMovable, L"Movable Splitter");
+  AppendMenuW(menu, MF_POPUP, reinterpret_cast<UINT_PTR>(splitter), L"Splitter Contextual");
+
+  TrackPopupMenu(menu, TPM_LEFTALIGN | TPM_RIGHTBUTTON, x, y, 0, hwnd_, nullptr);
+  DestroyMenu(menu);
+}
+
 void AiMainFrame::OnCommand(WORD id) {
   if (id == kCmdFileExit) {
     PostMessageW(hwnd_, WM_CLOSE, 0, 0);
     return;
+  }
+  switch (id) {
+    case kCmdPaneSplitH: app_.Log(L"Pane: Split Horizontally"); InvalidateChrome(); return;
+    case kCmdPaneSplitV: app_.Log(L"Pane: Split Vertically"); InvalidateChrome(); return;
+    case kCmdPaneRemoveView: app_.Log(L"Pane: Remove View"); InvalidateChrome(); return;
+    case kCmdPaneDelete: app_.Log(L"Pane: Delete Pane"); InvalidateChrome(); return;
+    case kCmdPaneRelationships: app_.Log(L"Pane: Set Relationships..."); InvalidateChrome(); return;
+    case kCmdPaneNoSplit: app_.Log(L"Pane: No Splitter"); InvalidateChrome(); return;
+    case kCmdPaneFixed: app_.Log(L"Pane: Fixed Splitter"); InvalidateChrome(); return;
+    case kCmdPaneMovable: app_.Log(L"Pane: Movable Splitter"); InvalidateChrome(); return;
+    default: break;
   }
   if (id == kCmdHelpAbout) {
     MessageBoxW(hwnd_,
@@ -311,6 +348,19 @@ LRESULT CALLBACK AiMainFrame::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
     }
     case WM_COMMAND:
       if (self) self->OnCommand(LOWORD(wparam));
+      return 0;
+    case WM_CONTEXTMENU:
+      if (self) {
+        int x = GET_X_LPARAM(lparam);
+        int y = GET_Y_LPARAM(lparam);
+        if (x == -1 && y == -1) {
+          POINT pt{0, 0};
+          ClientToScreen(hwnd, &pt);
+          x = pt.x;
+          y = pt.y;
+        }
+        self->ShowPaneContextMenu(x, y);
+      }
       return 0;
     case WM_LBUTTONDOWN: {
       if (!self) return 0;

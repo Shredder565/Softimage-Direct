@@ -916,3 +916,30 @@ body.dock-picking, body.dock-picking * { cursor: crosshair !important; }
 .fr-act-title { font-weight: 700; border-bottom: 1px solid #7c7875; padding-bottom: 4px; }
 .fr-act-meta { font-size: 10px; color: #4a4644; }
 .fr-act-synoptic { flex: 1; border: 1px solid #6a6663; min-height: 120px; }
+
+/* Softimage RT_DIALOG templates (src/ui/siDialog.ts) — positions are the template's own dialog units. */
+.si-dlg-host { padding: 0; overflow: auto; background: #d4d0c8; }
+.si-dlg { position: relative; background: #d4d0c8; color: #000; box-sizing: border-box; }
+.si-dlg-ctl { position: absolute; box-sizing: border-box; font: inherit; }
+.si-dlg-static { overflow: hidden; line-height: 1.15; }
+.si-dlg-btn { font: inherit; background: #d4d0c8; border: 1px solid #404040; border-radius: 2px; padding: 0 4px; cursor: pointer; }
+.si-dlg-btn.default { border-color: #000; font-weight: 600; }
+.si-dlg-btn:disabled, .si-dlg-ctl.disabled { opacity: 0.45; pointer-events: none; }
+.si-dlg-check { display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; }
+.si-dlg-check input { margin: 0; }
+.si-dlg-edit, .si-dlg-combo { font: inherit; background: #fff; color: #000; border: 1px solid #404040; padding: 0 2px; }
+.si-dlg-edit.multiline { resize: none; }
+.si-dlg-timecell { position: absolute; width: 48px; height: 16px; }
+.si-dlg-list { background: #fff; border: 1px solid #404040; overflow: auto; }
+.si-dlg-item { padding: 1px 4px; white-space: pre; cursor: default; }
+.si-dlg-item.selected { background: #0a246a; color: #fff; }
+.si-dlg-group { margin: 0; border: 1px solid #808080; padding: 2px 4px; }
+.si-dlg-group legend { padding: 0 3px; }
+.si-spdl { margin: 0; padding: 8px; font: 11px Consolas, monospace; white-space: pre; }
+.pane-primary { outline: 2px solid #c80; outline-offset: -2px; }
+.pane-selected { outline: 2px dashed #48c; outline-offset: -2px; }
+.splitter.fixed { cursor: default; background: transparent; }
+.tb-titlebar { background: #3a3836; color: #e8e4e0; padding: 2px 6px; font-weight: 600; }
+.tb-readonly { }
+.user-toolbar.tb-text-only .si-icon { display: none; }
+.user-toolbar.tb-thumb-small .xp-btn { font-size: 9px; }

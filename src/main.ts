@@ -45,7 +45,7 @@ import { toolbarPanel, menuStatus, runMenuPath, getEnableParity } from './ui/too
 import { commandEnabled, mcpSampleEnabled } from './ui/cmdEnable';
 import { mcpMatrixMeta, mcpSelectionContext, matrixCommandEnabled, peMenuItemGrayed } from './ui/mcpEnableMatrix';
 import { explorerView } from './ui/explorer';
-import { mcpPanel } from './ui/mcp';
+import { mcpPanel, mcpTipsAudit } from './ui/mcp';
 import { installKeymap } from './ui/keymap';
 import { propertyEditor } from './ui/ppg';
 import { applyPpgChrome, ppgChromeAudit, PPG_CHROME } from './ui/ppgChrome';
@@ -78,6 +78,9 @@ import { openFloating, floatingWindows, setDockHook } from './ui/floating';
 import { installFlipbookViewer } from './ui/flipbookViewer';
 import { siIcon, hasIcon, runScriptLine, siMessage, SI_VIEWS, SI_KEYMAPS, SI_MENUS } from './ui/si';
 import { preferencesWindow, preferenceSets } from './ui/prefs';
+import { installPaneContext, paneContextAudit } from './ui/paneContext';
+import { uiSurfaceAudit } from './ui/uiSurfaceAudit';
+import { siDialogAudit } from './ui/siDialog';
 
 // Softimage Flipbook / still preview in-app (never window.open → Electron ms-link on Windows).
 installFlipbookViewer();
@@ -136,6 +139,8 @@ layout.registerView('Command Line', h => commandLine(app, h));
 layout.registerView('Playback Panel', h => playbackPanel(app, h));
 layout.registerView('Animation Panel', h => animationPanel(app, h));
 layout.registerView('Main Shelf', h => mainShelf(app, h));
+// shelf.xsivw names the view "Shelf"; the layout hosts it as "Main Shelf".
+layout.registerView('Shelf', h => mainShelf(app, h));
 for (const n of ['Selection Panel', 'Transformation Panel', 'Snap Panel', 'Constraint Panel', 'Edit Panel', 'Mini Transform Panel'] as const) layout.registerView(n, h => { mcpPanel(app, h, n === 'Selection Panel' ? { only: ['Select'] } : n === 'Transformation Panel' ? { only: ['Transform'] } : n === 'Snap Panel' ? { only: ['Snap'] } : n === 'Constraint Panel' ? { only: ['Constrain'] } : n === 'Edit Panel' ? { only: ['Edit'] } : { only: ['Transform'], cls: 'mini' }); });
 layout.registerView('Palettes', h => palettesView(app, h)); layout.registerView('Scripts', h => toolbarView(app, h, 'Scripts'));
 window.addEventListener('toolbarmenu', (e: any) => { const l = e.detail?.label; if (l === 'New Custom Toolbar...') newToolbar(app, 'toolbar'); else if (l === 'New Custom Shelf...') newToolbar(app, 'shelf'); else if (l === 'Customize Toolbars...') customizeToolbars(app); else if (l === 'New Custom Relational View') app.logMsg('info', 'Custom relational views: use View > Layouts > New Blank Layout'); else openToolbarWindow(app, l); });
@@ -178,6 +183,7 @@ layout.registerView('SDK Explorer', h => xsiExplorer(app, h));
 layout.registerView('Animation Layer Manager', h => animationLayerManager(app, h));
 layout.build(layoutByName(currentLayoutName()) ?? layoutByName('Default')!, root);
 installLayoutEditing(app, layout, root);
+installPaneContext(app, layout, root);
 setDockHook((win, frame) => { const body = win.body; const title = win.title; return dockInto(frame, title, body, (b) => { openFloating(title, (nb, w) => { nb.replaceWith(b); b.classList.remove('docked-body'); b.className = 'ppg-float-body'; (w as any).body = b; }, { w: 480, h: 400 }); }); });
 window.addEventListener('frameall', () => vm?.frameAll());
 
@@ -408,6 +414,11 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     ppgChrome: ppgChromeAudit(),
     // Animate chrome (PE pack #47 + xsivw / PNG glyph extras)
     animChrome: animChromeAudit(),
+    // UI-surface audit (docs/ghidra/ui-surface-audit.md) — dump inventory vs what this build wires.
+    uiSurface: uiSurfaceAudit(),
+    paneContext: paneContextAudit(),
+    siDialogs: siDialogAudit(),
+    mcpTips: mcpTipsAudit(),
     // Softimage Layout HWND chrome (softimage-pc render-freeze harvest → 1.0.24 WR-LOOK-00..07)
     softimageLayoutHwnd: softimageLayoutHwndAudit(),
     softimageExactLook: {

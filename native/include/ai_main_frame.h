@@ -23,6 +23,8 @@ class AiMainFrame {
   void Paint(HDC hdc);
   void OnCommand(WORD id);
   void InvalidateChrome();
+  // uiut.dll pane context (MENU 246) + splitter (MENU 163) — attested item names, TrackPopupMenu.
+  void ShowPaneContextMenu(int x, int y);
 
   AiApp& app_;
   HWND hwnd_ = nullptr;
@@ -38,5 +40,14 @@ class AiMainFrame {
     kCmdRenderPreview = 1204,
     kCmdSoftimageLayout = 1301,
     kCmdHelpAbout = 1401,
+    // uiut.dll MENU 163 / 246 item ids (resource command ids, used as menu command ids).
+    kCmdPaneSplitH = 1923,
+    kCmdPaneSplitV = 1924,
+    kCmdPaneRemoveView = 1926,
+    kCmdPaneDelete = 1976,
+    kCmdPaneRelationships = 160,
+    kCmdPaneNoSplit = 1970,
+    kCmdPaneFixed = 1971,
+    kCmdPaneMovable = 1972,
   };
 };

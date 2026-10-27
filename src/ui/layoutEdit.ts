@@ -3,6 +3,7 @@
 import { App } from '../core/commands';
 import { userToolbars, saveToolbars } from './toolbars';
 import { LayoutEngine, LayoutNode, captureLayout, saveUserLayout, switchLayout, layoutNames, layoutByName, currentLayoutName, userLayouts } from './layout';
+import { manageLayoutsDialog, openLayoutItemMenu, renameLayoutDialog, restoreFactoryLayoutDialog, saveLayoutsDialog } from './siDialogWire';
 
 export function installLayoutEditing(app: App, layout: LayoutEngine, root: HTMLElement) {
   let editing = false; const overlays: HTMLElement[] = [];
@@ -21,18 +22,79 @@ export function installLayoutEditing(app: App, layout: LayoutEngine, root: HTMLE
   const stop = () => { editing = false; root.classList.remove('layout-editing'); overlays.splice(0).forEach(o => o.remove()); };
   const save = (name = currentLayoutName()) => { const tree = captureLayout(root); if (!tree) return; saveUserLayout(name, tree); app.logMsg('info', `Layout "${name}" saved`); };
   const blank = (dual: boolean): LayoutNode => { const vm = (n: string): LayoutNode => ({ kind: 'frame', name: n, view: 'View Manager', label: 'View Manager' }); const one: LayoutNode = { kind: 'frameset', orientation: 'horizontal', sizes: ['*', '135'], splitter: true, children: [vm('vm'), { kind: 'frame', name: 'mcp', view: 'MCP', label: 'MCP' }] }; return dual ? { kind: 'frameset', orientation: 'horizontal', sizes: ['50%', '50%'], children: [one, { kind: 'frame', name: 'explorer', view: 'Explorer', label: 'Explorer' }] } : one; };
+
+  /** A layout the live frame tree no longer matches — what XSI.exe 315 lists with a checkmark. */
+  const modifiedLayouts = (): string[] => {
+    const live = captureLayout(root);
+    if (!live) return [];
+    return JSON.stringify(live) === JSON.stringify(layoutByName(currentLayoutName())) ? [] : [currentLayoutName()];
+  };
+
+  /** Room Menu (XSI.exe 146) / Layout Item (XSI.exe 308) over a layout list. */
+  const layoutItemMenu = (name: string | null, x: number, y: number) => {
+    openLayoutItemMenu(name, x, y, (label, target) => {
+      switch (label) {
+        case 'New Layout': { const n = prompt('New Layout name:', 'MyLayout'); if (n) { saveUserLayout(n, blank(false)); app.logMsg('info', `Layout "${n}" created`); } return; }
+        case 'Copy Layout': { if (!target) return; const src = layoutByName(target); if (!src) return; const n = prompt(`Copy Layout "${target}" to:`, target + '_copy'); if (n) saveUserLayout(n, JSON.parse(JSON.stringify(src))); return; }
+        case 'Rename Layout': {
+          if (!target) return;
+          renameLayoutDialog(target, n => {
+            const t = layoutByName(target);
+            if (!t) return;
+            saveUserLayout(n, t);
+            if (userLayouts()[target]) saveUserLayout(target, null);
+            if (currentLayoutName() === target) switchLayout(n); else app.logMsg('info', `Layout "${target}" renamed to "${n}"`);
+          });
+          return;
+        }
+        case 'Remove Layout': {
+          if (!target) return;
+          restoreFactoryLayoutDialog(target, () => {
+            saveUserLayout(target, null);
+            app.logMsg('info', `Layout "${target}" removed — factory default restored`);
+            if (currentLayoutName() === target) switchLayout('Default');
+          });
+          return;
+        }
+      }
+    });
+  };
   const handle = (label: string, path: string[]) => {
     if (path.includes('New Blank Layout')) { const n = prompt('New layout name:', 'MyLayout'); if (!n) return; saveUserLayout(n, blank(label === 'Dual Screen')); switchLayout(n); return; }
     if (path.includes('New Layout From')) { const src = layoutByName(label); if (!src) return; const n = prompt(`New layout from "${label}" — name:`, label + '_copy'); if (!n) return; saveUserLayout(n, JSON.parse(JSON.stringify(src))); switchLayout(n); return; }
     switch (label) {
-      case 'Edit Current Layout': start(); return; case 'Exit Layout Editing': stop(); return; case 'Save Layouts': save(); stop(); return;
-      case 'Manage...': { const u = userLayouts(); const tbs = userToolbars(); const names = [...Object.keys(u).map(n => 'Layout: ' + n), ...tbs.map(t => `${t.kind === 'shelf' ? 'Shelf' : 'Toolbar'}: ${t.name}`)]; if (!names.length) { alert('Manage Layouts, Views, Shelves and Toolbars\n\nNo user layouts, shelves or toolbars to delete (shipped ones cannot be removed).'); return; } const r = prompt('Manage Layouts, Views, Shelves and Toolbars — delete:\n' + names.map((n, i) => `${i + 1}. ${n}`).join('\n'), ''); const pick = /^\d+$/.test(r ?? '') ? names[Number(r) - 1] : r; if (!pick) return; if (pick.startsWith('Layout: ')) { const n = pick.slice(8); saveUserLayout(n, null); app.logMsg('info', `Layout "${n}" deleted`); if (currentLayoutName() === n) switchLayout('Default'); } else { const n = pick.replace(/^(Shelf|Toolbar): /, ''); saveToolbars(tbs.filter(t => t.name !== n)); app.logMsg('info', `Toolbar "${n}" deleted`); } return; }
-      case 'Rename Layout': { const cur = currentLayoutName(); const n = prompt('Rename layout:', cur); if (!n || n === cur) return; const t = layoutByName(cur); if (t) { saveUserLayout(n, t); if (userLayouts()[cur]) saveUserLayout(cur, null); switchLayout(n); } return; }
+      case 'Edit Current Layout': start(); return; case 'Exit Layout Editing': stop(); return;
+      case 'Save Layouts': {
+        const mod = modifiedLayouts();
+        if (!mod.length) { save(); stop(); return; }
+        saveLayoutsDialog(mod, () => { save(); stop(); }, () => { stop(); switchLayout(currentLayoutName()); });
+        return;
+      }
+      // XSI.exe 403 — Manage Layouts, Views, Shelves and Toolbars, with the Room / Layout Item menus on its list.
+      case 'Manage...': {
+        manageLayoutsDialog(
+          app,
+          () => ({
+            layouts: Object.keys(userLayouts()),
+            views: userToolbars().filter(t => t.kind === 'shelf').map(t => t.name),
+            toolbars: userToolbars().filter(t => t.kind === 'toolbar').map(t => t.name),
+          }),
+          (kind, name) => {
+            if (kind === 'layout') { saveUserLayout(name, null); app.logMsg('info', `Layout "${name}" deleted`); if (currentLayoutName() === name) switchLayout('Default'); return; }
+            saveToolbars(userToolbars().filter(t => t.name !== name));
+            app.logMsg('info', `${kind === 'view' ? 'Shelf' : 'Toolbar'} "${name}" deleted`);
+          },
+          layoutItemMenu,
+        );
+        return;
+      }
+      case 'Rename Layout': renameLayoutDialog(currentLayoutName(), n => { const cur = currentLayoutName(); const t = layoutByName(cur); if (!t) return; saveUserLayout(n, t); if (userLayouts()[cur]) saveUserLayout(cur, null); switchLayout(n); }); return;
     }
     if (layoutNames().includes(label)) { if (label !== currentLayoutName()) switchLayout(label); return; }
     app.logMsg('info', `Layouts: ${label} not implemented`);
   };
   window.addEventListener('layoutmenu', (e: any) => handle(e.detail?.label ?? '', e.detail?.path ?? []));
   window.addEventListener('vmlayout', (e: any) => { const l = e.detail?.layout; if (typeof l === 'string' && layoutNames().includes(l) && l !== currentLayoutName()) switchLayout(l); });
-  return { start, stop, save, isEditing: () => editing };
+  window.addEventListener('layoutitemmenu', (e: any) => layoutItemMenu(e.detail?.name ?? null, e.detail?.x ?? 100, e.detail?.y ?? 100));
+  return { start, stop, save, isEditing: () => editing, layoutItemMenu, modifiedLayouts };
 }

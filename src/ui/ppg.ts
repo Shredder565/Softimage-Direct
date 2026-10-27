@@ -8,6 +8,9 @@ import { Parameter, ParamSet } from '../core/params';
 import type { LayoutNode } from '../core/opdefs';
 import { applyPpgChrome, PPG_CHROME } from './ppgChrome';
 import { dispatchPpgOnChanged, dispatchPpgOnInit } from './ppgLogic';
+import { SI_MENUS, SiMenuItem, openSiMenu } from './si';
+import { logicScriptErrorDialog, parameterConnectionDialog } from './siDialogWire';
+import { openFloating } from './floating';
 
 export function propertyEditor(app: App, host: HTMLElement, target?: () => Node | undefined) {
   applyPpgChrome();
@@ -39,6 +42,7 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
   root.append(title, bar, tabs, body); host.appendChild(root);
   let activeTab = '';
   const collapsed = new Set<string>();
+  const groupKeys = new Set<string>();
   const go = (d: number) => { const i = state.hi + d; if (i < 0 || i >= state.history.length) return; state.hi = i; state.locked = state.history[i]; upd(); };
 
   type Page = { key: string; set: ParamSet; layout?: LayoutNode[]; kind?: 'geom-shape' | 'geom-geometry' | 'animation' };
@@ -94,7 +98,7 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
 
   const render = () => {
     const n = current();
-    tabs.innerHTML = ''; body.innerHTML = '';
+    tabs.innerHTML = ''; body.innerHTML = ''; groupKeys.clear();
     if (!n) {
       // Softimage Layout PPG with no selection: blank Property Page chrome.
       // WR-LOOK-07 — do not surface PE 394 "TODO: layout property page" in Softimage Layout a11y.
@@ -136,6 +140,8 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
       for (const name of Object.keys(TEXTURE_NODES)) { const o = document.createElement('option'); o.value = name; o.textContent = (sh.inputs.get(port)?.type === name ? '● ' : '') + name; sel.appendChild(o); }
       sel.onchange = () => { const v = sel.value; if (!v) app.run('DisconnectShader', { Shader: sh, Port: port }); else app.run('ConnectShaderNode', { Shader: sh, Port: port, Preset: v }); };
       const dot = document.createElement('div'); dot.className = 'anim-dot'; dot.style.visibility = 'hidden'; r.append(dot, l, sel); box.body.appendChild(r);
+      // uiut.dll dialog 129 "Parameter Connection List" — the attested connect picker for this port.
+      r.oncontextmenu = (e) => { e.preventDefault(); e.stopPropagation(); parameterConnectionDialog(app, sh, port); };
     }
     body.appendChild(box.el);
   };
@@ -154,7 +160,7 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
     body.appendChild(box.el);
   };
   const group = (name: string, pageKey: string, opts: string[] = []) => {
-    const el = document.createElement('div'); el.className = 'ppg-group'; const key = pageKey + '/' + name;
+    const el = document.createElement('div'); el.className = 'ppg-group'; const key = pageKey + '/' + name; groupKeys.add(key);
     const head = document.createElement('div'); head.className = 'ppg-group-head'; head.innerHTML = `<span class="tri">${collapsed.has(key) ? '▸' : '▾'}</span><span>${name}</span><span class="spacer"></span><span class="ppg-group-pin">⇪</span>`;
     const bodyEl = document.createElement('div'); bodyEl.className = 'ppg-group-body'; if (collapsed.has(key)) bodyEl.style.display = 'none';
     head.onclick = () => { if (collapsed.has(key)) collapsed.delete(key); else collapsed.add(key); render(); };
@@ -200,6 +206,58 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
     const rest2 = rest.filter(p => !inOtherTab.has(p.name.toLowerCase()));
     if (rest2.length) { const g = group(allow ? (pageKey === 'Geometry' ? 'Subdivisions' : pageKey) : 'Other', pageKey); for (const p of rest2) g.body.appendChild(row(app, p, [], multiSet)); into.appendChild(g.el); }
   };
+  // ---- Softimage genppg MENU 235 (property-page tree) and MENU 247 (page tab button).
+  // Item names come from the PE dump; what they do is this editor's own group state / property set.
+  const ppgMenu = (key: 'ppgTree' | 'ppgTabButton'): SiMenuItem[] => SI_MENUS[key] ?? [];
+  /** "Open SPDL for this property set" — the definition AfterImage holds for the inspected set. */
+  const openSpdl = () => {
+    const pg = currentPage;
+    if (!pg) return;
+    const set = pg.set as ParamSet & { type?: string; spdl?: unknown; layout?: unknown };
+    const lines = [
+      `PropertySet "${set.name}"`,
+      `  Type = ${set.type ?? '(none)'}`,
+      '  Parameters:',
+      ...set.params.map(p => `    ${p.name} : ${p.def.type}${p.def.min !== undefined ? ` [${p.def.min}..${p.def.max}]` : ''} = ${JSON.stringify(p.def.value ?? p.value)}${p.def.label && p.def.label !== p.name ? `   ; "${p.def.label}"` : ''}`),
+      '  Layout:',
+      ...(set.layout ? JSON.stringify(set.layout, null, 1).split('\n').map(l => '    ' + l) : ['    (none — parameters render in declaration order)']),
+    ];
+    openFloating(`SPDL — ${set.name}`, (b) => {
+      const pre = document.createElement('pre');
+      pre.className = 'si-spdl';
+      pre.textContent = lines.join('\n');
+      b.appendChild(pre);
+    }, { w: 460, h: 420, key: 'spdl:' + set.name });
+  };
+  const pickPpgMenu = (label: string) => {
+    switch (label) {
+      case 'Expand All': collapsed.clear(); render(); return;
+      case 'Collapse All': for (const k of groupKeys) collapsed.add(k); render(); return;
+      case 'Open SPDL for this property set': openSpdl(); return;
+      case 'Make Local': {
+        const set = currentPage?.set as unknown as { shared?: boolean; name?: string } | undefined;
+        if (!set) return;
+        if (!set.shared) { app.logMsg('info', `"${set.name}" is already a local property set`); return; }
+        app.record('Make local', () => { set.shared = false; }, () => { set.shared = true; });
+        app.events.emit('scene');
+        return;
+      }
+      default: app.logMsg('info', `Property editor: ${label}`);
+    }
+  };
+  body.addEventListener('contextmenu', (e) => {
+    if ((e.target as HTMLElement).closest('input, textarea, select')) return;
+    e.preventDefault(); e.stopPropagation();
+    openSiMenu(ppgMenu('ppgTree'), e.clientX, e.clientY, it => pickPpgMenu(it.label ?? ''));
+  });
+  tabs.addEventListener('contextmenu', (e) => {
+    const tab = (e.target as HTMLElement).closest<HTMLElement>('.ppg-tab');
+    if (!tab) return;
+    e.preventDefault(); e.stopPropagation();
+    activeTab = tab.textContent ?? activeTab; render();
+    openSiMenu(ppgMenu('ppgTabButton'), e.clientX, e.clientY, it => pickPpgMenu(it.label ?? ''));
+  });
+
   let lastKeys = '';
   const refresh = () => {
     const n = current();
@@ -330,6 +388,14 @@ function row(app: App, p: Parameter, opts: string[] = [], setter?: (p: Parameter
   }
   r.append(dot, label, ctl);
   return r;
+}
+
+// genppg.dll dialog 232 — one listener for the whole page, not one per property editor.
+if (typeof window !== 'undefined') {
+  window.addEventListener('ppglogicerror', (e: Event) => {
+    const d = (e as CustomEvent<{ message?: string; location?: string }>).detail ?? {};
+    logicScriptErrorDialog(d.message ?? 'Error in logic script', d.location ?? '');
+  });
 }
 
 export function rgbHex(v: number[]) { return '#' + v.map(x => Math.round(Math.max(0, Math.min(1, x)) * 255).toString(16).padStart(2, '0')).join(''); }
