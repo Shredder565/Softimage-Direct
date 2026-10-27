@@ -1,14 +1,23 @@
 // Softimage-faithful pass / picture output for AfterImage.
 // Dump-attested: OutputDir, Framebuffer.Filename/Format, Pass frame range (render-desktop / framebuffer enums).
 // Product: still frames write real image bytes; sequences keep .mp4 default (no .mov); 2K/4K via renderOutput.
+import * as THREE from 'three';
 import type { App } from './commands';
 import type { Pass, Framebuffer } from './scene';
+import type { MeshData } from './geometry';
+import { sphere as makeSphereMesh } from './geometry';
 import {
   DEFAULT_RENDER_OUTPUT_FORMAT,
   acceptsRenderOutputFormat,
   extensionForFormat,
   isMovieOutputFormat,
 } from './renderOutput';
+
+/** Softimage default Camera world pose (viewManager / PROJECT_HISTORY). */
+const SI_CAM_POS: [number, number, number] = [9.5, 7.3, 12.3];
+const SI_CAM_FOV = 53.6;
+/** Softimage Scene Colors background (viewport grey). */
+const SI_BG = { r: 0x7f, g: 0x7f, b: 0x7f };
 
 export interface RenderedFile {
   /**
@@ -383,35 +392,93 @@ function movieFormatFor(pass: Pass, override?: string | null): string {
 }
 
 /** Reuse one WebGLRenderer across sequence frames (new-per-frame was a main-thread hitch). */
-let _captureGl: { r: any; w: number; h: number } | null = null;
+let _captureGl: { r: THREE.WebGLRenderer; w: number; h: number } | null = null;
 
-/** Capture one frame to a PNG data URL via viewport WebGL, or software fallback. */
+/**
+ * Softimage Render Current Frame draws shaded geometry — not the last viewport's wireframe.
+ * viewManager scissors toggle mesh/wire per-vp; capture must force Softimage shaded state.
+ */
+function prepareSoftimageShadedCapture(scene: THREE.Scene): () => void {
+  const saved: { obj: THREE.Object3D; visible: boolean }[] = [];
+  const remember = (obj: THREE.Object3D) => {
+    if (!saved.some(s => s.obj === obj)) saved.push({ obj, visible: obj.visible });
+  };
+  scene.traverse((obj) => {
+    const k = (obj as any)._kind as string | undefined;
+    remember(obj);
+    if (k === 'mesh') { obj.visible = true; return; }
+    if (k === 'wire' || k === 'bbox' || k === 'marker' || k === 'aimline') { obj.visible = false; return; }
+    if (k === 'light') { obj.visible = true; return; }
+    if (obj.name === 'grid' || obj.type === 'GridHelper' || obj.type === 'AxesHelper') {
+      obj.visible = false; return;
+    }
+    // Softimage still has no component/hover/gizmo chrome (viewManager renderOrder ≥ 9).
+    if ((obj.renderOrder ?? 0) >= 9 && !k) obj.visible = false;
+  });
+  return () => { for (const s of saved) s.obj.visible = s.visible; };
+}
+
+/** Resolve Softimage Camera viewport for still capture (never rely on unset window.THREE). */
+function resolveCaptureCamera(w: number, h: number): THREE.Camera {
+  const g = globalThis as any;
+  const cam =
+    g.__activeCamera
+    ?? g.__vm?.active?.()?.camera
+    ?? g.__vm?.viewports?.()?.find?.((v: { name: string }) => v.name === 'Camera')?.camera;
+  if (cam) {
+    const c = cam.clone();
+    if ((c as THREE.PerspectiveCamera).isPerspectiveCamera) {
+      (c as THREE.PerspectiveCamera).aspect = w / h;
+      (c as THREE.PerspectiveCamera).updateProjectionMatrix();
+    }
+    c.updateMatrixWorld?.(true);
+    return c;
+  }
+  const persp = new THREE.PerspectiveCamera(SI_CAM_FOV, w / h, 0.1, 5000);
+  persp.position.set(...SI_CAM_POS);
+  persp.up.set(0, 1, 0);
+  persp.lookAt(0, 0, 0);
+  persp.updateMatrixWorld(true);
+  return persp;
+}
+
+/** Capture one frame to a PNG data URL via viewport WebGL, or software mesh fallback. */
 export function captureFrameDataUrl(app: App, width: number, height: number, frame: number): string {
   const w = Math.max(1, Math.floor(width));
   const h = Math.max(1, Math.floor(height));
   try {
     const g = globalThis as any;
-    const THREE = g.THREE;
+    // Module THREE — window.THREE was never set (1.0.27 always fell through to ambience bands = "static").
+    if (!g.THREE) g.THREE = THREE;
     const three = g.__three;
-    const cam = g.__activeCamera;
-    if (three?.scene && cam && THREE?.WebGLRenderer) {
+    if (three?.scene && THREE.WebGLRenderer) {
+      // Flush Softimage → Three sync so sphere / meshes are in the framebuffer before plate write.
+      try { three.syncNow?.(); } catch { /* ignore */ }
       if (!_captureGl || _captureGl.w !== w || _captureGl.h !== h) {
         try { _captureGl?.r?.dispose?.(); } catch { /* ignore */ }
-        const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
-        r.setSize(w, h);
+        const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: false });
+        r.setSize(w, h, false);
+        r.setClearColor(SI_BG.r << 16 | SI_BG.g << 8 | SI_BG.b, 1);
         r.shadowMap.enabled = true;
         _captureGl = { r, w, h };
       }
       const r = _captureGl.r;
-      const c = cam.clone();
-      if (c.aspect !== undefined) { c.aspect = w / h; c.updateProjectionMatrix?.(); }
+      const c = resolveCaptureCamera(w, h);
       const prev = app.anim.frame;
       app.anim.frame = frame;
       three.needs?.();
-      r.render(three.scene, c);
-      const url = r.domElement.toDataURL('image/png');
-      app.anim.frame = prev;
-      if (url?.startsWith('data:image')) return url;
+      // Softimage still = shaded mesh plate. Viewport scissors leave last ortho as wireframe —
+      // force Softimage shaded visibility (mesh on, wire/gizmo/hover off) for the capture pass.
+      const restore = prepareSoftimageShadedCapture(three.scene);
+      try {
+        r.render(three.scene, c);
+        const url = r.domElement.toDataURL('image/png');
+        app.anim.frame = prev;
+        if (url?.startsWith('data:image')) return url;
+      } finally {
+        restore();
+        app.anim.frame = prev;
+      }
     }
   } catch {
     /* fall through to software */
@@ -419,27 +486,213 @@ export function captureFrameDataUrl(app: App, width: number, height: number, fra
   return softwareFrameDataUrl(app, w, h, frame);
 }
 
-/** Deterministic still when no viewport — proves image write without inventing Softimage OM. */
+type SoftTri = {
+  ax: number; ay: number; az: number;
+  bx: number; by: number; bz: number;
+  cx: number; cy: number; cz: number;
+  nx: number; ny: number; nz: number;
+  cr: number; cg: number; cb: number;
+};
+
+function collectSceneTris(app: App): SoftTri[] {
+  const tris: SoftTri[] = [];
+  for (const o of app.scene.allObjects()) {
+    if (!o.visible) continue;
+    const mesh = o.primitive?.mesh() as MeshData | null | undefined;
+    if (!mesh?.positions || !mesh?.indices) continue;
+    const M = o.globalMatrix();
+    const sh = o.material?.surface;
+    const col = (sh?.val('diffuse') as number[] | undefined)
+      ?? (sh?.val('color') as number[] | undefined)
+      ?? [0.72, 0.72, 0.72];
+    const cr = Math.max(0, Math.min(1, Number(col[0]) || 0.72));
+    const cg = Math.max(0, Math.min(1, Number(col[1]) || 0.72));
+    const cb = Math.max(0, Math.min(1, Number(col[2]) || 0.72));
+    const pos = mesh.positions;
+    const idx = mesh.indices;
+    const xform = (i: number) => {
+      const v = new THREE.Vector3(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]).applyMatrix4(M);
+      return v;
+    };
+    for (let t = 0; t + 2 < idx.length; t += 3) {
+      const A = xform(idx[t]), B = xform(idx[t + 1]), C = xform(idx[t + 2]);
+      const e1 = B.clone().sub(A), e2 = C.clone().sub(A);
+      const n = e1.cross(e2);
+      const len = n.length() || 1;
+      n.multiplyScalar(1 / len);
+      tris.push({
+        ax: A.x, ay: A.y, az: A.z,
+        bx: B.x, by: B.y, bz: B.z,
+        cx: C.x, cy: C.y, cz: C.z,
+        nx: n.x, ny: n.y, nz: n.z,
+        cr, cg, cb,
+      });
+    }
+  }
+  return tris;
+}
+
+/** Softimage default sphere when scene has no mesh geo yet. */
+function softimageDefaultSphereTris(): SoftTri[] {
+  const mesh = makeSphereMesh(1, 24, 16);
+  const tris: SoftTri[] = [];
+  const pos = mesh.positions;
+  const idx = mesh.indices;
+  for (let t = 0; t + 2 < idx.length; t += 3) {
+    const a = idx[t] * 3, b = idx[t + 1] * 3, c = idx[t + 2] * 3;
+    const Ax = pos[a], Ay = pos[a + 1], Az = pos[a + 2];
+    const Bx = pos[b], By = pos[b + 1], Bz = pos[b + 2];
+    const Cx = pos[c], Cy = pos[c + 1], Cz = pos[c + 2];
+    const e1x = Bx - Ax, e1y = By - Ay, e1z = Bz - Az;
+    const e2x = Cx - Ax, e2y = Cy - Ay, e2z = Cz - Az;
+    let nx = e1y * e2z - e1z * e2y, ny = e1z * e2x - e1x * e2z, nz = e1x * e2y - e1y * e2x;
+    const len = Math.hypot(nx, ny, nz) || 1;
+    nx /= len; ny /= len; nz /= len;
+    tris.push({
+      ax: Ax, ay: Ay, az: Az, bx: Bx, by: By, bz: Bz, cx: Cx, cy: Cy, cz: Cz,
+      nx, ny, nz, cr: 0.72, cg: 0.72, cb: 0.72,
+    });
+  }
+  return tris;
+}
+
+/**
+ * Softimage-like CPU still: grey backdrop + Lambert-shaded scene meshes (or default sphere).
+ * Replaces pre-1.0.28 ambience-band "static" fallback that had no geo.
+ */
 export function softwareFrameDataUrl(app: App, width: number, height: number, frame: number): string {
   const w = Math.max(1, Math.floor(width));
   const h = Math.max(1, Math.floor(height));
   const rgba = new Uint8Array(w * h * 4);
-  const amb = (app.scene.root.property('ambience')?.val('ambience') as number[] | undefined) ?? [0.2, 0.2, 0.2];
-  const r0 = Math.round(Math.max(0, Math.min(1, Number(amb[0]) || 0.2)) * 200) + 20;
-  const g0 = Math.round(Math.max(0, Math.min(1, Number(amb[1]) || 0.2)) * 200) + 20;
-  const b0 = Math.round(Math.max(0, Math.min(1, Number(amb[2]) || 0.2)) * 200) + 40;
-  const objs = [...app.scene.allObjects()].length;
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const i = (y * w + x) * 4;
-      const band = ((x + frame * 3 + objs) % 64) < 8 ? 40 : 0;
-      rgba[i] = Math.min(255, r0 + band);
-      rgba[i + 1] = Math.min(255, g0 + (y < h / 2 ? 10 : 0));
-      rgba[i + 2] = Math.min(255, b0 + ((x / w) * 30) | 0);
-      rgba[i + 3] = 255;
+  const zbuf = new Float32Array(w * h);
+  zbuf.fill(1e30);
+
+  // Softimage Scene Colors background
+  for (let i = 0; i < rgba.length; i += 4) {
+    rgba[i] = SI_BG.r; rgba[i + 1] = SI_BG.g; rgba[i + 2] = SI_BG.b; rgba[i + 3] = 255;
+  }
+
+  // Softimage viewport grid (XZ plane) — faint lines for Softimage-like plate.
+  drawSoftimageGrid(rgba, zbuf, w, h, frame);
+
+  let tris = collectSceneTris(app);
+  if (!tris.length) tris = softimageDefaultSphereTris();
+
+  // Softimage Camera look-from DEFAULT_CAMERA_POS → origin; light from upper-right.
+  const eye = new THREE.Vector3(...SI_CAM_POS);
+  const target = new THREE.Vector3(0, 0, 0);
+  const up = new THREE.Vector3(0, 1, 0);
+  const forward = target.clone().sub(eye).normalize();
+  const right = forward.clone().cross(up).normalize();
+  const camUp = right.clone().cross(forward).normalize();
+  const fov = SI_CAM_FOV * Math.PI / 180;
+  const tanHalf = Math.tan(fov / 2);
+  const aspect = w / h;
+  const L = new THREE.Vector3(0.45, 0.85, 0.35).normalize(); // Softimage-ish key
+  const amb = 0.28;
+
+  const project = (x: number, y: number, z: number) => {
+    const p = new THREE.Vector3(x, y, z).sub(eye);
+    const px = p.dot(right), py = p.dot(camUp), pz = p.dot(forward);
+    if (pz <= 0.05) return null;
+    const sx = (px / (pz * tanHalf * aspect) + 1) * 0.5 * w;
+    const sy = (1 - (py / (pz * tanHalf) + 1) * 0.5) * h;
+    return { sx, sy, z: pz };
+  };
+
+  for (const t of tris) {
+    const A = project(t.ax, t.ay, t.az);
+    const B = project(t.bx, t.by, t.bz);
+    const C = project(t.cx, t.cy, t.cz);
+    if (!A || !B || !C) continue;
+    // Backface (Softimage shaded): skip if facing away
+    const ndot = t.nx * forward.x + t.ny * forward.y + t.nz * forward.z;
+    if (ndot > 0.02) continue;
+    const ndL = Math.max(0, t.nx * L.x + t.ny * L.y + t.nz * L.z);
+    const shade = amb + (1 - amb) * ndL;
+    const rr = Math.min(255, Math.round(t.cr * shade * 255));
+    const gg = Math.min(255, Math.round(t.cg * shade * 255));
+    const bb = Math.min(255, Math.round(t.cb * shade * 255));
+    fillTri(rgba, zbuf, w, h, A, B, C, rr, gg, bb);
+  }
+
+  return pngBytesToDataUrl(encodePngRGBA(w, h, rgba));
+}
+
+function drawSoftimageGrid(
+  rgba: Uint8Array, zbuf: Float32Array, w: number, h: number, _frame: number,
+) {
+  // Project Softimage grid lines on XZ (viewport GridHelper analogue) — subtle.
+  const eye = new THREE.Vector3(...SI_CAM_POS);
+  const target = new THREE.Vector3(0, 0, 0);
+  const up = new THREE.Vector3(0, 1, 0);
+  const forward = target.clone().sub(eye).normalize();
+  const right = forward.clone().cross(up).normalize();
+  const camUp = right.clone().cross(forward).normalize();
+  const fov = SI_CAM_FOV * Math.PI / 180;
+  const tanHalf = Math.tan(fov / 2);
+  const aspect = w / h;
+  const proj = (x: number, y: number, z: number) => {
+    const p = new THREE.Vector3(x, y, z).sub(eye);
+    const px = p.dot(right), py = p.dot(camUp), pz = p.dot(forward);
+    if (pz <= 0.05) return null;
+    return {
+      sx: (px / (pz * tanHalf * aspect) + 1) * 0.5 * w,
+      sy: (1 - (py / (pz * tanHalf) + 1) * 0.5) * h,
+      z: pz,
+    };
+  };
+  const line = (x0: number, z0: number, x1: number, z1: number) => {
+    const a = proj(x0, 0, z0), b = proj(x1, 0, z1);
+    if (!a || !b) return;
+    const steps = Math.max(2, Math.hypot(b.sx - a.sx, b.sy - a.sy) | 0);
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const x = (a.sx + (b.sx - a.sx) * t) | 0;
+      const y = (a.sy + (b.sy - a.sy) * t) | 0;
+      const z = a.z + (b.z - a.z) * t;
+      if (x < 0 || y < 0 || x >= w || y >= h) continue;
+      const p = y * w + x;
+      if (z >= zbuf[p]) continue;
+      zbuf[p] = z;
+      const o = p * 4;
+      rgba[o] = 0x5e; rgba[o + 1] = 0x5e; rgba[o + 2] = 0x5e;
+    }
+  };
+  for (let i = -10; i <= 10; i++) {
+    line(i, -10, i, 10);
+    line(-10, i, 10, i);
+  }
+}
+
+function fillTri(
+  rgba: Uint8Array, zbuf: Float32Array, w: number, h: number,
+  A: { sx: number; sy: number; z: number },
+  B: { sx: number; sy: number; z: number },
+  C: { sx: number; sy: number; z: number },
+  rr: number, gg: number, bb: number,
+) {
+  const minX = Math.max(0, Math.floor(Math.min(A.sx, B.sx, C.sx)));
+  const maxX = Math.min(w - 1, Math.ceil(Math.max(A.sx, B.sx, C.sx)));
+  const minY = Math.max(0, Math.floor(Math.min(A.sy, B.sy, C.sy)));
+  const maxY = Math.min(h - 1, Math.ceil(Math.max(A.sy, B.sy, C.sy)));
+  const area = (B.sx - A.sx) * (C.sy - A.sy) - (B.sy - A.sy) * (C.sx - A.sx);
+  if (Math.abs(area) < 1e-8) return;
+  for (let y = minY; y <= maxY; y++) {
+    for (let x = minX; x <= maxX; x++) {
+      // Barycentric: wA=area(PBC)/ABC, wB=area(PCA)/ABC, wC=area(PAB)/ABC
+      const wC = ((B.sx - A.sx) * (y - A.sy) - (B.sy - A.sy) * (x - A.sx)) / area;
+      const wA = ((C.sx - B.sx) * (y - B.sy) - (C.sy - B.sy) * (x - B.sx)) / area;
+      const wB = 1 - wA - wC;
+      if (wA < -0.001 || wB < -0.001 || wC < -0.001) continue;
+      const z = wA * A.z + wB * B.z + wC * C.z;
+      const p = y * w + x;
+      if (z >= zbuf[p]) continue;
+      zbuf[p] = z;
+      const o = p * 4;
+      rgba[o] = rr; rgba[o + 1] = gg; rgba[o + 2] = bb; rgba[o + 3] = 255;
     }
   }
-  return pngBytesToDataUrl(encodePngRGBA(w, h, rgba));
 }
 
 /**

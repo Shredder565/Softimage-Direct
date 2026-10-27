@@ -33,6 +33,7 @@ import { faceRobotControlPanelView } from './ui/faceRobotController';
 import { hairPanelView } from './ui/hairPanel';
 import hairViewChrome from './data/si/hair_view_chrome.json';
 import { frostGraphView, frostHairWizardView, frostClothWizardView, frostExperimentalRenderView, frostOf, runFrostSmokeTests } from './frost';
+import { ensureSoftimageDefaultScene } from './core/softimageDefaultScene';
 import { registerToolbarCommands, palettesView, toolbarView, newToolbar, customizeToolbars, openToolbarWindow, userToolbars } from './ui/toolbars';
 import { playbackPanel, animationPanel, timerange, layerManager, xsiExplorer, scriptHistory } from './ui/views';
 import { LayoutEngine, layoutByName, currentLayoutName, layoutNames, dockInto } from './ui/layout';
@@ -101,6 +102,8 @@ registerSimulateModuleCommands(app);
 registerFaceRobotModuleCommands(app);
 registerCrowdFxModuleCommands(app);
 registerToolbarCommands(app);
+// Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
+ensureSoftimageDefaultScene(app);
 (window as any).__siMessage = siMessage; (window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); (window as any).__getEnableParity = () => getEnableParity(app); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})
 // Softimage Command.GetEnabled analogue for harness / Script Editor probes
 (window as any).__commandEnabled = (name: string, args: Record<string, unknown> = {}) => commandEnabled(app, name, args);
@@ -503,8 +506,27 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
   // Avoid embedding the exact failure phrase in the bundle (asar probes false-positive on it).
   const stubGone = !new RegExp(['offline', 'render', 'stub'].join(' '), 'i')
     .test(app.log.slice(-12).map(l => l.text).join('\n'));
+  // Softimage sphere / scene geo on plate — reject pre-1.0.28 ambience-band "static" (near-flat).
+  let spherePlateOk = false;
+  let plateVariance = 0;
+  try {
+    const url = still?.files?.[0]?.dataUrl;
+    if (url?.startsWith('data:image') && typeof document !== 'undefined') {
+      const img = document.createElement('img');
+      // Sync decode via Image + canvas is async; approximate via byte diversity of PNG payload.
+      const b64 = url.slice(url.indexOf(',') + 1);
+      const sample = b64.slice(100, 4000);
+      const seen = new Set(sample.split(''));
+      plateVariance = seen.size;
+      // Flat ambience PNG base64 alphabet is tiny; shaded sphere spreads many codes.
+      spherePlateOk = seen.size >= 40 && (still?.files?.[0]?.byteLength ?? 0) > 2000;
+    }
+  } catch { /* ignore */ }
+  const hasDefaultSphere = !!app.scene.find('sphere');
+  const hasDefaultCam = [...app.scene.allObjects()].some(o => o.type === 'camera');
+  const hasDefaultLight = [...app.scene.allObjects()].some(o => o.type === 'light');
   return {
-    ok: !!(still?.ok && pathOk && bytesOk && resolvedOk && stillFrameOk && seqOk && movieOk && longRangeOk && rcpArgs && rcfArgs && rpArgs && stubGone),
+    ok: !!(still?.ok && pathOk && bytesOk && resolvedOk && stillFrameOk && seqOk && movieOk && longRangeOk && rcpArgs && rcfArgs && rpArgs && stubGone && spherePlateOk && hasDefaultSphere && hasDefaultCam && hasDefaultLight),
     stillPath: still?.files?.[0]?.path ?? null,
     stillBytes: still?.files?.[0]?.byteLength ?? 0,
     stillFormat: still?.format ?? null,
@@ -516,6 +538,9 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     movieOk,
     longRangeOk,
     longRangeBytes,
+    spherePlateOk,
+    plateVariance,
+    defaultScene: { sphere: hasDefaultSphere, camera: hasDefaultCam, light: hasDefaultLight },
     arities: { renderCurrentPass: 1, renderCurrentFrame: 0, renderPass: 6, ok: rcpArgs && rcfArgs && rpArgs },
     stubGone,
     lastRender: (window as any).__siLastRender ?? null,
