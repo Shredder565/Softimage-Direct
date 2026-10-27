@@ -74,8 +74,12 @@ import { mainShelf, panelSwitcher } from './ui/shelf';
 import { menubar, menubarStatus } from './ui/menubar';
 import { statusBar } from './ui/statusbar';
 import { openFloating, floatingWindows, setDockHook } from './ui/floating';
+import { installFlipbookViewer } from './ui/flipbookViewer';
 import { siIcon, hasIcon, runScriptLine, siMessage, SI_VIEWS, SI_KEYMAPS, SI_MENUS } from './ui/si';
 import { preferencesWindow, preferenceSets } from './ui/prefs';
+
+// Softimage Flipbook / still preview in-app (never window.open → Electron ms-link on Windows).
+installFlipbookViewer();
 
 const app = new App();
 registerBuiltins(app);

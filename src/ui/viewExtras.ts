@@ -91,7 +91,8 @@ export function installViewExtras(C: Ctx) {
   const pickRoto = (vp: VPX) => { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*'; inp.onchange = () => { const f = inp.files?.[0]; if (!f) return; const url = URL.createObjectURL(f); new THREE.TextureLoader().load(url, t => { t.colorSpace = THREE.SRGBColorSpace; const x = X(vp); x.roto = t; x.rotoUrl = f.name; vp.flags['Rotoscope'] = true; x.disp.set('rotoenable', true); C.setDisplay(vp, 'Rotoscope'); C.needs(); }); }; inp.click(); };
 
   // ---------------------------------------------------------------- capture / flipbook
-  // Softimage Flipbook viewer subset — never JSON.stringify multi‑MB data URLs into document.write (1.0.22 freeze).
+  // Softimage Flipbook viewer subset — never JSON.stringify multi‑MB data URLs into document.write (1.0.22/1.0.23 freeze).
+  // In-app Flipbook only (installFlipbookViewer) — never window.open (Electron openExternal → Windows ms-link).
   const FLIP_CAP = 16;
   const FLIP_EDGE = 480;
   const grab = (vp: VPX, r: Rect, maxEdge = 0): string => {
@@ -121,28 +122,8 @@ export function installViewExtras(C: Ctx) {
     A.frame = captureReq.f;
     C.needs();
   };
-  const flipbook = (frames: string[], name: string) => {
-    const w = window.open('', '_blank');
-    if (!w) { app.logMsg('error', 'Flipbook: popup blocked'); return; }
-    const n = Math.max(0, frames.length - 1);
-    // Shell only — inject frame array via window handle (no JSON embed / document.write OOM).
-    w.document.write(
-      `<title>Flipbook – ${name}</title><body style="margin:0;background:#333;color:#ddd;font:12px Tahoma">` +
-      `<div style="padding:4px"><button id=p>▶</button> <input id=s type=range min=0 max=${n} value=0 style="width:300px"> ` +
-      `<span id=f>1 / ${frames.length}</span> <a id=d download="${name}_0001.png" href="#">save frame</a></div><img id=i>` +
-      `<script>let F=[],i=0,t=null;const img=document.getElementById('i'),s=document.getElementById('s'),` +
-      `f=document.getElementById('f'),d=document.getElementById('d');` +
-      `function show(k){if(!F.length)return;i=k;img.src=F[i];s.value=i;f.textContent=(i+1)+' / '+F.length;` +
-      `d.href=F[i];d.download='${name}_'+String(i+1).padStart(4,'0')+'.png';}` +
-      `s.oninput=()=>show(+s.value);document.getElementById('p').onclick=()=>{if(t){clearInterval(t);t=null;}` +
-      `else t=setInterval(()=>show((i+1)%F.length),1000/${app.anim.fps});};` +
-      `window.__setFlipbookFrames=function(fr){F=fr||[];s.max=Math.max(0,F.length-1);show(0);};</script></body>`,
-    );
-    w.document.close();
-    try { (w as any).__setFlipbookFrames?.(frames); } catch { /* popup may block script */ }
-  };
+  // Capture → flipbook-frames event → installFlipbookViewer in-app floating (no popup).
   window.addEventListener('flipbook', () => capture(vps[C.active()]));
-  window.addEventListener('flipbook-frames', (e: any) => flipbook(e.detail.frames, e.detail.name));
 
   // ---------------------------------------------------------------- grid / rulers / safe areas / stats overlay
   const gridFor = (vp: VPX) => { const v = X(vp).vis; const ext = Number(v.val('disextent') ?? 20), su = Math.max(0.1, Number(v.val('disustep') ?? 1)); const key = `${ext}|${su}`; if (key !== gridKey) { gridKey = key; const n = Math.max(1, Math.round(ext * 2 / su)); const old = C.grid; const ng = new THREE.GridHelper(ext * 2, n, (old.material as any).color?.getHex?.() ?? 0x6e6e6e, 0x5e5e5e); ng.name = 'grid'; scene.remove(old); scene.add(ng); C.grid = ng; } };
@@ -287,7 +268,10 @@ export function installViewExtras(C: Ctx) {
         if (fr.length === 1) {
           const a = document.createElement('a'); a.href = fr[0]; a.download = name + '.png'; a.click();
           app.logMsg('info', `Captured ${name}.png`);
-        } else flipbook(fr, name);
+        } else {
+          // In-app Flipbook (never window.open → Electron ms-link).
+          window.dispatchEvent(new CustomEvent('flipbook-frames', { detail: { frames: fr, name } }));
+        }
       } else { captureReq.f++; app.anim.frame = captureReq.f; C.needs(); }
     }
   };

@@ -399,6 +399,7 @@ export function runFrostExperimentalRender(
     (app as any).lastFrostExperimentalRender = result;
 
     if (opts.openFlipbook !== false && flipbookFrames.length > 1 && typeof window !== 'undefined') {
+      // In-app Flipbook — never window.open (Electron openExternal(about:blank) → Windows ms-link).
       window.dispatchEvent(new CustomEvent('flipbook-frames', {
         detail: {
           frames: flipbookFrames.slice(0, FLIPBOOK_MAX_FRAMES),
@@ -406,15 +407,13 @@ export function runFrostExperimentalRender(
         },
       }));
     } else if (opts.openFlipbook !== false && flipbookFrames.length === 1 && typeof window !== 'undefined') {
-      const w = window.open('', '_blank');
-      if (w) {
-        w.document.write(
-          `<title>FROST Experimental Beauty</title><body style="margin:0;background:#222;text-align:center;color:#ddd;font:12px Tahoma">` +
-          `<div>Experimental · ${settings.mode} · ${samples} spp · denoise=${settings.denoise} · ${device}</div>` +
-          `<img src="${flipbookFrames[0]}"></body>`,
-        );
-        w.document.close();
-      }
+      window.dispatchEvent(new CustomEvent('still-preview', {
+        detail: {
+          dataUrl: flipbookFrames[0],
+          path: `FROST_Experimental_Beauty.${settings.mode}.${samples}spp.png`,
+          format: 'png',
+        },
+      }));
     }
 
     app.logMsg(
