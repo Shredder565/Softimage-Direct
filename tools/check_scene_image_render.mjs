@@ -55,6 +55,34 @@ const viewExtras = fs.readFileSync(path.join(root, 'src/ui/viewExtras.ts'), 'utf
 if (/JSON\.stringify\(frames\)/.test(viewExtras))
   diffs.push('viewExtras Flipbook must not JSON.stringify frame data URLs into document.write');
 else notes.push('viewExtras Flipbook injects frames without JSON.stringify embed');
+const stripLineComments = (s) => s.replace(/\/\/.*$/gm, '');
+if (/\bwindow\.open\s*\(/.test(stripLineComments(viewExtras)))
+  diffs.push('viewExtras must not window.open Flipbook (Electron openExternal → Windows ms-link)');
+else notes.push('viewExtras Flipbook uses in-app flipbook-frames event (no window.open)');
+if (!/browserDownloadLeaf/.test(core))
+  diffs.push('sceneRender missing browserDownloadLeaf (.pic → .png download; Softimage path stays .pic)');
+else notes.push('sceneRender browserDownloadLeaf maps Softimage .pic download to .png');
+if (!/still-preview/.test(core))
+  diffs.push('sceneRender still preview must dispatch still-preview (in-app; no window.open)');
+else notes.push('sceneRender still preview uses still-preview event');
+const electronMain = fs.readFileSync(path.join(root, 'electron/main.cjs'), 'utf8');
+if (/setWindowOpenHandler[\s\S]*shell\.openExternal\(url\)[\s\S]*action:\s*'deny'/.test(electronMain)
+    && !/about:blank/.test(electronMain))
+  diffs.push('electron main must not openExternal every window.open url (about:blank → ms-link)');
+if (!/about:blank/.test(electronMain) || !/ms-windows-store|ms-link|https\?:/i.test(electronMain))
+  diffs.push('electron main missing about:blank allow + http(s)-only openExternal (ms-link guard)');
+else notes.push('electron windowOpenHandler allows about:blank; openExternal only http(s)');
+const frostXr = fs.readFileSync(path.join(root, 'src/frost/experimentalRender.ts'), 'utf8');
+if (/\bwindow\.open\s*\(/.test(stripLineComments(frostXr)))
+  diffs.push('FROST Experimental Render must not window.open (ms-link); use Flipbook/still-preview events');
+else notes.push('FROST Experimental Render uses in-app Flipbook/still-preview (no window.open)');
+const flipUi = fs.readFileSync(path.join(root, 'src/ui/flipbookViewer.ts'), 'utf8');
+if (!/installFlipbookViewer|openInAppFlipbook|openInAppStillPreview/.test(flipUi))
+  diffs.push('flipbookViewer.ts missing in-app Flipbook/still APIs');
+else notes.push('in-app Flipbook viewer present');
+if (!/FLIPBOOK_MAX_FRAMES\s*=\s*16/.test(core) || !/FLIP_CAP\s*=\s*16/.test(viewExtras))
+  diffs.push('1.0.23 Flipbook freeze caps must stay at 16 (sceneRender + viewExtras)');
+else notes.push('1.0.23 Flipbook freeze caps still FLIPBOOK_MAX_FRAMES=16 / FLIP_CAP=16');
 if (!/MovieCreate/.test(core) || !/wantsMovieContainer|emitMovie/.test(core))
   diffs.push('sceneRender must gate movie sidecar on MovieCreate / movie override');
 else notes.push('sceneRender MovieCreate gates .mp4 sidecar');

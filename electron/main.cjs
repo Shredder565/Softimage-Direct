@@ -17,6 +17,24 @@ const SOFTIMAGE_BG = '#aca8a5';
 /** @type {BrowserWindow | null} */
 let mainWindow = null;
 
+/**
+ * window.open handler — Softimage Flipbook / still used to call window.open('', '_blank').
+ * openExternal('about:blank') on Windows surfaces Store / ms-link prompts for missing apps.
+ * Allow blank/blob/data in-app; http(s) → default browser; never ms-windows-store or unknown protocols.
+ */
+function handleWindowOpen({ url }) {
+  const u = String(url || '');
+  if (!u || u === 'about:blank' || u.startsWith('blob:') || u.startsWith('data:')) {
+    return { action: 'allow' };
+  }
+  if (/^https?:/i.test(u)) {
+    shell.openExternal(u);
+    return { action: 'deny' };
+  }
+  // Refuse ms-windows-store:, ms-link, file: without association, and other protocol traps.
+  return { action: 'deny' };
+}
+
 function createWindow() {
   // Softimage Layout: one Softimage menubar inside the page — hide Electron OS menu (WR-LOOK-00).
   Menu.setApplicationMenu(null);
@@ -44,10 +62,7 @@ function createWindow() {
     mainWindow?.show();
   });
 
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
-    return { action: 'deny' };
-  });
+  mainWindow.webContents.setWindowOpenHandler(handleWindowOpen);
 
   if (isDev) {
     mainWindow.loadURL(DEV_URL);
@@ -71,3 +86,5 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
+
+module.exports = { handleWindowOpen };

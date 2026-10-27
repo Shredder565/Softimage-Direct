@@ -396,6 +396,19 @@ export function softwareFrameDataUrl(app: App, width: number, height: number, fr
   return pngBytesToDataUrl(encodePngRGBA(w, h, rgba));
 }
 
+/**
+ * Softimage ResolvedFilename may end in .pic while payload is PNG.
+ * Browser download must use a known image extension — opening .pic on Windows
+ * triggers Store / ms-link "find an app" prompts (no Softimage PIC association).
+ */
+export function browserDownloadLeaf(softimagePath: string, dataUrl: string): string {
+  const leaf = softimagePath.split(/[/\\]/).pop() || softimagePath;
+  if (dataUrl.startsWith('data:image/png') && /\.pic$/i.test(leaf)) return leaf.replace(/\.pic$/i, '.png');
+  if (dataUrl.startsWith('data:image/jpeg') && /\.pic$/i.test(leaf)) return leaf.replace(/\.pic$/i, '.jpg');
+  if (/\.mov$/i.test(leaf)) return leaf.replace(/\.mov$/i, '.mp4');
+  return leaf;
+}
+
 function downloadDataUrl(dataUrl: string, filename: string) {
   if (typeof document === 'undefined') return;
   const a = document.createElement('a');
@@ -404,18 +417,15 @@ function downloadDataUrl(dataUrl: string, filename: string) {
   a.click();
 }
 
+/**
+ * Softimage still preview — in-app via still-preview event (Flipbook viewer).
+ * Never window.open / shell.openExternal (Electron about:blank → Windows ms-link).
+ */
 function previewStill(dataUrl: string, title: string, format: string) {
-  if (typeof window === 'undefined' || !window.open) return;
-  const w = window.open('', '_blank');
-  if (!w) return;
-  const file = title.split('/').pop() || title;
-  w.document.write(
-    `<title>${file}</title><body style="margin:0;background:#222;text-align:center">` +
-    `<a download="${file}" href="${dataUrl}" style="color:#ddd;font:12px Tahoma">save ${file}</a> ` +
-    `<span style="color:#888;font:11px Tahoma">output format ${format}</span><br>` +
-    `<img src="${dataUrl}"></body>`,
-  );
-  w.document.close();
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new CustomEvent('still-preview', {
+    detail: { dataUrl, path: title, format },
+  }));
 }
 
 function storePicture(path: string, file: RenderedFile) {
@@ -588,7 +598,8 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
   (globalThis as any).__siLastRender = result;
 
   if (ok && mode === 'still' && pictureFiles[0]) {
-    const leaf = pictureFiles[0].path.split('/').pop() || pictureFiles[0].path;
+    // Softimage path stays .pic in __siRenderPictures / ResolvedFilename; download leaf is .png for OS open.
+    const leaf = browserDownloadLeaf(pictureFiles[0].path, pictureFiles[0].dataUrl);
     if (opts.download !== false) downloadDataUrl(pictureFiles[0].dataUrl, leaf);
     if (opts.openPreview !== false) previewStill(pictureFiles[0].dataUrl, pictureFiles[0].path, pictureFiles[0].format);
   } else if (ok && mode === 'sequence') {
