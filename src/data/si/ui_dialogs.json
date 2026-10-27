@@ -1,0 +1,3847 @@
+{
+"softimage": "Softimage 2015 SP2",
+"source": "data/si/pe_resources.json RT_DIALOG",
+"generated_by": "tools/build_ui_surface_audit.py",
+"dialogs": {
+"XSI.exe#102": {
+"dll": "XSI.exe",
+"id": "102",
+"title": "Command Mapping",
+"rectDlu": [
+0,
+0,
+561,
+292
+],
+"font": [
+11,
+"Arial"
+],
+"surface": "File > Keyboard Mapping — key-map editor",
+"controls": [
+{
+"cls": "static",
+"text": "&Key Map:",
+"id": 4294967295,
+"dlu": [
+6,
+5,
+38,
+11
+],
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1000,
+"dlu": [
+44,
+4,
+100,
+74
+],
+"style": 1344340227
+},
+{
+"cls": "button",
+"text": "&New",
+"id": 1001,
+"dlu": [
+150,
+4,
+38,
+11
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Remove",
+"id": 1002,
+"dlu": [
+188,
+4,
+38,
+11
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "&Group:",
+"id": 4294967295,
+"dlu": [
+6,
+18,
+32,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "SysListView32",
+"text": "List1",
+"id": 1159,
+"dlu": [
+4,
+27,
+109,
+60
+],
+"style": 1350680733
+},
+{
+"cls": "static",
+"text": "&Command:",
+"id": 4294967295,
+"dlu": [
+118,
+18,
+38,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "SysListView32",
+"text": "List1",
+"id": 1160,
+"dlu": [
+116,
+27,
+258,
+60
+],
+"style": 1350682781
+},
+{
+"cls": "button",
+"text": "Description:",
+"id": 4294967295,
+"dlu": [
+378,
+27,
+137,
+60
+],
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "[description]",
+"id": 1006,
+"dlu": [
+383,
+35,
+126,
+35
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Binding:",
+"id": 4294967295,
+"dlu": [
+380,
+75,
+37,
+10
+],
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Cl&ear",
+"id": 1163,
+"dlu": [
+483,
+74,
+28,
+11
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Ctr&l",
+"id": 1023,
+"dlu": [
+389,
+92,
+24,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "&Shift",
+"id": 1024,
+"dlu": [
+437,
+92,
+26,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "&Alt",
+"id": 1025,
+"dlu": [
+486,
+92,
+21,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Aux Mod&1",
+"id": 1026,
+"dlu": [
+10,
+192,
+60,
+10
+],
+"style": 1073807363
+},
+{
+"cls": "button",
+"text": "Aux Mod&2",
+"id": 1027,
+"dlu": [
+72,
+192,
+60,
+10
+],
+"style": 1073807363
+},
+{
+"cls": "button",
+"text": "Aux Mod&3",
+"id": 1028,
+"dlu": [
+134,
+192,
+60,
+10
+],
+"style": 1073807363
+},
+{
+"cls": "button",
+"text": " Conte&xt:",
+"id": 1015,
+"dlu": [
+4,
+91,
+39,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1016,
+"dlu": [
+45,
+91,
+68,
+30
+],
+"style": 1344340227
+},
+{
+"cls": "button",
+"text": " &View:",
+"id": 1019,
+"dlu": [
+117,
+92,
+38,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1020,
+"dlu": [
+155,
+92,
+138,
+30
+],
+"style": 1344340227
+},
+{
+"cls": "static",
+"text": "&Device:",
+"id": 4294967295,
+"dlu": [
+4,
+191,
+26,
+8
+],
+"style": 1073872896
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1008,
+"dlu": [
+32,
+186,
+116,
+50
+],
+"style": 1075904771
+},
+{
+"cls": "static",
+"text": "",
+"id": 1007,
+"dlu": [
+4,
+116,
+553,
+173
+],
+"style": 1073876992
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+517,
+28,
+42,
+11
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+517,
+40,
+42,
+11
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "View in &Browser",
+"id": 3,
+"dlu": [
+226,
+4,
+69,
+11
+],
+"style": 1342246656
+},
+{
+"cls": "static",
+"text": "Static",
+"id": 1004,
+"dlu": [
+422,
+75,
+59,
+11
+],
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Help",
+"id": 9,
+"dlu": [
+517,
+52,
+42,
+11
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "To assign a key binding, drag a command to the diagram below.",
+"id": 4294967295,
+"dlu": [
+6,
+106,
+454,
+8
+],
+"style": 1342308352
+}
+]
+},
+"XSI.exe#104": {
+"dll": "XSI.exe",
+"id": "104",
+"title": "Save Preset As...",
+"rectDlu": [
+0,
+0,
+187,
+121
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "PPG Save Preset As…",
+"controls": [
+{
+"cls": "static",
+"text": "Preset Name:",
+"id": 4294967295,
+"dlu": [
+9,
+6,
+115,
+9
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1021,
+"dlu": [
+8,
+17,
+173,
+18
+],
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "Preset Description:",
+"id": 4294967295,
+"dlu": [
+8,
+46,
+172,
+10
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1022,
+"dlu": [
+8,
+58,
+173,
+32
+],
+"style": 1352732740
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+35,
+100,
+50,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+101,
+100,
+51,
+14
+],
+"style": 1342242816
+}
+]
+},
+"XSI.exe#159": {
+"dll": "XSI.exe",
+"id": "159",
+"title": "Script Button",
+"rectDlu": [
+0,
+0,
+264,
+63
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "Toolbar button type picker",
+"controls": [
+{
+"cls": "static",
+"text": "Select the type of button you wish to create:",
+"id": 4294967295,
+"dlu": [
+11,
+9,
+172,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Script Button",
+"id": 800,
+"dlu": [
+19,
+25,
+142,
+10
+],
+"style": 1342308361
+},
+{
+"cls": "button",
+"text": "Script Command (external file)",
+"id": 801,
+"dlu": [
+19,
+40,
+142,
+10
+],
+"style": 1342177289
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+201,
+14,
+50,
+14
+],
+"style": 1342373889
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+201,
+37,
+50,
+14
+],
+"style": 1342373888
+}
+]
+},
+"XSI.exe#166": {
+"dll": "XSI.exe",
+"id": "166",
+"title": "Rename Layout",
+"rectDlu": [
+0,
+0,
+172,
+45
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "View > Layouts > Rename Layout",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+60,
+24,
+50,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+115,
+24,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1020,
+"dlu": [
+9,
+6,
+155,
+12
+],
+"style": 1350631552
+}
+]
+},
+"XSI.exe#167": {
+"dll": "XSI.exe",
+"id": "167",
+"title": "Customize Spacer",
+"rectDlu": [
+0,
+0,
+142,
+80
+],
+"font": [
+10,
+"Arial"
+],
+"surface": "Toolbar spacer size",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+27,
+59,
+50,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+85,
+59,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Width:",
+"id": 4294967295,
+"dlu": [
+8,
+13,
+40,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1303,
+"dlu": [
+52,
+12,
+80,
+12
+],
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "Height:",
+"id": 4294967295,
+"dlu": [
+8,
+33,
+40,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1304,
+"dlu": [
+52,
+32,
+80,
+12
+],
+"style": 1350631552
+}
+]
+},
+"XSI.exe#281": {
+"dll": "XSI.exe",
+"id": "281",
+"title": "Project Manager",
+"rectDlu": [
+0,
+0,
+415,
+234
+],
+"font": [
+11,
+"Arial"
+],
+"surface": "File > Project Manager",
+"controls": [
+{
+"cls": "listbox",
+"text": "",
+"id": 1088,
+"dlu": [
+7,
+54,
+103,
+138
+],
+"style": 1352728963
+},
+{
+"cls": "button",
+"text": "&New Project...",
+"id": 1102,
+"dlu": [
+121,
+54,
+86,
+12
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Set as Default",
+"id": 1106,
+"dlu": [
+121,
+68,
+86,
+12
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Add Project...",
+"id": 3028,
+"dlu": [
+126,
+105,
+76,
+12
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Remove from List",
+"id": 3024,
+"dlu": [
+126,
+119,
+76,
+12
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Scan Disk",
+"id": 7,
+"dlu": [
+126,
+133,
+76,
+12
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "C&lear List",
+"id": 3025,
+"dlu": [
+126,
+147,
+76,
+12
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Import List...",
+"id": 3026,
+"dlu": [
+126,
+161,
+76,
+12
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Export List...",
+"id": 3027,
+"dlu": [
+126,
+175,
+76,
+12
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Delete &Project",
+"id": 1103,
+"dlu": [
+121,
+194,
+86,
+12
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Open ",
+"id": 1104,
+"dlu": [
+343,
+55,
+67,
+13
+],
+"style": 1342373889
+},
+{
+"cls": "button",
+"text": "&Delete",
+"id": 10,
+"dlu": [
+343,
+70,
+67,
+13
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Help",
+"id": 8,
+"dlu": [
+343,
+85,
+67,
+13
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Close",
+"id": 2,
+"dlu": [
+343,
+217,
+67,
+13
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Select a Sequence:",
+"id": 1166,
+"dlu": [
+218,
+45,
+122,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "&Archive...",
+"id": 3,
+"dlu": [
+114,
+220,
+62,
+13
+],
+"style": 1073807360
+},
+{
+"cls": "button",
+"text": "&Restore...",
+"id": 6,
+"dlu": [
+112,
+220,
+62,
+13
+],
+"style": 1073807360
+},
+{
+"cls": "static",
+"text": "Project Path:",
+"id": 4294967295,
+"dlu": [
+7,
+209,
+92,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1150,
+"dlu": [
+7,
+218,
+201,
+12
+],
+"style": 1350633600
+},
+{
+"cls": "button",
+"text": "...",
+"id": 9,
+"dlu": [
+126,
+222,
+18,
+11
+],
+"style": 1073807360
+},
+{
+"cls": "button",
+"text": "&Copy To...",
+"id": 3029,
+"dlu": [
+113,
+220,
+62,
+13
+],
+"style": 1073807360
+},
+{
+"cls": "static",
+"text": "Select a Project:",
+"id": 4294967295,
+"dlu": [
+7,
+45,
+133,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Project List",
+"id": 4294967295,
+"dlu": [
+121,
+95,
+86,
+95
+],
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Sort By: ",
+"id": 4294967295,
+"dlu": [
+7,
+195,
+43,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1282,
+"dlu": [
+52,
+193,
+57,
+45
+],
+"style": 1344339971
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1283,
+"dlu": [
+189,
+202,
+202,
+12
+],
+"style": 1082198144
+},
+{
+"cls": "static",
+"text": "From Project List :",
+"id": 4294967295,
+"dlu": [
+189,
+196,
+61,
+8
+],
+"style": 1073872896
+},
+{
+"cls": "button",
+"text": "Set Active Project",
+"id": 1231,
+"dlu": [
+121,
+83,
+86,
+12
+],
+"style": 1342242816
+}
+]
+},
+"XSI.exe#315": {
+"dll": "XSI.exe",
+"id": "315",
+"title": "Edit layout",
+"rectDlu": [
+0,
+0,
+221,
+146
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "Save-modified-layouts prompt",
+"controls": [
+{
+"cls": "button",
+"text": "Save",
+"id": 1,
+"dlu": [
+149,
+7,
+68,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Don't Save",
+"id": 2,
+"dlu": [
+149,
+25,
+68,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "listbox",
+"text": "",
+"id": 1088,
+"dlu": [
+7,
+63,
+136,
+76
+],
+"style": 1344340305
+},
+{
+"cls": "static",
+"text": "You have modified the layouts listed below with a checkmark.",
+"id": 4294967295,
+"dlu": [
+7,
+7,
+134,
+18
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Do you want to save your modifications for future sessions?",
+"id": 4294967295,
+"dlu": [
+7,
+30,
+131,
+31
+],
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Revert",
+"id": 1114,
+"dlu": [
+149,
+125,
+68,
+14
+],
+"style": 1073807360
+}
+]
+},
+"XSI.exe#316": {
+"dll": "XSI.exe",
+"id": "316",
+"title": "Change Icon",
+"rectDlu": [
+0,
+0,
+376,
+159
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "Toolbar button bitmap picker",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+258,
+138,
+56,
+15
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+314,
+138,
+56,
+15
+],
+"style": 1342242816
+},
+{
+"cls": "SysListView32",
+"text": "List2",
+"id": 1115,
+"dlu": [
+7,
+8,
+362,
+110
+],
+"style": 1350633484
+},
+{
+"cls": "edit",
+"text": "",
+"id": 3023,
+"dlu": [
+7,
+138,
+95,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "Name",
+"id": 4294967295,
+"dlu": [
+7,
+128,
+31,
+8
+],
+"style": 1342308352
+}
+]
+},
+"XSI.exe#319": {
+"dll": "XSI.exe",
+"id": "319",
+"title": "Add Script Command",
+"rectDlu": [
+0,
+0,
+188,
+256
+],
+"font": [
+11,
+"Arial"
+],
+"surface": "Toolbar Add Script Command",
+"controls": [
+{
+"cls": "edit",
+"text": "",
+"id": 1133,
+"dlu": [
+5,
+15,
+120,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1134,
+"dlu": [
+5,
+40,
+120,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1171,
+"dlu": [
+5,
+65,
+120,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1136,
+"dlu": [
+5,
+90,
+100,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "...",
+"id": 1154,
+"dlu": [
+105,
+90,
+20,
+10
+],
+"style": 1342242816
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1135,
+"dlu": [
+5,
+115,
+120,
+30
+],
+"style": 1344340226
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1131,
+"dlu": [
+5,
+140,
+120,
+30
+],
+"style": 1344340226
+},
+{
+"cls": "button",
+"text": ";states=NEW_",
+"id": 1020,
+"dlu": [
+70,
+157,
+19,
+11
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": ";states=DELETE_",
+"id": 1021,
+"dlu": [
+89,
+157,
+12,
+11
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": ";states=UP_",
+"id": 1023,
+"dlu": [
+100,
+157,
+12,
+11
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": ";states=DOWN_",
+"id": 1022,
+"dlu": [
+112,
+157,
+12,
+11
+],
+"style": 1342242816
+},
+{
+"cls": "DSGrid",
+"text": "Parameters",
+"id": 202,
+"dlu": [
+5,
+171,
+120,
+66
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+130,
+7,
+54,
+16
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+130,
+25,
+54,
+16
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Help",
+"id": 4,
+"dlu": [
+130,
+43,
+54,
+16
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Parse Script",
+"id": 1132,
+"dlu": [
+130,
+140,
+54,
+16
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Command / Button Name",
+"id": 4294967295,
+"dlu": [
+5,
+5,
+120,
+10
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Script Command Name",
+"id": 4294967295,
+"dlu": [
+5,
+30,
+120,
+10
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Script Procedure",
+"id": 4294967295,
+"dlu": [
+5,
+130,
+120,
+10
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Parsing a script reveals the procedures in the script but may also execute global code in the script.",
+"id": 4294967295,
+"dlu": [
+130,
+171,
+54,
+65
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Script Language",
+"id": 4294967295,
+"dlu": [
+5,
+105,
+120,
+10
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Filename",
+"id": 4294967295,
+"dlu": [
+5,
+80,
+120,
+10
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Description",
+"id": 4294967295,
+"dlu": [
+5,
+55,
+120,
+10
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Parameters",
+"id": 1222,
+"dlu": [
+5,
+159,
+42,
+8
+],
+"style": 1342308352
+}
+]
+},
+"XSI.exe#326": {
+"dll": "XSI.exe",
+"id": "326",
+"title": "Specify a folder for the preset list to search for presets",
+"rectDlu": [
+0,
+0,
+198,
+125
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "Preset-list search folder",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+47,
+105,
+50,
+15
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+101,
+105,
+50,
+15
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Button Label:",
+"id": 4294967295,
+"dlu": [
+11,
+6,
+60,
+10
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Preset Folder:",
+"id": 4294967295,
+"dlu": [
+11,
+73,
+62,
+10
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1144,
+"dlu": [
+11,
+17,
+136,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1021,
+"dlu": [
+11,
+83,
+136,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "...",
+"id": 1143,
+"dlu": [
+150,
+84,
+23,
+13
+],
+"style": 1342242816
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1162,
+"dlu": [
+11,
+51,
+136,
+55
+],
+"style": 1344339971
+},
+{
+"cls": "static",
+"text": "Root Of Path To Preset Folder:",
+"id": 4294967295,
+"dlu": [
+11,
+40,
+142,
+10
+],
+"style": 1342308352
+}
+]
+},
+"XSI.exe#327": {
+"dll": "XSI.exe",
+"id": "327",
+"title": "Customize Popup Menu Button",
+"rectDlu": [
+0,
+0,
+207,
+133
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "Popup menu button item order",
+"controls": [
+{
+"cls": "button",
+"text": "Close",
+"id": 1,
+"dlu": [
+136,
+111,
+70,
+15
+],
+"style": 1342242817
+},
+{
+"cls": "listbox",
+"text": "",
+"id": 1145,
+"dlu": [
+7,
+7,
+122,
+117
+],
+"style": 1352732929
+},
+{
+"cls": "button",
+"text": "Move Up",
+"id": 1146,
+"dlu": [
+136,
+7,
+70,
+15
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Move Down",
+"id": 1147,
+"dlu": [
+136,
+23,
+70,
+15
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Remove",
+"id": 1148,
+"dlu": [
+136,
+39,
+70,
+15
+],
+"style": 1342242816
+}
+]
+},
+"XSI.exe#331": {
+"dll": "XSI.exe",
+"id": "331",
+"title": "Layout Explorer",
+"rectDlu": [
+0,
+0,
+471,
+351
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "Relational-view frame tree",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+414,
+7,
+50,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+414,
+24,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "SysTreeView32",
+"text": "Tree1",
+"id": 1147,
+"dlu": [
+7,
+7,
+398,
+319
+],
+"style": 1350631431
+},
+{
+"cls": "static",
+"text": "The DS Focus is believe to be :",
+"id": 65535,
+"dlu": [
+7,
+333,
+130,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "no where",
+"id": 1148,
+"dlu": [
+143,
+333,
+165,
+8
+],
+"style": 1342308352
+}
+]
+},
+"XSI.exe#364": {
+"dll": "XSI.exe",
+"id": "364",
+"title": "Restore factory default layout",
+"rectDlu": [
+0,
+0,
+221,
+77
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "Restore factory default layout confirm",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+36,
+50,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+131,
+50,
+50,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "static",
+"text": "This will PERMANENTLY remove your personalised settings for this layout and restore the factory default. It cannot be undone. You will need to restart application to see effect. Continue ?",
+"id": 1192,
+"dlu": [
+8,
+11,
+204,
+38
+],
+"style": 1342308353
+}
+]
+},
+"XSI.exe#383": {
+"dll": "XSI.exe",
+"id": "383",
+"title": "Events",
+"rectDlu": [
+0,
+0,
+393,
+218
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "Event handler grid",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+83,
+191,
+68,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "DSGrid",
+"text": "Event",
+"id": 1256,
+"dlu": [
+19,
+9,
+353,
+134
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Cancel",
+"id": 2,
+"dlu": [
+163,
+191,
+68,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "",
+"id": 1261,
+"dlu": [
+20,
+153,
+353,
+27
+],
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "&Help",
+"id": 9,
+"dlu": [
+243,
+191,
+68,
+14
+],
+"style": 1342242816
+}
+]
+},
+"XSI.exe#403": {
+"dll": "XSI.exe",
+"id": "403",
+"title": "Manage Layouts, Views, Shelves and Toolbars",
+"rectDlu": [
+0,
+0,
+301,
+315
+],
+"font": [
+9,
+"Tahoma"
+],
+"surface": "View > Layouts > Manage…",
+"controls": [
+{
+"cls": "listbox",
+"text": "",
+"id": 1291,
+"dlu": [
+12,
+36,
+273,
+61
+],
+"style": 1352859729
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1294,
+"dlu": [
+12,
+93,
+273,
+14
+],
+"style": 1350633600
+},
+{
+"cls": "listbox",
+"text": "",
+"id": 1292,
+"dlu": [
+12,
+125,
+273,
+61
+],
+"style": 1352728657
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1295,
+"dlu": [
+12,
+182,
+273,
+14
+],
+"style": 1350633600
+},
+{
+"cls": "listbox",
+"text": "",
+"id": 1293,
+"dlu": [
+12,
+214,
+273,
+61
+],
+"style": 1352728657
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1296,
+"dlu": [
+12,
+271,
+273,
+14
+],
+"style": 1350633600
+},
+{
+"cls": "button",
+"text": "Delete",
+"id": 1,
+"dlu": [
+184,
+294,
+50,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Close",
+"id": 2,
+"dlu": [
+244,
+294,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "  Layouts  ",
+"id": 1297,
+"dlu": [
+7,
+26,
+287,
+85
+],
+"style": 1342177287
+},
+{
+"cls": "button",
+"text": "  Views (incl. Shelves)  ",
+"id": 1298,
+"dlu": [
+7,
+115,
+287,
+85
+],
+"style": 1342177287
+},
+{
+"cls": "button",
+"text": "  Toolbars (old)  ",
+"id": 1299,
+"dlu": [
+7,
+204,
+287,
+85
+],
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Place a checkmark next to each of the layouts, views and ds toolbars that you wish to delete.",
+"id": 1300,
+"dlu": [
+7,
+7,
+287,
+17
+],
+"style": 1342308352
+}
+]
+},
+"XSI.exe#404": {
+"dll": "XSI.exe",
+"id": "404",
+"title": "Customize Button",
+"rectDlu": [
+0,
+0,
+208,
+121
+],
+"font": [
+8,
+"MS Shell Dlg"
+],
+"surface": "Toolbar button size / label / bitmap",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+150,
+12,
+50,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+150,
+33,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1001,
+"dlu": [
+72,
+42,
+51,
+14
+],
+"style": 1484849280
+},
+{
+"cls": "button",
+"text": "User Button Size",
+"id": 4294967295,
+"dlu": [
+6,
+6,
+138,
+59
+],
+"style": 1342177287
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1021,
+"dlu": [
+72,
+21,
+51,
+14
+],
+"style": 1484849280
+},
+{
+"cls": "button",
+"text": "Width:",
+"id": 1178,
+"dlu": [
+18,
+24,
+48,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Height:",
+"id": 1281,
+"dlu": [
+18,
+44,
+48,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1000,
+"dlu": [
+72,
+75,
+72,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "Button Label:",
+"id": 1002,
+"dlu": [
+9,
+78,
+59,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "static",
+"text": "Bitmap:",
+"id": 4294967295,
+"dlu": [
+22,
+99,
+46,
+10
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1035,
+"dlu": [
+72,
+97,
+72,
+14
+],
+"style": 1350631552
+}
+]
+},
+"XSI.exe#405": {
+"dll": "XSI.exe",
+"id": "405",
+"title": "Interaction Mode",
+"rectDlu": [
+0,
+0,
+219,
+70
+],
+"font": [
+11,
+"Arial"
+],
+"surface": "Interaction mode (key map + mouse)",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+97,
+46,
+50,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+156,
+46,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Set my mouse and keyboard interaction to:",
+"id": 4294967295,
+"dlu": [
+10,
+10,
+181,
+15
+],
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 3036,
+"dlu": [
+10,
+25,
+96,
+30
+],
+"style": 1344471043
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 3037,
+"dlu": [
+116,
+25,
+90,
+30
+],
+"style": 1344471043
+}
+]
+},
+"XSI.exe#406": {
+"dll": "XSI.exe",
+"id": "406",
+"title": "Customize Button",
+"rectDlu": [
+0,
+0,
+259,
+239
+],
+"font": [
+10,
+"Arial"
+],
+"surface": "Toolbar button script command",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+198,
+190,
+50,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+198,
+210,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1001,
+"dlu": [
+72,
+150,
+51,
+12
+],
+"style": 1484849280
+},
+{
+"cls": "button",
+"text": "User Button Size",
+"id": 4294967295,
+"dlu": [
+6,
+120,
+162,
+53
+],
+"style": 1342177287
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1021,
+"dlu": [
+72,
+132,
+51,
+12
+],
+"style": 1484849280
+},
+{
+"cls": "button",
+"text": "Width:",
+"id": 1178,
+"dlu": [
+18,
+133,
+48,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Height:",
+"id": 1281,
+"dlu": [
+18,
+151,
+48,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1000,
+"dlu": [
+72,
+179,
+96,
+12
+],
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "Button Label:",
+"id": 1002,
+"dlu": [
+7,
+180,
+61,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Script Commands",
+"id": 4294967295,
+"dlu": [
+6,
+6,
+246,
+90
+],
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Scripting Language:",
+"id": 4294967295,
+"dlu": [
+66,
+105,
+96,
+12
+],
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 1003,
+"dlu": [
+168,
+102,
+84,
+84
+],
+"style": 1344340227
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1004,
+"dlu": [
+12,
+18,
+234,
+72
+],
+"style": 1352732804
+},
+{
+"cls": "button",
+"text": "Run",
+"id": 1231,
+"dlu": [
+198,
+126,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "Tooltip:",
+"id": 4294967295,
+"dlu": [
+17,
+199,
+47,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1005,
+"dlu": [
+72,
+197,
+96,
+12
+],
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "Bitmap:",
+"id": 4294967295,
+"dlu": [
+17,
+217,
+45,
+9
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 1035,
+"dlu": [
+72,
+215,
+96,
+12
+],
+"style": 1350631552
+}
+]
+},
+"XSI.exe#410": {
+"dll": "XSI.exe",
+"id": "410",
+"title": "Migrate Preferences",
+"rectDlu": [
+0,
+0,
+442,
+202
+],
+"font": [
+8,
+"MS Shell Dlg"
+],
+"surface": "Preference migration version picker",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+166,
+181,
+50,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+224,
+181,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "listbox",
+"text": "",
+"id": 3034,
+"dlu": [
+7,
+19,
+428,
+157
+],
+"style": 1353777411
+},
+{
+"cls": "static",
+"text": "Please select a version to migrate from:",
+"id": 4294967295,
+"dlu": [
+7,
+7,
+128,
+8
+],
+"style": 1342308352
+}
+]
+},
+"genppg.dll#232": {
+"dll": "genppg.dll",
+"id": "232",
+"title": "Error in Logic Script",
+"rectDlu": [
+0,
+0,
+357,
+241
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "PPG logic-script error",
+"controls": [
+{
+"cls": "static",
+"text": "Error message:",
+"id": 65535,
+"dlu": [
+5,
+5,
+48,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 211,
+"dlu": [
+5,
+15,
+280,
+12
+],
+"style": 1350633600
+},
+{
+"cls": "static",
+"text": "Error Location:",
+"id": 65535,
+"dlu": [
+5,
+35,
+47,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 212,
+"dlu": [
+5,
+45,
+280,
+190
+],
+"style": 1350631556
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+340,
+230,
+10,
+9
+],
+"style": 1073807361
+},
+{
+"cls": "button",
+"text": "Close",
+"id": 2,
+"dlu": [
+300,
+5,
+50,
+14
+],
+"style": 1342242816
+}
+]
+},
+"mcp.dll#220": {
+"dll": "mcp.dll",
+"id": "220",
+"title": "Current Time",
+"rectDlu": [
+0,
+0,
+186,
+95
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "Playback current-frame entry",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+129,
+18,
+50,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+129,
+47,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "FRAME",
+"id": 65535,
+"dlu": [
+40,
+20,
+51,
+9
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "SECOND",
+"id": 65535,
+"dlu": [
+40,
+42,
+51,
+9
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "MILLISECOND",
+"id": 65535,
+"dlu": [
+40,
+64,
+51,
+9
+],
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "",
+"id": 282,
+"dlu": [
+15,
+15,
+15,
+20
+],
+"style": 1342308361
+},
+{
+"cls": "button",
+"text": "",
+"id": 283,
+"dlu": [
+15,
+37,
+15,
+20
+],
+"style": 1342177289
+},
+{
+"cls": "button",
+"text": "",
+"id": 284,
+"dlu": [
+15,
+59,
+15,
+20
+],
+"style": 1342177289
+}
+]
+},
+"siuitasks.dll#201": {
+"dll": "siuitasks.dll",
+"id": "201",
+"title": "Assemble NurbsMesh (SCM)",
+"rectDlu": [
+0,
+0,
+195,
+125
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "Assemble NurbsMesh (SCM)",
+"controls": [
+{
+"cls": "button",
+"text": "&OK",
+"id": 1,
+"dlu": [
+14,
+97,
+50,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "&Cancel",
+"id": 2,
+"dlu": [
+75,
+97,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "SCM Tolerance",
+"id": 201,
+"dlu": [
+26,
+19,
+50,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 202,
+"dlu": [
+83,
+16,
+40,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "Copy User Clusters Locally",
+"id": 203,
+"dlu": [
+26,
+37,
+99,
+14
+],
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Copy Materials and Textures Locally ",
+"id": 204,
+"dlu": [
+26,
+54,
+135,
+14
+],
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Center To Geometric Center",
+"id": 205,
+"dlu": [
+26,
+71,
+104,
+14
+],
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "&Help",
+"id": 9,
+"dlu": [
+137,
+97,
+45,
+14
+],
+"style": 1342242816
+}
+]
+},
+"siuitasks.dll#202": {
+"dll": "siuitasks.dll",
+"id": "202",
+"title": "User Keyword(s)",
+"rectDlu": [
+0,
+0,
+195,
+64
+],
+"font": [
+11,
+"Arial"
+],
+"surface": "User keyword editor",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+21,
+40,
+59,
+17
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+113,
+40,
+59,
+17
+],
+"style": 1342242816
+},
+{
+"cls": "edit",
+"text": "",
+"id": 248,
+"dlu": [
+8,
+22,
+180,
+18
+],
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "Please enter the User Keywords (comma separated)",
+"id": 4294967295,
+"dlu": [
+9,
+7,
+179,
+8
+],
+"style": 1342308353
+}
+]
+},
+"uiut.dll#129": {
+"dll": "uiut.dll",
+"id": "129",
+"title": "Parameter Connection List",
+"rectDlu": [
+0,
+0,
+227,
+247
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "PPG parameter connect list",
+"controls": [
+{
+"cls": "listbox",
+"text": "",
+"id": 220,
+"dlu": [
+20,
+13,
+185,
+201
+],
+"style": 1352728841
+},
+{
+"cls": "button",
+"text": "Connect",
+"id": 1,
+"dlu": [
+96,
+220,
+50,
+14
+],
+"style": 1342373889
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+153,
+220,
+50,
+14
+],
+"style": 1342242816
+}
+]
+},
+"uiut.dll#160": {
+"dll": "uiut.dll",
+"id": "160",
+"title": "Relational View Editor - Set Pane Relationships",
+"rectDlu": [
+0,
+0,
+471,
+183
+],
+"font": [
+10,
+"Arial"
+],
+"surface": "Pane context > Set Relationships…",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+414,
+144,
+50,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+414,
+166,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Add Relationship",
+"id": 300,
+"dlu": [
+7,
+144,
+84,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Validate Relationships",
+"id": 301,
+"dlu": [
+7,
+166,
+84,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "edit",
+"text": "",
+"id": 302,
+"dlu": [
+100,
+144,
+305,
+36
+],
+"style": 1350637636
+}
+]
+},
+"uiut.dll#162": {
+"dll": "uiut.dll",
+"id": "162",
+"title": "Relational View - Bitmap Editor",
+"rectDlu": [
+0,
+0,
+293,
+182
+],
+"font": [
+10,
+"Arial"
+],
+"surface": "Stack window > Bitmap Editor",
+"controls": [
+{
+"cls": "listbox",
+"text": "",
+"id": 259,
+"dlu": [
+7,
+24,
+120,
+123
+],
+"style": 1352728835
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 269,
+"dlu": [
+177,
+161,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+232,
+161,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Load All Default Bitmaps",
+"id": 271,
+"dlu": [
+18,
+154,
+99,
+13
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "Import New Bitmap",
+"id": 272,
+"dlu": [
+166,
+54,
+85,
+13
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "The imported bitmap will be copied to the user directory. The filename syntax for bitmaps is filename.bmp and filename_highlight.bmp",
+"id": 65535,
+"dlu": [
+150,
+84,
+126,
+34
+],
+"style": 1342308352
+}
+]
+},
+"viewinteraction.dll#337": {
+"dll": "viewinteraction.dll",
+"id": "337",
+"title": "Polygon Winding",
+"rectDlu": [
+0,
+0,
+226,
+121
+],
+"font": [
+11,
+"Arial"
+],
+"surface": "Add Polygon winding conflict",
+"controls": [
+{
+"cls": "button",
+"text": "Invert Others",
+"id": 1000,
+"dlu": [
+12,
+100,
+56,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+156,
+100,
+58,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "This operation will connect two polygons, each with different edge-winding orientation, resulting in a double-boundary edge. ",
+"id": 65535,
+"dlu": [
+8,
+4,
+204,
+20
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "You can either :",
+"id": 65535,
+"dlu": [
+8,
+39,
+56,
+11
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Create this polygon and Invert Other conflicting polygons",
+"id": 65535,
+"dlu": [
+12,
+51,
+189,
+11
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Create this polygon with Double Edges",
+"id": 65535,
+"dlu": [
+12,
+64,
+189,
+11
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "Cancel the operation (ESC)",
+"id": 65535,
+"dlu": [
+12,
+78,
+189,
+10
+],
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "Double Edges",
+"id": 3,
+"dlu": [
+84,
+100,
+60,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "The default behaviour can be set in the User Preferences",
+"id": 65535,
+"dlu": [
+8,
+25,
+196,
+8
+],
+"style": 1342308352
+}
+]
+},
+"vm.dll#386": {
+"dll": "vm.dll",
+"id": "386",
+"title": "Capture Viewport",
+"rectDlu": [
+0,
+0,
+312,
+244
+],
+"font": [
+11,
+"Arial"
+],
+"surface": "Viewport capture",
+"controls": [
+{
+"cls": "static",
+"text": "&Output Filename",
+"id": 65535,
+"dlu": [
+7,
+5,
+55,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 213,
+"dlu": [
+7,
+16,
+276,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "...",
+"id": 230,
+"dlu": [
+288,
+17,
+17,
+12
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "&Format",
+"id": 65535,
+"dlu": [
+7,
+39,
+34,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 217,
+"dlu": [
+42,
+37,
+104,
+81
+],
+"style": 1344340227
+},
+{
+"cls": "button",
+"text": "Codec...",
+"id": 240,
+"dlu": [
+154,
+36,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "&Padding",
+"id": 218,
+"dlu": [
+214,
+39,
+34,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 220,
+"dlu": [
+249,
+37,
+57,
+45
+],
+"style": 1344339970
+},
+{
+"cls": "button",
+"text": "Picture Settings",
+"id": 65535,
+"dlu": [
+7,
+58,
+298,
+73
+],
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "Image &Size:",
+"id": 231,
+"dlu": [
+21,
+75,
+50,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 223,
+"dlu": [
+78,
+73,
+40,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "x",
+"id": 232,
+"dlu": [
+127,
+76,
+8,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 224,
+"dlu": [
+142,
+73,
+40,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "&Scale",
+"id": 233,
+"dlu": [
+195,
+75,
+28,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "combobox",
+"text": "",
+"id": 226,
+"dlu": [
+224,
+73,
+57,
+64
+],
+"style": 1344339971
+},
+{
+"cls": "static",
+"text": "Pixel &Ratio:",
+"id": 234,
+"dlu": [
+21,
+97,
+50,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 225,
+"dlu": [
+78,
+94,
+40,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "&User Pixel Ratio",
+"id": 241,
+"dlu": [
+142,
+96,
+86,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Record Audio Track",
+"id": 239,
+"dlu": [
+21,
+115,
+99,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "static",
+"text": "Picture Ratio :",
+"id": 235,
+"dlu": [
+210,
+116,
+47,
+8
+],
+"style": 1073872896
+},
+{
+"cls": "edit",
+"text": "",
+"id": 227,
+"dlu": [
+260,
+113,
+40,
+14
+],
+"style": 1082198144
+},
+{
+"cls": "button",
+"text": "&Sequence",
+"id": 65535,
+"dlu": [
+7,
+135,
+229,
+49
+],
+"style": 1342177287
+},
+{
+"cls": "static",
+"text": "&From",
+"id": 65535,
+"dlu": [
+21,
+152,
+28,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 214,
+"dlu": [
+49,
+150,
+40,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "To",
+"id": 65535,
+"dlu": [
+96,
+153,
+19,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 215,
+"dlu": [
+115,
+150,
+40,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "static",
+"text": "Step",
+"id": 65535,
+"dlu": [
+162,
+152,
+16,
+8
+],
+"style": 1073872896
+},
+{
+"cls": "edit",
+"text": "",
+"id": 216,
+"dlu": [
+185,
+150,
+40,
+14
+],
+"style": 1082196096
+},
+{
+"cls": "button",
+"text": "Remember Last Sequence",
+"id": 259,
+"dlu": [
+49,
+169,
+134,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Return to Current Frame When Done",
+"id": 392,
+"dlu": [
+8,
+190,
+130,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "Launch Flipbook When Done",
+"id": 221,
+"dlu": [
+8,
+201,
+110,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "&Play Videos With Native Players",
+"id": 222,
+"dlu": [
+8,
+212,
+120,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "button",
+"text": "OpenGL &Anti-Aliasing (multi-pass)",
+"id": 238,
+"dlu": [
+8,
+223,
+145,
+10
+],
+"style": 1342242819
+},
+{
+"cls": "static",
+"text": "Frame Rate:",
+"id": 237,
+"dlu": [
+142,
+191,
+42,
+8
+],
+"style": 1342308352
+},
+{
+"cls": "edit",
+"text": "",
+"id": 236,
+"dlu": [
+196,
+189,
+40,
+14
+],
+"style": 1350631552
+},
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+247,
+146,
+53,
+16
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+247,
+166,
+53,
+16
+],
+"style": 1342242816
+},
+{
+"cls": "button",
+"text": "&Help",
+"id": 9,
+"dlu": [
+247,
+190,
+53,
+16
+],
+"style": 1342242816
+}
+]
+}
+}
+}

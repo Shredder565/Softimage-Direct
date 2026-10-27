@@ -4,6 +4,8 @@
 import { App } from '../core/commands';
 import { Node, X3DObject, Scene, Layer, Material, MarkerNode, Property, Model, Camera, Light, Null } from '../core/scene';
 import { Parameter } from '../core/params';
+import { SI_MENUS } from './si';
+import { userKeywordsDialog } from './siDialogWire';
 
 type Scope = 'Scene' | 'Layers' | 'Passes' | 'Materials' | 'Groups' | 'Selection' | 'Application';
 const FILTERS = ['All', 'All + Animatable Parameters', 'All except parameters', 'Objects only', 'Models only', 'Primitives and Properties', 'Geometry Operators', 'Materials and Shaders', 'Animated Parameters'] as const;
@@ -42,6 +44,8 @@ export function explorerView(app: App, host: HTMLElement) {
 
   const roots = (): Node[] => { const sc = app.scene; switch (state.scope) { case 'Layers': return sc.layers; case 'Passes': return sc.passes; case 'Materials': return sc.materials; case 'Groups': return sc.groupList; case 'Selection': return app.selection.filter(n => n instanceof X3DObject); case 'Application': return [sc]; default: return [sc.root]; } };
   const expandAll = (on: boolean) => { const walk = (n: Node) => { if (on) expanded.add(n.id); else expanded.delete(n.id); for (const c of n.explorerChildren()) walk(c); }; for (const r of roots()) walk(r); if (!on) for (const r of roots()) expanded.add(r.id); };
+  /** sceneexplorer.dll MENU 305 Expand/Collapse All from Here: the clicked node and everything under it. */
+  const expandFrom = (n: Node, on: boolean) => { const walk = (x: Node) => { if (on) expanded.add(x.id); else expanded.delete(x.id); for (const c of x.explorerChildren()) walk(c); }; walk(n); render(); };
   const passes = (n: Node): boolean => {
     switch (state.filter) {
       case 'Objects only': return n.kind === 'object' || n.kind === 'model';
@@ -97,7 +101,7 @@ export function explorerView(app: App, host: HTMLElement) {
     if (n instanceof Layer) { const c = n.val('color') as number[]; const sw = document.createElement('span'); sw.className = 'sw'; sw.style.background = `rgb(${c.map(x => x * 255).join(',')})`; row.appendChild(sw); }
     row.onclick = (e) => { if (renaming) return; app.select([n], e.ctrlKey ? 'toggle' : e.shiftKey ? 'add' : 'replace'); body.focus(); };
     row.ondblclick = (e) => { if (n.kind === 'cluster') { app.run('SelectClusterComponents', { Cluster: (n as any).obj?.name + '.' + n.name }); return; } if ((e.target as HTMLElement) === nm) startRename(n, nm); else { if (expanded.has(n.id)) expanded.delete(n.id); else expanded.add(n.id); render(); } };
-    row.oncontextmenu = (e) => { e.preventDefault(); if (!app.selection.includes(n)) app.select([n]); contextMenu(app, n, e.clientX, e.clientY, () => startRename(n, nm)); };
+    row.oncontextmenu = (e) => { e.preventDefault(); if (!app.selection.includes(n)) app.select([n]); contextMenu(app, n, e.clientX, e.clientY, () => startRename(n, nm), (on) => expandFrom(n, on)); };
     row.ondragstart = (e) => { e.dataTransfer?.setData('text/plain', String(n.id)); e.dataTransfer!.effectAllowed = 'move'; };
     if (n instanceof X3DObject) { row.ondragover = (e) => { e.preventDefault(); row.classList.add('drop'); }; row.ondragleave = () => row.classList.remove('drop'); row.ondrop = (e) => { e.preventDefault(); row.classList.remove('drop'); const id = Number(e.dataTransfer?.getData('text/plain')); const src = [...app.scene.allObjects()].find(o => o.id === id); if (src && src !== n && ![...src.descendants()].includes(n)) app.run('ParentObj', { Parent: n.fullName, Children: [src] }); }; }
     if (matches || q) { wrap.appendChild(row); rows.push({ node: n, el: row }); }
@@ -187,9 +191,31 @@ function popup(items: { label: string; checked?: boolean; sep?: boolean; fn?: ()
   setTimeout(() => { document.addEventListener('pointerdown', close); document.addEventListener('keydown', esc, true); });
 }
 
-function contextMenu(app: App, n: Node, x: number, y: number, rename: () => void) {
+function contextMenu(app: App, n: Node, x: number, y: number, rename: () => void, expandFrom?: (on: boolean) => void) {
   const items: { label: string; sep?: boolean; fn?: () => void }[] = [];
+  // sceneexplorer.dll MENU 305 heads the tree's contextual menu (attested item names + its trailing separator).
+  if (expandFrom) {
+    for (const it of SI_MENUS.explorerTree ?? []) {
+      if (it.separator) { items.push({ label: '', sep: true }); continue; }
+      const on = it.label === 'Expand All from Here';
+      items.push({ label: it.label ?? '', fn: () => expandFrom(on) });
+    }
+  }
   items.push({ label: 'Inspect', fn: () => app.run('InspectObj', { InputObjs: [n] }) });
+  // siuitasks.dll dialog 202 — User Keyword(s), stored per node (comma separated, as the template asks).
+  items.push({
+    label: 'User Keyword(s)',
+    fn: () => {
+      const key = 'si.userkeywords';
+      const all = (() => { try { return JSON.parse(localStorage.getItem(key) ?? '{}') as Record<string, string>; } catch { return {} as Record<string, string>; } })();
+      const id = String(n.id);
+      userKeywordsDialog(all[id] ?? '', (words) => {
+        all[id] = words.join(', ');
+        localStorage.setItem(key, JSON.stringify(all));
+        app.logMsg('info', `User Keyword(s) on "${n.name}": ${all[id] || '(none)'}`);
+      });
+    },
+  });
   if (n instanceof X3DObject) {
     items.push({ label: 'Rename', fn: rename }, { label: 'Duplicate', fn: () => app.run('Duplicate', { InputObjs: [n] }) }, { label: n.visible ? 'Hide' : 'Unhide', fn: () => app.run('ToggleVisibility', { InputObjs: [n] }) }, { label: 'Select Children', fn: () => app.run('SelectChildNodes', { InputObjs: [n] }) }, { label: 'Cut Hierarchical Link', fn: n.parentObj && n.parentObj !== app.scene.root ? () => app.run('CutObj', { Children: [n] }) : undefined }, { label: 'Freeze Construction History', fn: n.primitive ? () => app.run('FreezeObj', { InputObjs: [n] }) : undefined }, { label: '', sep: true }, { label: 'Delete', fn: n !== app.scene.root ? () => app.run('DeleteObj', { InputObj: [n] }) : undefined });
   }

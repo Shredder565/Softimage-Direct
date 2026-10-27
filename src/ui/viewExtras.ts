@@ -8,6 +8,7 @@ import { X3DObject, Property } from '../core/scene';
 import { siPropDefs, siPropLayout } from '../core/opdefs';
 import { SI_MENUS, SiMenuItem, openSiMenu } from './si';
 import { SI } from './viewManager';
+import { captureViewportDialog } from './siDialogWire';
 
 export type Rect = { x: number; y: number; w: number; h: number };
 export interface VPX { name: string; kind: 'ortho' | 'persp'; camera: THREE.Camera; el: HTMLElement; display: string; flags: Record<string, boolean>; x?: Extra }
@@ -110,17 +111,27 @@ export function installViewExtras(C: Ctx) {
   let captureReq: { vp: VPX; frames: string[]; f: number; end: number } | null = null;
   const capture = (vp: VPX) => {
     const A = app.anim;
-    const all = confirm(`Capture viewport ${vp.name}: OK = frames ${A.startFrame}–${A.endFrame} to a Flipbook, Cancel = the current frame only`);
-    let f0 = all ? A.startFrame : A.frame;
-    let f1 = all ? A.endFrame : A.frame;
-    if (f1 < f0) [f0, f1] = [f1, f0];
-    if (all && f1 - f0 + 1 > FLIP_CAP) {
-      f1 = f0 + FLIP_CAP - 1;
-      app.logMsg('info', `Flipbook capture capped to ${FLIP_CAP} frames (Softimage viewer subset)`);
-    }
-    captureReq = { vp, frames: [], f: f0, end: f1 };
-    A.frame = captureReq.f;
-    C.needs();
+    const r = C.rect(C.active());
+    // vm.dll dialog 386 — Capture Viewport. The flipbook viewer still caps the sequence (FLIP_CAP).
+    captureViewportDialog(app, {
+      filename: `viewport_${vp.name}`, format: 'png', padding: '4',
+      width: Math.max(1, r.w), height: Math.max(1, r.h), scale: '100%', pixelRatio: 1,
+      from: A.startFrame, to: A.endFrame, step: 1, frameRate: 24,
+      returnToCurrent: true, launchFlipbook: true, antiAliasing: false,
+    }, (o) => {
+      let f0 = o.from, f1 = o.to;
+      if (f1 < f0) [f0, f1] = [f1, f0];
+      if (f1 - f0 + 1 > FLIP_CAP) {
+        f1 = f0 + FLIP_CAP - 1;
+        app.logMsg('info', `Flipbook capture capped to ${FLIP_CAP} frames (Softimage viewer subset)`);
+      }
+      const back = A.frame;
+      captureReq = { vp, frames: [], f: f0, end: f1 };
+      (captureReq as { back?: number }).back = o.returnToCurrent ? back : undefined;
+      A.frame = captureReq.f;
+      app.logMsg('info', `Capture Viewport: ${o.filename}.${o.format} ${o.width}×${o.height} @ ${o.scale}, frames ${f0}–${f1}`);
+      C.needs();
+    });
   };
   // Capture → flipbook-frames event → installFlipbookViewer in-app floating (no popup).
   window.addEventListener('flipbook', () => capture(vps[C.active()]));

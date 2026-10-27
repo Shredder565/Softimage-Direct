@@ -76,24 +76,36 @@ def clean(tree):
 def menus():
     pe = json.load(open(os.path.join(SI, 'pe_resources.json')))
     pick = {
-        'mainMenu': ('XSI.exe', '128'), 'fileMenu': ('XSI.exe', '344'), 'toolbarMenu': ('XSI.exe', '245'), 'viewCamera': ('viewcontrol.dll', '101'), 'viewVisibility': ('viewcontrol.dll', '102'),
+        'mainMenu': ('XSI.exe', '128'), 'fileMenu': ('XSI.exe', '344'), 'toolbarMenu': ('XSI.exe', '245'), 'roomMenu': ('XSI.exe', '146'),
+        'toolButtonMenu': ('XSI.exe', '244'), 'layoutItemMenu': ('XSI.exe', '308'), 'toolbarReadOnlyMenu': ('XSI.exe', '345'),
+        'viewCamera': ('viewcontrol.dll', '101'), 'viewVisibility': ('viewcontrol.dll', '102'),
         'viewStereo': ('viewcontrol.dll', '127'), 'viewCube': ('viewcontrol.dll', '128'), 'viewContext': ('viewcontrol.dll', '106'), 'viewObjectContext': ('viewcontrol.dll', '124'),
-        'vmLayout': ('vm.dll', '202'), 'vmResize': ('vm.dll', '272'),
+        'vmLayout': ('vm.dll', '202'), 'vmResize': ('vm.dll', '272'), 'vmMuteSolo': ('vm.dll', '290'),
         'mcpSelect': ('mcp.dll', '201'), 'mcpAnimation': ('mcp.dll', '202'), 'mcpEdit': ('mcp.dll', '203'), 'mcpTransform': ('mcp.dll', '204'), 'mcpPlayback': ('mcp.dll', '219'),
         'mcpConstraints': ('mcp.dll', '293'), 'mcpGet': ('mcp.dll', '294'), 'mcpLayer': ('mcp.dll', '350'), 'mcpExplore': ('mcp.dll', '353'), 'mcpSelFilter': ('mcp.dll', '356'),
         'mcpNavigate': ('mcp.dll', '470'), 'mcpReference': ('mcp.dll', '482'), 'mcpSymmetry': ('mcp.dll', '483'), 'mcpSnap': ('mcp.dll', '10002'), 'mcpSnapPoints': ('mcp.dll', '10004'),
         'mcpSnapSegments': ('mcp.dll', '10005'), 'mcpSnapFacets': ('mcp.dll', '10006'),
+        'mcpControlTips': ('mcp.dll', '325'), 'mcpRefModeTips': ('mcp.dll', '487'),
         'toolTranslate': ('viewinteraction.dll', '530'), 'toolRotate': ('viewinteraction.dll', '531'), 'toolScale': ('viewinteraction.dll', '532'), 'toolPivot': ('viewinteraction.dll', '533'),
         'toolTweak': ('viewinteraction.dll', '535'), 'toolTweakNormals': ('viewinteraction.dll', '536'), 'toolKnife': ('viewinteraction.dll', '345'), 'toolCurve': ('viewinteraction.dll', '534'),
+        'toolCurveDirectManip': ('viewinteraction.dll', '349'),
         'explorerView': ('sceneexplorer.dll', '300'), 'explorerScope': ('sceneexplorer.dll', '302'), 'explorerFilters': ('sceneexplorer.dll', '303'), 'explorerContext': ('sceneexplorer.dll', '304'),
-        'ppgMain': ('genppg.dll', '223'), 'ppgAnim': ('genppg.dll', '205'), 'keyingPanel': ('genppg.dll', '264'), 'uiModules': ('uiut.dll', '211'), 'uiEdit': ('uiut.dll', '213'), 'uiView': ('uiut.dll', '181'),
+        'explorerTree': ('sceneexplorer.dll', '305'),
+        'ppgMain': ('genppg.dll', '223'), 'ppgAnim': ('genppg.dll', '205'), 'keyingPanel': ('genppg.dll', '264'),
+        'ppgTree': ('genppg.dll', '235'), 'ppgTabButton': ('genppg.dll', '247'),
+        'uiModules': ('uiut.dll', '211'), 'uiEdit': ('uiut.dll', '213'), 'uiView': ('uiut.dll', '181'),
+        'uiSplitter': ('uiut.dll', '163'), 'uiPaneContext': ('uiut.dll', '246'),
     }
+    # uiut 246 and sceneexplorer 305 carry several named popups in one resource; keep every popup node so
+    # the pane context menu can address Context / Relationship / Stack Window / Splitter Contextual.
+    MULTI_POPUP = {'uiPaneContext'}
     out = {}
     for k, (f, mid) in pick.items():
         t = pe.get(f, {}).get('menus', {}).get(mid)
         if isinstance(t, list):
             t = clean(t)
-            if k not in ('mainMenu', 'fileMenu') and len(t) == 1 and t[0].get('items'): t = t[0]['items']  # popup resources wrap their items in one named node
+            if k not in ('mainMenu', 'fileMenu') and k not in MULTI_POPUP and len(t) == 1 and t[0].get('items'): t = t[0]['items']  # popup resources wrap their items in one named node
+            if k in MULTI_POPUP: t = [n for n in t if n.get('items')]  # drop the trailing bare separators between popups
             out[k] = t
     json.dump(out, open(os.path.join(OUT, 'menus.json'), 'w'), indent=0)
     print('menus', list(out))

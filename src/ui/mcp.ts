@@ -15,6 +15,54 @@ type PanelDef = { skin: string; skinDown?: string; skinHover?: string; w: number
 
 const PANELS = (hitmaps as { panels: Record<string, PanelDef> }).panels;
 
+/**
+ * mcp.dll MENU 325 (control tips) and MENU 487 (reference-mode tips) carry the MCP's own tooltip text.
+ * Each hit region maps onto the PE command id whose tip Softimage shows for that control; where the dump
+ * has no tip the panel keeps its own longer hint.
+ */
+const TIP_PE: Record<string, number> = {
+  selectTool: 32785, group: 32778, center: 32781,
+  explore: 32782, scene: 32794, selection: 32799, clusters: 32795,
+  filter: 32789, nameNav: 32791,
+  scale: 32816, rotate: 32830, translate: 32831,
+  miniScale: 32816, miniRotate: 32830, miniTranslate: 32831,
+  refGlobal: 32801, refLocal: 32802, refPar: 32803, refView: 32804, refRef: 32805, refPlane: 32806,
+  miniRef0: 32801, miniRef1: 32802, miniRef2: 32804,
+  cog: 32807, prop: 32808, sym: 32809,
+  snapOn: 32836, snapPoint: 32837, snapCurve: 32838, snapMidpoint: 32839, snapGrid: 32840,
+  parent: 32841, cut: 32842, cnsComp: 32847, childComp: 32848,
+  freeze: 32854, immed: 32855,
+};
+/** Edit > Group creates a group or cluster — a different PE tip from the Select > Group mode toggle. */
+const TIP_PE_BY_SECTION: Record<string, Record<string, number>> = { Edit: { group: 32852 } };
+const PE_TIPS = (() => {
+  const m = new Map<number, string>();
+  for (const src of [SI_MENUS.mcpControlTips ?? [], SI_MENUS.mcpRefModeTips ?? []]) {
+    for (const it of src) if (it.id != null && it.label && !m.has(it.id)) m.set(it.id, it.label);
+  }
+  return m;
+})();
+function peTip(section: string, hitId: string, fallback: string): string {
+  const id = TIP_PE_BY_SECTION[section]?.[hitId] ?? TIP_PE[hitId];
+  return (id != null ? PE_TIPS.get(id) : undefined) ?? fallback;
+}
+/** Inventory for __uiAudit: which MCP hits now show the dump's own tip text. */
+export function mcpTipsAudit(): { tips: number; mapped: number; unmapped: string[]; sample: Record<string, string> } {
+  const unmapped = Object.entries(TIP_PE).filter(([, id]) => !PE_TIPS.has(id)).map(([k]) => k);
+  return {
+    tips: PE_TIPS.size,
+    mapped: Object.keys(TIP_PE).length - unmapped.length,
+    unmapped,
+    sample: {
+      scale: peTip('Transform', 'scale', ''),
+      sym: peTip('Transform', 'sym', ''),
+      group: peTip('Select', 'group', ''),
+      groupEdit: peTip('Edit', 'group', ''),
+      snapPoint: peTip('Snap', 'snapPoint', ''),
+    },
+  };
+}
+
 /** Softimage-painted MCP section: bitmap skin + invisible hit overlays (same pattern as views.ts Playback/Anim). */
 function skinPanel(title: string, def: PanelDef, collapsed: Set<string>) {
   const wrap = document.createElement('div');
@@ -38,7 +86,7 @@ function skinPanel(title: string, def: PanelDef, collapsed: Set<string>) {
     b.className = 'bmp-hit mcp-btn';
     b.dataset.hit = id;
     b.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${hgt}px`;
-    b.title = titleTip;
+    b.title = peTip(title, id, titleTip);
     if (label) b.textContent = label;
     b.onclick = fn;
     root.appendChild(b);
@@ -53,7 +101,7 @@ function skinPanel(title: string, def: PanelDef, collapsed: Set<string>) {
     i.className = 'bmp-field mcp-bmp-field';
     i.dataset.hit = id;
     i.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${hgt}px`;
-    i.title = titleTip;
+    i.title = peTip(title, id, titleTip);
     i.spellcheck = false;
     i.onchange = () => onCommit(i.value);
     i.onkeydown = e => e.stopPropagation();

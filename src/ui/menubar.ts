@@ -8,6 +8,7 @@ import { SI_MENUS, SI_VIEWS, SiMenuItem, openSiMenu } from './si';
 import { minimizeAll, restoreAll, closeAll, floatingWindows, openFloating } from './floating';
 import { construction } from '../core/scene';
 import { keymapNames, setKeymap, currentKeymap, bindingFor } from './keymap';
+import { commandMappingDialog, interactionModeDialog, migratePreferencesDialog, projectManagerDialog } from './siDialogWire';
 import faceRobotTops from '../data/si/face_robot_module_mcp_tops.json';
 import { openModuleMenuTearOff } from './toolbarPanel';
 
@@ -232,23 +233,15 @@ export function menubar(app: App, host: HTMLElement) {
         if (n) { setProject(n); app.logMsg('info', `Project: ${n}`); const r = document.querySelector('#menubar .right'); if (r) r.textContent = `Project: ${n}     Scene: Untitled`; }
         return;
       }
-      case 'Project Manager...': {
-        const cur = projectName();
-        const n = prompt(`Project Manager\nCurrent: ${cur}\nEnter project name to switch/create:`, cur);
-        if (n) { setProject(n); app.logMsg('info', `Project Manager → ${n}`); }
-        return;
-      }
+      // Softimage's own templates: Project Manager (XSI.exe 281), Interaction Mode (405),
+      // Migrate Preferences (410), Command Mapping (102).
+      case 'Project Manager...': projectManagerDialog(app, (n) => { setProject(n); const r = document.querySelector('#menubar .right'); if (r) r.textContent = `Project: ${n}     Scene: Untitled`; }); return;
       case 'External Files...': ev('openview', { name: 'Image Clips' }); app.logMsg('info', 'External Files → Image Clips'); return;
       case 'Plug-in Manager...': ev('openview', { name: 'Plugin Manager' }); return;
-      case 'Interaction Mode...': {
-        const names = keymapNames();
-        const n = prompt('Interaction mode (key map):\n' + names.map((k, i) => `${i + 1}. ${k}${k === currentKeymap ? ' (current)' : ''}`).join('\n'), String(names.indexOf(currentKeymap) + 1));
-        const k = names[Number(n) - 1]; if (k) { setKeymap(k); app.logMsg('info', `Interaction mode: ${k}`); }
-        return;
-      }
-      case 'Migrate Preferences...': ev('openprefs'); app.logMsg('info', 'Migrate Preferences → Preferences (import Softimage prefs manually)'); return;
+      case 'Interaction Mode...': interactionModeDialog(app); return;
+      case 'Migrate Preferences...': migratePreferencesDialog(app); return;
       case 'Preferences...': ev('openprefs'); return;
-      case 'Keyboard Mapping...': { const names = keymapNames(); const n = prompt('Keyboard map:\n' + names.map((k, i) => `${i + 1}. ${k}${k === currentKeymap ? ' (current)' : ''}`).join('\n'), String(names.indexOf(currentKeymap) + 1)); const k = names[Number(n) - 1]; if (k) { setKeymap(k); app.logMsg('info', `Key map: ${k}`); } return; }
+      case 'Keyboard Mapping...': commandMappingDialog(app); return;
       case 'Exit': return;
       case 'Undo': app.undo(); return; case 'Redo': app.redo(); return;
       case 'Repeat': { const last = app.log.filter(x => x.kind === 'cmd').slice(-1)[0]; if (last) app.logMsg('info', 'Repeat: ' + last.text); return; }

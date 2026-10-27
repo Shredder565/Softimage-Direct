@@ -20,6 +20,7 @@ import {
 } from '../core/renderOutput';
 import { renderScenePasses } from '../core/sceneRender';
 import { openSiMenu, SI_MENUS } from './si';
+import { eventsDialog, presetFolderDialog, savePresetAsDialog } from './siDialogWire';
 import { PRESET_MODELS } from '../commands/presets';
 import { animChrome, fcurveMenuLabels, mixerMenuLabels } from './animChrome';
 import {
@@ -314,7 +315,9 @@ export function pluginManager(app: App, host: HTMLElement) {
     const sec = (title: string, items: [string, string[]][]) => { tree.appendChild(el('div', 'tb-group', title)); for (const [name, cmds] of items) { const r = el('div', 'plug-row' + (dis.has(name) ? ' off' : '')); const cb = el('input') as HTMLInputElement; cb.type = 'checkbox'; cb.checked = !dis.has(name); cb.onchange = () => { const d = disabled(); if (cb.checked) d.delete(name); else d.add(name); localStorage.setItem('si.plugins.disabled', JSON.stringify([...d])); for (const c of cmds) { const def = app.commands.get(c); if (def) (def as any).disabled = !cb.checked; } render(); }; r.append(cb, el('span', 'nm', name), el('span', 'cnt', `${cmds.length} command${cmds.length === 1 ? '' : 's'}`)); r.onclick = (e) => { if (e.target === cb) return; const det = r.nextElementSibling; if (det?.classList.contains('plug-detail')) det.remove(); else { const d = el('div', 'plug-detail', cmds.sort().join(', ')); r.after(d); } }; tree.appendChild(r); } };
     sec('Built-in Plug-ins (command categories)', cats);
     const tbs = JSON.parse(localStorage.getItem('si.toolbars') ?? '[]') as { name: string; tabs: { items: any[] }[] }[]; sec('User Plug-ins (custom toolbars & scripts)', tbs.map(t => [t.name, t.tabs.flatMap(x => x.items.map((i: any) => i.label))] as [string, string[]]));
-    sec('Workgroups', [['Local (localStorage)', ['si.toolbars', 'si.layouts', 'si.prefs', 'si.refmodel.*', 'si.scene.*']]]); };
+    sec('Workgroups', [['Local (localStorage)', ['si.toolbars', 'si.layouts', 'si.prefs', 'si.refmodel.*', 'si.scene.*']]]);
+    // XSI.exe dialog 383 "Events" — the event handlers this install dispatches.
+    root.appendChild(head(btn('Events...', 'Event handlers (XSI.exe dialog 383)', () => eventsDialog(app)))); };
   render();
 }
 
@@ -486,9 +489,43 @@ export function presetManager(app: App, host: HTMLElement) {
     'Materials': Object.keys(MATERIAL_PRESETS).map(p => [p, () => app.run('SIApplyShader', { PresetObj: p, InputObjs: app.selectedObjects })] as [string, () => void]),
     'Textures': Object.keys(TEXTURE_NODES).map(p => [p, () => { const m = currentMaterial(app); if (m?.surface) app.run('ConnectShaderNode', { Shader: m.surface, Port: 'diffuse', Preset: p }); }] as [string, () => void]),
   };
-  const sel = el('select') as HTMLSelectElement; for (const k of Object.keys(CATS)) sel.appendChild(el('option', '', k)); const search = el('input') as HTMLInputElement; search.placeholder = 'filter'; search.onkeydown = e => e.stopPropagation();
-  root.appendChild(head(sel, search)); const list = el('div', 'tb-items'); root.appendChild(list);
-  const render = () => { list.innerHTML = ''; const q = search.value.toLowerCase(); for (const [l, fn] of CATS[sel.value]) if (!q || l.toLowerCase().includes(q)) list.appendChild(btn(l, 'Apply preset', fn)); };
+  // User presets: the parameter values of the inspected node, saved under a name (XSI.exe 104) inside the
+  // preset folder the search-folder dialog (XSI.exe 326) names.
+  type UserPreset = { name: string; description: string; folder: string; type: string; values: Record<string, unknown> };
+  const userPresets = (): UserPreset[] => { try { return JSON.parse(localStorage.getItem('si.presets') ?? '[]'); } catch { return []; } };
+  const saveUserPresets = (p: UserPreset[]) => localStorage.setItem('si.presets', JSON.stringify(p));
+  const presetFolder = { label: 'User Presets', folder: 'Data/Presets' };
+  CATS[presetFolder.label] = [];
+  const sel = el('select') as HTMLSelectElement; const fillCats = () => { sel.innerHTML = ''; for (const k of Object.keys(CATS)) sel.appendChild(el('option', '', k)); };
+  const search = el('input') as HTMLInputElement; search.placeholder = 'filter'; search.onkeydown = e => e.stopPropagation();
+  const saveAs = btn('Save Preset As...', 'Save the inspected node as a user preset', () => {
+    const n = app.selection[app.selection.length - 1];
+    if (!n) { app.logMsg('info', 'Save Preset As: select a node first'); return; }
+    savePresetAsDialog(app, n.name, ({ name, description }) => {
+      const values: Record<string, unknown> = {};
+      for (const p of n.params) values[p.name] = p.value;
+      saveUserPresets([...userPresets().filter(x => x.name !== name), { name, description, folder: presetFolder.folder, type: n.type, values }]);
+      app.logMsg('info', `Preset "${name}" saved (${Object.keys(values).length} parameters)`);
+      refreshUser(); sel.value = presetFolder.label; render();
+    });
+  });
+  const folderBtn = btn('Preset Folder...', 'Specify a folder for the preset list to search for presets', () => {
+    presetFolderDialog(presetFolder, v => {
+      presetFolder.label = v.label || presetFolder.label;
+      presetFolder.folder = `${v.root}/${v.folder}`.replace(/\/+/g, '/');
+      refreshUser(); fillCats(); sel.value = presetFolder.label; render();
+    });
+  });
+  const refreshUser = () => {
+    for (const k of Object.keys(CATS)) if (!['Primitives › Polygon Mesh', 'Primitives › Surface', 'Primitives › Curve', 'Models', 'Materials', 'Textures'].includes(k)) delete CATS[k];
+    CATS[presetFolder.label] = userPresets().filter(p => p.folder === presetFolder.folder || presetFolder.folder.endsWith(p.folder)).map(p => [
+      p.name,
+      () => { const n = app.selection[app.selection.length - 1]; if (!n) { app.logMsg('info', `Preset "${p.name}": select a node to apply it to`); return; } for (const [k, v] of Object.entries(p.values)) { const q = n.get(k); if (q) app.setParam(q, v); } },
+    ] as [string, () => void]);
+  };
+  refreshUser(); fillCats();
+  root.appendChild(head(sel, search, saveAs, folderBtn)); const list = el('div', 'tb-items'); root.appendChild(list);
+  const render = () => { list.innerHTML = ''; const q = search.value.toLowerCase(); for (const [l, fn] of CATS[sel.value] ?? []) if (!q || l.toLowerCase().includes(q)) list.appendChild(btn(l, 'Apply preset', fn)); };
   sel.onchange = render; search.oninput = render; render();
 }
 export function animationMixer(app: App, host: HTMLElement) {

@@ -118,8 +118,7 @@
 "items": [
 {
 "label": "View insertion point",
-"id": 32920,
-"grayed": true
+"id": 32920
 },
 {
 "separator": true
@@ -198,15 +197,13 @@
 "items": [
 {
 "label": "None",
-"id": 32892,
-"grayed": true
+"id": 32892
 }
 ]
 },
 {
 "label": "Edit Current Layout",
-"id": 32841,
-"grayed": true
+"id": 32841
 },
 {
 "label": "Exit Layout Editing",
@@ -363,8 +360,7 @@
 },
 {
 "label": "Softimage Home Page",
-"id": 32855,
-"grayed": true
+"id": 32855
 },
 {
 "label": "Try Other Autodesk Products",
@@ -454,8 +450,7 @@
 },
 {
 "label": "IGES File...",
-"id": 32961,
-"grayed": true
+"id": 32961
 },
 {
 "label": "EPS File...",
@@ -638,8 +633,7 @@
 },
 {
 "label": "Preferences...",
-"id": 32839,
-"grayed": true
+"id": 32839
 },
 {
 "label": "Keyboard Mapping...",
@@ -707,8 +701,7 @@
 "items": [
 {
 "label": "Small",
-"id": 32880,
-"grayed": true
+"id": 32880
 },
 {
 "label": "Normal",
@@ -726,6 +719,92 @@
 {
 "label": "Customize Toolbar...",
 "id": 32879
+}
+],
+"roomMenu": [
+{
+"label": "Room Menu",
+"id": null,
+"items": [
+{
+"label": "New Layout",
+"id": 32869
+}
+]
+},
+{
+"separator": true
+}
+],
+"toolButtonMenu": [
+{
+"label": "Remove Button",
+"id": 32877
+},
+{
+"label": "Remove Command",
+"id": 32967
+},
+{
+"separator": true
+},
+{
+"label": "Customize Button...",
+"id": 32948
+},
+{
+"separator": true
+},
+{
+"label": "Edit Script...",
+"id": 32952
+},
+{
+"label": "Edit Command...",
+"id": 33060
+}
+],
+"layoutItemMenu": [
+{
+"label": "Layout Item",
+"id": null,
+"items": [
+{
+"label": "New Layout",
+"id": 32869
+},
+{
+"separator": true
+},
+{
+"label": "Copy Layout",
+"id": 32870
+},
+{
+"label": "Rename Layout",
+"id": 32937
+},
+{
+"label": "Remove Layout",
+"id": 32862
+}
+]
+},
+{
+"separator": true
+}
+],
+"toolbarReadOnlyMenu": [
+{
+"label": "Read-Only Toolbar",
+"id": 32977
+},
+{
+"separator": true
+},
+{
+"label": "Make Local Copy",
+"id": 32981
 }
 ],
 "viewCamera": [
@@ -1722,6 +1801,16 @@
 "id": 32832
 }
 ],
+"vmMuteSolo": [
+{
+"label": "Mute",
+"id": 32830
+},
+{
+"label": "Solo",
+"id": 32831
+}
+],
 "mcpSelect": [
 {
 "label": "Select",
@@ -1921,13 +2010,11 @@
 },
 {
 "label": "Select Branch",
-"id": 32820,
-"grayed": true
+"id": 32820
 },
 {
 "label": "Select Tree",
-"id": 32821,
-"grayed": true
+"id": 32821
 },
 {
 "label": "Select Model",
@@ -1961,8 +2048,7 @@
 },
 {
 "label": "Deselect All",
-"id": 32866,
-"grayed": true
+"id": 32866
 },
 {
 "label": "Deselect All Using Filter",
@@ -2304,8 +2390,7 @@
 "items": [
 {
 "label": "from Marked Parameters",
-"id": 32779,
-"grayed": true
+"id": 32779
 },
 {
 "separator": true
@@ -2548,8 +2633,7 @@
 },
 {
 "label": "Duplicate Multiple",
-"id": 32844,
-"grayed": true
+"id": 32844
 },
 {
 "separator": true
@@ -2564,8 +2648,7 @@
 },
 {
 "label": "Clone Multiple",
-"id": 32870,
-"grayed": true
+"id": 32870
 },
 {
 "separator": true
@@ -2649,8 +2732,7 @@
 },
 {
 "label": "Create Cluster with Center",
-"id": 33122,
-"grayed": true
+"id": 33122
 },
 {
 "label": "Create Non-Overlapping Cluster",
@@ -2895,8 +2977,7 @@
 "mcpTransform": [
 {
 "label": "Reset All Transforms",
-"id": 32851,
-"grayed": true
+"id": 32851
 },
 {
 "label": "Reset Scaling",
@@ -2912,16 +2993,14 @@
 },
 {
 "label": "Reset Active Transform",
-"id": 32850,
-"grayed": true
+"id": 32850
 },
 {
 "separator": true
 },
 {
 "label": "Freeze All Transforms",
-"id": 32861,
-"grayed": true
+"id": 32861
 },
 {
 "label": "Freeze Scaling",
@@ -3099,8 +3178,7 @@
 "mcpPlayback": [
 {
 "label": "Play All Frames",
-"id": 32853,
-"grayed": true
+"id": 32853
 },
 {
 "label": "Real-Time Playback",
@@ -3208,8 +3286,7 @@
 },
 {
 "label": "First Frame",
-"id": 32857,
-"grayed": true
+"id": 32857
 },
 {
 "label": "Last Frame",
@@ -3221,8 +3298,7 @@
 },
 {
 "label": "Next Frame",
-"id": 32819,
-"grayed": true
+"id": 32819
 },
 {
 "separator": true
@@ -3288,8 +3364,7 @@
 },
 {
 "label": "3 Points",
-"id": 32827,
-"grayed": true
+"id": 32827
 },
 {
 "label": "N Points",
@@ -3329,13 +3404,11 @@
 },
 {
 "label": "Bounding Volume",
-"id": 32837,
-"grayed": true
+"id": 32837
 },
 {
 "label": "Bounding Plane",
-"id": 32835,
-"grayed": true
+"id": 32835
 },
 {
 "separator": true
@@ -3386,8 +3459,7 @@
 },
 {
 "label": "Infinite Light",
-"id": 32814,
-"grayed": true
+"id": 32814
 },
 {
 "label": "Camera",
@@ -3427,8 +3499,7 @@
 },
 {
 "label": "Selectability",
-"id": 32892,
-"grayed": true
+"id": 32892
 },
 {
 "label": "Ghosting",
@@ -3558,8 +3629,7 @@
 },
 {
 "label": "Polynode",
-"id": 32896,
-"grayed": true
+"id": 32896
 },
 {
 "label": "Domainpoint",
@@ -3879,6 +3949,286 @@
 {
 "label": "Surfaces",
 "id": 10111
+}
+],
+"mcpControlTips": [
+{
+"label": "Current Layer.  Click to see list of layers",
+"id": 32779
+},
+{
+"label": "Group",
+"id": 32778
+},
+{
+"label": "Object",
+"id": 32780
+},
+{
+"label": "Center",
+"id": 32781
+},
+{
+"label": "Explore",
+"id": 32782
+},
+{
+"label": "Scene",
+"id": 32783
+},
+{
+"label": "Selection",
+"id": 33310
+},
+{
+"label": "Clusters",
+"id": 32784
+},
+{
+"label": "Select Tool",
+"id": 32785
+},
+{
+"label": "Group or Cluster Selection Filter",
+"id": 32786
+},
+{
+"label": "Component Selection Filter",
+"id": 32789
+},
+{
+"label": "Additional Component or Object Filter",
+"id": 32790
+},
+{
+"label": "Click to select additional filter",
+"id": 32791
+},
+{
+"label": "Center Selection Filter",
+"id": 32792
+},
+{
+"label": "Pre-filtered Transient Explorer Views",
+"id": 32793
+},
+{
+"label": "Scene Explorer",
+"id": 32794
+},
+{
+"label": "Cluster Explorer of Current Selection",
+"id": 32795
+},
+{
+"label": "Current Selection Explorer.  Right-click to popup menu.",
+"id": 32799
+},
+{
+"label": "Component Selection Filter",
+"id": 32789
+},
+{
+"label": "Global",
+"id": 32801
+},
+{
+"label": "Local",
+"id": 32802
+},
+{
+"label": "Par",
+"id": 32803
+},
+{
+"label": "View",
+"id": 32804
+},
+{
+"label": "Ref",
+"id": 32805
+},
+{
+"label": "Plane",
+"id": 32806
+},
+{
+"label": "COG",
+"id": 32807
+},
+{
+"label": "Prop",
+"id": 32808
+},
+{
+"label": "Sym",
+"id": 32809
+},
+{
+"label": "Scale Tool with the 3 Axes",
+"id": 32816
+},
+{
+"label": "Rotate Tool with the 3 Axes",
+"id": 32830
+},
+{
+"label": "Translate Tool with the 3 Axes",
+"id": 32831
+},
+{
+"label": "This is the reset xfo button - it will be enabled one day.",
+"id": 32832
+},
+{
+"label": "This is the reset xfo button - it will be enabled one day.",
+"id": 32832
+},
+{
+"label": "Enable Snapping (Ctrl modifier)",
+"id": 32836
+},
+{
+"label": "Snap to Points",
+"id": 32837
+},
+{
+"label": "Snap to Segments",
+"id": 32838
+},
+{
+"label": "Snap to Facets",
+"id": 32839
+},
+{
+"label": "Snap to Reference Plane",
+"id": 32840
+},
+{
+"label": "Parent",
+"id": 32841
+},
+{
+"label": "Cut",
+"id": 32842
+},
+{
+"label": "CnsComp",
+"id": 32843
+},
+{
+"label": "ChldComp",
+"id": 32844
+},
+{
+"label": "Constraint Compensation",
+"id": 32847
+},
+{
+"label": "Child Transform Compensation",
+"id": 32848
+},
+{
+"label": "Show",
+"id": 32849
+},
+{
+"label": "Freeze",
+"id": 32850
+},
+{
+"label": "Immed",
+"id": 32851
+},
+{
+"label": "Create Group or Cluster",
+"id": 32852
+},
+{
+"label": "Remove Group or Cluster",
+"id": 32853
+},
+{
+"label": "Freeze Construction History",
+"id": 32854
+},
+{
+"label": "Immediate Mode",
+"id": 32855
+},
+{
+"label": "Play All Frames VS. Real-Time Playback",
+"id": 32856
+},
+{
+"label": "Audio Mute",
+"id": 32859
+},
+{
+"label": "Set Keys When Changing Values (Autokey)",
+"id": 32861
+},
+{
+"label": "Popup Animatable Parameters Tree",
+"id": 32865
+},
+{
+"label": "Lock/Unlock Marking",
+"id": 32866
+},
+{
+"label": "Loop",
+"id": 32872
+}
+],
+"mcpRefModeTips": [
+{
+"label": "Add",
+"id": 65535
+},
+{
+"label": "Par",
+"id": 33299
+},
+{
+"label": "Object",
+"id": 33300
+},
+{
+"label": "View",
+"id": 33301
+},
+{
+"label": "Plane",
+"id": 33302
+},
+{
+"label": "Uni",
+"id": 33303
+},
+{
+"label": "Vol",
+"id": 33304
+},
+{
+"label": "object",
+"id": 33300
+},
+{
+"label": "point",
+"id": 33306
+},
+{
+"label": "edge",
+"id": 33307
+},
+{
+"label": "polygon",
+"id": 33308
+},
+{
+"label": "selected",
+"id": 33309
 }
 ],
 "toolTranslate": [
@@ -4308,6 +4658,91 @@
 "id": 40008
 }
 ],
+"toolCurveDirectManip": [
+{
+"label": "Selection Menu >",
+"id": 40059
+},
+{
+"label": "Align Bezier Handles",
+"id": 40033
+},
+{
+"label": "Align Bezier Handle Back to Forward",
+"id": 40052
+},
+{
+"label": "Align Bezier Handle Forward to Back",
+"id": 40053
+},
+{
+"label": "Edit Curve Approximation...",
+"id": 40034
+},
+{
+"label": "Goto Previous Knot",
+"id": 40029
+},
+{
+"label": "Goto Next Knot",
+"id": 40030
+},
+{
+"label": "Insert Bezier Knot",
+"id": 40019
+},
+{
+"label": "Insert Knot",
+"id": 40023
+},
+{
+"label": "Make Adjacent Knot Segments Linear",
+"id": 40047
+},
+{
+"label": "Make Fwd Knot Segment Linear",
+"id": 40045
+},
+{
+"label": "Make Bwd Knot Segment Linear",
+"id": 40046
+},
+{
+"label": "Make Bezier-Knot Corner",
+"id": 40049
+},
+{
+"label": "Make Knot Bezier",
+"id": 40020
+},
+{
+"label": "Make Knot Non-Bezier",
+"id": 40021
+},
+{
+"label": "Open/Close",
+"id": 40061
+},
+{
+"label": "Remove Knot",
+"id": 40022
+},
+{
+"separator": true
+},
+{
+"label": "LMB Binds Broken Tangents",
+"id": 40055
+},
+{
+"label": "Snap To Curve Plane",
+"id": 40044
+},
+{
+"label": "Translate Manipulator",
+"id": 40027
+}
+],
 "explorerView": [
 {
 "label": "__SE_View__",
@@ -4349,8 +4784,7 @@
 },
 {
 "label": "Alphabetical",
-"id": 32896,
-"grayed": true
+"id": 32896
 },
 {
 "label": "Type + Alphabetical",
@@ -4459,8 +4893,7 @@
 },
 {
 "label": "Track Selection",
-"id": 32779,
-"grayed": true
+"id": 32779
 },
 {
 "label": "Find Next Selected Node",
@@ -4490,8 +4923,7 @@
 },
 {
 "label": "Animated Parameters Only",
-"id": 32845,
-"grayed": true
+"id": 32845
 },
 {
 "label": "Keyable Parameters Only",
@@ -4502,13 +4934,11 @@
 },
 {
 "label": "All Nodes",
-"id": 32847,
-"grayed": true
+"id": 32847
 },
 {
 "label": "Custom Properties",
-"id": 32857,
-"grayed": true
+"id": 32857
 },
 {
 "label": "More...",
@@ -4516,23 +4946,19 @@
 "items": [
 {
 "label": "General Properties",
-"id": 32848,
-"grayed": true
+"id": 32848
 },
 {
 "label": "Modeling Properties",
-"id": 32849,
-"grayed": true
+"id": 32849
 },
 {
 "label": "Animation Properties",
-"id": 32850,
-"grayed": true
+"id": 32850
 },
 {
 "label": "Kinematics",
-"id": 32851,
-"grayed": true
+"id": 32851
 },
 {
 "label": "Local Transform",
@@ -4544,13 +4970,11 @@
 "items": [
 {
 "label": "All",
-"id": 32852,
-"grayed": true
+"id": 32852
 },
 {
 "label": "X",
-"id": 32880,
-"grayed": true
+"id": 32880
 },
 {
 "label": "Y",
@@ -4558,8 +4982,7 @@
 },
 {
 "label": "Z",
-"id": 32882,
-"grayed": true
+"id": 32882
 }
 ]
 },
@@ -4569,8 +4992,7 @@
 "items": [
 {
 "label": "All",
-"id": 32853,
-"grayed": true
+"id": 32853
 },
 {
 "label": "X",
@@ -4592,8 +5014,7 @@
 "items": [
 {
 "label": "All",
-"id": 32854,
-"grayed": true
+"id": 32854
 },
 {
 "label": "X",
@@ -4611,18 +5032,15 @@
 },
 {
 "label": "Color Only",
-"id": 32858,
-"grayed": true
+"id": 32858
 },
 {
 "label": "Rendering Properties",
-"id": 32855,
-"grayed": true
+"id": 32855
 },
 {
 "label": "Viewing Properties",
-"id": 32856,
-"grayed": true
+"id": 32856
 }
 ]
 },
@@ -4695,13 +5113,11 @@
 },
 {
 "label": "Activation Parameters Only",
-"id": 32846,
-"grayed": true
+"id": 32846
 },
 {
 "label": "Marked Parameters Only",
-"id": 32892,
-"grayed": true
+"id": 32892
 },
 {
 "label": "Selected Parameters Only",
@@ -4863,8 +5279,7 @@
 "items": [
 {
 "label": "Temporary Separator",
-"id": 32859,
-"grayed": true
+"id": 32859
 },
 {
 "label": "All Parameters",
@@ -4905,8 +5320,7 @@
 "items": [
 {
 "label": "Temporary Separator",
-"id": 32859,
-"grayed": true
+"id": 32859
 },
 {
 "label": "Objects",
@@ -4914,8 +5328,7 @@
 },
 {
 "label": "Models",
-"id": 32870,
-"grayed": true
+"id": 32870
 },
 {
 "label": "Groups",
@@ -4991,8 +5404,7 @@
 "items": [
 {
 "label": "Temporary Separator",
-"id": 32859,
-"grayed": true
+"id": 32859
 },
 {
 "label": "All Parameters",
@@ -5033,8 +5445,7 @@
 "items": [
 {
 "label": "Temporary Separator",
-"id": 32859,
-"grayed": true
+"id": 32859
 },
 {
 "label": "All Parameters",
@@ -5075,8 +5486,7 @@
 "items": [
 {
 "label": "Temporary Separator",
-"id": 32859,
-"grayed": true
+"id": 32859
 },
 {
 "label": "All Nodes",
@@ -5091,18 +5501,15 @@
 },
 {
 "label": "User",
-"id": 32921,
-"grayed": true
+"id": 32921
 },
 {
 "label": "Workgroup",
-"id": 32920,
-"grayed": true
+"id": 32920
 },
 {
 "label": "Add-on",
-"id": 32922,
-"grayed": true
+"id": 32922
 },
 {
 "label": "User Add-on",
@@ -5120,8 +5527,7 @@
 "items": [
 {
 "label": "Temporary Separator",
-"id": 32859,
-"grayed": true
+"id": 32859
 }
 ]
 },
@@ -5131,8 +5537,7 @@
 "items": [
 {
 "label": "Temporary Separator",
-"id": 32859,
-"grayed": true
+"id": 32859
 },
 {
 "label": "All Parameters",
@@ -5991,6 +6396,19 @@
 ]
 }
 ],
+"explorerTree": [
+{
+"label": "Expand All from Here",
+"id": 7000
+},
+{
+"label": "Collapse All from Here",
+"id": 7001
+},
+{
+"separator": true
+}
+],
 "ppgMain": [
 {
 "label": "Edit...",
@@ -6071,8 +6489,7 @@
 },
 {
 "label": "Link with Multi...",
-"id": 32793,
-"grayed": true
+"id": 32793
 },
 {
 "label": "Link with Orientation...",
@@ -6091,8 +6508,7 @@
 "items": [
 {
 "label": "First Key",
-"id": 32779,
-"grayed": true
+"id": 32779
 },
 {
 "label": "Last Key",
@@ -6132,8 +6548,7 @@
 },
 {
 "label": "Edit Parameter Definition...",
-"id": 32961,
-"grayed": true
+"id": 32961
 },
 {
 "separator": true
@@ -6386,6 +6801,29 @@
 {
 "label": "Preferences...",
 "id": 33039
+}
+],
+"ppgTree": [
+{
+"label": "Expand All",
+"id": 32787
+},
+{
+"label": "Collapse All",
+"id": 32788
+},
+{
+"separator": true
+},
+{
+"label": "Open SPDL for this property set",
+"id": 32790
+}
+],
+"ppgTabButton": [
+{
+"label": "Make Local",
+"id": 32791
 }
 ],
 "uiModules": [
@@ -7408,6 +7846,201 @@
 {
 "label": "Preferences...",
 "id": 628
+}
+],
+"uiSplitter": [
+{
+"label": "Split Horizontally",
+"id": 1923
+},
+{
+"label": "Split Vertically",
+"id": 1924
+}
+],
+"uiPaneContext": [
+{
+"label": "Context",
+"id": null,
+"items": [
+{
+"label": "File",
+"id": null,
+"items": [
+{
+"label": "New...",
+"id": 1927
+},
+{
+"label": "Open...",
+"id": 1928
+},
+{
+"separator": true
+},
+{
+"label": "Save",
+"id": 1929
+},
+{
+"label": "Save As...",
+"id": 1930
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "New Tray Switcher",
+"id": 1959
+},
+{
+"separator": true
+},
+{
+"label": "Split Horizontally",
+"id": 1923
+},
+{
+"label": "Split Vertically",
+"id": 1924
+},
+{
+"separator": true
+},
+{
+"label": "Set View",
+"id": null,
+"items": [
+{
+"label": "None",
+"id": 1925
+}
+]
+},
+{
+"label": "Set Toolbar/Shelf",
+"id": null,
+"items": [
+{
+"label": "None",
+"id": 1925
+}
+]
+},
+{
+"label": "Remove View",
+"id": 1926
+},
+{
+"label": "Delete Pane",
+"id": 1976
+},
+{
+"label": "Select Parent",
+"id": 1979
+},
+{
+"separator": true
+},
+{
+"label": "Toolbar",
+"id": null,
+"items": [
+{
+"label": "None",
+"id": 1931
+},
+{
+"label": "Local",
+"id": 1932
+},
+{
+"label": "Shared",
+"id": 1933
+}
+]
+},
+{
+"separator": true
+},
+{
+"label": "Set View as Primary",
+"id": 1949
+},
+{
+"label": "Set Relationships...",
+"id": 1948
+},
+{
+"label": "Set View Properties",
+"id": 1978
+}
+]
+},
+{
+"label": "Relationship",
+"id": null,
+"items": [
+{
+"label": "Remove Relationship",
+"id": 1947
+}
+]
+},
+{
+"label": "Stack Window",
+"id": null,
+"items": [
+{
+"label": "Add Pane",
+"id": 1961
+},
+{
+"label": "Delete Pane",
+"id": 1980
+},
+{
+"separator": true
+},
+{
+"label": "Bitmap Editor",
+"id": 1963
+},
+{
+"label": "Set Bitmap",
+"id": null,
+"items": [
+{
+"label": "None",
+"id": 1925
+}
+]
+},
+{
+"label": "Remove Bitmap",
+"id": 266
+}
+]
+},
+{
+"label": "Splitter Contextual",
+"id": null,
+"items": [
+{
+"label": "No Splitter",
+"id": 1920
+},
+{
+"label": "Fixed Splitter",
+"id": 1921
+},
+{
+"label": "Movable Splitter",
+"id": 1922
+}
+]
 }
 ]
 }

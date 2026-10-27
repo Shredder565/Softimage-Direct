@@ -1,0 +1,2041 @@
+{
+ "softimage": "Softimage 2015 SP2",
+ "source": "data/si/pe_resources.json + data/si/dict.json + data/si/{views,layouts,toolbars}",
+ "generated_by": "tools/build_ui_surface_audit.py",
+ "modules": [
+  "uiut.dll",
+  "genppg.dll",
+  "toolbarobj.dll",
+  "sicoresdk.dll",
+  "Softimage.XSIOM.dll",
+  "XSI.exe",
+  "mcp.dll",
+  "vm.dll",
+  "viewinteraction.dll",
+  "viewcontrol.dll",
+  "sceneexplorer.dll",
+  "toolbar.dll",
+  "siuitasks.dll",
+  "siviewtasks.dll",
+  "prefs.dll",
+  "manipulators.dll",
+  "transformmanager.dll"
+ ],
+ "counts": {
+  "PRESENT": 127,
+  "PARTIAL": 3,
+  "MISSING": 40,
+  "ABSENT": 53,
+  "total": 223,
+  "wiredThisPass": 42
+ },
+ "items": [
+  {
+   "kind": "menu",
+   "module": "uiut.dll",
+   "item": "MENU 163 — Splitter",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "menus.json `uiSplitter`",
+   "note": "2 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "uiut.dll",
+   "item": "MENU 181 — View",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `uiView`",
+   "note": "8 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "uiut.dll",
+   "item": "MENU 211 — Modeling / Animation / Rendering / Property / Simulate",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `uiModules`",
+   "note": "116 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "uiut.dll",
+   "item": "MENU 213 — EDIT",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `uiEdit`",
+   "note": "43 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "uiut.dll",
+   "item": "MENU 215 — REMOVED MENU ITEMS",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Resource is titled \"REMOVED MENU ITEMS\" — Softimage keeps the template, the product does not show it"
+  },
+  {
+   "kind": "menu",
+   "module": "uiut.dll",
+   "item": "MENU 246 — Context / Relationship / Stack Window / Splitter Contextual",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "menus.json `uiPaneContext`",
+   "note": "27 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "genppg.dll",
+   "item": "MENU 205 — AnimMenu",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `ppgAnim`",
+   "note": "37 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "genppg.dll",
+   "item": "MENU 223 — Main",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `ppgMain`",
+   "note": "4 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "genppg.dll",
+   "item": "MENU 235 — Menu",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "menus.json `ppgTree`",
+   "note": "3 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "genppg.dll",
+   "item": "MENU 247 — Tab Button",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "menus.json `ppgTabButton`",
+   "note": "1 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "genppg.dll",
+   "item": "MENU 264 — Keying Panel",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `keyingPanel`",
+   "note": "35 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "XSI.exe",
+   "item": "MENU 128 — &File / &Edit / &View / &Display / &Window / &Help",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mainMenu`",
+   "note": "57 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "XSI.exe",
+   "item": "MENU 146 — Room Menu",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "menus.json `roomMenu`",
+   "note": "1 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "XSI.exe",
+   "item": "MENU 226 — DebugMenu",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "DebugMenu — SDK / memory-tracking / crash-test developer items"
+  },
+  {
+   "kind": "menu",
+   "module": "XSI.exe",
+   "item": "MENU 244 — ToolMenu",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "menus.json `toolButtonMenu`",
+   "note": "5 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "XSI.exe",
+   "item": "MENU 245 — ToolbarMenu",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `toolbarMenu`",
+   "note": "9 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "XSI.exe",
+   "item": "MENU 308 — Layout Item",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "menus.json `layoutItemMenu`",
+   "note": "4 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "XSI.exe",
+   "item": "MENU 344 — &File",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `fileMenu`",
+   "note": "47 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "XSI.exe",
+   "item": "MENU 345 — ToolbarMenu",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "menus.json `toolbarReadOnlyMenu`",
+   "note": "2 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 201 — Select / CONTEXT",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpSelect`",
+   "note": "67 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 202 — Animation",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpAnimation`",
+   "note": "78 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 203 — Edit",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpEdit`",
+   "note": "67 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 204 — Transformation",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpTransform`",
+   "note": "40 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 219 — Playback",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpPlayback`",
+   "note": "26 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 293 — Constraints",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpConstraints`",
+   "note": "26 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 294 — Get",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpGet`",
+   "note": "5 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 325 — (unnamed)",
+   "verdict": "PARTIAL",
+   "wired": true,
+   "surface": "menus.json `mcpControlTips`",
+   "note": "57 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 350 — LAYER",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpLayer`",
+   "note": "8 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 353 — EXPLORE",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpExplore`",
+   "note": "27 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 354 — REMOVED MENU ITEMS",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Resource is titled \"REMOVED MENU ITEMS\" — same as uiut 215"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 356 — SELECTION FILTER",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpSelFilter`",
+   "note": "5 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 470 — NAVIGATE",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpNavigate`",
+   "note": "5 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 482 — REFERENCE",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpReference`",
+   "note": "7 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 483 — SYMMETRY",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpSymmetry`",
+   "note": "4 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 487 — (unnamed)",
+   "verdict": "PARTIAL",
+   "wired": true,
+   "surface": "menus.json `mcpRefModeTips`",
+   "note": "12 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 10002 — Snap",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpSnap`",
+   "note": "32 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 10004 — SNAP POINTS",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpSnapPoints`",
+   "note": "4 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 10005 — SNAP SEGMENTS",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpSnapSegments`",
+   "note": "5 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "mcp.dll",
+   "item": "MENU 10006 — SNAP FACETS",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `mcpSnapFacets`",
+   "note": "2 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "vm.dll",
+   "item": "MENU 202 — Menu",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `vmLayout`",
+   "note": "4 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "vm.dll",
+   "item": "MENU 272 — RESIZE",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `vmResize`",
+   "note": "6 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "vm.dll",
+   "item": "MENU 273 — Interface Test Menu",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Interface Test Menu — vm view-client self-test (SI3DVIEWTILE_* tiles)"
+  },
+  {
+   "kind": "menu",
+   "module": "vm.dll",
+   "item": "MENU 290 — Mute/Solo menu",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "menus.json `vmMuteSolo`",
+   "note": "2 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewinteraction.dll",
+   "item": "MENU 345 — KNIFE",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `toolKnife`",
+   "note": "2 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewinteraction.dll",
+   "item": "MENU 349 — CURVE_DIRECT_MANIP",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "menus.json `toolCurveDirectManip`",
+   "note": "20 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewinteraction.dll",
+   "item": "MENU 530 — TRANSLATE",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `toolTranslate`",
+   "note": "12 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewinteraction.dll",
+   "item": "MENU 531 — ROTATE",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `toolRotate`",
+   "note": "13 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewinteraction.dll",
+   "item": "MENU 532 — SCALE",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `toolScale`",
+   "note": "12 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewinteraction.dll",
+   "item": "MENU 533 — PIVOT",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `toolPivot`",
+   "note": "2 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewinteraction.dll",
+   "item": "MENU 534 — CURVE",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `toolCurve`",
+   "note": "6 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewinteraction.dll",
+   "item": "MENU 535 — TWEAK",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `toolTweak`",
+   "note": "24 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewinteraction.dll",
+   "item": "MENU 536 — TWEAK NORMALS",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `toolTweakNormals`",
+   "note": "19 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewcontrol.dll",
+   "item": "MENU 101 — Menu",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `viewCamera`",
+   "note": "36 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewcontrol.dll",
+   "item": "MENU 102 — Menu",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `viewVisibility`",
+   "note": "51 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewcontrol.dll",
+   "item": "MENU 106 — 3DVIEW_SUBCOMPONENT",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `viewContext`",
+   "note": "68 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewcontrol.dll",
+   "item": "MENU 124 — __Object__ / __SelectEdge__ / __Cluster__",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `viewObjectContext`",
+   "note": "23 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewcontrol.dll",
+   "item": "MENU 127 — Menu",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `viewStereo`",
+   "note": "14 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "viewcontrol.dll",
+   "item": "MENU 128 — Menu",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `viewCube`",
+   "note": "7 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "sceneexplorer.dll",
+   "item": "MENU 300 — __SE_View__ / __AE_View__",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `explorerView`",
+   "note": "82 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "sceneexplorer.dll",
+   "item": "MENU 302 — __Scope__",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `explorerScope`",
+   "note": "20 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "sceneexplorer.dll",
+   "item": "MENU 303 — __Application__ / __Scene__ / __Custom__ / __SourcesClips__ / __Logic__ / __Desktop__ / __Other__",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `explorerFilters`",
+   "note": "59 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "sceneexplorer.dll",
+   "item": "MENU 304 — __Action__ / __Animatable__ / __Animation__ / __ClipsContainer__ / __Constraint__ / __Duplication__ / __Folder__ / __General__ / __Group__ / __Info__ / __Layers__ / __Locks__ / __Material__ / __Model__ / __ObjectManagement__ / __Operator__ / __ParameterColor__ / __Partitions__ / __Passes__ / __PointCloud__ / __Polygon__ / __Preference__ / __Properties__ / __ScriptedOp__ / __Select__ / __SourcesContainer__ / __Tags__ / __TerminalNode__ / __Thumbnail__ / __UserKeyword__",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json `explorerContext`",
+   "note": "143 leaves"
+  },
+  {
+   "kind": "menu",
+   "module": "sceneexplorer.dll",
+   "item": "MENU 305 — __TreeControl__",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "menus.json `explorerTree`",
+   "note": "2 leaves"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 15 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 129 — Parameter Connection List",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `uiut.dll#129`",
+   "note": "PPG parameter connect list"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 137 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 138 — (untitled)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "ppg_chrome.json hosts",
+   "note": "PPG host frame pin"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 139 — (untitled)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "ppg_chrome.json hosts",
+   "note": "PPG host frame pin"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 141 — (untitled)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "ppg_chrome.json hosts",
+   "note": "PPG host frame pin"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 142 — (untitled)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "ppg_chrome.json hosts",
+   "note": "PPG host frame pin"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 143 — Dialog",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 144 — (untitled)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "ppg_chrome.json hosts",
+   "note": "PPG host frame pin"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 145 — (untitled)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "ppg_chrome.json hosts",
+   "note": "PPG host frame pin"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 147 — (untitled)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "ppg_chrome.json canonicalHostDialog",
+   "note": "PPG host frame pin"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 157 — (untitled)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "ppg_chrome.json softDialog.peAttest",
+   "note": "Soft-dialog font / OK-Cancel DLU sample"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 160 — Relational View Editor - Set Pane Relationships",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `uiut.dll#160`",
+   "note": "Pane context > Set Relationships…"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 162 — Relational View - Bitmap Editor",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `uiut.dll#162`",
+   "note": "Stack window > Bitmap Editor"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 357 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 358 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 359 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 360 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "genppg.dll",
+   "item": "DIALOG 232 — Error in Logic Script",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `genppg.dll#232`",
+   "note": "PPG logic-script error"
+  },
+  {
+   "kind": "dialog",
+   "module": "genppg.dll",
+   "item": "DIALOG 3401 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 102 — Command Mapping",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#102`",
+   "note": "File > Keyboard Mapping — key-map editor"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 104 — Save Preset As...",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#104`",
+   "note": "PPG Save Preset As…"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 105 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 106 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 136 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 139 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 159 — Script Button",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#159`",
+   "note": "Toolbar button type picker"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 166 — Rename Layout",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#166`",
+   "note": "View > Layouts > Rename Layout"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 167 — Customize Spacer",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#167`",
+   "note": "Toolbar spacer size"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 169 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 207 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 210 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 211 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 225 — (untitled)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/toolbars.ts customizeToolbars()",
+   "note": "Wired by an earlier pass"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 259 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 281 — Project Manager",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#281`",
+   "note": "File > Project Manager"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 287 — Autodesk® Softimage®",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Autodesk product splash — product identity, not an AfterImage surface"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 289 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 304 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 315 — Edit layout",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#315`",
+   "note": "Save-modified-layouts prompt"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 316 — Change Icon",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#316`",
+   "note": "Toolbar button bitmap picker"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 317 — Autodesk® Softimage®",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Autodesk product splash variant — same as 287"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 319 — Add Script Command",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#319`",
+   "note": "Toolbar Add Script Command"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 326 — Specify a folder for the preset list to search for presets",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#326`",
+   "note": "Preset-list search folder"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 327 — Customize Popup Menu Button",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#327`",
+   "note": "Popup menu button item order"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 331 — Layout Explorer",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#331`",
+   "note": "Relational-view frame tree"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 345 — Crash detected",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Crash detected — Softimage crash-recovery host dialog"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 346 — Package Add-On",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Package Add-On — AfterImage has no add-on / workgroup subsystem"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 347 — Install Add-On",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Install Add-On — no add-on subsystem"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 360 — License connection lost",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "License connection lost — licensing host dialog"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 361 — Duplicate Object Found",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Duplicate Object Found — scene-merge path not reached by AfterImage import"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 364 — Restore factory default layout",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#364`",
+   "note": "Restore factory default layout confirm"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 365 — Autodesk® Softimage® New Features Tour",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "New Features Tour — Autodesk product tour"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 366 — Autodesk® Softimage® New Features Tour",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "New Features Tour — Autodesk product tour"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 372 — Autodesk® Softimage® New Features Tour",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "New Features Tour — Autodesk product tour"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 374 — Autodesk® Softimage® New Features Tour",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "New Features Tour — Autodesk product tour"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 375 — UnInstall Add-On",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "UnInstall Add-On — no add-on subsystem"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 376 — Add-On Information",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Add-On Information — no add-on subsystem"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 383 — Events",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#383`",
+   "note": "Event handler grid"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 394 — Property Page",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/si/pe_property_page_394.json (residual C3)",
+   "note": "Wired by an earlier pass"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 397 — Autodesk® Softimage® Foundation",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Softimage Foundation licence tier prompt"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 398 — Autodesk® Softimage® Foundation",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Softimage Foundation licence tier prompt"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 403 — Manage Layouts, Views, Shelves and Toolbars",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#403`",
+   "note": "View > Layouts > Manage…"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 404 — Customize Button",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#404`",
+   "note": "Toolbar button size / label / bitmap"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 405 — Interaction Mode",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#405`",
+   "note": "Interaction mode (key map + mouse)"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 406 — Customize Button",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#406`",
+   "note": "Toolbar button script command"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 410 — Migrate Preferences",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `XSI.exe#410`",
+   "note": "Preference migration version picker"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG 429 — OpenGL Context Lost",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "OpenGL Context Lost — host GL driver dialog"
+  },
+  {
+   "kind": "dialog",
+   "module": "XSI.exe",
+   "item": "DIALOG IDD_PROPPAGE_LARGE — Property Page",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "Same stub pins as dialog 394",
+   "note": "Wired by an earlier pass"
+  },
+  {
+   "kind": "dialog",
+   "module": "mcp.dll",
+   "item": "DIALOG 220 — Current Time",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `mcp.dll#220`",
+   "note": "Playback current-frame entry"
+  },
+  {
+   "kind": "dialog",
+   "module": "mcp.dll",
+   "item": "DIALOG 346 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "mcp.dll",
+   "item": "DIALOG 489 — set from code using dictionnary",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "mcp.dll",
+   "item": "DIALOG 9100 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "mcp.dll",
+   "item": "DIALOG 9200 — (untitled)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/si/mcp_hitmaps.json SRT cells",
+   "note": "Geometry pin"
+  },
+  {
+   "kind": "dialog",
+   "module": "mcp.dll",
+   "item": "DIALOG 9400 — (untitled)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/si/mcp_hitmaps.json snap cells",
+   "note": "Geometry pin"
+  },
+  {
+   "kind": "dialog",
+   "module": "mcp.dll",
+   "item": "DIALOG 9500 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "mcp.dll",
+   "item": "DIALOG 9700 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "mcp.dll",
+   "item": "DIALOG 9800 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "mcp.dll",
+   "item": "DIALOG 10000 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "mcp.dll",
+   "item": "DIALOG 11001 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "vm.dll",
+   "item": "DIALOG 100 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "vm.dll",
+   "item": "DIALOG 274 — Interface Test Dialog",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Interface Test Dialog — vm self-test surface"
+  },
+  {
+   "kind": "dialog",
+   "module": "vm.dll",
+   "item": "DIALOG 275 — Interface Test Dialog",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Interface Test Dialog — vm self-test surface"
+  },
+  {
+   "kind": "dialog",
+   "module": "vm.dll",
+   "item": "DIALOG 386 — Capture Viewport",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `vm.dll#386`",
+   "note": "Viewport capture"
+  },
+  {
+   "kind": "dialog",
+   "module": "viewinteraction.dll",
+   "item": "DIALOG 337 — Polygon Winding",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `viewinteraction.dll#337`",
+   "note": "Add Polygon winding conflict"
+  },
+  {
+   "kind": "dialog",
+   "module": "sceneexplorer.dll",
+   "item": "DIALOG 725 — Dialog",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "ppg_chrome.json explorer.renameDialog",
+   "note": "Wired by an earlier pass"
+  },
+  {
+   "kind": "dialog",
+   "module": "toolbar.dll",
+   "item": "DIALOG 103 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable Softimage dialog name in the committed dump"
+  },
+  {
+   "kind": "dialog",
+   "module": "siuitasks.dll",
+   "item": "DIALOG 201 — Assemble NurbsMesh (SCM)",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `siuitasks.dll#201`",
+   "note": "Assemble NurbsMesh (SCM)"
+  },
+  {
+   "kind": "dialog",
+   "module": "siuitasks.dll",
+   "item": "DIALOG 202 — User Keyword(s)",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "ui_dialogs.json `siuitasks.dll#202`",
+   "note": "User keyword editor"
+  },
+  {
+   "kind": "strings",
+   "module": "XSICAMERA",
+   "item": "XSICAMERA (19 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/viewManager.ts camera menus",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIDEFORMOP",
+   "item": "XSIDEFORMOP (83 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/core/opdefs.ts deformer names",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIFILTERMGR",
+   "item": "XSIFILTERMGR (136 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/si.ts siFilterNames",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIGENPPG",
+   "item": "XSIGENPPG (16 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/si.ts siString — PPG display / logic-script strings",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIMANIPULATORS",
+   "item": "XSIMANIPULATORS (9 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/manipulatorHitbox.ts",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIMCP",
+   "item": "XSIMCP (44 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/mcp.ts tooltips + src/ui/si.ts siHint",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIMODELTASKS",
+   "item": "XSIMODELTASKS (15 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands/model.ts labels",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIMSGCAT",
+   "item": "XSIMSGCAT (232 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/si.ts siMessage / siMessageLike",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSINODEOP",
+   "item": "XSINODEOP (691 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/core/opdefs.ts operator names",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIOPTASKS",
+   "item": "XSIOPTASKS (47 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands/model2.ts labels",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIPICKMGR",
+   "item": "XSIPICKMGR (7 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/viewManager.ts pick session",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIPLUGINUI",
+   "item": "XSIPLUGINUI (94 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/shell.ts pluginManager",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIPREFS",
+   "item": "XSIPREFS (38 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/si.ts siPrefTitle + src/ui/prefs.ts",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIPROPS",
+   "item": "XSIPROPS (114 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/core/opdefs.ts + PPG labels",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSISCENEEXPLORER",
+   "item": "XSISCENEEXPLORER (24 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/explorer.ts",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSISCNMGR",
+   "item": "XSISCNMGR (458 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/core/scene.ts + File menu messages",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSISCRIPTS",
+   "item": "XSISCRIPTS (132 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/shell.ts scriptLog / Script Editor",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSISELECTIONMGR",
+   "item": "XSISELECTIONMGR (9 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/mcp.ts selection filters",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSITASKS",
+   "item": "XSITASKS (41 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands/* command labels",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSITOOLBAROBJ",
+   "item": "XSITOOLBAROBJ (9 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/si.ts siString — toolbar object command hints",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSITOOLMANAGER",
+   "item": "XSITOOLMANAGER (6 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/viewManager.ts tool activation",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSITOPOLOGYOP",
+   "item": "XSITOPOLOGYOP (103 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/core/topology.ts operator names",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIUIUT",
+   "item": "XSIUIUT (66 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/si.ts siString — relational view / PPG / layout strings",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIVIEWCONTROL",
+   "item": "XSIVIEWCONTROL (31 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/viewManager.ts + viewExtras.ts",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIVIEWCORE",
+   "item": "XSIVIEWCORE (18 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/viewManager.ts display modes",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIVIEWINTERACTION",
+   "item": "XSIVIEWINTERACTION (126 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/si.ts siHintBy — tool status-bar hints",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIVM",
+   "item": "XSIVM (14 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/viewManager.ts view-manager strings",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIXSI",
+   "item": "XSIXSI (163 strings)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/menubar.ts + shell strings",
+   "note": "Lifted by tools/build_si_ui.py → strings.json"
+  },
+  {
+   "kind": "view",
+   "module": "KeyingPanel.xsivw",
+   "item": "Keying Panel",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {1A32021D-D551-4b23-A5C1-4BD882B237F7}"
+  },
+  {
+   "kind": "view",
+   "module": "MiniTransformMCP.xsivw",
+   "item": "Mini Transform Panel",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {E0F89586-824F-4a9c-9E00-12BCE216B86A}"
+  },
+  {
+   "kind": "view",
+   "module": "animationpanel.xsivw",
+   "item": "Animation Panel",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {B17DF864-6768-11D1-8029-00A0243E2717}"
+  },
+  {
+   "kind": "view",
+   "module": "commandline.xsivw",
+   "item": "Command Line",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {333670EB-4414-11D2-8726-00A0C906816C}"
+  },
+  {
+   "kind": "view",
+   "module": "editpanel.xsivw",
+   "item": "Edit Panel",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {685AB352-69C4-11D1-8029-00A0243E2717}"
+  },
+  {
+   "kind": "view",
+   "module": "explorer.xsivw",
+   "item": "Explorer",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {25C1D4E0-0196-11D3-AE8E-00A0243E3654}"
+  },
+  {
+   "kind": "view",
+   "module": "hairpanel.xsivw",
+   "item": "Hair Panel",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {0E338020-8317-42C5-B48E-E8CABB3643E8}"
+  },
+  {
+   "kind": "view",
+   "module": "iceattributeeditor.xsivw",
+   "item": "ICE Attribute Editor",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {A705D500-E6A8-4181-A0EE-E6B2FC431ED7}"
+  },
+  {
+   "kind": "view",
+   "module": "icetree.xsivw",
+   "item": "ICE Tree",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {20281947-5CFF-450f-A9A1-1FBC9F7AD5E7}"
+  },
+  {
+   "kind": "view",
+   "module": "layercontrol.xsivw",
+   "item": "Scene Layer Manager",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {8BAFDF20-A130-11D3-B4AE-009027BC38D5}"
+  },
+  {
+   "kind": "view",
+   "module": "playbackpanel.xsivw",
+   "item": "Playback Panel",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {B17DF866-6768-11D1-8029-00A0243E2717}"
+  },
+  {
+   "kind": "view",
+   "module": "propertyeditor.xsivw",
+   "item": "Property Editor",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {5F3351D9-A33E-11D3-A93D-00C04F8EDEB9}"
+  },
+  {
+   "kind": "view",
+   "module": "scripteditor.xsivw",
+   "item": "Script Editor",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {2BC1E470-3227-11D2-8722-00A0C906816C}"
+  },
+  {
+   "kind": "view",
+   "module": "scripthistoryview.xsivw",
+   "item": "Script History",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {29160E6A-36F9-4dc9-840D-69A900B4EABD}"
+  },
+  {
+   "kind": "view",
+   "module": "selectionpanel.xsivw",
+   "item": "Selection Panel",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {093B3121-6733-11D1-8028-00A0243E2717}"
+  },
+  {
+   "kind": "view",
+   "module": "shelf.xsivw",
+   "item": "Shelf",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {D8169747-DAC8-453C-A0B2-1F6C4EE902FD}"
+  },
+  {
+   "kind": "view",
+   "module": "snappanel.xsivw",
+   "item": "Snap Panel",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {823FCC4D-FBF4-11D3-A2B0-08003658D403}"
+  },
+  {
+   "kind": "view",
+   "module": "timeline.xsivw",
+   "item": "Timeline",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {E768AC17-54E2-4e5e-A567-1B7A61358467}"
+  },
+  {
+   "kind": "view",
+   "module": "timerange.xsivw",
+   "item": "Timerange",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {21B3AE33-0616-44de-87B2-0CFFCEE065AD}"
+  },
+  {
+   "kind": "view",
+   "module": "toolbarpanel.xsivw",
+   "item": "Toolbar Panel",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {918039F1-D593-11CF-8287-00A0243E268D}"
+  },
+  {
+   "kind": "view",
+   "module": "transformationpanel.xsivw",
+   "item": "Transformation Panel",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {4BDB6AD1-6768-11D1-8029-00A0243E2717}"
+  },
+  {
+   "kind": "view",
+   "module": "vm.xsivw",
+   "item": "View Manager",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {1E9E95BB-B8CE-11CF-AE56-00A02411DF1A}"
+  },
+  {
+   "kind": "view",
+   "module": "xsiexplorer.xsivw",
+   "item": "XSI Explorer",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "clsid {BA75ACC4-5EF1-4052-B1C1-7B4698A3175B}"
+  },
+  {
+   "kind": "layout",
+   "module": "1024_x_768.xsily",
+   "item": "1024 x 768",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/si/layouts.json",
+   "note": "1026×708"
+  },
+  {
+   "kind": "layout",
+   "module": "Autohide.xsily",
+   "item": "Autohide",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/si/layouts.json",
+   "note": "0×0"
+  },
+  {
+   "kind": "layout",
+   "module": "Dual.xsily",
+   "item": "Dual",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/si/layouts.json",
+   "note": "2512×689"
+  },
+  {
+   "kind": "layout",
+   "module": "default.xsily",
+   "item": "Default",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/si/layouts.json",
+   "note": "1282×959"
+  },
+  {
+   "kind": "toolbar",
+   "module": "Main_Shelf.xsitb",
+   "item": "Main_Shelf.xsitb",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/si/shelf.json",
+   "note": "5 tab(s)"
+  },
+  {
+   "kind": "toolbar",
+   "module": "Palettes.xsitb",
+   "item": "Palettes.xsitb",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/toolbars.ts palettesView",
+   "note": "1 tab(s)"
+  },
+  {
+   "kind": "toolbar",
+   "module": "PanelSwitcher.xsitb",
+   "item": "PanelSwitcher.xsitb",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/si/panelswitcher.json",
+   "note": "1 tab(s)"
+  },
+  {
+   "kind": "toolbar",
+   "module": "ScriptCommands.xsitb",
+   "item": "ScriptCommands.xsitb",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/toolbars.ts Scripts toolbar",
+   "note": "1 tab(s)"
+  },
+  {
+   "kind": "symbol",
+   "module": "uiut.dll",
+   "item": "CDSBasePropertyFrame::OnDrawItem",
+   "verdict": "PARTIAL",
+   "wired": false,
+   "surface": "src/ui/ppgChrome.ts + ppgTitleColorref.ts",
+   "note": "Owner-draw COLORREF tokens wired; no paint pins in the dump"
+  },
+  {
+   "kind": "symbol",
+   "module": "uiut.dll",
+   "item": "C3DTrackMenu::DrawItem",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Owner-draw track-menu paint has no attested metric — DOM menus stay CSS-painted"
+  },
+  {
+   "kind": "symbol",
+   "module": "uiut.dll",
+   "item": "InspNavCtrl / LoadSaveCtrl / DsAnimationCtrl2",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/ppg.ts nav + tools bitmaps",
+   "note": "From ppg_chrome.json hosts"
+  },
+  {
+   "kind": "symbol",
+   "module": "uiut.dll",
+   "item": "RT_BITMAP inventory (43 × 24bpp, 71×25 / 66×25)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/si/ppg_chrome.json bitmaps",
+   "note": "Strips under public/si"
+  },
+  {
+   "kind": "symbol",
+   "module": "genppg.dll",
+   "item": "PPGEvent OnInit / OnChanged",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/ppgLogic.ts",
+   "note": "WR-06 attested event names"
+  },
+  {
+   "kind": "symbol",
+   "module": "genppg.dll",
+   "item": "dscontrol unrecognised-class gate (XSIGENPPG 3522/3523)",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/ui/siDialog.ts unknownClasses",
+   "note": "Unknown control classes are skipped and reported, as genppg does"
+  },
+  {
+   "kind": "symbol",
+   "module": "toolbarobj.dll",
+   "item": "Module MCP top strips",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/si/*_module_mcp_tops.json → src/commands/*Module.ts",
+   "note": "Per-module MENU tops"
+  },
+  {
+   "kind": "symbol",
+   "module": "toolbarobj.dll",
+   "item": "DSCommandMap / .xsitb toolbar objects",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/si/shelf.json + panelswitcher.json + src/ui/toolbars.ts",
+   "note": "data/si/toolbars + data/si/commandmaps"
+  },
+  {
+   "kind": "symbol",
+   "module": "sicoresdk.dll",
+   "item": "CXSICommandCore::GetEnabled / PutEnabled",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/cmdEnable.ts + src/ui/mcpEnableMatrix.ts",
+   "note": "docs/ghidra/getenabled-callpath.md"
+  },
+  {
+   "kind": "symbol",
+   "module": "sicoresdk.dll",
+   "item": "CanBeModified gate",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/cmdEnable.ts",
+   "note": "null → canRun fallback (getenabled-deepen.md)"
+  },
+  {
+   "kind": "symbol",
+   "module": "Softimage.XSIOM.dll",
+   "item": "OnBeginRenderPass / OnEndRenderPass",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/core/sceneRender.ts + src/core/commands.ts",
+   "note": "WR-01 attested event names"
+  },
+  {
+   "kind": "symbol",
+   "module": "Softimage.XSIOM.dll",
+   "item": "OM view / layout automation entry points",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No OM type library in the committed dump — only the two render-pass event names are attested"
+  }
+ ]
+}

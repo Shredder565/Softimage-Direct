@@ -128,6 +128,68 @@ function addSplitter(grid: HTMLElement, orientation: 'horizontal' | 'vertical', 
   };
 }
 
+/** uiut.dll Splitter (MENU 163) / pane context Split Horizontally|Vertically: wrap `frame` in a new frameset
+ *  and put an empty pane beside it, the way Softimage's relational view splits a pane. Returns the new pane. */
+export function splitFrame(frame: HTMLElement, orientation: 'horizontal' | 'vertical'): HTMLElement | null {
+  const parent = frame.parentElement;
+  if (!parent) return null;
+  const fs = div('frameset ' + orientation, (frame.dataset.name ?? 'pane') + '_split');
+  fs.dataset.sizes = '50%,50%';
+  fs.style.display = 'grid';
+  parent.insertBefore(fs, frame);
+  fs.appendChild(frame);
+  // Softimage's Set View menu offers "None" for a fresh pane — leave it empty rather than guessing a view.
+  const pane = div('frame', (frame.dataset.name ?? 'pane') + '_2');
+  pane.dataset.view = ''; pane.dataset.label = 'None';
+  pane.innerHTML = '<div class="view-placeholder">None</div>';
+  fs.appendChild(pane);
+  setSplitterMode(fs, 'movable');
+  applyTracks(fs, orientation);
+  window.dispatchEvent(new Event('resize'));
+  return pane;
+}
+
+/** uiut.dll Splitter Contextual (MENU 246): No Splitter / Fixed Splitter / Movable Splitter. */
+export function setSplitterMode(frameset: HTMLElement, mode: 'none' | 'fixed' | 'movable') {
+  frameset.dataset.splitter = mode;
+  for (const s of Array.from(frameset.querySelectorAll(':scope > .splitter'))) s.remove();
+  if (mode === 'none') return;
+  const orientation = frameset.classList.contains('horizontal') ? 'horizontal' : 'vertical';
+  const kids = Array.from(frameset.children).filter(c => !c.classList.contains('splitter'));
+  for (let i = 0; i < kids.length - 1; i++) {
+    addSplitter(frameset, orientation, i);
+    if (mode === 'fixed') (frameset.querySelectorAll(':scope > .splitter')[i] as HTMLElement).classList.add('fixed');
+  }
+}
+
+/** Pane context Delete Pane: drop the frame and collapse a frameset left with a single child. */
+export function deletePane(frame: HTMLElement): boolean {
+  const parent = frame.parentElement;
+  if (!parent || !parent.classList.contains('frameset')) return false;
+  frame.remove();
+  const kids = Array.from(parent.children).filter(c => !c.classList.contains('splitter')) as HTMLElement[];
+  if (kids.length === 1 && parent.parentElement) {
+    parent.parentElement.insertBefore(kids[0], parent);
+    parent.remove();
+  } else {
+    setSplitterMode(parent, (parent.dataset.splitter as 'none' | 'fixed' | 'movable') ?? 'movable');
+    applyTracks(parent, parent.classList.contains('horizontal') ? 'horizontal' : 'vertical');
+  }
+  window.dispatchEvent(new Event('resize'));
+  return true;
+}
+
+/** Pane context Set View / Remove View: rebuild a frame around another registered view ('' = Softimage "None"). */
+export function setFrameView(engine: LayoutEngine, frame: HTMLElement, view: string) {
+  frame.innerHTML = '';
+  frame.dataset.view = view;
+  frame.dataset.label = view || 'None';
+  const f = view ? engine.views.get(view) : undefined;
+  if (f) f(frame);
+  else frame.innerHTML = `<div class="view-placeholder">${view || 'None'}</div>`;
+  window.dispatchEvent(new Event('resize'));
+}
+
 import siLayout from '../data/si/layout_default.json';
 import siLayouts from '../data/si/layouts.json';
 type SiNode = { kind: string; name?: string; displayname?: string; type?: string; bitmap?: string; optional?: string; orientation?: string; splitter?: string; sizes?: string[]; buttonside?: string; buttonsize?: string; active?: number; children?: SiNode[] };
