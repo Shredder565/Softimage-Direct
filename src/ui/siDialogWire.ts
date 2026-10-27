@@ -4,7 +4,8 @@
 // control *does* is AfterImage's own. A template control with no AfterImage counterpart is left inert rather
 // than given invented behaviour, and the dialog logs the Softimage name it carries.
 import { App } from '../core/commands';
-import { openSiDialog, SiDialogHandle } from './siDialog';
+import { openSiDialog, SiDialogHandle, dluToPx, type SiDialogControl } from './siDialog';
+import { formatCurrentTime, parseCurrentTime, type TimeUnit } from './animateDialogs';
 import { SI_MENUS, SiMenuItem, openSiMenu, SI_KEYMAPS, siString, runScriptLine } from './si';
 import { keymapNames, setKeymap, currentKeymap } from './keymap';
 import { TEXTURE_NODES } from '../core/shaders';
@@ -484,38 +485,70 @@ export function captureViewportDialog(app: App, defaults: CaptureOptions, onOk: 
 }
 
 // ------------------------------------------------------------------ mcp 220 — Current Time
-/** The playback current-frame entry: FRAME / SECOND / MILLISECOND, as the radio group names them. */
-export function currentTimeDialog(app: App, fps: number, onOk: (frame: number) => void) {
+const TIME_UNITS: TimeUnit[] = ['FRAME', 'SECOND', 'MILLISECOND'];
+const BS_AUTORADIO = 9;
+
+/** Unit static nearest a radio, using the template's own DLU (radio y beside FRAME / SECOND / MILLISECOND). */
+function unitForRadio(radio: SiDialogControl, statics: SiDialogControl[]): { unit: TimeUnit; label: SiDialogControl } | null {
+  let best: SiDialogControl | null = null;
+  let dist = Infinity;
+  for (const s of statics) {
+    if (!TIME_UNITS.includes(s.text as TimeUnit)) continue;
+    const dy = Math.abs(s.dlu[1] - radio.dlu[1]);
+    if (dy < dist) { dist = dy; best = s; }
+  }
+  return best ? { unit: best.text as TimeUnit, label: best } : null;
+}
+
+/** mcp.dll RT_DIALOG 220. One template: unit radios plus the frame value. OK writes both. */
+export function currentTimeDialog(app: App) {
   openSiDialog('mcp.dll#220', {
     onReady: (d, close) => {
+      const fps = app.anim.fps || 30;
       const frame = app.anim.frame;
-      type TimeCell = { id: number; set: (v: number) => number; get: () => number; input?: HTMLInputElement };
-      const fields: TimeCell[] = [
-        { id: 282, set: v => v, get: () => frame },
-        { id: 283, set: v => v * fps, get: () => frame / fps },
-        { id: 284, set: v => (v / 1000) * fps, get: () => (frame / fps) * 1000 },
-      ];
-      // The template paints three radio cells beside the FRAME / SECOND / MILLISECOND statics; the value is
-      // typed into the cell, so each radio gets its own entry field at the template's own rect.
-      for (const f of fields) {
-        const cell = d.byId.get(f.id);
-        if (!cell) continue;
-        const i = document.createElement('input');
-        i.type = 'text';
-        i.className = 'si-dlg-edit si-dlg-timecell';
-        i.value = String(Math.round(f.get() * 1000) / 1000);
-        i.onkeydown = e => e.stopPropagation();
-        i.onfocus = () => d.setChecked(f.id, true);
-        cell.after(i);
-        cell.dataset.cell = String(f.id);
-        f.input = i;
+      const statics = d.tpl.controls.filter(c => c.cls === 'static');
+      const radios = d.tpl.controls.filter(c => c.cls === 'button' && (c.style & 0x0f) === BS_AUTORADIO);
+      const ok = d.tpl.controls.find(c => c.id === 1);
+      const rows: { id: number; unit: TimeUnit; input: HTMLInputElement }[] = [];
+      for (const radio of radios) {
+        const paired = unitForRadio(radio, statics);
+        if (!paired || !ok) continue;
+        const glyph = d.byId.get(radio.id)?.querySelector<HTMLInputElement>('input[type=radio]');
+        if (glyph) glyph.name = 'mcp.dll#220-unit';
+        // The template has no edit. The value sits in the gap the resource leaves between the unit
+        // static and OK — those two rects are the coordinates, not a second layout.
+        const left = paired.label.dlu[0] + paired.label.dlu[2] + 2;
+        const editDlu: [number, number, number, number] = [
+          left,
+          radio.dlu[1],
+          Math.max(12, ok.dlu[0] - left - 4),
+          radio.dlu[3],
+        ];
+        const [x, y, w, h] = dluToPx(d.tpl.font, editDlu);
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'si-dlg-edit';
+        input.style.left = `${x}px`;
+        input.style.top = `${y}px`;
+        input.style.width = `${w}px`;
+        input.style.height = `${h}px`;
+        input.value = formatCurrentTime(frame, fps, paired.unit);
+        input.onkeydown = e => e.stopPropagation();
+        input.onfocus = () => d.setChecked(radio.id, true);
+        d.root.appendChild(input);
+        rows.push({ id: radio.id, unit: paired.unit, input });
       }
-      d.setChecked(282, true);
+      const current = rows.find(r => r.unit === app.anim.timeUnit) ?? rows[0];
+      if (current) d.setChecked(current.id, true);
       d.on(1, () => {
-        const active = fields.find(f => d.checked(f.id)) ?? fields[0];
-        const raw = Number(active.input?.value ?? frame);
+        const active = rows.find(r => d.checked(r.id)) ?? rows[0];
+        if (!active) { close(); return; }
+        const next = parseCurrentTime(active.input.value, fps, active.unit);
+        if (!Number.isFinite(next)) return;
+        app.anim.timeUnit = active.unit;
         close();
-        if (Number.isFinite(raw)) onOk(Math.round(active.set(raw)));
+        app.run('SetCurrentFrame', { Frame: Math.round(next) });
+        app.events.emit('frame');
       });
     },
   });

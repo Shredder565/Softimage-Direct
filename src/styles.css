@@ -929,7 +929,7 @@ body.dock-picking, body.dock-picking * { cursor: crosshair !important; }
 .si-dlg-check input { margin: 0; }
 .si-dlg-edit, .si-dlg-combo { font: inherit; background: #fff; color: #000; border: 1px solid #404040; padding: 0 2px; }
 .si-dlg-edit.multiline { resize: none; }
-.si-dlg-timecell { position: absolute; width: 48px; height: 16px; }
+.si-dlg .si-dlg-edit { position: absolute; box-sizing: border-box; }
 .si-dlg-list { background: #fff; border: 1px solid #404040; overflow: auto; }
 .si-dlg-item { padding: 1px 4px; white-space: pre; cursor: default; }
 .si-dlg-item.selected { background: #0a246a; color: #fff; }
