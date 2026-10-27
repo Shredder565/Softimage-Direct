@@ -7,6 +7,7 @@ import { Parameter } from '../core/params';
 import { SI_MENUS, SiMenuItem, openSiMenu } from './si';
 import { explorerView } from './explorer';
 import { keyMappingTargets } from '../commands/anim';
+import { formatCurrentTime, openCurrentTimeDialog, parseCurrentTime } from './animateDialogs';
 
 type Rect = [number, number, number, number];
 /** A panel painted with one of the real bitmaps; `hit` adds an invisible button over a painted one. */
@@ -39,9 +40,13 @@ export function playbackPanel(app: App, host: HTMLElement) {
   P.hit([250, 6, 33, 25], 'Last Frame', () => app.run('LastFrame'));
   const loopB = P.hit([285, 6, 29, 25], 'Loop playback (right-click: Once / Bounce)', () => app.run('SetLoopMode', { Mode: A.loopMode === 'loop' ? 'once' : 'loop' })); loopB.oncontextmenu = e => { e.preventDefault(); const r = loopB.getBoundingClientRect(); openSiMenu([{ label: 'Loop' }, { label: 'Once' }, { label: 'Bounce' }], r.left, r.top - 2, it => app.run('SetLoopMode', { Mode: it.label!.toLowerCase() }), { checked: it => A.loopMode === it.label!.toLowerCase() }); };
   const audioB = P.hit([317, 6, 31, 25], 'Audio playback on/off', () => { (A as any).audio = !(A as any).audio; upd(); });
-  const frame = P.field([355, 11, 38, 14], 'Current Frame', v => app.run('SetCurrentFrame', { Frame: Number(v) }), 'dark');
+  const frame = P.field([355, 11, 38, 14], 'Current Frame', v => {
+    const next = parseCurrentTime(v, A.fps, A.timeUnit);
+    if (Number.isFinite(next)) app.run('SetCurrentFrame', { Frame: next });
+  }, 'dark');
+  frame.oncontextmenu = (e) => { e.preventDefault(); openCurrentTimeDialog(app); };
   const rtB = P.hit([400, 6, 28, 25], 'Play All Frames / Real-Time (All / RT)', () => app.run('SetPlaybackMode', { Mode: A.realtime ? 'Play All Frames' : 'Real-Time Playback' }));
-  const upd = () => { if (document.activeElement !== frame) frame.value = String(A.frame); playB.classList.toggle('on', A.playing); loopB.classList.toggle('on', A.loopMode !== 'once'); loopB.classList.toggle('bounce', A.loopMode === 'bounce'); audioB.classList.toggle('on', !!(A as any).audio); rtB.textContent = A.realtime ? 'RT' : 'All'; };
+  const upd = () => { if (document.activeElement !== frame) frame.value = formatCurrentTime(A.frame, A.fps, A.timeUnit); playB.classList.toggle('on', A.playing); loopB.classList.toggle('on', A.loopMode !== 'once'); loopB.classList.toggle('bounce', A.loopMode === 'bounce'); audioB.classList.toggle('on', !!(A as any).audio); rtB.textContent = A.realtime ? 'RT' : 'All'; };
   upd(); app.events.on('frame', upd);
 }
 

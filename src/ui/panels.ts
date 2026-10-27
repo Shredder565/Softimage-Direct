@@ -4,16 +4,33 @@ import { App } from '../core/commands';
 import { tool } from './viewManager';
 import { X3DObject } from '../core/scene';
 import { findParam } from '../commands';
+import { SI_MENUS, openSiMenu } from './si';
 
 const btn = (label: string, fn: () => void, title = '') => { const b = document.createElement('button'); b.textContent = label; b.title = title; b.onclick = fn; return b; };
 const row = (...els: HTMLElement[]) => { const r = document.createElement('div'); r.className = 'mcp-row'; r.append(...els); return r; };
 const panel = (title: string) => { const p = document.createElement('div'); p.className = 'mcp-panel'; const t = document.createElement('div'); t.className = 'mcp-title'; t.textContent = title; p.appendChild(t); return p; };
+
+/** genppg MENU 264 — match the menu label to a registered command label. Ids in menu_commands.json collide, so they are not used. */
+export function runKeyingPanelLabel(app: App, label: string) {
+  const bare = label.replace(/\.\.\.$/, '').trim();
+  if (!bare) return false;
+  for (const def of app.commands.values()) {
+    const lab = (def.label ?? '').replace(/\.\.\.$/, '').trim();
+    if (lab && lab === bare) { app.run(def.name); return true; }
+  }
+  app.logMsg('info', `Keying Panel: ${label}`);
+  return false;
+}
 
 // Selection / Transformation / Snap / Edit panels now live in mcp.ts (the Main Command Panel).
 export function keyingPanel(app: App, host: HTMLElement) {
   // Softimage KeyingPanel.xsivw chrome class (tokens via applyAnimChromeVars on :root)
   const root = document.createElement('div'); root.className = 'kp anim-keying';
   host.appendChild(root);
+  root.oncontextmenu = (e) => {
+    e.preventDefault();
+    openSiMenu(SI_MENUS.keyingPanel ?? [], e.clientX, e.clientY, (it) => { if (it.label) runKeyingPanelLabel(app, it.label); });
+  };
   const render = () => {
     root.innerHTML = '';
     const t = document.createElement('div'); t.className = 'mcp-title kp-title-bar';

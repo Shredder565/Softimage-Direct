@@ -200,6 +200,14 @@ else {
   if (!acp) fail.push('animClientPaint missing from __uiAudit');
   else if (!acp.ok) fail.push(`animClientPaint audit failed: ${JSON.stringify(acp)}`);
   else ok.push(`Anim client paint HWND_PNG (${acp.mixerPngPx?.[0]}x${acp.mixerPngPx?.[1]} mixer, explorer ${acp.editorExplorerW}px)`);
+  const ans = audit.animateSurface;
+  if (!ans) fail.push('animateSurface missing from __uiAudit');
+  else if (!ans.ok || !ans.wiredOk || !ans.countsOk) fail.push(`animateSurface audit failed: ${JSON.stringify({ ok: ans.ok, wiredOk: ans.wiredOk, countsOk: ans.countsOk, failed: ans.failed })}`);
+  else {
+    const smoke = await p.evaluate(() => window.__animateSurfaceSmoke?.());
+    if (!smoke?.ok) fail.push(`animateSurface smoke failed: ${JSON.stringify(smoke)}`);
+    else ok.push(`Animate surface ${ans.counts.wiredThisPass} wired (Current Time, keying menu, mixer tracks, ${ans.counts.MISSING} command contracts)`);
+  }
   // Softimage ≡ leaves: Lock Pivot / Volume / Edit Pivot must not fall through as "not implemented"
   const pePick = await p.evaluate(() => {
     const logs = [];

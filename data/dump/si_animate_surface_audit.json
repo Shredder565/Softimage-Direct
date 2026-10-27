@@ -1,0 +1,2319 @@
+{
+ "softimage": "Softimage 2015 SP2",
+ "source": "data/dump/animate-menu-leaves.json + si_anim_enabled_xsibatch.json + commands_full.json + pe_resources.json + anim_chrome.json",
+ "generated_by": "tools/build_animate_surface_audit.py",
+ "counts": {
+  "PRESENT": 121,
+  "PARTIAL": 2,
+  "MISSING": 125,
+  "ABSENT": 8,
+  "total": 256,
+  "wiredThisPass": 127
+ },
+ "items": [
+  {
+   "kind": "menu",
+   "module": "toolbarobj / RT_MENU 237",
+   "item": "Get (170 leaves)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/menus.json `Animate`",
+   "note": "170 dump ids present in the Animate menu tree"
+  },
+  {
+   "kind": "menu",
+   "module": "toolbarobj / RT_MENU 237",
+   "item": "Create (76 leaves)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/menus.json `Animate`",
+   "note": "76 dump ids present in the Animate menu tree"
+  },
+  {
+   "kind": "menu",
+   "module": "toolbarobj / RT_MENU 237",
+   "item": "Deform (55 leaves)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/menus.json `Animate`",
+   "note": "55 dump ids present in the Animate menu tree"
+  },
+  {
+   "kind": "menu",
+   "module": "toolbarobj / RT_MENU 237",
+   "item": "Actions (24 leaves)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/menus.json `Animate`",
+   "note": "24 dump ids present in the Animate menu tree"
+  },
+  {
+   "kind": "menu",
+   "module": "toolbarobj / RT_MENU 237",
+   "item": "Tools (20 leaves)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/menus.json `Animate`",
+   "note": "20 dump ids present in the Animate menu tree"
+  },
+  {
+   "kind": "menu",
+   "module": "RT_MENU 237",
+   "item": "Tools / MOTOR / Anchor-to-Delete (41522)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "menus.json MOTOR + anchor_factory_menu_fills.json",
+   "note": "Factory fills: Tag Rig, Rig to Rig, Mocap to Rig, Load Motion, Save Motion"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "PlotToAction",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 11 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ExportAction",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 2 args · Enabled=true"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ApplyAction",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 7 args · Enabled=true · actions/tools defaults dump"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "OffloadAction",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "EqualizeAction",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 4 args · Enabled=true"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CollapseLayers",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 7 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ImportActionAndAddClip",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ImportAudioAndAddClip",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddLayerClip",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 3 args · Enabled=true"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "GetDrivingActions",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 5 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CutClipInSpace",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 3 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "StoreAction",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 12 args · Enabled=true · actions/tools defaults dump"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "PlotAndApplyActions",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 13 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetMappingRule",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 6 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ResetOffset",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "OffsetValueMap",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 4 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddPoseActionItems",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "FindPeriods",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 8 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "DeleteMappingRule",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CreateValueMap",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 6 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CreateConnectionMap",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 3 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ImportRefAction",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 4 args · Enabled=true"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "PlotAndApplyAction",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 14 args · Enabled=true"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "GetInputAndPlotKeyableToAction",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 14 args · Enabled=true"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "DeleteUnusedMixerTracks",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 1 args · Enabled=true"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "PartialOffloadAction",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 4 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CreateEmptyValueMap",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CreateVisemeAction",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddTWTransition",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 5 args · Enabled=true"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CreateEvolverSpeechAction",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 3 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "GetNumMappingRules",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddTransition",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 4 args · Enabled=true · actions/tools defaults dump"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddBridgeTransition",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 3 args · Enabled=true · actions/tools defaults dump"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "StoreViseme",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 4 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "EqualizeClips",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 1 args · Enabled=true · actions/tools defaults dump"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CreateOffsetEffect",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SaveOffsetKeys",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 3 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "PlotConstrainedTransforms",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 13 args · Enabled=true"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "PlotKeyableToActions",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 13 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CreateSpeechAction",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "FreezeLipSync",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddClip",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 10 args · Enabled=true"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddTrack",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 5 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CreateCompound",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 6 args · Enabled=true · actions/tools defaults dump"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "MoveClipToTrack",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 5 args · Enabled=true"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddClipRelation",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 3 args · Enabled=true"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddMarker",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 5 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ImportActionAndApply",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "LoadActionPreset",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 4 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "PlotConstrainedTransformsToActions",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 14 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ClipMatch",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ReloadAction",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ResetEffectAtFrame",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "PlotFrameSetToActions",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 9 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddMappingRule",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 4 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "GetInputAndStoreAction",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 12 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ReconnectMixer",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 1 args · Enabled=true"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "TrimBefore",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 3 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "TrimAfter",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 3 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "EditClip",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 3 args · Enabled=true"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SwapRelationMasterAndSlaveClip",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 1 args · Enabled=true"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "GetMappingRule",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 6 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ExplodeCompound",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 2 args · Enabled=true"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetupEvolverVisemes",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 5 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "PlotToActions",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 10 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CopyClipToTrack",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 5 args · Enabled=true"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "GetInputAndStoreAction2",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 12 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "GetStoreActionDefaults",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 6 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SIStoreAction",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation Mixer · 10 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ImportAction",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer)",
+   "note": "Animation Mixer · 4 args · Enabled=true"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "StoreShapeKey",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation|Deformation)",
+   "note": "Animation|Deformation · 8 args · Enabled=true · actions/tools defaults dump"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ApplyShapeKey",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation|Deformation)",
+   "note": "Animation|Deformation · 8 args · Enabled=true · actions/tools defaults dump"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SelectShapeKey",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation|Deformation)",
+   "note": "Animation|Deformation · 5 args · Enabled=true"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "StripDeformOperators",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation|Deformation · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CopyShape",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation|Deformation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "TransferShapeAnimation",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation|Deformation · 4 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "envelope",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SelectDeformersFromEnvelope",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation|Deformation)",
+   "note": "Animation|Deformation · 1 args · Enabled=true"
+  },
+  {
+   "kind": "envelope",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AssociateEnvelopeBoundingVolume",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation|Deformation)",
+   "note": "Animation|Deformation · 2 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetUserPref",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Property|Edit)",
+   "note": "Property|Edit · 2 args · Enabled=true"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CreateShapeGroup",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation|Deformation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ApplyDeformKey",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation|Deformation)",
+   "note": "Animation|Deformation · 1 args · Enabled=true"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SITransferShapeAnimation",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation|Deformation · 4 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SaveShapeKey",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation|Deformation · 9 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ConvertShapeReferenceMode",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation|Deformation)",
+   "note": "Animation|Deformation · 2 args · Enabled=true"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ReplaceShapeKey",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation|Deformation)",
+   "note": "Animation|Deformation · 3 args · Enabled=true"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "LinkDeform",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 3 args · Enabled=true"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetShapeGroup",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation|Deformation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SaveDeformKey",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation|Deformation)",
+   "note": "Animation|Deformation · 2 args · Enabled=true"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "LinkDeformWithOri",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation|Deformation)",
+   "note": "Animation|Deformation · 3 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddProp",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "uncategorised · 5 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "RenameCPSetLayoutItems",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Property|Animation · 4 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "EditParameterDefinition",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Property|Animation)",
+   "note": "Property|Animation · 10 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "siWriteRetargetComponentData",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Property|Animation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetKeyableAttributes",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Property|Animation · 3 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "siCreateRetargetMapping",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Property|Animation · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "siWriteRetargetMapping",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Property|Animation · 19 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SIAddCustomParameter",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Property|Animation)",
+   "note": "Property|Animation · 12 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "TagObject",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Property|Animation)",
+   "note": "Property|Animation · 2 args · Enabled=true"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "TagStepMarks",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Property|Animation)",
+   "note": "Property|Animation · 1 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "RemoveCustomParam",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Property|Animation)",
+   "note": "Property|Animation · 1 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SIAddCustomParam",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Property|Animation · 12 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "layer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "IsAnimationLayerLocked",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "layer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetCurrentAnimationLayer",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 3 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SICreateSkeleton",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 14 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ConnectSource",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AlignRootToFirstBone",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 1 args · Enabled=true"
+  },
+  {
+   "kind": "fcurve",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ActivateFCurve",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 5 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "Create2DSkeleton",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 12 args · Enabled=true"
+  },
+  {
+   "kind": "fcurve",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "Sequence",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 9 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "RemoveAllAnimation",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 8 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "GetKeyInfo",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 11 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SIAppendBone",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 6 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "LastKey",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 3 args · Enabled=true"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "FirstKey",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 3 args · Enabled=true"
+  },
+  {
+   "kind": "fcurve",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ActivateFCurveOnKeyable",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 4 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "KeyAllBoneRotations",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 1 args · Enabled=true"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "DeleteKeys",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 6 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "fcurve",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ScaleAndOffset",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 12 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetKey",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 6 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "InspectChainProperties",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 1 args · Enabled=true"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "RemoveKeyOnKeyable",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 4 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SavePivotKey",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 3 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetExpr",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 3 args · Enabled=true"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CutKeys",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 7 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CopyKeys",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 6 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "PasteKeys",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 10 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "Create3DSkeleton",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 11 args · Enabled=true"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SaveActionKey",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 4 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SaveKey",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 8 args · Enabled=true · actions/tools defaults dump"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "PathRetime",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 5 args · Enabled=true"
+  },
+  {
+   "kind": "fcurve",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "MakeRotationsContinuous",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddBoneToEnd",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 1 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "BreakChainAtBone",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 1 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AppendBone",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 5 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetBoneMinRotLimit",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 2 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetBoneMaxRotLimit",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 2 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CreateChainfromCurve",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 3 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ResetActor",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 2 args · Enabled=true"
+  },
+  {
+   "kind": "layer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "UnlockAnimationLayer",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "fcurve",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SISequence",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 10 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "fcurve",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ConvertQuatToEuler",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SaveKeyOnMarkedKeyable",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 8 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddExpr",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 3 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ConvertPosAnimToPath",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 5 args · Enabled=true"
+  },
+  {
+   "kind": "layer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "GetNumberOfAnimationLayers",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CreateRigFromQuadruped",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 0 args · Enabled=true"
+  },
+  {
+   "kind": "fcurve",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "EvalFCurve",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "layer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "GetCurrentAnimationLayer",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetRelativeValues",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 1 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CreateSpine",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 5 args · Enabled=true"
+  },
+  {
+   "kind": "fcurve",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "GetFCurveInfo",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 8 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "GetSource",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SaveKeyOnKeyable",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 8 args · Enabled=true"
+  },
+  {
+   "kind": "fcurve",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddFCurve",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "EditExpr",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 1 args · Enabled=true"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ClearMarking",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 0 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "layer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddAnimationLayer",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 3 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "constraint",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ApplyPath",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 7 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "constraint",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ApplyCns",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Constraint)",
+   "note": "Constraint · 4 args · Enabled=true"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SaveKeyOnPath",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 6 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "RetargetRigToRig",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "fcurve",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ActivateFCurveOnMarkedKeyable",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 4 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "constraint",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SelectExternalConstraints",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "constraint",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ActivateExternalConstraints",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "constraint",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "DeactivateExternalConstraints",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "constraint",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "RemoveExternalConstraints",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "MoveJoint",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 6 args · Enabled=true"
+  },
+  {
+   "kind": "fcurve",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ConvertEulerToQuat",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SelectKeysInTimespan",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 5 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "DeselectAllKeys",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 0 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SaveKeyAtMultipleFrames",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "layer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "DeleteAnimationLayer",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "layer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "LockAnimationLayer",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "RemoveKeyOnMarkedKeyable",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 4 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetMarking",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetBoneRotationToPrefRotation",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 1 args · Enabled=true"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "NextKey",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 4 args · Enabled=true"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "PrevKey",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 4 args · Enabled=true"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "AddToMarking",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "RemoveFromMarking",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "GetMarking",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 0 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "fcurve",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetCurveType",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SceneRefresh",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 0 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "RetargetTagRig",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CreateRigFromGuide",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 0 args · Enabled=true"
+  },
+  {
+   "kind": "layer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "DuplicateAnimationLayer",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "RemoveKey",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 4 args · Enabled=true · actions/tools defaults dump"
+  },
+  {
+   "kind": "keying",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "RemoveAnimation",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation)",
+   "note": "Animation · 6 args · Enabled=true · actions/tools defaults dump"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "GenerateLipSync",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation · 6 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ResetAllEffectCurves",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation mixer · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ResetSelectedEffectCurves",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation mixer · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "CreateScaleEffect",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation mixer · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "RemoveEffect",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation mixer · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ClearParameterColor",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation|Property · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetParameterColor",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation|Property · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "RandomizeParameters",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Property|Modeling|Animation)",
+   "note": "Property|Modeling|Animation · 4 args · Enabled=true"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ApplyOp",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Modeling|Deformation|Operator)",
+   "note": "Modeling|Deformation|Operator · 6 args · Enabled=true"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "PlotShape",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Animation Mixer|Deformation)",
+   "note": "Animation Mixer|Deformation · 12 args · Enabled=true"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "DisconnectOperatorParameter",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation|Deformation|Modeling · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "deform",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ConnectOperatorParameter",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Animation|Deformation|Modeling · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "PlotCurve",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands (Drawing|Animation)",
+   "note": "Drawing|Animation · 5 args · Enabled=true"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ToggleBooleanUserPrefProc",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Modeling|Animation|Property · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "other",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "SetTransformRefMode",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Modeling|Animation|Property · 1 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "mixer",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "RemoveActionItem",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "src/commands/animateSurface.ts",
+   "note": "Action · 2 args · Enabled=true · no handler before this pass"
+  },
+  {
+   "kind": "defaults",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "ApplyFlexEnv",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands",
+   "note": "Deformation|Operator · defaults dump"
+  },
+  {
+   "kind": "defaults",
+   "module": "commands_full + si_anim_enabled_xsibatch",
+   "item": "InspectDevices",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands",
+   "note": "Devices · defaults dump"
+  },
+  {
+   "kind": "view",
+   "module": "data/si/views/KeyingPanel.xsivw",
+   "item": "Keying Panel",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "Floating / layout frame"
+  },
+  {
+   "kind": "view",
+   "module": "src/data/si/anim_chrome.json views",
+   "item": "Animation Editor",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "Floating / layout frame"
+  },
+  {
+   "kind": "view",
+   "module": "src/data/si/anim_chrome.json views",
+   "item": "Fcurve Editor",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "Floating / layout frame"
+  },
+  {
+   "kind": "view",
+   "module": "src/data/si/anim_chrome.json views",
+   "item": "Animation Mixer",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "Floating / layout frame"
+  },
+  {
+   "kind": "view",
+   "module": "src/data/si/anim_chrome.json views",
+   "item": "DopeSheet",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "Floating / layout frame"
+  },
+  {
+   "kind": "view",
+   "module": "src/data/si/anim_chrome.json views",
+   "item": "Animation Layer Manager",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "Floating / layout frame"
+  },
+  {
+   "kind": "view",
+   "module": "data/si/views",
+   "item": "Playback Panel",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "Floating / layout frame"
+  },
+  {
+   "kind": "view",
+   "module": "data/si/views/animationpanel.xsivw",
+   "item": "Animation Panel",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/main.ts layout.registerView",
+   "note": "Floating / layout frame"
+  },
+  {
+   "kind": "surface",
+   "module": "genppg.dll MENU 264",
+   "item": "Keying Panel context menu",
+   "verdict": "PARTIAL",
+   "wired": true,
+   "surface": "src/ui/panels.ts keyingPanel",
+   "note": "Menu resource is in menus.json keyingPanel; the panel did not open it"
+  },
+  {
+   "kind": "surface",
+   "module": "anim_chrome.mixer_tools",
+   "item": "Mixer Track flyout — Insert Animation / Shape / Audio Track",
+   "verdict": "PARTIAL",
+   "wired": true,
+   "surface": "src/ui/shell.ts animationMixer",
+   "note": "Animation and Shape were logged only; Audio Track is attested and was not on the flyout"
+  },
+  {
+   "kind": "surface",
+   "module": "si_anim_client_paint.json",
+   "item": "Animation Mixer / Editor / Fcurve client paint",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/animClientPaint.ts",
+   "note": "HWND PNG metrics"
+  },
+  {
+   "kind": "surface",
+   "module": "si_anim_editors_execcmd.json",
+   "item": "OpenAnimationMixer / OpenAnimationEditor / OpenFcurveEditor",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/commands/anim.ts",
+   "note": "ExecuteCommand empty-args open path"
+  },
+  {
+   "kind": "surface",
+   "module": "si_anim_hwnd_chrome.json",
+   "item": "Anim HWND enabled matrix + view probe",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/animEditorsExecCmd.ts",
+   "note": "Open* commands, not the OpenView API"
+  },
+  {
+   "kind": "surface",
+   "module": "si_anim_client_paint.json",
+   "item": "Animation Mixer menubar",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/animClientPaint.ts",
+   "note": "Edit / View / Track / Clip / Mix / Effect"
+  },
+  {
+   "kind": "surface",
+   "module": "si_anim_client_paint.json",
+   "item": "Animation Editor menubar",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/animClientPaint.ts",
+   "note": "Explorer / Editor / File / Edit / View / Select / Curves / Keys"
+  },
+  {
+   "kind": "surface",
+   "module": "si_anim_client_paint.json",
+   "item": "Fcurve Editor menubar",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/animClientPaint.ts",
+   "note": "no menubar text in the dump"
+  },
+  {
+   "kind": "surface",
+   "module": "anim_chrome menus",
+   "item": "Mixer Effect / Mix flyout leaves",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "Shell comment and the committed dump have the top labels only — no leaf list"
+  },
+  {
+   "kind": "dialog",
+   "module": "mcp.dll",
+   "item": "DIALOG 220 — Current Time",
+   "verdict": "MISSING",
+   "wired": true,
+   "surface": "animate_dialogs.json `mcp.dll#220`",
+   "note": "Playback time entry; radios sit beside FRAME / SECOND / MILLISECOND"
+  },
+  {
+   "kind": "dialog",
+   "module": "action.dll",
+   "item": "DIALOG 106 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable dialog title in the committed dump; control text: Instanced Actions, Exclusive, Normalize mode, From"
+  },
+  {
+   "kind": "dialog",
+   "module": "action.dll",
+   "item": "DIALOG 108 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable dialog title in the committed dump; control text: Edit Source Data..., Source, Select/Unselect All, Toggle Activeness"
+  },
+  {
+   "kind": "dialog",
+   "module": "action.dll",
+   "item": "DIALOG 124 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable dialog title in the committed dump; control text: InstAction, Edit Clip-Specific Data..., Toggle Active, Clear Fx"
+  },
+  {
+   "kind": "dialog",
+   "module": "props.dll",
+   "item": "DIALOG 103 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable dialog title in the committed dump; control text:  Source Clipping ,  Time Control ,  Extrapolation Before ,  Extrapolation After "
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 147 — PPG host frame",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/si/ppg_chrome.json canonicalHostDialog",
+   "note": "Untitled host frame already pinned; not a named Animate dialog"
+  },
+  {
+   "kind": "dialog",
+   "module": "uiut.dll",
+   "item": "DIALOG 358 — (untitled)",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "No attestable dialog title; control text: Track Visibility, Animation, Shape, Audio"
+  },
+  {
+   "kind": "dialog",
+   "module": "anim PE pack",
+   "item": "Remaining action/mixer RT_DIALOG templates",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "anim_chrome.pe_pack counts 133 dialogs / 113 menus; only the summaries above are committed. Names for the rest are not in the repo."
+  },
+  {
+   "kind": "contract",
+   "module": "twistop",
+   "item": "Twist parameters",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/opdefs.json `twistop` + DeformOperator mute",
+   "note": "10 script names"
+  },
+  {
+   "kind": "contract",
+   "module": "bendop",
+   "item": "Bend parameters",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/opdefs.json `bendop` + DeformOperator mute",
+   "note": "9 script names"
+  },
+  {
+   "kind": "contract",
+   "module": "taperop",
+   "item": "Taper parameters",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/opdefs.json `taperop` + DeformOperator mute",
+   "note": "10 script names"
+  },
+  {
+   "kind": "contract",
+   "module": "bulgeop",
+   "item": "Bulge parameters",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/opdefs.json `bulgeop` + DeformOperator mute",
+   "note": "10 script names"
+  },
+  {
+   "kind": "contract",
+   "module": "shearop",
+   "item": "Shear parameters",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/opdefs.json `shearop` + DeformOperator mute",
+   "note": "10 script names"
+  },
+  {
+   "kind": "contract",
+   "module": "pushop",
+   "item": "Push parameters",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/opdefs.json `pushop` + DeformOperator mute",
+   "note": "1 script names"
+  },
+  {
+   "kind": "contract",
+   "module": "smoothop",
+   "item": "Smooth parameters",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/opdefs.json `smoothop` + DeformOperator mute",
+   "note": "24 script names"
+  },
+  {
+   "kind": "contract",
+   "module": "smoothop",
+   "item": "Relax parameters",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/opdefs.json `smoothop` + DeformOperator mute",
+   "note": "24 script names"
+  },
+  {
+   "kind": "contract",
+   "module": "foldop",
+   "item": "Fold parameters",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/opdefs.json `foldop` + DeformOperator mute",
+   "note": "9 script names"
+  },
+  {
+   "kind": "contract",
+   "module": "lattice",
+   "item": "Lattice parameters",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/opdefs.json `lattice` + DeformOperator mute",
+   "note": "7 script names"
+  },
+  {
+   "kind": "contract",
+   "module": "wave",
+   "item": "Wave parameters",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/opdefs.json `wave` + DeformOperator mute",
+   "note": "4 script names"
+  },
+  {
+   "kind": "contract",
+   "module": "crvdeform",
+   "item": "Deform by Curve parameters",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/opdefs.json `crvdeform` + DeformOperator mute",
+   "note": "10 script names"
+  },
+  {
+   "kind": "contract",
+   "module": "deformbyspineop2",
+   "item": "Deform by Spine parameters",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/data/opdefs.json `deformbyspineop2` + DeformOperator mute",
+   "note": "0 script names"
+  },
+  {
+   "kind": "contract",
+   "module": "si_anim_fcurve_golden.json",
+   "item": "FCurve key (time, value, left, right, interp, extrap)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/core/animation.ts FCurve",
+   "note": "extrap=1 keys=3 interp=3"
+  },
+  {
+   "kind": "contract",
+   "module": "si_anim_mixer_deep.json",
+   "item": "Mixer collections",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/core/scene.ts makeMixer",
+   "note": "Sources, Tracks, Transitions, Compounds, Relations"
+  },
+  {
+   "kind": "contract",
+   "module": "si_anim_envelope_shape.json",
+   "item": "Envelope weight samples",
+   "verdict": "ABSENT",
+   "wired": false,
+   "surface": "—",
+   "note": "ApplyFlexEnv failed in the dump; weight_samples are null — no attestable weights"
+  },
+  {
+   "kind": "contract",
+   "module": "si_anim_envelope_shape.json",
+   "item": "Shape key result cube.polymsh.cls.Shape.ShapeKey",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/core/shape.ts + StoreShapeKey",
+   "note": "Headless StoreShapeKey succeeded"
+  },
+  {
+   "kind": "toolbar",
+   "module": "menu_command_map.json",
+   "item": "Animate toolbar (345 entries)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "src/ui/toolbarPanel.ts module Animate",
+   "note": "Same leaf ids as RT_MENU 237; module menu is the toolbar"
+  },
+  {
+   "kind": "strings",
+   "module": "XSIDEFORMOP.dict",
+   "item": "XSIDEFORMOP (5 lines)",
+   "verdict": "PRESENT",
+   "wired": false,
+   "surface": "data/si/dict/XSIDEFORMOP.dict → deform operator strings",
+   "note": "Committed dictionary; deform ops read opdefs script names"
+  }
+ ]
+}

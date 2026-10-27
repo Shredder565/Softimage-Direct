@@ -23,6 +23,11 @@ export class FCurve {
   extrap = SI_FCURVE_EXTRAP_CONSTANT;
   /** Default key interpolation when a key omits `interp` (3 = spline). */
   interp = SI_KEY_INTERP_SPLINE;
+  /** ActivateFCurve Activate=false mutes the whole curve. */
+  muted = false;
+  /** ActivateFCurve StartFrame/EndFrame — curve drives only inside the range when set. */
+  activeStart: number | null = null;
+  activeEnd: number | null = null;
   constructor(readonly param: Parameter) {}
   addKey(time: number, value: number, extra?: Partial<Key>) {
     const k = this.keys.find(k => k.time === time);
@@ -130,6 +135,16 @@ export class AnimationManager {
   playbackView = 'All Views'; updateMode = 'Update All';
   /** Marked parameters (Animation > Parameters, keying panel marks) and named marking sets. */
   readonly marked = new Set<Parameter>(); readonly markingSets = new Map<string, Parameter[]>();
+  /**
+   * Animation layers (AddAnimationLayer / LockAnimationLayer / SetCurrentAnimationLayer).
+   * The committed command table attests create, delete, duplicate, lock, and current index — not a solver.
+   */
+  readonly layers: { name: string; locked: boolean }[] = [];
+  currentLayer = -1;
+  /** SelectKeysInTimespan / DeselectAllKeys — `${parameter.fullName}@${time}`. */
+  readonly selectedKeys = new Set<string>();
+  /** mcp.dll RT_DIALOG 220 Current Time radios: FRAME / SECOND / MILLISECOND. */
+  timeUnit: 'FRAME' | 'SECOND' | 'MILLISECOND' = 'FRAME';
   /** Expressions: param -> source text, evaluated every frame with Fc (current frame) like Softimage's expression language subset. */
   readonly expressions = new Map<Parameter, { text: string; fn: (fc: number, t: number) => number }>();
   private listeners = new Set<(frame: number) => void>();
@@ -137,7 +152,12 @@ export class AnimationManager {
   get frame() { return this._frame; }
   set frame(f: number) {
     this._frame = f;
-    for (const [p, fc] of this.fcurves) if (fc.keys.length) p.value = fc.eval(f);
+    for (const [p, fc] of this.fcurves) {
+      if (!fc.keys.length || fc.muted) continue;
+      if (fc.activeStart != null && f < fc.activeStart) continue;
+      if (fc.activeEnd != null && f > fc.activeEnd) continue;
+      p.value = fc.eval(f);
+    }
     for (const [p, ex] of this.expressions) { try { const v = ex.fn(f, f / this.fps); if (Number.isFinite(v)) p.value = v; } catch { /* bad expression: leave the value */ } }
     for (const l of this.listeners) l(f);
   }

@@ -515,7 +515,9 @@ export function animationMixer(app: App, host: HTMLElement) {
     } else if (label === 'View') {
       hd.appendChild(menuBtn('View', () => [{ label: 'Refresh' }, { label: 'Frame All' }], () => render()));
     } else if (label === 'Track') {
-      hd.appendChild(menuBtn('Track', () => [{ label: 'Insert Animation Track' }, { label: 'Insert Shape Track' }], (l) => { app.logMsg('info', `Mixer: ${l}`); }));
+      hd.appendChild(menuBtn('Track', () => [{ label: 'Insert Animation Track' }, { label: 'Insert Shape Track' }, { label: 'Insert Audio Track' }], (l) => {
+        if (l === 'Insert Animation Track' || l === 'Insert Shape Track' || l === 'Insert Audio Track') app.run('AddTrack', { Name: l });
+      }));
     } else if (label === 'Clip') {
       hd.appendChild(menuBtn('Clip', () => [{ label: 'Add Transition' }, { label: 'Add Bridge Transition' }, { label: 'Create Compound' }], (l) => {
         if (l === 'Add Transition') app.run('AddTransition');

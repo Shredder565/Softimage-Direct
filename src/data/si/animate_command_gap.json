@@ -1,0 +1,3131 @@
+{
+"softimage": "Softimage 2015 SP2",
+"source": "data/commands_full.json ∩ data/dump/si_anim_enabled_xsibatch.json, names absent from src/ before this pass",
+"generated_by": "tools/build_animate_surface_audit.py",
+"commands": [
+{
+"scripting_name": "PlotToAction",
+"label": "PlotToAction",
+"category": "Animation Mixer",
+"description": "",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Name",
+"default": ""
+},
+{
+"name": "StartFrame",
+"default": 0.0
+},
+{
+"name": "EndFrame",
+"default": 0.0
+},
+{
+"name": "StepFrame",
+"default": 1.0
+},
+{
+"name": "FCurve Kind",
+"default": 20
+},
+{
+"name": "DefaultSegKind",
+"default": 3
+},
+{
+"name": "Fit FCurve",
+"default": false
+},
+{
+"name": "Fit Tolerance",
+"default": 0.01
+},
+{
+"name": "ProcessContRots",
+"default": true
+}
+]
+},
+{
+"scripting_name": "OffloadAction",
+"label": "OffloadAction",
+"category": "Animation Mixer",
+"description": "OffloadAction",
+"family": "mixer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+}
+]
+},
+{
+"scripting_name": "CollapseLayers",
+"label": "Collapse Animation Layers",
+"category": "Animation Mixer",
+"description": "",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "PlottingType",
+"default": 1
+},
+{
+"name": "StartFrame",
+"default": 0.0
+},
+{
+"name": "EndFrame",
+"default": 0.0
+},
+{
+"name": "StepFrame",
+"default": 1.0
+},
+{
+"name": "Fit FCurve",
+"default": true
+},
+{
+"name": "Fit Tolerance",
+"default": 0.01
+}
+]
+},
+{
+"scripting_name": "ImportActionAndAddClip",
+"label": "ImportActionAndAddClip",
+"category": "Animation Mixer",
+"description": "Create and add clip to the given compound and track",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "FileName",
+"default": null
+}
+]
+},
+{
+"scripting_name": "ImportAudioAndAddClip",
+"label": "ImportAudioAndAddClip",
+"category": "Animation Mixer",
+"description": "Import an audio file and create a clip for it",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "FileName",
+"default": null
+}
+]
+},
+{
+"scripting_name": "GetDrivingActions",
+"label": "Get Driving Actions",
+"category": "Animation Mixer",
+"description": " ",
+"family": "mixer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Consider Time",
+"default": false
+},
+{
+"name": "Time",
+"default": null
+},
+{
+"name": "Keep Compound Actions",
+"default": true
+},
+{
+"name": "Keep Inactive Actions",
+"default": false
+}
+]
+},
+{
+"scripting_name": "CutClipInSpace",
+"label": "CutClipInSpace",
+"category": "Animation Mixer",
+"description": "Cuts a clip in space",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Clip",
+"default": null
+}
+]
+},
+{
+"scripting_name": "PlotAndApplyActions",
+"label": "Plot Marked Parameters To Actions",
+"category": "Animation Mixer",
+"description": "Plot values from consecutive frames from animated parameters into actions",
+"family": "mixer",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Name",
+"default": null
+},
+{
+"name": "StartFrame",
+"default": null
+},
+{
+"name": "EndFrame",
+"default": null
+},
+{
+"name": "StepFrame",
+"default": null
+},
+{
+"name": "FCurve Kind",
+"default": null
+},
+{
+"name": "DefaultSegKind",
+"default": null
+},
+{
+"name": "Fit FCurve",
+"default": null
+},
+{
+"name": "Fit Tolerance",
+"default": null
+},
+{
+"name": "ProcessContRots",
+"default": null
+},
+{
+"name": "Apply",
+"default": null
+},
+{
+"name": "Paste",
+"default": null
+},
+{
+"name": "Delete",
+"default": null
+}
+]
+},
+{
+"scripting_name": "SetMappingRule",
+"label": "Set Mapping Rule",
+"category": "Animation Mixer",
+"description": "Modify a mapping rule in-place.",
+"family": "mixer",
+"args": [
+{
+"name": "MappingTemplate",
+"default": null
+},
+{
+"name": "From",
+"default": ""
+},
+{
+"name": "To",
+"default": ""
+},
+{
+"name": "Index",
+"default": 0
+},
+{
+"name": "Active",
+"default": -1
+},
+{
+"name": "PoseOffset",
+"default": -1
+}
+]
+},
+{
+"scripting_name": "ResetOffset",
+"label": "ResetOffset",
+"category": "Animation Mixer",
+"description": "Reset the offset effect for selected parameters",
+"family": "mixer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Time",
+"default": null
+}
+]
+},
+{
+"scripting_name": "OffsetValueMap",
+"label": "Set Value Map Offset",
+"category": "Animation Mixer",
+"description": "",
+"family": "mixer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Type",
+"default": null
+},
+{
+"name": "Time",
+"default": null
+},
+{
+"name": "Value",
+"default": null
+}
+]
+},
+{
+"scripting_name": "AddPoseActionItems",
+"label": "Add Pose Action Items",
+"category": "Animation Mixer",
+"description": "",
+"family": "mixer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Name",
+"default": "OFFSET_ROOT"
+}
+]
+},
+{
+"scripting_name": "FindPeriods",
+"label": "Find Cycle Input",
+"category": "Animation Mixer",
+"description": "",
+"family": "mixer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Algorithm",
+"default": null
+},
+{
+"name": "StartFrame",
+"default": null
+},
+{
+"name": "EndFrame",
+"default": null
+},
+{
+"name": "Minimum Period Length",
+"default": null
+},
+{
+"name": "Mode",
+"default": null
+},
+{
+"name": "Name",
+"default": null
+},
+{
+"name": "Title",
+"default": "Find Periods"
+}
+]
+},
+{
+"scripting_name": "DeleteMappingRule",
+"label": "Delete Mapping Rule",
+"category": "Animation Mixer",
+"description": " ",
+"family": "mixer",
+"args": [
+{
+"name": "MappingTemplate",
+"default": null
+},
+{
+"name": "Index",
+"default": 0
+}
+]
+},
+{
+"scripting_name": "CreateValueMap",
+"label": "Create Value Map",
+"category": "Animation Mixer",
+"description": " ",
+"family": "mixer",
+"args": [
+{
+"name": "Obj1",
+"default": null
+},
+{
+"name": "Obj2",
+"default": null
+},
+{
+"name": "Mode",
+"default": 4
+},
+{
+"name": "Scope",
+"default": 1
+},
+{
+"name": "UseNames",
+"default": false
+},
+{
+"name": "MappingTemplate",
+"default": null
+}
+]
+},
+{
+"scripting_name": "CreateConnectionMap",
+"label": "Create Connection Map",
+"category": "Animation Mixer",
+"description": " ",
+"family": "mixer",
+"args": [
+{
+"name": "Obj1",
+"default": null
+},
+{
+"name": "Obj2",
+"default": null
+},
+{
+"name": "MappingTemplate",
+"default": null
+}
+]
+},
+{
+"scripting_name": "PartialOffloadAction",
+"label": "PartialOffloadAction",
+"category": "Animation Mixer",
+"description": "PartialOffloadAction",
+"family": "mixer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "StartFrame",
+"default": 0
+},
+{
+"name": "EndFrame",
+"default": 0
+},
+{
+"name": "Remember",
+"default": false
+}
+]
+},
+{
+"scripting_name": "CreateEmptyValueMap",
+"label": "Create Empty Value Map",
+"category": "Animation Mixer",
+"description": "",
+"family": "mixer",
+"args": [
+{
+"name": "Obj1",
+"default": null
+},
+{
+"name": "MappingTemplate",
+"default": null
+}
+]
+},
+{
+"scripting_name": "CreateVisemeAction",
+"label": "CreateVisemeAction",
+"category": "Animation Mixer",
+"description": " ",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "Name",
+"default": "Viseme"
+}
+]
+},
+{
+"scripting_name": "CreateEvolverSpeechAction",
+"label": "CreateEvolverSpeechAction",
+"category": "Animation Mixer",
+"description": " ",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "Name",
+"default": "SpeechAction"
+},
+{
+"name": "KeyList",
+"default": null
+}
+]
+},
+{
+"scripting_name": "GetNumMappingRules",
+"label": "Get Number of Mapping Rules",
+"category": "Animation Mixer",
+"description": " ",
+"family": "mixer",
+"args": [
+{
+"name": "MappingTemplate",
+"default": null
+},
+{
+"name": "Value",
+"default": null
+}
+]
+},
+{
+"scripting_name": "StoreViseme",
+"label": "StoreViseme",
+"category": "Animation Mixer",
+"description": " ",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Name",
+"default": "StoredAction"
+},
+{
+"name": "PhonemeType",
+"default": 0
+}
+]
+},
+{
+"scripting_name": "CreateOffsetEffect",
+"label": "CreateOffsetEffect",
+"category": "Animation Mixer",
+"description": "Create an offset effect in the selected clips",
+"family": "mixer",
+"args": [
+{
+"name": "Clip",
+"default": null
+}
+]
+},
+{
+"scripting_name": "SaveOffsetKeys",
+"label": "SaveOffsetKeys",
+"category": "Animation Mixer",
+"description": "Save offsets keys in the effect of the selected clip",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Type",
+"default": ":siSelectedParams:siEffectInputType"
+},
+{
+"name": "Time",
+"default": null
+}
+]
+},
+{
+"scripting_name": "PlotKeyableToActions",
+"label": "Plot Keyable Parameters To Actions",
+"category": "Animation Mixer",
+"description": "Plot values from consecutive frames from keyable parameters into actions",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Name",
+"default": null
+},
+{
+"name": "StartFrame",
+"default": null
+},
+{
+"name": "EndFrame",
+"default": null
+},
+{
+"name": "StepFrame",
+"default": null
+},
+{
+"name": "FCurve Kind",
+"default": null
+},
+{
+"name": "DefaultSegKind",
+"default": null
+},
+{
+"name": "Fit FCurve",
+"default": null
+},
+{
+"name": "Fit Tolerance",
+"default": null
+},
+{
+"name": "ProcessContRots",
+"default": null
+},
+{
+"name": "Apply",
+"default": null
+},
+{
+"name": "Paste",
+"default": null
+},
+{
+"name": "Delete",
+"default": null
+}
+]
+},
+{
+"scripting_name": "CreateSpeechAction",
+"label": "CreateSpeechAction",
+"category": "Animation Mixer",
+"description": " ",
+"family": "mixer",
+"args": [
+{
+"name": "Face",
+"default": null
+},
+{
+"name": "Name",
+"default": "SpeechAction"
+}
+]
+},
+{
+"scripting_name": "FreezeLipSync",
+"label": "FreezeLipSync",
+"category": "Animation Mixer",
+"description": " ",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+}
+]
+},
+{
+"scripting_name": "AddTrack",
+"label": "AddTrack",
+"category": "Animation Mixer",
+"description": "Create and add track to the given compound",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "Compound",
+"default": null
+},
+{
+"name": "Type",
+"default": "4294967295"
+},
+{
+"name": "Name",
+"default": ""
+},
+{
+"name": "InsertPosition",
+"default": -1
+}
+]
+},
+{
+"scripting_name": "AddMarker",
+"label": "AddMarker",
+"category": "Animation Mixer",
+"description": "Create and add NLE marker and to the given container",
+"family": "keying",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "Container",
+"default": null
+},
+{
+"name": "Time",
+"default": null
+},
+{
+"name": "Duration",
+"default": 0.0
+},
+{
+"name": "Name",
+"default": ""
+}
+]
+},
+{
+"scripting_name": "ImportActionAndApply",
+"label": "ImportActionAndApply",
+"category": "Animation Mixer",
+"description": "Create and apply action to the given compound and track",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "FileName",
+"default": null
+}
+]
+},
+{
+"scripting_name": "LoadActionPreset",
+"label": "LoadActionPreset",
+"category": "Animation Mixer",
+"description": "",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "FileName",
+"default": null
+},
+{
+"name": "Name",
+"default": ""
+},
+{
+"name": "ActionStorage",
+"default": 0
+}
+]
+},
+{
+"scripting_name": "PlotConstrainedTransformsToActions",
+"label": "Plot Constrained Transforms To Actions",
+"category": "Animation Mixer",
+"description": "Plot values from consecutive frames from constrained transforms into actions",
+"family": "mixer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Name",
+"default": null
+},
+{
+"name": "StartFrame",
+"default": null
+},
+{
+"name": "EndFrame",
+"default": null
+},
+{
+"name": "StepFrame",
+"default": null
+},
+{
+"name": "FCurve Kind",
+"default": null
+},
+{
+"name": "DefaultSegKind",
+"default": null
+},
+{
+"name": "Fit FCurve",
+"default": null
+},
+{
+"name": "Fit Tolerance",
+"default": null
+},
+{
+"name": "ProcessContRots",
+"default": null
+},
+{
+"name": "Apply",
+"default": null
+},
+{
+"name": "Paste",
+"default": null
+},
+{
+"name": "Delete",
+"default": null
+},
+{
+"name": "DeleteCns",
+"default": null
+}
+]
+},
+{
+"scripting_name": "ClipMatch",
+"label": "Clip Match",
+"category": "Animation Mixer",
+"description": "Matches up two clips at the start of the the second.",
+"family": "mixer",
+"args": [
+{
+"name": "InputObj",
+"default": null
+}
+]
+},
+{
+"scripting_name": "ReloadAction",
+"label": "ReloadAction",
+"category": "Animation Mixer",
+"description": "ReloadAction",
+"family": "mixer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+}
+]
+},
+{
+"scripting_name": "ResetEffectAtFrame",
+"label": "ResetEffectAtFrame",
+"category": "Animation Mixer",
+"description": "",
+"family": "mixer",
+"args": [
+{
+"name": "Clip",
+"default": null
+},
+{
+"name": "Time",
+"default": null
+}
+]
+},
+{
+"scripting_name": "PlotFrameSetToActions",
+"label": "PlotFrameSetToActions",
+"category": "Animation Mixer",
+"description": "",
+"family": "mixer",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Name",
+"default": ""
+},
+{
+"name": "StartFrame",
+"default": 1
+},
+{
+"name": "FrameSet",
+"default": 0.0
+},
+{
+"name": "FCurve Kind",
+"default": null
+},
+{
+"name": "DefaultSegKind",
+"default": 20
+},
+{
+"name": "Fit FCurve",
+"default": 3
+},
+{
+"name": "Fit Tolerance",
+"default": false
+},
+{
+"name": "ProcessContRots",
+"default": 0.01
+}
+]
+},
+{
+"scripting_name": "AddMappingRule",
+"label": "Add Mapping Rule",
+"category": "Animation Mixer",
+"description": " ",
+"family": "mixer",
+"args": [
+{
+"name": "MappingTemplate",
+"default": null
+},
+{
+"name": "From",
+"default": ""
+},
+{
+"name": "To",
+"default": ""
+},
+{
+"name": "Index",
+"default": 0
+}
+]
+},
+{
+"scripting_name": "GetInputAndStoreAction",
+"label": "GetInputAndStoreAction",
+"category": "Animation Mixer",
+"description": "",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": ""
+},
+{
+"name": "InputObj",
+"default": ""
+},
+{
+"name": "Mode",
+"default": 1
+},
+{
+"name": "Name",
+"default": "StoredAction"
+},
+{
+"name": "RemoveAnim",
+"default": true
+},
+{
+"name": "StartFrame",
+"default": 0.0
+},
+{
+"name": "EndFrame",
+"default": -1.0
+},
+{
+"name": "Consider Time",
+"default": false
+},
+{
+"name": "Ripple",
+"default": false
+},
+{
+"name": "AddClip",
+"default": false
+},
+{
+"name": "ClipOffset",
+"default": 0.0
+},
+{
+"name": "IncludeAnimLayers",
+"default": false
+}
+]
+},
+{
+"scripting_name": "TrimBefore",
+"label": "Trim Before",
+"category": "Animation Mixer",
+"description": "Trims the head of the selected clips",
+"family": "mixer",
+"args": [
+{
+"name": "Clip",
+"default": null
+},
+{
+"name": "Mode",
+"default": ":siTrimBefore:siCutClipOptions"
+},
+{
+"name": "Time",
+"default": null
+}
+]
+},
+{
+"scripting_name": "TrimAfter",
+"label": "Trim After",
+"category": "Animation Mixer",
+"description": "Trims the tail of the selected clips",
+"family": "mixer",
+"args": [
+{
+"name": "Clip",
+"default": null
+},
+{
+"name": "Mode",
+"default": ":siTrimAfter:siCutClipOptions"
+},
+{
+"name": "Time",
+"default": null
+}
+]
+},
+{
+"scripting_name": "GetMappingRule",
+"label": "Get Mapping Rule",
+"category": "Animation Mixer",
+"description": " ",
+"family": "mixer",
+"args": [
+{
+"name": "MappingTemplate",
+"default": null
+},
+{
+"name": "Index",
+"default": 0
+},
+{
+"name": "From",
+"default": ""
+},
+{
+"name": "To",
+"default": ""
+},
+{
+"name": "Active",
+"default": false
+},
+{
+"name": "PoseOffset",
+"default": false
+}
+]
+},
+{
+"scripting_name": "SetupEvolverVisemes",
+"label": "SetupEvolverVisemes",
+"category": "Animation Mixer",
+"description": " ",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "ClipList",
+"default": null
+},
+{
+"name": "FileName",
+"default": ""
+},
+{
+"name": "KeyList",
+"default": null
+},
+{
+"name": "Action",
+"default": null
+}
+]
+},
+{
+"scripting_name": "PlotToActions",
+"label": "PlotToActions",
+"category": "Animation Mixer",
+"description": "",
+"family": "mixer",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Name",
+"default": ""
+},
+{
+"name": "StartFrame",
+"default": 0.0
+},
+{
+"name": "EndFrame",
+"default": 0.0
+},
+{
+"name": "StepFrame",
+"default": 1.0
+},
+{
+"name": "FCurve Kind",
+"default": 20
+},
+{
+"name": "DefaultSegKind",
+"default": 3
+},
+{
+"name": "Fit FCurve",
+"default": false
+},
+{
+"name": "Fit Tolerance",
+"default": 0.01
+},
+{
+"name": "ProcessContRots",
+"default": true
+}
+]
+},
+{
+"scripting_name": "GetInputAndStoreAction2",
+"label": "GetInputAndStoreActionProc2",
+"category": "Animation Mixer",
+"description": "",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": ""
+},
+{
+"name": "InputObj",
+"default": ""
+},
+{
+"name": "Mode",
+"default": 1
+},
+{
+"name": "Name",
+"default": "StoredAction"
+},
+{
+"name": "RemoveAnim",
+"default": true
+},
+{
+"name": "StartFrame",
+"default": 0.0
+},
+{
+"name": "EndFrame",
+"default": 0.0
+},
+{
+"name": "Consider Time",
+"default": false
+},
+{
+"name": "Ripple",
+"default": false
+},
+{
+"name": "AddClip",
+"default": false
+},
+{
+"name": "ClipOffset",
+"default": 0.0
+},
+{
+"name": "IncludeAnimLayers",
+"default": false
+}
+]
+},
+{
+"scripting_name": "GetStoreActionDefaults",
+"label": "Get store Action defaults",
+"category": "Animation Mixer",
+"description": "Get the suggested clip in/out and number of items that would be found if an Action were stored.",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Mode",
+"default": 1
+},
+{
+"name": "From",
+"default": 0.0
+},
+{
+"name": "To",
+"default": 0.0
+},
+{
+"name": "Size",
+"default": 0
+}
+]
+},
+{
+"scripting_name": "SIStoreAction",
+"label": "SIStoreAction",
+"category": "Animation Mixer",
+"description": " ",
+"family": "mixer",
+"args": [
+{
+"name": "Model",
+"default": null
+},
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Mode",
+"default": 1
+},
+{
+"name": "Name",
+"default": "StoredAction"
+},
+{
+"name": "RemoveAnim",
+"default": true
+},
+{
+"name": "Consider Time",
+"default": false
+},
+{
+"name": "StartFrame",
+"default": 0.0
+},
+{
+"name": "EndFrame",
+"default": 0.0
+},
+{
+"name": "Ripple",
+"default": false
+},
+{
+"name": "IncludeAnimLayers",
+"default": false
+}
+]
+},
+{
+"scripting_name": "StripDeformOperators",
+"label": "Strip Deform Operators",
+"category": "Animation|Deformation",
+"description": "",
+"family": "deform",
+"args": [
+{
+"name": "InputObj",
+"default": null
+}
+]
+},
+{
+"scripting_name": "CopyShape",
+"label": "Copy Shape",
+"category": "Animation|Deformation",
+"description": "CopyShape",
+"family": "deform",
+"args": [
+{
+"name": "Source",
+"default": null
+},
+{
+"name": "Target",
+"default": null
+}
+]
+},
+{
+"scripting_name": "TransferShapeAnimation",
+"label": "Transfer Shape Animation",
+"category": "Animation|Deformation",
+"description": "",
+"family": "deform",
+"args": [
+{
+"name": "SourceObject",
+"default": null
+},
+{
+"name": "DestinationObject",
+"default": null
+},
+{
+"name": "SourceShapeKeys",
+"default": null
+},
+{
+"name": "DestinationShapeKeys",
+"default": null
+}
+]
+},
+{
+"scripting_name": "CreateShapeGroup",
+"label": "Create Shape Group",
+"category": "Animation|Deformation",
+"description": "",
+"family": "deform",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Name",
+"default": ""
+}
+]
+},
+{
+"scripting_name": "SITransferShapeAnimation",
+"label": "Low level Transfer Shape Animation",
+"category": "Animation|Deformation",
+"description": "",
+"family": "deform",
+"args": [
+{
+"name": "SourceObject",
+"default": null
+},
+{
+"name": "DestinationObject",
+"default": null
+},
+{
+"name": "SourceShapeKeys",
+"default": null
+},
+{
+"name": "DestinationShapeKeys",
+"default": null
+}
+]
+},
+{
+"scripting_name": "SaveShapeKey",
+"label": "SaveShapeKey",
+"category": "Animation|Deformation",
+"description": "",
+"family": "deform",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Compound",
+"default": null
+},
+{
+"name": "Track",
+"default": null
+},
+{
+"name": "Time",
+"default": null
+},
+{
+"name": "Duration",
+"default": -1.0
+},
+{
+"name": "Mode",
+"default": 4
+},
+{
+"name": "Name",
+"default": ""
+},
+{
+"name": "Overwrite",
+"default": 0
+},
+{
+"name": "RefMode",
+"default": ":siShapeLocalReferenceMode:siShapeReferenceMode"
+}
+]
+},
+{
+"scripting_name": "SetShapeGroup",
+"label": "Set Shape Group",
+"category": "Animation|Deformation",
+"description": "",
+"family": "deform",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Name",
+"default": ""
+}
+]
+},
+{
+"scripting_name": "RenameCPSetLayoutItems",
+"label": "Rename Custom Property Layout Items",
+"category": "Property|Animation",
+"description": "Renames the UI label of items in a Custom Property's layout",
+"family": "other",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "LayoutName",
+"default": "Default"
+},
+{
+"name": "Indices",
+"default": null
+},
+{
+"name": "Name",
+"default": ""
+}
+]
+},
+{
+"scripting_name": "siWriteRetargetComponentData",
+"label": "Set Retarget Component Information",
+"category": "Property|Animation",
+"description": "Write component data to the motion retargeting structure",
+"family": "other",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Parameter list",
+"default": ""
+}
+]
+},
+{
+"scripting_name": "SetKeyableAttributes",
+"label": "Set Keyable Attributes",
+"category": "Property|Animation",
+"description": "Set or Clear the keyable attributes on list of parameters",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Params",
+"default": ""
+},
+{
+"name": "Attribute",
+"default": ":siKeyableAttributeKeyable:siKeyableAttributeType"
+}
+]
+},
+{
+"scripting_name": "siCreateRetargetMapping",
+"label": "Set Retarget Mapping Properties",
+"category": "Property|Animation",
+"description": "Set the motion retargeting mapping",
+"family": "other",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+}
+]
+},
+{
+"scripting_name": "siWriteRetargetMapping",
+"label": "Set Retarget Mapping Properties",
+"category": "Property|Animation",
+"description": "Set the motion retargeting mapping",
+"family": "other",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Sx",
+"default": 1.0
+},
+{
+"name": "Sy",
+"default": 1.0
+},
+{
+"name": "Sz",
+"default": 1.0
+},
+{
+"name": "Rx",
+"default": 0.0
+},
+{
+"name": "Ry",
+"default": 0.0
+},
+{
+"name": "Rz",
+"default": 0.0
+},
+{
+"name": "Tx",
+"default": 0.0
+},
+{
+"name": "Ty",
+"default": 0.0
+},
+{
+"name": "Tz",
+"default": 0.0
+},
+{
+"name": "P2M_Sx",
+"default": 1.0
+},
+{
+"name": "P2M_Sy",
+"default": 1.0
+},
+{
+"name": "P2M_Sz",
+"default": 1.0
+},
+{
+"name": "P2M_Rx",
+"default": 0.0
+},
+{
+"name": "P2M_Ry",
+"default": 0.0
+},
+{
+"name": "P2M_Rz",
+"default": 0.0
+},
+{
+"name": "P2M_Tx",
+"default": 0.0
+},
+{
+"name": "P2M_Ty",
+"default": 0.0
+},
+{
+"name": "P2M_Tz",
+"default": 0.0
+}
+]
+},
+{
+"scripting_name": "SIAddCustomParam",
+"label": "Add Custom Parameter",
+"category": "Property|Animation",
+"description": "Add a new custom parameter to the parameter set",
+"family": "other",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "ScriptName",
+"default": "ParamName"
+},
+{
+"name": "VarType",
+"default": ":siDouble:siVariantType"
+},
+{
+"name": "DefaultValue",
+"default": null
+},
+{
+"name": "MinValue",
+"default": 0.0
+},
+{
+"name": "MaxValue",
+"default": 1.0
+},
+{
+"name": "Classification",
+"default": -32768
+},
+{
+"name": "Capabilities",
+"default": 5
+},
+{
+"name": "SuggMin",
+"default": 0.0
+},
+{
+"name": "SuggMax",
+"default": 0.0
+},
+{
+"name": "ParamName",
+"default": ""
+},
+{
+"name": "Description",
+"default": ""
+}
+]
+},
+{
+"scripting_name": "IsAnimationLayerLocked",
+"label": "Is Animation Layer Locked",
+"category": "Animation",
+"description": "Tests if the specified animation layers is locked or not",
+"family": "layer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Layer",
+"default": -1
+}
+]
+},
+{
+"scripting_name": "SetCurrentAnimationLayer",
+"label": "Set Current Animation Layer",
+"category": "Animation",
+"description": "Set current animation layer",
+"family": "layer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Layer",
+"default": 0
+},
+{
+"name": "CreateLayer",
+"default": false
+}
+]
+},
+{
+"scripting_name": "ConnectSource",
+"label": "Connect Animation Source",
+"category": "Animation",
+"description": "",
+"family": "other",
+"args": [
+{
+"name": "Target",
+"default": null
+},
+{
+"name": "InputObj",
+"default": null
+}
+]
+},
+{
+"scripting_name": "ActivateFCurve",
+"label": "Activate FCurve",
+"category": "Animation",
+"description": "Either mutes or unmutes and entire fcurve or activates/deactivates a range of the fcurve",
+"family": "fcurve",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Activate",
+"default": true
+},
+{
+"name": "StartFrame",
+"default": null
+},
+{
+"name": "EndFrame",
+"default": null
+},
+{
+"name": "Type",
+"default": ":siInputParams:siParameterScope"
+}
+]
+},
+{
+"scripting_name": "Sequence",
+"label": "Sequence All",
+"category": "Animation",
+"description": "Offsets and scales fcurves with respect to a pivot and start and end frames",
+"family": "fcurve",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Type",
+"default": ":siAllAnimParams:siSequenceType"
+},
+{
+"name": "Offset",
+"default": 0.0
+},
+{
+"name": "Scale",
+"default": 1.0
+},
+{
+"name": "StartFrame",
+"default": 1.0
+},
+{
+"name": "EndFrame",
+"default": 100.0
+},
+{
+"name": "Pivot",
+"default": 1.0
+},
+{
+"name": "Mode",
+"default": ":siFCurvesAnimationSources:siSequenceMode"
+},
+{
+"name": "AllLayers",
+"default": true
+}
+]
+},
+{
+"scripting_name": "RemoveAllAnimation",
+"label": "Remove All Transform Animation",
+"category": "Animation",
+"description": "Remove all animation from the object's transforms",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Time",
+"default": null
+},
+{
+"name": "BranchFlag",
+"default": ":siUnspecified:siBranchFlag"
+},
+{
+"name": "SourceMask",
+"default": ":siAnySource:siSourceType"
+},
+{
+"name": "ParameterMask",
+"default": ":siTransformParam:siParameterFilter"
+},
+{
+"name": "StaticFCurves",
+"default": false
+},
+{
+"name": "BaseAnimation",
+"default": true
+},
+{
+"name": "LayerAnimation",
+"default": true
+}
+]
+},
+{
+"scripting_name": "GetKeyInfo",
+"label": "GetKeyInfo",
+"category": "Animation",
+"description": "Get information for a key of a given index on an FCurve connected to a given component",
+"family": "keying",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Index",
+"default": 0
+},
+{
+"name": "Parameter",
+"default": 0.0
+},
+{
+"name": "LeftValue",
+"default": 0.0
+},
+{
+"name": "RightValue",
+"default": 0.0
+},
+{
+"name": "LeftTanParam",
+"default": 0.0
+},
+{
+"name": "LeftTanValue",
+"default": 0.0
+},
+{
+"name": "RightTanParam",
+"default": 0.0
+},
+{
+"name": "RightTanValue",
+"default": 0.0
+},
+{
+"name": "RightSegKind",
+"default": 0
+},
+{
+"name": "Constraints",
+"default": 0
+}
+]
+},
+{
+"scripting_name": "SIAppendBone",
+"label": "Append Bone",
+"category": "Animation",
+"description": "",
+"family": "other",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Ex",
+"default": 0.0
+},
+{
+"name": "Ey",
+"default": 0.0
+},
+{
+"name": "Ez",
+"default": 0.0
+},
+{
+"name": "Pin",
+"default": true
+},
+{
+"name": "AlignRootToFirstBone",
+"default": false
+}
+]
+},
+{
+"scripting_name": "ActivateFCurveOnKeyable",
+"label": "Activate FCurve On Keyable",
+"category": "Animation",
+"description": "Either mutes or unmutes and entire fcurve or activates/deactivates a range of the fcurve",
+"family": "fcurve",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Activate",
+"default": true
+},
+{
+"name": "StartFrame",
+"default": null
+},
+{
+"name": "EndFrame",
+"default": null
+}
+]
+},
+{
+"scripting_name": "DeleteKeys",
+"label": "Delete FCurve Keys",
+"category": "Animation",
+"description": "Delete keys",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "StartFrame",
+"default": 1.0
+},
+{
+"name": "EndFrame",
+"default": 100.0
+},
+{
+"name": "Ripple",
+"default": false
+},
+{
+"name": "SelectedKeysOnly",
+"default": false
+},
+{
+"name": "Type",
+"default": ":siInputParams:siParameterScope"
+}
+]
+},
+{
+"scripting_name": "ScaleAndOffset",
+"label": "Scale and Offset fcurves",
+"category": "Animation",
+"description": "Offsets and scales fcurves with respect to a pivot and start and end frames",
+"family": "fcurve",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Type",
+"default": ":siAnimatedParameters:siParameterScope"
+},
+{
+"name": "Offset",
+"default": 0.0
+},
+{
+"name": "Scale",
+"default": 1.0
+},
+{
+"name": "StartFrame",
+"default": 1.0
+},
+{
+"name": "EndFrame",
+"default": 100.0
+},
+{
+"name": "Pivot",
+"default": 1.0
+},
+{
+"name": "Ripple",
+"default": true
+},
+{
+"name": "Mode",
+"default": ":siFCurvesAnimationSources:siSequenceMode"
+},
+{
+"name": "Discrete Time",
+"default": false
+},
+{
+"name": "SelectedKeysOnly",
+"default": false
+},
+{
+"name": "Layer",
+"default": -1
+}
+]
+},
+{
+"scripting_name": "RemoveKeyOnKeyable",
+"label": "Remove Key On Keyable",
+"category": "Animation",
+"description": "Remove key on keyable parameters",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Time",
+"default": null
+},
+{
+"name": "Tolerance",
+"default": -1.0
+},
+{
+"name": "Layer",
+"default": -1
+}
+]
+},
+{
+"scripting_name": "SavePivotKey",
+"label": "Save Pivot Key",
+"category": "Animation",
+"description": "Save pivot key on object",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Type",
+"default": ":siSRT:siTransformFilter"
+},
+{
+"name": "Time",
+"default": null
+}
+]
+},
+{
+"scripting_name": "CutKeys",
+"label": "Cut FCurve Keys",
+"category": "Animation",
+"description": "Cut keys",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "StartFrame",
+"default": 1.0
+},
+{
+"name": "EndFrame",
+"default": 100.0
+},
+{
+"name": "Reset",
+"default": true
+},
+{
+"name": "Ripple",
+"default": true
+},
+{
+"name": "SelectedKeysOnly",
+"default": false
+},
+{
+"name": "Type",
+"default": ":siInputParams:siParameterScope"
+}
+]
+},
+{
+"scripting_name": "CopyKeys",
+"label": "Copy FCurve Keys",
+"category": "Animation",
+"description": "Copy keys",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "StartFrame",
+"default": 1.0
+},
+{
+"name": "EndFrame",
+"default": 100.0
+},
+{
+"name": "Reset",
+"default": true
+},
+{
+"name": "SelectedKeysOnly",
+"default": false
+},
+{
+"name": "Type",
+"default": ":siInputParams:siParameterScope"
+}
+]
+},
+{
+"scripting_name": "PasteKeys",
+"label": "Paste FCurve Keys",
+"category": "Animation",
+"description": "Paste keys",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "StartFrame",
+"default": 1.0
+},
+{
+"name": "EndFrame",
+"default": 100.0
+},
+{
+"name": "Ripple",
+"default": true
+},
+{
+"name": "Merge",
+"default": true
+},
+{
+"name": "Type",
+"default": ":siInputParams:siParameterScope"
+},
+{
+"name": "Offset",
+"default": false
+},
+{
+"name": "Relative",
+"default": 0.0
+},
+{
+"name": "LeftContinuity",
+"default": false
+},
+{
+"name": "RightContinuity",
+"default": 0
+}
+]
+},
+{
+"scripting_name": "SaveActionKey",
+"label": "SaveActionKey",
+"category": "Animation",
+"description": "Save keyframe into an action item's fcurve if it is the only driver of component at time",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Time",
+"default": null
+},
+{
+"name": "Value",
+"default": null
+},
+{
+"name": "Tolerance",
+"default": -1.0
+}
+]
+},
+{
+"scripting_name": "MakeRotationsContinuous",
+"label": "Make Rotation Keys Continuous",
+"category": "Animation",
+"description": "Process rotations keys to make Euler angles continuous between successive keyframes",
+"family": "fcurve",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+}
+]
+},
+{
+"scripting_name": "AppendBone",
+"label": "Append Bone",
+"category": "Animation",
+"description": "Append a new bone to the selected skeleton",
+"family": "other",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Ex",
+"default": 0.0
+},
+{
+"name": "Ey",
+"default": 0.0
+},
+{
+"name": "Ez",
+"default": 0.0
+},
+{
+"name": "Pin",
+"default": true
+}
+]
+},
+{
+"scripting_name": "UnlockAnimationLayer",
+"label": "Unlock Animation Layer",
+"category": "Animation",
+"description": "Unlocks an existing animation layer",
+"family": "layer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Layer",
+"default": -1
+}
+]
+},
+{
+"scripting_name": "SISequence",
+"label": "SISequence",
+"category": "Animation",
+"description": "Offsets and scales fcurves with respect to a pivot and start and end frames",
+"family": "fcurve",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Type",
+"default": ":siAllAnimParams:siSequenceType"
+},
+{
+"name": "Offset",
+"default": 0.0
+},
+{
+"name": "Scale",
+"default": 1.0
+},
+{
+"name": "StartFrame",
+"default": 1.0
+},
+{
+"name": "EndFrame",
+"default": 100.0
+},
+{
+"name": "Pivot",
+"default": 1.0
+},
+{
+"name": "Mode",
+"default": ":siFCurvesAnimationSources:siSequenceMode"
+},
+{
+"name": "Ripple",
+"default": true
+},
+{
+"name": "Discrete Time",
+"default": false
+}
+]
+},
+{
+"scripting_name": "ConvertQuatToEuler",
+"label": "Convert Quaternion Rotation FCurves To Euler FCurves",
+"category": "Animation",
+"description": "Convert quaternion rotation fcurves to Euler fcurves",
+"family": "fcurve",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+}
+]
+},
+{
+"scripting_name": "SaveKeyOnMarkedKeyable",
+"label": "Save Key On Marked Keyable",
+"category": "Animation",
+"description": "Save key on the marked keyable parameters",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Time",
+"default": null
+},
+{
+"name": "Value",
+"default": null
+},
+{
+"name": "Tolerance",
+"default": -1.0
+},
+{
+"name": "Layer",
+"default": -1
+},
+{
+"name": "ModifiedOnly",
+"default": false
+},
+{
+"name": "AutokeyScope",
+"default": 0
+},
+{
+"name": "Source",
+"default": "FCurve"
+}
+]
+},
+{
+"scripting_name": "GetNumberOfAnimationLayers",
+"label": "GetNumberOfAnimationLayers",
+"category": "Animation",
+"description": "Get number of animation layers present",
+"family": "layer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+}
+]
+},
+{
+"scripting_name": "EvalFCurve",
+"label": "EvalFCurve",
+"category": "Animation",
+"description": "Evaluates a value of the fcurve at a given time",
+"family": "fcurve",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Time",
+"default": null
+}
+]
+},
+{
+"scripting_name": "GetCurrentAnimationLayer",
+"label": "GetCurrentAnimationLayer",
+"category": "Animation",
+"description": "Get current animation layer",
+"family": "layer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+}
+]
+},
+{
+"scripting_name": "GetFCurveInfo",
+"label": "GetFCurveInfo",
+"category": "Animation",
+"description": "Get the informations corresponding to the FCurve attached to a given component",
+"family": "fcurve",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "CurveKind",
+"default": 0
+},
+{
+"name": "ValueWhenNoKey",
+"default": 0.0
+},
+{
+"name": "NbKeys",
+"default": 0
+},
+{
+"name": "ExtrapolationKind",
+"default": 0
+},
+{
+"name": "DefaultSegKind",
+"default": 0
+},
+{
+"name": "LowClamp",
+"default": 0.0
+},
+{
+"name": "HighClamp",
+"default": 0.0
+}
+]
+},
+{
+"scripting_name": "GetSource",
+"label": "GetSource",
+"category": "Animation",
+"description": "Get the list of animation sources corresponding to the input list of components",
+"family": "other",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "SourceMask",
+"default": ":siAnySource:siSourceType"
+}
+]
+},
+{
+"scripting_name": "AddFCurve",
+"label": "Add FCurve",
+"category": "Animation",
+"description": "Add function curve to all marked property(ies)",
+"family": "fcurve",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+}
+]
+},
+{
+"scripting_name": "ClearMarking",
+"label": "Clear Marking",
+"category": "Animation",
+"description": "Clear the marked parameter list",
+"family": "keying",
+"args": []
+},
+{
+"scripting_name": "AddAnimationLayer",
+"label": "Add Animation Layer",
+"category": "Animation",
+"description": "Create a new animation layer",
+"family": "layer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Name",
+"default": ""
+},
+{
+"name": "MakeCurrent",
+"default": true
+}
+]
+},
+{
+"scripting_name": "ApplyPath",
+"label": "Apply Path",
+"category": "Animation",
+"description": "",
+"family": "constraint",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Path",
+"default": null
+},
+{
+"name": "StartFrame",
+"default": 0.0
+},
+{
+"name": "EndFrame",
+"default": 0.0
+},
+{
+"name": "NbKeys",
+"default": 2
+},
+{
+"name": "Linear",
+"default": false
+},
+{
+"name": "Tangent",
+"default": false
+}
+]
+},
+{
+"scripting_name": "RetargetRigToRig",
+"label": "RetargetRigToRig",
+"category": "Animation",
+"description": "Retarget motion from one rig to another",
+"family": "other",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+}
+]
+},
+{
+"scripting_name": "ActivateFCurveOnMarkedKeyable",
+"label": "Activate FCurve On Marked Keyable",
+"category": "Animation",
+"description": "Either mutes or unmutes and entire fcurve or activates/deactivates a range of the fcurve",
+"family": "fcurve",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Activate",
+"default": true
+},
+{
+"name": "StartFrame",
+"default": null
+},
+{
+"name": "EndFrame",
+"default": null
+}
+]
+},
+{
+"scripting_name": "SelectExternalConstraints",
+"label": "Character - Select Constraints Outside Model Boundaries",
+"category": "Animation",
+"description": "Selects all the constraints that do not completely belong to the selected model",
+"family": "constraint",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Operation",
+"default": "Select"
+}
+]
+},
+{
+"scripting_name": "ActivateExternalConstraints",
+"label": "Character - Activate Constraints Outside Model Boundaries",
+"category": "Animation",
+"description": "Activates all the constraints that do not completely belong to the selected model",
+"family": "constraint",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Operation",
+"default": "Activate"
+}
+]
+},
+{
+"scripting_name": "DeactivateExternalConstraints",
+"label": "Character - Deactivate Constraints Outside Model Boundaries",
+"category": "Animation",
+"description": "Deactivates all the constraints that do not completely belong to the selected model",
+"family": "constraint",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Operation",
+"default": "Deactivate"
+}
+]
+},
+{
+"scripting_name": "RemoveExternalConstraints",
+"label": "Character - Remove Constraints Outside Model Boundaries",
+"category": "Animation",
+"description": "Removes all the constraints that do not completely belong to the selected model",
+"family": "constraint",
+"args": [
+{
+"name": "InputObj",
+"default": null
+},
+{
+"name": "Operation",
+"default": "Remove"
+}
+]
+},
+{
+"scripting_name": "ConvertEulerToQuat",
+"label": "Convert Euler Rotation FCurves To Quaternion FCurves",
+"category": "Animation",
+"description": "Convert Euler rotation fcurves to quaternion fcurves",
+"family": "fcurve",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+}
+]
+},
+{
+"scripting_name": "SelectKeysInTimespan",
+"label": "Select Keys In Timespan",
+"category": "Animation",
+"description": "",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Mode",
+"default": ":siSetKeySelection:siFCurveKeySelectionMode"
+},
+{
+"name": "StartFrame",
+"default": null
+},
+{
+"name": "EndFrame",
+"default": null
+},
+{
+"name": "Type",
+"default": ":siInputParams:siParameterScope"
+}
+]
+},
+{
+"scripting_name": "DeselectAllKeys",
+"label": "Deselect All Keys",
+"category": "Animation",
+"description": "Deselects all the keys on all the fcurves",
+"family": "keying",
+"args": []
+},
+{
+"scripting_name": "SaveKeyAtMultipleFrames",
+"label": "Save Key At Multiple Frames",
+"category": "Animation",
+"description": "Save key on marked parameters",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+}
+]
+},
+{
+"scripting_name": "DeleteAnimationLayer",
+"label": "Delete Animation Layer",
+"category": "Animation",
+"description": "Remove an existing animation layer",
+"family": "layer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Layer",
+"default": -1
+}
+]
+},
+{
+"scripting_name": "LockAnimationLayer",
+"label": "Lock Animation Layer",
+"category": "Animation",
+"description": "Locks an existing animation layer",
+"family": "layer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Layer",
+"default": -1
+}
+]
+},
+{
+"scripting_name": "RemoveKeyOnMarkedKeyable",
+"label": "Remove Key On Marked Keyable",
+"category": "Animation",
+"description": "Remove key on the marked keyable parameters",
+"family": "keying",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Time",
+"default": null
+},
+{
+"name": "Tolerance",
+"default": -1.0
+},
+{
+"name": "Layer",
+"default": -1
+}
+]
+},
+{
+"scripting_name": "SetMarking",
+"label": "Set Marking",
+"category": "Animation",
+"description": "Set marked parameter list",
+"family": "keying",
+"args": [
+{
+"name": "PathList",
+"default": null
+}
+]
+},
+{
+"scripting_name": "AddToMarking",
+"label": "Add To Marking",
+"category": "Animation",
+"description": "Add parameter list to the list of marked parameters",
+"family": "keying",
+"args": [
+{
+"name": "PathList",
+"default": null
+}
+]
+},
+{
+"scripting_name": "RemoveFromMarking",
+"label": "Remove From Marking",
+"category": "Animation",
+"description": "Remove parameter list from the list of marked parameters",
+"family": "keying",
+"args": [
+{
+"name": "PathList",
+"default": null
+}
+]
+},
+{
+"scripting_name": "GetMarking",
+"label": "Get Marked Parameters",
+"category": "Animation",
+"description": "Get list of marked parameters",
+"family": "keying",
+"args": []
+},
+{
+"scripting_name": "SetCurveType",
+"label": "Set Curve Interpolation Type",
+"category": "Animation",
+"description": "Set curve interpolation type i.e. linear, constant, bezier",
+"family": "fcurve",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Interpolation",
+"default": 0
+}
+]
+},
+{
+"scripting_name": "SceneRefresh",
+"label": "SceneRefresh",
+"category": "Animation",
+"description": "Removes all interactions for a clean scene refresh",
+"family": "other",
+"args": []
+},
+{
+"scripting_name": "RetargetTagRig",
+"label": "RetargetTagRig",
+"category": "Animation",
+"description": "Tag a rig for motion retargeting",
+"family": "other",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+}
+]
+},
+{
+"scripting_name": "DuplicateAnimationLayer",
+"label": "Duplicate Animation Layer",
+"category": "Animation",
+"description": "Duplicates an existing animation layer",
+"family": "layer",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Layer",
+"default": -1
+}
+]
+},
+{
+"scripting_name": "GenerateLipSync",
+"label": "GenerateLipSync",
+"category": "Animation",
+"description": "Generate lip-sync animation for an Evolver character",
+"family": "other",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "AudioFileName",
+"default": ""
+},
+{
+"name": "TextFileName",
+"default": ""
+},
+{
+"name": "Language",
+"default": "en"
+},
+{
+"name": "Resolutions",
+"default": "hmlc"
+},
+{
+"name": "MappingProfilePath",
+"default": ""
+}
+]
+},
+{
+"scripting_name": "ResetAllEffectCurves",
+"label": "ResetAllEffectCurves",
+"category": "Animation mixer",
+"description": "Reset the effect curves for all the parameters in the selected clips",
+"family": "other",
+"args": [
+{
+"name": "Clip",
+"default": null
+}
+]
+},
+{
+"scripting_name": "ResetSelectedEffectCurves",
+"label": "ResetSelectedEffectCurves",
+"category": "Animation mixer",
+"description": "Reset the effect curves for all the parameters in the selected clips",
+"family": "other",
+"args": [
+{
+"name": "Clip",
+"default": null
+}
+]
+},
+{
+"scripting_name": "CreateScaleEffect",
+"label": "CreateScaleEffect",
+"category": "Animation mixer",
+"description": "Create a scale effect on the selected clips",
+"family": "other",
+"args": [
+{
+"name": "Clip",
+"default": null
+}
+]
+},
+{
+"scripting_name": "RemoveEffect",
+"label": "RemoveEffect",
+"category": "Animation mixer",
+"description": "Remove the effect of the selected clips",
+"family": "other",
+"args": [
+{
+"name": "Clip",
+"default": null
+}
+]
+},
+{
+"scripting_name": "ClearParameterColor",
+"label": "Clear Parameter Color",
+"category": "Animation|Property",
+"description": "Clears the parameter color on given parameter(s)",
+"family": "other",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+}
+]
+},
+{
+"scripting_name": "SetParameterColor",
+"label": "Set Parameter Color",
+"category": "Animation|Property",
+"description": "Sets the parameter color on the input parameter(s)",
+"family": "other",
+"args": [
+{
+"name": "InputObjs",
+"default": null
+},
+{
+"name": "Value",
+"default": null
+}
+]
+},
+{
+"scripting_name": "DisconnectOperatorParameter",
+"label": "Disconnect Operator Parameter",
+"category": "Animation|Deformation|Modeling",
+"description": "",
+"family": "deform",
+"args": [
+{
+"name": "Parameter",
+"default": null
+}
+]
+},
+{
+"scripting_name": "ConnectOperatorParameter",
+"label": "Connect Operator Parameter",
+"category": "Animation|Deformation|Modeling",
+"description": "",
+"family": "deform",
+"args": [
+{
+"name": "Parameter",
+"default": null
+},
+{
+"name": "ProjObj",
+"default": null
+}
+]
+},
+{
+"scripting_name": "ToggleBooleanUserPrefProc",
+"label": "MCP Setting: Toggle Prop Modeling",
+"category": "Modeling|Animation|Property",
+"description": "",
+"family": "other",
+"args": [
+{
+"name": "UserPref",
+"default": "3D_TRANSFO_PROPORTIONAL_CHANGED"
+}
+]
+},
+{
+"scripting_name": "SetTransformRefMode",
+"label": "MCP Setting: Set Transform Ref/Modifier",
+"category": "Modeling|Animation|Property",
+"description": "",
+"family": "other",
+"args": [
+{
+"name": "Mode",
+"default": 0
+}
+]
+},
+{
+"scripting_name": "RemoveActionItem",
+"label": "RemoveActionItem",
+"category": "Action",
+"description": "Remove an item of the selected action",
+"family": "mixer",
+"args": [
+{
+"name": "Source",
+"default": null
+},
+{
+"name": "Name",
+"default": ""
+}
+]
+}
+]
+}

@@ -38,5 +38,15 @@ class AiMainFrame {
     kCmdRenderPreview = 1204,
     kCmdSoftimageLayout = 1301,
     kCmdHelpAbout = 1401,
+    // 1601+ — Model pass owns 1501–1509.
+    kCmdAnimEditor = 1601,
+    kCmdAnimMixer = 1602,
+    kCmdAnimFcurve = 1603,
+    kCmdAnimKeying = 1604,
+    kCmdAnimGet = 1610,
+    kCmdAnimCreate = 1611,
+    kCmdAnimDeform = 1612,
+    kCmdAnimActions = 1613,
+    kCmdAnimTools = 1614,
   };
 };

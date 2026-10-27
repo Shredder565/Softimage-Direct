@@ -816,6 +816,9 @@ export type MixerWeightKey = { time: number; value: number; left?: number; right
 /** Softimage Mixer clip on a track (PC dump nested Sources/Tracks). */
 export type MixerClip = {
   name: string; source: string; start: number; duration: number; track?: number; weight?: number; mute?: boolean; additive?: boolean;
+  /** CreateOffsetEffect / CreateScaleEffect — attested clip effect kinds. */
+  offsetEffect?: boolean;
+  scaleEffect?: boolean;
   /** Softimage `clip.actionclip.weight` FCurve keys; when set, mixer eval samples this instead of scalar `weight`. */
   weightKeys?: MixerWeightKey[];
 };
