@@ -1,0 +1,121 @@
+{
+"softimage": "Softimage 2015 SP2",
+"source": "data/si/pe_resources.json RT_DIALOG",
+"generated_by": "tools/build_animate_surface_audit.py",
+"dialogs": {
+"mcp.dll#220": {
+"dll": "mcp.dll",
+"id": "220",
+"title": "Current Time",
+"rectDlu": [
+0,
+0,
+186,
+95
+],
+"font": [
+8,
+"MS Sans Serif"
+],
+"surface": "Playback current time — FRAME / SECOND / MILLISECOND",
+"controls": [
+{
+"cls": "button",
+"text": "OK",
+"id": 1,
+"dlu": [
+129,
+18,
+50,
+14
+],
+"style": 1342242817
+},
+{
+"cls": "button",
+"text": "Cancel",
+"id": 2,
+"dlu": [
+129,
+47,
+50,
+14
+],
+"style": 1342242816
+},
+{
+"cls": "static",
+"text": "FRAME",
+"id": 65535,
+"dlu": [
+40,
+20,
+51,
+9
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "SECOND",
+"id": 65535,
+"dlu": [
+40,
+42,
+51,
+9
+],
+"style": 1342308352
+},
+{
+"cls": "static",
+"text": "MILLISECOND",
+"id": 65535,
+"dlu": [
+40,
+64,
+51,
+9
+],
+"style": 1342308352
+},
+{
+"cls": "button",
+"text": "",
+"id": 282,
+"dlu": [
+15,
+15,
+15,
+20
+],
+"style": 1342308361
+},
+{
+"cls": "button",
+"text": "",
+"id": 283,
+"dlu": [
+15,
+37,
+15,
+20
+],
+"style": 1342177289
+},
+{
+"cls": "button",
+"text": "",
+"id": 284,
+"dlu": [
+15,
+59,
+15,
+20
+],
+"style": 1342177289
+}
+]
+}
+}
+}

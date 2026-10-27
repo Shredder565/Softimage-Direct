@@ -9,6 +9,7 @@ import { registerClusterCommands } from './commands/clusters';
 import { registerRiggingCommands } from './commands/rigging';
 import { registerConstraintCommands } from './commands/constraints';
 import { registerAnimCommands } from './commands/anim';
+import { registerAnimateSurfaceCommands } from './commands/animateSurface';
 import { registerRenderCommands } from './commands/render';
 import { registerModuleToolbarCommands } from './commands/moduleToolbar';
 import { registerRenderToolbarOmCommands, renderToolbarOmAudit } from './commands/renderToolbarOm';
@@ -62,6 +63,7 @@ import { directLockDesktopAudit } from './ui/directLockDesktop';
 import { ppgTitleColorrefAudit } from './ui/ppgTitleColorref';
 import { animEditorsExecCmdAudit, animEditorsExecCmdSmoke } from './ui/animEditorsExecCmd';
 import { applyAnimClientPaintVars, animClientPaintAudit } from './ui/animClientPaint';
+import { animateSurfaceAudit, animateSurfaceSmoke } from './ui/animateSurfaceAudit';
 import { applySoftimageLayoutHwndChrome, softimageLayoutHwndAudit } from './ui/softimageLayoutHwndChrome';
 applySoftimageLayoutHwndChrome();
 applyPpgChrome();
@@ -97,6 +99,7 @@ registerClusterCommands(app);
 registerRiggingCommands(app);
 registerConstraintCommands(app);
 registerAnimCommands(app);
+registerAnimateSurfaceCommands(app);
 registerRenderCommands(app);
 registerModuleToolbarCommands(app);
 registerRenderToolbarOmCommands(app);
@@ -241,6 +244,7 @@ window.addEventListener('openview', (e: any) => openView(e.detail?.name));
 window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail?.page));
 
 /** Playwright / Script Editor hook: inventory UI wiring without Softimage install access. */
+(window as any).__animateSurfaceSmoke = () => animateSurfaceSmoke(app);
 (window as any).__uiAudit = () => {
   const MENUS = menusData as Record<string, unknown>;
   const registered = [...layout.views.keys()].sort();
@@ -347,6 +351,7 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
     animEditorsExecCmd: animEditorsExecCmdAudit(app),
     // Softimage Anim Mixer/Editor/Fcurve client paint — modules-gdi 50/51/52 HWND PNG
     animClientPaint: animClientPaintAudit(),
+    animateSurface: animateSurfaceAudit(app),
     // Softimage Render toolbar OM scripting names + RenderOptionsRegion SPDL + HWND crop DUMP_READY
     renderToolbarOm: renderToolbarOmAudit(app),
     // Softimage render.region_hwnd_crop — modules-gdi harvest crop + DsNewRegionButtonCtrl + prefs colors

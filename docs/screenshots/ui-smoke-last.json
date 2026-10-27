@@ -1,5 +1,5 @@
 {
-  "ok": 68,
+  "ok": 69,
   "fail": 0,
   "note": 0,
   "okItems": [
@@ -25,6 +25,7 @@
     "PPG title/chrome COLORREF WIRED (fill #607388 text #E4E6EA face #ABA8A6; hover close #2F2E2E)",
     "Anim ExecCmd open Mixer/Editor/Fcurve (OpenView LOCK, paint DONE HWND_PNG)",
     "Anim client paint HWND_PNG (1010x327 mixer, explorer 195px)",
+    "Animate surface 127 wired (Current Time, keying menu, mixer tracks, 125 command contracts)",
     "PE ≡ Lock Pivot / Volume / Edit Pivot wired (no not-implemented)",
     "default Camera pose (9.5,7.3,12.3)",
     "default Camera FOV 53.6",

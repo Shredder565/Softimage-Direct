@@ -83,6 +83,21 @@ void AiMainFrame::BuildMenus() {
   AppendMenuW(model_m, MF_POPUP, reinterpret_cast<UINT_PTR>(model_modify), L"&Modify");
   AppendMenuW(menubar, MF_POPUP, reinterpret_cast<UINT_PTR>(model_m), L"&Model");
 
+  // Animate tab views and RT_MENU 237 section names. Native has no animation engine:
+  // the items log the attested name and switch to SwitchToolbar target 2.
+  HMENU animate_m = CreatePopupMenu();
+  AppendMenuW(animate_m, MF_STRING, kCmdAnimEditor, L"Animation Editor");
+  AppendMenuW(animate_m, MF_STRING, kCmdAnimMixer, L"Animation Mixer");
+  AppendMenuW(animate_m, MF_STRING, kCmdAnimFcurve, L"Fcurve Editor");
+  AppendMenuW(animate_m, MF_STRING, kCmdAnimKeying, L"Keying Panel");
+  AppendMenuW(animate_m, MF_SEPARATOR, 0, nullptr);
+  AppendMenuW(animate_m, MF_STRING, kCmdAnimGet, L"Get");
+  AppendMenuW(animate_m, MF_STRING, kCmdAnimCreate, L"Create");
+  AppendMenuW(animate_m, MF_STRING, kCmdAnimDeform, L"Deform");
+  AppendMenuW(animate_m, MF_STRING, kCmdAnimActions, L"Actions");
+  AppendMenuW(animate_m, MF_STRING, kCmdAnimTools, L"Tools");
+  AppendMenuW(menubar, MF_POPUP, reinterpret_cast<UINT_PTR>(animate_m), L"&Animate");
+
   HMENU help_m = CreatePopupMenu();
   AppendMenuW(help_m, MF_STRING, kCmdHelpAbout, L"About AfterImage Native…");
   AppendMenuW(menubar, MF_POPUP, reinterpret_cast<UINT_PTR>(help_m), L"&Help");
@@ -354,6 +369,25 @@ void AiMainFrame::OnCommand(WORD id) {
   }
   if (model_cmd) {
     app_.Commands().Execute(model_cmd);
+    InvalidateChrome();
+    return;
+  }
+  const wchar_t* anim = nullptr;
+  switch (id) {
+    case kCmdAnimEditor: anim = L"Animation Editor"; break;
+    case kCmdAnimMixer: anim = L"Animation Mixer"; break;
+    case kCmdAnimFcurve: anim = L"Fcurve Editor"; break;
+    case kCmdAnimKeying: anim = L"Keying Panel"; break;
+    case kCmdAnimGet: anim = L"Get"; break;
+    case kCmdAnimCreate: anim = L"Create"; break;
+    case kCmdAnimDeform: anim = L"Deform"; break;
+    case kCmdAnimActions: anim = L"Actions"; break;
+    case kCmdAnimTools: anim = L"Tools"; break;
+    default: break;
+  }
+  if (anim) {
+    app_.Log(std::wstring(L"Animate: ") + anim);
+    app_.SetActiveModuleTarget(2);
     InvalidateChrome();
   }
 }
