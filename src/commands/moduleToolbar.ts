@@ -198,7 +198,14 @@ export function registerModuleToolbarCommands(app: App) {
         return link.download;
       }
       // Fallback: still of current frame cropped via full still (region fractions already on OM).
-      const still = renderScenePasses(app, { passes: 'Passes.Current', currentFrameOnly: true, download: true, openPreview: false });
+      // Softimage region fallback: auto-write Render_Pictures, no Save As / Pick an app (WR-MSLINK-01/02).
+      const still = renderScenePasses(app, {
+        passes: 'Passes.Current',
+        currentFrameOnly: true,
+        download: false,
+        openPreview: false,
+        autoWriteDisk: true,
+      });
       app.logMsg('info', `Render region save (still fallback): ${still.files[0]?.path ?? name}`);
       return still;
     },

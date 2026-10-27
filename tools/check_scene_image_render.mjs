@@ -83,6 +83,25 @@ else notes.push('in-app Flipbook viewer present');
 if (!/FLIPBOOK_MAX_FRAMES\s*=\s*16/.test(core) || !/FLIP_CAP\s*=\s*16/.test(viewExtras))
   diffs.push('1.0.23 Flipbook freeze caps must stay at 16 (sceneRender + viewExtras)');
 else notes.push('1.0.23 Flipbook freeze caps still FLIPBOOK_MAX_FRAMES=16 / FLIP_CAP=16');
+// WR-MSLINK-01 Softimage auto-write — no Save As PIC File on still render
+if (!/autoWriteSoftimagePictures|autoWriteDisk/.test(core))
+  diffs.push('sceneRender missing Softimage Render_Pictures auto-write (WR-MSLINK-01)');
+else notes.push('sceneRender Softimage Render_Pictures auto-write (WR-MSLINK-01)');
+if (/opts\.download\s*!==\s*false/.test(core) && !/opts\.download\s*===\s*true/.test(core))
+  diffs.push('still download must be opt-in (=== true); Softimage has no Save As on render');
+else notes.push('still download is opt-in only (no default Save As)');
+const preload = fs.existsSync(path.join(root, 'electron/preload.cjs'))
+  ? fs.readFileSync(path.join(root, 'electron/preload.cjs'), 'utf8') : '';
+if (!/writeRenderPicture/.test(preload) || !/writeRenderPicture/.test(electronMain))
+  diffs.push('electron preload/main missing writeRenderPicture IPC (Softimage silent plate write)');
+else notes.push('electron writeRenderPicture IPC for Softimage Render_Pictures');
+if (!/will-download|setSavePath/.test(electronMain))
+  diffs.push('electron missing will-download setSavePath guard (Save As PIC File)');
+else notes.push('electron will-download auto-saves Softimage plates (no Save As dialog)');
+const shellUi = fs.readFileSync(path.join(root, 'src/ui/shell.ts'), 'utf8');
+if (/download:\s*!range/.test(shellUi) || /download:\s*true/.test(shellUi))
+  diffs.push('Render Manager must not download:true / !range (Save As PIC File tour)');
+else notes.push('Render Manager download:false Softimage auto-write path');
 if (!/MovieCreate/.test(core) || !/wantsMovieContainer|emitMovie/.test(core))
   diffs.push('sceneRender must gate movie sidecar on MovieCreate / movie override');
 else notes.push('sceneRender MovieCreate gates .mp4 sidecar');

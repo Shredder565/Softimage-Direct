@@ -445,8 +445,10 @@ export function renderManager(app: App, host: HTMLElement) {
       formatOverride: opts.format,
       width: opts.width,
       height: opts.height,
-      download: !range,
+      // Softimage: no Save As on render (WR-MSLINK-01); Electron auto-writes Render_Pictures.
+      download: false,
       openPreview: !range,
+      autoWriteDisk: true,
     });
   };
   syncPassMovie(opts.format);
