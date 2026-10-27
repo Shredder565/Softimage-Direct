@@ -185,7 +185,7 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
         } else if (nd.param) {
           if (nd.param === '__name' || nd.param === 'Name') continue;
           const p = set.params.find(x => x.name.toLowerCase() === nd.param!.toLowerCase());
-          if (p && p.name !== 'mute' && (!allow || allow.has(p.name.toLowerCase()))) { seen.add(p.name); host.appendChild(row(app, p, nd.opts, multiSet)); }
+          if (p && p.name !== 'mute' && p.def.inspectable !== false && (!allow || allow.has(p.name.toLowerCase()))) { seen.add(p.name); host.appendChild(row(app, p, nd.opts, multiSet)); }
           rowHost = null;
         } else if (nd.row !== undefined) { const r = document.createElement('div'); r.className = 'ppg-hrow'; walk(nd.items ?? [], r); host.appendChild(r); rowHost = null; }
         else {
@@ -201,7 +201,7 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
       }
     };
     walk(nodes, into);
-    const rest = set.params.filter(p => !seen.has(p.name) && p.name !== 'mute' && (!allow || allow.has(p.name.toLowerCase())));
+    const rest = set.params.filter(p => !seen.has(p.name) && p.name !== 'mute' && p.def.inspectable !== false && (!allow || allow.has(p.name.toLowerCase())));
     const inOtherTab = !allow && (set.layout as any[] | undefined)?.every(t => t.tab !== undefined) ? new Set((set.layout as any[]).flatMap(t => collect(t.items ?? []))) : new Set<string>();
     const rest2 = rest.filter(p => !inOtherTab.has(p.name.toLowerCase()));
     if (rest2.length) { const g = group(allow ? (pageKey === 'Geometry' ? 'Subdivisions' : pageKey) : 'Other', pageKey); for (const p of rest2) g.body.appendChild(row(app, p, [], multiSet)); into.appendChild(g.el); }

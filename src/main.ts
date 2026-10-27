@@ -81,6 +81,7 @@ import { preferencesWindow, preferenceSets } from './ui/prefs';
 import { installPaneContext, paneContextAudit } from './ui/paneContext';
 import { uiSurfaceAudit } from './ui/uiSurfaceAudit';
 import { siDialogAudit } from './ui/siDialog';
+import { modelSurfaceAudit } from './ui/modelSurfaceAudit';
 
 // Softimage Flipbook / still preview in-app (never window.open → Electron ms-link on Windows).
 installFlipbookViewer();
@@ -258,6 +259,7 @@ window.addEventListener('openprefs', (e: any) => preferencesWindow(app, e.detail
   const EXPECTED_KEYMAPS = ['Softimage Key Map', 'Maya Compatible Key Map', '3ds Max Compatible Key Map', 'SI|3D Key Map'];
   const keymapStats = keymapNames().map(n => ({ name: n, contexts: Object.keys(SI_KEYMAPS[n] ?? {}).length, bindings: Object.values(SI_KEYMAPS[n] ?? {}).reduce((a, b) => a + (b?.length ?? 0), 0) }));
   return {
+    modelSurface: modelSurfaceAudit(app),
     layout: currentLayoutName(),
     layouts: layoutNames(),
     keymap: currentKeymap,

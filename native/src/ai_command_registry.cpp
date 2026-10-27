@@ -92,6 +92,15 @@ void SeedDumpAttestedNames(std::vector<AiCommandDesc>& out) {
       "ApplySnapFaceOp",
       "ApplyICEOp",
       "SwitchToolbar",
+      "GetPrim",
+      "CreatePrim",
+      "ApplyGenOp",
+      "UIAssembleNurbsMesh",
+      "ApplyTopoOp",
+      "ApplyOp",
+      "SelectGeneratorInputs",
+      "SelectGeneratorOutputs",
+      "AddPolygonTool",
   };
   for (const char* n : kNames) {
     bool dup = false;
