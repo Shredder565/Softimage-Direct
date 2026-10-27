@@ -18,6 +18,7 @@ import * as C from '../core/curves';
 import { FCurve } from '../core/animation';
 import { edgeKey, fromPolys, toPolys, splitEdges, weldPoints, dissolvePolygons, disconnectPolygons, sliceAxis, dicePolygons } from '../core/topology';
 import { floatingWindows } from '../ui/floating';
+import { openAssembleNurbsDialog } from '../ui/assembleNurbsDialog';
 
 const CURVE_PRESETS = ['Arc', 'Circle', 'Spiral', 'Square'];
 const SURF_PRESETS = ['Sphere', 'Torus', 'Cylinder', 'Cone', 'Disc', 'Grid', 'Cube'];
@@ -116,7 +117,7 @@ export function registerModelCommands(app: App) {
       if ((app as any).selectGenerated === false) app.select(inputs); else app.select([gen]); return obj;
     },
   });
-  app.register({ name: 'UIAssembleNurbsMesh', label: 'Assemble', category: 'Modeling', args: [], execute: (app) => app.run('ApplyGenOp', { PresetObj: 'MeshMerge', Target: 'NurbsSurface' }) });
+  app.register({ name: 'UIAssembleNurbsMesh', label: 'Assemble', category: 'Modeling', args: [], undoable: false, execute: (app) => { openAssembleNurbsDialog(app); return null; } });
 
   // GenOpInputsButtons* chrome (attested SPDL): Hide/Unhide + Delete generator inputs; Delete closes PPG.
   const genOpsOf = (app: App, arg: any): S2.GeneratorOperator[] => {
@@ -167,6 +168,28 @@ export function registerModelCommands(app: App) {
       const inputs: X3DObject[] = [];
       for (const op of genOpsOf(app, a.InputObjs)) for (const i of op.inputs) if (!inputs.includes(i)) inputs.push(i);
       if (inputs.length) app.select(inputs);
+    },
+  });
+  // GenOpInputsButtonsLogic SelectOutputs_OnClicked. Selects the generator's output object.
+  app.register({
+    name: 'SelectGeneratorOutputs', label: 'Select Generator Outputs', category: 'Modeling',
+    args: [{ name: 'InputObjs', default: null }],
+    execute(app, a) {
+      const outs: X3DObject[] = [];
+      const push = (o: X3DObject | null | undefined) => { if (o && !outs.includes(o)) outs.push(o); };
+      for (const op of genOpsOf(app, a.InputObjs)) push(op.owner?.() ?? null);
+      if (!outs.length) {
+        const raw = a.InputObjs === undefined || a.InputObjs === null || a.InputObjs === '' ? app.selection : Array.isArray(a.InputObjs) ? a.InputObjs : [a.InputObjs];
+        const seeds = raw.filter((x: any) => x instanceof X3DObject) as X3DObject[];
+        if (seeds.length) {
+          for (const obj of app.scene.allObjects()) {
+            for (const op of obj.primitive?.operators ?? []) {
+              if (op instanceof S2.GeneratorOperator && op.inputs.some(i => seeds.includes(i))) push(obj);
+            }
+          }
+        }
+      }
+      if (outs.length) app.select(outs);
     },
   });
 
@@ -568,8 +591,8 @@ export function registerModelCommands(app: App) {
   reg('NURBSCurveTool', 'Interpolating NURBS Curve Tool', () => curveTool(app, 'Draw Cubic by Knot Points', 3, true), '{24C6539B-E239-11D2-9205-00A0C9612E3A}');
   reg('LinearCurveTool', 'Linear Curve Tool', () => curveTool(app, 'Draw Linear', 1, false), '{BF47DBF9-E2E0-11D2-9205-00A0C9612E3A}');
   reg('SketchCurveTool', 'Sketch Curve Tool', () => curveTool(app, 'Sketch', 3, false, true), '{218A3C00-A7CE-11D1-A8FE-00A024190119}');
-  const compTool = (name: string, label: string, kind: 'point' | 'edge' | 'polygon', prompt: string, onPick: (picks: { obj: X3DObject; item: number | string; worldPoint: V3 }[]) => boolean): void => {
-    reg(name, label, () => { const picks: { obj: X3DObject; item: number | string; worldPoint: V3 }[] = []; return { name: label, prompt, pickKind: kind, onClick: (_p, pick) => { if (pick && pick.kind === kind) { picks.push(pick); if (onPick(picks)) picks.length = 0; } }, onFinish() { app.setTool(null); }, onCancel() { app.activeTool = null; } }; });
+  const compTool = (name: string, label: string, kind: 'point' | 'edge' | 'polygon', prompt: string, onPick: (picks: { obj: X3DObject; item: number | string; worldPoint: V3 }[]) => boolean, onDone?: (picks: { obj: X3DObject; item: number | string; worldPoint: V3 }[]) => void): void => {
+    reg(name, label, () => { const picks: { obj: X3DObject; item: number | string; worldPoint: V3 }[] = []; return { name: label, prompt, pickKind: kind, onClick: (_p, pick) => { if (pick && pick.kind === kind) { picks.push(pick); if (onPick(picks)) picks.length = 0; } }, onFinish() { onDone?.(picks); app.setTool(null); }, onCancel() { app.activeTool = null; } }; });
   };
   const addTopo = (obj: X3DObject, op: Operator, label: string) => { const prim = obj.primitive!; app.record(label, () => prim.addOperator(op), () => prim.removeOperator(op)); app.logMsg('cmd', `${label.replace(/ /g, '')}("${obj.name}")`); app.events.emit('scene'); };
   compTool('AddVertexTool', 'Add Vertex Tool', 'edge', 'Add Vertex: click an edge to split it at that point. Esc to exit.', (picks) => { const p = picks[0]; const m = p.obj.primitive!.mesh()!; const [a, b] = String(p.item).split('-').map(Number); const pa = new THREE.Vector3(m.positions[a * 3], m.positions[a * 3 + 1], m.positions[a * 3 + 2]).applyMatrix4(p.obj.globalMatrix()), pb = new THREE.Vector3(m.positions[b * 3], m.positions[b * 3 + 1], m.positions[b * 3 + 2]).applyMatrix4(p.obj.globalMatrix()); const w = new THREE.Vector3(...p.worldPoint); const t = Math.max(0.05, Math.min(0.95, w.clone().sub(pa).dot(pb.clone().sub(pa)) / Math.max(1e-9, pb.clone().sub(pa).lengthSq()))); const op = new TopologyOperator2('Split Edges', { kind: 'edge', indices: [a], edges: [[a, b]] }); op.set('ratio', t); addTopo(p.obj, op, 'Add Vertex'); return true; });
@@ -577,7 +600,15 @@ export function registerModelCommands(app: App) {
   compTool('AddEdgeTool', 'Add Edge Tool', 'point', 'Add Edge: click two points of the same polygon to connect them (splits the polygon). Esc to exit.', (picks) => { if (picks.length < 2) return false; const [a, b] = picks; if (a.obj !== b.obj) return true; const op = new TopologyOperator2('Connect Points', { kind: 'point', indices: [Number(a.item), Number(b.item)] }); addTopo(a.obj, op, 'Add Edge'); return true; });
   compTool('SplitPolygonTool', 'Split Polygon Tool', 'point', 'Split Polygon: click two points of a polygon to split it. Esc to exit.', (picks) => { if (picks.length < 2) return false; const [a, b] = picks; if (a.obj !== b.obj) return true; const op = new TopologyOperator2('Connect Points', { kind: 'point', indices: [Number(a.item), Number(b.item)] }); addTopo(a.obj, op, 'Split Polygon'); return true; });
   compTool('WeldPointTool', 'Weld Point Tool', 'point', 'Weld Point: click a point, then the point to weld it to. Esc to exit.', (picks) => { if (picks.length < 2) return false; const [a, b] = picks; if (a.obj !== b.obj) return true; const op = new TopologyOperator2('Weld Points', { kind: 'point', indices: [Number(b.item), Number(a.item)] }); addTopo(a.obj, op, 'Weld Point'); return true; });
-  compTool('AddPolygonTool', 'Add Polygon Tool', 'point', 'Add Polygon: click 3 or more points, then Enter (Right-click) to make the polygon.', () => false);
+  compTool('AddPolygonTool', 'Add Polygon Tool', 'point', 'Add Polygon: click 3 or more points, then Enter (Right-click) to make the polygon.', () => false, (picks) => {
+    if (picks.length < 3) return;
+    const obj = picks[0].obj;
+    if (!obj.primitive?.mesh() || picks.some(p => p.obj !== obj)) return;
+    const indices = picks.map(p => Number(p.item)).filter(i => Number.isInteger(i));
+    if (new Set(indices).size < 3) return;
+    const op = new TopologyOperator2('Add Polygon', { kind: 'point', indices });
+    addTopo(obj, op, 'Add Polygon');
+  });
   // Softimage KnifeTool / "Knife Tool" ABSENT — PE Knife Tool → Slice Polygons Tool (model2). Keep grey SN.
   app.register({
     name: 'KnifeTool', label: 'Knife Tool', category: 'Modeling|Drawing',
@@ -765,6 +796,14 @@ export class TopologyOperator2 extends Operator {
       case 'Symmetrize Polygons': { const op = makeTopologyOperator('Symmetrize Polygons', this.sel)!; op.set('symmetryplane', this.p('symmetryplane', 'axis')); return op.apply(m); }
       case 'Invert Polygons': return makeTopologyOperator('Invert Polygons', this.sel)!.apply(m);
       case 'Connect Points': { const [a, b] = this.sel.indices as number[]; const { verts, faces } = toPolys(m); const fi = faces.findIndex(f => f.includes(a) && f.includes(b) && Math.abs(f.indexOf(a) - f.indexOf(b)) > 1 && Math.abs(f.indexOf(a) - f.indexOf(b)) !== f.length - 1); if (fi < 0) return m; const f = faces[fi]; const ia = f.indexOf(a), ib = f.indexOf(b); const one: number[] = []; for (let i = ia; ; i = (i + 1) % f.length) { one.push(f[i]); if (i === ib) break; } const two: number[] = []; for (let i = ib; ; i = (i + 1) % f.length) { two.push(f[i]); if (i === ia) break; } faces[fi] = one; faces.push(two); return fromPolys(verts, faces); }
+      case 'Add Polygon': {
+        const idx = ((this.sel?.indices ?? []) as number[]).filter(i => Number.isInteger(i));
+        if (new Set(idx).size < 3) return m;
+        const { verts, faces } = toPolys(m);
+        if (idx.some(i => i < 0 || i >= verts.length)) return m;
+        faces.push([...idx]);
+        return fromPolys(verts, faces);
+      }
     }
     return m;
   }

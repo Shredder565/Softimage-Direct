@@ -18,6 +18,8 @@ export interface ParamDef {
   animatable?: boolean;
   keyable?: boolean;
   readOnly?: boolean;
+  /** SPDL UnInspectable: the parameter is stored and is not drawn in the property page. */
+  inspectable?: boolean;
   group?: string;        // PPG tab / group
 }
 

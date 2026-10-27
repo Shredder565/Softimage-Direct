@@ -38,5 +38,15 @@ class AiMainFrame {
     kCmdRenderPreview = 1204,
     kCmdSoftimageLayout = 1301,
     kCmdHelpAbout = 1401,
+    // Model module menu (MENU 204 tops). Same dispatch as the Render popup: attested command Names.
+    kCmdModelGetPrim = 1501,
+    kCmdModelCreatePrim = 1502,
+    kCmdModelApplyGenOp = 1503,
+    kCmdModelAssemble = 1504,
+    kCmdModelApplyTopoOp = 1505,
+    kCmdModelApplyOp = 1506,
+    kCmdModelSelectGeneratorInputs = 1507,
+    kCmdModelSelectGeneratorOutputs = 1508,
+    kCmdModelAddPolygonTool = 1509,
   };
 };

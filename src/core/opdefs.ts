@@ -62,9 +62,46 @@ export const primStats = data.primStats;
 export function menuDefaults(label: string) { return data.byMenu[label]; }
 export const GENOP_HAS_LAYOUT = !!(genopChrome as { has_layout?: boolean }).has_layout;
 
+/**
+ * C3DGenerator.spdl `inputreadregion` (Construction Mode). Committed opdefs already carry it for the
+ * parametric generators; these types include C3DGenerator.spdl and the opdef omitted the combo.
+ */
+const GENERATOR_BASE_TYPES = new Set(['mergemesh', 'blendcrv', 'mergecrv', 'crvnet']);
+const CONSTRUCTION_MODE: ParamDef['items'] = [
+  { label: 'Modeling', value: 0 },
+  { label: 'Shape Modeling', value: 1 },
+  { label: 'Animation', value: 2 },
+  { label: 'Secondary Shape (Result)', value: 3 },
+];
+
+function constructionMode(): ParamDef {
+  return { name: 'inputreadregion', label: 'Construction Mode', type: 'enum', value: 0, items: CONSTRUCTION_MODE, animatable: false };
+}
+
+/** curvenetop.spdl + C3DParametricSurfaceGenerator.spdl. No opdef row was committed for `crvnet`. */
+function curveNetContract(): ParamDef[] {
+  return [
+    { name: 'tol', label: 'Tolerance', type: 'double', value: 0.1, animatable: true },
+    { name: 'featurematch', label: 'Feature Match', type: 'bool', value: true, animatable: false },
+    { name: 'subdivu', label: 'U abs', type: 'int', value: 8, min: 1, max: 1000, animatable: true },
+    { name: 'subdivv', label: 'V abs', type: 'int', value: 8, min: 1, max: 1000, animatable: true },
+    { name: 'subdivuperspan', label: 'U span', type: 'int', value: 8, min: 1, max: 100, animatable: true },
+    { name: 'subdivvperspan', label: 'V span', type: 'int', value: 8, min: 1, max: 100, animatable: true },
+    { name: 'subdivtype', label: 'Subdivision Type', type: 'enum', value: 0, items: [{ label: 'Per Span', value: 0 }, { label: 'Absolute', value: 1 }], animatable: false },
+    { name: 'ignoresub', label: 'Ignore Subdivision OBSOLETE. Use subdivtype field', type: 'bool', value: false, animatable: false },
+    constructionMode(),
+  ];
+}
+
+function withGeneratorBase(key: string, out: ParamDef[]): ParamDef[] {
+  if (key === 'crvnet' && !out.length) out.push(...curveNetContract());
+  if (GENERATOR_BASE_TYPES.has(key) && !out.some(d => d.name === 'inputreadregion')) out.push(constructionMode());
+  return out;
+}
+
 /** Softimage-side parameter definitions as our ParamDefs. Parameters bound to fcurve profiles are skipped. */
 export function siParamDefs(key: string, overrides: Record<string, any> = {}, extra: Partial<ParamDef> = {}): ParamDef[] {
-  const d = siDef(key); if (!d) return [];
+  const d = siDef(key); if (!d) return withGeneratorBase(key, []);
   const out: ParamDef[] = [];
   for (const p of d.params) {
     if (p.default === 'FCurve' || p.sn === 'Name') continue;
@@ -83,7 +120,7 @@ export function siParamDefs(key: string, overrides: Record<string, any> = {}, ex
     if (p.desc) def.desc = p.desc;
     out.push(def);
   }
-  return out;
+  return withGeneratorBase(key, out);
 }
 
 /** Merge Softimage opdef params with local overrides (by script name). Softimage values win unless overridden. */

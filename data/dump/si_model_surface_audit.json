@@ -1,0 +1,825 @@
+{
+  "softimage": "13.2.163.0",
+  "source": "committed Model dumps",
+  "generated_by": "tools/build_model_surface_audit.py",
+  "counts": {
+    "PRESENT": 56,
+    "PARTIAL": 8,
+    "MISSING": 4,
+    "ABSENT": 22,
+    "total": 90,
+    "wiredThisPass": 12
+  },
+  "items": [
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "MENU 204 \u2014 Get / Create / Modify",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "menus.json `Model`",
+      "note": "390 leaves; every id is in menu_commands.json"
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Get / Primitive",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts",
+      "note": "96 leaves registered"
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Get / Material",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts",
+      "note": "22 leaves registered"
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Get / Property",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts",
+      "note": "53 leaves registered"
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Create / Curve",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts",
+      "note": "14 leaves registered"
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Create / Surf. Mesh",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts",
+      "note": "16 leaves registered"
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Create / Poly. Mesh",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts",
+      "note": "19 leaves registered"
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Create / Skeleton",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts",
+      "note": "24 leaves registered"
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Create / Model",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts",
+      "note": "3 leaves registered"
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Create / Text",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts",
+      "note": "3 leaves registered"
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Modify / Component",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts",
+      "note": "25 leaves registered"
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Modify / Curve",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts",
+      "note": "23 leaves registered"
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Modify / Surf. Mesh",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts",
+      "note": "13 leaves registered"
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Modify / Poly. Mesh",
+      "verdict": "PARTIAL",
+      "wired": true,
+      "surface": "AddPolygonTool",
+      "note": "46 leaves. Add Polygon Tool was registered but finish never built a polygon."
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Modify / Deform",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts",
+      "note": "22 leaves registered"
+    },
+    {
+      "kind": "menu",
+      "module": "data/menu_model.txt",
+      "item": "Modify / Model",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts",
+      "note": "11 leaves registered"
+    },
+    {
+      "kind": "table",
+      "module": "data/dump/si_model_dump.json",
+      "item": "Model menu execution table",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "menu_commands.json",
+      "note": "390 menu-leaf executions"
+    },
+    {
+      "kind": "table",
+      "module": "data/dump/si_model_dump4.json",
+      "item": "Get/* primParams",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json prim:Polygon Mesh",
+      "note": "subdrule and subdloop live on the polygon-mesh primitive, not on geom:Cube"
+    },
+    {
+      "kind": "table",
+      "module": "data/dump/si_model_prims.json",
+      "item": "Primitive golden table",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/commands/model.ts CreatePrim / GetPrim",
+      "note": "Mesh and curve primitive goldens"
+    },
+    {
+      "kind": "table",
+      "module": "data/dump/si_model_property_commands.json",
+      "item": "Property command table",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "Get / Property menu leaves",
+      "note": "Model-menu property leaves are registered. The file also lists non-Model categories (MCP, retarget, GPU maps); those are not Model-tab surfaces."
+    },
+    {
+      "kind": "table",
+      "module": "data/dump/si_model_ops_counts.json",
+      "item": "Boolean / text / OT count locks",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/core/scene2.ts booleanOp",
+      "note": "Count locks. Direct CSG is not Softimage-equal; the command names are present."
+    },
+    {
+      "kind": "table",
+      "module": "data/dump/si_generators_golden.json",
+      "item": "Generator apply golden",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "ApplyGenOp",
+      "note": "Dump rows came back with empty meshes or a failed loft. The generator commands are registered."
+    },
+    {
+      "kind": "strings",
+      "module": "data/si/dict/XSIMODELTASKS.dict",
+      "item": "XSIMODELTASKS string table",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "strings.json XSIMODELTASKS",
+      "note": "Labels already carried by the Model commands"
+    },
+    {
+      "kind": "operator",
+      "module": "generator op",
+      "item": "extrusion",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "siParamDefs('extrusion')",
+      "note": "C3DGenerator inputreadregion is on the opdef"
+    },
+    {
+      "kind": "operator",
+      "module": "generator op",
+      "item": "revolution",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "siParamDefs('revolution')",
+      "note": "C3DGenerator inputreadregion is on the opdef"
+    },
+    {
+      "kind": "operator",
+      "module": "generator op",
+      "item": "loft",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "siParamDefs('loft')",
+      "note": "C3DGenerator inputreadregion is on the opdef"
+    },
+    {
+      "kind": "operator",
+      "module": "generator op",
+      "item": "birail",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "siParamDefs('birail')",
+      "note": "C3DGenerator inputreadregion is on the opdef"
+    },
+    {
+      "kind": "operator",
+      "module": "generator op",
+      "item": "foursided",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "siParamDefs('foursided')",
+      "note": "C3DGenerator inputreadregion is on the opdef"
+    },
+    {
+      "kind": "operator",
+      "module": "generator op",
+      "item": "crvnet",
+      "verdict": "MISSING",
+      "wired": true,
+      "surface": "siParamDefs('crvnet')",
+      "note": "No opdef row. curvenetop.spdl + C3DParametricSurfaceGenerator.spdl. Feature-match solver is not in the dumps; the flag is stored."
+    },
+    {
+      "kind": "operator",
+      "module": "generator op",
+      "item": "CurveListToMesh",
+      "verdict": "PARTIAL",
+      "wired": true,
+      "surface": "siParamDefs('CurveListToMesh')",
+      "note": "syncwithinputspose was on the opdef and depStamp ignored it"
+    },
+    {
+      "kind": "operator",
+      "module": "generator op",
+      "item": "booleansrftopoop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "siParamDefs('booleansrftopoop')",
+      "note": "C3DBooleanSrfTopoOp.spdl does not include C3DGenerator.spdl"
+    },
+    {
+      "kind": "operator",
+      "module": "generator op",
+      "item": "blendcrv",
+      "verdict": "PARTIAL",
+      "wired": true,
+      "surface": "siParamDefs('blendcrv')",
+      "note": "blendcrvop.spdl includes C3DGenerator.spdl; opdef omitted inputreadregion"
+    },
+    {
+      "kind": "operator",
+      "module": "generator op",
+      "item": "mergecrv",
+      "verdict": "PARTIAL",
+      "wired": true,
+      "surface": "siParamDefs('mergecrv')",
+      "note": "mergecrv.spdl includes C3DGenerator.spdl; opdef omitted inputreadregion"
+    },
+    {
+      "kind": "operator",
+      "module": "generator op",
+      "item": "mergemesh",
+      "verdict": "PARTIAL",
+      "wired": true,
+      "surface": "siParamDefs('mergemesh')",
+      "note": "C3DMergeMeshOp.spdl includes C3DGenerator.spdl; opdef omitted inputreadregion"
+    },
+    {
+      "kind": "operator",
+      "module": "generator op",
+      "item": "nurbstomesh",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "siParamDefs('nurbstomesh')",
+      "note": "inputreadregion is on the opdef"
+    },
+    {
+      "kind": "operator",
+      "module": "generator op",
+      "item": "extractcrvseg",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "siParamDefs('extractcrvseg')",
+      "note": "inputreadregion is on the opdef"
+    },
+    {
+      "kind": "operator",
+      "module": "C3DGenerator.spdl",
+      "item": "inputreadregion evaluation",
+      "verdict": "PARTIAL",
+      "wired": true,
+      "surface": "GeneratorOperator.inputGeom",
+      "note": "Parametric generators already had the combo and still read the full input stack"
+    },
+    {
+      "kind": "ppg",
+      "module": "data/dump/si_genop_inputs_buttons.json",
+      "item": "GenOpInputsButtons display + logic",
+      "verdict": "PARTIAL",
+      "wired": true,
+      "surface": "genop_inputs_buttons.json",
+      "note": "Hide/Delete were wired. SelectOutputs_OnClicked named SelectGeneratorOutputs, which was not registered."
+    },
+    {
+      "kind": "command",
+      "module": "GenOpInputsButtonsLogic.spdl",
+      "item": "SelectGeneratorOutputs",
+      "verdict": "MISSING",
+      "wired": true,
+      "surface": "src/commands/model.ts",
+      "note": "SelectOutputs_OnClicked. Selects the generator output object."
+    },
+    {
+      "kind": "toolbar",
+      "module": "Main_Shelf.xsitb",
+      "item": "TargetContent ModelGetPrimitive&Polygon Mesh",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/ui/shelf.ts",
+      "note": "Menu Window target parsed from the shelf script"
+    },
+    {
+      "kind": "toolbar",
+      "module": "Main_Shelf.xsitb",
+      "item": "TargetContent ModelGetPrimitive",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/ui/shelf.ts",
+      "note": "Menu Window target parsed from the shelf script"
+    },
+    {
+      "kind": "toolbar",
+      "module": "Main_Shelf.xsitb",
+      "item": "TargetContent ModelGetPrimitiveCamera",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/ui/shelf.ts",
+      "note": "Menu Window target parsed from the shelf script"
+    },
+    {
+      "kind": "toolbar",
+      "module": "Main_Shelf.xsitb",
+      "item": "TargetContent ModelGetPrimitiveLight",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/ui/shelf.ts",
+      "note": "Menu Window target parsed from the shelf script"
+    },
+    {
+      "kind": "toolbar",
+      "module": "Main_Shelf.xsitb",
+      "item": "TargetContent ModelGetPrimitive&curve",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/ui/shelf.ts",
+      "note": "Menu Window target parsed from the shelf script"
+    },
+    {
+      "kind": "toolbar",
+      "module": "Main_Shelf.xsitb",
+      "item": "TargetContent ModelCreateCurve",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "src/ui/shelf.ts",
+      "note": "Menu Window target parsed from the shelf script"
+    },
+    {
+      "kind": "dialog",
+      "module": "siuitasks.dll",
+      "item": "DIALOG 201 \u2014 Assemble NurbsMesh (SCM)",
+      "verdict": "MISSING",
+      "wired": true,
+      "surface": "src/ui/assembleNurbsDialog.ts",
+      "note": "OK, Cancel, Help, SCM Tolerance, Copy User Clusters Locally, Copy Materials and Textures Locally, Center To Geometric Center. Template rect 195\u00d7125, font MS Sans Serif 8."
+    },
+    {
+      "kind": "native",
+      "module": "native/src/ai_main_frame.cpp",
+      "item": "Model menu \u2014 Get / Create / Modify",
+      "verdict": "MISSING",
+      "wired": true,
+      "surface": "AiMainFrame::BuildMenus",
+      "note": "The shell had a Render popup of attested command names and no Model menu."
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_deform.json",
+      "item": "Twist \u2014 twistop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `twistop`",
+      "note": "11 parameters match the opdef (mute is applied at runtime)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_deform.json",
+      "item": "Bend \u2014 bendop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `bendop`",
+      "note": "10 parameters match the opdef (mute is applied at runtime)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_deform.json",
+      "item": "Taper \u2014 taperop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `taperop`",
+      "note": "11 parameters match the opdef (mute is applied at runtime)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_deform.json",
+      "item": "Bulge \u2014 bulgeop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `bulgeop`",
+      "note": "11 parameters match the opdef (mute is applied at runtime)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_deform.json",
+      "item": "Shear \u2014 shearop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `shearop`",
+      "note": "11 parameters match the opdef (mute is applied at runtime)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_deform.json",
+      "item": "Push \u2014 pushop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `pushop`",
+      "note": "2 parameters match the opdef (mute is applied at runtime)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_deform.json",
+      "item": "Smooth \u2014 smoothop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `smoothop`",
+      "note": "25 parameters match the opdef (mute is applied at runtime)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_deform.json",
+      "item": "Relax \u2014 smoothop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `smoothop`",
+      "note": "25 parameters match the opdef (mute is applied at runtime)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_deform.json",
+      "item": "Fold \u2014 foldop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `foldop`",
+      "note": "10 parameters match the opdef (mute is applied at runtime)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_deform.json",
+      "item": "Lattice \u2014 lattice",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `lattice`",
+      "note": "8 parameters match the opdef (mute is applied at runtime)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_deform.json",
+      "item": "Wave \u2014 wave",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `wave`",
+      "note": "5 parameters match the opdef (mute is applied at runtime)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_deform.json",
+      "item": "Deform by Curve \u2014 crvdeform",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `crvdeform`",
+      "note": "11 parameters match the opdef (mute is applied at runtime)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_deform.json",
+      "item": "Deform by Spine \u2014 deformbyspineop2",
+      "verdict": "PARTIAL",
+      "wired": true,
+      "surface": "RefDeformOperator siType deformbyspineop2",
+      "note": "Dump type deformbyspineop2 (mute only). SPDL adds UseNormalizedUValues (UnInspectable). Runtime type was refdeform."
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "extrude_axis_poly0 \u2014 extrudecompaxisop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `extrudecompaxisop`",
+      "note": "23 parameters match the opdef"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "extrude_axis_poly0_long \u2014 extrudecompaxisop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `extrudecompaxisop`",
+      "note": "23 parameters match the opdef"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "extrude_normal_poly0 \u2014 extrudenormalop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `extrudenormalop`",
+      "note": "9 parameters match the opdef"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "extrude_normal_poly0_long \u2014 extrudenormalop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `extrudenormalop`",
+      "note": "9 parameters match the opdef"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "inset_poly0 \u2014 extrudecompaxisop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `extrudecompaxisop`",
+      "note": "23 parameters match the opdef"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "subdivide_poly01 \u2014 no type",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Dump returned no parameter names (Invalid argument specified.)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "dissolve_edge0 \u2014 dissolvecompop",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Dump returned no parameter names"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "collapse_edge0 \u2014 collapseop",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Dump returned no parameter names"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "weld_pnt01 \u2014 weldpointsop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `weldpointsop`",
+      "note": "3 parameters match the opdef"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "symmetrize_poly012 \u2014 no type",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Dump returned no parameter names (Invalid argument specified.)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "invert_all \u2014 no type",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Dump returned no parameter names (Invalid argument specified.)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "local_subdiv_poly0 \u2014 no type",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Dump returned no parameter names (Invalid argument specified.)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "add_edge_pnt01 \u2014 no type",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Dump returned no parameter names (Invalid argument specified.)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "split_edge0 \u2014 no type",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Dump returned no parameter names (Invalid argument specified.)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "bridge_edge02 \u2014 no type",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Dump returned no parameter names (Invalid argument specified.)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "offset_poly0 \u2014 no type",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Dump returned no parameter names (Invalid argument specified.)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "clean_object \u2014 no type",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Dump returned no parameter names (Invalid argument specified.)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "filter_points \u2014 no type",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Dump returned no parameter names (Invalid argument specified.)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "quadrangulate \u2014 quadrangulateop",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `quadrangulateop`",
+      "note": "9 parameters match the opdef"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "triangulate \u2014 no type",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Dump returned no parameter names (Invalid argument specified.)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "thickness \u2014 no type",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Dump returned no parameter names (Invalid argument specified.)"
+    },
+    {
+      "kind": "contract",
+      "module": "data/dump/si_model_topo_extra.json",
+      "item": "caphole_after_delete_poly0 \u2014 ICETree",
+      "verdict": "PRESENT",
+      "wired": false,
+      "surface": "opdefs.json `ICETree`",
+      "note": "2 parameters match the opdef"
+    },
+    {
+      "kind": "symbol",
+      "module": "commands_full",
+      "item": "GATOR scripting name",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "commands_full has no GATOR scripting name. The grey command stays unable to run."
+    },
+    {
+      "kind": "symbol",
+      "module": "sicommands.dll",
+      "item": "KnifeTool / Knife Tool",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Absent from Commands and sicommands.dll. PE Knife Tool is Slice Polygons Tool."
+    },
+    {
+      "kind": "symbol",
+      "module": "sicommands.dll",
+      "item": "SetUserNormalsSettings",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Name is absent. The menu leaf is Inspect User Normal Editing Preferences."
+    },
+    {
+      "kind": "symbol",
+      "module": "commands_full",
+      "item": "AddPointOnCurveTool",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Bare name is a FAIL. Only the By CVs / By Bezier-Knot / By Knot Points names are active."
+    },
+    {
+      "kind": "symbol",
+      "module": "data/dump/si_model_dump4.json",
+      "item": "CreateLightRigFromImage layout",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "The leaf produced no objects and the dump has no light-rig layout. The command stays unable to run."
+    },
+    {
+      "kind": "symbol",
+      "module": "data/dump/si_model_property_commands.json",
+      "item": "Add property extended",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Scripting name is empty."
+    },
+    {
+      "kind": "symbol",
+      "module": "data/dump/si_model_property_commands.json",
+      "item": "Open SE on Override parent",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Scripting name is empty."
+    },
+    {
+      "kind": "symbol",
+      "module": "data/dump/si_model_property_commands.json",
+      "item": "Polygon Cluster Visibility Property",
+      "verdict": "ABSENT",
+      "wired": false,
+      "surface": "\u2014",
+      "note": "Scripting name is empty."
+    }
+  ]
+}

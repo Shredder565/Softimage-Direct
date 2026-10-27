@@ -64,6 +64,25 @@ void AiMainFrame::BuildMenus() {
   AppendMenuW(render_m, MF_STRING, kCmdRenderPreview, L"RenderPreview");
   AppendMenuW(menubar, MF_POPUP, reinterpret_cast<UINT_PTR>(render_m), L"&Render");
 
+  // Model tab (MENU 204 Get / Create / Modify). Item strings are attested command Names.
+  HMENU model_m = CreatePopupMenu();
+  HMENU model_get = CreatePopupMenu();
+  AppendMenuW(model_get, MF_STRING, kCmdModelGetPrim, L"GetPrim");
+  AppendMenuW(model_m, MF_POPUP, reinterpret_cast<UINT_PTR>(model_get), L"&Get");
+  HMENU model_create = CreatePopupMenu();
+  AppendMenuW(model_create, MF_STRING, kCmdModelCreatePrim, L"CreatePrim");
+  AppendMenuW(model_create, MF_STRING, kCmdModelApplyGenOp, L"ApplyGenOp");
+  AppendMenuW(model_create, MF_STRING, kCmdModelAssemble, L"UIAssembleNurbsMesh");
+  AppendMenuW(model_m, MF_POPUP, reinterpret_cast<UINT_PTR>(model_create), L"&Create");
+  HMENU model_modify = CreatePopupMenu();
+  AppendMenuW(model_modify, MF_STRING, kCmdModelApplyTopoOp, L"ApplyTopoOp");
+  AppendMenuW(model_modify, MF_STRING, kCmdModelApplyOp, L"ApplyOp");
+  AppendMenuW(model_modify, MF_STRING, kCmdModelSelectGeneratorInputs, L"SelectGeneratorInputs");
+  AppendMenuW(model_modify, MF_STRING, kCmdModelSelectGeneratorOutputs, L"SelectGeneratorOutputs");
+  AppendMenuW(model_modify, MF_STRING, kCmdModelAddPolygonTool, L"AddPolygonTool");
+  AppendMenuW(model_m, MF_POPUP, reinterpret_cast<UINT_PTR>(model_modify), L"&Modify");
+  AppendMenuW(menubar, MF_POPUP, reinterpret_cast<UINT_PTR>(model_m), L"&Model");
+
   HMENU help_m = CreatePopupMenu();
   AppendMenuW(help_m, MF_STRING, kCmdHelpAbout, L"About AfterImage Native…");
   AppendMenuW(menubar, MF_POPUP, reinterpret_cast<UINT_PTR>(help_m), L"&Help");
@@ -282,6 +301,23 @@ void AiMainFrame::OnCommand(WORD id) {
     app_.Commands().Execute("RenderPreview");
     InvalidateChrome();
     return;
+  }
+  const char* model_cmd = nullptr;
+  switch (id) {
+    case kCmdModelGetPrim: model_cmd = "GetPrim"; break;
+    case kCmdModelCreatePrim: model_cmd = "CreatePrim"; break;
+    case kCmdModelApplyGenOp: model_cmd = "ApplyGenOp"; break;
+    case kCmdModelAssemble: model_cmd = "UIAssembleNurbsMesh"; break;
+    case kCmdModelApplyTopoOp: model_cmd = "ApplyTopoOp"; break;
+    case kCmdModelApplyOp: model_cmd = "ApplyOp"; break;
+    case kCmdModelSelectGeneratorInputs: model_cmd = "SelectGeneratorInputs"; break;
+    case kCmdModelSelectGeneratorOutputs: model_cmd = "SelectGeneratorOutputs"; break;
+    case kCmdModelAddPolygonTool: model_cmd = "AddPolygonTool"; break;
+    default: break;
+  }
+  if (model_cmd) {
+    app_.Commands().Execute(model_cmd);
+    InvalidateChrome();
   }
 }
 

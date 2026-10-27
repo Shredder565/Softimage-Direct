@@ -165,12 +165,31 @@ export class GeneratorOperator extends Operator {
   /** Read a Softimage parameter, falling back to a legacy name. */
   p(si: string, legacy?: string, dflt = 0): number { const a = this.get(si); if (a) return Number(a.value); const b = legacy ? this.get(legacy) : undefined; return b ? Number(b.value) : dflt; }
   inputsChanged() { const vs = this.inputs.map(o => o.primitive?.version ?? -1); const ch = vs.some((v, i) => v !== this.inputVersions[i]); this.inputVersions = vs; return ch; }
-  depStamp() { return stampOf([...this.inputs, this.owner()]); }
+  /** C3DGenerator inputreadregion: 0 Modeling, 1 Shape, 2 Animation, 3 Secondary Shape (result). */
+  private inputRegion(): 'modeling' | 'shape' | 'animation' | 'secondaryshape' {
+    const p = this.get('inputreadregion');
+    if (!p) return 'secondaryshape';
+    return (['modeling', 'shape', 'animation', 'secondaryshape'] as const)[Number(p.value)] ?? 'secondaryshape';
+  }
+  private inputGeom(o: X3DObject): any {
+    const prim = o.primitive; if (!prim) return null;
+    return this.get('inputreadregion') ? prim.geomUpTo(this.inputRegion()) : prim.geom();
+  }
+  depStamp() {
+    // C3DCurveListToMeshOp syncwithinputspose: when false, input transforms alone do not refresh the generator.
+    const pose = this.get('syncwithinputspose');
+    if (pose && !pose.value) {
+      let s = 'geo:';
+      for (const o of [...this.inputs, this.owner()]) { if (!o) continue; s += (o.primitive?.version ?? 0) + '|'; }
+      return s;
+    }
+    return stampOf([...this.inputs, this.owner()]);
+  }
   apply(): any {
     const v = (n: string) => Number(this.val(n));
     const me = this.owner(); const invMe = me ? me.globalMatrix().invert() : new THREE.Matrix4();
-    const curveOf = (o: X3DObject): CurveData | null => { const c = o.primitive?.curve(); if (!c) return null; const M = invMe.clone().multiply(o.globalMatrix()); return { ...c, cvs: c.cvs.map(p => { const q = new THREE.Vector3(p[0], p[1], p[2]).applyMatrix4(M); return [q.x, q.y, q.z, p[3]] as [number, number, number, number]; }) }; };
-    const meshOf = (o: X3DObject) => { const m = o.primitive?.mesh(); if (!m) return null; return T2.mergeMeshes([{ mesh: m, matrix: invMe.clone().multiply(o.globalMatrix()).elements as any }]); };
+    const curveOf = (o: X3DObject): CurveData | null => { const g = this.inputGeom(o); const c = g && g.cvs ? g as CurveData : null; if (!c) return null; const M = invMe.clone().multiply(o.globalMatrix()); return { ...c, cvs: c.cvs.map(p => { const q = new THREE.Vector3(p[0], p[1], p[2]).applyMatrix4(M); return [q.x, q.y, q.z, p[3]] as [number, number, number, number]; }) }; };
+    const meshOf = (o: X3DObject) => { const g = this.inputGeom(o); const m = g && g.positions ? g as MeshData : null; if (!m) return null; return T2.mergeMeshes([{ mesh: m, matrix: invMe.clone().multiply(o.globalMatrix()).elements as any }]); };
     const curves = this.inputs.map(curveOf).filter((c): c is CurveData => !!c);
     // Softimage axis flags (alongx/alongy/alongz, revx/revy/revz) or the legacy axis enum
     const flagAxis = (pre: string): V3 => { if (this.get(pre + 'x')) { const f = [!!this.val(pre + 'x'), !!this.val(pre + 'y'), !!this.val(pre + 'z')]; const i = f.indexOf(true); return [[1, 0, 0], [0, 1, 0], [0, 0, 1]][i < 0 ? 1 : i] as V3; } return [[1, 0, 0], [0, 1, 0], [0, 0, 1]][Number(this.val('axis') ?? 1)] as V3; };
@@ -240,7 +259,7 @@ function require_topology() { return topoMod; }
 
 // --------------------------------------------------------------- deformers (referencing objects)
 export class RefDeformOperator extends Operator {
-  constructor(readonly preset: string, readonly refs: X3DObject[], readonly owner: () => X3DObject | null, readonly sel: CompSel | null, defs: any[]) { super(preset, 'refdeform', [...defs, bool('mute', false, 'Mute')]); this.rest = refs[0] ? refs[0].globalMatrix().clone() : null; }
+  constructor(readonly preset: string, readonly refs: X3DObject[], readonly owner: () => X3DObject | null, readonly sel: CompSel | null, defs: any[], siType = 'refdeform') { super(preset, siType, [...defs, bool('mute', false, 'Mute')]); this.rest = refs[0] ? refs[0].globalMatrix().clone() : null; }
   rest: THREE.Matrix4 | null; restPts: V3[] | null = null; restCage: MeshData | null = null; cageWeights: Float32Array[] | null = null;
   depStamp() { return stampOf([...this.refs, this.owner()]); }
   apply(m: MeshData | null): MeshData | null {
@@ -266,7 +285,11 @@ export function makeRefDeformOperator(preset: string, refs: X3DObject[], owner: 
   switch (preset) {
     case 'by Lattice': case 'Cluster Center': return new RefDeformOperator(preset, refs, owner, sel, []);
     case 'by Curve': { const si = siParamDefs('crvdeform'); return new RefDeformOperator(preset, refs, owner, sel, si.length ? si : [enumP('axis', 1, [{ label: 'X', value: 0 }, { label: 'Y', value: 1 }, { label: 'Z', value: 2 }], 'Axis'), num('poscurve', 0, 'Position along Curve'), num('posnormal', 0, 'Position along Normal'), num('posbinormal', 0, 'Position along Binormal'), num('sclcurve', 1, 'Scale along Curve'), num('sclnormal', 1, 'Scale along Normal'), num('sclbinormal', 1, 'Scale along Binormal'), num('roll', 0, 'Roll')]); }
-    case 'by Spine': return new RefDeformOperator(preset, refs, owner, sel, [num('radius', 4, 'Radius', { min: 0.01, max: 100 }), num('falloff', 1, 'Falloff', { min: 0.1, max: 8 })]);
+    case 'by Spine': return new RefDeformOperator(preset, refs, owner, sel, [
+      // C3DDeformBySpineOp2.spdl — UnInspectable. radius/falloff stay; the spine dump did not list them.
+      bool('UseNormalizedUValues', false, 'Use Normalized U Values', { readOnly: true, inspectable: false, desc: 'Constrain To Deformee' }),
+      num('radius', 4, 'Radius', { min: 0.01, max: 100 }), num('falloff', 1, 'Falloff', { min: 0.1, max: 8 }),
+    ], 'deformbyspineop2');
     case 'by Cage': return new RefDeformOperator(preset, refs, owner, sel, []);
     case 'Shrink Wrap': return new RefDeformOperator(preset, refs, owner, sel, [num('amount', 1, 'Amount', { min: 0, max: 1 })]);
     case 'by Volume': return new RefDeformOperator(preset, refs, owner, sel, [num('radius', 6, 'Radius', { min: 0.01, max: 100 })]);
