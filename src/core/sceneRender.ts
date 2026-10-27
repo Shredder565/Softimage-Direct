@@ -36,12 +36,56 @@ export interface SceneRenderOptions {
   formatOverride?: string | null;
   width?: number | null;
   height?: number | null;
-  /** Trigger browser download for still (single-file) results. Default true. */
+  /**
+   * Softimage does not Save As on render (tour WR-MSLINK-01 #32770 PIC File was AfterImage bug).
+   * Default false — Electron auto-writes Render_Pictures; optional true only for explicit Export.
+   */
   download?: boolean;
-  /** Open preview window for stills. Default true when download. */
+  /** Open in-app still preview. Default true for stills. */
   openPreview?: boolean;
+  /** Softimage silent disk write via Electron bridge. Default true when bridge present. */
+  autoWriteDisk?: boolean;
   /** Cap sequence length (Softimage Render Manager parity). */
   maxFrames?: number;
+}
+
+/** Electron preload bridge (WR-MSLINK-01 Softimage Render_Pictures auto-write). */
+export interface AfterimageBridge {
+  getRenderPicturesRoot?: () => Promise<string>;
+  writeRenderPicture?: (payload: {
+    softimagePath: string;
+    dataUrl: string;
+  }) => Promise<{ ok: boolean; path?: string; bytes?: number; error?: string }>;
+}
+
+export function afterimageBridge(): AfterimageBridge | null {
+  if (typeof window === 'undefined') return null;
+  const b = (window as any).afterimage as AfterimageBridge | undefined;
+  return b?.writeRenderPicture ? b : null;
+}
+
+/**
+ * Softimage OutputDir write — silent; never opens the plate (Pick an app / ms-link).
+ * Returns absolute disk paths written, or [] when bridge absent (browser / headless).
+ */
+export async function autoWriteSoftimagePictures(
+  files: RenderedFile[],
+): Promise<{ written: string[]; root: string | null }> {
+  const bridge = afterimageBridge();
+  if (!bridge?.writeRenderPicture) return { written: [], root: null };
+  const root = (await bridge.getRenderPicturesRoot?.()) ?? null;
+  const written: string[] = [];
+  for (const f of files) {
+    if (isMovieOutputFormat(f.format)) continue;
+    if (!f.dataUrl?.startsWith('data:')) continue;
+    try {
+      const res = await bridge.writeRenderPicture({ softimagePath: f.path, dataUrl: f.dataUrl });
+      if (res?.ok && res.path) written.push(res.path);
+    } catch {
+      /* keep Softimage virtual __siRenderPictures even if disk write fails */
+    }
+  }
+  return { written, root };
 }
 
 export interface SceneRenderResult {
@@ -53,6 +97,8 @@ export interface SceneRenderResult {
   passNames: string[];
   mode: 'still' | 'sequence';
   outputDir: string;
+  /** Softimage-faithful disk paths written under Render_Pictures (Electron). */
+  diskPaths?: string[];
   error?: string;
 }
 
@@ -438,7 +484,8 @@ function storePicture(path: string, file: RenderedFile) {
  * Render Softimage Pass picture output (still or sequence).
  * Dump: per-frame plates → Render_Pictures/[Pass]_[Framebuffer].FRAME.pic (Format=pic).
  * MovieCreate / movie formatOverride → AfterImage .mp4 sidecar (product; no .mov) beside plates.
- * Still → download + preview. Sequence → virtual Render_Pictures + capped Flipbook (avoid OOM).
+ * Still → Softimage auto-write Render_Pictures + in-app preview (no Save As / OpenWith).
+ * Sequence → virtual + disk plates + capped Flipbook (avoid OOM).
  */
 export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): SceneRenderResult {
   const passList = resolvePasses(app, opts.passes);
@@ -597,10 +644,27 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
   (app as any).lastRender = result;
   (globalThis as any).__siLastRender = result;
 
+  // Softimage: silent write to OutputDir\Render_Pictures — never Save As (#32770 PIC File) / never open .pic.
+  const wantDisk = opts.autoWriteDisk !== false && !!afterimageBridge();
+  const wantDownload = opts.download === true; // opt-in only (WR-MSLINK-01)
+  if (ok && wantDisk) {
+    // Fire-and-forget disk write; Softimage UI stays responsive. Result.diskPaths filled when settled.
+    void autoWriteSoftimagePictures(pictureFiles).then(({ written, root }) => {
+      result.diskPaths = written;
+      (app as any).lastRender = result;
+      (globalThis as any).__siLastRender = result;
+      if (written.length) {
+        app.logMsg('info', `Softimage Render_Pictures auto-write ${written.length} plate(s) → ${root ?? written[0]}`);
+      }
+    });
+  }
+
   if (ok && mode === 'still' && pictureFiles[0]) {
-    // Softimage path stays .pic in __siRenderPictures / ResolvedFilename; download leaf is .png for OS open.
-    const leaf = browserDownloadLeaf(pictureFiles[0].path, pictureFiles[0].dataUrl);
-    if (opts.download !== false) downloadDataUrl(pictureFiles[0].dataUrl, leaf);
+    // Softimage path stays .pic; explicit Export may download as .png (never default — Save As was the bug).
+    if (wantDownload) {
+      const leaf = browserDownloadLeaf(pictureFiles[0].path, pictureFiles[0].dataUrl);
+      downloadDataUrl(pictureFiles[0].dataUrl, leaf);
+    }
     if (opts.openPreview !== false) previewStill(pictureFiles[0].dataUrl, pictureFiles[0].path, pictureFiles[0].format);
   } else if (ok && mode === 'sequence') {
     const name = (pictureFiles[0]?.path.split('/').pop() || 'pass').replace(/\.\d+\.[^.]+$/, '');
