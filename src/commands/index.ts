@@ -10,6 +10,7 @@ import { extractPolygons, meshEdges } from '../core/topology';
 import { color, num, bool } from '../core/params';
 import { Operator, construction } from '../core/scene';
 import type { MeshData } from '../core/geometry';
+import { ensureSoftimageDefaultScene } from '../core/softimageDefaultScene';
 
 class FrozenOperator extends Operator {
   constructor(readonly mesh: MeshData | null) { super('Frozen Geometry', 'geom', []); }
@@ -360,6 +361,8 @@ export function registerBuiltins(app: App) {
     delete (app as any).currentKeySet; delete (app as any).currentKeySetName; delete (app as any).keySets;
     app.undoStack = []; app.redoStack = []; app.select([]); app.compSel = null; app.setTool?.(null);
     app.events.emit('newscene');
+    // Softimage New Scene: Camera + light (+ sphere for recognizable still plates).
+    ensureSoftimageDefaultScene(app);
   } });
   app.register({ name: 'SetUserPref', label: 'Set User Preference', category: 'Preferences', args: [{ name: 'Name' }, { name: 'Value' }], undoable: false, execute(app, a) { if (a.Name === 'AutoInspect') app.autoInspect = !!a.Value; if (a.Name === 'AutoKey') app.autoKey = !!a.Value; } });
   app.register({ name: 'CreateLayer', label: 'Create Layer', category: 'Layer', args: [{ name: 'Name', default: 'Layer' }, { name: 'InputObjs', default: '' }], execute(app, a) { const l = app.scene.addLayer(a.Name || 'Layer'); for (const o of app.targets(a.InputObjs)) { o.layer = l; l.members.add(o); } return l; } });

@@ -88,7 +88,10 @@ export function viewManager(app: App, host: HTMLElement) {
   const hoverPoint = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: SI.highlight, size: SI.pointSize + 2, sizeAttenuation: false, depthTest: true })); hoverPoint.renderOrder = 15; scene.add(hoverPoint);
   const gizmo = new THREE.Group(); scene.add(gizmo);
   const toolPreview = new THREE.Group(); scene.add(toolPreview);
-  (window as any).__three = { scene, needs: () => { needs = true; } };
+  // Softimage still capture (sceneRender) needs module THREE on window — was missing → ambience-band "static".
+  (window as any).THREE = THREE;
+  // Placeholder until sync() is defined — captureFrameDataUrl calls syncNow before WebGL plate write.
+  (window as any).__three = { scene, needs: () => { needs = true; }, syncNow: () => { needs = true; } };
 
   const mk = (name: string, kind: 'ortho' | 'persp', pos: THREE.Vector3, up: THREE.Vector3): Viewport => {
     const cam: THREE.Camera = kind === 'ortho' ? new THREE.OrthographicCamera(-20, 20, 20, -20, -1000, 1000) : new THREE.PerspectiveCamera(DEFAULT_CAMERA_FOV, 1, 0.1, 5000);
@@ -118,6 +121,8 @@ export function viewManager(app: App, host: HTMLElement) {
   vps.push(mk('Camera', 'persp', new THREE.Vector3(...DEFAULT_CAMERA_POS), new THREE.Vector3(0, 1, 0)));
   vps.push(mk('Front', 'ortho', new THREE.Vector3(0, 0, 100), new THREE.Vector3(0, 1, 0)));
   vps.push(mk('Right', 'ortho', new THREE.Vector3(100, 0, 0), new THREE.Vector3(0, 1, 0)));
+  // Softimage still capture before first RAF — Camera viewport is Softimage default.
+  (window as any).__activeCamera = vps[1].camera;
   const setDisplay = (vp: Viewport, mode: string) => { vp.display = mode.toLowerCase().replace('textured decal', 'texture decal').replace('hidden line removal', 'hidden line'); vp.head.disp.textContent = DISPLAY_MODES.find(m => m.toLowerCase() === vp.display) ?? mode; needs = true; };
   // ---- camera history (camera-menu Undo/Redo, Undo Camera / Redo Camera keys) and the key-map view actions
   type CamState = { pos: THREE.Vector3; up: THREE.Vector3; tgt: THREE.Vector3; zoom: number; name: string };
@@ -132,7 +137,7 @@ export function viewManager(app: App, host: HTMLElement) {
   const black = () => scene.background instanceof THREE.Color && (scene.background as THREE.Color).getHex() === 0;
   (app as any).symMirror = (o: X3DObject, kind: 'point' | 'edge' | 'polygon', items: (number | string)[]) => { const sm = symmetryMapOf(o, ((app as any).symPlane as any) ?? undefined); const mesh = o.primitive?.mesh(); if (!sm || !mesh) return []; return items.map(it => mirrorComponent(mesh, sm.map, kind, it)).filter((x): x is number | string => x !== null); };
   (window as any).__vm = {
-    active: () => vps[active], view: (name: string) => { const vp = vps[active]; camSnap(vp); switchView(vp, name); needs = true; }, zoom: (f: number) => zoomBy(vps[active], f), nudge: (dx: number, dy: number) => nudge(vps[active], dx, dy),
+    active: () => vps[active], viewports: () => vps, view: (name: string) => { const vp = vps[active]; camSnap(vp); switchView(vp, name); needs = true; }, zoom: (f: number) => zoomBy(vps[active], f), nudge: (dx: number, dy: number) => nudge(vps[active], dx, dy),
     undoCamera: () => camUndo(vps[active]), redoCamera: () => camRedo(vps[active]), toggleBackground: () => { scene.background = new THREE.Color(black() ? SI.background : 0x000000); needs = true; },
     manipSize: (f: number) => { gizmoPx = Math.max(20, Math.min(300, gizmoPx * f)); SI.transformSize = Math.round(gizmoPx * 30 / 70); needs = true; }, display: (mode: string) => { setDisplay(vps[active], mode); needs = true; }, displayOf: () => vps[active].display,
     cameraMenu: (label: string) => cameraMenu(vps[active], label), visibility: (label: string) => visibilityMenu(vps[active], label), flags: () => vps[active].flags, wireOnShaded: () => { const vp = vps[active]; vp.flags['Wire on Shaded'] = !vp.flags['Wire on Shaded']; needs = true; },
@@ -313,6 +318,7 @@ export function viewManager(app: App, host: HTMLElement) {
     syncHighlights(); syncToolPreview(); syncGizmo();
     needs = true;
   };
+  (window as any).__three = { scene, needs: () => { needs = true; }, syncNow: () => { sync(); } };
   /** "User Normals" property: per-point overrides blended into the shading normals (Modify > Component > Set User Normals). */
   const applyUserNormals = (o: X3DObject, m: THREE.Mesh, mesh: MeshData) => {
     const p = o.property('usernormals') as any; const map: Map<number, [number, number, number]> | undefined = p?.normals; const geo = m.geometry;

@@ -39,6 +39,25 @@ else notes.push('sceneRender encodePngRGBA present');
 if (!/writeExtensionFor/.test(core) || !/return 'pic'/.test(core))
   diffs.push('writeExtensionFor must keep Softimage pic default');
 else notes.push('writeExtensionFor keeps Softimage .pic');
+// 1.0.28: WebGL capture must use module THREE (window.THREE was never set → ambience static)
+if (!/import \* as THREE from ['"]three['"]/.test(core))
+  diffs.push('sceneRender must import three for WebGL still capture (fix ambience-band static)');
+else notes.push('sceneRender imports three for WebGL capture');
+if (!/softimageDefaultSphereTris|collectSceneTris/.test(core))
+  diffs.push('softwareFrameDataUrl must rasterize Softimage sphere/mesh (not ambience bands only)');
+else notes.push('softwareFrameDataUrl rasterizes Softimage sphere/mesh');
+if (/const band = \(\(x \+ frame \* 3 \+ objs\) % 64\)/.test(core))
+  diffs.push('softwareFrameDataUrl still paints ambience bands (static / no sphere)');
+else notes.push('ambience-band static fallback removed');
+const vm = fs.readFileSync(path.join(root, 'src/ui/viewManager.ts'), 'utf8');
+if (!/\.THREE\s*=\s*THREE/.test(vm) || !/syncNow/.test(vm))
+  diffs.push('viewManager must expose window.THREE and __three.syncNow for still capture');
+else notes.push('viewManager exposes THREE + syncNow for still capture');
+const defScene = fs.existsSync(path.join(root, 'src/core/softimageDefaultScene.ts'))
+  ? fs.readFileSync(path.join(root, 'src/core/softimageDefaultScene.ts'), 'utf8') : '';
+if (!/ensureSoftimageDefaultScene/.test(defScene) || !/sphere/.test(defScene) || !/Camera/.test(defScene))
+  diffs.push('softimageDefaultScene missing Camera/light/sphere seed');
+else notes.push('softimageDefaultScene seeds Camera + light + sphere');
 if (!/resolveSoftimageMoviePath/.test(core))
   diffs.push('sceneRender missing Softimage MovieFileName → .mp4 path helper');
 else notes.push('sceneRender resolveSoftimageMoviePath present');
