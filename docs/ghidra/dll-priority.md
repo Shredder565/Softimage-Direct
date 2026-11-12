@@ -38,3 +38,5 @@ Generated from softimage-pc string hunts under `Application\` (449 binaries).
 |-----|-----|------|
 | `Application\Plugins\FBXXSI.64.dll` | CMD-01a | [cmd-01a-fbx.md](./cmd-01a-fbx.md) |
 | `Application\bin\xsiutils.dll` | CMD-01b | [cmd-01b-sdk-helpers.md](./cmd-01b-sdk-helpers.md) (`XSIUtils.Translate`; imports only for the rest) |
+| `Application\bin\shadertasks.dll` | CMD-01c | [cmd-01c-texture-layers.md](./cmd-01c-texture-layers.md) (texture layer tasks; pop-up tasks still open) |
+| `Application\bin\shaderhelper.dll` | CMD-01c | same note (layer order, insert, move and suitability helpers) |
