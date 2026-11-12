@@ -37,3 +37,4 @@ Generated from softimage-pc string hunts under `Application\` (449 binaries).
 | DLL | Row | Note |
 |-----|-----|------|
 | `Application\Plugins\FBXXSI.64.dll` | CMD-01a | [cmd-01a-fbx.md](./cmd-01a-fbx.md) |
+| `Application\bin\xsiutils.dll` | CMD-01b | [cmd-01b-sdk-helpers.md](./cmd-01b-sdk-helpers.md) (`XSIUtils.Translate`; imports only for the rest) |
