@@ -31,3 +31,9 @@ Generated from softimage-pc string hunts under `Application\` (449 binaries).
 3. `mohelper.dll` DAT_* for bevel collide
 4. `topologyop.dll` PolyReduce cost helpers rename
 5. Envelope / ApplyFlexEnv Mode constants
+
+## Opened by the full-clone loop
+
+| DLL | Row | Note |
+|-----|-----|------|
+| `Application\Plugins\FBXXSI.64.dll` | CMD-01a | [cmd-01a-fbx.md](./cmd-01a-fbx.md) |
