@@ -17,6 +17,7 @@ import { registerIceModuleCommands, iceModuleAudit } from './commands/iceModule'
 import { registerHairModuleCommands, hairModuleAudit, hairApplySmoke } from './commands/hairModule';
 import { registerSimulateModuleCommands, simulateModuleAudit } from './commands/simulateModule';
 import { registerFaceRobotModuleCommands, faceRobotModuleAudit } from './commands/faceRobotModule';
+import { registerSimpleProperties, anchorMenuItems, runAnchorMenuItem } from './commands/simpleProperties';
 import { registerCrowdFxModuleCommands, crowdFxModuleAudit } from './commands/crowdFxModule';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
@@ -109,6 +110,8 @@ registerSimulateModuleCommands(app);
 registerFaceRobotModuleCommands(app);
 registerCrowdFxModuleCommands(app);
 registerToolbarCommands(app);
+registerSimpleProperties(app);
+(window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);
 (window as any).__siMessage = siMessage; (window as any).Application = app; (window as any).__runLine = (t: string) => runScriptLine(app, t); (window as any).__menuStatus = (m?: string) => menuStatus(app, m); (window as any).__runMenu = (m: string, p: string, l: string) => runMenuPath(app, m, p, l); (window as any).__getEnableParity = () => getEnableParity(app); // scripting hook: Application.run('CreatePrim', {PresetObj:'Cube'})

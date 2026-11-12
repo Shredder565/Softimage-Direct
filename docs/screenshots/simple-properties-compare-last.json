@@ -1,0 +1,238 @@
+{
+  "ok": true,
+  "diffs": [],
+  "r": {
+    "items": [
+      {
+        "anchor": "siMenuTbGetPropertyPSetID",
+        "label": "CustomColor"
+      },
+      {
+        "anchor": "siMenuTbGetPropertyPSetID",
+        "label": "TextProp"
+      }
+    ],
+    "none": {
+      "CustomColor": {
+        "result": null,
+        "box": [
+          "Please select something and try again"
+        ],
+        "undoGrew": 0,
+        "added": 0
+      },
+      "TextProp": {
+        "result": null,
+        "box": [
+          "Please select something and try again"
+        ],
+        "undoGrew": 0,
+        "added": 0
+      }
+    },
+    "boxesClosed": true,
+    "menu": {
+      "CustomColor": {
+        "prop": {
+          "name": "CustomColor",
+          "type": "CustomColor",
+          "kind": "property",
+          "help": "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/property8539.htm",
+          "layout": [
+            {
+              "param": "Color_R",
+              "label": "Color",
+              "control": "rgba"
+            }
+          ],
+          "params": [
+            {
+              "name": "Color_R",
+              "type": "double",
+              "value": 0,
+              "min": 0,
+              "max": 1,
+              "uimin": 0,
+              "uimax": 1,
+              "animatable": true
+            },
+            {
+              "name": "Color_G",
+              "type": "double",
+              "value": 0,
+              "min": 0,
+              "max": 1,
+              "uimin": 0,
+              "uimax": 1,
+              "animatable": true
+            },
+            {
+              "name": "Color_B",
+              "type": "double",
+              "value": 0,
+              "min": 0,
+              "max": 1,
+              "uimin": 0,
+              "uimax": 1,
+              "animatable": true
+            },
+            {
+              "name": "Color_A",
+              "type": "double",
+              "value": 0,
+              "min": 0,
+              "max": 1,
+              "uimin": 0,
+              "uimax": 1,
+              "animatable": true
+            }
+          ]
+        },
+        "onFirst": true,
+        "onSecond": false,
+        "parent": "boxA",
+        "box": 0,
+        "inspected": true,
+        "rowLabel": "Color",
+        "hasSwatch": true,
+        "hasAlpha": true,
+        "textareaHeight": null,
+        "channelRows": 0
+      },
+      "TextProp": {
+        "prop": {
+          "name": "TextProp",
+          "type": "TextProp",
+          "kind": "property",
+          "help": "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/property8541.htm",
+          "layout": [
+            {
+              "param": "Text",
+              "control": "multiline",
+              "height": 275,
+              "opts": [
+                "NoLabel"
+              ]
+            }
+          ],
+          "params": [
+            {
+              "name": "Text",
+              "type": "string",
+              "value": "",
+              "animatable": false
+            }
+          ]
+        },
+        "onFirst": true,
+        "onSecond": false,
+        "parent": "boxA",
+        "box": 0,
+        "inspected": true,
+        "rowLabel": null,
+        "hasSwatch": false,
+        "hasAlpha": false,
+        "textareaHeight": 275,
+        "channelRows": 0
+      }
+    },
+    "clamp": [
+      1,
+      0,
+      0.25,
+      0.5
+    ],
+    "text": "line one\nline two",
+    "undo": {
+      "had": true,
+      "after": false
+    },
+    "addProp": {
+      "CustomColor": {
+        "prop": {
+          "name": "CustomColor",
+          "type": "CustomColor",
+          "kind": "property",
+          "help": "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/property8539.htm",
+          "layout": [
+            {
+              "param": "Color_R",
+              "label": "Color",
+              "control": "rgba"
+            }
+          ],
+          "params": [
+            {
+              "name": "Color_R",
+              "type": "double",
+              "value": 0,
+              "min": 0,
+              "max": 1,
+              "uimin": 0,
+              "uimax": 1,
+              "animatable": true
+            },
+            {
+              "name": "Color_G",
+              "type": "double",
+              "value": 0,
+              "min": 0,
+              "max": 1,
+              "uimin": 0,
+              "uimax": 1,
+              "animatable": true
+            },
+            {
+              "name": "Color_B",
+              "type": "double",
+              "value": 0,
+              "min": 0,
+              "max": 1,
+              "uimin": 0,
+              "uimax": 1,
+              "animatable": true
+            },
+            {
+              "name": "Color_A",
+              "type": "double",
+              "value": 0,
+              "min": 0,
+              "max": 1,
+              "uimin": 0,
+              "uimax": 1,
+              "animatable": true
+            }
+          ]
+        },
+        "on": true
+      },
+      "TextProp": {
+        "prop": {
+          "name": "TextProp",
+          "type": "TextProp",
+          "kind": "property",
+          "help": "<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/property8541.htm",
+          "layout": [
+            {
+              "param": "Text",
+              "control": "multiline",
+              "height": 275,
+              "opts": [
+                "NoLabel"
+              ]
+            }
+          ],
+          "params": [
+            {
+              "name": "Text",
+              "type": "string",
+              "value": "",
+              "animatable": false
+            }
+          ]
+        },
+        "on": true
+      }
+    }
+  }
+}
