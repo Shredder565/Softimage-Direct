@@ -81,6 +81,13 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 | | **Total** | **2950** | **1400** | **1550** | |
 <!-- END GENERATED: commands -->
 
+### P1 sub-rows (hand-maintained; survive regeneration)
+
+| Row | Parent | Batch | Commands | Status | Note |
+|-----|--------|-------|---------:|--------|------|
+| CMD-01a | CMD-01 | FBX import / export family (`FBXXSI.64.dll`): `FBXExport`, `FBXImport`, `FBXInjectInCopy`, `FBXInjectInOriginal`, `FBXGetPluginVersion`, `FBXGetSDKVersion`, 18 `FBXExport*` and 16 `FBXImport*` option commands | 40 | SPEC-PARTIAL | [cmd-01a-fbx.md](../ghidra/cmd-01a-fbx.md). Command surface, option storage and defaults are wire-ready. Missing: public-doc cross-check, unit table order, capability flags, XSIBATCH golden (Q1–Q9 in the note). File content is SYS-03 |
+| PROP-FBX | (new) | `ExportFBXOptions`, `ImportFBXOptions`, `FBXWarningDialogData` custom properties: PPG layout and event logic | 3 | TODO | parameter tables already in cmd-01a-fbx.md; found while doing CMD-01a |
+
 ## P2: operators and properties (to be generated)
 
 One row per `.spdl` family (995 files) once `tools/build_coverage_ledger.py` is extended
