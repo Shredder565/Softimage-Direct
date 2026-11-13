@@ -18,6 +18,7 @@ import { registerHairModuleCommands, hairModuleAudit, hairApplySmoke } from './c
 import { registerSimulateModuleCommands, simulateModuleAudit } from './commands/simulateModule';
 import { registerFaceRobotModuleCommands, faceRobotModuleAudit } from './commands/faceRobotModule';
 import { registerCrowdFxModuleCommands, crowdFxModuleAudit } from './commands/crowdFxModule';
+import { registerFbxCommands } from './commands/fbx';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -108,6 +109,7 @@ registerHairModuleCommands(app);
 registerSimulateModuleCommands(app);
 registerFaceRobotModuleCommands(app);
 registerCrowdFxModuleCommands(app);
+registerFbxCommands(app);
 registerToolbarCommands(app);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);
