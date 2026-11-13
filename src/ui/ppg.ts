@@ -185,7 +185,9 @@ export function propertyEditor(app: App, host: HTMLElement, target?: () => Node 
         } else if (nd.param) {
           if (nd.param === '__name' || nd.param === 'Name') continue;
           const p = set.params.find(x => x.name.toLowerCase() === nd.param!.toLowerCase());
-          if (p && p.name !== 'mute' && p.def.inspectable !== false && (!allow || allow.has(p.name.toLowerCase()))) { seen.add(p.name); host.appendChild(row(app, p, nd.opts, multiSet)); }
+          if (p && nd.control === 'rgba') { const i = set.params.indexOf(p); const ch = set.params.slice(i, i + 4); if (ch.length === 4) { ch.forEach(c => seen.add(c.name)); host.appendChild(rgbaRow(app, ch, nd.label ?? p.label)); } }
+          else if (p && nd.control === 'multiline') { seen.add(p.name); host.appendChild(multilineRow(app, p, nd)); }
+          else if (p && p.name !== 'mute' && p.def.inspectable !== false && (!allow || allow.has(p.name.toLowerCase()))) { seen.add(p.name); host.appendChild(row(app, p, nd.opts, multiSet)); }
           rowHost = null;
         } else if (nd.row !== undefined) { const r = document.createElement('div'); r.className = 'ppg-hrow'; walk(nd.items ?? [], r); host.appendChild(r); rowHost = null; }
         else {
@@ -387,6 +389,32 @@ function row(app: App, p: Parameter, opts: string[] = [], setter?: (p: Parameter
     const t = document.createElement('input'); t.type = 'text'; t.value = String(p.value ?? ''); t.disabled = !!d.readOnly; t.onchange = () => setP(t.value); ctl = t;
   }
   r.append(dot, label, ctl);
+  return r;
+}
+
+/** One colour control over four channel parameters (R, G, B, A): a swatch for RGB and a 0..1 field for alpha. */
+function rgbaRow(app: App, ch: Parameter[], labelText: string): HTMLElement {
+  const r = document.createElement('div'); r.className = 'ppg-row ppg-rgba'; r.dataset.param = ch[0].name; r.dataset.control = 'rgba';
+  const dot = document.createElement('div'); dot.className = 'anim-dot' + dotState(app, ch[0]);
+  const label = document.createElement('label'); label.textContent = labelText; label.title = ch.map(c => c.fullName).join(', ');
+  const wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;gap:6px;align-items:center';
+  const sw = document.createElement('input'); sw.type = 'color'; sw.className = 'ppg-rgba-swatch'; sw.value = rgbHex(ch.slice(0, 3).map(c => Number(c.value)));
+  sw.onchange = () => { const v = hexRgb(sw.value); v.forEach((x, i) => app.setParam(ch[i], x)); app.events.emit('scene'); };
+  const al = document.createElement('input'); al.type = 'text'; al.className = 'val ppg-rgba-alpha'; al.title = ch[3].fullName; al.value = fmtNum(ch[3].value); al.style.width = '48px';
+  al.onchange = () => { app.setParam(ch[3], Number(al.value)); al.value = fmtNum(ch[3].value); app.events.emit('scene'); };
+  wrap.append(sw, al); r.append(dot, label, wrap);
+  return r;
+}
+/** Multi-line string control with a fixed pixel height. */
+function multilineRow(app: App, p: Parameter, nd: LayoutNode): HTMLElement {
+  const lo = parseLayoutOpts(nd.opts);
+  const r = document.createElement('div'); r.className = 'ppg-row ppg-multiline' + (lo.noLabel ? ' no-label' : ''); r.dataset.param = p.name; r.dataset.control = 'multiline';
+  if (lo.noLabel) r.style.display = 'block';
+  const t = document.createElement('textarea'); t.value = String(p.value ?? ''); t.disabled = !!p.def.readOnly;
+  t.style.cssText = `box-sizing:border-box;width:100%;height:${nd.height ?? 60}px;resize:none`;
+  t.onchange = () => app.setParam(p, t.value);
+  if (lo.noLabel) r.append(t);
+  else { const dot = document.createElement('div'); dot.className = 'anim-dot'; dot.style.visibility = 'hidden'; const label = document.createElement('label'); label.textContent = nd.label ?? p.label; r.append(dot, label, t); }
   return r;
 }
 

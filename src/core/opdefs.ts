@@ -8,6 +8,9 @@ export interface LayoutNode {
   group?: string; row?: string; tab?: string; items?: LayoutNode[]; param?: string; opts?: string[];
   /** Softimage SPDL Button id (GenOpInputsButtonsDisplay) — text-only chrome, has_layout:false. */
   button?: string; label?: string; command?: string;
+  /** Control kind for a `param` node: `rgba` = one colour control over four consecutive channel parameters
+   *  starting at `param`; `multiline` = multi-line string control (`height` in pixels). `label` overrides the row label. */
+  control?: 'rgba' | 'multiline'; height?: number;
 }
 interface SiParam { sn: string; label: string; type: string; default: any; min?: number; max?: number; uimin?: number; uimax?: number; items?: [string, any][]; anim?: boolean; ro?: boolean; desc?: string }
 interface SiDef { type: string; name: string; spdl?: string | null; params: SiParam[]; layout?: LayoutNode[]; source?: string }
