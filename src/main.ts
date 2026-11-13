@@ -19,6 +19,7 @@ import { registerSimulateModuleCommands, simulateModuleAudit } from './commands/
 import { registerFaceRobotModuleCommands, faceRobotModuleAudit } from './commands/faceRobotModule';
 import { registerSimpleProperties, anchorMenuItems, runAnchorMenuItem } from './commands/simpleProperties';
 import { registerCrowdFxModuleCommands, crowdFxModuleAudit } from './commands/crowdFxModule';
+import { registerFbxCommands } from './commands/fbx';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -109,6 +110,7 @@ registerHairModuleCommands(app);
 registerSimulateModuleCommands(app);
 registerFaceRobotModuleCommands(app);
 registerCrowdFxModuleCommands(app);
+registerFbxCommands(app);
 registerToolbarCommands(app);
 registerSimpleProperties(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
