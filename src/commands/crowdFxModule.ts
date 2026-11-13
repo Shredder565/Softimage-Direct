@@ -435,20 +435,7 @@ export function registerCrowdFxModuleCommands(app: App) {
     },
   });
 
-  // ——— FBX scale factor helpers swept with CrowdFX actor I/O ———
-  ensure({
-    name: 'FBXExportScaleFactor',
-    label: 'FBXExportScaleFactor',
-    category: '',
-    args: [{ name: 'Factor', default: null }],
-    undoable: false,
-    execute(app, a) {
-      const A = app as any;
-      if (a.Factor != null) A.fbxExportScaleFactor = Number(a.Factor);
-      app.logMsg('info', `FBXExportScaleFactor=${A.fbxExportScaleFactor ?? a.Factor ?? ''}`);
-      return A.fbxExportScaleFactor ?? a.Factor ?? null;
-    },
-  });
+  // ——— FBX import scale factor helper swept with CrowdFX actor I/O (FBXExportScaleFactor lives in fbx.ts) ———
   ensure({
     name: 'FBXImportScaleFactor',
     label: 'FBXImportScaleFactor',
