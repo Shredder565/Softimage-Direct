@@ -638,6 +638,101 @@ Image", 194 "Apply to...", 195 to 198 "Reflection", "Transparency", "Diffuse",
 "Ambient", 199 "&Add", 200 "&Edit All", 106 "&More...", 128 "Disconnect",
 129 "Edit", and the texture names 152 to 168 ("&Wood" … "&Image").
 
+### F2. Binary facts for group F (CMD-01c-CNX pass, 2026-11-16)
+
+Static string and export tables of the DLLs below were searched; no function
+was read this pass, so this section adds names and tables, not step-by-step
+behaviour. Group F stays **SPEC-PARTIAL**.
+
+**Converter shaders** (`Application\bin\shaderhelper.dll`, one table of
+name → shader ProgID; exports `SISCFindPathThroughConversionShaders`,
+`SISCIsConversionShader`, `SISCCanConnectShader`, `SISCHelperConnectShader`,
+`SISCHelperDisconnectShader`). When `SIConnectShaderToCnxPoint` (and the two
+`SIApplyShaderToCnxPoint` commands through it, *inferred*) meets a source whose
+output type differs from the port type, the converter is looked up by the
+(from, to) type pair; the export name says a **path** through more than one
+converter may be used. Only these pairs exist:
+
+| From → to | Preset name | ProgID |
+|-----------|-------------|--------|
+| color → scalar | `Color_to_Scalar` | `Softimage.sib_color_to_scalar.1.0` |
+| color → vector | `Color_to_Vector` | `Softimage.sib_color_to_vector.1.0` |
+| color → boolean | `Color_to_Boolean` | `Softimage.sib_color_to_boolean.1.0` |
+| scalar → color | `Scalar_to_Color` | `Softimage.sib_scalar_to_color.1.0` |
+| scalar → boolean | `Scalar_to_Boolean` | `Softimage.sib_scalar_to_boolean.1.0` |
+| scalar → integer | `Scalar_to_Integer` | `Softimage.sib_scalar_to_integer.1.0` |
+| integer → scalar | `Integer_to_Scalar` | `Softimage.sib_integer_to_scalar.1.0` |
+| vector → color | `Vector_to_Color` | `Softimage.sib_vector_to_color.1.0` |
+| vector → scalar | `Vector_to_Scalar` | `Softimage.sib_vector_to_scalar.1.0` |
+| vector3 → vector2 | `Vector3_to_Vector2` | `SIUtilityShaders.Vector3ToVector2.1.0` |
+| vector3 → vector4 | `Vector3_to_Vector4` | `SIUtilityShaders.Vector3ToVector4.1.0` |
+| vector2 → color | `Vector2_to_Color` | `SIUtilityShaders.Vector2ToColor.1.0` |
+| vector2 → vector3 | `Vector2_to_Vector3` | `SIUtilityShaders.Vector2ToVector3.1.0` |
+| vector2 → vector4 | `Vector2_to_Vector4` | `SIUtilityShaders.Vector2ToVector4.1.0` |
+| vector2 → scalar | `Vector2_to_Scalar` | `SIUtilityShaders.Vector2ToScalar.1.0` |
+| vector4 → color | `Vector4_to_Color` | `SIUtilityShaders.Vector4ToColor.1.0` |
+| vector4 → vector2 | `Vector4_to_Vector2` | `SIUtilityShaders.Vector4ToVector2.1.0` |
+| vector4 → vector3 | `Vector4_to_Vector3` | `SIUtilityShaders.Vector4ToVector3.1.0` |
+| vector4 → scalar | `Vector4_to_Scalar` | `SIUtilityShaders.Vector4ToScalar.1.0` |
+| vector4 → quaternion | `Vector4_to_Quaternion` | `SIUtilityShaders.Vector4ToQuaternion.1.0` |
+| quaternion → vector4 | `Quaternion_to_Vector4` | `SIUtilityShaders.QuaternionToVector4.1.0` |
+| matrix4 → matrix3 | `Matrix4_to_Matrix3` | `SIUtilityShaders.Matrix4ToMatrix3.1.0` |
+| matrix3 → matrix4 | `Matrix3_to_Matrix4` | `SIUtilityShaders.Matrix3ToMatrix4.1.0` |
+
+There is no direct boolean → anything, integer → color or color → integer
+converter; such a connection needs a two-step path or fails (the script-side
+"nothing returned when no converter exists" of group F). An image clip source
+is wrapped in `Softimage.txt2d-image-explicit.1.0`, or
+`Softimage.txt2d-scalarimage-explicit.1.0` for a scalar port (*inferred* from
+the two ProgIDs stored next to the table).
+
+**Connection pop-up menu content** (same DLL, class `C3DShaderMenuHelper`,
+which also owns a "disconnect shaders" action). The menu is built from a
+token list; plain entries are preset paths under the shader preset root,
+entries starting with `!` are built-ins:
+
+| Token | Role (*inferred* from the name and the dictionary texts in group F) |
+|-------|------|
+| `!RemoveItem` | Disconnect (text 128) |
+| `!Separator` | separator line |
+| `!Blend` | blend the picked preset with what is connected |
+| `!Insert` | insert the picked preset before what is connected |
+| `!EditConversion` | edit the converter shader sitting on the port |
+| `!Clips` | sub-menu of image clips |
+| `!Sources` | sub-menu of image sources |
+| `!More` | "More…" (text 106): opens the preset browser |
+
+Preset entries, in table order; the per-type grouping is *inferred* from the
+names:
+
+| Port type | Presets offered |
+|-----------|-----------------|
+| scalar | `ScalarImage`, `Map_lookup_scalar`, `Color_Channels\Pick_channel`, `Surface\Incidence`, `Math\Change_range`, `Switch\Scalar_Boolean_Switch`, `Conversion\Color_to_Scalar`, `Conversion\Vector_to_Scalar`, `Conversion\Integer_to_Scalar`, `Math\Scalar_Math_Basic`, `Math\Scalar_Math_Unary`, `Math\Scalar_Math_Exponent` |
+| boolean | `Map_lookup_boolean`, `Math\Color_Math_Logic`, `Math\Scalar_Math_Logic`, `Math\Boolean_Math_Logic`, `Math\Boolean_negate` |
+| integer | `Map_lookup_integer`, `Conversion\Scalar_to_Integer` |
+| vector | `Map_lookup_vector`, `State\Vector_state` |
+| texture space | `texture_space_generators\Texture_space_generator`, `texture_space_controller\Texture_edit` |
+
+The colour-port list is the texture list of dictionary ids 152 to 168 already
+recorded above.
+
+**Task ProgIDs** (`Application\bin\shadertasks.dll`):
+`SI.3D.UIApplyShaderToCnxPointsTask` (`UIApplyShaderToCnxPoints`),
+`SI.3D.UIPresetPopUpMenuTask`, `SI.3D.CLSID_UITextureAssignmentTask`,
+`SI.3D.CLSID_UITextureAppendTask`. The last three are the candidates for
+`Texture Pop-up Menu` and `Modify Texture Pop-up Menu` (*inferred*; not
+matched). `propertytasks.dll` holds `SI.3D.ConnectShaderToCnxPoint_OverrideInstallTask`,
+the variant of the connect task used when a shader is connected onto an
+override.
+
+**Where the three `SI…CnxPoint` commands are not**: their scripting names and
+no `…ShaderToCnxPoint…` task ProgID other than the two above occur in
+`shadertasks`, `shaderhelper`, `propertytasks`, `optasks`, `tasks`,
+`siuitasks`, `materialmanager`, `rendertree`, `rendering`, `phencore`,
+`rendercore`, `props`, `metashader`, `mentalray`, `sicommands`. Commands of
+this kind are bound by CLSID in the command registry, not by name, so the next
+pass should take the CLSID from the registry dump and search for it (Q14).
+
 ## Enable conditions and errors
 
 No enable condition is registered for any of the 27. Script commands do not
@@ -662,6 +757,6 @@ result codes returned on the 69 and 72 paths were not recovered.
 | Q11 | Fate of ports and connections when a layer is removed from one of several containers | golden |
 | Q12 | `AddClipTextureLayer` with a non-clip argument, and `AddPresetTextureLayer` with containers from two materials: script error or logged message? | golden |
 | Q13 | `BlendClipsInTextureLayers` with two or more clips | golden |
-| Q14 | Meaning of `Value` on `SIApplyShaderToCnxPoint[2]`; which DLL implements them and `SIConnectShaderToCnxPoint`; converter selection rules | REA string hunt for the task ProgIDs across `Application\bin` |
-| Q15 | `UIApplyShaderToCnxPoints` and the two pop-up menu commands: menu contents, what they run on selection | `shadertasks.dll`: three pop-up menu call sites at `0x18003a280`, `0x18003b8a0`, `0x18003df30` were seen but not matched to commands |
+| Q14 | *Partly closed 2026-11-16 (section F2): the converter table and the image wrappers are recorded.* Still open: meaning of `Value` on `SIApplyShaderToCnxPoint[2]`; which DLL implements the three commands (15 DLLs ruled out by name search, listed in F2); whether multi-step converter paths are really built | take the command CLSIDs from the registry dump (`cmdreg` / `commands_full` source) and byte-search `Application\bin` for them; then read `SISCFindPathThroughConversionShaders` in `shaderhelper.dll` |
+| Q15 | *Partly closed 2026-11-16 (section F2): menu tokens, preset lists and task ProgIDs are recorded.* Still open: which task serves which of the two pop-up commands, the exact item order per port type, and what each built-in item runs (`Mode` handling, `X` / `Y` of `UIApplyShaderToCnxPoints`) | read the three pop-up call sites in `shadertasks.dll` (`0x18003a280`, `0x18003b8a0`, `0x18003df30`) and `C3DShaderMenuHelper` in `shaderhelper.dll` |
 | Q16 | Message 413 says integer ports can take a layer port; the type test read from `0x1800a4cd0` accepts only 0, 2, 4, 10. Which is right? | golden: `AddTextureLayerPorts` on an integer shader parameter |
