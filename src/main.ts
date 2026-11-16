@@ -21,6 +21,7 @@ import { registerSimpleProperties, anchorMenuItems, runAnchorMenuItem } from './
 import { registerCrowdFxModuleCommands, crowdFxModuleAudit } from './commands/crowdFxModule';
 import { registerFbxCommands } from './commands/fbx';
 import { registerSdkHelperCommands } from './commands/sdkHelpers';
+import { registerTextureLayerCommands } from './commands/textureLayers';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -115,6 +116,7 @@ registerFbxCommands(app);
 registerToolbarCommands(app);
 registerSimpleProperties(app);
 registerSdkHelperCommands(app);
+registerTextureLayerCommands(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);
