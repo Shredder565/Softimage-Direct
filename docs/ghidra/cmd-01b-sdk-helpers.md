@@ -589,6 +589,6 @@ otherwise adds the property to the **first** selected object and inspects it.
 | Q7 | File enumeration order for `FindFilesInFolder` | XSIBATCH golden on a fixed folder |
 | Q8 | `spdlcheck.exe` output format beyond the "Compilation succeeded" prefix | run the tool on a shipped SPDL (headless, read-only) |
 | Q9 | `PackageAddon` default destination: is the missing separator real? | XSIBATCH golden with an empty `DestinationPath` |
-| Q10 | Detail and description file names and format, from `GetAddonDocHelper` (`Addons\sdkui\Application\Plugins\AddonDoc.js`) and `WizardHelper` (`…\SDKWizards.js`) | read those two scripts; they are a separate batch |
+| Q10 | **Closed 2026-11-16** ([cmd-01-addondoc-wizardhelper.md](./cmd-01-addondoc-wizardhelper.md)): detail file `netview_<N>.xml` (root `xsi_file`, `type="AddonInfo"`, `xsi_version`, `syntax_version="1.0"`, one child element per key, no escaping), description file `netview_<N>.txt` (plain text); `<N>` is the path text after the first `\Addons\` | - |
 
 No XSIBATCH golden was run for this row.

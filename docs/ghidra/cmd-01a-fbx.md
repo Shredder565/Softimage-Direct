@@ -118,7 +118,7 @@ values: 11 bool, 4 float, 3 int4, 8 string):
 | UseMatrixFromBindPose | bool | false |
 | LoadMode | int4 | 2 |
 | Automatic | bool | true |
-| FileScaleFactor | float | computed at definition time (Q5) |
+| FileScaleFactor | float | 1.0 (the scale factor of the FBX centimetre unit); read-only + persistable (capabilities 6), every other parameter is persistable only (4) |
 | MasterScale | float | 1.0 |
 | MasterUnitIndex | int4 | index of centimetres; one capability flag set |
 | ImportCameras | bool | true |
@@ -127,14 +127,15 @@ values: 11 bool, 4 float, 3 int4, 8 string):
 | ImportAnimation | bool | true |
 | ShowWarningDialog | bool | true |
 | ResamplingRate | float | 30.0 |
-| ConstantKeyReducer, KeyReducer, KeySync, KeysOnFrame, UnRoll, UnRollPath, Character | bool | not read (Q5) |
-| KeyReducerPrecision, UnRollQuality | float | not read (Q5) |
+| ConstantKeyReducer, KeyReducer, KeySync, KeysOnFrame, UnRoll, UnRollPath | bool | no value is written after definition: false *(inferred: type zero)*. Definition order is ConstantKeyReducer, KeyReducer, KeyReducerPrecision, KeySync, KeysOnFrame, UnRoll, UnRollQuality, UnRollPath |
+| KeyReducerPrecision, UnRollQuality | float | no value written: 0.0 *(inferred)* |
 | ImportSkelsAsNulls | bool | true |
 | KeepXsiEffectors | bool | true |
 | ImportSkins | bool | true |
 | ForceWeightNormalize | bool | false |
+| Character | bool | no value written: false *(inferred)* |
 | ProtectExpressionFCurve | bool | false |
-| NameSpaceReplacement | string | not read (Q5) |
+| NameSpaceReplacement | string | no value written: empty string *(inferred)* |
 | ImportFilename | string | "" |
 | Take | int4 | 1 |
 | Info | int4 | 0 |
@@ -171,7 +172,35 @@ The unit commands use the FBX SDK 2015.0 table of 9 predefined
 `FbxSystemUnit` values, indexed 0..8, and compare the argument
 case-insensitively against each unit's plural name as returned by the FBX SDK
 (`GetScaleFactorAsString_Plurial`). The table and the names live in the FBX
-SDK, not in this plug-in; their order was not read (Q2).
+SDK (`Application\bin\libfbxsdk.dll`, imported symbols `sPredefinedUnits`,
+`cm`), not in this plug-in.
+
+Unit facts read from `libfbxsdk.dll` (2026-11-16, static data and string
+table; scale factor = centimetres per unit, multiplier 1.0 for all):
+
+| Unit constant | Scale factor | Plural name (what the commands match and return) |
+|---------------|-------------:|--------------------------------------------------|
+| mm | 0.1 | `Millimeters` |
+| dm | 10.0 | `Decimeters` |
+| cm | 1.0 | `Centimeters` |
+| m | 100.0 | `Meters` |
+| km | 100000.0 | `Kilometers` |
+| Inch | 2.54 | `Inches` |
+| Foot | 30.48 | `Feet` |
+| Mile | 160934.4 | `Miles` |
+| Yard | 91.44 | `Yards` |
+
+A unit that matches none of these is named `Custom unit` by the SDK. The
+conversion factor used for `MasterScale` is, per the public SDK semantics,
+(source scale factor) / (target scale factor): e.g. centimetres to `Meters`
+gives 0.01 *(inferred)*.
+
+The rows above are in the order the nine constants are laid out in the SDK
+(mm, dm, cm, m, km, Inch, Foot, Mile, Yard). The SDK's name lookup tests them
+in a different order (mm, cm, m, km, Inch, Foot, Yard, Mile, dm). Which of the
+two is the order of the 0..8 table behind `MasterUnitIndex` was **not**
+established (the table is filled at load time, Q2), so the wire should key on
+names and treat the stored index as opaque until a golden shows it.
 
 Reading the stored index: if it is outside 0..8 it is replaced by the index of
 centimetres and written back before use.
@@ -341,7 +370,7 @@ All: one argument, empty default, get/set convention, target `ImportFBXOptions`.
 | `FBXImportKeepXSIEffectors` | State | bool | KeepXsiEffectors | true |
 | `FBXImportForceNormEnvelope` | State | bool | ForceWeightNormalize | false |
 | `FBXImportProtectExprDrivenFC` | State | bool | ProtectExpressionFCurve | false |
-| `FBXImportNamespaceReplacement` | Regex | string | NameSpaceReplacement | Q5 |
+| `FBXImportNamespaceReplacement` | Regex | string | NameSpaceReplacement | `""` *(inferred)* |
 | `FBXImportUnit` | Unit | string | MasterUnitIndex (+ MasterScale) | centimetres |
 | `FBXImportMode` | Mode | string | LoadMode | 2 |
 
@@ -389,19 +418,27 @@ Special cases (B):
 - **Q1** Public command reference pages for this family were not consulted
   (no local docs; online fetch unavailable in this run). Cross-check
   descriptions and any documented value lists next run.
-- **Q2** Order and plural names of the 9 FBX SDK predefined units (expected
-  from the public FBX SDK: millimetres, decimetres, centimetres, metres,
-  kilometres, inches, feet, yards, miles in some order). Needs golden 4 or a
-  read of the FBX SDK library.
+- **Q2** *Partly closed 2026-11-16.* Plural names and scale factors of the 9
+  predefined units are in the Units section (read from `libfbxsdk.dll`).
+  Still open: the index order of the 0..8 table (`sPredefinedUnits`, filled
+  at load time); candidates are the layout order and the name-lookup order
+  given there. Needs golden 4 (`GetValue` of `MasterUnitIndex` after each
+  `FBXExportUnit`) or the SDK's static initialiser.
 - **Q3** Which `siCapabilities` flag the plug-in sets on `MasterUnitIndex`,
   `ConvertImageFormat`, `ImageFormat`, `GroupToCache`, and the flag and
   polarity changed by `FBXExportEmbedMedias`. The values were not recoverable
   from the pseudo-code; needs instruction-level reading or a parameter
   capability dump.
-- **Q4** Text returned by `FBXExportGroupAsCache` on the get path (integer
-  parameter converted to string).
-- **Q5** Defaults of the import parameters marked "not read", and of
-  `FileScaleFactor`.
+- **Q4** *Closed as inferred 2026-11-16.* The get path returns the stored
+  integer in its plain decimal text form (`"0"`, `"1"`, …) *(inferred from the
+  value-to-text conversion used by all option reads; no golden)*.
+- **Q5** *Closed 2026-11-16* (`ImportFBXOptions_Define`, export ordinal 104,
+  image address `0x18008c110`): `FileScaleFactor` is 1.0 and read-only; the
+  nine key-reducer / unroll parameters, `Character` and
+  `NameSpaceReplacement` get no explicit value (type zero / empty,
+  *inferred*). The UI name of `ImportMaterialsAndTextures` is
+  "Import Materials And Textures"; the grid parameter is named `Grid`. The
+  capability flag set on `MasterUnitIndex` is still Q3.
 - **Q6** Directory in which `fbxxsi.log` is written.
 - **Q7** Effect of take index −2 (omitted `TakeNb` with its registered default)
   versus −1 in the importer.
