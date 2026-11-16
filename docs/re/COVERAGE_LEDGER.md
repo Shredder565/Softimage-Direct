@@ -37,48 +37,48 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 | CMD-01 | (uncategorised) | 448 | 152 | 296 | TODO |
 | CMD-02 | Custom | 413 | 174 | 239 | TODO |
 | CMD-03 | Viewing | 191 | 85 | 106 | TODO |
-| CMD-04 | Selection | 108 | 22 | 86 | TODO |
-| CMD-05 | Simulation | 118 | 34 | 84 | TODO |
-| CMD-06 | File | 110 | 27 | 83 | TODO |
-| CMD-07 | Modeling | 274 | 198 | 76 | TODO |
-| CMD-08 | Animation | 186 | 120 | 66 | TODO |
-| CMD-09 | Edit | 117 | 53 | 64 | TODO |
-| CMD-10 | Rendering | 175 | 122 | 53 | TODO |
-| CMD-11 | Property | 125 | 79 | 46 | TODO |
-| CMD-12 | Animation Mixer | 113 | 75 | 38 | TODO |
-| CMD-13 | Texturing | 75 | 46 | 29 | TODO |
-| CMD-14 | Character Rigging | 31 | 4 | 27 | TODO |
-| CMD-15 | Manipulation | 51 | 29 | 22 | TODO |
-| CMD-16 | Navigation | 22 | 1 | 21 | TODO |
-| CMD-17 | Deformation | 55 | 38 | 17 | TODO |
-| CMD-18 | Group | 16 | 3 | 13 | TODO |
-| CMD-19 | Primitive | 131 | 120 | 11 | TODO |
-| CMD-20 | Layer | 20 | 11 | 9 | TODO |
-| CMD-21 | General | 10 | 2 | 8 | TODO |
-| CMD-22 | Camera Sequencer | 7 | 0 | 7 | TODO |
-| CMD-23 | Cluster | 16 | 9 | 7 | TODO |
-| CMD-24 | Constraint | 27 | 20 | 7 | TODO |
-| CMD-25 | Transport Control | 23 | 16 | 7 | TODO |
-| CMD-26 | Drawing | 14 | 8 | 6 | TODO |
-| CMD-27 | Source | 6 | 0 | 6 | TODO |
-| CMD-28 | Animation mixer | 5 | 0 | 5 | TODO |
-| CMD-29 | Views | 5 | 0 | 5 | TODO |
-| CMD-30 | file | 5 | 0 | 5 | TODO |
-| CMD-31 | Scripting | 4 | 0 | 4 | TODO |
-| CMD-32 | Customization | 2 | 0 | 2 | TODO |
-| CMD-33 | Paint | 7 | 5 | 2 | TODO |
-| CMD-34 | Preferences | 2 | 0 | 2 | TODO |
-| CMD-35 | Transform | 5 | 3 | 2 | TODO |
-| CMD-36 | Action | 1 | 0 | 1 | TODO |
-| CMD-37 | Camera | 1 | 0 | 1 | TODO |
-| CMD-38 | VertexColor | 1 | 0 | 1 | TODO |
-| CMD-39 | Cache | 2 | 2 | 0 | AUDIT |
-| CMD-40 | Devices | 5 | 5 | 0 | AUDIT |
-| CMD-41 | Generator | 1 | 1 | 0 | AUDIT |
-| CMD-42 | ICE | 5 | 5 | 0 | AUDIT |
+| CMD-04 | Simulation | 118 | 34 | 84 | TODO |
+| CMD-05 | File | 110 | 27 | 83 | TODO |
+| CMD-06 | Modeling | 274 | 198 | 76 | TODO |
+| CMD-07 | Animation | 186 | 120 | 66 | TODO |
+| CMD-08 | Edit | 117 | 53 | 64 | TODO |
+| CMD-09 | Rendering | 175 | 122 | 53 | TODO |
+| CMD-10 | Property | 125 | 79 | 46 | TODO |
+| CMD-11 | Animation Mixer | 113 | 75 | 38 | TODO |
+| CMD-12 | Texturing | 75 | 46 | 29 | TODO |
+| CMD-13 | Character Rigging | 31 | 4 | 27 | TODO |
+| CMD-14 | Manipulation | 51 | 29 | 22 | TODO |
+| CMD-15 | Navigation | 22 | 1 | 21 | TODO |
+| CMD-16 | Deformation | 55 | 38 | 17 | TODO |
+| CMD-17 | Primitive | 131 | 120 | 11 | TODO |
+| CMD-18 | Selection | 108 | 97 | 11 | TODO |
+| CMD-19 | General | 10 | 2 | 8 | TODO |
+| CMD-20 | Camera Sequencer | 7 | 0 | 7 | TODO |
+| CMD-21 | Cluster | 16 | 9 | 7 | TODO |
+| CMD-22 | Constraint | 27 | 20 | 7 | TODO |
+| CMD-23 | Transport Control | 23 | 16 | 7 | TODO |
+| CMD-24 | Drawing | 14 | 8 | 6 | TODO |
+| CMD-25 | Source | 6 | 0 | 6 | TODO |
+| CMD-26 | Animation mixer | 5 | 0 | 5 | TODO |
+| CMD-27 | Views | 5 | 0 | 5 | TODO |
+| CMD-28 | file | 5 | 0 | 5 | TODO |
+| CMD-29 | Scripting | 4 | 0 | 4 | TODO |
+| CMD-30 | Customization | 2 | 0 | 2 | TODO |
+| CMD-31 | Group | 16 | 14 | 2 | TODO |
+| CMD-32 | Paint | 7 | 5 | 2 | TODO |
+| CMD-33 | Preferences | 2 | 0 | 2 | TODO |
+| CMD-34 | Transform | 5 | 3 | 2 | TODO |
+| CMD-35 | Action | 1 | 0 | 1 | TODO |
+| CMD-36 | Camera | 1 | 0 | 1 | TODO |
+| CMD-37 | VertexColor | 1 | 0 | 1 | TODO |
+| CMD-38 | Cache | 2 | 2 | 0 | AUDIT |
+| CMD-39 | Devices | 5 | 5 | 0 | AUDIT |
+| CMD-40 | Generator | 1 | 1 | 0 | AUDIT |
+| CMD-41 | ICE | 5 | 5 | 0 | AUDIT |
+| CMD-42 | Layer | 20 | 20 | 0 | AUDIT |
 | CMD-43 | Operator | 11 | 11 | 0 | AUDIT |
 | CMD-44 | Toolbar | 6 | 6 | 0 | AUDIT |
-| | **Total** | **2950** | **1486** | **1464** | |
+| | **Total** | **2950** | **1581** | **1369** | |
 <!-- END GENERATED: commands -->
 
 ### P1 sub-rows (hand-maintained; survive regeneration)
@@ -94,6 +94,7 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 | PROP-SIMPLE | (new) | `CustomColor`, `TextProp` custom properties and their Get > Property menu items (`SimpleProperties.js`) | 2 | WIRE-PARTIAL | parameters, layout, menu behaviour in cmd-01b-sdk-helpers.md; found while doing CMD-01b. Wired in `src/commands/simpleProperties.ts` (+ `rgba` / `multiline` PPG controls, `src/ui/msgBox.ts`); `tools/compare_simple_properties.mjs` passes against the spec tables. Not WIRED because: (1) no XSIBATCH golden in `data/dump/` for either property; (2) the two menu items are registered on `siMenuTbGetPropertyPSetID` and runnable but **not drawn** in Get > Property: where does this anchor insert relative to the PE items Annotation … Transform Setup, and in which order do `CustomColor` / `TextProp` appear? (3) what name does the menu item give the new property (type name assumed), and does it also select it? (4) caption and buttons of the id-1174 message box; (5) appearance of the Softimage colour-with-alpha control (wired as swatch + alpha field) |
 | CMD-01-ADDONDOC | CMD-01 | `GetAddonDocHelper`, `WizardHelper` helper objects (`Addons\sdkui\Application\Plugins\AddonDoc.js`, `SDKWizards.js`) used by `PackageAddon` / `PackageAddonUI` | 2 | TODO | closes Q10 of CMD-01b |
 | TOOL-01 | (new) | `tools/parse_dict.py` drops records: it does not skip the 4-byte padding after each string (132 of 254 read from `en/XSISCRIPTS.dict`). Fix, then regenerate anything built from dictionaries | 1 | TODO | found while doing CMD-01b; not fixed there so the PR stays docs-only |
+| CMD-04a | Selection, Group, Layer | **Inferred batch, no analyst note.** Selection list (`AddToSelection`, `RemoveFromSelection`, `ToggleSelection`, `SetAndToggleSelection`, `SelectBranch`, `SelectTree`, `SelectModel`, `SelectChain`, `SelectMembers`, `SelectNeighborObj`, `SelectAllUsingFilter`, `DeselectAllUsingFilter`), filters and tools (`SelectFilter`, `SetSelFilter`, 5 `Select…Filter`, 4 `Set…SelectionFilter`, `ToggleObjectComponentSelectionFilter`, `Cycle Selection Mode`, 5 `Activate…SelToolWithNoObjStateChange`), components (`GrowSelection`, `ShrinkSelection`, `SelectAdjacent`, `ConvertSelection[To…]`, `SelectAllConnectedComponents`, `SelectNSidedPolygons`, `SelectGeometryComponents`, `GetNeighborSubcomponents`, 6 loop commands, `SelectPolygonOutline`), `InfoSelection`, `InfoScene`, 11 group and 9 layer commands | 70 | WIRE-PARTIAL | Wired in `src/commands/selectionGroupLayer.ts` (+ `selectionGroupLayerTopology.ts`) from the registry dump, public scripting semantics and the related commands already in `src/`; every command is marked `// inferred`. `tools/compare_selection_group_layer_commands.mjs` passes (699 checks) but checks the inferred contract, not Softimage. **Analyst: confirm or correct each command** (23 questions in PR #167), then add a note and goldens. Left out: `ActivateElements` family, sampled-point tools, `GetSize`, `GenerateInfoReport`, `AssignObjectGroup`, `UnassignObjectGroup`, `PickDeformerByVertexTool`, `SelectUVRow` |
 
 ## P2: operators and properties (to be generated)
 
