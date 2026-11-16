@@ -36,15 +36,15 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 |-----|-------------------------|-------------------:|----------------:|--------------:|--------|
 | CMD-01 | (uncategorised) | 448 | 152 | 296 | TODO |
 | CMD-02 | Custom | 413 | 174 | 239 | TODO |
-| CMD-03 | Viewing | 191 | 85 | 106 | TODO |
-| CMD-04 | Simulation | 118 | 34 | 84 | TODO |
-| CMD-05 | File | 110 | 27 | 83 | TODO |
-| CMD-06 | Modeling | 274 | 198 | 76 | TODO |
-| CMD-07 | Animation | 186 | 120 | 66 | TODO |
-| CMD-08 | Edit | 117 | 53 | 64 | TODO |
-| CMD-09 | Rendering | 175 | 122 | 53 | TODO |
-| CMD-10 | Property | 125 | 79 | 46 | TODO |
-| CMD-11 | Animation Mixer | 113 | 75 | 38 | TODO |
+| CMD-03 | Simulation | 118 | 34 | 84 | TODO |
+| CMD-04 | File | 110 | 27 | 83 | TODO |
+| CMD-05 | Modeling | 274 | 198 | 76 | TODO |
+| CMD-06 | Animation | 186 | 120 | 66 | TODO |
+| CMD-07 | Viewing | 191 | 130 | 61 | TODO |
+| CMD-08 | Rendering | 175 | 122 | 53 | TODO |
+| CMD-09 | Edit | 117 | 76 | 41 | TODO |
+| CMD-10 | Animation Mixer | 113 | 75 | 38 | TODO |
+| CMD-11 | Property | 125 | 94 | 31 | TODO |
 | CMD-12 | Texturing | 75 | 46 | 29 | TODO |
 | CMD-13 | Character Rigging | 31 | 4 | 27 | TODO |
 | CMD-14 | Manipulation | 51 | 29 | 22 | TODO |
@@ -52,33 +52,33 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 | CMD-16 | Deformation | 55 | 38 | 17 | TODO |
 | CMD-17 | Primitive | 131 | 120 | 11 | TODO |
 | CMD-18 | Selection | 108 | 97 | 11 | TODO |
-| CMD-19 | General | 10 | 2 | 8 | TODO |
-| CMD-20 | Camera Sequencer | 7 | 0 | 7 | TODO |
-| CMD-21 | Cluster | 16 | 9 | 7 | TODO |
-| CMD-22 | Constraint | 27 | 20 | 7 | TODO |
-| CMD-23 | Transport Control | 23 | 16 | 7 | TODO |
-| CMD-24 | Drawing | 14 | 8 | 6 | TODO |
-| CMD-25 | Source | 6 | 0 | 6 | TODO |
-| CMD-26 | Animation mixer | 5 | 0 | 5 | TODO |
-| CMD-27 | Views | 5 | 0 | 5 | TODO |
-| CMD-28 | file | 5 | 0 | 5 | TODO |
-| CMD-29 | Scripting | 4 | 0 | 4 | TODO |
-| CMD-30 | Customization | 2 | 0 | 2 | TODO |
-| CMD-31 | Group | 16 | 14 | 2 | TODO |
-| CMD-32 | Paint | 7 | 5 | 2 | TODO |
-| CMD-33 | Preferences | 2 | 0 | 2 | TODO |
-| CMD-34 | Transform | 5 | 3 | 2 | TODO |
-| CMD-35 | Action | 1 | 0 | 1 | TODO |
-| CMD-36 | Camera | 1 | 0 | 1 | TODO |
-| CMD-37 | VertexColor | 1 | 0 | 1 | TODO |
-| CMD-38 | Cache | 2 | 2 | 0 | AUDIT |
-| CMD-39 | Devices | 5 | 5 | 0 | AUDIT |
-| CMD-40 | Generator | 1 | 1 | 0 | AUDIT |
-| CMD-41 | ICE | 5 | 5 | 0 | AUDIT |
-| CMD-42 | Layer | 20 | 20 | 0 | AUDIT |
-| CMD-43 | Operator | 11 | 11 | 0 | AUDIT |
-| CMD-44 | Toolbar | 6 | 6 | 0 | AUDIT |
-| | **Total** | **2950** | **1581** | **1369** | |
+| CMD-19 | Camera Sequencer | 7 | 0 | 7 | TODO |
+| CMD-20 | Cluster | 16 | 9 | 7 | TODO |
+| CMD-21 | Drawing | 14 | 8 | 6 | TODO |
+| CMD-22 | General | 10 | 4 | 6 | TODO |
+| CMD-23 | Source | 6 | 0 | 6 | TODO |
+| CMD-24 | Animation mixer | 5 | 0 | 5 | TODO |
+| CMD-25 | Views | 5 | 0 | 5 | TODO |
+| CMD-26 | file | 5 | 0 | 5 | TODO |
+| CMD-27 | Scripting | 4 | 0 | 4 | TODO |
+| CMD-28 | Customization | 2 | 0 | 2 | TODO |
+| CMD-29 | Group | 16 | 14 | 2 | TODO |
+| CMD-30 | Paint | 7 | 5 | 2 | TODO |
+| CMD-31 | Preferences | 2 | 0 | 2 | TODO |
+| CMD-32 | Transform | 5 | 3 | 2 | TODO |
+| CMD-33 | Action | 1 | 0 | 1 | TODO |
+| CMD-34 | Camera | 1 | 0 | 1 | TODO |
+| CMD-35 | Constraint | 27 | 26 | 1 | TODO |
+| CMD-36 | VertexColor | 1 | 0 | 1 | TODO |
+| CMD-37 | Cache | 2 | 2 | 0 | AUDIT |
+| CMD-38 | Devices | 5 | 5 | 0 | AUDIT |
+| CMD-39 | Generator | 1 | 1 | 0 | AUDIT |
+| CMD-40 | ICE | 5 | 5 | 0 | AUDIT |
+| CMD-41 | Layer | 20 | 20 | 0 | AUDIT |
+| CMD-42 | Operator | 11 | 11 | 0 | AUDIT |
+| CMD-43 | Toolbar | 6 | 6 | 0 | AUDIT |
+| CMD-44 | Transport Control | 23 | 23 | 0 | AUDIT |
+| | **Total** | **2950** | **1679** | **1271** | |
 <!-- END GENERATED: commands -->
 
 ### P1 sub-rows (hand-maintained; survive regeneration)
@@ -95,6 +95,7 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 | CMD-01-ADDONDOC | CMD-01 | `GetAddonDocHelper`, `WizardHelper` helper objects (`Addons\sdkui\Application\Plugins\AddonDoc.js`, `SDKWizards.js`) used by `PackageAddon` / `PackageAddonUI` | 2 | TODO | closes Q10 of CMD-01b |
 | TOOL-01 | (new) | `tools/parse_dict.py` drops records: it does not skip the 4-byte padding after each string (132 of 254 read from `en/XSISCRIPTS.dict`). Fix, then regenerate anything built from dictionaries | 1 | TODO | found while doing CMD-01b; not fixed there so the PR stays docs-only |
 | CMD-04a | Selection, Group, Layer | **Inferred batch, no analyst note.** Selection list (`AddToSelection`, `RemoveFromSelection`, `ToggleSelection`, `SetAndToggleSelection`, `SelectBranch`, `SelectTree`, `SelectModel`, `SelectChain`, `SelectMembers`, `SelectNeighborObj`, `SelectAllUsingFilter`, `DeselectAllUsingFilter`), filters and tools (`SelectFilter`, `SetSelFilter`, 5 `Select…Filter`, 4 `Set…SelectionFilter`, `ToggleObjectComponentSelectionFilter`, `Cycle Selection Mode`, 5 `Activate…SelToolWithNoObjStateChange`), components (`GrowSelection`, `ShrinkSelection`, `SelectAdjacent`, `ConvertSelection[To…]`, `SelectAllConnectedComponents`, `SelectNSidedPolygons`, `SelectGeometryComponents`, `GetNeighborSubcomponents`, 6 loop commands, `SelectPolygonOutline`), `InfoSelection`, `InfoScene`, 11 group and 9 layer commands | 70 | WIRE-PARTIAL | Wired in `src/commands/selectionGroupLayer.ts` (+ `selectionGroupLayerTopology.ts`) from the registry dump, public scripting semantics and the related commands already in `src/`; every command is marked `// inferred`. `tools/compare_selection_group_layer_commands.mjs` passes (699 checks) but checks the inferred contract, not Softimage. **Analyst: confirm or correct each command** (23 questions in PR #167), then add a note and goldens. Left out: `ActivateElements` family, sampled-point tools, `GetSize`, `GenerateInfoReport`, `AssignObjectGroup`, `UnassignObjectGroup`, `PickDeformerByVertexTool`, `SelectUVRow` |
+| CMD-03a | Viewing, Edit, Property, Constraint, Transport Control, General | **Inferred batch, no analyst note.** Viewing (26): hide / unhide / unghost, 4 `Isolate…`, `ColorizeObject`, `ShadeObject`, `SetViewDisplayMode`, 3 display toggles, `CenterSelection`, `FrameContextual`, 9 user keyword / tab commands. Edit (20): `ToggleSelectability`, `MakeAllUnselectable`, `ParentObjects`, `Clone`, `Instance`, `SIInstantiate`, `GetMaster`, `GetInstances`, `SIDuplicate`, model duplicate / delete, `DeleteAll`, `DeleteObjPermanent`, `ToggleParameterValue`, 3 operator-order commands, `DeactivateAbove`, transform groups. Property (16): `SIAddProp[Ex]`, `RemoveProperties`, `RemoveAllProperties`, `SI[Un]AssignMaterial`, `SICreateMaterial`, `[SI]MakeLocal`, material selection, subdivision level, `AutoInspectEnabled`, `ToggleBooleanUserPref`, `InspectLastOperator`. Constraint (6), Transport Control (4), `BeginUndo`, `EndUndo` | 74 | WIRE-PARTIAL | Wired in `src/commands/viewEditProperty.ts`, `viewEditPropertyMore.ts`, `viewEditPropertyHelpers.ts` from the registry dump, public scripting semantics and the related commands already in `src/`; every command is marked `// inferred`. `tools/compare_view_edit_property_commands.mjs` passes (549 checks) but checks the inferred contract, not Softimage. **Analyst: confirm or correct each command** (21 questions in PR #168), then add a note and goldens. Left out: `SetLightingDisplayMode`, `SetNURBSDisplayQuality*`, `UnhideAllPolygons`, `UnhideAllPolygonClusters`, `MoveOperator`, `ReorderSceneItem`, `CollapseOp`, `TogglePinObjectInPosition`, `InfoGeometry`, `Untag`, `Unlock`, `InspectLocks`, the Source category |
 
 ## P2: operators and properties (to be generated)
 
