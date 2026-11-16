@@ -25,6 +25,8 @@ export interface CommandDef {
   description?: string;
   args: ArgDef[];
   undoable?: boolean;         // default true
+  /** Softimage siNoLogging capability: the command never appears in the command log (default false). */
+  noLog?: boolean;
   /** Softimage GetEnabled analogue (dynamic flag bit). Menu/MCP grey when false. */
   canRun?(args: Record<string, any>): boolean;
   /**
@@ -116,7 +118,7 @@ export class App {
       if (!nested && (this as any).immediate && result && (result as any).kind === 'operator' && (result as any).parent?.kind === 'primitive' && (result as any).type !== 'geom') { // Immediate mode: apply and freeze right away (no operator left in the stack)
         const op: any = result; const prim: any = op.parent; const idx = prim.operators.indexOf(op); if (idx > 0) { const above = prim.operators.slice(idx + 1); let g: any = null; for (const x of prim.operators.slice(0, idx + 1)) { try { g = x.apply(g); } catch { /* ignore */ } } const frozen = new Operator('Frozen Geometry', 'geom', []); (frozen as any).apply = () => g; (frozen as any).region = 'modeling'; const old = [...prim.operators]; this.record('Immediate', () => { prim.operators.splice(0, prim.operators.length, frozen, ...above); frozen.parent = prim; prim.dirty = true; }, () => { prim.operators.splice(0, prim.operators.length, ...old); prim.dirty = true; }); const owner = prim.parent; if (owner) this.select([owner]); }
       }
-      if (!nested && (this as any).cmdLog !== false) this.logMsg('cmd', fmtCall(name, def.args.map(a => full[a.name]), (this as any).scriptLang));
+      if (!nested && !def.noLog && (this as any).cmdLog !== false) this.logMsg('cmd', fmtCall(name, def.args.map(a => full[a.name]), (this as any).scriptLang));
     } catch (e: any) {
       this.logMsg('error', `${name}: ${e?.message ?? e}`);
       if (!nested) { for (const u of this.pendingUndo!.reverse()) u.undo(); this.pendingUndo = null; }
