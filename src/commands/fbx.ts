@@ -3,7 +3,9 @@
 //
 // What is wired here is the command surface: names, arguments, defaults, return values and the two
 // option properties under the scene root. Everything the contract lists as an open question raises
-// NotYetAttested instead of guessing (unit table Q2, group text Q4, import defaults Q5, file content SYS-03).
+// NotYetAttested instead of guessing (file content SYS-03, group enumeration order). Answers of 2026-11-16 applied:
+// Q5 (import defaults), Q4 (inferred: GroupToCache reads as decimal text), Q2 partly (unit names and scale factors;
+// the order of the 0..8 index table is still open, so the unit is kept by name and MasterUnitIndex stays unset).
 import { App, CommandDef } from '../core/commands';
 import { Property } from '../core/scene';
 import type { ParamDef } from '../core/params';
@@ -33,7 +35,7 @@ export const IMPORT_OPTIONS = 'ImportFBXOptions';
 const EXPORT_ROWS: OptRow[] = [
   ['Automatic', 'bool', true],
   ['MasterScale', 'float', 1.0],
-  ['MasterUnitIndex', 'int', undefined],          // index of centimetres in the unit table: Q2
+  ['MasterUnitIndex', 'int', undefined],          // index of centimetres in the unit table: order still open (Q2)
   ['ExportSelection', 'bool', false],
   ['ExportGeometry', 'bool', true],
   ['ExportCameras', 'bool', true],
@@ -67,30 +69,31 @@ const IMPORT_ROWS: OptRow[] = [
   ['UseMatrixFromBindPose', 'bool', false],
   ['LoadMode', 'int', 2],
   ['Automatic', 'bool', true],
-  ['FileScaleFactor', 'float', undefined],        // computed at definition time: Q5
+  ['FileScaleFactor', 'float', 1.0],              // Q5: 1.0, read-only
   ['MasterScale', 'float', 1.0],
-  ['MasterUnitIndex', 'int', undefined],          // Q2
+  ['MasterUnitIndex', 'int', undefined],          // order of the index table still open (Q2)
   ['ImportCameras', 'bool', true],
   ['ImportLights', 'bool', true],
   ['ImportMaterialsAndTextures', 'bool', true],
   ['ImportAnimation', 'bool', true],
   ['ShowWarningDialog', 'bool', true],
   ['ResamplingRate', 'float', 30.0],
-  ['ConstantKeyReducer', 'bool', undefined],      // Q5 (this one and the eight that follow)
-  ['KeyReducer', 'bool', undefined],
-  ['KeySync', 'bool', undefined],
-  ['KeysOnFrame', 'bool', undefined],
-  ['UnRoll', 'bool', undefined],
-  ['UnRollPath', 'bool', undefined],
-  ['Character', 'bool', undefined],
-  ['KeyReducerPrecision', 'float', undefined],
-  ['UnRollQuality', 'float', undefined],
+  // Q5: this one and the eight that follow get no explicit value: zero of their type (inferred)
+  ['ConstantKeyReducer', 'bool', false],
+  ['KeyReducer', 'bool', false],
+  ['KeySync', 'bool', false],
+  ['KeysOnFrame', 'bool', false],
+  ['UnRoll', 'bool', false],
+  ['UnRollPath', 'bool', false],
+  ['Character', 'bool', false],
+  ['KeyReducerPrecision', 'float', 0],
+  ['UnRollQuality', 'float', 0],
   ['ImportSkelsAsNulls', 'bool', true],
   ['KeepXsiEffectors', 'bool', true],
   ['ImportSkins', 'bool', true],
   ['ForceWeightNormalize', 'bool', false],
   ['ProtectExpressionFCurve', 'bool', false],
-  ['NameSpaceReplacement', 'string', undefined],  // Q5
+  ['NameSpaceReplacement', 'string', ''],         // Q5: no explicit value, empty (inferred)
   ['ImportFilename', 'string', ''],
   ['Take', 'int', 1],
   ['Info', 'int', 0],
@@ -134,6 +137,18 @@ export function fbxOptions(app: App, name: typeof EXPORT_OPTIONS | typeof IMPORT
   app.events.emit('scene');
   return prop;
 }
+
+// ------------------------------------------------------------------ units (Q2, partly closed 2026-11-16)
+
+/** [plural name the commands match and return, scale factor = centimetres per unit], in the SDK's layout order.
+ *  The order of the 0..8 table behind MasterUnitIndex is not established; nothing here depends on the position. */
+export const FBX_UNITS: readonly (readonly [string, number])[] = [
+  ['Millimeters', 0.1], ['Decimeters', 10.0], ['Centimeters', 1.0], ['Meters', 100.0], ['Kilometers', 100000.0],
+  ['Inches', 2.54], ['Feet', 30.48], ['Miles', 160934.4], ['Yards', 91.44],
+];
+/** The unit an option property holds, by name (stands in for MasterUnitIndex until its table order is known). */
+const STORED_UNIT = new WeakMap<Property, string>();
+export function fbxStoredUnit(prop: Property): string { return STORED_UNIT.get(prop) ?? 'Centimeters'; }
 
 // ------------------------------------------------------------------ argument handling
 
@@ -249,14 +264,25 @@ export function registerFbxCommands(app: App) {
     execute: (app) => fbxOptions(app, EXPORT_OPTIONS).val('MasterScale'),
   });
 
-  // ---- unit commands: the nine unit names and their order are not attested (Q2)
+  // ---- unit commands. The nine plural names and scale factors are attested (Q2, partly closed); the order of
+  // the 0..8 table behind MasterUnitIndex is not, so the unit is kept by name and the index parameter stays unset.
   for (const [name, propName] of [['FBXExportUnit', EXPORT_OPTIONS], ['FBXImportUnit', IMPORT_OPTIONS]] as const) {
     reg({
       name, label: name, description: `${name} <string>`, args: [{ name: 'Unit', default: null }],
-      supported: () => false,
-      execute(app) {
-        fbxOptions(app, propName); // the lookup-or-create side effect is attested for every option command
-        throw new NotYetAttested(name, 'FBX unit table (names and order of the nine predefined units)', 'Q2');
+      execute(app, a) {
+        const prop = fbxOptions(app, propName);
+        if (!isEmpty(a.Unit)) {
+          const unit = FBX_UNITS.find(u => u[0].toLowerCase() === String(a.Unit).toLowerCase());
+          if (unit) {   // no match: nothing is written and no error is raised
+            STORED_UNIT.set(prop, unit[0]);
+            // conversion factor (source scale factor) / (target scale factor) (inferred from the public SDK semantics):
+            // export converts from centimetres, import from a unit whose scale factor is the current FileScaleFactor
+            const source = propName === EXPORT_OPTIONS ? 1.0 : Number(prop.val('FileScaleFactor') ?? 1.0);
+            prop.set('MasterScale', Math.fround(source / unit[1])); // the parameter is a float (siFloat)
+            app.logMsg('info', `${name}: not yet attested: the index written to MasterUnitIndex for "${unit[0]}" (order of the unit table, ${NOTE} Q2); the unit is kept by name`);
+          }
+        }
+        return fbxStoredUnit(prop);   // both paths return the plural name of the unit currently stored
       },
     });
   }
@@ -266,7 +292,9 @@ export function registerFbxCommands(app: App) {
     name: 'FBXExportGroupAsCache', label: 'FBXExportGroupAsCache', description: 'FBXExportGroupAsCache <string>', args: [{ name: 'Group', default: null }],
     execute(app, a) {
       const prop = fbxOptions(app, EXPORT_OPTIONS);
-      if (isEmpty(a.Group)) throw new NotYetAttested('FBXExportGroupAsCache', 'text returned when reading GroupToCache', 'Q4');
+      // Q4 (closed as inferred): the get path returns the stored integer in its plain decimal text form.
+      // inferred: a GroupToCache that was never written reads as zero.
+      if (isEmpty(a.Group)) return String(Math.trunc(Number(prop.val('GroupToCache') ?? 0)));
       // The stored value is the position of the matching group, 0 when nothing matches. With fewer than
       // two groups that is 0 either way; with more, it depends on the enumeration order of the groups.
       if (app.scene.groupList.length > 1) throw new NotYetAttested('FBXExportGroupAsCache', 'group enumeration order with two or more groups', 'special cases / golden 5');
@@ -281,9 +309,7 @@ export function registerFbxCommands(app: App) {
     execute(app, a) {
       const prop = fbxOptions(app, IMPORT_OPTIONS);
       if (isEmpty(a.Regex)) {
-        const v = prop.val('NameSpaceReplacement');
-        if (v === null || v === undefined) throw new NotYetAttested('FBXImportNamespaceReplacement', 'default of NameSpaceReplacement', 'Q5');
-        return v;
+        return prop.val('NameSpaceReplacement') ?? '';   // Q5: no explicit value, empty (inferred)
       }
       const v = String(a.Regex);
       prop.set('NameSpaceReplacement', v);
