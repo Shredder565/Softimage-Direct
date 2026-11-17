@@ -245,6 +245,17 @@ const got = await page.evaluate(async ({ NAMES }) => {
     // by name, relative to <user path>\Addons
     fsx.ensureFolder(U + '\\Addons\\ByName'); fsx.writeFile(U + '\\Addons\\ByName\\one.txt', '1');
     p.byName = pk({ SrcDir: 'ByName', DestinationPath: 'C:\\temp\\pk\\out\\byname' });
+    // Q10 (closed): detail file netview_<N>.xml and description file netview_<N>.txt in the source root
+    {
+      const D = A + '\\Detailed'; fsx.ensureFolder(D); fsx.writeFile(D + '\\f.txt', 'f');
+      fsx.writeFile(D + '\\netview_Detailed.xml', '<?xml version="1.0"?>\n<xsi_file type="AddonInfo" xsi_version="x" syntax_version="1.0">\n\t<Title>My add-on</Title>\n\t<AuthorName>Ann</AuthorName>\n\t<Description>from xml</Description>\n</xsi_file>\n');
+      fsx.writeFile(D + '\\netview_Detailed.txt', 'Line one\nLine two');
+      p.details = pk({ SrcDir: D, DestinationPath: 'C:\\temp\\pk\\out\\detailed' });
+      p.detailsManifest = fsx.readFile('C:\\temp\\pk\\out\\detailed.xsiaddon').split('\n').filter(l => l.startsWith('detail\t'));
+      p.noDetailsManifest = fsx.readFile('C:\\temp\\pk\\out\\byname.xsiaddon').split('\n').filter(l => l.startsWith('detail\t'));
+      fsx.writeFile(D + '\\netview_Detailed.xml', '<broken');
+      S.verbose.length = 0; p.detailsBroken = [pk({ SrcDir: D, DestinationPath: 'C:\\temp\\pk\\out\\detailed' }).r, fsx.readFile('C:\\temp\\pk\\out\\detailed.xsiaddon').split('\n').filter(l => l.startsWith('detail\t'))];
+    }
     p.byNameSrc = `${U}\\Addons\\ByName`;
     p.progressHidden = S.progress.visible === false;
     out.pkg = p;
@@ -378,12 +389,20 @@ const got = await page.evaluate(async ({ NAMES }) => {
     P.msgs = msgs;
     // success
     setField('Source', T); setField('Destination', 'C:\\temp\\pk\\out\\fromui.xsiaddon'); setField('ExcludeDir', 'src');
+    setField('AuthorName', 'Ann'); setField('AuthorEmail', 'ann@example.com'); setField('Company', 'ACME'); setField('URL', 'http://example.com'); setField('Description', 'What it does');
     m2 = mark(); q(`${W} .sdkh-modal-ok`).click();
     P.result = await pr; P.runLog = logFrom(m2).filter(l => l.startsWith('cmd:')); P.file = fsx.isFile('C:\\temp\\pk\\out\\fromui.xsiaddon');
     P.remembered = S.excludeDirs; P.detailAfter = [S.globals.has('PackageAddon_DetailDict'), S.globals.get('PackageAddon_DetailDict')];
+    P.detailFile = fsx.isFile(T + '\\netview_MyTool.xml') ? app.run('GetAddonDocHelper').loadAddonDetails(T + '\\netview_MyTool.xml') : null;
+    P.detailFileHead = fsx.isFile(T + '\\netview_MyTool.xml') ? fsx.readFile(T + '\\netview_MyTool.xml').split('\n')[2].replace(/xsi_version="[^"]*"/, 'xsi_version="V"') : null;
+    P.descFile = fsx.isFile(T + '\\netview_MyTool.txt') ? fsx.readFile(T + '\\netview_MyTool.txt') : null;
+    P.packagedDetails = fsx.readFile('C:\\temp\\pk\\out\\fromui.xsiaddon').split('\n').filter(l => l.startsWith('detail\t'));
     // with a Source argument: destination is <parent>\<name>.xsiaddon and the exclude list is remembered; cancel returns false
     pr = app.run('PackageAddonUI', { Source: T }); await tick();
     P.withSource = { Source: field('Source').value, Destination: field('Destination').value, ExcludeDir: field('ExcludeDir').value, title: q(`${W} .ppg-float-title`)?.textContent };
+    P.prefilled = { AuthorName: field('AuthorName').value, AuthorEmail: field('AuthorEmail').value, Company: field('Company').value, URL: field('URL').value, Description: field('Description').value, global: { ...(S.globals.get('PackageAddon_DetailDict') ?? {}) } };
+    setField('Source', 'C:\\temp\\pk\\Addons\\ByName'); P.sourceChanged = { AuthorName: field('AuthorName').value, global: S.globals.get('PackageAddon_DetailDict') };
+    setField('Source', T); P.sourceBack = { AuthorName: field('AuthorName').value, Description: field('Description').value, hasGlobal: !!S.globals.get('PackageAddon_DetailDict') };
     q(`${W} .sdkh-modal-cancel`).click(); P.cancel = await pr;
     // a packaging failure is shown in a critical box and still returns false
     pr = app.run('PackageAddonUI', { Source: T }); await tick();
@@ -617,6 +636,21 @@ eq('PackageAddonUI returns false on success; runs the logged PackageAddon comman
 eq('PackageAddonUI remembers the exclude list; detail global null afterwards', [P.remembered, P.detailAfter], ['src', [true, null]]);
 ok('PackageAddonUI with Source: destination <parent>\\<name>.xsiaddon, remembered excludes', P.withSource.Source === T && P.withSource.Destination === T + '.xsiaddon' && P.withSource.ExcludeDir === 'src' && typeof P.withSource.title === 'string' && P.withSource.title !== '', P.withSource);
 eq('PackageAddonUI Cancel returns false', P.cancel, false);
+// Q10 (closed 2026-11-16): detail file netview_<N>.xml, description file netview_<N>.txt
+const DKEYS = ['Categories', 'PlatForms', 'Title', 'AuthorName', 'AuthorEMail', 'Company', 'URL', 'Language', 'Summary', 'Usage'];
+eq('PackageAddon: every key of the detail file becomes a detail, the description file becomes "Description"', got.pkg.detailsManifest,
+  ['detail\tTitle\t"My add-on"', 'detail\tAuthorName\t"Ann"', 'detail\tDescription\t"Line one\\nLine two"']);
+eq('PackageAddon: no detail files, no details; packaging succeeds', [got.pkg.details.r, got.pkg.noDetailsManifest], [V(''), []]);
+eq('PackageAddon: a broken detail file does not stop packaging; the description still applies', got.pkg.detailsBroken, [V(''), ['detail\tDescription\t"Line one\\nLine two"']]);
+eq('PackageAddonUI writes the detail file: default keys with the author fields', P.detailFile, Object.fromEntries(DKEYS.map(k => [k, { AuthorName: 'Ann', AuthorEMail: 'ann@example.com', Company: 'ACME', URL: 'http://example.com' }[k] ?? ''])));
+eq('PackageAddonUI detail file root element', P.detailFileHead, '<xsi_file type="AddonInfo" xsi_version="V" syntax_version="1.0">');
+eq('PackageAddonUI writes the description file', P.descFile, 'What it does');
+eq('PackageAddonUI: the details written in step 6 reach the PackageAddon run', P.packagedDetails.filter(l => /\t(AuthorName|AuthorEMail|Company|URL|Description)\t/.test(l)),
+  ['detail\tAuthorName\t"Ann"', 'detail\tAuthorEMail\t"ann@example.com"', 'detail\tCompany\t"ACME"', 'detail\tURL\t"http://example.com"', 'detail\tDescription\t"What it does"']);
+eq('PackageAddonUI pre-fills the author fields and the description, keeps the dictionary in PackageAddon_DetailDict', [P.prefilled.AuthorName, P.prefilled.AuthorEmail, P.prefilled.Company, P.prefilled.URL, P.prefilled.Description, Object.keys(P.prefilled.global)],
+  ['Ann', 'ann@example.com', 'ACME', 'http://example.com', 'What it does', DKEYS]);
+eq('PackageAddonUI: changing Source to a folder without a detail file sets the global to null (fields stay)', P.sourceChanged, { AuthorName: 'Ann', global: null });
+eq('PackageAddonUI: changing Source back reloads the fields', P.sourceBack, { AuthorName: 'Ann', Description: 'What it does', hasGlobal: true });
 eq('PackageAddonUI packaging failure: critical box with the reason, still false', [P.failMsg, P.failResult, P.left], ['File already exists C:\\temp\\pk\\out\\fromui.xsiaddon', false, 0]);
 
 eq('page errors', pageErrors, []);
@@ -628,4 +662,4 @@ if (diffs.length) {
 }
 console.log(`OK CMD-01b SDK helper commands: ${checks} checks, ${NAMES.length} commands exercised (contract tables + registry dump; no XSIBATCH golden yet)`);
 console.log('   fully wired: GetGlobal, SetGlobal, SetGlobalObject, XSIInputBox, StringSearch, TrimString, XSIRound, LargeMsgBox, FindFilesInFolder, CreateAddonDirectories, CreateWorkgroupDirectories (file system = the session\'s virtual host FS)');
-console.log('   partly wired: PackageAddon (.xsiaddon content SYS-13, detail files Q10, default destination Q9), PackageAddonUI (title id 1532 Q2, detail files Q10), SpdlCheck (run step Q3/Q8), ShowFileForEdit / ShowFileInShaderCodeEditor (editor-view model, Q6), PickFolder (batch error Q5)');
+console.log('   partly wired: PackageAddon (.xsiaddon content SYS-13, default destination Q9; detail files wired, Q10 closed), PackageAddonUI (title id 1532 Q2; detail files wired), SpdlCheck (run step Q3/Q8), ShowFileForEdit / ShowFileInShaderCodeEditor (editor-view model, Q6), PickFolder (batch error Q5)');

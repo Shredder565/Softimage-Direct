@@ -30,13 +30,14 @@ const EXPORT_DEFAULTS = [
   ['ExportVisibilityAsShow', false], ['ExportShapeNamespace', false],
 ];
 const IMPORT_DEFAULTS = [
-  ['UseMatrixFromBindPose', false], ['LoadMode', 2], ['Automatic', true], ['FileScaleFactor', U], ['MasterScale', 1],
+  ['UseMatrixFromBindPose', false], ['LoadMode', 2], ['Automatic', true], ['FileScaleFactor', 1], ['MasterScale', 1],
   ['MasterUnitIndex', U], ['ImportCameras', true], ['ImportLights', true], ['ImportMaterialsAndTextures', true],
   ['ImportAnimation', true], ['ShowWarningDialog', true], ['ResamplingRate', 30],
-  ['ConstantKeyReducer', U], ['KeyReducer', U], ['KeySync', U], ['KeysOnFrame', U], ['UnRoll', U], ['UnRollPath', U], ['Character', U],
-  ['KeyReducerPrecision', U], ['UnRollQuality', U],
+  // Q5 (closed 2026-11-16): FileScaleFactor 1.0; the nine below and NameSpaceReplacement have no explicit value (zero / empty, inferred)
+  ['ConstantKeyReducer', false], ['KeyReducer', false], ['KeySync', false], ['KeysOnFrame', false], ['UnRoll', false], ['UnRollPath', false], ['Character', false],
+  ['KeyReducerPrecision', 0], ['UnRollQuality', 0],
   ['ImportSkelsAsNulls', true], ['KeepXsiEffectors', true], ['ImportSkins', true], ['ForceWeightNormalize', false],
-  ['ProtectExpressionFCurve', false], ['NameSpaceReplacement', U], ['ImportFilename', ''], ['Take', 1], ['Info', 0],
+  ['ProtectExpressionFCurve', false], ['NameSpaceReplacement', ''], ['ImportFilename', ''], ['Take', 1], ['Info', 0],
   ['ImportHardEdges', false], ['GeometryCacheFile', true], ['ImportFrameRate', false], ['ImportFillTimeline', false],
   ['ImportOneClickMerge', false], ['ImportMudboxMergeTexture', false], ['ImportOneClickAdd', false], ['ImportOneClickMode', false],
   ['ImportNullsAsModels', false], ['StripShapeNamespace', false], ['UnbiasNormalMaps', true],
@@ -148,20 +149,35 @@ const got = await page.evaluate(({ registry, EXPORT_BOOLS, IMPORT_BOOLS, MODE_SE
   out.groupNoGroups = [run('FBXExportGroupAsCache', { Group: 'nothing' }), val('ExportFBXOptions', 'GroupToCache')];
   A.run('GetPrim', { PresetObj: 'Null', Name: 'n1' }); A.run('CreateGroup', { Name: 'cacheA', InputObjs: [A.scene.find('n1')] });
   out.groupOne = [run('FBXExportGroupAsCache', { Group: 'cacheA' }), val('ExportFBXOptions', 'GroupToCache'), run('FBXExportGroupAsCache', { Group: 'miss' }), val('ExportFBXOptions', 'GroupToCache')];
+  out.groupGetAfter = run('FBXExportGroupAsCache');
   A.run('CreateGroup', { Name: 'cacheB', InputObjs: [A.scene.find('n1')] });
   out.groupTwo = run('FBXExportGroupAsCache', { Group: 'cacheB' });
 
   // 10. branches that must raise "not yet attested"
   A.run('NewScene');
+  // units (Q2 partly closed: names and factors; the index order is open, MasterUnitIndex stays unset)
+  {
+    const u = {}; const logN = () => A.log.length; const nyaSince = (i) => A.log.slice(i).filter(l => /not yet attested/.test(l.text) && /Q2/.test(l.text)).length;
+    u.exportGet = run('FBXExportUnit'); u.importGet = run('FBXImportUnit');
+    u.sideEffect = [!!prop('ExportFBXOptions'), !!prop('ImportFBXOptions')];
+    let m = logN(); u.exportSet = [run('FBXExportUnit', { Unit: 'Meters' }), val('ExportFBXOptions', 'MasterScale'), val('ExportFBXOptions', 'MasterUnitIndex'), nyaSince(m)];
+    u.exportGet2 = run('FBXExportUnit');
+    u.exportCase = [run('FBXExportUnit', { Unit: 'inches' }), val('ExportFBXOptions', 'MasterScale')];
+    m = logN(); u.exportBad = [run('FBXExportUnit', { Unit: 'Parsecs' }), val('ExportFBXOptions', 'MasterScale'), nyaSince(m)];
+    u.importUntouched = run('FBXImportUnit');
+    u.all = ['Millimeters', 'Decimeters', 'Centimeters', 'Meters', 'Kilometers', 'Inches', 'Feet', 'Miles', 'Yards'].map(n => [run('FBXImportUnit', { Unit: n }).v, val('ImportFBXOptions', 'MasterScale')]);
+    u.importIndex = val('ImportFBXOptions', 'MasterUnitIndex');
+    out.units = u;
+    A.run('NewScene');
+    out.unitsAfterNewScene = [run('FBXExportUnit'), run('FBXImportUnit')];
+    A.run('NewScene');
+  }
   out.unattested = {
-    FBXExportUnit_get: run('FBXExportUnit'), FBXExportUnit_set: run('FBXExportUnit', { Unit: 'Meters' }),
-    FBXImportUnit_get: run('FBXImportUnit'), FBXImportUnit_set: run('FBXImportUnit', { Unit: 'Meters' }),
     FBXExport_path: run('FBXExport', { FilePathName: 'C:\\temp\\a.fbx' }), FBXExport_browse: run('FBXExport'),
     FBXImport_path: run('FBXImport', { FilePathName: 'C:\\temp\\a.fbx' }), FBXImport_browse: run('FBXImport'),
     FBXInjectInOriginal: run('FBXInjectInOriginal', { FilePathName: 'C:\\temp\\a.fbx' }),
     FBXInjectInCopy: run('FBXInjectInCopy', { SourceFilePathName: 'a.fbx', OutputFilePathName: 'b.fbx' }),
   };
-  out.unitSideEffect = [!!prop('ExportFBXOptions'), !!prop('ImportFBXOptions')];
   out.supported = Object.fromEntries(['FBXExportUnit', 'FBXImportUnit', 'FBXInjectInOriginal', 'FBXInjectInCopy', 'FBXExport', 'FBXImport', 'FBXExportAscii']
     .map(n => { const d = A.commands.get(n); return [n, d.supported ? [!!d.supported({ FilePathName: 'options' }), !!d.supported({ FilePathName: 'x.fbx' })] : 'always']; }));
 
@@ -239,18 +255,30 @@ eq('FBXImport "OPTIONS" sets no return value', got.importOptions, { v: '<none>' 
 eq('FBXImport "OPTIONS" creates ImportFBXOptions', got.importOptionsState, [true, true]);
 eq('ImportFBXOptions defaults via "options"', got.importOptionsDefaults, IMPORT_DEFAULTS);
 // 8
-nya('FBXImportNamespaceReplacement get before any set (Q5)', got.ns[0]);
+eq('FBXImportNamespaceReplacement get before any set: empty (Q5 closed, inferred)', got.ns[0], { v: '' });
 eq('FBXImportNamespaceReplacement set / get', got.ns.slice(1), [{ v: '^ns:(.*)$' }, '^ns:(.*)$', { v: '^ns:(.*)$' }]);
 // 9
-nya('FBXExportGroupAsCache get (Q4)', got.groupGet);
+eq('FBXExportGroupAsCache get: the stored index as decimal text (Q4 closed as inferred)', [got.groupGet, got.groupGetAfter], [{ v: '0' }, { v: '0' }]);
 eq('FBXExportGroupAsCache, no groups', got.groupNoGroups, [{ v: 'nothing' }, 0]);
 eq('FBXExportGroupAsCache, one group: match and miss', got.groupOne, [{ v: 'cacheA' }, 0, { v: 'miss' }, 0]);
 nya('FBXExportGroupAsCache with two groups (enumeration order)', got.groupTwo);
 // 10
 for (const [k, r] of Object.entries(got.unattested)) nya(k, r);
-eq('unit commands still create their option property', got.unitSideEffect, [true, true]);
+{
+  const u = got.units; const f = Math.fround;
+  eq('FBXExportUnit / FBXImportUnit get: Centimeters by default; create their option property', [u.exportGet, u.importGet, u.sideEffect], [{ v: 'Centimeters' }, { v: 'Centimeters' }, [true, true]]);
+  eq('FBXExportUnit set "Meters": returns the plural name, MasterScale 0.01, index unset with one "not yet attested" line (Q2)', u.exportSet, [{ v: 'Meters' }, f(0.01), U, 1]);
+  eq('FBXExportUnit get after set', u.exportGet2, { v: 'Meters' });
+  eq('FBXExportUnit: the name match ignores case; the stored plural name comes back', u.exportCase, [{ v: 'Inches' }, f(1 / 2.54)]);
+  eq('FBXExportUnit: no match writes nothing, raises nothing, returns the stored unit', u.exportBad, [{ v: 'Inches' }, f(1 / 2.54), 0]);
+  eq('FBXImportUnit is independent of the export options', u.importUntouched, { v: 'Centimeters' });
+  eq('FBXImportUnit: the nine plural names and MasterScale = FileScaleFactor (1.0) / scale factor', u.all,
+    [['Millimeters', 0.1], ['Decimeters', 10], ['Centimeters', 1], ['Meters', 100], ['Kilometers', 100000], ['Inches', 2.54], ['Feet', 30.48], ['Miles', 160934.4], ['Yards', 91.44]].map(([n, s]) => [n, f(1 / s)]));
+  eq('MasterUnitIndex stays unset (index order open, Q2)', u.importIndex, U);
+  eq('a new scene resets the unit to Centimeters', got.unitsAfterNewScene, [{ v: 'Centimeters' }, { v: 'Centimeters' }]);
+}
 eq('greyed / supported state', got.supported, {
-  FBXExportUnit: [false, false], FBXImportUnit: [false, false], FBXInjectInOriginal: [false, false], FBXInjectInCopy: [false, false],
+  FBXExportUnit: 'always', FBXImportUnit: 'always', FBXInjectInOriginal: [false, false], FBXInjectInCopy: [false, false],
   FBXExport: [true, false], FBXImport: [true, false], FBXExportAscii: 'always',
 });
 // 11
@@ -267,5 +295,6 @@ if (diffs.length) {
 }
 console.log(`OK CMD-01a FBX commands: ${checks} checks, ${wired} commands exercised (contract tables + registry dump; no XSIBATCH golden yet)`);
 console.log('   fully wired: 27 bool options, FBXExportFrameRate, FBXExportScaleFactor, FBXImportMode, FBXGetPluginVersion, FBXGetSDKVersion, FBXExportConvert2Tif');
-console.log('   partly wired: FBXExport / FBXImport ("options" only), FBXExportGroupAsCache (set, fewer than two groups), FBXImportNamespaceReplacement (get after a set)');
-console.log('   raise "not yet attested": FBXExportUnit, FBXImportUnit, FBXInjectInOriginal, FBXInjectInCopy');
+console.log('   also fully wired since the 2026-11-16 answers: FBXImportNamespaceReplacement (Q5), FBXExportGroupAsCache get (Q4, inferred)');
+console.log('   partly wired: FBXExport / FBXImport ("options" only), FBXExportGroupAsCache (fewer than two groups), FBXExportUnit / FBXImportUnit (by name; MasterUnitIndex order Q2)');
+console.log('   raise "not yet attested": FBXInjectInOriginal, FBXInjectInCopy');
