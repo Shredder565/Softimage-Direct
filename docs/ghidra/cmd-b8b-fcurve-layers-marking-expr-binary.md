@@ -1,6 +1,7 @@
 # CMD-B8b: Animation layers, marking, expressions, relative values, source connection read from `fcurve.dll`
 
-Row: **CMD-B8b**. Status: **SPEC** (20 names), **SPEC-PARTIAL** (1 names); per command below.
+Row: **CMD-B8b**. Status: **SPEC** (21 names), **SPEC-PARTIAL** (0 names); per command below.
+Batch 9 (2026-11-17): `DuplicateAnimationLayer` closed after re-reading `0x18002ac60` and reading the Layer Clip Helper (`0x180030b70`, `0x180032f70`).
 Run: 2026-11-17, `si-analyst`, unattended, batch 8 (binary first, REA + Ghidra 12.1.4 on the PC plus local static reads of the same DLLs).
 **No XSIBATCH golden**: nothing here was executed. No decompiler output or disassembly is reproduced.
 
@@ -65,8 +66,9 @@ No decompiler output or disassembly is reproduced.
   `{8fb755e3-06e3-11d7-be20-00a0c9615daf}` = `CycleChecking`;
   `{d8b3c0e0-49cf-4f6c-b008-3c24ee218e1b}` (not in the registry; called with owner, component, source object and a
   type number 2 or 4 only when a referenced model is involved: *(inferred)* the "store connection in the model
-  delta" task); `{42eb14da-bcab-4e24-bee6-b8a0bb496c3a}` and `{ecebf698-1af5-4c04-aa46-46119a508f10}` (not in the
-  registry, see Duplicate and SetRelativeValues).
+  delta" task); `{42eb14da-bcab-4e24-bee6-b8a0bb496c3a}` (the Layer Clip Helper: not in the
+  registry but served by `fcurve.dll` itself, see Duplicate) and `{ecebf698-1af5-4c04-aa46-46119a508f10}` (not in
+  the registry, see SetRelativeValues).
 - **Undo / redo of the layer editing tasks.** Undo (`0x18002cba0` / `0x18002cb80`) undoes the recorded sub-tasks
   and then clears them. Redo (`0x18002c980`, `0x18002ca00`, `0x18002ca60`, `0x18002cac0`, `0x18002cb20`) re-resolves
   the stored input reference (a reference object obtained on first execution from the generic object
@@ -157,22 +159,56 @@ No decompiler output or disassembly is reproduced.
      with a `SetCurrentAnimationLayer` sub-task (done regardless of which layer was current);
   2. the track is deleted with the `DeleteObj` task (`{dd531990-…}`).
 - If any model was flagged: message `0x27`, warning when at least one layer was deleted, error otherwise.
-- The status value returned by the worker was not recoverable from the listing (Q3). Undo / redo: shared scheme.
+- Return (read from the instruction listing, batch 9): 0 when at least one layer was deleted, 1 otherwise.
+  Undo / redo: shared scheme.
 
-### `DuplicateAnimationLayer`: SPEC-PARTIAL
+### `DuplicateAnimationLayer`: SPEC
 
-**Wire contract**
+**Wire contract** (worker re-read and the Layer Clip Helper read 2026-11-17, batch 9)
+- Purpose: make a copy of one animation layer directly above it, mute the original and make the copy current.
 - Arguments: `InputObjs` (in, list), `Layer` (in, I4, default -1 = current). No return value.
-- Models: normalised list. Per model: resolve `Layer`; `< 1` or `>= count` flags the model invalid. Otherwise
-  find the layer track (as in Delete), take the first clip of that track, and:
-  1. run task `{42eb14da-bcab-4e24-bee6-b8a0bb496c3a}` initialised with that clip and a flag 1
-     *(inferred: duplicates the layer clip onto a new layer track above the source)*;
-  2. set parameter `(0x402, 8)` of the **source** track to boolean true with a `SetValue` sub-task
-     *(meaning of id 8 not established; inferred mute/ignore of the original layer)*;
-  3. run `SetCurrentAnimationLayer` on the model with `Layer + 1`, `CreateLayer` false.
-  A failure in any of these stops the whole command; success continues with the next model.
-- If any model was flagged: message `0x27`, warning when at least one duplication succeeded, else error.
-- Missing: identity and exact effect of task `{42eb14da-…}` and of track parameter id 8 (Q4); returned status (Q3).
+- Models: normalised list (section 2). On first execution a reference to the input list is stored for redo.
+- Per model, in order:
+  1. Resolve `Layer` (negative means the model's current layer). An index `< 1` or `>= count` flags the model
+     invalid and nothing is done for it (the base layer cannot be duplicated).
+  2. Find the layer track: among the mixer tracks (kind `0x13`) the one of class `{d9fa2370-…}` whose layer index
+     equals `Layer`. Take the first clip of that track (container `{2320123e-d1b9-11d2-b34b-00105a1e6ce9}`,
+     clip interface `{2320122c-d1b9-11d2-b34b-00105a1e6ce9}`). No such track or no clip: the model is skipped.
+  3. Run the **Layer Clip Helper** (class `{42eb14da-bcab-4e24-bee6-b8a0bb496c3a}`, served by `fcurve.dll`
+     itself; creation `0x18004a380`, see below): register the clip (slot 9, `0x180030b70`), then commit with the
+     duplicate flag 1 (slot 13, `0x180032f70`). Effect, in order:
+     - every active item of the layer's action source (one fcurve per layered parameter) is duplicated with the
+       low-level duplicate task `{747d257f-d01b-11d2-80c4-00a0c9ac19a9}`;
+     - a new action source (class `{12a3efc5-e543-11d2-b352-00105a1e6ce9}`) is created, named
+       `<source name>_copy`, filled with the duplicated items under the **same item names**, and added to the
+       mixer's sources;
+     - a new layer track is created with the `AddTrack` task (type `{d9fa2370-…}`) at the mixer position of the
+       original track, named `<track name>_copy`; it therefore becomes layer `Layer + 1` and the layers above
+       move up by one;
+     - a new layer clip (class `{bb3ca994-1e49-4aaf-8aa1-fc0fa797ace6}`, `Mixer Layer Clip`) instancing the new
+       source is added to the new track and named `<clip name>_copy`;
+     - the suffix `_copy` is appended only when the name does not already contain `_copy`;
+     - the original clip, track and source are left untouched; the lock state is **not** copied (the copy is
+       unlocked).
+     The helper is attached as a sub-task on first execution.
+  4. Set parameter `(0x402, 8)` of the **original** track to boolean true with a `SetValue` sub-task. In the
+     parameter list of the layer track (`C3DAnimLayerTrack.spdl`: type entry, `Name`, `Hidden`, `Active`,
+     `ContainerStart`, `ContainerDuration`, `Markers`, `UIProps`, `mute`, …) position 8 is `mute`, so the
+     original layer is muted and the copy takes over its contribution *(the id-to-name mapping is inferred from
+     the spdl order; it was not confirmed in the binary)*.
+  5. Run `SetCurrentAnimationLayer` on the model with layer `Layer + 1`, `CreateLayer` false: the copy becomes the
+     current layer.
+  A failure in step 3, 4 or 5 ends the whole command with that status; success continues with the next model.
+- If any model was flagged invalid: message `XSIFCURVE` `0x27`, as a warning (4) when at least one duplication
+  succeeded, as an error (2) otherwise.
+- Return (read from the instruction listing): 0 when at least one layer was duplicated, 1 when none was;
+  `0x8007000e` when a sub-task object could not be created; a failing sub-task's own status otherwise
+  (`0x8000ffff` is also loaded on one failure path whose condition was not traced).
+- Undo / redo: shared scheme (sub-tasks undone and cleared; redo re-runs the worker).
+- Layer Clip Helper facts used here (read): registering refuses objects that are not a `Mixer Layer Clip`
+  (`0x80070057`) and refuses after a commit (`0x80004005`). Its internal call `0x180031810` (made with the model
+  and the old / new clip) was not read; full description in
+  [cmd-b8a](./cmd-b8a-fcurve-keys-binary.md) section 2.7.
 
 ### `LockAnimationLayer` / `UnlockAnimationLayer`: SPEC
 
@@ -372,11 +408,12 @@ No decompiler output or disassembly is reproduced.
    `F3DConvertPathListToMarkedParameters`, `F3DConvertMarkedParametersToPathList` (imports) and the
    `dssdk10.dll` `DS*MarkedParameters` functions; also whether an empty `PathList` reaches the worker as an empty
    string (clear) or as "no string" (no-op) depends on `CSIString::GetDynamicMemSize` in UnPackArg `0x18000ecc0`.
-3. Final status value of workers `0x18002baf0` (Delete), `0x18002ac60` (Duplicate), `0x18002b4a0` (IsLocked):
-   the result register is restored from a saved value the decompiler did not show.
-4. `DuplicateAnimationLayer`: task `{42eb14da-bcab-4e24-bee6-b8a0bb496c3a}` (IID
-   `{d3e8ed6d-0324-4e7c-acf7-28239d9ff495}`, methods slot 9 and 13) lives in another DLL; meaning of track
-   parameter `(0x402, 8)`.
+3. **Closed 2026-11-17 (batch 9)** for Delete and Duplicate: both return 0 when at least one layer was
+   processed and 1 otherwise (local instruction listing). Still open for `0x18002b4a0` (IsLocked): its
+   invalid-index path loads `0x80004005` conditionally and was not traced to the end.
+4. **Closed 2026-11-17 (batch 9).** Task `{42eb14da-…}` is the `Layer Clip Helper` of `fcurve.dll` itself
+   (creation `0x18004a380`); slot 9 registers the layer clip, slot 13 with flag 1 builds the `_copy` source,
+   track and clip. Track parameter `(0x402, 8)` is `mute` by spdl position *(inferred)*.
 5. `SetExpr`: class `{386b0f00-65ce-11d1-84c6-00a0243e3543}` (refusal `0x2d`), the preference behind generic
    object `{b54dca74-…}` slot 39 argument 8, and confirmation that interface `{c1afbd50-…}` is the fcurve.
 6. `GetCurrentAnimationLayer` / `GetNumberOfAnimationLayers`: how `F3DGetCurrentKeyingLayer` /
@@ -385,3 +422,5 @@ No decompiler output or disassembly is reproduced.
    is outside this DLL.
 8. UnPackArg bodies `0x18002d360`, `0x18002d3d0`, `0x18002d300`, `0x18002d490`, `0x18001e8f0` and RePackArg
    `0x18001f270` were not read line by line; argument names there are taken from the registry.
+9. Layer Clip Helper internals not read: `0x180031810` (called with the model and the clip around the layer
+   rebuild) and its Undo / Redo slots.

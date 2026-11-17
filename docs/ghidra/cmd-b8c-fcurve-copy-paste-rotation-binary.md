@@ -1,6 +1,7 @@
 # CMD-B8c: Animation copy / paste, key clipboard, key selection, rotation conversion, sequencing read from `fcurve.dll`
 
-Row: **CMD-B8c**. Status: **SPEC** (13 names), **SPEC-PARTIAL** (4 names); per command below.
+Row: **CMD-B8c**. Status: **SPEC** (17 names), **SPEC-PARTIAL** (0 names); per command below.
+Batch 9 (2026-11-17): `CopyAnimContainer` and `Sequence` / `SISequence` / `ScaleAndOffset` closed after reading `0x180011090`, `0x180010500`, `0x180010e70`, `0x180010ad0`, `0x1800109c0`, `0x1800405b0`, `0x18003fe20`, `0x18003faa0`, `0x1800421b0`, `0x180042d20`, `0x180043030`, `0x180042670`, `0x180043390`.
 Run: 2026-11-17, `si-analyst`, unattended, batch 8 (binary first, REA + Ghidra 12.1.4 on the PC plus local static reads of the same DLLs).
 **No XSIBATCH golden**: nothing here was executed. No decompiler output or disassembly is reproduced.
 
@@ -80,11 +81,12 @@ Note (R): the registry holds three further entries whose scripting name is also
 
 ---
 
-### `CopyAnimContainer`: SPEC-PARTIAL
+### `CopyAnimContainer`: SPEC
 
-**Wire contract**
+**Wire contract** (collection and apply routines read 2026-11-17, batch 9)
 
-- Purpose (R): copy the animation of one container onto another container.
+- Purpose (R): copy the animation of one container onto another container,
+  matching parameters by name.
 - Arguments: `InputObj` (in, object; handler `55f36231…`), `Target` (in,
   object list). No return value.
 - UnPackArg (B): `InputObj` is fetched as a bare object. If it is already an
@@ -95,15 +97,45 @@ Note (R): the registry holds three further entries whose scripting name is also
 - Do (B) forwards *(InputObj list, Target list, firstExecution)* to the worker:
   1. fails with `0x8000ffff` if the task already holds working data;
   2. computes a "multiple" flag = InputObj count >= 2, or Target count >= 2;
-  3. calls `0x180011090(task, InputObj list, multiple, 0)` (collects the
-     source container's animation into the working data *(inferred)*);
-  4. if working data now exists, calls `0x180010500(task, Target list,
-     firstExecution, multiple, 0)` (applies it to the targets through nested
-     tasks *(inferred)*).
+  3. collects the source animation (`0x180011090`);
+  4. if anything was collected, applies it to the targets (`0x180010500`).
+- Name key of a parameter (B, `0x180010e70`), used on both sides: the names
+  (property `{fe15f21c-48c0-11d2-8d73-00a0c982a649}`, string) of the parameter
+  and of each of its parents are joined with `.`, **leaf first**, walking up
+  to but not including the container item itself; when the "multiple" flag is
+  set the container's own name is appended as the last segment. The result is
+  converted to upper case, so matching is case-insensitive. Example: parameter
+  `posx` in `pos` in `local` under the container gives `POSX.POS.LOCAL`.
+- Collection (B), for each item of the `InputObj` list: its direct children
+  are walked in order. For a child that has a connected source (first kind
+  `{c1afbd50-…}` fcurve-type source, else `{481262ff-…}`, expression
+  *(inferred)*) the name key is built and *(key -> source)* is stored in the
+  task's map; an existing key is kept (first one wins). A child without a
+  source (or with an empty key) that has children of its own is descended
+  into recursively, the key root staying the original container item.
+- Apply (B), for each item of the `Target` list: its children are walked the
+  same way. A child whose capability flags lack bit 0 (not an animatable
+  parameter) is descended into when it has children. For each animatable
+  parameter the name key is built and looked up:
+  - **found**: the stored source is duplicated with the low-level duplicate
+    task `{747d257f-d01b-11d2-80c4-00a0c9ac19a9}` and the duplicate is
+    connected to the target parameter with the nested `ConnectSource` task
+    `{ec7663e9-2f0b-11d3-bffd-00a0248f9397}` (which first removes whatever
+    animated the target, see cmd-b8b); the `ConnectSource` task is attached as
+    a sub-task on first execution;
+  - **not found**: the nested `RemoveAnimation` task
+    `{5ad1fd7e-5d5d-11d2-8082-00a0c955b335}` is run on that single parameter
+    (second argument 0, as `ConnectSource` passes it: the current time
+    *(inferred)*; source mask 4 = any) and attached as a sub-task. So
+    after the command every animatable parameter of the target carries
+    exactly the animation of the same-named source parameter, or none.
+- Sources are copied, not shared: each target gets its own duplicate. Only
+  directly connected sources are copied; animation-layer and mixer content is
+  not looked at by this command.
 - Undo / Redo (B): `C3DCoreBaseTask::UndoTasks` / `RedoTasks` only, so every
   change is made by nested tasks.
-- Missing: the bodies of `0x180011090` and `0x180010500` (what is collected,
-  how source parameters are matched to target parameters).
+- Errors: null list `0x80004003`; a failing nested task or tree-walk call
+  aborts the walk with its status.
 
 ### `CopyAllAnimation` / `CopyAnimation`: SPEC
 
@@ -430,11 +462,12 @@ Note (R): the registry holds three further entries whose scripting name is also
 - Undo (B): the saved key values are written back (`0x1800381d0`). Redo
   re-runs Do.
 
-### `Sequence` / `SISequence` / `ScaleAndOffset`: SPEC-PARTIAL
+### `Sequence` / `SISequence` / `ScaleAndOffset`: SPEC
 
-**Wire contract**
+**Wire contract** (scene walk, per-fcurve routine and clip helpers read 2026-11-17, batch 9)
 
-- Purpose (R): offset and scale fcurves about a pivot inside a frame range.
+- Purpose (R): offset and scale fcurves (and, depending on `Mode`, action
+  sources and mixer clips) about a pivot inside a frame range.
 - Arguments read by UnPackArg (B), by name: `InputObjs`, `Scale` (double),
   `Ripple` (bool), `Discrete Time` (bool), `Type` (long), `Offset` (double,
   frames), `StartFrame`, `EndFrame`, `Pivot` (frames), `Mode` (long); then,
@@ -449,44 +482,131 @@ Note (R): the registry holds three further entries whose scripting name is also
   `ScaleAndOffset` defaults `Type` = `siAnimatedParameters`, declares
   `SelectedKeysOnly` (false) and `Layer` (-1), and takes `InputObjs` through
   the generic object handler.
-- Transform (B, from the Undo arithmetic): a key time *t* becomes
-  `(t - Pivot) * Scale + Pivot + Offset`. Offset, range and pivot are held in
-  seconds.
+- Transform (B): a time *t* becomes `(t - Pivot) * Scale + Pivot + Offset`.
+  Offset, range and pivot are held in seconds.
 - Do (B): returns `1` (nothing to do) when `|Scale - 1| < 1e-6` and
   `|Offset| < 1e-6`; `0x80004005` when `|Scale| < 1e-6`. Then by `Type`:
   `1` = the input list as given; `2` = each input expanded to its animated
-  parameters (`SIIsAnimated`); `3` = scene-wide walk; other -> `0x80004005`.
-  (`siMarkedParams`=1, `siAnimParams`=2, `siAllAnimParams`=3 *(inferred)*.)
+  parameters; `3` = scene-wide walk (below, `InputObjs` not used); other ->
+  `0x80004005`. (`siMarkedParams`=1, `siAnimParams`=2, `siAllAnimParams`=3
+  *(inferred)*.) `Mode` is used **only** with `Type` 3.
+- `Type` 1 / 2, per list item (B): items that are not parameter references
+  are ignored; the parameter must pass a filter (`0x18003f9e0`, not read;
+  the fcurve-level twin `0x18003faa0` asks the curve object the same
+  question, vtable offset `0x298`, that `ActivateFCurve` uses for its scene
+  walk); then the per-parameter routine runs. A locked parameter
+  (`0x80070005`) is removed from the working list.
 - Per parameter (B): every animation layer of the parameter is visited
   (`C3DComponentLayerEnum`, base included); `Layer` < 0 = all layers,
   otherwise only the layer with that index. The fcurve is fetched, the range
-  and pivot are clip-compensated, and the per-fcurve routine runs. A locked
-  parameter (`0x80070005`) is removed from the working list. The command
-  returns `0` when at least one fcurve was transformed, else `1`.
-- Per fcurve (B, partly): lock / keying-layer-lock check; a copy of the
-  fcurve is saved on first execution; range ends are snapped to existing keys;
-  the fcurve's own scale-and-offset method is called with *(start, end,
-  pivot, scale, offset, ripple, discrete-time, anchor side, selected-only)*.
-  With `Ripple` and a negative offset or an end-anchored scale the operation
-  is split into a scale pass and an offset pass.
+  and pivot are clip-compensated, and the per-fcurve routine runs.
+- `Type` 3, scene walk (B). `Mode` values as tested by the code:
+
+  | `Mode` | Plain fcurves (not owned by an action source) | Fcurves inside action sources | Action sources and their clips | Clips moved as units | Mixer markers |
+  |---|---|---|---|---|---|
+  | 1 | yes | no | no | no | no |
+  | 2 (`siFCurvesAnimationSources`, registry default) | yes | yes | yes | no | yes |
+  | 3 | yes | no | no | yes | yes |
+  | 4 | no | yes | yes | no | yes |
+  | 5 | no | no | no | yes | yes |
+
+  Names for 1, 3, 4, 5 were not read (fcurves only / fcurves and clips /
+  animation sources only / clips only *(inferred from the behaviour)*).
+  Order and detail:
+  1. Modes 3 and 5, for every `Mixer Action Clip` of the scene (class
+     `{12a3efc6-e543-11d2-b352-00105a1e6ce9}`), on its time control
+     (`C3DTimeControl`): `scale` is divided by `|Scale|`; `startoffset`
+     (frames) is transformed with the formula above (for a non-positive
+     `Scale` the value transformed is `endtime`, and the result is stored as
+     the new `startoffset`); `extrapbef_timehold` and `extrapaft_timehold`
+     are multiplied by `|Scale|`. For a negative `Scale` `dowarp` is set to
+     true and the clip's warp fcurve is reversed through its curve object
+     (method at offset `0x1e8`, then helper `0x180043420`, not read).
+  2. Two sets of fcurves are gathered: those owned by action sources (class
+     `{12a3efc5-…}`, `C3DAction`) and those owned by mixer transitions (class
+     `{d8d203a5-e13d-11d2-b34f-00105a1e6ce9}`). Transition fcurves are
+     **never** transformed.
+  3. Modes 1 to 4: every fcurve object of the scene (classes
+     `{e2a86051-f669-11d1-8d60-080036f3cc02}` and
+     `{3a9e3aff-9773-493c-a375-840456d73477}`) is visited and transformed
+     with the per-fcurve routine according to the table; plain fcurves must
+     additionally pass the `0x298` curve filter, action-source fcurves need
+     not.
+  4. Modes 2 and 4: for every action source, `AnimStart` and `AnimEnd`
+     (`TimeStart` / `TimeEnd`) are transformed with the formula and stored
+     smaller first (`0x180043030`); then for every `Mixer Action Clip` the
+     time control gets (`0x180042670`): `startoffset` transformed (base value
+     `endtime` for a non-positive `Scale`); `clipin` / `clipout` transformed
+     and stored smaller / larger, `clipin` only when `cliptoparentstart` is
+     false and `clipout` only when `cliptoparentend` is false; both hold
+     times multiplied by `|Scale|`; a negative `Scale` again calls
+     `0x180043420`.
+  5. Modes 2 to 5: every `Mixer Marker` (class
+     `{d8d203a9-e13d-11d2-b34f-00105a1e6ce9}`) has its start transformed and
+     its duration multiplied by the scale (for a negative scale the start is
+     moved back by the new duration) (`0x180042d20`; pivot handling there
+     *(inferred to follow the same formula)*).
+- Per fcurve (B, `0x18003fe20`), in order:
+  1. lock / keying-layer-lock check (locked: `0x80070005`; status 1 = skip);
+  2. raw curves of kind `0x28` are processed once per underlying curve
+     object (per-task visited set);
+  3. first execution: a copy of the curve is saved. Later passes (undo /
+     redo): while saved copies remain, the next one is assigned back to the
+     curve instead of recomputing, and the routine ends;
+  4. range snapping: with the frame bounds of `StartFrame` and `EndFrame`
+     (`DSGetAnimationTimeAndBounds`), the first key at or after the lower
+     bound of the start frame and the last key at or before the upper bound
+     of the end frame are located. If no key falls inside the range (and the
+     key gather, which honours `SelectedKeysOnly`, finds nothing) the curve
+     is left alone with status 0. Otherwise the start is moved onto that
+     first key when the key lies inside the start frame before the given
+     start (when the pivot coincides with a range end: whenever the key is
+     inside that frame and not exactly at the start), and symmetrically the
+     end onto the last key. A pivot that coincided (within 1e-7) with the
+     start or the end follows the snapped value; a pivot within 1e-7 of the
+     first or last key is set exactly onto it;
+  5. anchor side: `2` when the pivot is nearer the range end than the range
+     start, `4` otherwise. When the scale is not 1, a range end was snapped
+     and the pivot sits on the anchored end, the scale is recomputed so that
+     the far snapped end lands where the unsnapped far end would have landed;
+  6. the curve's own scale-and-offset method (curve object, offset `0x1f0`)
+     is called with *(start, end, pivot, scale, offset, ripple, pass flag,
+     anchor side, selected-only)*. Ripple rules: `Ripple` is dropped when the
+     anchor side is 2 and the scale is not 1. With `Ripple` on and a
+     **negative** offset (or when the task's internal flag at offset `0xec`
+     is set) the edit is split in two calls: first scale only (offset 0),
+     then, on the scaled range `[(start - pivot) * scale + pivot,
+     (end - pivot) * scale + pivot]` (ends ordered), offset only (scale 1,
+     pivot 0, ripple off). In every other case one call does both. A zero
+     answer from the method gives `0x80004005`;
+  7. `Discrete Time` true: after the transform the fcurve (interface
+     `31ca7790-…`) method at offset `0x190` is called with (0, 0): the keys
+     are put back on whole frames *(inferred from the argument name)*; a
+     failure aborts;
+  8. the fcurve's end-of-edit notification is sent (and a refresh on
+     interface `{9a0d12a9-ae9e-45c2-a5c9-2bf123c45e1c}` when present); on first execution
+     the effective parameters are remembered for undo.
+- Return: `0` when at least one fcurve was transformed, else `1`. On first
+  execution the arguments and a soft reference to the working list are stored
+  (`Type` 2 is stored as 1 because the list is already expanded).
 - Undo (B): the list worker is re-run with offset `-Offset`, scale
   `1 / Scale`, the transformed range (ends swapped if needed) and pivot
-  `Pivot + Offset`; on such non-first passes a saved fcurve copy, when one is
-  left, is assigned back instead of recomputing. Redo re-runs the original
-  parameters.
-- Missing: (a) the `Type` 3 scene walk and the exact meaning of `Mode` 1..5
-  there (it selects which fcurves are touched: plain parameter fcurves vs
-  those held by action sources / clips; modes 3 and 5 are treated as "both");
-  (b) the snapping / ripple branches of `0x18003fe20` in detail and the
-  effect of `Discrete Time`; (c) third private slot `0x180043390`, which
-  applies a time transform to two further object classes
-  (`{22c3e8f8-ccea-11d2-b35b-00105a1e70de}`, kind 1, and
-  `{d39d0046-ed33-11d2-b353-00105a1e6ce9}`, kind 0xb).
+  `Pivot + Offset`; saved fcurve copies are assigned back first (step 3).
+  Redo re-runs the original parameters.
+- Not part of the command's Do (B): the class's third private method
+  `0x180043390` applies the clip time-control transform of step 4
+  (`0x180042670`) to every image clip (class
+  `{22c3e8f8-ccea-11d2-b35b-00105a1e70de}`, child 1) and every audio clip
+  (class `{d39d0046-ed33-11d2-b353-00105a1e6ce9}`, child `0xb`). It has no
+  caller inside `fcurve.dll` (only the vtable entry), so it is reached only
+  through the interface by other modules.
 
 ## Open questions
 
-1. `CopyAnimContainer`: `0x180011090` (source collection) and `0x180010500`
-   (apply to targets) were not read.
+1. **Closed 2026-11-17 (batch 9).** `0x180011090` builds a map from an
+   upper-case, leaf-first dotted name key to the connected source;
+   `0x180010500` connects a duplicate of the matching source to each target
+   parameter (`ConnectSource`) and runs `RemoveAnimation` on unmatched ones.
 2. `CopyAnimation`: second source interface `{481262ff-…}` is assumed to be
    the expression source; the meaning of mask bits `0xA` / `0xC` inside
    `motionhelp!F3DGetAllAnimationComponents` was not checked.
@@ -502,8 +622,13 @@ Note (R): the registry holds three further entries whose scripting name is also
 6. Symbolic names of the numeric `Type` / `Mode` values (`siParameterScope`,
    `siSequenceType`, `siSequenceMode`, `siFCurveKeySelectionMode` beyond
    `siSetKeySelection`) are inferred, not read from a type library.
-7. `Sequence`: `Type` 3 branch of `0x1800405b0`, `0x180043390` / `0x180042670`,
-   and the fine detail of `0x18003fe20`.
+7. **Closed 2026-11-17 (batch 9).** `Type` 3 walk, `Mode` 1 to 5 table, clip /
+   action / marker helpers and the per-fcurve snapping and ripple rules are
+   in the contract; `0x180043390` has no caller in `fcurve.dll`.
 8. Rotation commands: which kinematic state the "index 1 / ids 0x0b-0x0d"
    triple is, and the custom-transform interface `{092fa96b-…}` path.
 9. Text of `XSIFCURVE` dictionary ids `0x24` and `0x3a` not resolved.
+10. `Sequence`: helper `0x180043420` (negative scale on a clip time control),
+    parameter filter `0x18003f9e0`, the curve methods at offsets `0x1f0`
+    (scale-and-offset), `0x190` (`Discrete Time`) and `0x298` (filter) are
+    known only by their call sites; symbolic names of `Mode` 1, 3, 4, 5.
