@@ -1,6 +1,7 @@
 # CMD-B8a: Fcurve / key commands read from `fcurve.dll` (key save / remove / navigation, fcurve info, activation, animation removal)
 
-Row: **CMD-B8a**. Status: **SPEC** (18 names), **SPEC-PARTIAL** (4 names); per command below.
+Row: **CMD-B8a**. Status: **SPEC** (22 names), **SPEC-PARTIAL** (0 names); per command below.
+Batch 9 (2026-11-17): `ActivateFCurve*` and `RemoveAnimation` closed after reading `0x180001240`, `0x180038d20`, `0x18003a440`, `0x18003a970` and the Layer Clip Helper (`0x180030b70`, `0x180034a40`, `0x180032f70`).
 Run: 2026-11-17, `si-analyst`, unattended, batch 8 (binary first, REA + Ghidra 12.1.4 on the PC plus local static reads of the same DLLs).
 **No XSIBATCH golden**: nothing here was executed. No decompiler output or disassembly is reproduced.
 
@@ -142,6 +143,47 @@ SaveKey per-list warnings (see SaveKey steps 3b to 3d); `0x26` SaveKey "nothing 
 `0x37` RemoveAnimation layer warning. The texts were not read (they are in the
 dictionary, not in the DLL code).
 
+### 2.7 Layer Clip Helper (class `42eb14da-bcab-4e24-bee6-b8a0bb496c3a`, read 2026-11-17, batch 9)
+
+Served by `fcurve.dll` itself (registered name `Layer Clip Helper`; creation function
+`0x18004a380`, constructor `0x1800304c0`, task interface `d3e8ed6d-0324-4e7c-acf7-28239d9ff495`
+with vtable `0x180068220`). It is a small task that batches edits to the action source
+of animation-layer clips and is used by `RemoveAnimation`, `RemoveKey`, `PasteAnimation`
+and `DuplicateAnimationLayer`.
+
+- Slot 9 (`0x180030b70`), "register clip": the object must be a `Mixer Layer Clip`
+  (class `bb3ca994-...`), else `0x80070057`; after a commit the helper refuses with
+  `0x80004005`. A per-clip record with a soft reference is created once.
+- Slot 12 (`0x180034a40`), "remove item by name": registers the clip if needed and adds
+  the name to that clip's edit map with no replacement source.
+- Slots 10 / 11 (`0x180031470`, `0x180030dc0`) add a replacement source under a name
+  (used by `PasteAnimation`; bodies not read here).
+- Slot 13 (`0x180032f70`), "commit(duplicate flag)". Because the items of an action
+  source are not edited in place, each registered layer is **rebuilt**:
+  1. the clip, its track, its model (`SIGetPrimaryModelForAction`) and its action source
+     are resolved; the lock state of the layer and the names of clip, track and source
+     are read;
+  2. every active item of the old source whose name is **not** in the edit map and
+     that holds a plain source is duplicated (duplicate task `747d257f-...`) and kept
+     with its name; names in the edit map are not carried over;
+  3. the position of the old track among the mixer tracks is counted;
+  4. flag 0 only: the old clip is deleted with a `DeleteObj` task (option `0x10`), kept
+     in the record for undo;
+  5. a new action source (class `12a3efc5-...`) is created, named like the old one,
+     filled with the carried-over items and then with the edit-map entries, added to
+     the mixer's source container and to the mixer;
+  6. a new layer track is created at the counted position with the `AddTrack` task
+     (`67b8773c-...`, type `d9fa2370-...`), named like the old track; a new layer clip
+     (class `bb3ca994-...`) instancing the new source is put on it;
+  7. flag 0: if the old layer was locked the new clip is locked again with the
+     `LockAnimationLayer` task (`f9ce2086-...`). Flag 1 (duplicate): the old clip is
+     kept, and the new source, track and clip names get the suffix `_copy` (unless the
+     name already contains `_copy`);
+  8. soft references to the new track and the mixer are stored for undo; afterwards the
+     edit map is cleared and the helper is marked committed. Returns 0.
+- Helper `0x180031810` (called with the model and the old / new clip around the
+  rebuild) was not read.
+
 ---
 
 ## 3. Contracts
@@ -213,8 +255,10 @@ dictionary, not in the DLL code).
   4. Do: if an fcurve was found it is evaluated at that time (fcurve method at vtable
      offset `0x78`) and the result stored.
 - Return: `Value` = the evaluated double. If the parameter has no fcurve source the
-  evaluation is skipped and `Value` is whatever the task field was initialised to
-  (constructor `0x180014ac0` not read; see open question 5).
+  evaluation is skipped, Do answers status 1, and the result field is **not
+  initialised** by the constructor `0x180014ac0` (it clears only the fcurve pointer
+  and one flag), so `Value` is undefined in that case; an implementation should
+  return an empty / zero value and treat the call as "nothing evaluated".
 - Undo / Redo: none.
 
 ### `GetFCurveInfo`: SPEC
@@ -441,8 +485,8 @@ handler `5c0cf8b6-...` that decides between the native entries.
      helper tasks (class `d8b3c0e0-...`, modes 2 and 1) are run and attached as
      sub-tasks.
   4. When a layer fcurve ends up with no keys, the corresponding item is removed from
-     the layer's action source through a helper object (class `180071ea8` /
-     interface `180071e98` data constants) `(inferred from the call pattern)`.
+     the layer's action source through the Layer Clip Helper (class `42eb14da-...`,
+     2.7, "remove item by name").
   5. First execution: undo record with parameter reference, time, removed value and
      saved fcurve state.
 - Undo: the key is written back with the key writer `0x18001adb0` (same time, saved
@@ -496,8 +540,11 @@ fcurve.dll contract).
 - Return: `Value` = found time converted with `SISecondsToFrames`. When nothing was
   found the internal sentinel (plus or minus `DBL_MAX`) is doubled and returned as is,
   i.e. a non-finite number.
-- Undo / Redo: slots `0x18001cba0` / `0x18001cb90` (not read; presumably restore /
-  reapply the time, see open question 6).
+- Undo (`0x18001cba0`): the current time is set back to the `Time` argument (the time
+  the search started from, task field in seconds). Redo (`0x18001cb90`): the current
+  time is set to the found time again. Both go through `0x18001c7e0`, which uses the
+  playback object and answers `0x80070057` when the stored time is the plus or minus
+  `DBL_MAX` sentinel (nothing was found).
 
 ### `SaveActionKey` (native entry): SPEC
 
@@ -523,12 +570,12 @@ fcurve.dll contract).
   value is written back. Redo replays.
 - No layer filtering, no autokey scope, no `ModifiedOnly`, no delta task in this class.
 
-### `ActivateFCurve` / `ActivateFCurveOnKeyable` / `ActivateFCurveOnMarkedKeyable`: SPEC-PARTIAL
+### `ActivateFCurve` / `ActivateFCurveOnKeyable` / `ActivateFCurveOnMarkedKeyable`: SPEC
 
-**Wire contract** (established part)
+**Wire contract** (range branch and helper sub-tasks read 2026-11-17, batch 9)
 
 - Purpose: mute / unmute whole fcurves, or deactivate / reactivate a frame range of
-  them.
+  them. On **boolean** fcurves the range form instead writes the on / off state as keys.
 - Arguments: `InputObjs` (in; parameter list handler `fa0b5d32-...` for ActivateFCurve,
   object list handler `7834cb8c-...` for the two keyable variants); `Activate` (in,
   bool, default True); `StartFrame`, `EndFrame` (in, variant, default empty);
@@ -546,55 +593,157 @@ fcurve.dll contract).
 - Range decoding: if `StartFrame` is empty the whole curve is addressed. Otherwise
   `StartFrame` must be numeric and `EndFrame` is read: empty again means whole curve,
   numeric gives the range end. Both are converted to seconds; a reversed range is
-  swapped in the worker.
-- Do, per parameter (`0x180001240`): parameters without an fcurve are skipped. Whole
-  curve: the fcurve's mute state is set to the inverse of `Activate` (interface
-  `31ca7790-...`, method at offset `0x1a8`). Range: the range is deactivated
-  (offset `0x1c8`) or reactivated (offset `0x1d0`) between the two times. The processed
-  parameters are collected in a list kept as a soft list reference for undo / redo.
-- Undo: sub-tasks are undone, then the same operation is applied with `Activate`
-  inverted. Redo: sub-tasks are redone and the operation reapplied.
+  swapped in the worker (start = the smaller time, end = the larger).
+- Per parameter (`0x180001240`), step 1, which curve is addressed:
+  - the parameter's fcurve source (interface `01dfa2a0-6962-11ce-b8ac-00aa005c18ec`) is
+    used when it has one;
+  - a parameter **without** an fcurve whose capability flags have bit 0 set (animatable)
+    gets a *temporary* fcurve from the fcurve creator class
+    `ceb464fa-00f9-11cf-80f1-00aa006297e2` (interface `2fa89991-6633-11ce-b8ac-00aa005c18ec`),
+    only so that its kind and constant values can be read; the creator takes it back at
+    the end of the step. Below this is "the temporary case";
+  - a parameter with neither is left alone.
+  The curve kind is then read; kind `10` is the boolean fcurve kind.
+- Step 2, whole curve (no range):
+  - real fcurve, any kind: the mute state is set to the inverse of `Activate` (interface
+    `31ca7790-...`, method at offset `0x1a8`); the parameter is recorded for undo when the
+    call answers status 0.
+  - temporary case, boolean parameter: the parameter's value at the current time is read
+    and the **logical inverse** of it is written back at the current time through a
+    `SetValue` sub-task (`c089b901-8481-11d2-b118-00a024c79287`). `Activate` is not
+    looked at on this path: an unanimated boolean parameter is simply toggled.
+  - temporary case, other kinds: nothing (status 1).
+- Step 3, range on a non-boolean fcurve: the range is deactivated (offset `0x1c8`,
+  `Activate` false) or reactivated (offset `0x1d0`, `Activate` true) between the two
+  times; recorded for undo when the call answers status 0. In the temporary case the
+  call only touches the throw-away curve, so nothing lasting happens `(inferred)`.
+- Step 4, range on a **boolean** fcurve (kind 10). Let `v` = 1.0 when `Activate` is
+  true, 0.0 when false, and `!v` the other one. The edit is done entirely with nested
+  key commands, so that the curve reads `v` over `[start, end]` and keeps what it had
+  outside:
+  1. Early out: the curve is asked for its value at `start` and at `end` (curve method
+     at offset `0x68`, mode 2, tolerance 1e-12). When both queries answer a non-zero
+     status and the value at `start` already equals `v` while the value at `end` differs
+     from `v`, nothing is done for this parameter.
+  2. All key times are listed. The first key strictly after `start` is located; the
+     value the curve holds on the left side of that key is the *value before the range*.
+     Every key with `start < time <= end` is collected. The first key after `end` gives,
+     by its left-side value, the *value after the range*; when there is no key after
+     `end` the curve's trailing constant (curve getter at offset `0x188`) is used.
+     When no key lies after `start` at all, the value before the range is taken equal to
+     that trailing constant. In the temporary case both values come from the curve's two
+     constant getters (offsets `0x170` and `0x188`).
+  3. Each collected key is removed with a `RemoveKey`-class sub-task
+     (`5ad1fd81-5d5d-11d2-8082-00a0c955b335`, run with owner, parameter, key time).
+  4. If the value before the range differs from `v`: a key with value `v` is set at
+     `start` with a `SaveKey`-class sub-task (`5ad1fd80-5d5d-11d2-8082-00a0c955b335`, run
+     with owner, parameter, time, value). When the first key after `start` was the very
+     first key of the curve (or in the temporary case), a key with value `!v` is set
+     first, one time unit before `start` (a `CDSTime` built from the value 1.0;
+     one frame `(inferred)`), so that the curve does not read `v` before the range.
+  5. If the value after the range differs from `v`: a key with value `!v` is set at
+     `end` with another `SaveKey`-class sub-task.
+  6. Each sub-task that answers status 0 is attached to the command on first execution.
+     The parameter is **not** put on the command's own undo list on this path; the
+     sub-tasks carry the undo.
+- After a real fcurve was edited its end-of-edit notification (fcurve method at offset
+  `0x90`) is sent. Parameters recorded for undo are kept as a soft list reference.
+- Undo: sub-tasks are undone, then the mute / range operation is applied to the recorded
+  parameters with `Activate` inverted. Redo: sub-tasks are redone and the operation
+  reapplied.
+- Errors: fcurve without interface `31ca7790-...` gives `0x80004002`; failures of the
+  creator, of a sub-task or of `AddTask` are returned unchanged.
+- Not confirmed (does not block the contract): the symbolic names of the
+  `siParameterScope` values other than the tested 2 and 3.
 
-Missing (why PARTIAL): inside `0x180001240` the range branch creates helper sub-tasks
-(classes at data `0x180071f78`, `0x180071f88`, `0x180072328`) that insert boundary keys
-and re-apply the parameter value at the current time; their exact conditions and key
-values were not read. The numeric values of `siParameterScope` names other than the
-tested 2 and 3 are not confirmed.
+### `RemoveAnimation`: SPEC
 
-### `RemoveAnimation`: SPEC-PARTIAL
-
-**Wire contract** (established part)
+**Wire contract** (collector and layer removal read 2026-11-17, batch 9)
 
 - Purpose: remove animation sources from the input parameters while keeping their
   value at a given time.
-- Arguments: `InputObjs` (in, parameter list, default marked parameters `(inferred)`);
-  `Time` (in, frames, default current); `StaticFCurves` (in, bool, default False);
-  `BaseAnimation` (in, bool, default True); `LayerAnimation` (in, bool, default True);
-  `SourceMask` (in, `siSourceType` read as long, default `siAnySource`; the code's own
-  fallback before reading is 4). No return value.
+- Arguments (UnPackArg `0x18003b090`, read): `InputObjs` (in, parameter list, default
+  marked parameters `(inferred)`); `Time` (in, frames, converted to seconds);
+  `StaticFCurves` (in, bool, default False); `BaseAnimation` (in, bool, default True);
+  `LayerAnimation` (in, bool, default True; the task presets True before reading);
+  `SourceMask` (in, `siSourceType` read as long, default `siAnySource`; the task presets
+  4 before reading). No return value.
+- `SourceMask` bits as tested by the code: `1` = fcurve sources (interface
+  `c1afbd50-debf-11cf-8290-00a0243f1013`), `2` = expression sources (interface
+  `481262ff-7ddb-11d0-a57f-00a0c91412de`), `4` = any source, `0x10` = constraints. The
+  layer pass runs for masks containing `1` or `4`; the constraint pass for masks
+  containing `4` or `0x10`.
+- "Static" test (`0x18003a440`), used when `StaticFCurves` is true: the source must be
+  an fcurve (interface `31ca7790-...`). A curve without keys is static. Otherwise every
+  key must have the same value as the first key (difference at most 1e-12) and both
+  tangent slopes of every key must be at most 1e-6 in magnitude. For layer curves the
+  first key's value must additionally be zero (magnitude at most 1e-12), i.e. a layer
+  curve that adds nothing. A non-fcurve source is never static.
 - Steps:
   1. Per parameter the value at `Time` is read and saved. A parameter whose value
      getter answers `0x80004001` is skipped.
-  2. The collector `0x180038d20` is called with (parameter, time, `SourceMask`) and
-     accumulates a removal sub-task and its work list across all parameters.
-  3. If nothing was collected and no layer work exists, the command returns status 1.
-  4. Otherwise locks are suspended (`CSILockSuspender`, level 3), the removal sub-task
-     is executed, locks are resumed, and on first execution the sub-task is attached
-     for undo.
+  2. The collector `0x180038d20` runs per parameter:
+     a. `motionhelp.dll!F3DGetCompleteAnimationState(owner, parameter, Time, &flags, 1,
+        &source)` gives the driving source and state flags (bits 16, 17 and 18 are used
+        below; their names are inside the helper). The ambient value
+        `RefmodelIsApplyingDelta` is read.
+     b. Choice of the object to remove: the reported source is used directly when one
+        exists, flag bit 17 is clear, and either a reference-model delta is being
+        applied or flag bit 18 is clear. Otherwise the parameter's directly connected
+        source is used when it has one; failing that, when flag bit 17 is set and the
+        mask allows constraints, the constraint found by
+        `F3DIsComponentConstrained` is used. When the mask allows constraints and a
+        constraint exists next to another source, the constraint is remembered as a
+        second object to delete.
+     c. No object chosen: only the layer pass (step 6) is tried for this parameter.
+     d. Object chosen: a parameter locked at level 2 outside a locked reference model
+        raises the lock error and is skipped. An owner exposing interface
+        `12a3ef95-e543-11d2-b352-00105a1e6ce9` (an action source: the parameter lives
+        inside a stored action) is skipped. The layer pass (step 6) runs.
+     e. Type filter: mask bit 4 accepts anything; otherwise bit 1 accepts an fcurve
+        source and bit 2 an expression source.
+     f. The source is queued for removal only when `BaseAnimation` is true, the type
+        filter accepted it, and, when `StaticFCurves` is true, the source passes the
+        static test **and** the parameter has no animation-layer entries
+        (`C3DComponentLayerEnum` count 0). With `StaticFCurves` false every accepted
+        source is queued.
+     g. Queuing: one `DeleteObj` task (`dd531990-ccc2-11d2-ac73-00a02485cecb`) and one
+        object list are created lazily and shared by all parameters; the source (and the
+        remembered constraint, if any) is appended to that list.
+     h. Reference models: when `F3DRequiresDeltaCreation` answers 0, delta tasks
+        (`d8b3c0e0-...`) are run and attached on first execution: type 4 when flag bit
+        16 is set, type 8 when bit 18 is set, otherwise type 2 only if the source was
+        queued (the source's interface `7fac8dc7-85ab-45b0-9924-02b39e7c0382` is also
+        told 0 through its first method); then always one of type 1.
+  3. If nothing was queued and no layer work exists, the command returns status 1.
+  4. Otherwise locks are suspended (`CSILockSuspender`, level 3), the `DeleteObj` task
+     is executed on the queued sources, locks are resumed, and on first execution the
+     task is attached for undo.
   5. Second pass: for each parameter with a numeric saved value for which the helper
      `0x180005e10` returns 1 (no remaining mixer entry on the parameter or its parents)
      the saved value is written back at `Time`, so the parameter keeps the value it
      showed.
-  6. Layer animation (`0x18003a970`, also replayed by Redo when `LayerAnimation` is
-     true): the parameter's entries in animation-layer action sources are removed
-     through a helper object; a locked keying layer is skipped with warning `0x37`
-     (severity 4) naming the object.
-- Undo: the layer helper is undone, then the sub-tasks. Redo: sub-tasks, then the layer
-  removal again.
-
-Missing (why PARTIAL): `0x180038d20` was not read, so the precise use of
-`StaticFCurves`, `BaseAnimation` and the per-source-type filtering by `SourceMask` is
-not established; `0x18003a970` was read only in outline.
+  6. Layer pass (`0x18003a970`; runs only when `LayerAnimation` is true and the mask
+     contains 1 or 4; also replayed by Redo): the real parameter is resolved from
+     compounds; the mixer drivers of the parameter at `Time` are enumerated; for each
+     driver whose clip is an animation-layer clip (class
+     `bb3ca994-1e49-4aaf-8aa1-fc0fa797ace6`, `Mixer Layer Clip`):
+     - with `StaticFCurves` true the layer's curve for this parameter must pass the
+       static test in its layer form (constant **and** zero); a non-static layer curve
+       is left in place;
+     - a locked keying layer (`F3DIsKeyingLayerLocked`) logs warning `XSIFCURVE` `0x37`
+       (severity 4) with the layer's path; the removal request is still issued;
+     - the parameter's item name in that layer is handed to the Layer Clip Helper
+       (class `42eb14da-...`, 2.7 below, "remove item by name"), which is created once
+       per command.
+     A parameter for which at least one layer item was requested is appended (as an
+     element reference) to the command's layer work list.
+- Undo: the Layer Clip Helper is undone, then the sub-tasks. Redo: sub-tasks, then the
+  layer pass again.
+- Errors: failures of the helpers and of task creation are returned unchanged.
+- Not confirmed (does not block the contract): the names of state-flag bits 16 to 18 of
+  `F3DGetCompleteAnimationState`, and the hierarchy query at vtable offset `0xa0` that
+  must answer non-zero before step 2e (identified only by its slot).
 
 ---
 
@@ -643,14 +792,20 @@ the hidden registry argument `MarkedOnly` with default `True` (`False` for
    native entries (`SaveKey*`, `SaveActionKey`, and presumably expression / other source
    handlers listed in `handler_dlls`), and which of the two same-named registry entries
    a script call resolves to.
-3. `0x180038d20` (RemoveAnimation collector): handling of `StaticFCurves`,
-   `BaseAnimation`, `SourceMask`. `0x18003a970` layer removal details.
-4. `0x180001240` (ActivateFCurve per parameter): boundary-key insertion in range mode
-   (lines around the three `SICreateInstance` helper classes).
-5. `0x180014ac0` (EvalFCurve constructor): initial value of the result field returned
-   when the parameter has no fcurve.
-6. `0x18001cba0` / `0x18001cb90` (navigation Undo / Redo) and `0x18001c6c0` (undo record
-   builder for SaveKey / RemoveKey): not read.
+3. **Closed 2026-11-17 (batch 9).** `0x180038d20` / `0x18003a970` read: `BaseAnimation`
+   gates the deletion of the base source, `StaticFCurves` restricts it to constant
+   curves on parameters without layers (and layer curves to constant zero),
+   `SourceMask` bits are 1 fcurve, 2 expression, 4 any, 0x10 constraint; layers are
+   edited through the Layer Clip Helper (2.7).
+4. **Closed 2026-11-17 (batch 9).** `0x180001240` read: the three classes are
+   `RemoveKey` (`5ad1fd81-...`), `SaveKey` (`5ad1fd80-...`) and `SetValue`
+   (`c089b901-...`); they are used only for boolean fcurves (kind 10), see the contract.
+5. **Closed 2026-11-17 (batch 9).** `0x180014ac0` does not initialise the result field;
+   without an fcurve Do answers status 1 and `Value` is undefined.
+6. **Closed 2026-11-17 (batch 9).** Navigation Undo restores the start time, Redo
+   re-applies the found time (`0x18001c7e0`). `0x18001c6c0` allocates a 0xa0-byte undo
+   record holding the parameter soft reference, key time, new value, old value, the
+   "key existed" flag, an optional quaternion key and the saved fcurve state.
 7. `0x18001b800` / `0x180046c60` (iterator slot 32, argument-handler configuration
    callback keyed on the argument handler CLSIDs `fa0b5d32-...` and `7834cb8c-...`):
    meaning of the returned variants (it is what parameterises the default of
@@ -660,3 +815,7 @@ the hidden registry argument `MarkedOnly` with default `True` (`False` for
    identified only by GUID. Texts of `XSIFCURVE` messages `0x25` to `0x37` not read.
 9. `0x180009dc0`, `0x1800096b0`, `0x18000a2b0` (SaveKey Euler-triple / layer offset
    helpers) were read only through their call sites.
+10. `0x180031810` (Layer Clip Helper, called around the layer rebuild with the model and
+    the clip) and helper slots 10 / 11 (`0x180031470`, `0x180030dc0`) were not read.
+11. `F3DGetCompleteAnimationState` (`motionhelp.dll`): names of state-flag bits 16, 17
+    and 18 used by the RemoveAnimation collector.

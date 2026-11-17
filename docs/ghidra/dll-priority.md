@@ -44,3 +44,6 @@ Generated from softimage-pc string hunts under `Application\` (449 binaries).
 | `Application\bin\primtasks.dll` | CMD-B8d, CMD-B8e | [cmd-b8d](./cmd-b8d-primtasks-texture-binary.md), [cmd-b8e](./cmd-b8e-primtasks-prims-binary.md) (30 commands) |
 | `Application\bin\simeshtasks.dll`, `sicurvetasks.dll` | CMD-B8f | [cmd-b8f](./cmd-b8f-mesh-curve-step-tasks-binary.md) (19 commands) |
 | `Application\bin\mohelper.dll` | CMD-B8a | `F3DGetKeyableParams` only (addendum of cmd-b8a); other helpers wanted, row CMD-B8-HELPERS |
+| `Application\bin\xsipaint.dll` | CMD-B9a, CMD-B9b, CMD-B9c | [cmd-b9a](./cmd-b9a-xsipaint-shapes-keys-stores-binary.md), [cmd-b9b](./cmd-b9b-xsipaint-add-shapes-binary.md), [cmd-b9c](./cmd-b9c-xsipaint-masks-select-color-binary.md) (45 commands) |
+| `Application\bin\phonemeui.dll` | CMD-B9d | [cmd-b9d](./cmd-b9d-phonemeui-speech-binary.md) (26 commands) |
+| `Application\bin\fxcore.dll` | CMD-B9e, CMD-B9f, CMD-B9g | [cmd-b9e](./cmd-b9e-fxcore-paintclip-fxtree-binary.md), [cmd-b9f](./cmd-b9f-fxcore-2dshape-connect-tracking-binary.md), [cmd-b9g](./cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) (43 commands) |

@@ -371,16 +371,16 @@ of the command's contract (see the note). No code is recorded here.
 | `FirstKey` | `Application\bin\fcurve.dll` | Do 0x180047140 / worker 0x18001caf0 -> 0x180046ac0 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
 | `LastKey` | `Application\bin\fcurve.dll` | Do 0x180047140 / worker 0x18002f470 -> 0x180046d20 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
 | `SaveActionKey` (native entry) | `Application\bin\fcurve.dll` | Do OnDo (imported) / worker 0x180044e10 -> 0x180044c30, source lookup 0x1800447f0 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
-| `ActivateFCurve` | `Application\bin\fcurve.dll` | Do 0x180002380 / worker 0x180002110 -> 0x180001240 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC-PARTIAL |
-| `ActivateFCurveOnKeyable` | `Application\bin\fcurve.dll` | Do 0x180002380 / worker 0x180002110 -> 0x180001240 (mode 1 in UnPackArg 0x180002860) | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC-PARTIAL |
-| `ActivateFCurveOnMarkedKeyable` | `Application\bin\fcurve.dll` | Do 0x180002380 / worker 0x180002110 -> 0x180001240 (mode 2 in UnPackArg 0x180002860) | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC-PARTIAL |
-| `RemoveAnimation` | `Application\bin\fcurve.dll` | Do 0x18003a660 / worker 0x180039b70 (collector 0x180038d20 unread) | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC-PARTIAL |
+| `ActivateFCurve` | `Application\bin\fcurve.dll` | Do 0x180002380 / worker 0x180002110 -> 0x180001240 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `ActivateFCurveOnKeyable` | `Application\bin\fcurve.dll` | Do 0x180002380 / worker 0x180002110 -> 0x180001240 (mode 1 in UnPackArg 0x180002860) | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `ActivateFCurveOnMarkedKeyable` | `Application\bin\fcurve.dll` | Do 0x180002380 / worker 0x180002110 -> 0x180001240 (mode 2 in UnPackArg 0x180002860) | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `RemoveAnimation` | `Application\bin\fcurve.dll` | Do 0x18003a660 / worker 0x180039b70 / collector 0x180038d20 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
 | `GetCurrentAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c8a0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
 | `SetCurrentAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c950 / worker 0x18002c080 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
 | `GetNumberOfAnimationLayers` | `Application\bin\fcurve.dll` | Do 0x18002c8d0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
 | `AddAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c820 / worker 0x18002a5d0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
 | `DeleteAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c940 / worker 0x18002baf0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
-| `DuplicateAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c890 / worker 0x18002ac60 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC-PARTIAL |
+| `DuplicateAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c890 / worker 0x18002ac60 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
 | `LockAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c910 / worker 0x18002b7d0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
 | `UnlockAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c910 / worker 0x18002b7d0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
 | `IsAnimationLayerLocked` | `Application\bin\fcurve.dll` | Do 0x18002c900 / worker 0x18002b4a0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
@@ -396,7 +396,7 @@ of the command's contract (see the note). No code is recorded here.
 | `GetRelativeValue` | `Application\bin\fcurve.dll` | Do 0x18001f0f0 / worker 0x18001eea0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
 | `RemoveRelativeValue` | `Application\bin\fcurve.dll` | Do 0x18003f0e0 / worker 0x18003f050 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
 | `ConnectSource` | `Application\bin\fcurve.dll` | Do 0x18000f9d0 / worker 0x18000f6d0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
-| `CopyAnimContainer` | `Application\bin\fcurve.dll` | Do 0x180011530 / worker 0x1800113f0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC-PARTIAL |
+| `CopyAnimContainer` | `Application\bin\fcurve.dll` | Do 0x180011530 / worker 0x1800113f0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
 | `CopyAllAnimation` | `Application\bin\fcurve.dll` | Do 0x180013a40 / worker 0x180012ed0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
 | `CopyAnimation` | `Application\bin\fcurve.dll` | Do 0x180013a40 / worker 0x180012ed0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
 | `PasteAllAnimation` | `Application\bin\fcurve.dll` | Do 0x180013a70 / worker 0x1800138d0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
@@ -410,9 +410,9 @@ of the command's contract (see the note). No code is recorded here.
 | `ConvertEulerToQuat` | `Application\bin\fcurve.dll` | Do 0x18000d790 / worker 0x18000c3f0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
 | `ConvertQuatToEuler` | `Application\bin\fcurve.dll` | Do 0x18003df60 / worker 0x18003cb40 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
 | `MakeRotationsContinuous` | `Application\bin\fcurve.dll` | Do 0x1800373c0 / worker 0x180037520 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
-| `Sequence` | `Application\bin\fcurve.dll` | Do 0x180041da0 / worker 0x1800405b0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC-PARTIAL |
-| `SISequence` | `Application\bin\fcurve.dll` | Do 0x180041da0 / worker 0x1800405b0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC-PARTIAL |
-| `ScaleAndOffset` | `Application\bin\fcurve.dll` | Do 0x180041da0 / worker 0x1800405b0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC-PARTIAL |
+| `Sequence` | `Application\bin\fcurve.dll` | Do 0x180041da0 / worker 0x1800405b0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `SISequence` | `Application\bin\fcurve.dll` | Do 0x180041da0 / worker 0x1800405b0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `ScaleAndOffset` | `Application\bin\fcurve.dll` | Do 0x180041da0 / worker 0x1800405b0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
 | `SIFindUniqueTextureName` | `Application\bin\primtasks.dll` | Do 0x18000aa70 / worker 0x180003570 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC |
 | `SICreateTexturePureImplicit` | `Application\bin\primtasks.dll` | Do 0x18001f1c0 / worker 0x18001eec0 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC |
 | `SICreateTextureBasicGeo` | `Application\bin\primtasks.dll` | Do 0x180023b30 / worker 0x1800235d0 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC |
@@ -462,6 +462,120 @@ of the command's contract (see the note). No code is recorded here.
 | `SIDeletePointOnCurve` | `Application\bin\sicurvetasks.dll` | Do 0x180007c00 / worker 0x180007940 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
 | `CreateCurvePartitionClusters` | `Application\bin\sicurvetasks.dll` | Do 0x180004890 / worker 0x1800041b0 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
 | `CurveDirectManip` | `Application\bin\sicurvetasks.dll` | Do 0x1800060c0 / worker 0x1800059d0 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `AddPaintShapePoint` | `Application\bin\xsipaint.dll` | Do `0x18003d380` -> `0x18003d190` -> shape method `0x18000d0e0` | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC |
+| `ClearPaintSelection` | `Application\bin\xsipaint.dll` | Do `0x180046f90` -> `0x180046c30` | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC |
+| `DecPaintShapePointWeight` | `Application\bin\xsipaint.dll` | Do `0x18004bcc0` -> Inc `0x18004bac0` / Dec `0x18004b940` | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC |
+| `EllipsePaintRaster` | `Application\bin\xsipaint.dll` | Do `0x180048e00` -> `0x180049040` | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC-PARTIAL |
+| `GetClosestPaintShapeKey` | `Application\bin\xsipaint.dll` | Do `0x18004d700` -> worker interface `0x18007f3f0`: First `0x18004d440`, Prev `0x18004d7f0`, Closest `0x18004ce90`, Next `0x18004d500`, Last `0x18004d460`; shared bodies `0x18004cf50` (First / Last) and `0x18004d0d0` (Prev / Closest) | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC |
+| `GetFirstPaintShapeKey` | `Application\bin\xsipaint.dll` | Do `0x18004d700` -> worker interface `0x18007f3f0`: First `0x18004d440`, Prev `0x18004d7f0`, Closest `0x18004ce90`, Next `0x18004d500`, Last `0x18004d460`; shared bodies `0x18004cf50` (First / Last) and `0x18004d0d0` (Prev / Closest) | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC |
+| `GetLastPaintShapeKey` | `Application\bin\xsipaint.dll` | Do `0x18004d700` -> worker interface `0x18007f3f0`: First `0x18004d440`, Prev `0x18004d7f0`, Closest `0x18004ce90`, Next `0x18004d500`, Last `0x18004d460`; shared bodies `0x18004cf50` (First / Last) and `0x18004d0d0` (Prev / Closest) | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC |
+| `GetNextPaintShapeKey` | `Application\bin\xsipaint.dll` | Do `0x18004d700` -> worker interface `0x18007f3f0`: First `0x18004d440`, Prev `0x18004d7f0`, Closest `0x18004ce90`, Next `0x18004d500`, Last `0x18004d460`; shared bodies `0x18004cf50` (First / Last) and `0x18004d0d0` (Prev / Closest) | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC |
+| `GetPrevPaintShapeKey` | `Application\bin\xsipaint.dll` | Do `0x18004d700` -> worker interface `0x18007f3f0`: First `0x18004d440`, Prev `0x18004d7f0`, Closest `0x18004ce90`, Next `0x18004d500`, Last `0x18004d460`; shared bodies `0x18004cf50` (First / Last) and `0x18004d0d0` (Prev / Closest) | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC |
+| `IncPaintShapePointWeight` | `Application\bin\xsipaint.dll` | Do `0x18004bcc0` -> Inc `0x18004bac0` / Dec `0x18004b940` | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC |
+| `InvertPaintStencil` | `Application\bin\xsipaint.dll` | Do `0x180046f90` -> `0x1800472d0` | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC |
+| `RectanglePaintRaster` | `Application\bin\xsipaint.dll` | Do `0x180048e00` -> `0x180049040` | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC-PARTIAL |
+| `SetPaintMaskStore` | `Application\bin\xsipaint.dll` | Do `0x180044ee0` -> `0x1800452f0` | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC |
+| `SetPaintMergeStore` | `Application\bin\xsipaint.dll` | Do `0x180044ee0` -> `0x1800452f0` | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC |
+| `SetPaintStore` | `Application\bin\xsipaint.dll` | Do `0x180044ee0` -> `0x1800452f0` | CMD-B9a | [cmd-b9a-xsipaint-shapes-keys-stores-binary.md](../ghidra/cmd-b9a-xsipaint-shapes-keys-stores-binary.md) | SPEC |
+| `AddAlphaFloodFillPaintShape` | `Application\bin\xsipaint.dll` | `0x18003e0a0` -> `0x18003dbc0` | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC-PARTIAL |
+| `AddBoundaryFillPaintShape` | `Application\bin\xsipaint.dll` | `0x18003e0a0` -> `0x18003dbc0` | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC-PARTIAL |
+| `AddBrushStroke` | `Application\bin\xsipaint.dll` | `0x18003c480` -> `0x18003b0d0` (stroke reuse test `0x18003c1d0`) | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC |
+| `AddClearImageShape` | `Application\bin\xsipaint.dll` | `0x180043520` -> `0x180042e80` (ClearImage) / `0x1800431a0` (DeleteAll) / `0x180042a80` (AddClearImageShape) | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC |
+| `AddColorPaintShape` | `Application\bin\xsipaint.dll` | `0x18003e0a0` -> `0x18003dbc0` | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC |
+| `AddEllipsePaintShape` | `Application\bin\xsipaint.dll` | `0x180049e80` -> `0x180049910` (geometry builders `0x18000f270` rectangle, `0x18000f0c0` ellipse) | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC |
+| `AddFloodFillPaintShape` | `Application\bin\xsipaint.dll` | `0x18003e0a0` -> `0x18003dbc0` | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC |
+| `AddFxMaskShape` | `Application\bin\xsipaint.dll` | `0x18003e0a0` -> `0x18003dbc0` | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC-PARTIAL |
+| `AddRectanglePaintShape` | `Application\bin\xsipaint.dll` | `0x180049e80` -> `0x180049910` (geometry builders `0x18000f270` rectangle, `0x18000f0c0` ellipse) | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC |
+| `ClearImage` | `Application\bin\xsipaint.dll` | `0x180043520` -> `0x180042e80` (ClearImage) / `0x1800431a0` (DeleteAll) / `0x180042a80` (AddClearImageShape) | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC |
+| `DeleteAllPaintShapes` | `Application\bin\xsipaint.dll` | `0x180043520` -> `0x180042e80` (ClearImage) / `0x1800431a0` (DeleteAll) / `0x180042a80` (AddClearImageShape) | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC |
+| `DeletePaintShapePoints` | `Application\bin\xsipaint.dll` | `0x18003ec50` -> `0x18003ea60` | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC |
+| `MovePaintShapeHandle` | `Application\bin\xsipaint.dll` | `0x180041c80` -> `0x180041b10` (Move) / `0x180041f30` (Set) | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC |
+| `SetPaintShapeHandle` | `Application\bin\xsipaint.dll` | `0x180041c80` -> `0x180041b10` (Move) / `0x180041f30` (Set) | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC |
+| `TranslatePaintShapePoint` | `Application\bin\xsipaint.dll` | `0x18004c670` -> `0x18004c850` | CMD-B9b | [cmd-b9b-xsipaint-add-shapes-binary.md](../ghidra/cmd-b9b-xsipaint-add-shapes-binary.md) | SPEC |
+| `AddPaintMaskShape` | `Application\bin\xsipaint.dll` | `0x180045f50` / `0x180046120` / `0x180046030` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC |
+| `AddToPaintShapePointSelection` | `Application\bin\xsipaint.dll` | `0x1800441c0` / `0x1800442d0` / `0x180044220` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC |
+| `EllipticalPaintMask` | `Application\bin\xsipaint.dll` | `0x180045f50` / `0x180046120` / `0x180046030` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC |
+| `FloodFillRaster` | `Application\bin\xsipaint.dll` | `0x180047c50` / `0x180047c90` / `0x180047c70` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC-PARTIAL |
+| `ImportMatadorShapeList` | `Application\bin\xsipaint.dll` | `0x1800405b0` / `0x1800406f0` (stub) / `0x180040630` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC |
+| `InsertPaintShapePoint` | `Application\bin\xsipaint.dll` | `0x180041450` / `0x180041510` / `0x180041480` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC |
+| `MagicWandPaintMask` | `Application\bin\xsipaint.dll` | `0x180045f50` / `0x180046120` / `0x180046030` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC |
+| `PaintRasterLine` | `Application\bin\xsipaint.dll` | `0x1800483a0` / `0x180048460` / `0x180048400` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC |
+| `RectangularPaintMask` | `Application\bin\xsipaint.dll` | `0x180045f50` / `0x180046120` / `0x180046030` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC |
+| `ResetPaintColor` | `Application\bin\xsipaint.dll` | `0x18004ae40` / `0x18004afe0` / `0x18004af10` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC |
+| `SelectPaintShapePoint` | `Application\bin\xsipaint.dll` | `0x1800441c0` / `0x1800442d0` / `0x180044220` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC |
+| `SetPaintBrush` | `Application\bin\xsipaint.dll` | `0x18004a850` / `0x18004a920` / `0x18004a8c0` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC |
+| `SetPaintColor` | `Application\bin\xsipaint.dll` | `0x18004ae40` / `0x18004afe0` / `0x18004af10` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC |
+| `SwapPaintColors` | `Application\bin\xsipaint.dll` | `0x18004ae40` / `0x18004afe0` / `0x18004af10` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC |
+| `TogglePaintShapePointSelection` | `Application\bin\xsipaint.dll` | `0x1800441c0` / `0x1800442d0` / `0x180044220` | CMD-B9c | [cmd-b9c-xsipaint-masks-select-color-binary.md](../ghidra/cmd-b9c-xsipaint-masks-select-color-binary.md) | SPEC |
+| `ExtractPhonemesToSpeechOp` | `Application\bin\phonemeui.dll` | Do `0x18001d290` -> guided recogniser `0x180004fa0` / unguided `0x180005530`; result array builder `0x18001d6a0` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `ExtractPhonemesToSpeechOpJapanese` | `Application\bin\phonemeui.dll` | Do `0x18001d290` -> guided recogniser `0x180004fa0` / unguided `0x180005530`; result array builder `0x18001d6a0` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `GetPhonemeBlendFromSpeechClip` | `Application\bin\phonemeui.dll` | Do `0x18001f040` -> phoneme table `0x18001f4c0` / blend table `0x18001f290` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC-PARTIAL |
+| `GetPhonemesFromSpeechClip` | `Application\bin\phonemeui.dll` | Do `0x18001f040` -> phoneme table `0x18001f4c0` / blend table `0x18001f290` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `PlaybackTimeRange` | `Application\bin\phonemeui.dll` | Do `0x18001cb20` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC-PARTIAL |
+| `SIExtractPhonemes` | `Application\bin\phonemeui.dll` | Do `0x18001d290` -> guided recogniser `0x180004fa0` / unguided `0x180005530`; result array builder `0x18001d6a0` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpDeletePhonemes` | `Application\bin\phonemeui.dll` | Do `0x18001e8c0` -> word remover `0x180004eb0` / phoneme remover `0x18001e740` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpDeleteWords` | `Application\bin\phonemeui.dll` | Do `0x18001e8c0` -> word remover `0x180004eb0` / phoneme remover `0x18001e740` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpInsertWord` | `Application\bin\phonemeui.dll` | Do `0x180020370` -> `0x18001fdc0` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpMovePhoneme` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> move words `0x180006290`, move phoneme `0x180005fc0`, scale word `0x180006e30`, scale phoneme `0x180006920`, range rescale `0x180006be0`, split `0x1800210f0`, IPA `0x180020fe0`, numeric fields `0x180020e70`, variation `0x180021050` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpMoveWords` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> move words `0x180006290`, move phoneme `0x180005fc0`, scale word `0x180006e30`, scale phoneme `0x180006920`, range rescale `0x180006be0`, split `0x1800210f0`, IPA `0x180020fe0`, numeric fields `0x180020e70`, variation `0x180021050` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpScalePhonEnd` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> move words `0x180006290`, move phoneme `0x180005fc0`, scale word `0x180006e30`, scale phoneme `0x180006920`, range rescale `0x180006be0`, split `0x1800210f0`, IPA `0x180020fe0`, numeric fields `0x180020e70`, variation `0x180021050` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpScalePhonStart` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> move words `0x180006290`, move phoneme `0x180005fc0`, scale word `0x180006e30`, scale phoneme `0x180006920`, range rescale `0x180006be0`, split `0x1800210f0`, IPA `0x180020fe0`, numeric fields `0x180020e70`, variation `0x180021050` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpScaleWordEnd` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> move words `0x180006290`, move phoneme `0x180005fc0`, scale word `0x180006e30`, scale phoneme `0x180006920`, range rescale `0x180006be0`, split `0x1800210f0`, IPA `0x180020fe0`, numeric fields `0x180020e70`, variation `0x180021050` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpScaleWordStart` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> move words `0x180006290`, move phoneme `0x180005fc0`, scale word `0x180006e30`, scale phoneme `0x180006920`, range rescale `0x180006be0`, split `0x1800210f0`, IPA `0x180020fe0`, numeric fields `0x180020e70`, variation `0x180021050` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpSetPhonemesBlendIn` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> worker `0x180020e70` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpSetPhonemesBlendOut` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> worker `0x180020e70` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpSetPhonemesFalloffIn` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> worker `0x180020e70` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpSetPhonemesFalloffOut` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> worker `0x180020e70` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpSetPhonemesIPAValue` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> move words `0x180006290`, move phoneme `0x180005fc0`, scale word `0x180006e30`, scale phoneme `0x180006920`, range rescale `0x180006be0`, split `0x1800210f0`, IPA `0x180020fe0`, numeric fields `0x180020e70`, variation `0x180021050` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpSetPhonemesShapeFalloffIn` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> worker `0x180020e70` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpSetPhonemesShapeFalloffOut` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> worker `0x180020e70` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpSetPhonemesShapeWeight` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> worker `0x180020e70` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpSetPhonemesVariation` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> worker `0x180021050` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpSetPhonemesWeight` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> worker `0x180020e70` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `SpeechOpSplitPhonemes` | `Application\bin\phonemeui.dll` | Do `0x180020b30` -> move words `0x180006290`, move phoneme `0x180005fc0`, scale word `0x180006e30`, scale phoneme `0x180006920`, range rescale `0x180006be0`, split `0x1800210f0`, IPA `0x180020fe0`, numeric fields `0x180020e70`, variation `0x180021050` | CMD-B9d | [cmd-b9d-phonemeui-speech-binary.md](../ghidra/cmd-b9d-phonemeui-speech-binary.md) | SPEC |
+| `ClearPaintClipFrameSelection` | `Application\bin\fxcore.dll` | Do `0x18005b1c0` -> paint clip interface methods (table in 2.2) | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC |
+| `CreateFxTree` | `Application\bin\fxcore.dll` | Do `0x1800786b0` -> worker `0x1800784c0` | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC |
+| `DisconnectFxOp` | `Application\bin\fxcore.dll` | Do `0x180078ce0` -> worker `0x180078b40` | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC-PARTIAL |
+| `GotoSelectedPaintClipFrame` | `Application\bin\fxcore.dll` | Do `0x18005b1c0` -> paint clip interface methods (table in 2.2) | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC |
+| `MakeWarperShapePair` | `Application\bin\fxcore.dll` | Do `0x18007f480` -> list driver `0x18007f2f0` -> per shape `0x18007f060` (helpers `0x18007ede0`, `0x18007ebf0`, `0x18007f5a0`) | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC-PARTIAL |
+| `NextModifiedPaintClipFrame` | `Application\bin\fxcore.dll` | Do `0x18005b1c0` -> paint clip interface methods (table in 2.2) | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC |
+| `PrevModifiedPaintClipFrame` | `Application\bin\fxcore.dll` | Do `0x18005b1c0` -> paint clip interface methods (table in 2.2) | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC |
+| `RenderFxOp` | `Application\bin\fxcore.dll` | Do `0x180079220` -> worker `0x180079310` | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC |
+| `RevertPaintClip` | `Application\bin\fxcore.dll` | Do `0x18005b1c0` -> paint clip interface methods (table in 2.2) | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC-PARTIAL |
+| `RevertPaintClipFrame` | `Application\bin\fxcore.dll` | Do `0x18005b1c0` -> paint clip interface methods (table in 2.2) | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC |
+| `RevertSelectedPaintClipFrame` | `Application\bin\fxcore.dll` | Do `0x18005b1c0` -> paint clip interface methods (table in 2.2) | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC |
+| `SavePaintClip` | `Application\bin\fxcore.dll` | Do `0x18005b1c0` -> paint clip interface methods (table in 2.2) | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC |
+| `SaveSelectedPaintClipFrames` | `Application\bin\fxcore.dll` | Do `0x18005b1c0` -> paint clip interface methods (table in 2.2) | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC |
+| `SelectPaintClipFrames` | `Application\bin\fxcore.dll` | Do `0x18005b1c0` -> paint clip interface methods (table in 2.2) | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC |
+| `SetFxOpPos` | `Application\bin\fxcore.dll` | Do `0x18007aeb0` -> worker `0x18007b060` | CMD-B9e | [cmd-b9e-fxcore-paintclip-fxtree-binary.md](../ghidra/cmd-b9e-fxcore-paintclip-fxtree-binary.md) | SPEC |
+| `Add2DShape` | `Application\bin\fxcore.dll` | `0x180072030` -> `0x180071ab0` | CMD-B9f | [cmd-b9f-fxcore-2dshape-connect-tracking-binary.md](../ghidra/cmd-b9f-fxcore-2dshape-connect-tracking-binary.md) | SPEC |
+| `Add2DShapePoint` | `Application\bin\fxcore.dll` | `0x180071080` -> single point `0x180070e90`, array `0x180070f70` | CMD-B9f | [cmd-b9f-fxcore-2dshape-connect-tracking-binary.md](../ghidra/cmd-b9f-fxcore-2dshape-connect-tracking-binary.md) | SPEC |
+| `Add2DShapePointArray` | `Application\bin\fxcore.dll` | `0x180071080` -> single point `0x180070e90`, array `0x180070f70` | CMD-B9f | [cmd-b9f-fxcore-2dshape-connect-tracking-binary.md](../ghidra/cmd-b9f-fxcore-2dshape-connect-tracking-binary.md) | SPEC |
+| `AddPassInputFxOp` | `Application\bin\fxcore.dll` | `0x180076d40` -> `0x180076740` | CMD-B9f | [cmd-b9f-fxcore-2dshape-connect-tracking-binary.md](../ghidra/cmd-b9f-fxcore-2dshape-connect-tracking-binary.md) | SPEC-PARTIAL |
+| `ConnectFxOp` | `Application\bin\fxcore.dll` | `0x180077e70` -> `0x180077930` -> connect helper `0x18000fc60` | CMD-B9f | [cmd-b9f-fxcore-2dshape-connect-tracking-binary.md](../ghidra/cmd-b9f-fxcore-2dshape-connect-tracking-binary.md) | SPEC |
+| `CurrentFxTracking` | `Application\bin\fxcore.dll` | `0x18007e2c0` -> `0x18007e600` / `0x18007e5f0` / `0x18007e610` -> shared `0x18007e1e0` (helpers `0x18007e420`, `0x18007df50`) | CMD-B9f | [cmd-b9f-fxcore-2dshape-connect-tracking-binary.md](../ghidra/cmd-b9f-fxcore-2dshape-connect-tracking-binary.md) | SPEC-PARTIAL |
+| `Insert2DShapePoint` | `Application\bin\fxcore.dll` | `0x180071080` -> single point `0x180070e90`, array `0x180070f70` | CMD-B9f | [cmd-b9f-fxcore-2dshape-connect-tracking-binary.md](../ghidra/cmd-b9f-fxcore-2dshape-connect-tracking-binary.md) | SPEC |
+| `Move2DShape` | `Application\bin\fxcore.dll` | `0x180074080` -> `0x180074150` | CMD-B9f | [cmd-b9f-fxcore-2dshape-connect-tracking-binary.md](../ghidra/cmd-b9f-fxcore-2dshape-connect-tracking-binary.md) | SPEC |
+| `Move2DShapePin` | `Application\bin\fxcore.dll` | `0x180074080` -> `0x180074150` | CMD-B9f | [cmd-b9f-fxcore-2dshape-connect-tracking-binary.md](../ghidra/cmd-b9f-fxcore-2dshape-connect-tracking-binary.md) | SPEC |
+| `Scale2DShape` | `Application\bin\fxcore.dll` | `0x180074080` -> `0x180074150` | CMD-B9f | [cmd-b9f-fxcore-2dshape-connect-tracking-binary.md](../ghidra/cmd-b9f-fxcore-2dshape-connect-tracking-binary.md) | SPEC |
+| `Set2DShapeRotation` | `Application\bin\fxcore.dll` | `0x180074080` -> `0x180074150` | CMD-B9f | [cmd-b9f-fxcore-2dshape-connect-tracking-binary.md](../ghidra/cmd-b9f-fxcore-2dshape-connect-tracking-binary.md) | SPEC |
+| `SetFxOpAttrib` | `Application\bin\fxcore.dll` | `0x180079dd0` -> `0x180079fb0` (name table lookup `0x18007cf10`) | CMD-B9f | [cmd-b9f-fxcore-2dshape-connect-tracking-binary.md](../ghidra/cmd-b9f-fxcore-2dshape-connect-tracking-binary.md) | SPEC-PARTIAL |
+| `StartFxTracking` | `Application\bin\fxcore.dll` | `0x18007e2c0` -> `0x18007e600` / `0x18007e5f0` / `0x18007e610` -> shared `0x18007e1e0` (helpers `0x18007e420`, `0x18007df50`) | CMD-B9f | [cmd-b9f-fxcore-2dshape-connect-tracking-binary.md](../ghidra/cmd-b9f-fxcore-2dshape-connect-tracking-binary.md) | SPEC-PARTIAL |
+| `StepFxTracking` | `Application\bin\fxcore.dll` | `0x18007e2c0` -> `0x18007e600` / `0x18007e5f0` / `0x18007e610` -> shared `0x18007e1e0` (helpers `0x18007e420`, `0x18007df50`) | CMD-B9f | [cmd-b9f-fxcore-2dshape-connect-tracking-binary.md](../ghidra/cmd-b9f-fxcore-2dshape-connect-tracking-binary.md) | SPEC-PARTIAL |
+| `AddFxOp` | `Application\bin\fxcore.dll` | Do `0x180075fb0` -> worker `0x180075da0` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC-PARTIAL |
+| `AddImageClipFxOp` | `Application\bin\fxcore.dll` | Do `0x180075670` -> worker `0x180074cb0` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC-PARTIAL |
+| `CopyFxOp` | `Application\bin\fxcore.dll` | Do `0x18007c030` -> copy/cut worker `0x18007b6e0` or paste worker `0x18007c160` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
+| `CutFxOp` | `Application\bin\fxcore.dll` | Do `0x18007c030` -> copy/cut worker `0x18007b6e0` or paste worker `0x18007c160` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
+| `Delete2DShapePoint` | `Application\bin\fxcore.dll` | Do `0x180072840` -> worker `0x180072660` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
+| `Key2DShapePoints` | `Application\bin\fxcore.dll` | Do `0x180073030` -> worker `0x180072de0` (key helper `0x180073100`) | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
+| `Move2DShapeLHandle` | `Application\bin\fxcore.dll` | Do `0x180073b30` -> worker `0x1800735a0` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
+| `Move2DShapePoint` | `Application\bin\fxcore.dll` | Do `0x180073b30` -> worker `0x1800735a0` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
+| `Move2DShapeRHandle` | `Application\bin\fxcore.dll` | Do `0x180073b30` -> worker `0x1800735a0` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
+| `PasteFxOp` | `Application\bin\fxcore.dll` | Do `0x18007c030` -> copy/cut worker `0x18007b6e0` or paste worker `0x18007c160` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
+| `SetFxOpCnxFlag` | `Application\bin\fxcore.dll` | Do `0x18007a770` -> worker `0x18007a860` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
+| `SetFxTrackerSearchArea` | `Application\bin\fxcore.dll` | Do `0x18007d1c0` -> workers `0x18007d8c0` (point), `0x18007d7f0` (template), `0x18007d720` (search) -> per-value helper `0x18007d3f0`, then `0x18007d2f0` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
+| `SetFxTrackerTemplateArea` | `Application\bin\fxcore.dll` | Do `0x18007d1c0` -> workers `0x18007d8c0` (point), `0x18007d7f0` (template), `0x18007d720` (search) -> per-value helper `0x18007d3f0`, then `0x18007d2f0` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
+| `SetFxTrackerTrackedPoint` | `Application\bin\fxcore.dll` | Do `0x18007d1c0` -> workers `0x18007d8c0` (point), `0x18007d7f0` (template), `0x18007d720` (search) -> per-value helper `0x18007d3f0`, then `0x18007d2f0` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
 
 ## Earlier rows (not yet itemised per command)
 
@@ -1536,94 +1650,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `ReloadAllAddonLibs` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
 | `UnloadAllCOMLibs` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
 | `TestPluginHost` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
-| `AddFxOp` | `fxcore.dll`, `si3dobjectmodel.dll` | CLSID `{88f181e0-1e0b-11d5-b93e-0800690c8bd0}` |
-| `SetFxOpCnxFlag` | `fxcore.dll`, `si3dobjectmodel.dll` | CLSID `{dec69f6f-79bf-4720-843c-77ba07a9d75a}` |
-| `ConnectFxOp` | `fxcore.dll`, `si3dobjectmodel.dll` | CLSID `{6a122800-4e2c-11d5-b953-0800690c8bd0}` |
-| `DisconnectFxOp` | `fxcore.dll`, `si3dobjectmodel.dll` | CLSID `{c8530d7d-aecc-4232-b272-c50455c05f8a}` |
-| `AddImageClipFxOp` | `fxcore.dll`, `si3dobjectmodel.dll` | CLSID `{27f96e05-1e1b-45bc-aaa5-266606670ad3}` |
-| `AddPassInputFxOp` | `fxcore.dll`, `si3dobjectmodel.dll` | CLSID `{cee1c8a0-803d-11d5-a279-00d0b7190223}` |
-| `RenderFxOp` | `fxcore.dll`, `si3dobjectmodel.dll` | CLSID `{2031f707-f7d2-47a8-9155-6e453c727701}` |
-| `SetFxOpAttrib` | `fxcore.dll` | CLSID `{b345b4dc-7ad5-46aa-8028-1d231fea6180}` |
-| `SetFxOpPos` | `fxcore.dll`, `si3dobjectmodel.dll` | CLSID `{a07d815e-92a8-4076-b71b-f1202bcc7b01}` |
-| `CreateFxTree` | `fxcore.dll`, `si3dobjectmodel.dll` | CLSID `{3d1b717e-162d-459b-b978-4183a9567141}` |
-| `Add2DShape` | `fxcore.dll` | CLSID `{205f3d8b-57c3-42e5-818d-639784adc23d}` |
-| `Add2DShapePoint` | `fxcore.dll` | CLSID `{c7d2cdbd-86cb-49e3-bf9d-2512b7b52dd7}` |
-| `Add2DShapePointArray` | `fxcore.dll` | CLSID `{c7d2cdbd-86cb-49e3-bf9d-2512b7b52dd7}` |
-| `Insert2DShapePoint` | `fxcore.dll` | CLSID `{c7d2cdbd-86cb-49e3-bf9d-2512b7b52dd7}` |
-| `Move2DShape` | `fxcore.dll` | CLSID `{2bda6dc3-a2e7-4938-a5ce-1cdc64748587}` |
-| `Scale2DShape` | `fxcore.dll` | CLSID `{2bda6dc3-a2e7-4938-a5ce-1cdc64748587}` |
-| `Move2DShapePin` | `fxcore.dll` | CLSID `{2bda6dc3-a2e7-4938-a5ce-1cdc64748587}` |
-| `Set2DShapeRotation` | `fxcore.dll` | CLSID `{2bda6dc3-a2e7-4938-a5ce-1cdc64748587}` |
-| `Move2DShapePoint` | `fxcore.dll` | CLSID `{52af562a-62c6-4dcd-a493-b2f4db352668}` |
-| `Move2DShapeLHandle` | `fxcore.dll` | CLSID `{52af562a-62c6-4dcd-a493-b2f4db352668}` |
-| `Move2DShapeRHandle` | `fxcore.dll` | CLSID `{52af562a-62c6-4dcd-a493-b2f4db352668}` |
-| `Delete2DShapePoint` | `fxcore.dll` | CLSID `{0d017291-4351-471e-87fd-b78f80d97ea5}` |
-| `Key2DShapePoints` | `fxcore.dll` | CLSID `{b91ef230-1686-434d-b61e-de0ab8815012}` |
-| `CutFxOp` | `fxcore.dll` | CLSID `{0322d097-8d58-411b-95ee-a3fb0707052a}` |
-| `CopyFxOp` | `fxcore.dll` | CLSID `{0322d097-8d58-411b-95ee-a3fb0707052a}` |
-| `PasteFxOp` | `fxcore.dll` | CLSID `{0322d097-8d58-411b-95ee-a3fb0707052a}` |
-| `AddColorPaintShape` | `xsipaint.dll` | CLSID `{6ca3aa0b-9967-40a8-ad6c-ff1644ad1539}` |
-| `AddFxMaskShape` | `xsipaint.dll` | CLSID `{6ca3aa0b-9967-40a8-ad6c-ff1644ad1539}` |
-| `AddFloodFillPaintShape` | `xsipaint.dll` | CLSID `{6ca3aa0b-9967-40a8-ad6c-ff1644ad1539}` |
-| `AddAlphaFloodFillPaintShape` | `xsipaint.dll` | CLSID `{6ca3aa0b-9967-40a8-ad6c-ff1644ad1539}` |
-| `AddBoundaryFillPaintShape` | `xsipaint.dll` | CLSID `{6ca3aa0b-9967-40a8-ad6c-ff1644ad1539}` |
-| `AddPaintShapePoint` | `xsipaint.dll` | CLSID `{6ffabcb8-27fc-4d19-8e9a-a5deffda85a0}` |
-| `InsertPaintShapePoint` | `xsipaint.dll` | CLSID `{b0cead3d-6d8f-4348-a4da-e50cd799e5f8}` |
-| `DeletePaintShapePoints` | `xsipaint.dll` | CLSID `{7ae8bd3a-9a52-4a45-bdb5-31217e3d0bed}` |
-| `AddBrushStroke` | `xsipaint.dll` | CLSID `{e890d4ec-48cd-4abc-9a37-11a9ddca18d9}` |
-| `ImportMatadorShapeList` | `xsipaint.dll` | CLSID `{6a95269b-c073-495e-a535-ec1d42364afd}` |
-| `SelectPaintShapePoint` | `xsipaint.dll` | CLSID `{e9fc9ffe-c411-4119-8868-f9a497d86908}` |
-| `TogglePaintShapePointSelection` | `xsipaint.dll` | CLSID `{e9fc9ffe-c411-4119-8868-f9a497d86908}` |
-| `AddToPaintShapePointSelection` | `xsipaint.dll` | CLSID `{e9fc9ffe-c411-4119-8868-f9a497d86908}` |
-| `TranslatePaintShapePoint` | `xsipaint.dll` | CLSID `{65aff90b-a34e-40fa-92bd-386c90116b78}` |
-| `MovePaintShapeHandle` | `xsipaint.dll` | CLSID `{ff7c5cd6-d75d-445c-81ba-93db1f591c65}` |
-| `SetPaintShapeHandle` | `xsipaint.dll` | CLSID `{ff7c5cd6-d75d-445c-81ba-93db1f591c65}` |
-| `RectangularPaintMask` | `xsipaint.dll` | CLSID `{ccce0968-ef9e-4828-b55a-b4c37b22bde0}` |
-| `EllipticalPaintMask` | `xsipaint.dll` | CLSID `{ccce0968-ef9e-4828-b55a-b4c37b22bde0}` |
-| `MagicWandPaintMask` | `xsipaint.dll` | CLSID `{ccce0968-ef9e-4828-b55a-b4c37b22bde0}` |
-| `AddPaintMaskShape` | `xsipaint.dll` | CLSID `{ccce0968-ef9e-4828-b55a-b4c37b22bde0}` |
-| `ClearPaintSelection` | `xsipaint.dll` | CLSID `{56cf0363-eba7-49d0-be96-8861004dbeb7}` |
-| `InvertPaintStencil` | `xsipaint.dll` | CLSID `{e75d6028-3a67-492c-9663-90ecfb0ff853}` |
-| `SetPaintStore` | `xsipaint.dll` | CLSID `{9da75f7c-ffaa-47a4-906f-846e6c223995}` |
-| `SetPaintMergeStore` | `xsipaint.dll` | CLSID `{9da75f7c-ffaa-47a4-906f-846e6c223995}` |
-| `SetPaintMaskStore` | `xsipaint.dll` | CLSID `{9da75f7c-ffaa-47a4-906f-846e6c223995}` |
-| `PaintRasterLine` | `xsipaint.dll` | CLSID `{414b4ea8-91f3-43fe-b78d-104e5bd27bb7}` |
-| `FloodFillRaster` | `xsipaint.dll` | CLSID `{2612bc0f-435a-425d-8f43-a2e80a3ece66}` |
-| `ClearImage` | `xsipaint.dll` | CLSID `{e2252486-5ef1-44cc-8703-d311971256f0}` |
-| `DeleteAllPaintShapes` | `xsipaint.dll` | CLSID `{e2252486-5ef1-44cc-8703-d311971256f0}` |
-| `AddClearImageShape` | `xsipaint.dll` | CLSID `{e2252486-5ef1-44cc-8703-d311971256f0}` |
-| `RectanglePaintRaster` | `xsipaint.dll` | CLSID `{30274025-9dd5-490c-b0e1-eae8e11b0a1f}` |
-| `EllipsePaintRaster` | `xsipaint.dll` | CLSID `{30274025-9dd5-490c-b0e1-eae8e11b0a1f}` |
-| `AddRectanglePaintShape` | `xsipaint.dll` | CLSID `{48d67c0e-b397-4c62-80fe-304a6253a46d}` |
-| `AddEllipsePaintShape` | `xsipaint.dll` | CLSID `{48d67c0e-b397-4c62-80fe-304a6253a46d}` |
-| `SetPaintColor` | `xsipaint.dll` | CLSID `{46f73afb-6e8a-41f6-adba-0f74f5a0d698}` |
-| `ResetPaintColor` | `xsipaint.dll` | CLSID `{46f73afb-6e8a-41f6-adba-0f74f5a0d698}` |
-| `SwapPaintColors` | `xsipaint.dll` | CLSID `{46f73afb-6e8a-41f6-adba-0f74f5a0d698}` |
-| `SetPaintBrush` | `xsipaint.dll` | CLSID `{fd108e2b-b7bb-4cd0-8d9e-c7a9d40afede}` |
-| `IncPaintShapePointWeight` | `xsipaint.dll` | CLSID `{722fb33e-7c86-4e27-a546-bf0514acba09}` |
-| `DecPaintShapePointWeight` | `xsipaint.dll` | CLSID `{722fb33e-7c86-4e27-a546-bf0514acba09}` |
-| `SavePaintClip` | `fxcore.dll` | CLSID `{64a5ea2b-225f-45a6-a47e-af53bdb4e31b}` |
-| `SaveSelectedPaintClipFrames` | `fxcore.dll` | CLSID `{64a5ea2b-225f-45a6-a47e-af53bdb4e31b}` |
-| `RevertPaintClip` | `fxcore.dll` | CLSID `{64a5ea2b-225f-45a6-a47e-af53bdb4e31b}` |
-| `RevertPaintClipFrame` | `fxcore.dll` | CLSID `{64a5ea2b-225f-45a6-a47e-af53bdb4e31b}` |
-| `RevertSelectedPaintClipFrame` | `fxcore.dll` | CLSID `{64a5ea2b-225f-45a6-a47e-af53bdb4e31b}` |
-| `GotoSelectedPaintClipFrame` | `fxcore.dll` | CLSID `{64a5ea2b-225f-45a6-a47e-af53bdb4e31b}` |
-| `PrevModifiedPaintClipFrame` | `fxcore.dll` | CLSID `{64a5ea2b-225f-45a6-a47e-af53bdb4e31b}` |
-| `NextModifiedPaintClipFrame` | `fxcore.dll` | CLSID `{64a5ea2b-225f-45a6-a47e-af53bdb4e31b}` |
-| `SelectPaintClipFrames` | `fxcore.dll` | CLSID `{64a5ea2b-225f-45a6-a47e-af53bdb4e31b}` |
-| `ClearPaintClipFrameSelection` | `fxcore.dll` | CLSID `{64a5ea2b-225f-45a6-a47e-af53bdb4e31b}` |
-| `StartFxTracking` | `fxcore.dll` | CLSID `{f8fb7cca-a7cc-4800-8249-1cb690e2e521}` |
-| `CurrentFxTracking` | `fxcore.dll` | CLSID `{f8fb7cca-a7cc-4800-8249-1cb690e2e521}` |
-| `StepFxTracking` | `fxcore.dll` | CLSID `{f8fb7cca-a7cc-4800-8249-1cb690e2e521}` |
-| `SetFxTrackerTrackedPoint` | `fxcore.dll` | CLSID `{f010c658-5a8e-4754-a9e0-097bc43f9c00}` |
-| `SetFxTrackerTemplateArea` | `fxcore.dll` | CLSID `{f010c658-5a8e-4754-a9e0-097bc43f9c00}` |
-| `SetFxTrackerSearchArea` | `fxcore.dll` | CLSID `{f010c658-5a8e-4754-a9e0-097bc43f9c00}` |
-| `GetFirstPaintShapeKey` | `xsipaint.dll` | CLSID `{2bd686e4-d548-4a00-b317-0ae5cfbb23bb}` |
-| `GetPrevPaintShapeKey` | `xsipaint.dll` | CLSID `{2bd686e4-d548-4a00-b317-0ae5cfbb23bb}` |
-| `GetClosestPaintShapeKey` | `xsipaint.dll` | CLSID `{2bd686e4-d548-4a00-b317-0ae5cfbb23bb}` |
-| `GetNextPaintShapeKey` | `xsipaint.dll` | CLSID `{2bd686e4-d548-4a00-b317-0ae5cfbb23bb}` |
-| `GetLastPaintShapeKey` | `xsipaint.dll` | CLSID `{2bd686e4-d548-4a00-b317-0ae5cfbb23bb}` |
-| `MakeWarperShapePair` | `fxcore.dll` | CLSID `{f7be9196-958b-4f3d-a68e-90fe38e77b87}` |
 | `CreateUserDataMapAndPickTemplate` | `UserDataScripts.vbs` (VBScript) | `CreateUserDataMapAndPickTemplateFunc` |
 | `InspectUserData` | `UserDataScripts.vbs` (VBScript) | `InspectUserDataFromObjListSub` |
 | `DeformMotion` | `customcommands.dll` (None) | `None` |
@@ -1744,30 +1770,4 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `ExportShaderDefinition` | `shadertasks.dll` | CLSID `{de3bfbe1-eab2-4a5d-a9d4-60ad12a00d8b}` |
 | `ReplaceShadersDefinition` | `shadertasks.dll`, `rendercore.dll`, `shadercodeeditor.dll`, `shaderhelper.dll` | CLSID `{3323a961-6741-4860-8504-a54f490e0417}` |
 | `ShowFaceRobotActPanel` | `siuitasks.dll` | CLSID `{3ea2aaac-44c4-4fb0-9a62-248ee72edead}` |
-| `ExtractPhonemesToSpeechOp` | `phonemeui.dll` | CLSID `{508c8c1f-4f64-4dee-8a10-45e99d0f7516}` |
-| `ExtractPhonemesToSpeechOpJapanese` | `phonemeui.dll` | CLSID `{508c8c1f-4f64-4dee-8a10-45e99d0f7516}` |
-| `PlaybackTimeRange` | `phonemeui.dll` | CLSID `{9ec070f3-b757-4d9d-bfd1-5ca2613c0c70}` |
-| `SpeechOpDeleteWords` | `phonemeui.dll` | CLSID `{78f069c0-5621-417f-9382-a6dcd9bf7557}` |
-| `SpeechOpDeletePhonemes` | `phonemeui.dll` | CLSID `{78f069c0-5621-417f-9382-a6dcd9bf7557}` |
-| `SpeechOpInsertWord` | `phonemeui.dll` | CLSID `{2a14054a-510b-433f-b555-208f5b9e158f}` |
-| `SpeechOpMoveWords` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpMovePhoneme` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpScaleWordStart` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpScaleWordEnd` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpScalePhonStart` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpScalePhonEnd` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpSplitPhonemes` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpSetPhonemesIPAValue` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpSetPhonemesWeight` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpSetPhonemesFalloffIn` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpSetPhonemesFalloffOut` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpSetPhonemesShapeWeight` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpSetPhonemesShapeFalloffIn` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpSetPhonemesShapeFalloffOut` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpSetPhonemesBlendIn` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpSetPhonemesBlendOut` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SpeechOpSetPhonemesVariation` | `phonemeui.dll` | CLSID `{1bdb1e5f-546a-4902-8d12-a0c049779d69}` |
-| `SIExtractPhonemes` | `phonemeui.dll` | CLSID `{508c8c1f-4f64-4dee-8a10-45e99d0f7516}` |
-| `GetPhonemesFromSpeechClip` | `phonemeui.dll` | CLSID `{3335b7b3-8a64-436a-aad1-dd60969dac56}` |
-| `GetPhonemeBlendFromSpeechClip` | `phonemeui.dll` | CLSID `{3335b7b3-8a64-436a-aad1-dd60969dac56}` |
 <!-- END GENERATED: registry -->
