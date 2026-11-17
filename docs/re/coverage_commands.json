@@ -1,7 +1,7 @@
 {
  "(uncategorised)": {
   "total": 448,
-  "registered": 217,
+  "registered": 226,
   "missing": [
    "Add property extended",
    "Add2DShape",
@@ -54,8 +54,6 @@
    "ClearPaintSelection",
    "ClearRealtimeShaderCache",
    "ConnectFxOp",
-   "CopyAllAnimation",
-   "CopyAnimContainer",
    "CopyFxOp",
    "CopySourceActionToFolder",
    "CrashXSI",
@@ -114,14 +112,11 @@
    "GetFirstPaintShapeKey",
    "GetKeyboardState",
    "GetLastPaintShapeKey",
-   "GetNbTriangles",
    "GetNextPaintShapeKey",
-   "GetNumRelativeValues",
    "GetNumberOfKnots",
    "GetPhonemeBlendFromSpeechClip",
    "GetPhonemesFromSpeechClip",
    "GetPrevPaintShapeKey",
-   "GetRelativeValue",
    "GetSkeleton",
    "GetUnevaluatedPrimitiveForConstructionHistory",
    "GetUserPref",
@@ -154,8 +149,6 @@
    "Obstalce Pop-up Menu",
    "PaintRasterLine",
    "Particle Type Pop-up Menu",
-   "PasteAllAnimation",
-   "PasteAnimation",
    "PasteFxOp",
    "Pick Session Tool",
    "PickElement",
@@ -165,14 +158,12 @@
    "PrevModifiedPaintClipFrame",
    "RectanglePaintRaster",
    "RectangularPaintMask",
-   "RemoveRelativeValue",
    "RenamePropAndRebind_Internal",
    "RenderFxOp",
    "ResetPaintColor",
    "RevertPaintClip",
    "RevertPaintClipFrame",
    "RevertSelectedPaintClipFrame",
-   "SICreateTextureSpatial",
    "SIExtractPhonemes",
    "SIMatchSubComponent",
    "SIObjExport",
@@ -245,41 +236,17 @@
  },
  "Animation": {
   "total": 186,
-  "registered": 151,
+  "registered": 175,
   "missing": [
-   "ActivateFCurve",
-   "ActivateFCurveOnKeyable",
-   "ActivateFCurveOnMarkedKeyable",
-   "AddFCurve",
-   "AddToMarking",
    "ConnectOperatorParameter",
-   "ConnectSource",
-   "ConvertEulerToQuat",
-   "ConvertQuatToEuler",
-   "CopyKeys",
    "CopyShape",
    "CreateShapeGroup",
-   "CutKeys",
-   "DeselectAllKeys",
    "DisconnectOperatorParameter",
    "GenerateLipSync",
-   "GetCurrentAnimationLayer",
-   "GetFCurveInfo",
-   "GetKeyInfo",
-   "GetMarking",
-   "GetSource",
-   "IsAnimationLayerLocked",
-   "MakeRotationsContinuous",
    "Open SE for Link With Deform",
-   "RemoveFromMarking",
-   "RemoveKeyOnKeyable",
-   "RemoveKeyOnMarkedKeyable",
    "SIAppendBone",
-   "SISequence",
    "SITransferShapeAnimation",
    "Save Zero Key Hot Key",
-   "ScaleAndOffset",
-   "SelectKeysInTimespan",
    "SetShapeGroup",
    "StripDeformOperators"
   ]
@@ -373,13 +340,8 @@
  },
  "Cluster": {
   "total": 16,
-  "registered": 12,
-  "missing": [
-   "CreateClustersAlongDepthFromCurvesToMeshOperator",
-   "CreateClustersFromSlicePolygonsOperator",
-   "CreateCurvePartitionClusters",
-   "CreateMeshPartitionClusters"
-  ]
+  "registered": 16,
+  "missing": []
  },
  "Constraint": {
   "total": 27,
@@ -584,18 +546,16 @@
  },
  "Drawing": {
   "total": 14,
-  "registered": 9,
+  "registered": 11,
   "missing": [
    "2D Chain Tool",
    "3D Chain Tool",
-   "AddParticleTool",
-   "SICreateCurve",
-   "SISetCurvePoints"
+   "AddParticleTool"
   ]
  },
  "Edit": {
   "total": 117,
-  "registered": 83,
+  "registered": 84,
   "missing": [
    "AddAttributeToSetDataICENode",
    "AddFileCacheSource",
@@ -614,7 +574,6 @@
    "GetGeneratorInputReadPosition_UIOnly",
    "GetLightListOnModelClip",
    "GetSurfaceFromCurvesConnectionSet",
-   "InitPropVolume",
    "InspectPropVolume",
    "MoveOperator",
    "PrivateGetCompoundConstructionMode",
@@ -635,7 +594,7 @@
  },
  "File": {
   "total": 110,
-  "registered": 62,
+  "registered": 63,
   "missing": [
    "AddAudioClip",
    "ApplyDelta",
@@ -646,7 +605,6 @@
    "DumpCacheHeader",
    "ExportMaterialLibrary",
    "ImportAudio",
-   "ImportEPS",
    "ImportPrefs",
    "ImportReferencedDelta",
    "MergeMixer",
@@ -689,10 +647,9 @@
  },
  "General": {
   "total": 10,
-  "registered": 7,
+  "registered": 8,
   "missing": [
    "ReconnectModel",
-   "Unlock",
    "Untag"
   ]
  },
@@ -735,19 +692,13 @@
  },
  "Modeling": {
   "total": 274,
-  "registered": 239,
+  "registered": 254,
   "missing": [
    "Add Surface Point Tool",
-   "AddPointInteriorToPolygon",
-   "AddPointToNewPolygon",
    "ConnectBevelProfileCurve",
-   "ConnectNewPolygonToEdge",
-   "ConnectNewPolygonToPoint",
    "ConnectPlaneReferenceToSlicePolygonsOp",
    "CreateGridAndConnectToSlicePolygonsOp",
    "CursorTransformTool",
-   "CurveDirectManip",
-   "CurveDirectManip",
    "Dice Object/Polygons",
    "DisconnectBevelProfileCurve",
    "DisconnectPlaneReferenceFromSlicePolygonsOp",
@@ -756,19 +707,10 @@
    "Mesh Filter",
    "MoveComponent Tool",
    "PropertyTransfer",
-   "RemoveLastPointInteriorToPolygon",
-   "RemovePointFromPolygon",
-   "SIAddPointOnCurve",
-   "SIAddPointOnCurveAtEnd",
-   "SIAddPointOnCurveAtStart",
-   "SIAssembleNurbsMesh",
    "SIBasicTransferClusterPropertiesAcrossGenOp",
    "SIBasicTransferClustersAcrossGenOp",
    "SICreateRefPlane",
-   "SIDeletePointOnCurve",
    "SetReferencePlane",
-   "SnapOffsetToPointForSlicePolygons",
-   "TerminateAddEdgeWithInteriorPoints",
    "TransferClusterPropertiesAcrossGenOp",
    "TransferPropertiesAcrossGenOp",
    "TransferShapeAnimationAcrossGenOp"
@@ -820,16 +762,8 @@
  },
  "Primitive": {
   "total": 131,
-  "registered": 124,
-  "missing": [
-   "GetURLAt",
-   "SIGetPrimCamera",
-   "SIGetPrimLattice",
-   "SIGetPrimLight",
-   "SIGetPrimSpotLight",
-   "SIGetPrimVolumeDeform",
-   "SIGetRigidCns"
-  ]
+  "registered": 131,
+  "missing": []
  },
  "Property": {
   "total": 125,
@@ -987,23 +921,13 @@
  },
  "Texturing": {
   "total": 75,
-  "registered": 58,
+  "registered": 68,
   "missing": [
-   "ChangeUVInput",
    "ConnectMap",
    "InspectAllUVW",
    "InspectUVW",
    "PinAllUVComponents",
    "PinUVComponents",
-   "SICameraTextureProj",
-   "SIConnectToProjection",
-   "SIConnectToSupport",
-   "SICreateTextureBasicGeo",
-   "SICreateTextureProj",
-   "SICreateTexturePureImplicit",
-   "SICreateTextureUVDomain",
-   "SIFindUniqueTextureName",
-   "SIGetTextureUVDomains",
    "UnPinAllUVComponents",
    "UnPinUVComponents"
   ]
