@@ -4,7 +4,10 @@
 // src/core/textureLayers.ts (layer lists, merged order, port resolution, preset table).
 //
 // Wired from the contract: groups A to E. Group F is wired as far as the note attests it (create a shader from a
-// preset or ProgID, connect it, return it; colour <-> scalar converters) and says "not yet attested" for the rest.
+// preset or ProgID, connect it, return it; the 23 single-step converters and the image-clip wrappers of section F2,
+// ledger row CMD-01c-CNX) and says "not yet attested" for the rest: the meaning of `Value`, multi-step converter
+// paths (Q14), and the item order / actions of the connection pop-ups, whose attested content (tokens, per-type
+// preset lists, task ProgIDs) is kept as data in CNX_POPUP (Q15).
 //
 // Known gaps (each is also logged or commented where it bites):
 //  - Yes/No message boxes cannot block this synchronous command bus, so the two sharing questions always get the
@@ -128,25 +131,148 @@ function deleteIfUnused(app: App, container: Node, sh: Shader) {
   if (sourceUsers(container, sh).length) return;
   if (nestedShaders(container).includes(sh)) app.record('Delete shader', () => unnestShader(container, sh), () => nestShader(container, sh));
 }
+// ---- converter shaders (section F2 of the note: the one name -> ProgID table of shaderhelper.dll)
+
+/** [from type, to type, preset name, ProgID]. Only these 23 pairs exist. */
+export const CNX_CONVERTERS: readonly (readonly [string, string, string, string])[] = [
+  ['color', 'scalar', 'Color_to_Scalar', 'Softimage.sib_color_to_scalar.1.0'],
+  ['color', 'vector', 'Color_to_Vector', 'Softimage.sib_color_to_vector.1.0'],
+  ['color', 'boolean', 'Color_to_Boolean', 'Softimage.sib_color_to_boolean.1.0'],
+  ['scalar', 'color', 'Scalar_to_Color', 'Softimage.sib_scalar_to_color.1.0'],
+  ['scalar', 'boolean', 'Scalar_to_Boolean', 'Softimage.sib_scalar_to_boolean.1.0'],
+  ['scalar', 'integer', 'Scalar_to_Integer', 'Softimage.sib_scalar_to_integer.1.0'],
+  ['integer', 'scalar', 'Integer_to_Scalar', 'Softimage.sib_integer_to_scalar.1.0'],
+  ['vector', 'color', 'Vector_to_Color', 'Softimage.sib_vector_to_color.1.0'],
+  ['vector', 'scalar', 'Vector_to_Scalar', 'Softimage.sib_vector_to_scalar.1.0'],
+  ['vector3', 'vector2', 'Vector3_to_Vector2', 'SIUtilityShaders.Vector3ToVector2.1.0'],
+  ['vector3', 'vector4', 'Vector3_to_Vector4', 'SIUtilityShaders.Vector3ToVector4.1.0'],
+  ['vector2', 'color', 'Vector2_to_Color', 'SIUtilityShaders.Vector2ToColor.1.0'],
+  ['vector2', 'vector3', 'Vector2_to_Vector3', 'SIUtilityShaders.Vector2ToVector3.1.0'],
+  ['vector2', 'vector4', 'Vector2_to_Vector4', 'SIUtilityShaders.Vector2ToVector4.1.0'],
+  ['vector2', 'scalar', 'Vector2_to_Scalar', 'SIUtilityShaders.Vector2ToScalar.1.0'],
+  ['vector4', 'color', 'Vector4_to_Color', 'SIUtilityShaders.Vector4ToColor.1.0'],
+  ['vector4', 'vector2', 'Vector4_to_Vector2', 'SIUtilityShaders.Vector4ToVector2.1.0'],
+  ['vector4', 'vector3', 'Vector4_to_Vector3', 'SIUtilityShaders.Vector4ToVector3.1.0'],
+  ['vector4', 'scalar', 'Vector4_to_Scalar', 'SIUtilityShaders.Vector4ToScalar.1.0'],
+  ['vector4', 'quaternion', 'Vector4_to_Quaternion', 'SIUtilityShaders.Vector4ToQuaternion.1.0'],
+  ['quaternion', 'vector4', 'Quaternion_to_Vector4', 'SIUtilityShaders.QuaternionToVector4.1.0'],
+  ['matrix4', 'matrix3', 'Matrix4_to_Matrix3', 'SIUtilityShaders.Matrix4ToMatrix3.1.0'],
+  ['matrix3', 'matrix4', 'Matrix3_to_Matrix4', 'SIUtilityShaders.Matrix3ToMatrix4.1.0'],
+];
+/** Image clip wrappers (F2, inferred from the two ProgIDs stored next to the converter table). */
+export const CNX_IMAGE_WRAPPER = 'Softimage.txt2d-image-explicit.1.0', CNX_SCALAR_IMAGE_WRAPPER = 'Softimage.txt2d-scalarimage-explicit.1.0';
+
+const CNX_TYPE_NAMES = new Set(CNX_CONVERTERS.flatMap(c => [c[0], c[1]]));
+// inferred: the table's "vector" and "vector3" are the same three-component type (the SPDL type name is `vector`)
+const sameCnxType = (a: string, b: string) => a === b || (/^vector3?$/.test(a) && /^vector3?$/.test(b));
+const codeTypeName = (code: number): string | null => code === siShaderDataTypeColor4 ? 'color' : code === siShaderDataTypeScalar ? 'scalar' : code === 0 ? 'boolean' : code === 1 ? 'integer' : code === 4 ? 'vector' : null;
+/** Converter-table type name of a port / of a source's output; null for types the table does not know. */
+function portTypeName(ref: PortRef): string | null {
+  const t = ref.owner instanceof Shader ? ref.owner.spdl?.params.find(p => p.sn === ref.name && p.dir === 'input')?.type : undefined;
+  return t && CNX_TYPE_NAMES.has(t) ? t : codeTypeName(portDataType(ref));
+}
+function sourceTypeName(src: Node): string | null {
+  const t = src instanceof Shader ? src.spdl?.output : undefined;
+  return t && CNX_TYPE_NAMES.has(t) ? t : codeTypeName(sourceDataType(src));
+}
+/** The single-step converter for a (from, to) type pair, or null: there is no other pair. */
+export function findCnxConverter(from: string | null, to: string | null): { preset: string; progId: string } | null {
+  if (!from || !to) return null;
+  const c = CNX_CONVERTERS.find(r => sameCnxType(r[0], from) && sameCnxType(r[1], to));
+  return c ? { preset: c[2], progId: c[3] } : null;
+}
+/** A shader definition for a ProgID of F2 that the project has no SPDL for: one input, one output.
+ *  // inferred: the input is named `input` (as on the two converters the scripts use; `tex` on the image wrapper),
+ *  and the definition file is named after the middle part of the ProgID. */
+function minimalShader(title: string, progId: string, inName: string, inType: string, outType: string): Shader {
+  const mid = progId.split('.')[1];
+  const defs: any[] = inType === 'color' ? [{ name: inName, label: 'Input', type: 'color', value: [1, 1, 1], animatable: false }]
+    : inType === 'scalar' ? [{ name: inName, label: 'Input', type: 'double', value: 0, animatable: true }]
+    : inType === 'integer' ? [{ name: inName, label: 'Input', type: 'int', value: 0, animatable: true }]
+    : inType === 'boolean' ? [{ name: inName, label: 'Input', type: 'bool', value: false, animatable: true }] : [];
+  return new Shader(title, title, defs, { file: `${mid}.spdl`, propset: `${mid}_params`, title, output: outType, params: [
+    { sn: 'out', type: outType, dir: 'output' }, { sn: inName, label: 'Input', type: inType, texturable: true, dir: 'input' }] });
+}
+/** Create the converter for a type pair in the container. Colour <-> scalar keep the preset names the scripts apply
+ *  (`Conversion\Color2scalar`, `Conversion\Scalar2color`); the other 21 are built from the F2 table. */
+function createConverter(app: App, container: Node, from: string, to: string): Shader | null {
+  if (from === 'color' && to === 'scalar') return createShader(app, container, 'Conversion\\Color2scalar');
+  if (from === 'scalar' && to === 'color') return createShader(app, container, 'Conversion\\Scalar2color');
+  const c = findCnxConverter(from, to); if (!c) return null;
+  const sh = makeProgIdShader(c.progId) ?? minimalShader(c.preset, c.progId, 'input', from, to);
+  sh.name = uniqueNameIn(container, sh.name);
+  nest(app, container, sh); return sh;
+}
+/** Wrap an image clip in the image shader for the port: the scalar image shader on a scalar port, else the image shader. */
+function wrapClip(app: App, container: Node, clip: Node, scalarPort: boolean): Shader | null {
+  const progId = scalarPort ? CNX_SCALAR_IMAGE_WRAPPER : CNX_IMAGE_WRAPPER;
+  const sh = makeProgIdShader(progId) ?? minimalShader(scalarPort ? 'ScalarImage' : 'Image', progId, 'tex', 'texture', scalarPort ? 'scalar' : 'color');
+  sh.name = uniqueNameIn(container, sh.name);
+  nest(app, container, sh);
+  connect(app, { owner: sh, name: 'tex' }, clip);
+  return sh;
+}
+
 /** The connection primitive behind SIConnectShaderToCnxPoint: connects `src` to the port, placing a converter in
- *  front when the types differ. Returns what ends up on the port, or null when no converter is known.
- *  Attested converters: `Conversion\Color2scalar` and `Conversion\Scalar2color` (they are the ones the scripts
- *  apply); every other mismatch returns null (Q14). */
+ *  front when the types differ. Returns what ends up on the port, or null when no converter exists.
+ *  Converters: the 23 (from, to) pairs of F2, one step. An image clip on a port that is not a texture port is
+ *  wrapped in the image shader (scalar image shader on a scalar port). Whether paths through more than one
+ *  converter are really built is open (Q14): a pair without a direct converter returns null and says so. */
 function connectWithConverter(app: App, container: Node, src: Node, ref: PortRef, deleteOnLast: boolean): Node | null {
   if (wouldCycle(src, ref.owner)) throw new Error(catText(69)); // inferred: the cycle message of the layer tasks
   const pt = portDataType(ref), st = sourceDataType(src);
   let onPort: Node | null = null;
   if (ref.owner instanceof Material) onPort = src instanceof Shader ? src : null;
-  else if (st === pt) onPort = src;
-  else if ((st === siShaderDataTypeColor4 && pt === siShaderDataTypeScalar) || (st === siShaderDataTypeScalar && pt === siShaderDataTypeColor4)) {
-    const conv = createShader(app, container, st === siShaderDataTypeColor4 ? 'Conversion\\Color2scalar' : 'Conversion\\Scalar2color');
-    if (conv) { connect(app, { owner: conv, name: 'input' }, src); onPort = conv; }
+  else if (st === pt && (st >= 0 || isImageClip(src) || sourceTypeName(src) === portTypeName(ref))) onPort = src;
+  else if (isImageClip(src)) {
+    const to = portTypeName(ref); if (!to) return null;
+    const wrapper = wrapClip(app, container, src, to === 'scalar'); if (!wrapper) return null;
+    // inferred: on a port that is neither colour nor scalar the wrapper goes through the ordinary converter lookup
+    return connectWithConverter(app, container, wrapper, ref, deleteOnLast);
+  } else {
+    const from = sourceTypeName(src), to = portTypeName(ref);
+    if (from && to && sameCnxType(from, to)) onPort = src;
+    else if (findCnxConverter(from, to)) {
+      const conv = createConverter(app, container, from!, to!);
+      if (conv) { connect(app, { owner: conv, name: 'input' }, src); onPort = conv; }
+    } else if (from && to) app.logMsg('info', `not yet attested: no direct ${from} -> ${to} converter exists; whether a path through several converters is built is open (${NOTE} Q14)`);
   }
   if (!onPort) return null;
   if (src instanceof Shader) nest(app, container, src);
   const displaced = connect(app, ref, onPort);
   if (displaced instanceof Shader && displaced !== onPort) { if (deleteOnLast) deleteIfUnused(app, container, displaced); else nest(app, container, displaced); }
   return onPort;
+}
+
+// ---- connection pop-up content (section F2: C3DShaderMenuHelper token list, per-type preset lists, task ProgIDs)
+
+export const CNX_POPUP = {
+  /** Built-in menu tokens and their role (roles inferred from the names and the dictionary texts). */
+  tokens: {
+    '!RemoveItem': 'Disconnect (XSISHADERTASKS 128)', '!Separator': 'separator line', '!Blend': 'blend the picked preset with what is connected',
+    '!Insert': 'insert the picked preset before what is connected', '!EditConversion': 'edit the converter shader sitting on the port',
+    '!Clips': 'sub-menu of image clips', '!Sources': 'sub-menu of image sources', '!More': 'More... (XSISHADERTASKS 106): opens the preset browser',
+  } as Record<string, string>,
+  /** Preset entries in table order; the per-type grouping is inferred from the names. */
+  presets: {
+    scalar: ['ScalarImage', 'Map_lookup_scalar', 'Color_Channels\\Pick_channel', 'Surface\\Incidence', 'Math\\Change_range', 'Switch\\Scalar_Boolean_Switch',
+      'Conversion\\Color_to_Scalar', 'Conversion\\Vector_to_Scalar', 'Conversion\\Integer_to_Scalar', 'Math\\Scalar_Math_Basic', 'Math\\Scalar_Math_Unary', 'Math\\Scalar_Math_Exponent'],
+    boolean: ['Map_lookup_boolean', 'Math\\Color_Math_Logic', 'Math\\Scalar_Math_Logic', 'Math\\Boolean_Math_Logic', 'Math\\Boolean_negate'],
+    integer: ['Map_lookup_integer', 'Conversion\\Scalar_to_Integer'],
+    vector: ['Map_lookup_vector', 'State\\Vector_state'],
+    texturespace: ['texture_space_generators\\Texture_space_generator', 'texture_space_controller\\Texture_edit'],
+  } as Record<string, string[]>,
+  /** Colour ports: the texture list of XSISHADERTASKS ids 152 to 168 ("&Wood" ... "&Image"). */
+  colorTextIds: Array.from({ length: 17 }, (_, i) => 152 + i),
+  /** Task ProgIDs. Which of the last three serves which pop-up command is not matched (Q15). */
+  tasks: { UIApplyShaderToCnxPoints: 'SI.3D.UIApplyShaderToCnxPointsTask', popupCandidates: ['SI.3D.UIPresetPopUpMenuTask', 'SI.3D.CLSID_UITextureAssignmentTask', 'SI.3D.CLSID_UITextureAppendTask'] },
+};
+/** The attested content of the connection pop-up for a port type: preset entries (colour: dictionary texts where the
+ *  strings table has them, else the id) and the built-in tokens. Item order and actions are open (Q15). */
+export function cnxPopupContent(type: string | null): { type: string | null; presets: string[]; tokens: string[] } {
+  const t = type === 'vector3' ? 'vector' : type;
+  const presets = t === 'color' ? CNX_POPUP.colorTextIds.map(id => siString('XSISHADERTASKS', id) ?? (id === 152 ? '&Wood' : id === 168 ? '&Image' : `XSISHADERTASKS ${id}`)) : t ? (CNX_POPUP.presets[t] ?? []) : [];
+  return { type: t, presets: [...presets], tokens: Object.keys(CNX_POPUP.tokens) };
 }
 /** The behaviour behind SIApplyShaderToCnxPoint: create a shader from a preset in the container, connect it to the ports, return it. */
 function applyPreset(app: App, container: Node, preset: any, ports: PortRef[], name = '', deleteOnLast = true): Shader | null {
@@ -633,7 +759,7 @@ function applyShaderToCnxPoint(app: App, a: Record<string, any>, cmd: string, ma
   if (!(given instanceof Shader)) sh.name = uniqueNameIn(container, a.Name || sh.name);
   nest(app, container, sh);
   for (const p of ports) if (!connectWithConverter(app, container, sh, p, true)) // inferred: the displaced shader goes when nothing else uses it, as with the default of SIConnectShaderToCnxPoint
-    warn(app, `${cmd}: no converter from ${nodePath(app.scene, sh)} to ${portPath(app.scene, p)}; not yet attested which converters exist (${NOTE} Q14)`);
+    warn(app, `${cmd}: no converter from ${nodePath(app.scene, sh)} to ${portPath(app.scene, p)}: none of the 23 converter pairs fits (${NOTE} F2, Q14)`);
   return sh;
 }
 function connectShaderToCnxPoint(app: App, a: Record<string, any>): Node | null {
@@ -650,7 +776,7 @@ function connectShaderToCnxPoint(app: App, a: Record<string, any>): Node | null 
     // inferred: with several ports a converter is created once and shared by the ports that need it
     let on: Node | null = converter && sourceDataType(converter) === portDataType(p) ? connectWithConverter(app, container, converter, p, del) : connectWithConverter(app, container, src!, p, del);
     if (on && on !== src) converter = on;
-    if (!on) warn(app, `${cmd}: no converter from ${src!.name} to ${portPath(app.scene, p)}; not yet attested which converters exist (${NOTE} Q14)`);
+    if (!on) warn(app, `${cmd}: no converter from ${src!.name} to ${portPath(app.scene, p)}: none of the 23 converter pairs fits (${NOTE} F2, Q14)`);
     if (i === 0) first = on;
   });
   return first;
@@ -770,7 +896,7 @@ export function registerTextureLayerCommands(app: App) {
   reg('InsertShader', 'Insert shader', 'Insert a shader between two shaders',
     [{ name: 'PresetObj', default: NONE }, { name: 'InputObjs', default: NONE }, { name: 'Name', default: '' }], (app, a) => insertShader(app, a));
 
-  // ---- F (binary not traced: wired as far as the registry and the scripts' call shapes attest)
+  // ---- F (wired as far as the registry, the scripts' call shapes and the string tables of section F2 attest; CMD-01c-CNX)
   reg('SIApplyShaderToCnxPoint', 'Apply Shader Preset to Component', 'Apply the specified shader preset to the specified components',
     [{ name: 'PresetObj', default: NONE }, { name: 'InputObjs', default: NONE }, { name: 'Name', default: '' }, { name: 'Value', default: true }],
     (app, a) => applyShaderToCnxPoint(app, a, 'SIApplyShaderToCnxPoint', x => makePresetShader(x), 'preset'));
@@ -782,16 +908,18 @@ export function registerTextureLayerCommands(app: App) {
   reg('UIApplyShaderToCnxPoints', 'UIApplyShaderToCnxPoints', 'Applies a shader to mulitple connection points',
     [{ name: 'InputObj', default: NONE }, { name: 'InputObjs', default: NONE }, { name: 'X', default: 0 }, { name: 'Y', default: 0 }],
     (app, a) => {
-      // Attested: the registry entry and the task ProgID only. What the command shows at (X, Y) and what a pick runs is Q15.
+      // Attested: the registry entry, the task ProgID and (F2) the menu's token list and per-type preset lists.
+      // The item order per port type, what each item runs and the use of X / Y are open (Q15): no menu is opened.
       const ports = refs(app, a.InputObjs); const x = Number(a.X) || 0, y = Number(a.Y) || 0;
-      app.logMsg('error', `UIApplyShaderToCnxPoints: not yet attested: the menu shown at (${x}, ${y}) and what a pick applies to the ${ports.length} connection point(s) given (${NOTE} Q15); nothing was applied`);
+      const c = cnxPopupContent(ports.length ? portTypeName(ports[0]) : null);
+      app.logMsg('error', `UIApplyShaderToCnxPoints: not yet attested: the item order of the menu shown at (${x}, ${y}) and what a pick applies to the ${ports.length} connection point(s) given (${NOTE} Q15); nothing was applied. Attested content${c.type ? ` for a ${c.type} port` : ''}: ${c.presets.length} preset entries${c.presets.length ? ` (${c.presets.join(', ')})` : ''}; built-ins ${c.tokens.join(' ')}`);
     }, { undoable: false });
   reg('Texture Pop-up Menu', 'Texture Pop-up Menu', 'Pop-up a menu of available textures',
     [{ name: 'InputObjs', default: NONE }, { name: 'ShaderName', default: '' }, { name: 'ClipList', default: NONE }, { name: 'Mode', default: ':siReplaceAndNoBlendInTextureLayers:siBlendInTextureLayersModes' }, { name: 'EmbeddedCommand', default: TEXTURE_POPUP_FILTER }],
     (app, a) => {
       const f = popupInputs(app, a); const mode = enumArg(a.Mode, LAYER_MODES, 2);
       if (!f.ok) app.logMsg('info', `Texture Pop-up Menu: the selection filter needs at least ${f.min} scene object, cluster, group or layer (no chain element, camera, control object, curve, light or null); ${f.accepted.length} given`);
-      app.logMsg('error', `Texture Pop-up Menu: not yet attested: the menu contents and what a pick runs (${NOTE} Q15); no menu was opened (${f.accepted.length} input(s) accepted by the filter, Mode ${mode})`);
+      app.logMsg('error', `Texture Pop-up Menu: not yet attested: the item order, which task serves the command and what a pick runs (${NOTE} Q15); no menu was opened (${f.accepted.length} input(s) accepted by the filter, Mode ${mode}). Attested content: the ${CNX_POPUP.colorTextIds.length} texture entries XSISHADERTASKS ${CNX_POPUP.colorTextIds[0]}-${CNX_POPUP.colorTextIds[CNX_POPUP.colorTextIds.length - 1]}; built-ins ${Object.keys(CNX_POPUP.tokens).join(' ')}`);
       return null;
     }, { undoable: false });
   reg('Modify Texture Pop-up Menu', 'Modify Texture Pop-up Menu', 'Pop-up a menu of available textures and list of connected shaders',
@@ -799,7 +927,7 @@ export function registerTextureLayerCommands(app: App) {
     (app, a) => {
       const f = popupInputs(app, a);
       if (!f.ok) app.logMsg('info', `Modify Texture Pop-up Menu: the selection filter needs at least ${f.min} scene object, cluster, group or layer (no chain element, camera, control object, curve, light or null); ${f.accepted.length} given`);
-      app.logMsg('error', `Modify Texture Pop-up Menu: not yet attested: the menu contents, the list of connected shaders and what a pick runs (${NOTE} Q15); no menu was opened (${f.accepted.length} input(s) accepted by the filter)`);
+      app.logMsg('error', `Modify Texture Pop-up Menu: not yet attested: the item order, the list of connected shaders, which task serves the command and what a pick runs (${NOTE} Q15); no menu was opened (${f.accepted.length} input(s) accepted by the filter). Attested content: the ${CNX_POPUP.colorTextIds.length} texture entries XSISHADERTASKS ${CNX_POPUP.colorTextIds[0]}-${CNX_POPUP.colorTextIds[CNX_POPUP.colorTextIds.length - 1]}; built-ins ${Object.keys(CNX_POPUP.tokens).join(' ')}`);
     }, { undoable: false });
 
   // Scripting / test access to the model half (window.Application.textureLayers).
@@ -808,5 +936,6 @@ export function registerTextureLayerCommands(app: App) {
     defaultTexturePorts, resolvePort: (x: any) => resolvePort(app.scene, x), resolveNode: (x: any) => resolveNode(app.scene, x),
     portPath: (r: PortRef) => portPath(app.scene, r), nodePath: (n: Node) => nodePath(app.scene, n), portDataType, isMix8, currentMaterial: (o: X3DObject) => currentMaterial(app.scene, o),
     uniqueShaderContainer: (items: any[]) => uniqueShaderContainer(app.scene, items), applySelectionFilter, scriptText, catText,
+    CNX_CONVERTERS, CNX_POPUP, CNX_IMAGE_WRAPPER, CNX_SCALAR_IMAGE_WRAPPER, findCnxConverter, cnxPopupContent,
   };
 }

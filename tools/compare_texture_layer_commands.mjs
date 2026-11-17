@@ -349,7 +349,8 @@ const got = await page.evaluate(({ registry }) => {
     const a2 = run('SIApplyShaderToCnxPoint', { PresetObj: 'Shaders\\Texture\\Checkerboard.Preset', InputObjs: [{ owner: ph, name: 'shiny' }, { owner: ph, name: 'ambient' }], Name: 'chk', Value: false });
     r.applyScalar = { name: nm(a2.v), shiny: nm(src(ph, 'shiny')), behind: src(src(ph, 'shiny'), 'input') === a2.v, ambient: src(ph, 'ambient') === a2.v, valueLog: a2.log.filter(l => /not yet attested/.test(l) && /Q14/.test(l)).length };
     const a3 = run('SIApplyShaderToCnxPoint', { PresetObj: 'Conversion\\Scalar2color', InputObjs: [{ owner: ph, name: 'specular' }] }); r.applyConv = { name: nm(a3.v), file: a3.v?.spdl?.file, onPort: src(ph, 'specular') === a3.v };
-    const a4 = run('SIApplyShaderToCnxPoint', { PresetObj: 'Image', InputObjs: [{ owner: ph, name: 'bump' }] }); r.applyNoConv = { name: nm(a4.v), onPort: nm(src(ph, 'bump')), log: a4.log.filter(l => /Q14/.test(l)).length };
+    const a4 = run('SIApplyShaderToCnxPoint', { PresetObj: 'Image', InputObjs: [{ owner: ph, name: 'bump' }] });
+    r.applyVector = { name: nm(a4.v), onPort: nm(src(ph, 'bump')), file: src(ph, 'bump')?.spdl?.file, out: src(ph, 'bump')?.spdl?.output, behind: src(src(ph, 'bump'), 'input') === a4.v, log: a4.log.filter(l => /Q14/.test(l)).length };
     const a5 = run('SIApplyShaderToCnxPoint', { PresetObj: 'NoSuchPreset', InputObjs: [{ owner: ph, name: 'radiance' }] }); r.applyBad = { kind: kind(a5.v), err: a5.err ?? null, log: a5.log.filter(l => /^error\|/.test(l)).length };
     const p1 = run('SIApplyShaderToCnxPoint2', { ProgID: 'Softimage.txt2d-image-explicit.1', InputObjs: [{ owner: ph, name: 'radiance' }], Name: 'viaProgID' });
     r.progid = { err: p1.err ?? null, name: nm(p1.v), file: p1.v?.spdl?.file, onPort: src(ph, 'radiance') === p1.v };
@@ -361,7 +362,19 @@ const got = await page.evaluate(({ registry }) => {
     const c2 = run('SIConnectShaderToCnxPoint', { Source: `${m.name}.Image`, InputObjs: [{ owner: ph, name: 'trans_glossy' }] }); r.connectConv = { returned: nm(c2.v), isConverter: c2.v !== img && c2.v?.spdl?.file === 'sib_color_to_scalar.spdl', behind: src(c2.v, 'input') === img };
     const clip = A.run('CreateImageClip', { FileName: 'pics/bark.pic', Name: 'bark_pic' });
     const c3 = run('SIConnectShaderToCnxPoint', { Source: clip, InputObjs: [{ owner: img, name: 'tex' }] }); r.connectClip = { returnsClip: c3.v === clip, onPort: src(img, 'tex') === clip, texValue: img.val('tex') };
-    const c4 = run('SIConnectShaderToCnxPoint', { Source: clip, InputObjs: [{ owner: ph, name: 'reflectivity' }] }); r.connectClipColour = { kind: kind(c4.v), onPort: nm(src(ph, 'reflectivity')) };
+    const c4 = run('SIConnectShaderToCnxPoint', { Source: clip, InputObjs: [{ owner: ph, name: 'reflectivity' }] }); r.connectClipColour = { kind: kind(c4.v), file: c4.v?.spdl?.file, onPort: src(ph, 'reflectivity') === c4.v, clipBehind: src(c4.v, 'tex') === clip, nested: T.nestedShaders(m).includes(c4.v) };
+    // CMD-01c-CNX (section F2): scalar image wrapper, more converters, no direct pair
+    const c5 = run('SIConnectShaderToCnxPoint', { Source: clip, InputObjs: [{ owner: ph, name: 'translucency' }] }); r.connectClipScalar = { kind: kind(c5.v), file: c5.v?.spdl?.file, out: c5.v?.spdl?.output, onPort: src(ph, 'translucency') === c5.v, clipBehind: src(c5.v, 'tex') === clip };
+    const c6 = run('SIConnectShaderToCnxPoint', { Source: c2.v, InputObjs: [{ owner: ph, name: 'notrace' }] }); r.connectScalarBool = { name: nm(c6.v), file: c6.v?.spdl?.file, out: c6.v?.spdl?.output, onPort: src(ph, 'notrace') === c6.v, behind: src(c6.v, 'input') === c2.v };
+    const c7 = run('SIConnectShaderToCnxPoint', { Source: img, InputObjs: [{ owner: p1.v, name: 'project' }] }); r.connectNoPair = { kind: kind(c7.v), err: c7.err ?? null, onPort: nm(src(p1.v, 'project')), nya: c7.log.filter(l => /not yet attested/.test(l) && /Q14/.test(l) && /color -> integer/.test(l)).length, warn: c7.log.filter(l => /WARNING/.test(l) && /23 converter pairs/.test(l)).length };
+    const c8 = run('SIConnectShaderToCnxPoint', { Source: clip, InputObjs: [{ owner: ph, name: 'bump' }] }); r.connectClipVector = { name: nm(c8.v), wrapper: src(c8.v, 'input')?.spdl?.file, clipBehind: src(src(c8.v, 'input'), 'tex') === clip, onPort: src(ph, 'bump') === c8.v };
+    r.table = { n: T.CNX_CONVERTERS.length, unique: new Set(T.CNX_CONVERTERS.map(c => c[0] + '>' + c[1])).size, progIds: new Set(T.CNX_CONVERTERS.map(c => c[3])).size,
+      pairs: [['color', 'scalar'], ['scalar', 'color'], ['vector', 'color'], ['vector3', 'vector2'], ['vector4', 'quaternion'], ['matrix3', 'matrix4'], ['integer', 'scalar']].map(([f, t]) => T.findCnxConverter(f, t)?.progId ?? null),
+      none: [['boolean', 'color'], ['boolean', 'scalar'], ['integer', 'color'], ['color', 'integer'], ['color', 'color'], [null, 'color']].map(([f, t]) => T.findCnxConverter(f, t)),
+      wrappers: [T.CNX_IMAGE_WRAPPER, T.CNX_SCALAR_IMAGE_WRAPPER] };
+    r.popupContent = { tokens: T.cnxPopupContent('scalar').tokens, counts: ['scalar', 'boolean', 'integer', 'vector', 'texturespace', 'color', 'matrix4'].map(t => T.cnxPopupContent(t).presets.length),
+      scalarFirstLast: [T.cnxPopupContent('scalar').presets[0], T.cnxPopupContent('scalar').presets[11]], integer: T.cnxPopupContent('integer').presets, colorEnds: [T.cnxPopupContent('color').presets[0], T.cnxPopupContent('color').presets[16]],
+      tasks: T.CNX_POPUP.tasks };
     // DeleteOnLastDisconnection
     const x = A.run('SIApplyShaderToCnxPoint', { PresetObj: 'Checkerboard', InputObjs: [{ owner: ph, name: 'reflectivity' }], Name: 'victim' });
     const y = A.run('SIApplyShaderToCnxPoint', { PresetObj: 'Checkerboard', InputObjs: [{ owner: ph, name: 'reflect_glossy' }], Name: 'other' });
@@ -372,6 +385,8 @@ const got = await page.evaluate(({ registry }) => {
     r.connectTwoContainers = kind(run('SIConnectShaderToCnxPoint', { Source: img, InputObjs: [{ owner: ph, name: 'radiance' }, { owner: ph2, name: 'radiance' }] }).v);
     // UIApplyShaderToCnxPoints and the pop-ups
     const u = run('UIApplyShaderToCnxPoints', { InputObj: img, InputObjs: [{ owner: ph, name: 'ambient' }], X: 10, Y: 20 }); r.ui = { err: u.err ?? null, ret: kind(u.v), log: u.log.filter(l => /not yet attested/.test(l) && /Q15/.test(l)).length, ambientUnchanged: src(ph, 'ambient') === a2.v };
+    r.uiContent = /for a color port: 17 preset entries/.test(u.log.join('\n')) && /!RemoveItem !Separator !Blend !Insert !EditConversion !Clips !Sources !More/.test(u.log.join('\n'));
+    const u2 = run('UIApplyShaderToCnxPoints', { InputObj: img, InputObjs: [{ owner: ph, name: 'shiny' }] }); r.uiScalar = /for a scalar port: 12 preset entries \(ScalarImage, Map_lookup_scalar, /.test(u2.log.join('\n'));
     A.select([o]); const menusBefore = document.querySelectorAll('.si-menu, .menu-popup').length;
     const t1 = run('Texture Pop-up Menu', {}); const t2 = run('Modify Texture Pop-up Menu', {});
     r.popup = { err: [t1.err ?? null, t2.err ?? null], ret: [kind(t1.v), kind(t2.v)], log: [t1.log.filter(l => /not yet attested/.test(l) && /Q15/.test(l)).length, t2.log.filter(l => /not yet attested/.test(l) && /Q15/.test(l)).length], accepted: [/1 input\(s\) accepted/.test(t1.log.join('\n')), /1 input\(s\) accepted/.test(t2.log.join('\n'))], menusOpened: document.querySelectorAll('.si-menu, .menu-popup').length - menusBefore };
@@ -600,14 +615,28 @@ eq('F SIApplyShaderToCnxPoint: creates a shader from a preset name, connects it,
 eq('F SIApplyShaderToCnxPoint: preset path, Name, several ports; Color2scalar in front on a scalar port', [F.applyScalar.name, F.applyScalar.shiny, F.applyScalar.behind, F.applyScalar.ambient], ['chk', 'Color2scalar', true, true]);
 eq('F SIApplyShaderToCnxPoint: Value other than the default says "not yet attested" (Q14)', F.applyScalar.valueLog, 1);
 eq('F SIApplyShaderToCnxPoint: Conversion\\Scalar2color preset', F.applyConv, { name: 'Scalar2color', file: 'sib_scalar_to_color.spdl', onPort: true });
-eq('F SIApplyShaderToCnxPoint: no known converter: nothing on the port, says so (Q14)', [F.applyNoConv.onPort, F.applyNoConv.log], [null, 1]);
+eq('F SIApplyShaderToCnxPoint: colour shader on a vector port gets the Color_to_Vector converter (F2 table)', F.applyVector, { name: 'Image1', onPort: 'Color_to_Vector', file: 'sib_color_to_vector.spdl', out: 'vector', behind: true, log: 0 });
 eq('F SIApplyShaderToCnxPoint: unknown preset returns nothing, logs an error', F.applyBad, { kind: 'null', err: null, log: 1 });
 eq('F SIApplyShaderToCnxPoint2: shader from a ProgID', F.progid, { err: null, name: 'viaProgID', file: IMG, onPort: true });
 eq('F SIApplyShaderToCnxPoint2: mixer ProgID / unknown ProgID', [F.progidMix, F.progidBad], [{ name: 'Mix_8colors', isMix8: true }, { kind: 'null', err: null }]);
 eq('F SIConnectShaderToCnxPoint: returns the object that ends up on the port', F.connect, { err: null, returnsSource: true, onPort: true });
 eq('F SIConnectShaderToCnxPoint: returns the converter when one had to be inserted', F.connectConv, { returned: 'Color2scalar1', isConverter: true, behind: true });
 eq('F SIConnectShaderToCnxPoint: Source may be an image clip', F.connectClip, { returnsClip: true, onPort: true, texValue: 'bark_pic' });
-eq('F SIConnectShaderToCnxPoint: nothing when no converter exists', F.connectClipColour, { kind: 'null', onPort: null });
+eq('F SIConnectShaderToCnxPoint: an image clip on a colour port is wrapped in the image shader (F2, inferred)', F.connectClipColour, { kind: 'Shader', file: IMG, onPort: true, clipBehind: true, nested: true });
+eq('F SIConnectShaderToCnxPoint: an image clip on a scalar port is wrapped in the scalar image shader (F2, inferred)', F.connectClipScalar, { kind: 'Shader', file: 'txt2d-scalarimage-explicit.spdl', out: 'scalar', onPort: true, clipBehind: true });
+eq('F SIConnectShaderToCnxPoint: scalar source on a boolean port gets Scalar_to_Boolean', F.connectScalarBool, { name: 'Scalar_to_Boolean', file: 'sib_scalar_to_boolean.spdl', out: 'boolean', onPort: true, behind: true });
+eq('F SIConnectShaderToCnxPoint: nothing when no direct converter exists (colour -> integer); multi-step paths "not yet attested" (Q14)', F.connectNoPair, { kind: 'null', err: null, onPort: null, nya: 1, warn: 1 });
+eq('F SIConnectShaderToCnxPoint: an image clip on a vector port: image wrapper behind Color_to_Vector (inferred)', F.connectClipVector, { name: 'Color_to_Vector1', wrapper: IMG, clipBehind: true, onPort: true });
+eq('F2 converter table: 23 distinct pairs and ProgIDs', [F.table.n, F.table.unique, F.table.progIds], [23, 23, 23]);
+eq('F2 converter table: lookups by (from, to)', F.table.pairs, ['Softimage.sib_color_to_scalar.1.0', 'Softimage.sib_scalar_to_color.1.0', 'Softimage.sib_vector_to_color.1.0', 'SIUtilityShaders.Vector3ToVector2.1.0', 'SIUtilityShaders.Vector4ToQuaternion.1.0', 'SIUtilityShaders.Matrix3ToMatrix4.1.0', 'Softimage.sib_integer_to_scalar.1.0']);
+eq('F2 converter table: no boolean -> anything, integer -> color, color -> integer', F.table.none, [null, null, null, null, null, null]);
+eq('F2 image wrapper ProgIDs', F.table.wrappers, ['Softimage.txt2d-image-explicit.1.0', 'Softimage.txt2d-scalarimage-explicit.1.0']);
+eq('F2 pop-up content: the eight built-in tokens', F.popupContent.tokens, ['!RemoveItem', '!Separator', '!Blend', '!Insert', '!EditConversion', '!Clips', '!Sources', '!More']);
+eq('F2 pop-up content: preset counts (scalar, boolean, integer, vector, texture space, colour ids 152-168, unknown type)', F.popupContent.counts, [12, 5, 2, 2, 2, 17, 0]);
+eq('F2 pop-up content: scalar list ends, integer list', [F.popupContent.scalarFirstLast, F.popupContent.integer], [['ScalarImage', 'Math\\Scalar_Math_Exponent'], ['Map_lookup_integer', 'Conversion\\Scalar_to_Integer']]);
+eq('F2 pop-up content: colour list runs from "&Wood" (152) to "&Image" (168)', [/Wood/.test(F.popupContent.colorEnds[0]), /Image/.test(F.popupContent.colorEnds[1])], [true, true]);
+eq('F2 task ProgIDs', F.popupContent.tasks, { UIApplyShaderToCnxPoints: 'SI.3D.UIApplyShaderToCnxPointsTask', popupCandidates: ['SI.3D.UIPresetPopUpMenuTask', 'SI.3D.CLSID_UITextureAssignmentTask', 'SI.3D.CLSID_UITextureAppendTask'] });
+eq('F UIApplyShaderToCnxPoints: the log line carries the attested menu content for the port type (colour, scalar)', [F.uiContent, F.uiScalar], [true, true]);
 eq('F DeleteOnLastDisconnection true: the displaced shader goes', F.deleteTrue, { onPort: true, victimNested: false });
 eq('F DeleteOnLastDisconnection: undo restores the displaced shader', F.deleteUndo, { onPort: true, victimNested: true });
 eq('F DeleteOnLastDisconnection false: the displaced shader survives', F.deleteFalse, { onPort: true, victimNested: true });
@@ -625,5 +654,5 @@ if (fails.length) {
   process.exit(1);
 }
 console.log(`OK CMD-01c texture layer commands: ${checks} checks, ${NAMES.length} commands exercised (contract tables + registry dump; no XSIBATCH golden yet, note Q2)`);
-console.log('   fully wired from the contract: groups A-E (20 commands), SIApplyShaderToCnxPoint, SIApplyShaderToCnxPoint2, SIConnectShaderToCnxPoint (as far as attested)');
-console.log('   raise / log "not yet attested": BlendClipsInTextureLayers[Insp] with two or more clips (Q13), Value of SIApplyShaderToCnxPoint[2] (Q14), UIApplyShaderToCnxPoints and the two pop-up menus (Q15)');
+console.log('   fully wired from the contract: groups A-E (20 commands), SIApplyShaderToCnxPoint, SIApplyShaderToCnxPoint2, SIConnectShaderToCnxPoint (as far as attested; CMD-01c-CNX: the 23 converters and image wrappers of section F2)');
+console.log('   raise / log "not yet attested": BlendClipsInTextureLayers[Insp] with two or more clips (Q13), Value of SIApplyShaderToCnxPoint[2] and multi-step converter paths (Q14), UIApplyShaderToCnxPoints and the two pop-up menus (item order and actions, Q15; tokens and preset lists are data)');
