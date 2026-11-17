@@ -38,6 +38,7 @@ import { registerOperatorsScriptsCommands } from './commands/operatorsScripts';
 import { registerDuplicateRenderingSimulationScriptsCommands } from './commands/duplicateRenderingSimulationScripts';
 import { registerAddonDocWizardCommands } from './commands/addonDocWizard';
 import { registerUiGroupViewTaskCommands } from './commands/uiGroupViewTasks';
+import { registerFcurveCopyPasteRotationTaskCommands } from './commands/fcurveCopyPasteRotationTasks';
 import { registerSyflexScriptsCommands } from './commands/syflexScripts';
 import { registerAddonScriptsCommands } from './commands/addonScripts';
 import { registerFcurveKeyTasksCommands } from './commands/fcurveKeyTasks';
@@ -157,6 +158,7 @@ registerSyflexScriptsCommands(app);
 registerAddonScriptsCommands(app);
 registerFcurveKeyTasksCommands(app);
 registerFcurveLayerMarkingCommands(app);
+registerFcurveCopyPasteRotationTaskCommands(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);
