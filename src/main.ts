@@ -34,6 +34,7 @@ import { registerAlembicSeqCamCommands } from './commands/alembicSeqCam';
 import { registerUixsiKeysSourcesMaterialsCommands } from './commands/uixsiKeysSourcesMaterials';
 import { registerUixsiClipsDisplayAddonsCommands } from './commands/uixsiClipsDisplayAddons';
 import { registerUixsiPrefsIceViewsCommands } from './commands/uixsiPrefsIceViews';
+import { registerOperatorsScriptsCommands } from './commands/operatorsScripts';
 import { registerAddonDocWizardCommands } from './commands/addonDocWizard';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
@@ -142,6 +143,7 @@ registerAlembicSeqCamCommands(app);
 registerUixsiKeysSourcesMaterialsCommands(app);
 registerUixsiClipsDisplayAddonsCommands(app);
 registerUixsiPrefsIceViewsCommands(app);
+registerOperatorsScriptsCommands(app);
 registerAddonDocWizardCommands(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
