@@ -315,7 +315,7 @@ const got = await page.evaluate(async ({ NAMES }) => {
     d.linear = [g2?.degree ?? null, g2?.cvs?.length ?? null];
     app.undo(); d.undo = names().includes(r2.raw?.[0]?.name);
     m = mark(); const r3 = run('CreateCurve', { CurveType: 1, Points: '(0,0,0),(1,1,0),(2,0,0),(3,1,0)' });
-    d.interpolated = [r3.raw?.[0]?.primitive?.geom()?.cvs?.length ?? null, logFrom(m).some(l => /not yet attested: the interpolated curve type/.test(l))];
+    d.interpolated = [r3.raw?.[0]?.primitive?.geom()?.cvs?.length ?? null, logFrom(m).some(l => /not yet attested: (the interpolated curve type|the drawing style of CurveType 1)/.test(l))];
     run('DeleteObj', { InputObj: r3.raw[0].name });
     out.curve = d; out.curveName = d.name; void before;
   }
@@ -440,7 +440,8 @@ eq('SaveOffsetKeys defaults: native SaveOffsetKeys', [D.SaveOffsetKeys.r, D.Save
 ok('DeleteUnusedMaterials defaults: empty selection is not a material library', /not a material library/.test(D.DeleteUnusedMaterials.r.err ?? ''), D.DeleteUnusedMaterials);
 eq('DeleteAllUnusedMaterials defaults: Nothing to delete', [D.DeleteAllUnusedMaterials.r, D.DeleteAllUnusedMaterials.log], [NONE, ['info:Nothing to delete']]);
 ok('MergeScene defaults: SIMergeScene / file browser flagged not yet attested', D.MergeScene.r.v === '<none>' && D.MergeScene.log.some(l => /not yet attested: SIMergeScene and its file browser/.test(l)), D.MergeScene);
-eq('CreateCurve defaults: an empty curve object, handed back as the Value output', [D.CreateCurve.n, D.CreateCurve.made, D.CreateCurve.calls], [1, ['crvlist'], ['SICreateCurve (stand-in)', 'SISetCurvePoints (stand-in)']]);
+// CMD-B8f put SICreateCurve / SISetCurvePoints on the bus: the wrapper now runs them, and SISetCurvePoints rejects the empty default Points (0x80070057).
+eq('CreateCurve defaults: SICreateCurve then SISetCurvePoints, which fails on the empty Points string; nothing is left behind', [/80070057/.test(D.CreateCurve.r.err ?? ''), D.CreateCurve.made, D.CreateCurve.calls], [true, [], ['SICreateCurve', 'SISetCurvePoints']]);
 ok('AssembleNurbsMesh defaults: no surface mesh, flagged not yet attested', D.AssembleNurbsMesh.r.v === '<none>' && D.AssembleNurbsMesh.log.some(l => /not yet attested: SIAssembleNurbsMesh without a surface mesh/.test(l)) && D.AssembleNurbsMesh.made.length === 0, D.AssembleNurbsMesh);
 ok('AddComponentTool defaults: empty selection = SplitEdgeTool', D.AddComponentTool.calls.includes('SplitEdgeTool') && /split/i.test(D.AddComponentTool.tool ?? ''), D.AddComponentTool);
 eq('ToggleContinuousDraw defaults: Views.ContinuousDraw negated, one SetValue', [D.ToggleContinuousDraw.r, D.ToggleContinuousDraw.views, D.ToggleContinuousDraw.calls], [NONE, { ContinuousDraw: true }, ['GetValue', 'SetValue']]);
@@ -543,7 +544,7 @@ eq('Align UI without a user session: the modal page counts as Cancel (inferred)'
 // ---- CreateCurve
 const cu = got.curve;
 eq('CreateCurve: curve object with the given control points, returned through Value; no selection change', cu.made,
-  [null, true, 'crvlist', true, 3, [[0, 0, 0], [1, 0, 0], [2, 1, 0], [3, 1, 0], [4, 0, 0]], true, true, ['SICreateCurve (stand-in)', 'SISetCurvePoints (stand-in)']]);
+  [null, true, 'crvlist', true, 3, [[0, 0, 0], [1, 0, 0], [2, 1, 0], [3, 1, 0], [4, 0, 0]], true, true, ['SICreateCurve', 'SISetCurvePoints']]);
 eq('CreateCurve: degree 1, local points; undoable', [cu.linear, cu.undo], [[1, 2], false]);
 eq('CreateCurve: interpolated type flagged not yet attested (points used as control points)', cu.interpolated, [4, true]);
 
@@ -600,5 +601,5 @@ if (diffs.length) {
 }
 console.log(`OK CMD-B6a uixsi keys / sources / materials commands: ${checks} checks, ${NAMES.length} commands exercised (contract tables + registry dump; no XSIBATCH golden yet)`);
 console.log('   fully wired: AddToContainer / RemoveFromContainer (group targets), SaveActionKey, SaveKeyOnMarkedKeyable (Q1 inferred), DeleteUnusedImageClips, DeleteUnusedImageSources, DeleteUnusedAnimationSources, DeleteUnusedMaterials, DeleteAllUnusedMaterials, Align (scripted + UI entry), ApplyPath (scripted + UI entry)');
-console.log('   partly wired: InspectMaterial (SIGetMaterialShader stand-in), Store...Properties x3 (SIStoreProp stand-in, Q9), SaveShapeKey (solo-index fix: combiner not modelled), OffsetValueMap / SaveOffsetKeys (native twins are placeholders), DeleteUnusedCacheSources / DeleteUnusedAudioSources (source kinds not modelled), CreateCurve (stand-ins; interpolated type), AssembleNurbsMesh (SIAssembleNurbsMesh stand-in; dialog layout Q7), AddComponentTool (AddPointOnCurveTool not on the bus), ToggleContinuousDraw (Views object stand-in)');
+console.log('   partly wired: InspectMaterial (SIGetMaterialShader stand-in), Store...Properties x3 (SIStoreProp stand-in, Q9), SaveShapeKey (solo-index fix: combiner not modelled), OffsetValueMap / SaveOffsetKeys (native twins are placeholders), DeleteUnusedCacheSources / DeleteUnusedAudioSources (source kinds not modelled), CreateCurve (interpolated type: SICreateCurve Q6 of CMD-B8f), AssembleNurbsMesh (SIAssembleNurbsMesh stand-in; dialog layout Q7), AddComponentTool (AddPointOnCurveTool not on the bus), ToggleContinuousDraw (Views object stand-in)');
 console.log('   stand-in / not yet attested: MergeScene (SIMergeScene not on the bus), folder targets of Add/RemoveFromContainer (MoveToFolder / RemoveFromFolder)');
