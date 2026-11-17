@@ -40,3 +40,7 @@ Generated from softimage-pc string hunts under `Application\` (449 binaries).
 | `Application\bin\xsiutils.dll` | CMD-01b | [cmd-01b-sdk-helpers.md](./cmd-01b-sdk-helpers.md) (`XSIUtils.Translate`; imports only for the rest) |
 | `Application\bin\shadertasks.dll` | CMD-01c | [cmd-01c-texture-layers.md](./cmd-01c-texture-layers.md) (texture layer tasks; pop-up tasks still open) |
 | `Application\bin\shaderhelper.dll` | CMD-01c | same note (layer order, insert, move and suitability helpers) |
+| `Application\bin\fcurve.dll` | CMD-B8a, CMD-B8b, CMD-B8c | [cmd-b8a](./cmd-b8a-fcurve-keys-binary.md), [cmd-b8b](./cmd-b8b-fcurve-layers-marking-expr-binary.md), [cmd-b8c](./cmd-b8c-fcurve-copy-paste-rotation-binary.md) (60 commands, 46 handler classes) |
+| `Application\bin\primtasks.dll` | CMD-B8d, CMD-B8e | [cmd-b8d](./cmd-b8d-primtasks-texture-binary.md), [cmd-b8e](./cmd-b8e-primtasks-prims-binary.md) (30 commands) |
+| `Application\bin\simeshtasks.dll`, `sicurvetasks.dll` | CMD-B8f | [cmd-b8f](./cmd-b8f-mesh-curve-step-tasks-binary.md) (19 commands) |
+| `Application\bin\mohelper.dll` | CMD-B8a | `F3DGetKeyableParams` only (addendum of cmd-b8a); other helpers wanted, row CMD-B8-HELPERS |

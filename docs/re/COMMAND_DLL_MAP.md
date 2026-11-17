@@ -128,7 +128,7 @@ of the command's contract (see the note). No code is recorded here.
 | `AddToContainer` | `Application\DSScripts\uixsiscripts.vbs` | `AddToContainer` | CMD-B6a | [cmd-b6a-uixsi-keys-sources-materials.md](../ghidra/cmd-b6a-uixsi-keys-sources-materials.md) | SPEC |
 | `RemoveFromContainer` | `Application\DSScripts\uixsiscripts.vbs` | `RemoveFromContainer` | CMD-B6a | [cmd-b6a-uixsi-keys-sources-materials.md](../ghidra/cmd-b6a-uixsi-keys-sources-materials.md) | SPEC |
 | `SaveActionKey` | `Application\DSScripts\uixsiscripts.vbs` | `SaveKeyProc` | CMD-B6a | [cmd-b6a-uixsi-keys-sources-materials.md](../ghidra/cmd-b6a-uixsi-keys-sources-materials.md) | SPEC |
-| `SaveKeyOnMarkedKeyable` | `Application\DSScripts\uixsiscripts.vbs` | `SaveKeyOnKeyableProc` | CMD-B6a | [cmd-b6a-uixsi-keys-sources-materials.md](../ghidra/cmd-b6a-uixsi-keys-sources-materials.md) | SPEC-PARTIAL |
+| `SaveKeyOnMarkedKeyable` | `Application\DSScripts\uixsiscripts.vbs` | `SaveKeyOnKeyableProc` | CMD-B6a | [cmd-b6a-uixsi-keys-sources-materials.md](../ghidra/cmd-b6a-uixsi-keys-sources-materials.md) | SPEC |
 | `SaveShapeKey` | `Application\DSScripts\uixsiscripts.vbs` | `SaveShapeKeyProc` | CMD-B6a | [cmd-b6a-uixsi-keys-sources-materials.md](../ghidra/cmd-b6a-uixsi-keys-sources-materials.md) | SPEC |
 | `OffsetValueMap` | `Application\DSScripts\uixsiscripts.vbs` | `OffsetValueMapProc` | CMD-B6a | [cmd-b6a-uixsi-keys-sources-materials.md](../ghidra/cmd-b6a-uixsi-keys-sources-materials.md) | SPEC |
 | `SaveOffsetKeys` | `Application\DSScripts\uixsiscripts.vbs` | `SaveOffsetKeysProc` | CMD-B6a | [cmd-b6a-uixsi-keys-sources-materials.md](../ghidra/cmd-b6a-uixsi-keys-sources-materials.md) | SPEC |
@@ -353,6 +353,115 @@ of the command's contract (see the note). No code is recorded here.
 | `PPGLayoutControl` | `Addons\sdkui\Application\Plugins\PPGLayoutControl.js` | `PPGLayoutControl_Execute` | CMD-B7c | [cmd-b7c-addon-scripts.md](../ghidra/cmd-b7c-addon-scripts.md) | SPEC |
 | `SDKGetScriptGenerator` | `Addons\sdkui\Application\Plugins\SDKScriptGenerator.js` | `SDKGetScriptGenerator_Execute` | CMD-B7c | [cmd-b7c-addon-scripts.md](../ghidra/cmd-b7c-addon-scripts.md) | SPEC |
 | `Create_Polygonizer_Polymesh` | `Addons\Polygonizer\Application\Plugins\Create_Polygonizer_PolymeshPlugin.vbs` | `Create_Polygonizer_Polymesh_Execute` | CMD-B7c | [cmd-b7c-addon-scripts.md](../ghidra/cmd-b7c-addon-scripts.md) | SPEC |
+| `IsAnimated` | `Application\bin\fcurve.dll` | Do 0x18001fed0 / worker motionhelp.dll!SIIsAnimated | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `GetSource` | `Application\bin\fcurve.dll` | Do 0x18001f710 / worker mohelper.dll!F3DGetAnimSources | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `EvalFCurve` | `Application\bin\fcurve.dll` | Do 0x180014c60 / worker 0x180014c10 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `GetFCurveInfo` | `Application\bin\fcurve.dll` | Do 0x18001cf50 / worker 0x18001cdf0 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `GetKeyInfo` | `Application\bin\fcurve.dll` | Do 0x18001d8b0 / worker 0x18001d3f0 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `AddFCurve` | `Application\bin\fcurve.dll` | Do OnDo (imported) / worker 0x18000aae0 -> 0x18000a7b0 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `SetCurveType` | `Application\bin\fcurve.dll` | Do 0x1800454c0 / worker 0x1800452d0 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `SaveKey` | `Application\bin\fcurve.dll` | Do 0x180008990 / worker 0x1800070e0 -> 0x180005ff0 -> 0x18001adb0 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `SaveKeyOnKeyable` | `Application\bin\fcurve.dll` | Do 0x180008990 / worker 0x1800070e0 -> 0x180005ff0 (mode 1 in UnPackArg 0x18000e800) | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `SaveKeyOnMarkedKeyable` (native entry) | `Application\bin\fcurve.dll` | Do 0x180008990 / worker 0x1800070e0 -> 0x180005ff0 (mode 2 in UnPackArg 0x18000e800) | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `RemoveKey` | `Application\bin\fcurve.dll` | Do 0x18003c1d0 / worker 0x18003be80 -> 0x18003b300 -> 0x18001c0f0 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `RemoveKeyOnKeyable` | `Application\bin\fcurve.dll` | Do 0x18003c1d0 / worker 0x18003b300 (mode 1 in UnPackArg 0x18000e800) | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `RemoveKeyOnMarkedKeyable` | `Application\bin\fcurve.dll` | Do 0x18003c1d0 / worker 0x18003b300 (mode 2 in UnPackArg 0x18000e800) | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `NextKey` | `Application\bin\fcurve.dll` | Do 0x180047140 / worker 0x1800386f0 -> 0x180046ec0 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `PrevKey` | `Application\bin\fcurve.dll` | Do 0x180047140 / worker 0x1800389b0 -> 0x180047200 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `FirstKey` | `Application\bin\fcurve.dll` | Do 0x180047140 / worker 0x18001caf0 -> 0x180046ac0 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `LastKey` | `Application\bin\fcurve.dll` | Do 0x180047140 / worker 0x18002f470 -> 0x180046d20 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `SaveActionKey` (native entry) | `Application\bin\fcurve.dll` | Do OnDo (imported) / worker 0x180044e10 -> 0x180044c30, source lookup 0x1800447f0 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC |
+| `ActivateFCurve` | `Application\bin\fcurve.dll` | Do 0x180002380 / worker 0x180002110 -> 0x180001240 | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC-PARTIAL |
+| `ActivateFCurveOnKeyable` | `Application\bin\fcurve.dll` | Do 0x180002380 / worker 0x180002110 -> 0x180001240 (mode 1 in UnPackArg 0x180002860) | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC-PARTIAL |
+| `ActivateFCurveOnMarkedKeyable` | `Application\bin\fcurve.dll` | Do 0x180002380 / worker 0x180002110 -> 0x180001240 (mode 2 in UnPackArg 0x180002860) | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC-PARTIAL |
+| `RemoveAnimation` | `Application\bin\fcurve.dll` | Do 0x18003a660 / worker 0x180039b70 (collector 0x180038d20 unread) | CMD-B8a | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md) | SPEC-PARTIAL |
+| `GetCurrentAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c8a0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `SetCurrentAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c950 / worker 0x18002c080 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `GetNumberOfAnimationLayers` | `Application\bin\fcurve.dll` | Do 0x18002c8d0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `AddAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c820 / worker 0x18002a5d0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `DeleteAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c940 / worker 0x18002baf0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `DuplicateAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c890 / worker 0x18002ac60 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC-PARTIAL |
+| `LockAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c910 / worker 0x18002b7d0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `UnlockAnimationLayer` | `Application\bin\fcurve.dll` | Do 0x18002c910 / worker 0x18002b7d0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `IsAnimationLayerLocked` | `Application\bin\fcurve.dll` | Do 0x18002c900 / worker 0x18002b4a0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `SetMarking` | `Application\bin\fcurve.dll` | Do 0x18000db50 / worker 0x180046730 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `ClearMarking` | `Application\bin\fcurve.dll` | Do 0x18000db50 / worker 0x180046730 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `AddToMarking` | `Application\bin\fcurve.dll` | Do 0x18000db50 / worker 0x18000daf0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `RemoveFromMarking` | `Application\bin\fcurve.dll` | Do 0x18000db50 / worker 0x18003c660 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `GetMarking` | `Application\bin\fcurve.dll` | Do 0x18001df20 / worker 0x18001def0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `SetExpr` | `Application\bin\fcurve.dll` | Do 0x180004360 / worker 0x180003150 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `EditExpr` | `Application\bin\fcurve.dll` | Do 0x180015270 / worker 0x180015030 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `SetRelativeValues` | `Application\bin\fcurve.dll` | Do 0x180046530 / worker 0x1800458e0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `GetNumRelativeValues` | `Application\bin\fcurve.dll` | Do 0x18001e710 / worker 0x18001e4a0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `GetRelativeValue` | `Application\bin\fcurve.dll` | Do 0x18001f0f0 / worker 0x18001eea0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `RemoveRelativeValue` | `Application\bin\fcurve.dll` | Do 0x18003f0e0 / worker 0x18003f050 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `ConnectSource` | `Application\bin\fcurve.dll` | Do 0x18000f9d0 / worker 0x18000f6d0 | CMD-B8b | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md) | SPEC |
+| `CopyAnimContainer` | `Application\bin\fcurve.dll` | Do 0x180011530 / worker 0x1800113f0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC-PARTIAL |
+| `CopyAllAnimation` | `Application\bin\fcurve.dll` | Do 0x180013a40 / worker 0x180012ed0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `CopyAnimation` | `Application\bin\fcurve.dll` | Do 0x180013a40 / worker 0x180012ed0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `PasteAllAnimation` | `Application\bin\fcurve.dll` | Do 0x180013a70 / worker 0x1800138d0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `PasteAnimation` | `Application\bin\fcurve.dll` | Do 0x180013a70 / worker 0x1800138d0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `CopyKeys` | `Application\bin\fcurve.dll` | Do 0x180025a00 / worker 0x180023b30 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `CutKeys` | `Application\bin\fcurve.dll` | Do 0x180025bb0 / worker 0x1800246b0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `DeleteKeys` | `Application\bin\fcurve.dll` | Do 0x180025bb0 / worker 0x1800246b0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `PasteKeys` | `Application\bin\fcurve.dll` | Do 0x180025da0 / worker 0x180025350 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `SelectKeysInTimespan` | `Application\bin\fcurve.dll` | Do 0x18002dd80 / worker 0x18002e5a0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `DeselectAllKeys` | `Application\bin\fcurve.dll` | Do 0x18002dd80 / worker 0x18002d9f0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `ConvertEulerToQuat` | `Application\bin\fcurve.dll` | Do 0x18000d790 / worker 0x18000c3f0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `ConvertQuatToEuler` | `Application\bin\fcurve.dll` | Do 0x18003df60 / worker 0x18003cb40 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `MakeRotationsContinuous` | `Application\bin\fcurve.dll` | Do 0x1800373c0 / worker 0x180037520 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC |
+| `Sequence` | `Application\bin\fcurve.dll` | Do 0x180041da0 / worker 0x1800405b0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC-PARTIAL |
+| `SISequence` | `Application\bin\fcurve.dll` | Do 0x180041da0 / worker 0x1800405b0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC-PARTIAL |
+| `ScaleAndOffset` | `Application\bin\fcurve.dll` | Do 0x180041da0 / worker 0x1800405b0 | CMD-B8c | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md) | SPEC-PARTIAL |
+| `SIFindUniqueTextureName` | `Application\bin\primtasks.dll` | Do 0x18000aa70 / worker 0x180003570 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC |
+| `SICreateTexturePureImplicit` | `Application\bin\primtasks.dll` | Do 0x18001f1c0 / worker 0x18001eec0 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC |
+| `SICreateTextureBasicGeo` | `Application\bin\primtasks.dll` | Do 0x180023b30 / worker 0x1800235d0 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC |
+| `SICreateTextureProj` | `Application\bin\primtasks.dll` | Do 0x180023b30 / worker 0x1800235d0 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC-PARTIAL |
+| `SICreateTextureUVDomain` | `Application\bin\primtasks.dll` | Do 0x18001e0a0 / worker 0x18001d620 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC-PARTIAL |
+| `SIConnectToSupport` | `Application\bin\primtasks.dll` | Do 0x180008350 / worker 0x180008040 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC |
+| `SIConnectToProjection` | `Application\bin\primtasks.dll` | Do 0x180007990 / worker 0x180007670 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC-PARTIAL |
+| `SICameraTextureProj` | `Application\bin\primtasks.dll` | Do 0x1800068d0 / worker 0x1800065f0 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC |
+| `SICreateTextureSpatial` | `Application\bin\primtasks.dll` | Do 0x18000c050 / worker 0x18000bea0 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC |
+| `SIGetTextureUVDomains` | `Application\bin\primtasks.dll` | Do 0x1800108c0 / worker 0x18000f8e0 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC-PARTIAL |
+| `ChangeUVInput` | `Application\bin\primtasks.dll` | Do 0x1800071a0 / worker 0x180006ee0 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC-PARTIAL |
+| `HealUVW` | `Application\bin\primtasks.dll` | Do 0x180011aa0 / worker 0x1800114f0 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC |
+| `MatchUVW` | `Application\bin\primtasks.dll` | Do 0x18001c430 / worker 0x18001bcf0 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC |
+| `CycleUVW` | `Application\bin\primtasks.dll` | Do 0x18000b880 / worker 0x1800096c0 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC |
+| `FlipUVW` | `Application\bin\primtasks.dll` | Do 0x18000b880 / worker 0x18000b450 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC |
+| `RelaxUVW` | `Application\bin\primtasks.dll` | Do 0x180011aa0 / worker 0x18001f850 | CMD-B8d | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md) | SPEC-PARTIAL |
+| `SIGetRigidCns` | `Application\bin\primtasks.dll` | Do 0x18000ec60 / worker 0x18000e260 | CMD-B8e | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md) | SPEC |
+| `SIAssembleNurbsMesh` | `Application\bin\primtasks.dll` | Do 0x180031330 / worker 0x180031030 | CMD-B8e | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md) | SPEC-PARTIAL |
+| `SIGetPrimLight` | `Application\bin\primtasks.dll` | Do 0x18001b680 / worker 0x18001aea0 | CMD-B8e | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md) | SPEC |
+| `SIGetPrimCamera` | `Application\bin\primtasks.dll` | Do 0x180021fb0 / worker 0x180004e60 | CMD-B8e | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md) | SPEC |
+| `SIGetPrimSpotLight` | `Application\bin\primtasks.dll` | Do 0x180021fb0 / worker 0x1800219e0 | CMD-B8e | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md) | SPEC |
+| `SIGetPrimLattice` | `Application\bin\primtasks.dll` | Do 0x18001a330 / worker 0x180019ae0 | CMD-B8e | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md) | SPEC |
+| `SIGetPrimVolumeDeform` | `Application\bin\primtasks.dll` | Do 0x180025200 / worker 0x180024a30 | CMD-B8e | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md) | SPEC-PARTIAL |
+| `SIInstantiate` | `Application\bin\primtasks.dll` | Do 0x180018bd0 / worker 0x180017ac0 | CMD-B8e | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md) | SPEC |
+| `GetMaster` | `Application\bin\primtasks.dll` | Do 0x180018ba0 / worker 0x1800175f0 | CMD-B8e | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md) | SPEC |
+| `GetInstances` | `Application\bin\primtasks.dll` | Do 0x180018ba0 / worker 0x1800173e0 | CMD-B8e | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md) | SPEC |
+| `GetURLAt` | `Application\bin\primtasks.dll` | Do 0x180010dc0 / worker 0x180010bc0 | CMD-B8e | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md) | SPEC |
+| `ImportEPS` | `Application\bin\primtasks.dll` | Do 0x180014fd0 / worker 0x180014a90 | CMD-B8e | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md) | SPEC-PARTIAL |
+| `GetNbTriangles` | `Application\bin\primtasks.dll` | Do 0x18000c2e0 / worker SIGetNbTriangles (import) | CMD-B8e | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md) | SPEC |
+| `SIAssignMaterial` | `Application\bin\not primtasks.dll (caller only at 0x18002bd90)` | Do not located / worker not located | CMD-B8e | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md) | SPEC-PARTIAL |
+| `AddPointToNewPolygon` | `Application\bin\simeshtasks.dll` | Do 0x180001950 / worker 0x1800017d0 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `RemovePointFromPolygon` | `Application\bin\simeshtasks.dll` | Do 0x1800071d0 / worker 0x180006fc0 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `AddPointInteriorToPolygon` | `Application\bin\simeshtasks.dll` | Do 0x180001360 / worker 0x180001220 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `RemoveLastPointInteriorToPolygon` | `Application\bin\simeshtasks.dll` | Do 0x180006c70 / worker 0x180006b70 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `TerminateAddEdgeWithInteriorPoints` | `Application\bin\simeshtasks.dll` | Do 0x180009050 / worker 0x180008920 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC-PARTIAL |
+| `SnapOffsetToPointForSlicePolygons` | `Application\bin\simeshtasks.dll` | Do 0x1800082b0 / worker 0x1800077d0 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC-PARTIAL |
+| `ConnectNewPolygonToEdge` | `Application\bin\simeshtasks.dll` | Do 0x1800027a0 / worker 0x180002060 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `ConnectNewPolygonToPoint` | `Application\bin\simeshtasks.dll` | Do 0x180002f50 / worker 0x180002ce0 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `CreateMeshPartitionClusters` | `Application\bin\simeshtasks.dll` | Do 0x180005b20 / worker 0x1800051d0 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `CreateClustersAlongDepthFromCurvesToMeshOperator` | `Application\bin\simeshtasks.dll` | Do 0x1800047d0 / worker 0x180003970 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `CreateClustersFromSlicePolygonsOperator` | `Application\bin\simeshtasks.dll` | Do 0x1800064a0 / worker 0x180005db0 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `SICreateCurve` | `Application\bin\sicurvetasks.dll` | Do 0x180005430 / worker 0x180005030 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `SISetCurvePoints` | `Application\bin\sicurvetasks.dll` | Do 0x180009450 / worker 0x180009250 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `SIAddPointOnCurve` | `Application\bin\sicurvetasks.dll` | Do 0x180003450 / worker 0x1800024c0 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `SIAddPointOnCurveAtStart` | `Application\bin\sicurvetasks.dll` | Do 0x180001fb0 / worker 0x180001b10 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `SIAddPointOnCurveAtEnd` | `Application\bin\sicurvetasks.dll` | Do 0x180001fb0 / worker 0x180001150 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `SIDeletePointOnCurve` | `Application\bin\sicurvetasks.dll` | Do 0x180007c00 / worker 0x180007940 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `CreateCurvePartitionClusters` | `Application\bin\sicurvetasks.dll` | Do 0x180004890 / worker 0x1800041b0 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
+| `CurveDirectManip` | `Application\bin\sicurvetasks.dll` | Do 0x1800060c0 / worker 0x1800059d0 | CMD-B8f | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md) | SPEC |
 
 ## Earlier rows (not yet itemised per command)
 
@@ -374,6 +483,11 @@ Registration strings, exports and hashes seen while a binary was open; starting 
 - customcommands.dll sha256 ff7a2aea29aa… | single export `XSIOnCommand` 0x180010d60 (dispatch by command display name: "OBJ Export function", "Obj Import function", ...); OBJ export worker 0x180002590 (`SIObjExport`), OBJ import worker 0x180008df0 (`ObjImport`), `TrackRig` worker 0x180017280. Contracts not read yet (CMD-01-OBJ-BIN)
 - Bin-wide string scan, 2026-11-17 (200 binaries of `Application\bin` staged and scanned for ASCII and UTF-16 strings): of 932 built-in C++ scripting names only 86 occur anywhere, and those are callers, not registrations (for example `SIConnectShaderToCnxPoint` only in `dotxsi_ie.dll`, which calls it). Task ProgID strings (`SI.3D.*Task`) exist only in `shadertasks.dll` (34), `propertytasks.dll` (9), `primtasks.dll` (3), `tasks.dll` (2). Built-in commands are therefore bound by CLSID outside the binaries (ledger row CMD-REGISTRY); a name search cannot build this map for them
 - Tool commands whose names occur only in `viewinteraction.dll` (tool registration by name, starting point): `CursorTransformTool`, `DirectManipTool`, `TimeSliderTool`, `VirtualSliderTool` (still TODO), and the already-named `AddVertexTool`, `BezierCurveTool`, `LinearCurveTool`, `MovePointTool`, `PaintVertexColorTool`, `ProbeMaterialTool`, `PropTransformTool`, `RotationTool`, `ScalingTool`, `SketchCurveTool`, `SplitEdgeTool`, `TranslateTool`, `TweakNormalsTool`, `TweakTool`, `WeldPointTool`
+- fcurve.dll sha256 70778c1ac396… | 46 handler classes located statically (CLSID in `DllGetClassObject` → factory vtable slot 6 → creation function → task vtable); message catalogue `XSIFCURVE`; CLSIDs present but not served here (callers only): `Lock`/`Unlock`/`Tag`/`Untag`, `AddLayerClip`, `AddTrack`, `AddMarker`, `CycleChecking`
+- primtasks.dll sha256 f7dab2efd123… | 34 handler classes located; not served here (callers only): `SIAssignMaterial`, `SelectObj` family, `ParentObj`, `SIAddToGroupLowLevel`, `Add3DObjectToScene`, `SIApplyConstraint`, `InitPropVolume`, `MoveOperator*`, `SIAddToCluster`, `CreateClusterFromSubComponent`, `SICreateModel`
+- simeshtasks.dll (11 classes) and sicurvetasks.dll (8 classes): all registry commands with a unique CLSID there are now read (CMD-B8f); callers only: `SelectObj` family, `CreateClusterFromSubComponent`, `GetConnectionSet`, `FreezeObj`
+- mohelper.dll sha256 26ac0f054925… | `F3DGetKeyableParams` export ordinal 290 at 0x1800e3b50 (read, see cmd-b8a addendum); exports carry demangled names in Ghidra, so helpers can be decompiled by plain name (`F3DGetAnimSources`, `F3DGetMarkedComponents`, `F3DGetAllAnimationComponents` are the next ones wanted)
+- Static locator recipe (2026-11-17): with pefile + capstone, follow the RIP-relative references to each handler CLSID inside `DllGetClassObject`; the first `lea` after the CLSID compare is the factory vtable. When several candidate vtables are installed by the constructor, the task vtable is the one whose slot 10 is `C3DCoreBaseTask::OnUpdateUI` or an override next to `RePackArg`; the first candidate is often the `CDSCOMObject` part
 
 ## Registry-declared homes of commands still TODO
 
@@ -541,10 +655,7 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `SICreateRefPlane` | `tasks.dll` | CLSID `{b85255a9-1c5a-11d4-b7e9-0008c7a011a6}` |
 | `SetCurrentReferencePlane` | `tasks.dll`, `viewinteraction.dll` | CLSID `{2f76bc8f-f028-11d2-ac7c-00a02485cecb}` |
 | `SetReferencePlane` | `tasks.dll`, `viewinteraction.dll` | CLSID `{9860fe78-9aa3-4a4a-b764-5d52578b4f36}` |
-| `SIInstantiate` | `primtasks.dll` | CLSID `{177b5057-fb54-45cf-afac-60fdfb0c58b4}` |
 | `Instantiate` | `duplicate.vbs` (VBScript) | `InstanceProc` |
-| `GetMaster` | `primtasks.dll` | CLSID `{c536b66e-0c88-4b9d-9eff-34d04d60bd66}` |
-| `GetInstances` | `primtasks.dll`, `imageclip.dll` | CLSID `{48492eb6-da48-406e-bcea-d1f8e0efc92b}` |
 | `CopyStyle` | (CLSID not specific to one binary) | CLSID `{3f4aac42-27d6-11d6-9e5b-0000e22bd0d9}` |
 | `SetInstanceGroup` | `grouptask.dll` | CLSID `{e0717f47-0ac4-4faa-b35a-7c56951e6ddf}` |
 | `RemoveInstanceGroup` | `grouptask.dll` | CLSID `{d534de9f-55e4-41c2-a5ca-2cfbe354d3e6}` |
@@ -642,16 +753,10 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `ApplyCns` | `uixsiscripts.vbs` (VBScript) | `ApplyTrajectoryProc` |
 | `ConvertPosAnimToPath` | `uixsiscripts.vbs` (VBScript) | `ConvertPosAnimToPathProc` |
 | `PathRetime` | `uixsiscripts.vbs` (VBScript) | `PathRetimeProc` |
-| `SICreateCurve` | `pathanimtask.dll`, `sicurvetasks.dll`, `viewinteraction.dll` | CLSID `{8f351a3d-edf2-11d2-9224-00a0c9612e3a}` |
-| `SISetCurvePoints` | `sicurvetasks.dll`, `viewinteraction.dll` | CLSID `{1808e581-f9b7-11d2-9244-00aa0068bf56}` |
-| `SIAddPointOnCurve` | `pathanimtask.dll`, `sicurvetasks.dll`, `viewinteraction.dll` | CLSID `{cfb524a3-eeb9-11d2-9224-00a0c9612e3a}` |
-| `SIAddPointOnCurveAtStart` | `pathanimtask.dll`, `sicurvetasks.dll`, `viewinteraction.dll` | CLSID `{d62480c3-eddd-11d2-9222-00a0c9612e3a}` |
-| `SIAddPointOnCurveAtEnd` | `pathanimtask.dll`, `sicurvetasks.dll`, `viewinteraction.dll` | CLSID `{cfb524a4-eeb9-11d2-9224-00a0c9612e3a}` |
 | `GetCurveLength` | `tasks.dll` | CLSID `{c1e68290-0d3a-11d3-bc2e-00a0c9612b97}` |
 | `EvaluateCurveAt` | `tasks.dll` | CLSID `{c54341b9-0d52-11d3-bc2e-00a0c9612b97}` |
 | `GetNumberOfKnots` | `tasks.dll` | CLSID `{656fc3b1-7c05-11d3-97b9-00a0243e3463}` |
 | `GetCurvePercentageAtKnotIndex` | `tasks.dll` | CLSID `{656fc3b2-7c05-11d3-97b9-00a0243e3463}` |
-| `SIDeletePointOnCurve` | `sicurvetasks.dll`, `viewinteraction.dll` | CLSID `{be413b72-cd20-11d3-a9ba-009027bc65d7}` |
 | `AddProp` | `uixsiscripts.vbs` (VBScript) | `AddPropProc` |
 | `CreateWeightMap` | `uixsiscripts.vbs` (VBScript) | `CreateWeightMap` |
 | `CreateVertexColorSupport` | `gap.dll`, `si3dobjectmodel.dll`, `sicoresdk.dll` | CLSID `{ab483760-38c0-11d4-b8ff-0800690c8bd0}` |
@@ -666,7 +771,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `EditParameterDefinition` | `propertytasks.dll`, `sicoresdk.dll` | CLSID `{d56b12d2-699a-11d4-a657-00a0c9ec5ef7}` |
 | `SIAddProp` | (CLSID not specific to one binary) | CLSID `{6fa26e30-7fe6-11d2-a938-00a024190119}` |
 | `SIAddPropEx` | `propertytasks.dll` | CLSID `{b683cd81-22c1-11d3-80e6-00a0c9ac19a9}` |
-| `SIAssignMaterial` | `modeltasks.dll`, `primtasks.dll`, `propertytasks.dll`, `action.dll`, `activedb.dll`, `scnmgr.dll` … | CLSID `{b81121a4-7ef2-4606-bef3-f9b01f582e35}` |
 | `SIUnAssignMaterial` | `propertytasks.dll` | CLSID `{c11ffe86-8e6b-4986-a698-c030d1ee45c3}` |
 | `SICreateMaterial` | `propertytasks.dll`, `shadertasks.dll`, `sicoresdk.dll` | CLSID `{3b75c06e-4d3f-458a-b591-13b65ed6603a}` |
 | `SICreateMaterialDD` | `propertytasks.dll`, `shadertasks.dll`, `sicoresdk.dll` | CLSID `{3b75c06e-4d3f-458a-b591-13b65ed6603a}` |
@@ -761,14 +865,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `UpdateConnectOnOp` | `optasks.dll`, `activedb.dll`, `adaptorop.dll`, `textureop.dll` | CLSID `{9c8384e2-da33-11d2-ac75-00a02485cecb}` |
 | `LocalAssignFlexEnv` | `operators.vbs` (VBScript) | `LocalAssignFlexibleEnvelopeFunc` |
 | `ApplyKinematicOp` | `operators.vbs` (VBScript) | `ApplyKinematicOpFunc` |
-| `AddPointToNewPolygon` | `simeshtasks.dll` | CLSID `{a8956b40-3bf3-11d4-8c25-009027bc3a0e}` |
-| `RemovePointFromPolygon` | `simeshtasks.dll` | CLSID `{9ff8f6d0-9ebf-11d4-8c45-009027bc3a0e}` |
-| `AddPointInteriorToPolygon` | `simeshtasks.dll` | CLSID `{d53d6794-8033-4693-88ed-4f6d6a25f028}` |
-| `RemoveLastPointInteriorToPolygon` | `simeshtasks.dll` | CLSID `{0bc15cdd-ff40-4ebd-9f83-06091226d41d}` |
-| `TerminateAddEdgeWithInteriorPoints` | `simeshtasks.dll` | CLSID `{247117fc-bce0-4988-8fa3-dc1ad7983f36}` |
-| `SnapOffsetToPointForSlicePolygons` | `simeshtasks.dll` | CLSID `{4b596493-d616-49d4-893f-f8fcc4c23c5a}` |
-| `ConnectNewPolygonToEdge` | `simeshtasks.dll` | CLSID `{321c2390-3e2f-11d4-8c25-009027bc3a0e}` |
-| `ConnectNewPolygonToPoint` | `simeshtasks.dll` | CLSID `{34a206f0-4ca6-11d4-8c28-009027bc3a0e}` |
 | `SplitEdge` | `operators.vbs` (VBScript) | `ApplySplitEdgeFunc` |
 | `Mesh Filter` | `scnmgr.dll`, `xsievents.dll` | CLSID `{48becc30-5e5e-11d4-8c2c-009027bc3a0e}` |
 | `Triangulate` | `operators.vbs` (VBScript) | `TriangulateProc` |
@@ -866,7 +962,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `AddCustomOp` | `action.dll`, `ophost.dll`, `sicoresdk.dll` | CLSID `{f33c09e7-3b99-4e69-b5f8-8c88cd1b25c8}` |
 | `AddScriptedOpFromFile` | `ophost.dll` | CLSID `{7fba5233-d05d-4cb7-a107-b5b08e513f1c}` |
 | `PropertyTransfer` | `optasks.dll` | CLSID `{d5b91e0f-d65f-4ced-8cac-811e801f54e8}` |
-| `CurveDirectManip` | `sicurvetasks.dll`, `viewinteraction.dll` | CLSID `{2012b58b-55bb-4512-a6d0-8f95a6c92c9a}` |
 | `AlignBezierKnotsTangents` | `operators.vbs` (VBScript) | `AlignBezierKnotsTangentsFunc` |
 | `CreateSimulatedICETree` | `operators.vbs` (VBScript) | `CreateSimulatedICETreeProc` |
 | `GetICECompoundProperties` | `optasks.dll` | CLSID `{1728169f-6fdc-4d78-b1b5-7db9226fcb5c}` |
@@ -901,10 +996,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `SIAddToCluster` | `optasks.dll`, `primtasks.dll`, `propertytasks.dll`, `siclustertasks.dll`, `tasks.dll`, `action.dll` … | CLSID `{5f1f5165-8b90-11d2-a93c-00a024190119}` |
 | `SIRemoveFromCluster` | `propertytasks.dll`, `siclustertasks.dll` | CLSID `{5f1f5167-8b90-11d2-a93c-00a024190119}` |
 | `CopyCluster` | `siclustertasks.dll`, `action.dll` | CLSID `{88f1aa51-7dc9-11d4-9c8a-00d0b719049e}` |
-| `CreateMeshPartitionClusters` | `simeshtasks.dll` | CLSID `{e487669d-e540-422b-9f8d-690c0d6bc50c}` |
-| `CreateClustersAlongDepthFromCurvesToMeshOperator` | `simeshtasks.dll` | CLSID `{9237b4fb-2165-4128-a23f-b255fb35f393}` |
-| `CreateClustersFromSlicePolygonsOperator` | `simeshtasks.dll` | CLSID `{a8e33f35-21c0-4c29-8ecb-5b606a789d01}` |
-| `CreateCurvePartitionClusters` | `sicurvetasks.dll` | CLSID `{2fb4eae2-5671-4a2b-b0f6-749ebc7d23d7}` |
 | `Polygon Cluster Visibility Property` | `layers.vbs` (VBScript) | `AddVisPropToPolygonCluster` |
 | `CreateGroup` | `uixsiscripts.vbs` (VBScript) | `FCreateGroup` |
 | `AddToGroup` | `uixsiscripts.vbs` (VBScript) | `AddToGroup` |
@@ -1025,74 +1116,16 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `SelectDeformersFromEnvelope` | `enveloping.vbs` (VBScript) | `SelectDeformersFromEnvelopeProc` |
 | `AssociateEnvelopeBoundingVolume` | `enveloping.vbs` (VBScript) | `EnvelopeAssociateBoundingVolumesProc` |
 | `MoveJoint` | `viewinteraction.dll` | CLSID `{ca6a8073-ab30-4b7f-bdec-6a6a5ad6859a}` |
-| `GetSource` | `fcurve.dll` | CLSID `{30db8dc4-1788-11d3-bc37-00a0c9612b97}` |
-| `IsAnimated` | `fcurve.dll` | CLSID `{5196a050-cdad-11d3-acc4-0090275802bf}` |
-| `AddFCurve` | `action.dll`, `fcurve.dll` | CLSID `{920f5f50-5d55-11d2-8082-00a0c955b335}` |
-| `SetCurrentAnimationLayer` | `action.dll`, `fcurve.dll` | CLSID `{adf44f2c-3eb5-4644-961e-124d9b9ac7cb}` |
-| `GetCurrentAnimationLayer` | `fcurve.dll` | CLSID `{5d501435-825b-4c5e-9d37-bf599c3fa721}` |
-| `GetNumberOfAnimationLayers` | `fcurve.dll` | CLSID `{3cd9b582-f774-4ff3-a3b9-4b7349e37598}` |
-| `AddAnimationLayer` | `fcurve.dll` | CLSID `{18b7bbf8-9f0d-4690-b04f-23876a305985}` |
-| `DeleteAnimationLayer` | `fcurve.dll` | CLSID `{f84a352a-2f6f-422c-b815-f35fa55eec1c}` |
-| `DuplicateAnimationLayer` | `fcurve.dll` | CLSID `{f37a1f2a-e2ed-47eb-afeb-d4cdc4e8ef77}` |
-| `LockAnimationLayer` | `action.dll`, `fcurve.dll` | CLSID `{f9ce2086-dfb8-4f6f-a722-4c29a4204242}` |
-| `UnlockAnimationLayer` | `action.dll`, `fcurve.dll` | CLSID `{f9ce2086-dfb8-4f6f-a722-4c29a4204242}` |
-| `IsAnimationLayerLocked` | `fcurve.dll` | CLSID `{c6dfe971-4f51-47f5-bc0f-6f4d5a7db562}` |
-| `ConvertEulerToQuat` | `fcurve.dll` | CLSID `{a12faa27-9db9-402d-bd47-6bf3f1a44e98}` |
-| `ConvertQuatToEuler` | `fcurve.dll` | CLSID `{a2fd91a0-c55e-4b68-ba16-d1aa1ab9da15}` |
-| `MakeRotationsContinuous` | `fcurve.dll` | CLSID `{b862933c-f2ae-4c9e-98d3-2b3d705b40d9}` |
-| `RemoveAnimation` | `propertytasks.dll`, `action.dll`, `fcurve.dll`, `sicoresdk.dll` | CLSID `{5ad1fd7e-5d5d-11d2-8082-00a0c955b335}` |
-| `SaveKey` | `pathanimtask.dll`, `action.dll`, `fcurve.dll`, `chanmgr.dll`, `expressions.dll`, `fxcore.dll` … | CLSID `{5ad1fd80-5d5d-11d2-8082-00a0c955b335}` |
-| `SaveKeyOnKeyable` | `pathanimtask.dll`, `action.dll`, `fcurve.dll`, `chanmgr.dll`, `expressions.dll`, `fxcore.dll` … | CLSID `{5ad1fd80-5d5d-11d2-8082-00a0c955b335}` |
 | `Remove Key Hot Key` | `uixsiscripts.vbs` (VBScript) | `RemoveKeyHotKeyProc` |
 | `Toggle AutoKey` | `uixsiscripts.vbs` (VBScript) | `ToggleAutoKeyProc` |
-| `RemoveKey` | `fcurve.dll` | CLSID `{5ad1fd81-5d5d-11d2-8082-00a0c955b335}` |
-| `RemoveKeyOnKeyable` | `fcurve.dll` | CLSID `{5ad1fd81-5d5d-11d2-8082-00a0c955b335}` |
-| `RemoveKeyOnMarkedKeyable` | `fcurve.dll` | CLSID `{5ad1fd81-5d5d-11d2-8082-00a0c955b335}` |
-| `NextKey` | `fcurve.dll` | CLSID `{5ad1fd82-5d5d-11d2-8082-00a0c955b335}` |
-| `PrevKey` | `fcurve.dll` | CLSID `{5ad1fd83-5d5d-11d2-8082-00a0c955b335}` |
-| `LastKey` | `fcurve.dll` | CLSID `{ef512cf4-07d8-11d3-80d6-00a0c9ac19a9}` |
-| `FirstKey` | `fcurve.dll` | CLSID `{ef512d00-07d8-11d3-80d6-00a0c9ac19a9}` |
-| `Sequence` | `fcurve.dll`, `props.dll` | CLSID `{63b4d611-38cd-11d4-8bdb-009027bc381b}` |
-| `SISequence` | `fcurve.dll`, `props.dll` | CLSID `{63b4d611-38cd-11d4-8bdb-009027bc381b}` |
-| `ScaleAndOffset` | `fcurve.dll`, `props.dll` | CLSID `{63b4d611-38cd-11d4-8bdb-009027bc381b}` |
-| `ActivateFCurve` | `fcurve.dll` | CLSID `{ab081aa2-10b5-4392-8a1d-bf44ac209826}` |
-| `ActivateFCurveOnKeyable` | `fcurve.dll` | CLSID `{ab081aa2-10b5-4392-8a1d-bf44ac209826}` |
-| `ActivateFCurveOnMarkedKeyable` | `fcurve.dll` | CLSID `{ab081aa2-10b5-4392-8a1d-bf44ac209826}` |
-| `SetExpr` | `action.dll`, `fcurve.dll`, `imageclip.dll`, `activedb.dll`, `shaderhelper.dll`, `sicoresdk.dll` | CLSID `{7247ac41-db1d-11d2-a5fb-00a0c9ec5ef7}` |
 | `AddExpr` | `uixsiscripts.vbs` (VBScript) | `AddExprProc` |
-| `EditExpr` | `fcurve.dll` | CLSID `{0d24b3b6-1860-11d3-a60f-00a0c9ec5ef7}` |
-| `SetRelativeValues` | `action.dll`, `fcurve.dll` | CLSID `{94d0dc72-1b48-11d3-a611-00a0c9ec5ef7}` |
-| `SetMarking` | `fcurve.dll` | CLSID `{2062ade9-0a3b-11d3-80d7-00a0c9ac19a9}` |
-| `ClearMarking` | `fcurve.dll` | CLSID `{2062ade9-0a3b-11d3-80d7-00a0c9ac19a9}` |
-| `AddToMarking` | `fcurve.dll`, `sicoresdk.dll` | CLSID `{2062adf6-0a3b-11d3-80d7-00a0c9ac19a9}` |
-| `RemoveFromMarking` | `fcurve.dll`, `sicoresdk.dll` | CLSID `{2062ae02-0a3b-11d3-80d7-00a0c9ac19a9}` |
-| `GetMarking` | `fcurve.dll` | CLSID `{2062ae11-0a3b-11d3-80d7-00a0c9ac19a9}` |
-| `GetFCurveInfo` | `fcurve.dll` | CLSID `{e1d91ef4-1835-11d3-bc37-00a0c9612b97}` |
-| `GetKeyInfo` | `fcurve.dll` | CLSID `{ee2f6429-1868-11d3-bc37-00a0c9612b97}` |
-| `SetCurveType` | `fcurve.dll` | CLSID `{2062ae20-0a3b-11d3-80d7-00a0c9ac19a9}` |
 | `SetKey` | `uixsiscripts.vbs` (VBScript) | `SISetKeyProc` |
-| `ConnectSource` | `action.dll`, `fcurve.dll` | CLSID `{ec7663e9-2f0b-11d3-bffd-00a0248f9397}` |
-| `EvalFCurve` | `fcurve.dll` | CLSID `{6913be21-7689-11d3-8d49-00609419fcaf}` |
-| `CopyAnimContainer` | `fcurve.dll` | CLSID `{0e765af2-7b31-11d3-b4a2-00a02485cecb}` |
-| `CopyAllAnimation` | `fcurve.dll` | CLSID `{77f8d68e-8f15-11d4-be8e-00a0c982ddd4}` |
-| `CopyAnimation` | `fcurve.dll` | CLSID `{77f8d68e-8f15-11d4-be8e-00a0c982ddd4}` |
-| `PasteAllAnimation` | `fcurve.dll` | CLSID `{77f8d68f-8f15-11d4-be8e-00a0c982ddd4}` |
-| `PasteAnimation` | `fcurve.dll` | CLSID `{77f8d68f-8f15-11d4-be8e-00a0c982ddd4}` |
 | `Save Zero Key Hot Key` | `uixsiscripts.vbs` (VBScript) | `SaveZeroKeyHotKeyProc` |
 | `Save Key Hot Key` | `uixsiscripts.vbs` (VBScript) | `SaveKeyHotKeyProc` |
-| `CopyKeys` | `action.dll`, `fcurve.dll` | CLSID `{cc482f24-4e8a-11d4-b270-00a0c9a8ad15}` |
-| `CutKeys` | `action.dll`, `fcurve.dll` | CLSID `{cc482f25-4e8a-11d4-b270-00a0c9a8ad15}` |
-| `DeleteKeys` | `action.dll`, `fcurve.dll` | CLSID `{cc482f25-4e8a-11d4-b270-00a0c9a8ad15}` |
-| `PasteKeys` | `action.dll`, `fcurve.dll`, `uiut.dll` | CLSID `{cc482f26-4e8a-11d4-b270-00a0c9a8ad15}` |
-| `SelectKeysInTimespan` | `fcurve.dll`, `dopesheet.dll` | CLSID `{1ca27ec8-31a3-4487-9d28-98c689ac500d}` |
-| `DeselectAllKeys` | `fcurve.dll`, `dopesheet.dll` | CLSID `{1ca27ec8-31a3-4487-9d28-98c689ac500d}` |
 | `CreateMarkingSet` | `animation.vbs` (VBScript) | `CreateMarkingSetProc` |
 | `ActivateMarkingSet` | `animation.vbs` (VBScript) | `ActivateMarkingSetProc` |
 | `DeleteMarkingSet` | `animation.vbs` (VBScript) | `DeleteMarkingSetProc` |
 | `SetKeyUsingMarkingSet` | `animation.vbs` (VBScript) | `SetKeyUsingMarkingSetProc` |
-| `GetNumRelativeValues` | `fcurve.dll` | CLSID `{7c40e3dc-47bc-4ca3-893d-8f38e21e9deb}` |
-| `GetRelativeValue` | `fcurve.dll` | CLSID `{756b2c1a-835d-4083-ba74-3aeaa3dc7832}` |
-| `RemoveRelativeValue` | `fcurve.dll` | CLSID `{b4015192-e0ff-4a28-bf8d-b5ee560deeed}` |
 | `CreateCharacterKeySet` | `CharacterKeySets.vbs` (VBScript) | `CreateCharacterSetCommand` |
 | `SetCurrentCharacterKeySet` | `CharacterKeySets.vbs` (VBScript) | `SetCurrentCharacterKeySetCommand` |
 | `StoreShapeKey` | `action.dll` | CLSID `{12a3efd2-e543-11d2-b352-00105a1e6ce9}` |
@@ -1219,24 +1252,14 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `GetProportionalGuide` | `Charac_LoadBipedGuide.vbs` (VBScript) | `load_biped_guide` |
 | `CreateHierarchyFromBiped` | `Charac_HierachyFromBiped.vbs` (VBScript) | `HierachyFromBipedProc` |
 | `SIGetPrim` | (CLSID not specific to one binary) | CLSID `{29668d60-591f-11d1-bafa-444553540000}` |
-| `SIGetRigidCns` | `primtasks.dll` | CLSID `{5b102c14-05e9-4285-a18b-3ccc5280dce3}` |
 | `CreateMeshText` | `operators.vbs` (VBScript) | `TextToCurveListToMeshFunc` |
 | `GetPrimLight` | `primitives.vbs` (VBScript) | `GetPrimLightProc` |
-| `SIGetPrimLight` | `primtasks.dll`, `customdisplayhost.dll`, `xsievents.dll` | CLSID `{af3aae91-d26f-11d2-a019-0000f875df68}` |
-| `SIGetPrimSpotLight` | `primtasks.dll` | CLSID `{6b0736c4-82f0-11d2-88ad-00a0c9067c03}` |
 | `GetPrimCamera` | `primitives.vbs` (VBScript) | `GetPrimCameraProc` |
 | `Get default camera` | `primitives.vbs` (VBScript) | `GetPrimCameraDefaultProc` |
-| `SIGetPrimCamera` | `primtasks.dll`, `customdisplayhost.dll`, `xsievents.dll` | CLSID `{c2051a90-7a6e-11d2-a938-00a024190119}` |
 | `GetPrimLattice` | `primitives.vbs` (VBScript) | `GetPrimLatticeProc` |
-| `SIGetPrimLattice` | `primtasks.dll`, `sicoresdk.dll` | CLSID `{afd20460-83db-11d2-a939-00a024190119}` |
 | `GetPrimVolumeDeform` | `primitives.vbs` (VBScript) | `GetPrimVolumeDeformProc` |
-| `SIGetPrimVolumeDeform` | `primtasks.dll` | CLSID `{7f788cdc-3943-4e9d-839d-b26dc86054a8}` |
 | `GetPrimWave` | `primitives.vbs` (VBScript) | `GetPrimWaveProc` |
 | `UIAssembleNurbsMesh` | `uixsiscripts.vbs` (VBScript) | `UIAssembleNurbsMeshProc` |
-| `SIAssembleNurbsMesh` | `primtasks.dll` | CLSID `{e900e81a-1449-11d3-b803-00a0243e3694}` |
-| `GetNbTriangles` | `primtasks.dll` | CLSID `{9a88ed34-d7fb-11d3-b497-009027bc38d5}` |
-| `ImportEPS` | `primtasks.dll` | CLSID `{65cc25d5-8d3f-4054-ac6d-0b3d4ca4abe6}` |
-| `GetURLAt` | `primtasks.dll` | CLSID `{fac83696-47a1-40fe-86db-dde2a087bdd5}` |
 | `AddAudioClip` | `moaudio.dll` | CLSID `{11b04f15-0353-11d3-b646-006094eb029c}` |
 | `ImportAudio` | `moaudio.dll` | CLSID `{11b04f16-0353-11d3-b646-006094eb029c}` |
 | `SIAddImageSourceOp` | `imageclip.dll` | CLSID `{041f67fd-53f8-43d7-95ec-69671c7925b4}` |
@@ -1450,31 +1473,15 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `CreateProjection` | `Texture.vbs` (VBScript) | `CreateProjectionProc` |
 | `ConnectToSupport` | `Texture.vbs` (VBScript) | `ConnectToSupportProc` |
 | `ConnectToProjection` | `Texture.vbs` (VBScript) | `ConnectToProjectionProc` |
-| `SIGetTextureUVDomains` | `primtasks.dll` | CLSID `{c781dcf0-d426-11d3-9e9e-009027bc38dd}` |
-| `SIFindUniqueTextureName` | `primtasks.dll`, `propertytasks.dll` | CLSID `{569410a0-88a2-11d3-bc5a-00a0c9612b97}` |
-| `SIConnectToSupport` | `primtasks.dll`, `action.dll` | CLSID `{7f6f4436-c668-11d2-8250-00a0c982dd9a}` |
-| `SIConnectToProjection` | `primtasks.dll` | CLSID `{9d173301-324f-11d4-ae61-00a0c96e63e1}` |
-| `SICameraTextureProj` | `primtasks.dll` | CLSID `{38f8038e-4f55-11d3-b0c9-00a0c982dd9a}` |
-| `SICreateTextureUVDomain` | `primtasks.dll`, `si3dobjectmodel.dll` | CLSID `{84fad572-857e-11d2-a939-00a024190119}` |
-| `SICreateTextureSpatial` | `primtasks.dll` | CLSID `{54e02e68-09fa-4972-8383-4d956eeffe4c}` |
-| `SICreateTextureBasicGeo` | `primtasks.dll`, `si3dobjectmodel.dll` | CLSID `{84fad570-857e-11d2-a939-00a024190119}` |
-| `SICreateTexturePureImplicit` | `primtasks.dll` | CLSID `{49c078d0-4bad-11d4-ae65-00a0c96e63e1}` |
 | `FreezeUVWTransformation` | `Texture.vbs` (VBScript) | `SIFreezeUVWTransformationProc` |
 | `GenerateUniqueUVs` | `Texture.vbs` (VBScript) | `GenerateUniqueUVsProc` |
 | `GenerateUVSetByContourStretching` | `Texture.vbs` (VBScript) | `GenerateUVSetByContourStretchingProc` |
-| `SICreateTextureProj` | `primtasks.dll`, `si3dobjectmodel.dll` | CLSID `{84fad570-857e-11d2-a939-00a024190119}` |
 | `CreateTextureSupport` | `Texture.vbs` (VBScript) | `CreateTextureSupportProc` |
-| `HealUVW` | `primtasks.dll` | CLSID `{e06b57d2-a59c-4a1b-87cd-56f9d77c32b3}` |
 | `IslandHealUVW` | `Texture.vbs` (VBScript) | `IslandHealUVWProc` |
-| `CycleUVW` | `primtasks.dll` | CLSID `{bde6f551-fdb8-46ef-9fb0-dc4df94c547d}` |
-| `FlipUVW` | `primtasks.dll` | CLSID `{1ddc14e2-67db-43b4-9605-6d3e84ec8c5e}` |
-| `RelaxUVW` | `primtasks.dll` | CLSID `{db7c3b91-2e81-4f2d-90f1-d941b298370d}` |
-| `MatchUVW` | `primtasks.dll` | CLSID `{4a50f2fd-31c9-4323-b49f-2eeaf3ef7ef1}` |
 | `CopyUVW` | `tasks.dll` | CLSID `{a1c9cbeb-2a8e-40d5-93e1-12e142a01c94}` |
 | `PasteUVW` | `tasks.dll` | CLSID `{594ea9c2-b64c-499f-9ae3-ba03147ab375}` |
 | `Create2DMap` | `propertytasks.dll` | CLSID `{3aece858-543f-11d5-b0c3-00a0c982e397}` |
 | `Create2DMapWithProjection` | `propertytasks.dll` | CLSID `{8d9c7d7d-547c-11d5-b0c3-00a0c982e397}` |
-| `ChangeUVInput` | `primtasks.dll` | CLSID `{21bb3f0a-e163-475b-b411-8bd9dcc39a5d}` |
 | `SwimUVW` | `Texture.vbs` (VBScript) | `SwimUVWProc` |
 | `StickUVW` | `Texture.vbs` (VBScript) | `StickUVWProc` |
 | `ReprojectUVW` | `Texture.vbs` (VBScript) | `ReprojectUVWProc` |

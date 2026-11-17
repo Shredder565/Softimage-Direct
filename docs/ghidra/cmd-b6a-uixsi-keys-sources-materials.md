@@ -1,6 +1,6 @@
 # CMD-B6a: `uixsiscripts.vbs` commands, part a (material inspect / store properties, containers, key saving, unused source / clip / material deletion, MergeScene, Align, ApplyPath, CreateCurve, AssembleNurbsMesh, AddComponentTool, OffsetValueMap, ToggleContinuousDraw)
 
-Row: **CMD-B6a** (batch grouped by implementing script). Status: **SPEC** (24 names), **SPEC-PARTIAL** (1 name: `SaveKeyOnMarkedKeyable`, see Q1).
+Row: **CMD-B6a** (batch grouped by implementing script). Status: **SPEC** (25 names). `SaveKeyOnMarkedKeyable` was SPEC-PARTIAL until 2026-11-17; Q1 is closed by [cmd-b8a-fcurve-keys-binary.md](./cmd-b8a-fcurve-keys-binary.md) (registry hidden argument `MarkedOnly`, default `True` for `SaveKeyOnMarkedKeyable` and `False` for `SaveKeyOnKeyable`; native contract and the `mohelper.dll` keyable / marked helper).
 Run: 2026-11-17, `si-analyst`, unattended.
 
 25 scripting names (28 script registry entries) implemented in VBScript in
@@ -679,7 +679,7 @@ fallback (logged, answered OK) besides the `Align` warning.
 
 | # | Question | How to close |
 |---|----------|--------------|
-| Q1 | `SaveKeyOnMarkedKeyable` / `SaveKeyOnKeyable` script entries: the shared procedure takes a ninth "marked only" parameter that the registry dump does not list. Where does its value come from (hidden fixed argument in the command definition)? Expected true / false respectively. | command definition in the binary that registers the script commands, or a golden: log which native command runs |
+| Q1 (closed 2026-11-17, see cmd-b8a) | `SaveKeyOnMarkedKeyable` / `SaveKeyOnKeyable` script entries: the shared procedure takes a ninth "marked only" parameter that the registry dump does not list. Where does its value come from (hidden fixed argument in the command definition)? Expected true / false respectively. | command definition in the binary that registers the script commands, or a golden: log which native command runs |
 | Q2 | Do the inner same-named calls (`SaveActionKey`, `SaveKeyOnMarkedKeyable`, `OffsetValueMap`, `SaveOffsetKeys`, `StoreShapeKey`, `ApplyShapeKey`) resolve to the native entry, as assumed? | golden with command logging; binary pass on command lookup order |
 | Q3 | Numeric values of `siAlignModes` (`siAlignGMIN` .. `siAlignFMAX`, six values) and the parameter layout of the `AlignWizard` preset | type library / `AlignWizard` SPDL |
 | Q4 | Values of `preferences.animation.save_key_command` are read as 1, 2, 3, other; the preference's UI labels and default are not in the script | preference SPDL |
