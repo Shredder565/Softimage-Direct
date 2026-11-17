@@ -165,19 +165,22 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
   }
   for (const [W, field] of [['Keyword', 'userKeywords'], ['Tab', 'userTabs']]) {
     const { cube, sph } = S(); A.select([cube]);
-    let r = run(`SetUser${W}`); ck(`SetUser${W}`, 'default args: empty list', ok(r) && eq(cube[field] ?? [], []), r);
-    r = run(`SetUser${W}`, { Keywords: 'alpha, beta' }); ck(`SetUser${W}`, 'sets the list on the selection', ok(r) && eq(cube[field], ['alpha', 'beta']), cube[field]);
-    r = run(`GetUser${W}`); ck(`GetUser${W}`, 'default args: comma separated text', r.v === 'alpha,beta', r);
-    r = run(`SetUser${W}`, { InputObjs: 'vsphere', Keywords: 'gamma' }); ck(`SetUser${W}`, 'InputObjs by name', ok(r) && eq(sph[field], ['gamma']) && eq(cube[field], ['alpha', 'beta']), sph[field]);
-    r = run(`GetUser${W}`, { InputObjs: [cube, sph] }); ck(`GetUser${W}`, 'several inputs: union', r.v === 'alpha,beta,gamma', r);
-    r = run(`SetUser${W}`, { Keywords: 'delta' }); ck(`SetUser${W}`, 'Set replaces', ok(r) && eq(cube[field], ['delta']), cube[field]);
-    A.undo(); ck(`SetUser${W}`, 'undo restores the previous list', eq(cube[field], ['alpha', 'beta']), cube[field]);
-    if (W === 'Tab') { r = run('AddUserTab'); ck('AddUserTab', 'default args: nothing added', ok(r) && eq(cube[field], ['alpha', 'beta']), r); r = run('AddUserTab', { Keywords: 'beta,zeta' }); ck('AddUserTab', 'appends new entries only', ok(r) && eq(cube[field], ['alpha', 'beta', 'zeta']), cube[field]); A.undo(); ck('AddUserTab', 'undo', eq(cube[field], ['alpha', 'beta'])); }
-    r = run(`RemoveUser${W}`); ck(`RemoveUser${W}`, 'default args: nothing removed', ok(r) && eq(cube[field], ['alpha', 'beta']), r);
-    r = run(`RemoveUser${W}`, { Keywords: 'alpha' }); ck(`RemoveUser${W}`, 'removes the named entry', ok(r) && eq(cube[field], ['beta']), cube[field]);
-    A.undo(); ck(`RemoveUser${W}`, 'undo', eq(cube[field], ['alpha', 'beta']));
-    r = run(`ClearUser${W}`); ck(`ClearUser${W}`, 'default args: clears the selection\'s list', ok(r) && eq(cube[field], []) && run(`GetUser${W}`).v === '', r);
-    A.undo(); ck(`ClearUser${W}`, 'undo', eq(cube[field], ['alpha', 'beta']));
+    // CMD-B7a (docs/ghidra/cmd-b7a-uitasks-group-view-binary.md) replaced the inferred registrations: the attribute is the
+    // comma separated string, Get returns a collection, and Set without Keywords fails in batch (it opens a dialog in a session).
+    const kw = o => String(o[field] ?? '').split(',').filter(Boolean);
+    A.Interactive = false; let r = run(`SetUser${W}`); A.Interactive = true; ck(`SetUser${W}`, 'default args, no UI: invalid argument, nothing set', /status 0x80070057/.test(r.err ?? '') && eq(kw(cube), []), r);
+    r = run(`SetUser${W}`, { Keywords: 'alpha, beta' }); ck(`SetUser${W}`, 'sets the list on the selection', ok(r) && eq(kw(cube), ['alpha', 'beta']), kw(cube));
+    r = run(`GetUser${W}`); ck(`GetUser${W}`, 'default args: collection of the tokens', String(r.v) === 'alpha,beta', r);
+    r = run(`SetUser${W}`, { InputObjs: 'vsphere', Keywords: 'gamma' }); ck(`SetUser${W}`, 'InputObjs by name', ok(r) && eq(kw(sph), ['gamma']) && eq(kw(cube), ['alpha', 'beta']), kw(sph));
+    r = run(`GetUser${W}`, { InputObjs: [cube, sph] }); ck(`GetUser${W}`, 'several inputs: union', String(r.v) === 'alpha,beta,gamma', r);
+    r = run(`SetUser${W}`, { Keywords: 'delta' }); ck(`SetUser${W}`, 'Set replaces', ok(r) && eq(kw(cube), ['delta']), kw(cube));
+    A.undo(); ck(`SetUser${W}`, 'undo restores the previous list', eq(kw(cube), ['alpha', 'beta']), kw(cube));
+    if (W === 'Tab') { r = run('AddUserTab'); ck('AddUserTab', 'default args: nothing added', ok(r) && eq(kw(cube), ['alpha', 'beta']), r); r = run('AddUserTab', { Keywords: 'beta,zeta' }); ck('AddUserTab', 'appends new entries only', ok(r) && eq(kw(cube), ['alpha', 'beta', 'zeta']), kw(cube)); A.undo(); ck('AddUserTab', 'undo', eq(kw(cube), ['alpha', 'beta'])); }
+    r = run(`RemoveUser${W}`); ck(`RemoveUser${W}`, 'default args: nothing removed', ok(r) && eq(kw(cube), ['alpha', 'beta']), r);
+    r = run(`RemoveUser${W}`, { Keywords: 'alpha' }); ck(`RemoveUser${W}`, 'removes the named entry', ok(r) && eq(kw(cube), ['beta']), kw(cube));
+    A.undo(); ck(`RemoveUser${W}`, 'undo', eq(kw(cube), ['alpha', 'beta']));
+    r = run(`ClearUser${W}`); ck(`ClearUser${W}`, 'default args: clears the selection\'s list', ok(r) && eq(kw(cube), []) && String(run(`GetUser${W}`).v) === '', r);
+    A.undo(); ck(`ClearUser${W}`, 'undo', eq(kw(cube), ['alpha', 'beta']));
   }
 
   // --------------------------------------------------------------------------------------------------- Edit
