@@ -34,42 +34,42 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 <!-- BEGIN GENERATED: commands -->
 | Row | Area (command category) | Softimage commands | Named in `src/` | Not yet named | Status |
 |-----|-------------------------|-------------------:|----------------:|--------------:|--------|
-| CMD-01 | (uncategorised) | 448 | 215 | 233 | TODO |
-| CMD-02 | Custom | 413 | 180 | 233 | TODO |
+| CMD-01 | (uncategorised) | 448 | 217 | 231 | TODO |
+| CMD-02 | Custom | 413 | 252 | 161 | TODO |
 | CMD-03 | File | 110 | 62 | 48 | TODO |
-| CMD-04 | Simulation | 118 | 70 | 48 | TODO |
-| CMD-05 | Viewing | 191 | 152 | 39 | TODO |
-| CMD-06 | Rendering | 175 | 137 | 38 | TODO |
-| CMD-07 | Animation | 186 | 149 | 37 | TODO |
-| CMD-08 | Edit | 117 | 81 | 36 | TODO |
-| CMD-09 | Modeling | 274 | 239 | 35 | TODO |
+| CMD-04 | Simulation | 118 | 72 | 46 | TODO |
+| CMD-05 | Rendering | 175 | 137 | 38 | TODO |
+| CMD-06 | Animation | 186 | 151 | 35 | TODO |
+| CMD-07 | Modeling | 274 | 239 | 35 | TODO |
+| CMD-08 | Edit | 117 | 83 | 34 | TODO |
+| CMD-09 | Viewing | 191 | 157 | 34 | TODO |
 | CMD-10 | Character Rigging | 31 | 4 | 27 | TODO |
-| CMD-11 | Property | 125 | 100 | 25 | TODO |
+| CMD-11 | Property | 125 | 101 | 24 | TODO |
 | CMD-12 | Animation Mixer | 113 | 93 | 20 | TODO |
 | CMD-13 | Navigation | 22 | 2 | 20 | TODO |
 | CMD-14 | Texturing | 75 | 58 | 17 | TODO |
 | CMD-15 | Manipulation | 51 | 40 | 11 | TODO |
 | CMD-16 | Deformation | 55 | 45 | 10 | TODO |
-| CMD-17 | Selection | 108 | 98 | 10 | TODO |
-| CMD-18 | Primitive | 131 | 123 | 8 | TODO |
-| CMD-19 | Cluster | 16 | 10 | 6 | TODO |
-| CMD-20 | Camera Sequencer | 7 | 2 | 5 | TODO |
-| CMD-21 | Drawing | 14 | 9 | 5 | TODO |
-| CMD-22 | Scripting | 4 | 0 | 4 | TODO |
-| CMD-23 | General | 10 | 7 | 3 | TODO |
+| CMD-17 | Primitive | 131 | 124 | 7 | TODO |
+| CMD-18 | Camera Sequencer | 7 | 2 | 5 | TODO |
+| CMD-19 | Drawing | 14 | 9 | 5 | TODO |
+| CMD-20 | Cluster | 16 | 12 | 4 | TODO |
+| CMD-21 | Scripting | 4 | 0 | 4 | TODO |
+| CMD-22 | General | 10 | 7 | 3 | TODO |
+| CMD-23 | Selection | 108 | 105 | 3 | TODO |
 | CMD-24 | Source | 6 | 3 | 3 | TODO |
 | CMD-25 | Customization | 2 | 0 | 2 | TODO |
-| CMD-26 | Group | 16 | 14 | 2 | TODO |
-| CMD-27 | Paint | 7 | 5 | 2 | TODO |
-| CMD-28 | Transform | 5 | 3 | 2 | TODO |
-| CMD-29 | file | 5 | 3 | 2 | TODO |
-| CMD-30 | Action | 1 | 0 | 1 | TODO |
-| CMD-31 | Animation mixer | 5 | 4 | 1 | TODO |
-| CMD-32 | Cache | 2 | 2 | 0 | AUDIT |
-| CMD-33 | Camera | 1 | 1 | 0 | AUDIT |
-| CMD-34 | Constraint | 27 | 27 | 0 | AUDIT |
-| CMD-35 | Devices | 5 | 5 | 0 | AUDIT |
-| CMD-36 | Generator | 1 | 1 | 0 | AUDIT |
+| CMD-26 | Paint | 7 | 5 | 2 | TODO |
+| CMD-27 | Transform | 5 | 3 | 2 | TODO |
+| CMD-28 | file | 5 | 3 | 2 | TODO |
+| CMD-29 | Action | 1 | 0 | 1 | TODO |
+| CMD-30 | Animation mixer | 5 | 4 | 1 | TODO |
+| CMD-31 | Cache | 2 | 2 | 0 | AUDIT |
+| CMD-32 | Camera | 1 | 1 | 0 | AUDIT |
+| CMD-33 | Constraint | 27 | 27 | 0 | AUDIT |
+| CMD-34 | Devices | 5 | 5 | 0 | AUDIT |
+| CMD-35 | Generator | 1 | 1 | 0 | AUDIT |
+| CMD-36 | Group | 16 | 16 | 0 | AUDIT |
 | CMD-37 | ICE | 5 | 5 | 0 | AUDIT |
 | CMD-38 | Layer | 20 | 20 | 0 | AUDIT |
 | CMD-39 | Operator | 11 | 11 | 0 | AUDIT |
@@ -78,7 +78,7 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 | CMD-42 | Transport Control | 23 | 23 | 0 | AUDIT |
 | CMD-43 | VertexColor | 1 | 1 | 0 | AUDIT |
 | CMD-44 | Views | 5 | 5 | 0 | AUDIT |
-| | **Total** | **2950** | **2017** | **933** | |
+| | **Total** | **2950** | **2115** | **835** | |
 <!-- END GENERATED: commands -->
 
 ### P1 sub-rows (hand-maintained; survive regeneration)
@@ -127,9 +127,9 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 | CMD-B6-CPP | (new) | C++ / low-level commands the CMD-B6 script wrappers delegate to and that have no contract yet (121 names): `ActivateObjectSelTool`, `AddContainerToEnvironment`, `AddMarker`, `AddPointOnCurveTool`, `AddProp`, `AddToSelection`, `Application.Desktop.ActiveLayout`, `Application.InstallAddon`, `Application.UnInstallAddon`, `ApplyAction`, `ApplyOp`, `ApplyOp (DynamicsOp, NXDynamicsOp)`, `ApplyOp (EvolveOp)`, `ApplyOperator`, `ApplyShapeKey`, `AutoInspect`, `AutoInspectEnabled`, `CopyAnimation`, `CreateClusterFromSubComponent`, `CreateEnvironment`, `CreateEnvironmentCache`, `DeleteObj`, `DeselectAll`, `DisplayPortValues (C++ entry)`, `Duplicate`, `EditICECompoundProperties`, `EnumElements`, `ExportRenderArchive`, `FindObjects`, `Flipbook`, `FreezeModeling`, `FreezeObj`, `GetBBox`, `GetConnectionSet`, `GetGeneratorInputsForDisposal`, `GetICECompoundProperties`, `GetPrim`, `GetShaderCompoundProperties`, `GetShotClip`, `GetUnevaluatedPrimitiveForConstructionHistory`, `GetUserPref`, `GetValue`, `GetViewCamera`, `HideAndUnselect`, `InspectObj`, `Instantiate`, `IsAnimated`, `LockEnvelopeDeformerWeights (C++ entry of the same name)`, `MakeLocal`, `MoveToFolder`, `MoveToPartition`, `OffsetValueMap (native entry)`, `OpenNetView`, `OpenXSIExplorer`, `PickElement`, `PlotCamSeqShape`, `PlotCamSeqToActions`, `Refresh`, `RemoveAllCns`, `RemoveAnimation`, `RemoveCluster`, `RemoveFromFolder`, `RemoveFromGroup`, `RemoveFromSelection`, `RenamePropAndRebind_Internal`, `Rotate`, `SIAddCustomParameter`, `SIAddImageSource`, `SIAddModelClip`, `SIAddModelSource`, `SIAddProp`, `SIAddToGroup`, `SIAddWritableImageSource`, `SIApplyCns`, `SIApplyDeformBySpine`, `SIAssembleNurbsMesh`, `SIConvert`, `SICreateCurve`, `SICreateEmptyPartition`, `SICreateImageClip`, `SICreateImageClip2`, `SICreateModelClip`, `SICreatePass`, `SICreateRefPlane`, `SIDuplicate`, `SIFilter`, `SIGetMaterialShader`, `SIGetModel`, `SIGetPreset`, `SIGetPrim`, `SIGetShaderOnCnxPoint`, `SILoadPreset`, `SIMergeScene`, `SISetCurvePoints`, `SIStoreEnvironmentCacheToMixer`, `SIStoreProp`, `SITransferShapeAnimation`, `SaveActionKey (native entry)`, `SaveKey`, `SaveKeyOnKeyable`, `SaveKeyOnKeyable (native entry)`, `SaveKeyOnMarkedKeyable (native entry)`, `SaveOffsetKeys (native entry)`, `Scale`, `SelectObj`, `SetCurrentPass`, `SetCurrentReferencePlane`, `SetCurveType`, `SetReferencePlane`, `SetSelFilter`, `SetShaderCompoundPropertiesEx`, `SetUserPref`, `SetValue`, `SplitEdgeTool`, `StoreShapeKey`, `TransferAllPropertiesAcrossGenOp`, `TransferICETree`, `Translate`, `Unlock`, `XSIFileService.ReferenceModel`, `siTrimWith` | - | TODO | call shapes are in the five CMD-B6 notes; handlers are built-in commands bound by CLSID (see CMD-REGISTRY) |
 | CMD-REGISTRY | (new) | Table that binds each built-in command to its handler: `Application\CommandMaps\XSI.DSCommandMap` (2397 commands: GUID, handler CLSID, names, category, arguments and defaults; script commands carry engine / file / procedure) | - | SPEC | [cmd-registry-dscommandmap.md](../ghidra/cmd-registry-dscommandmap.md). 2026-11-17: file format decoded, parser `tools/parse_dscommandmap.py`, data `data/command_registry.json`; handler CLSIDs located in the binaries (767 native commands in exactly one DLL, the rest with candidates). Corrects the earlier note (the binding is not in the Windows registry). Open: flag bits, section 3, exact DLL for multi-candidate CLSIDs |
 | CMD-01-OBJ-BIN | CMD-01-OBJ | `SIObjExport`, `ObjImport` handlers located in `customcommands.dll` (export `XSIOnCommand` `0x180010d60` dispatches on the display name; OBJ export worker `0x180002590`, OBJ import worker `0x180008df0`); contracts not read yet | 2 | TODO | next Ghidra pass; file-format strings (`mtllib`, `usemtl`, `newmtl`, `map_Kd`, `illum`, `#begin N vertices` comments, header `# XSI Wavefront OBJ Export v3.0`) seen in the string table |
-| CMD-B7a | several | Built-in task commands read through Ghidra (`siuitasks.dll`, `grouptask.dll`, `siviewtasks.dll`, `siclustertasks.dll`, `selectionmgr.dll`): `SetUserKeyword`, `SetUserTab`, `GetUserKeyword`, `GetUserTab`, `ClearUserKeyword`, `ClearUserTab`, `RemoveUserKeyword`, `RemoveUserTab`, `SetParameterColor`, `ClearParameterColor`, `ClearThumbnail`, `OpenXSIExplorer`, `OpenTransientExplorer` (SPEC); `SetThumbnail`, `SetThumbnailFromRegion`, `AssignObjectGroup`, `UnassignObjectGroup`, `SetParTypeInstanceGroup`, `RemoveParTypeInstanceGroup`, `OpenAttachments`, `SITogglePolygonVisibility`, `ClusterNonOverlapEnforcement`, `SetActiveElements`, `SetAndToggleActiveElements`, `ActivateElements`, `DeactivateElements`, `ToggleActiveElements`, `ActivateSampledPointSelTool`, `ActivateSampledPointSelToolWithNoObjStateChange` (SPEC-PARTIAL) | 29 | SPEC-PARTIAL | [cmd-b7a-uitasks-group-view-binary.md](../ghidra/cmd-b7a-uitasks-group-view-binary.md). 13 SPEC, 16 SPEC-PARTIAL (reasons per command in the note). Static reading only, no XSIBATCH golden |
-| CMD-B7b | CMD-02 | Syflex add-on script commands (`Addons\Syflex30X50\Application\Plugins\*.vbs`, 46 script commands incl. `SyCreateCloth`) and `SyCmdSaveCache` (`syCmd.64.dll`) | 47 | SPEC | [cmd-b7b-syflex-scripts.md](../ghidra/cmd-b7b-syflex-scripts.md). 44 SPEC; SPEC-PARTIAL: `SyCmdSaveCache` (C++, strings only), `SyCreateCollidePla`, `SyCreateCollideSph` (error message id undefined in the scripts). The `sy*` operators are not in the install (dependency, see CMD-B7b-OPS) |
-| CMD-B7c | CMD-02 | Add-on script commands: CacheManager (11), RenderManager (2), RTUserTools (2), Lagoa / ICEFlowBuilder (6), sdkui helpers (7), Polygonizer (1) | 29 | SPEC | [cmd-b7c-addon-scripts.md](../ghidra/cmd-b7c-addon-scripts.md). 27 SPEC; SPEC-PARTIAL: `GetShaderDefHelper`, `GetWizardParamTab` (template files they expand were not staged). 13 open questions in the note |
+| CMD-B7a | several | Built-in task commands read through Ghidra (`siuitasks.dll`, `grouptask.dll`, `siviewtasks.dll`, `siclustertasks.dll`, `selectionmgr.dll`): `SetUserKeyword`, `SetUserTab`, `GetUserKeyword`, `GetUserTab`, `ClearUserKeyword`, `ClearUserTab`, `RemoveUserKeyword`, `RemoveUserTab`, `SetParameterColor`, `ClearParameterColor`, `ClearThumbnail`, `OpenXSIExplorer`, `OpenTransientExplorer` (SPEC); `SetThumbnail`, `SetThumbnailFromRegion`, `AssignObjectGroup`, `UnassignObjectGroup`, `SetParTypeInstanceGroup`, `RemoveParTypeInstanceGroup`, `OpenAttachments`, `SITogglePolygonVisibility`, `ClusterNonOverlapEnforcement`, `SetActiveElements`, `SetAndToggleActiveElements`, `ActivateElements`, `DeactivateElements`, `ToggleActiveElements`, `ActivateSampledPointSelTool`, `ActivateSampledPointSelToolWithNoObjStateChange` (SPEC-PARTIAL) | 29 | WIRE-PARTIAL | [cmd-b7a-uitasks-group-view-binary.md](../ghidra/cmd-b7a-uitasks-group-view-binary.md). 13 SPEC, 16 SPEC-PARTIAL (reasons per command in the note). Static reading only, no XSIBATCH golden. Wired 2026-11-17 in `src/commands/uiGroupViewTasks.ts` (+ `…Views.ts`), checked by `tools/compare_ui_group_view_task_commands.mjs` (273 checks, contract only). 33 names registered (the 29 plus `AddUserKeyword`, `AddUserTab`, `SetInstanceGroup`, `RemoveInstanceGroup`); replaces the inferred CMD-03a / CMD-04a registrations of the keyword / tab and instance-group commands and the earlier `SetParameterColor` / `ClearParameterColor`. Fully wired at command level (15): the ten user keyword / tab commands, `SetParameterColor`, `ClearParameterColor`, `ClearThumbnail`, `OpenXSIExplorer`, `OpenTransientExplorer`. Partly (18): `SetThumbnail` (Q3), `SetThumbnailFromRegion` (region lookup, capture task), the six group assign / unassign commands (Q4, container kinds, group type 3), `OpenAttachments` (entries, viewer), `SITogglePolygonVisibility` (Q5), `ClusterNonOverlapEnforcement` (overlap test is a stand-in), the five active-elements commands (Q6, hierarchy levels 1–7), the two sampled-point selection tool commands (set-filter task, key modes); open branches log "not yet attested". 16 wire questions in PR |
+| CMD-B7b | CMD-02 | Syflex add-on script commands (`Addons\Syflex30X50\Application\Plugins\*.vbs`, 46 script commands incl. `SyCreateCloth`) and `SyCmdSaveCache` (`syCmd.64.dll`) | 47 | WIRE-PARTIAL | [cmd-b7b-syflex-scripts.md](../ghidra/cmd-b7b-syflex-scripts.md). 44 SPEC; SPEC-PARTIAL: `SyCmdSaveCache` (C++, strings only), `SyCreateCollidePla`, `SyCreateCollideSph` (error message id undefined in the scripts). The `sy*` operators are not in the install (dependency, see CMD-B7b-OPS). Wired 2026-11-17 in `src/commands/syflexScripts.ts` (+ `syflexScriptsOps.ts`), checked by `tools/compare_syflex_script_commands.mjs` (247 checks, contract only). All 47 on the bus; the 44 SPEC commands are wired at script level **on stand-in `sy*` operators** (no solver, CMD-B7b-OPS; evaluation logs "not yet attested"). Partly: `SyCreateCollidePla`, `SyCreateCollideSph` (undefined message id, Q1), `SyCmdSaveCache` (arguments recorded, nothing written, Q3). `SyCreateCloth` replaces the earlier registration in `simulateModule.ts` (which routed to `ApplyCloth`); `tools/compare_simulate_module.mjs` adjusted. 13 wire questions in PR |
+| CMD-B7c | CMD-02 | Add-on script commands: CacheManager (11), RenderManager (2), RTUserTools (2), Lagoa / ICEFlowBuilder (6), sdkui helpers (7), Polygonizer (1) | 29 | WIRE-PARTIAL | [cmd-b7c-addon-scripts.md](../ghidra/cmd-b7c-addon-scripts.md). 27 SPEC; SPEC-PARTIAL: `GetShaderDefHelper`, `GetWizardParamTab` (template files they expand were not staged). 13 open questions in the note. Wired 2026-11-17 in `src/commands/addonScripts.ts` (+ `addonScripts{Shared,CacheManager,Render,ShaderCategories,Ice,Sdkui,Generator,WizardParamTab,ShaderDefHelper}.ts`), checked by `tools/compare_addon_script_commands.mjs` (227 checks, contract only). Fully wired at script level (19): the 11 Cache Manager commands, `OpenOutputFormatPreferences`, `RTShaderSetCategories`, `SIGetExternalFilesViewerProp`, `SISetExternalFilesManagerTarget`, `ConnectToWorkgroupUI`, `SDKGetScriptGenerator`, `PPGLayoutControl`, `LagoaDisplayType` (on objects carrying the documented members; views and files are models / the virtual host file system). Partly (10): `OverrideMarkedPassParameters` (`SIAddEntryToOverride`, `Override` preset), `DeleteUnusedShaders` (graph seam), `Create_Polygonizer_Polymesh` (`ApplyPolygonizer`), `LagoaEmitMPVolume`, `LagoaTagCollisionObject`, `LagoaSetupAdvectMesh`, `LagoaSetupClothMesh` (compounds, `AddPortToICENode`, `ICEFlow_CreateParticlesFromPreset`), `ICEFlowInsertSimulationRoot` (own graph model only), `GetWizardParamTab`, `GetShaderDefHelper` (template files, Q11). Menus and the start-up event of the add-ons are not hooked. 14 wire questions in PR |
 | CMD-B7b-OPS | (new) | Syflex operators and presets the scripts apply (`syCloth`, `syProperties*`, `syGravity`, `syDamp`, `syAir`, `syWind`, `syTurbulence`, `syVolume`, `sySpring`, `syZipper`, `syCollide*`, `sySelfCollide`, `syNail`, `syPin`, `syMimic`, `syCache`): no SPDL, preset or operator binary found in the install | - | TODO | check `Addons\Syflex30X50` beyond `Application\Plugins`; LOCK if really absent |
 | CMD-B7a-REST | (new) | Remaining small task DLLs with unique handler CLSIDs: `simeshtasks.dll` (11), `sicurvetasks.dll`, `primtasks.dll` (13), `fcurve.dll` (21), `phonemeui.dll` (26), `xsipaint.dll` (45), `fxcore.dll` (34), `tasks.dll` (64), `optasks.dll` (62) | - | TODO | next Ghidra batches; command → DLL lists are in `COMMAND_DLL_MAP.md` (generated section) |
 | TOOL-02 | (new) | Regenerate `data/commands_full.json` consumers from `data/command_registry.json` (script procedure, hidden arguments, argument-handler CLSIDs); parse the 53 per-view `*.DSCommandMap` files | - | TODO | found while doing CMD-REGISTRY |
