@@ -3,6 +3,10 @@
 // data/commands_full.json. No XSIBATCH golden was run for this row, so this is a contract check: registration,
 // a run with default arguments, and the stated results (output arguments, created objects / properties, log lines).
 // UV values are Float32, so UV numbers are compared after rounding to 4 decimals.
+// Since row CMD-B8d the scripts run the C++ texture tasks of src/commands/primTasksTexture.ts (contract:
+// docs/ghidra/cmd-b8d-primtasks-texture-binary.md). Adjusted to that contract: SICameraTextureProj needs the camera
+// (none given = message box, nothing created; it no longer falls back to the first scene camera), and the UV
+// property now also carries its projection operator (the contour stretching counts filter by operator name).
 // Needs `vite preview` (SI_URL, default :4173). Usage: node tools/compare_texture_projection_commands.mjs
 import { chromium } from 'playwright';
 import fs from 'fs';
@@ -42,7 +46,8 @@ const got = await page.evaluate(async ({ NAMES }) => {
   const out = {};
   const mark = () => A.log.length;
   const logFrom = (i) => A.log.slice(i).filter(l => l.kind !== 'cmd').map(l => `${l.kind}:${l.text}`); // the command echo is not part of the contract
-  const run = (n, a = {}) => { const m = mark(); try { const v = A.run(n, a); return { v, log: logFrom(m) }; } catch (e) { return { err: String(e?.message ?? e), number: e?.number ?? null, log: logFrom(m) }; } };
+  const closeBoxes = () => document.querySelectorAll('.sdkh-msg .sdkh-modal-ok').forEach(b => b.click()); // message boxes of the texture tasks
+  const run = (n, a = {}) => { const m = mark(); try { const v = A.run(n, a); return { v, log: logFrom(m) }; } catch (e) { return { err: String(e?.message ?? e), number: e?.number ?? null, log: logFrom(m) }; } finally { closeBoxes(); } };
   const r4 = (x) => Math.round(x * 1e4) / 1e4;
   const tick = () => new Promise(r => setTimeout(r, 30));
   const cube = (name) => A.run('CreatePrim', { PresetObj: 'Cube', GeometryType: 'MeshSurface', Name: name });
@@ -134,7 +139,8 @@ const got = await page.evaluate(async ({ NAMES }) => {
     let camera = [...A.scene.allObjects()].find(x => x.type === 'camera');
     if (!camera && A.commands.has('GetPrimCamera')) { try { A.run('GetPrimCamera', {}); } catch { /* no camera preset */ } camera = [...A.scene.allObjects()].find(x => x.type === 'camera'); }
     r.haveCamera = !!camera;
-    A.select([]); const a = run('CameraTextureProj', { InputObjs: [o] });
+    A.select([]); const nc = run('CameraTextureProj', { InputObjs: [o] }); r.noCamera = [nc.err ?? null, nc.v, uvProps(o).length, A.primTasksTexture.messages.slice(-1)[0]?.text ?? null];
+    const a = run('CameraTextureProj', { InputObjs: [o], Camera: camera });
     r.err = a.err ?? null; r.keys = outKeys(a.v); r.name = a.v?.Name; r.cameraIsObject = !!camera && a.v?.Camera === camera;
     const p = uvProps(o)[0]; r.prop = [p?.name, p?.val('kind'), p?.val('support') === camera?.name, p?.uvInputAction, p?.swim];
     const b = run('CameraTextureProj', { InputObjs: [o], Camera: camera?.name ?? '' }); r.second = [b.v?.Name, names(uvProps(o))];
@@ -224,9 +230,9 @@ const got = await page.evaluate(async ({ NAMES }) => {
     r.ports = ops.map(x => x.ports.map(g => g.map(n => n.name)));
     r.portKinds = ops.map(x => [x.ports[0][0]?.compKind, x.ports[1][0] === p, x.ports[2][0]?.compKind ?? null]);
     r.clusters = o.clusters.filter(c => /^ContourStretch/.test(c.name)).map(c => [c.name, c.compKind, c.elements.size, c.mode]);
-    r.onProperty = TP.uvOperatorsOf(p).length; r.regions = ops.map(x => x.region);
+    r.onProperty = TP.uvOperatorsOf(p).filter(x => /ContourStretching/.test(x.name)).length; r.regions = ops.map(x => x.region);
     r.uvUnchanged = JSON.stringify(bounds(o, p)) === JSON.stringify(before); r.attestedLog = a.log.filter(l => /not yet attested/.test(l)).length;
-    A.undo(); r.afterUndo = [TP.uvOperatorsOf(p).length, o.clusters.filter(c => /^ContourStretch/.test(c.name)).length];
+    A.undo(); r.afterUndo = [TP.uvOperatorsOf(p).filter(x => /ContourStretching/.test(x.name)).length, o.clusters.filter(c => /^ContourStretch/.test(c.name)).length];
     // existing clusters are used as they are
     A.select([]); A.selMode = 'polygon'; A.selectComponents(o, 'polygon', [4], 'replace'); const cl = A.run('CreateCluster', { Name: 'MyPolys' }); A.setSelMode('object'); A.select([]);
     const c = run('ModifyUVSetByContourStretching', { InputObjs: [cl], TextureProjection: p }); r.cluster = { err: c.err ?? null, port0: c.v?.[0]?.ports[0][0] === cl, emptyCorners: c.v?.[0]?.ports[2].length, params: [c.v?.[0]?.val('method'), c.v?.[0]?.val('maintainaspect')], newClusters: o.clusters.filter(x => /^ContourStretch/.test(x.name)).length };
@@ -354,6 +360,7 @@ eq('CreateSubprojection: FitToImage - the input fills the unit square', S.fitToI
 // 5. CameraTextureProj
 const C = got.cam;
 eq('CameraTextureProj: a camera is available', C.haveCamera, true);
+eq('CameraTextureProj: no camera given - message box of SICameraTextureProj, nothing created, arguments as passed', C.noCamera, [null, { Name: 'Texture_Projection', Camera: '' }, 0, 'There were no valid camera selected']);
 eq('CameraTextureProj: Name and Camera come back', [C.err, C.keys, C.name, C.cameraIsObject], [null, ['Name', 'Camera'], 'Texture_Projection', true]);
 eq('CameraTextureProj: camera projection that swims (action 0)', C.prop, ['Texture_Projection', 'Camera Projection', true, 0, true]);
 eq('CameraTextureProj: unique name on a second call', C.second, ['Texture_Projection1', ['Texture_Projection', 'Texture_Projection1']]);
@@ -449,5 +456,5 @@ if (fails.length) {
   process.exit(1);
 }
 console.log(`OK CMD-12a texture projection commands: ${checks} checks, ${NAMES.length} commands exercised (contract tables + registry dump; no XSIBATCH golden yet)`);
-console.log('   wired from the contract: all 12 commands; the texture tasks behind them are stand-ins (Q4)');
-console.log('   log "not yet attested": lollipop mapping, world-relative fitting, ConnectToTextureProj without a support, UV-domain support on a non-surface (Q4); UV solve of the contour stretching operator (Q3)');
+console.log('   wired from the contract: all 12 commands; the texture tasks behind them are the CMD-B8d commands (tools/compare_primtasks_texture_commands.mjs)');
+console.log('   log "not yet attested": lollipop mapping, world-relative fitting (Q4); status after the "no valid texture control" box of SIConnectToSupport, message text of the UV-domain filter warning (CMD-B8d); UV solve of the contour stretching operator (Q3)');

@@ -304,6 +304,7 @@ export function viewManager(app: App, host: HTMLElement) {
       } else if (o.primitive?.type === 'crvlist' && payload?.cvs) {
         removeChild(g, 'mesh'); removeChild(g, 'wire');
         let ln = child(g, 'marker') as THREE.Line | undefined;
+        if (ln && !(ln as any).isLine) { g.remove(ln); ln = undefined; }   // the null marker of a curve list that had no points yet (SICreateCurve)
         if (!ln || (ln as any)._src !== payload) {
           // Softimage Curve List / Text: draw primary + optional subcurves (glyph outlines).
           const subs: any[] = [payload, ...((payload as any).subcurves ?? [])];

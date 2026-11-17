@@ -34,51 +34,51 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 <!-- BEGIN GENERATED: commands -->
 | Row | Area (command category) | Softimage commands | Named in `src/` | Not yet named | Status |
 |-----|-------------------------|-------------------:|----------------:|--------------:|--------|
-| CMD-01 | (uncategorised) | 448 | 217 | 231 | TODO |
+| CMD-01 | (uncategorised) | 448 | 226 | 222 | TODO |
 | CMD-02 | Custom | 413 | 252 | 161 | TODO |
-| CMD-03 | File | 110 | 62 | 48 | TODO |
+| CMD-03 | File | 110 | 63 | 47 | TODO |
 | CMD-04 | Simulation | 118 | 72 | 46 | TODO |
 | CMD-05 | Rendering | 175 | 137 | 38 | TODO |
-| CMD-06 | Animation | 186 | 151 | 35 | TODO |
-| CMD-07 | Modeling | 274 | 239 | 35 | TODO |
-| CMD-08 | Edit | 117 | 83 | 34 | TODO |
-| CMD-09 | Viewing | 191 | 157 | 34 | TODO |
-| CMD-10 | Character Rigging | 31 | 4 | 27 | TODO |
-| CMD-11 | Property | 125 | 101 | 24 | TODO |
-| CMD-12 | Animation Mixer | 113 | 93 | 20 | TODO |
-| CMD-13 | Navigation | 22 | 2 | 20 | TODO |
-| CMD-14 | Texturing | 75 | 58 | 17 | TODO |
-| CMD-15 | Manipulation | 51 | 40 | 11 | TODO |
-| CMD-16 | Deformation | 55 | 45 | 10 | TODO |
-| CMD-17 | Primitive | 131 | 124 | 7 | TODO |
-| CMD-18 | Camera Sequencer | 7 | 2 | 5 | TODO |
-| CMD-19 | Drawing | 14 | 9 | 5 | TODO |
-| CMD-20 | Cluster | 16 | 12 | 4 | TODO |
-| CMD-21 | Scripting | 4 | 0 | 4 | TODO |
-| CMD-22 | General | 10 | 7 | 3 | TODO |
-| CMD-23 | Selection | 108 | 105 | 3 | TODO |
-| CMD-24 | Source | 6 | 3 | 3 | TODO |
-| CMD-25 | Customization | 2 | 0 | 2 | TODO |
-| CMD-26 | Paint | 7 | 5 | 2 | TODO |
-| CMD-27 | Transform | 5 | 3 | 2 | TODO |
-| CMD-28 | file | 5 | 3 | 2 | TODO |
-| CMD-29 | Action | 1 | 0 | 1 | TODO |
-| CMD-30 | Animation mixer | 5 | 4 | 1 | TODO |
-| CMD-31 | Cache | 2 | 2 | 0 | AUDIT |
-| CMD-32 | Camera | 1 | 1 | 0 | AUDIT |
-| CMD-33 | Constraint | 27 | 27 | 0 | AUDIT |
-| CMD-34 | Devices | 5 | 5 | 0 | AUDIT |
-| CMD-35 | Generator | 1 | 1 | 0 | AUDIT |
-| CMD-36 | Group | 16 | 16 | 0 | AUDIT |
-| CMD-37 | ICE | 5 | 5 | 0 | AUDIT |
-| CMD-38 | Layer | 20 | 20 | 0 | AUDIT |
-| CMD-39 | Operator | 11 | 11 | 0 | AUDIT |
-| CMD-40 | Preferences | 2 | 2 | 0 | AUDIT |
+| CMD-06 | Viewing | 191 | 157 | 34 | TODO |
+| CMD-07 | Edit | 117 | 84 | 33 | TODO |
+| CMD-08 | Character Rigging | 31 | 4 | 27 | TODO |
+| CMD-09 | Property | 125 | 101 | 24 | TODO |
+| CMD-10 | Animation Mixer | 113 | 93 | 20 | TODO |
+| CMD-11 | Modeling | 274 | 254 | 20 | TODO |
+| CMD-12 | Navigation | 22 | 2 | 20 | TODO |
+| CMD-13 | Animation | 186 | 175 | 11 | TODO |
+| CMD-14 | Manipulation | 51 | 40 | 11 | TODO |
+| CMD-15 | Deformation | 55 | 45 | 10 | TODO |
+| CMD-16 | Texturing | 75 | 68 | 7 | TODO |
+| CMD-17 | Camera Sequencer | 7 | 2 | 5 | TODO |
+| CMD-18 | Scripting | 4 | 0 | 4 | TODO |
+| CMD-19 | Drawing | 14 | 11 | 3 | TODO |
+| CMD-20 | Selection | 108 | 105 | 3 | TODO |
+| CMD-21 | Source | 6 | 3 | 3 | TODO |
+| CMD-22 | Customization | 2 | 0 | 2 | TODO |
+| CMD-23 | General | 10 | 8 | 2 | TODO |
+| CMD-24 | Paint | 7 | 5 | 2 | TODO |
+| CMD-25 | Transform | 5 | 3 | 2 | TODO |
+| CMD-26 | file | 5 | 3 | 2 | TODO |
+| CMD-27 | Action | 1 | 0 | 1 | TODO |
+| CMD-28 | Animation mixer | 5 | 4 | 1 | TODO |
+| CMD-29 | Cache | 2 | 2 | 0 | AUDIT |
+| CMD-30 | Camera | 1 | 1 | 0 | AUDIT |
+| CMD-31 | Cluster | 16 | 16 | 0 | AUDIT |
+| CMD-32 | Constraint | 27 | 27 | 0 | AUDIT |
+| CMD-33 | Devices | 5 | 5 | 0 | AUDIT |
+| CMD-34 | Generator | 1 | 1 | 0 | AUDIT |
+| CMD-35 | Group | 16 | 16 | 0 | AUDIT |
+| CMD-36 | ICE | 5 | 5 | 0 | AUDIT |
+| CMD-37 | Layer | 20 | 20 | 0 | AUDIT |
+| CMD-38 | Operator | 11 | 11 | 0 | AUDIT |
+| CMD-39 | Preferences | 2 | 2 | 0 | AUDIT |
+| CMD-40 | Primitive | 131 | 131 | 0 | AUDIT |
 | CMD-41 | Toolbar | 6 | 6 | 0 | AUDIT |
 | CMD-42 | Transport Control | 23 | 23 | 0 | AUDIT |
 | CMD-43 | VertexColor | 1 | 1 | 0 | AUDIT |
 | CMD-44 | Views | 5 | 5 | 0 | AUDIT |
-| | **Total** | **2950** | **2115** | **835** | |
+| | **Total** | **2950** | **2189** | **761** | |
 <!-- END GENERATED: commands -->
 
 ### P1 sub-rows (hand-maintained; survive regeneration)
@@ -114,7 +114,7 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 | CMD-04-MOCAP | (new) | C++ BiovisionImport / AcclaimImport 'function' entries (simocaputils.dll) and combo items of the two option SPDLs | - | TODO | workers behind the script dialogs; closes cmd-04b Q3 |
 | CMD-04-REFMODEL | (new) | SICreateRefModel, CreateEmptyRefModel, SIImportIges, SIImportDotXSIFile, SIExportDotXSIFile | - | TODO | C++ workers the Model.vbs wrappers delegate to |
 | PROP-FREEZEWIZ | (new) | `FreezeActionWizard` and `MatchClips` preset properties: PPG layout and combo labels | - | TODO | used by FreezeClips / FreezeAndReplaceClips UI overloads and ClipMatch; parameters and defaults already in cmd-10a |
-| CMD-12b | (new) | C++ texture task commands called by the Texture.vbs wrappers: SICreateTextureSpatial (uncategorised, still TODO), SICreateTextureBasicGeo, SICameraTextureProj, SIConnectToSupport, SICreateTextureUVDomain, SIGetTextureUVDomains, SIFindUniqueTextureName | - | SPEC-PARTIAL | 2026-11-17: all seven read in CMD-B8d ([cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md)); `SICreateTextureUVDomain`, `SIGetTextureUVDomains` still SPEC-PARTIAL there. CMD-12a specifies only their call shapes; SICreateTextureSpatial is C++ with no file in the registry, not in Texture.vbs |
+| CMD-12b | (new) | C++ texture task commands called by the Texture.vbs wrappers: SICreateTextureSpatial (uncategorised, still TODO), SICreateTextureBasicGeo, SICameraTextureProj, SIConnectToSupport, SICreateTextureUVDomain, SIGetTextureUVDomains, SIFindUniqueTextureName | - | SPEC-PARTIAL | 2026-11-17: all seven read in CMD-B8d ([cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md)); `SICreateTextureUVDomain`, `SIGetTextureUVDomains` still SPEC-PARTIAL there. CMD-12a specifies only their call shapes; SICreateTextureSpatial is C++ with no file in the registry, not in Texture.vbs. 2026-11-17: all seven on the bus through CMD-B8d (WIRE-PARTIAL there) |
 | CMD-SYMTEMPLATE | (new) | CreateSymmetryMappingTemplate / CreateSymmetryMap / SISymEnvWeight (enveloping.vbs + C++) | - | TODO | deformer pairing rule and SISymEnvWeight needed by SymEnvWeight (Q2, Q3) |
 | CMD-RETARGET-OP | (new) | SimpleIKRetargetOp ports, TaggingTool command, RetargetingTag property | - | TODO | delegated to by RetargetRigToRig / RetargetTagRig (Q5, Q6) |
 | OP-SEQCAM | (new) | XSISequencerCameraKineOp / XSISequencerCameraPrimOp custom operators and the three XSISeqCam* events (SeqCam.dll) | - | TODO | found while doing CMD-19a; needed for the sequencer camera itself |
@@ -138,12 +138,12 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 
 One row per `.spdl` family (995 files) once `tools/build_coverage_ledger.py` is extended
 to diff `data/spdl/spdl.json` against `src/data/opdefs.json` and the operator classes in `src/core`.
-| CMD-B8a | CMD-06, CMD-B6-CPP | Fcurve / key commands read through Ghidra (`fcurve.dll`, helper in `mohelper.dll`): `IsAnimated`, `GetSource`, `EvalFCurve`, `GetFCurveInfo`, `GetKeyInfo`, `AddFCurve`, `SetCurveType`, `SaveKey`, `SaveKeyOnKeyable`, `SaveKeyOnMarkedKeyable`, `RemoveKey`, `RemoveKeyOnKeyable`, `RemoveKeyOnMarkedKeyable`, `NextKey`, `PrevKey`, `FirstKey`, `LastKey`, `SaveActionKey`, `ActivateFCurve`, `ActivateFCurveOnKeyable`, `ActivateFCurveOnMarkedKeyable`, `RemoveAnimation` | 22 | SPEC | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md). 2026-11-17: contracts read from the binary, no XSIBATCH golden. 18 SPEC; SPEC-PARTIAL (4): `ActivateFCurve`, `ActivateFCurveOnKeyable`, `ActivateFCurveOnMarkedKeyable`, `RemoveAnimation` (what is unread is stated per command). Open questions in the note |
-| CMD-B8b | CMD-06, CMD-B7a-REST | Animation layers, marking, expressions, relative values, source connection read through Ghidra (`fcurve.dll`): `GetCurrentAnimationLayer`, `SetCurrentAnimationLayer`, `GetNumberOfAnimationLayers`, `AddAnimationLayer`, `DeleteAnimationLayer`, `DuplicateAnimationLayer`, `LockAnimationLayer`, `UnlockAnimationLayer`, `IsAnimationLayerLocked`, `SetMarking`, `ClearMarking`, `AddToMarking`, `RemoveFromMarking`, `GetMarking`, `SetExpr`, `EditExpr`, `SetRelativeValues`, `GetNumRelativeValues`, `GetRelativeValue`, `RemoveRelativeValue`, `ConnectSource` | 21 | SPEC | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md). 2026-11-17: contracts read from the binary, no XSIBATCH golden. 20 SPEC; SPEC-PARTIAL (1): `DuplicateAnimationLayer` (what is unread is stated per command). Open questions in the note |
-| CMD-B8c | CMD-06, CMD-08, CMD-B6-CPP | Animation copy / paste, key clipboard, key selection, rotation conversion, sequencing read through Ghidra (`fcurve.dll`): `CopyAnimContainer`, `CopyAllAnimation`, `CopyAnimation`, `PasteAllAnimation`, `PasteAnimation`, `CopyKeys`, `CutKeys`, `DeleteKeys`, `PasteKeys`, `SelectKeysInTimespan`, `DeselectAllKeys`, `ConvertEulerToQuat`, `ConvertQuatToEuler`, `MakeRotationsContinuous`, `Sequence`, `SISequence`, `ScaleAndOffset` | 17 | SPEC | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md). 2026-11-17: contracts read from the binary, no XSIBATCH golden. 13 SPEC; SPEC-PARTIAL (4): `CopyAnimContainer`, `Sequence`, `SISequence`, `ScaleAndOffset` (what is unread is stated per command). Open questions in the note |
-| CMD-B8d | CMD-12b, CMD-14 | Texture projection / support / UVW task commands read through Ghidra and local static reads (`primtasks.dll`): `SIFindUniqueTextureName`, `SICreateTexturePureImplicit`, `SICreateTextureBasicGeo`, `SICreateTextureProj`, `SICreateTextureUVDomain`, `SIConnectToSupport`, `SIConnectToProjection`, `SICameraTextureProj`, `SICreateTextureSpatial`, `SIGetTextureUVDomains`, `ChangeUVInput`, `HealUVW`, `MatchUVW`, `CycleUVW`, `FlipUVW`, `RelaxUVW` | 16 | SPEC | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md). 2026-11-17: contracts read from the binary, no XSIBATCH golden. 10 SPEC; SPEC-PARTIAL (6): `SICreateTextureProj`, `SICreateTextureUVDomain`, `SIConnectToProjection`, `SIGetTextureUVDomains`, `ChangeUVInput`, `RelaxUVW` (what is unread is stated per command). Open questions in the note |
-| CMD-B8e | CMD-17, CMD-B7a-REST | Primitive getters, instancing and misc commands read through Ghidra (`primtasks.dll`): `SIGetRigidCns`, `SIAssembleNurbsMesh`, `SIGetPrimLight`, `SIGetPrimCamera`, `SIGetPrimSpotLight`, `SIGetPrimLattice`, `SIGetPrimVolumeDeform`, `SIInstantiate`, `GetMaster`, `GetInstances`, `GetURLAt`, `ImportEPS`, `GetNbTriangles`, `SIAssignMaterial` | 14 | SPEC | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md). 2026-11-17: contracts read from the binary, no XSIBATCH golden. 10 SPEC; SPEC-PARTIAL (4): `SIAssembleNurbsMesh`, `SIGetPrimVolumeDeform`, `ImportEPS`, `SIAssignMaterial` (what is unread is stated per command). Open questions in the note |
-| CMD-B8f | CMD-07, CMD-B7a-REST | Polygon / edge / slice step commands (`simeshtasks.dll`) and curve drawing step commands (`sicurvetasks.dll`) read through Ghidra: `AddPointToNewPolygon`, `RemovePointFromPolygon`, `AddPointInteriorToPolygon`, `RemoveLastPointInteriorToPolygon`, `TerminateAddEdgeWithInteriorPoints`, `SnapOffsetToPointForSlicePolygons`, `ConnectNewPolygonToEdge`, `ConnectNewPolygonToPoint`, `CreateMeshPartitionClusters`, `CreateClustersAlongDepthFromCurvesToMeshOperator`, `CreateClustersFromSlicePolygonsOperator`, `SICreateCurve`, `SISetCurvePoints`, `SIAddPointOnCurve`, `SIAddPointOnCurveAtStart`, `SIAddPointOnCurveAtEnd`, `SIDeletePointOnCurve`, `CreateCurvePartitionClusters`, `CurveDirectManip` | 19 | SPEC | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md). 2026-11-17: contracts read from the binary, no XSIBATCH golden. 17 SPEC; SPEC-PARTIAL (2): `TerminateAddEdgeWithInteriorPoints`, `SnapOffsetToPointForSlicePolygons` (what is unread is stated per command). Open questions in the note |
+| CMD-B8a | CMD-06, CMD-B6-CPP | Fcurve / key commands read through Ghidra (`fcurve.dll`, helper in `mohelper.dll`): `IsAnimated`, `GetSource`, `EvalFCurve`, `GetFCurveInfo`, `GetKeyInfo`, `AddFCurve`, `SetCurveType`, `SaveKey`, `SaveKeyOnKeyable`, `SaveKeyOnMarkedKeyable`, `RemoveKey`, `RemoveKeyOnKeyable`, `RemoveKeyOnMarkedKeyable`, `NextKey`, `PrevKey`, `FirstKey`, `LastKey`, `SaveActionKey`, `ActivateFCurve`, `ActivateFCurveOnKeyable`, `ActivateFCurveOnMarkedKeyable`, `RemoveAnimation` | 22 | WIRE-PARTIAL | [cmd-b8a-fcurve-keys-binary.md](../ghidra/cmd-b8a-fcurve-keys-binary.md). 2026-11-17: contracts read from the binary, no XSIBATCH golden. 18 SPEC; SPEC-PARTIAL (4): `ActivateFCurve`, `ActivateFCurveOnKeyable`, `ActivateFCurveOnMarkedKeyable`, `RemoveAnimation` (what is unread is stated per command). Open questions in the note. **Wired 2026-11-17** (`src/commands/fcurveKeyTasks*.ts`, `tools/compare_fcurve_key_task_commands.mjs`, 165 checks, contract only). Fully wired 15; partly 7: `SaveKey` family with `Layer` > 0 (layer key stored, not mixed into the value; Euler composition Q9), `EvalFCurve` without a curve (Q5), `SetCurveType` outside 1..3, `ActivateFCurve` x3 (range boundary keys, Q4), `RemoveAnimation` (`StaticFCurves` / `BaseAnimation` / `SourceMask` readings, Q3). Replaces the earlier registrations in `index.ts`, `anim.ts`, `animateSurface.ts`; `SaveKeyOnMarkedKeyable` / `SaveActionKey` stay the CMD-B6a wrappers on the bus with this row's native twin behind them. Seam `legacyDefaultList` keeps the build's Save Key mapping for an omitted `InputObjs` when nothing is marked (Q7). Wire questions in PR |
+| CMD-B8b | CMD-06, CMD-B7a-REST | Animation layers, marking, expressions, relative values, source connection read through Ghidra (`fcurve.dll`): `GetCurrentAnimationLayer`, `SetCurrentAnimationLayer`, `GetNumberOfAnimationLayers`, `AddAnimationLayer`, `DeleteAnimationLayer`, `DuplicateAnimationLayer`, `LockAnimationLayer`, `UnlockAnimationLayer`, `IsAnimationLayerLocked`, `SetMarking`, `ClearMarking`, `AddToMarking`, `RemoveFromMarking`, `GetMarking`, `SetExpr`, `EditExpr`, `SetRelativeValues`, `GetNumRelativeValues`, `GetRelativeValue`, `RemoveRelativeValue`, `ConnectSource` | 21 | WIRE-PARTIAL | [cmd-b8b-fcurve-layers-marking-expr-binary.md](../ghidra/cmd-b8b-fcurve-layers-marking-expr-binary.md). 2026-11-17: contracts read from the binary, no XSIBATCH golden. 20 SPEC; SPEC-PARTIAL (1): `DuplicateAnimationLayer` (what is unread is stated per command). Open questions in the note. **Wired 2026-11-17** (`src/commands/fcurveLayerMarkingTasks*.ts`, `tools/compare_fcurve_layer_marking_task_commands.mjs`, 170 checks, contract only). Fully wired at command level 12 (layers are records per model, base layer at index 0; mixer tracks / clips are traced sub-tasks only); partly 8: `DuplicateAnimationLayer` (no content copied, Q4), the four marking setters (relative paths, Q2), `SetExpr` (lock test, 0x2d, model delta), `SetRelativeValues` (multi-link interpolator stored, not evaluated, Q7), `ConnectSource` (fcurve / expression only); stand-in 1: `EditExpr`. Replaces the earlier registrations in `animateSurface.ts` and `anim.ts`; menu "Set Expression..." now runs `AddExpr`. Wire questions in PR |
+| CMD-B8c | CMD-06, CMD-08, CMD-B6-CPP | Animation copy / paste, key clipboard, key selection, rotation conversion, sequencing read through Ghidra (`fcurve.dll`): `CopyAnimContainer`, `CopyAllAnimation`, `CopyAnimation`, `PasteAllAnimation`, `PasteAnimation`, `CopyKeys`, `CutKeys`, `DeleteKeys`, `PasteKeys`, `SelectKeysInTimespan`, `DeselectAllKeys`, `ConvertEulerToQuat`, `ConvertQuatToEuler`, `MakeRotationsContinuous`, `Sequence`, `SISequence`, `ScaleAndOffset` | 17 | WIRE-PARTIAL | [cmd-b8c-fcurve-copy-paste-rotation-binary.md](../ghidra/cmd-b8c-fcurve-copy-paste-rotation-binary.md). 2026-11-17: contracts read from the binary, no XSIBATCH golden. 13 SPEC; SPEC-PARTIAL (4): `CopyAnimContainer`, `Sequence`, `SISequence`, `ScaleAndOffset` (what is unread is stated per command). Open questions in the note. **Wired 2026-11-17** (`src/commands/fcurveCopyPasteRotation*.ts`, `tools/compare_fcurve_copy_paste_rotation_task_commands.mjs`, 168 checks, contract only). Fully wired 10 (key clipboard, key selection, animation copy / paste on the base layer; `CompensateForClip`, layer records and the leaf-name branch Q3 log "not yet attested"); partly 7: `CopyAnimContainer` (Q1), `Sequence` / `SISequence` / `ScaleAndOffset` (Type 3 walk, `Mode`, `Discrete Time`, ripple passes), `ConvertEulerToQuat` / `ConvertQuatToEuler` / `MakeRotationsContinuous` (alternative triple, Q8). Replaces 12 earlier registrations of `animateSurface.ts`. Wire questions in PR |
+| CMD-B8d | CMD-12b, CMD-14 | Texture projection / support / UVW task commands read through Ghidra and local static reads (`primtasks.dll`): `SIFindUniqueTextureName`, `SICreateTexturePureImplicit`, `SICreateTextureBasicGeo`, `SICreateTextureProj`, `SICreateTextureUVDomain`, `SIConnectToSupport`, `SIConnectToProjection`, `SICameraTextureProj`, `SICreateTextureSpatial`, `SIGetTextureUVDomains`, `ChangeUVInput`, `HealUVW`, `MatchUVW`, `CycleUVW`, `FlipUVW`, `RelaxUVW` | 16 | WIRE-PARTIAL | [cmd-b8d-primtasks-texture-binary.md](../ghidra/cmd-b8d-primtasks-texture-binary.md). 2026-11-17: contracts read from the binary, no XSIBATCH golden. 10 SPEC; SPEC-PARTIAL (6): `SICreateTextureProj`, `SICreateTextureUVDomain`, `SIConnectToProjection`, `SIGetTextureUVDomains`, `ChangeUVInput`, `RelaxUVW` (what is unread is stated per command). Open questions in the note. **Wired 2026-11-17** (`src/commands/primTasksTexture.ts`, `tools/compare_primtasks_texture_commands.mjs`, 93 checks, contract only). Fully wired 7; partly 9: `SICreateTextureProj` (fails in UnPackArg by the inferred reading, open question 1; other reading behind a switch), `SICreateTextureUVDomain`, `SIConnectToProjection`, `ChangeUVInput` (actions 1, 2), `HealUVW` / `MatchUVW` / `CycleUVW` / `FlipUVW` / `RelaxUVW` (operator created, connected and parameterised; **UVs are not changed**). The CMD-12a wrappers in `textureProjectionScripts.ts` now run these commands; `compare_texture_projection_commands` adjusted (no camera fallback in `CameraTextureProj`). Wire questions in PR |
+| CMD-B8e | CMD-17, CMD-B7a-REST | Primitive getters, instancing and misc commands read through Ghidra (`primtasks.dll`): `SIGetRigidCns`, `SIAssembleNurbsMesh`, `SIGetPrimLight`, `SIGetPrimCamera`, `SIGetPrimSpotLight`, `SIGetPrimLattice`, `SIGetPrimVolumeDeform`, `SIInstantiate`, `GetMaster`, `GetInstances`, `GetURLAt`, `ImportEPS`, `GetNbTriangles`, `SIAssignMaterial` | 14 | WIRE-PARTIAL | [cmd-b8e-primtasks-prims-binary.md](../ghidra/cmd-b8e-primtasks-prims-binary.md). 2026-11-17: contracts read from the binary, no XSIBATCH golden. 10 SPEC; SPEC-PARTIAL (4): `SIAssembleNurbsMesh`, `SIGetPrimVolumeDeform`, `ImportEPS`, `SIAssignMaterial` (what is unread is stated per command). Open questions in the note. **Wired 2026-11-17** (`src/commands/primTasksPrims.ts`, `tools/compare_primtasks_prim_commands.mjs`, 77 checks, contract only). Fully wired 6 (`SIGetPrimLight` non-spot, `SIGetPrimLattice`, `GetMaster`, `GetInstances`, `GetURLAt`, `GetNbTriangles`); partly 7: `SIGetPrimSpotLight`, `SIGetPrimCamera` (constraint parameter 4, GUID-only parameters), `SIGetRigidCns`, `SIAssembleNurbsMesh`, `SIGetPrimVolumeDeform` (`InitPropVolume` is not on the bus), `SIInstantiate`, `ImportEPS` (stand-in path reader); **`SIAssignMaterial` not re-registered** (contract unread; the earlier inferred registration stays). `compare_view_edit_property_commands` adjusted to the `SIInstantiate` / `GetMaster` / `GetInstances` contracts. Wire questions in PR |
+| CMD-B8f | CMD-07, CMD-B7a-REST | Polygon / edge / slice step commands (`simeshtasks.dll`) and curve drawing step commands (`sicurvetasks.dll`) read through Ghidra: `AddPointToNewPolygon`, `RemovePointFromPolygon`, `AddPointInteriorToPolygon`, `RemoveLastPointInteriorToPolygon`, `TerminateAddEdgeWithInteriorPoints`, `SnapOffsetToPointForSlicePolygons`, `ConnectNewPolygonToEdge`, `ConnectNewPolygonToPoint`, `CreateMeshPartitionClusters`, `CreateClustersAlongDepthFromCurvesToMeshOperator`, `CreateClustersFromSlicePolygonsOperator`, `SICreateCurve`, `SISetCurvePoints`, `SIAddPointOnCurve`, `SIAddPointOnCurveAtStart`, `SIAddPointOnCurveAtEnd`, `SIDeletePointOnCurve`, `CreateCurvePartitionClusters`, `CurveDirectManip` | 19 | WIRE-PARTIAL | [cmd-b8f-mesh-curve-step-tasks-binary.md](../ghidra/cmd-b8f-mesh-curve-step-tasks-binary.md). 2026-11-17: contracts read from the binary, no XSIBATCH golden. 17 SPEC; SPEC-PARTIAL (2): `TerminateAddEdgeWithInteriorPoints`, `SnapOffsetToPointForSlicePolygons` (what is unread is stated per command). Open questions in the note. **Wired 2026-11-17** (`src/commands/meshCurveStepTasks*.ts`, `tools/compare_mesh_curve_step_task_commands.mjs`, 154 checks, contract only). Fully wired 8 (`AddPointToNewPolygon`, `RemovePointFromPolygon`, `RemoveLastPointInteriorToPolygon`, `SICreateCurve`, `SISetCurvePoints`, `SIAddPointOnCurveAtStart` / `AtEnd`, `SIDeletePointOnCurve`); partly 11 (stop status Q1, `EdgeID` receiver Q2, slice angle branch Q3, partition lists Q4, the two cluster-connect commands create clusters nothing fills, `SIAddPointOnCurve` landing position, `CurveDirectManip` deformation is a pass-through). The `CreateCurve` wrapper (CMD-B6a) now runs `SICreateCurve` / `SISetCurvePoints`; the interactive tools are not rewired. Wire questions in PR |
 | CMD-B8-HELPERS | (new) | Helper exports the batch-8 handlers delegate to and that were not opened: `mohelper.dll` (`F3DGetAnimSources`, `F3DGetMarkedComponents`, `F3DGetAllAnimationComponents`), `motionhelp.dll!SIIsAnimated`, `corehelper.dll` (`F3DGetCurrentKeyingLayer`, `F3DGetNbKeyingLayers`, `F3DIsKeyingLayerLocked`), `dssdk10.dll` (`DS{Get,Set,Add,Remove,Reset}MarkedParameters`); sub-task class `{42eb14da-bcab-4e24-bee6-b8a0bb496c3a}` used by `DuplicateAnimationLayer`; implementer of `SIAssignMaterial` (`modeltasks.dll` or `propertytasks.dll`) | - | TODO | closes the *(inferred)* items and most SPEC-PARTIALs of CMD-B8a–f; Ghidra resolves these exports by plain name |
 | GOLD-B8 | (new) | XSIBATCH goldens for the cheap batch-8 cases (`GetFCurveInfo`, `GetKeyInfo`, `NextKey` family, marking round trip, animation layer add / delete / lock, `ConvertEulerToQuat` round trip, `SICreateCurve` + `SISetCurvePoints`, `SIGetPrimCamera`) | - | TODO | needs `device_bash` or a process tool on the PC; neither was available |
 | CMD-B8-XSIFCURVE | (new) | Texts of the `XSIFCURVE` message ids the fcurve tasks log (`0x24`–`0x3a`), from `Application\Dictionary\en\XSIFCURVE.dict` (needs TOOL-01 fixed) | - | TODO | ids are recorded in the three fcurve notes |
