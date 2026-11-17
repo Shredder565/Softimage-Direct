@@ -10,6 +10,7 @@ import { clothPpgAudit } from './clothPpg';
 export function registerSimulateModuleCommands(app: App) {
   // commands_full: SyCreateCloth (Custom, Syflex cloth.vbs CreateCloth_Execute).
   // PE Create > Cloth > From Selection maps to ApplyCloth (id 41015) — route Name there; no Syflex GDI.
+  // Fallback only: src/commands/syflexScripts.ts (CMD-B7b, cloth.vbs contract) registers later and replaces this entry.
   if (!app.commands.has('SyCreateCloth')) {
     app.register({
       name: 'SyCreateCloth',

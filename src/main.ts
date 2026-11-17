@@ -37,6 +37,7 @@ import { registerUixsiPrefsIceViewsCommands } from './commands/uixsiPrefsIceView
 import { registerOperatorsScriptsCommands } from './commands/operatorsScripts';
 import { registerDuplicateRenderingSimulationScriptsCommands } from './commands/duplicateRenderingSimulationScripts';
 import { registerAddonDocWizardCommands } from './commands/addonDocWizard';
+import { registerSyflexScriptsCommands } from './commands/syflexScripts';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -147,6 +148,7 @@ registerUixsiPrefsIceViewsCommands(app);
 registerOperatorsScriptsCommands(app);
 registerDuplicateRenderingSimulationScriptsCommands(app);
 registerAddonDocWizardCommands(app);
+registerSyflexScriptsCommands(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);
