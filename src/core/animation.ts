@@ -28,6 +28,15 @@ export class FCurve {
   /** ActivateFCurve StartFrame/EndFrame — curve drives only inside the range when set. */
   activeStart: number | null = null;
   activeEnd: number | null = null;
+  /** ActivateFCurve Activate=false with StartFrame/EndFrame (CMD-B8a): frame ranges in which the curve does not drive. */
+  inactiveRanges: [number, number][] = [];
+  /** True when the curve drives its parameter at a frame (not muted, inside the active range, outside the inactive ranges). */
+  activeAt(f: number): boolean {
+    if (this.muted) return false;
+    if (this.activeStart != null && f < this.activeStart) return false;
+    if (this.activeEnd != null && f > this.activeEnd) return false;
+    return !this.inactiveRanges.some(([a, b]) => f >= a && f <= b);
+  }
   constructor(readonly param: Parameter) {}
   addKey(time: number, value: number, extra?: Partial<Key>) {
     const k = this.keys.find(k => k.time === time);
@@ -153,9 +162,7 @@ export class AnimationManager {
   set frame(f: number) {
     this._frame = f;
     for (const [p, fc] of this.fcurves) {
-      if (!fc.keys.length || fc.muted) continue;
-      if (fc.activeStart != null && f < fc.activeStart) continue;
-      if (fc.activeEnd != null && f > fc.activeEnd) continue;
+      if (!fc.keys.length || !fc.activeAt(f)) continue;
       p.value = fc.eval(f);
     }
     for (const [p, ex] of this.expressions) { try { const v = ex.fn(f, f / this.fps); if (Number.isFinite(v)) p.value = v; } catch { /* bad expression: leave the value */ } }
