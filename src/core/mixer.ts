@@ -129,7 +129,8 @@ export function clipWeightsAt(frame: number, clips: MixerClip[], transitions: Mi
     if (clip.mute) continue;
     const end = clip.start + clip.duration;
     let w = frame >= clip.start && frame < end ? 1 : 0;
-    let localTime = frame - clip.start;
+    // Time control scale (set by CutClip and friends, CMD-10a); absent = 1.
+    let localTime = (frame - clip.start) * (Number((clip as any).timectrl?.scale) || 1);
     for (const tr of transitions) {
       // Softimage Transition Active (sn: active); inactive transitions do not contribute.
       if (tr.active === false) continue;
@@ -182,7 +183,7 @@ function actionPayload(src: Property): { values: Record<string, number>; fcurves
   return { values, fcurves };
 }
 
-function sampleSource(src: Property, localTime: number, lookup: (path: string) => Parameter | undefined): Record<string, number> {
+function sampleSource(src: Property, localTime: number, lookup: (path: string) => Parameter | undefined, clipIn?: number): Record<string, number> {
   const { values, fcurves } = actionPayload(src);
   const out: Record<string, number> = { ...values };
   for (const [path, keys] of Object.entries(fcurves)) {
@@ -191,7 +192,8 @@ function sampleSource(src: Property, localTime: number, lookup: (path: string) =
     const fc = new FCurve(lookup(path) ?? ({ value: keys[0].value, def: { name: path } } as any));
     fc.keys = keys.map(k => ({ time: k.time, value: k.value, left: k.left ?? k.value, right: k.right ?? k.value, interp: k.interp ?? 3 }));
     // Action local time 0 maps to first key time (Softimage clip-relative sampling).
-    out[path] = fc.eval(t0 + localTime);
+    // An explicit clip in (CMD-10a time control) is a source frame; without one the first key is local time 0.
+    out[path] = fc.eval((clipIn ?? t0) + localTime);
   }
   return out;
 }
@@ -234,7 +236,8 @@ export function evaluateMixer(app: MixerHost, frame = app.anim.frame, apply = tr
   const values: Record<string, number> = {};
   for (const cw of ordered) {
     const src = sources.get(cw.clip.source); if (!src) continue;
-    const vals = sampleSource(src, cw.localTime, lookup);
+    const ci = (cw.clip as any).timectrl?.clipin;
+    const vals = sampleSource(src, cw.localTime, lookup, typeof ci === 'number' ? ci : undefined);
     for (const [path, v] of Object.entries(vals)) {
       if (!Number.isFinite(v)) continue;
       if (cw.clip.additive) {
