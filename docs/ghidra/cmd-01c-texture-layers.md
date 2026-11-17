@@ -733,6 +733,16 @@ no `…ShaderToCnxPoint…` task ProgID other than the two above occur in
 this kind are bound by CLSID in the command registry, not by name, so the next
 pass should take the CLSID from the registry dump and search for it (Q14).
 
+**2026-11-17 follow-up (bin-wide scan).** 200 binaries of `Application\bin` were
+scanned for ASCII and UTF-16 strings. `SIApplyShaderToCnxPoint` and
+`SIApplyShaderToCnxPoint2` occur in none of them; `SIConnectShaderToCnxPoint`
+occurs only in `dotxsi_ie.dll`, which calls it during import. No further
+`...CnxPoint...` task ProgID exists. The registry dump in `data/commands_full.json`
+carries no CLSID, and no command table file exists under `Application`, so Q14
+("which DLL") stays open until the CLSID binding is read from the PC (ledger
+row CMD-REGISTRY). `GetShaderOnCnxPointFunction` (script, CMD-B6c) is specified
+in [cmd-b6c-uixsi-prefs-ice-views.md](./cmd-b6c-uixsi-prefs-ice-views.md).
+
 ## Enable conditions and errors
 
 No enable condition is registered for any of the 27. Script commands do not
