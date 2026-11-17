@@ -28,8 +28,10 @@
 //  * Log severities. The script log here knows 'info' and 'error'. Warnings are logged as info with the prefix
 //    "WARNING : ". Verbose messages are kept in `app.sdkHelpers.verbose` and reach the log only when the
 //    Scripting preference "Log Verbose Messages" (or `app.verboseLog`) is on.
-//  * Not attested, left as "not yet attested": add-on detail / description files (Q10), dialog title id 1532
-//    (Q2), the .xsiaddon content (SYS-13; a placeholder manifest text is written so file counts are testable).
+//  * Add-on detail / description files (Q10, closed 2026-11-16): `netview_<N>.xml` / `netview_<N>.txt`, read and
+//    written through the add-on doc helper of ledger row CMD-01-ADDONDOC (src/commands/addonDocWizard.ts).
+//  * Not attested, left as "not yet attested": dialog title id 1532 (Q2), the .xsiaddon content (SYS-13; a
+//    placeholder manifest text is written so file counts and details are testable).
 import { App } from '../core/commands';
 import { Property } from '../core/scene';
 import { str, bool } from '../core/params';
@@ -203,6 +205,20 @@ function createStandardTree(fs: HostFs, root: string): string {
   return '';
 }
 
+// ------------------------------------------------------------------ add-on detail / description files (Q10)
+
+/** The add-on doc helper (CMD-01-ADDONDOC): file names `netview_<N>.xml` / `.txt`, detail dictionary load / save. */
+function addonDocHelper(app: App): any {
+  if (!app.commands.get('GetAddonDocHelper')) throw new Error('the add-on doc helper is not available');
+  return app.run('GetAddonDocHelper', {});
+}
+/** Detail and description file paths of the add-on folder `dir`. */
+function addonDocFiles(app: App, dir: string): { helper: any; detail: string; description: string } {
+  const helper = addonDocHelper(app);
+  const n = helper.GetAddonSubdirFromFullPath(dir);
+  return { helper, detail: hostFs.join(dir, helper.GetAddonDetailFileName(n)), description: hostFs.join(dir, helper.GetAddonDescriptionFileName(n)) };
+}
+
 // ------------------------------------------------------------------ PackageAddon
 
 function packageAddon(app: App, a: Record<string, any>): string {
@@ -236,8 +252,14 @@ function packageAddon(app: App, a: Record<string, any>): string {
     }
     // 3. exclusions: folder NAMES, split on ';', no trimming, no wildcards, case ignored
     const ex = a.ExcludeDirs === null || a.ExcludeDirs === undefined || a.ExcludeDirs === '' ? [] : String(a.ExcludeDirs).split(';').map(s => s.toLowerCase());
-    // 4. details: the detail / description file names come from the AddonDoc helper, which is not attested (Q10)
-    logVerbose(app, `PackageAddon: not yet attested: add-on detail and description files are not read (${NOTE} Q10)`);
+    // 4. details (best effort): every key of the detail file, then the description file as "Description"
+    const details: [string, string][] = [];
+    try {
+      const f = addonDocFiles(app, src);
+      const setDetail = (k: string, v: string) => { const i = details.findIndex(d => d[0] === k); if (i >= 0) details[i][1] = v; else details.push([k, v]); };
+      if (fs.isFile(f.detail)) for (const [k, v] of Object.entries(f.helper.loadAddonDetails(f.detail))) setDetail(k, String(v));
+      if (fs.isFile(f.description)) setDetail('Description', fs.readFile(f.description));
+    } catch (e) { logVerbose(app, `Error setting addon details: ${errDesc(e)}`); }
     // 5.
     app.logMsg('info', `Packaging: ${src}`);
     app.logMsg('info', `Destination: ${dest}`);
@@ -263,6 +285,7 @@ function packageAddon(app: App, a: Record<string, any>): string {
     try {
       const manifest = ['AfterImage placeholder .xsiaddon manifest (content format: SYS-13, not yet attested)',
         `DefaultInstallationPath=${state.paths[5]}`, `SubDirectory=${subDir}`, `Files=${items.length}`,
+        ...details.map(([k, v]) => `detail\t${k}\t${JSON.stringify(v)}`),
         ...items.map(i => `other\t${i.path}\t${i.targetDir}`)].join('\n');
       fs.writeFile(dest, manifest);
     } catch (e) { return fail(`Error saving addon - ${errDesc(e)}`); }
@@ -298,6 +321,9 @@ export function makePackageLocationOptions(source: string, destination: string):
   return p;
 }
 
+/** Detail key -> page parameter (the e-mail key is spelled `AuthorEMail` in the detail file). */
+const DETAIL_FIELDS: [string, string][] = [['AuthorName', 'AuthorName'], ['AuthorEMail', 'AuthorEmail'], ['Company', 'Company'], ['URL', 'URL']];
+
 function packageAddonUI(app: App, a: Record<string, any>): any {
   const fs = hostFs;
   // siCannotBeUsedInBatch. The wording of Softimage's refusal is not attested (inferred text).
@@ -311,10 +337,19 @@ function packageAddonUI(app: App, a: Record<string, any>): any {
     destination = fs.join(fs.parentPath(given), fs.baseName(given)) + '.xsiaddon';
   }
   const prop = makePackageLocationOptions(source, destination);
-  // 4. pre-fill from the source folder. The detail / description file names are not attested (Q10): nothing is read.
+  // 4. pre-fill from the source folder: author fields from the detail file (the whole dictionary is kept in the
+  // PackageAddon_DetailDict global, else null), description from the description file. Failures: verbose only.
   const prefill = () => {
-    logVerbose(app, `PackageAddonUI: not yet attested: add-on detail and description files are not read (${NOTE} Q10)`);
-    app.run('SetGlobal', { in_VariableName: 'PackageAddon_DetailDict', in_Value: null });
+    let dict: Record<string, string> | null = null;
+    try {
+      const f = addonDocFiles(app, String(prop.val('Source') ?? ''));
+      if (fs.isFile(f.detail)) {
+        dict = f.helper.loadAddonDetails(f.detail) as Record<string, string>;
+        for (const [key, field] of DETAIL_FIELDS) if (dict[key] !== undefined) prop.set(field, String(dict[key]));
+      }
+      if (fs.isFile(f.description)) prop.set('Description', fs.readFile(f.description));
+    } catch (e) { logVerbose(app, `PackageAddonUI: ${errDesc(e)}`); }   // inferred: the verbose text of a pre-fill failure
+    app.run('SetGlobal', { in_VariableName: 'PackageAddon_DetailDict', in_Value: dict });
   };
   prefill();
   // 5. title: id 1532 is missing from the English dictionary (Q2)
@@ -322,7 +357,15 @@ function packageAddonUI(app: App, a: Record<string, any>): any {
   if (!title) { title = PACKAGE_UI_TITLE_FALLBACK; logVerbose(app, `PackageAddonUI: not yet attested: dialog title id 1532 (${NOTE} Q2); using "${title}"`); }
   return (async () => {
     for (;;) {
-      const ok = await sdkModal(title!, (body) => renderSdkLayout(body, prop, (prop as any).sdkLayout, (n) => { if (n === 'Source') prefill(); }), { w: 520, cls: 'sdkh-ppg sdkh-PackageLocationOptions' });
+      const ok = await sdkModal(title!, (body) => renderSdkLayout(body, prop, (prop as any).sdkLayout, (n) => {
+        if (n !== 'Source') return;
+        prefill();
+        // show the reloaded author fields and description in the open page
+        for (const field of [...DETAIL_FIELDS.map(d => d[1]), 'Description']) {
+          const el = body.querySelector(`.sdkh-row[data-param="${field}"] input, .sdkh-row[data-param="${field}"] textarea`) as HTMLInputElement | null;
+          if (el) el.value = String(prop.val(field) ?? '');
+        }
+      }), { w: 520, cls: 'sdkh-ppg sdkh-PackageLocationOptions' });
       if (!ok) return false;
       const src = String(prop.val('Source') ?? ''), dst = String(prop.val('Destination') ?? '');
       state.excludeDirs = String(prop.val('ExcludeDir') ?? '');
@@ -332,8 +375,16 @@ function packageAddonUI(app: App, a: Record<string, any>): any {
       else if (!fs.isFolder(src)) bad = 1192;
       else if (fs.baseName(fs.parentPath(src.replace(/[\\/]+$/, ''))).toLowerCase() !== 'addons') bad = 1193;
       if (bad) { await sdkMsgBox(sdkHelpersText(bad), 'AfterImage', true); continue; }
-      // 6. remember the author fields in the add-on's detail file: file name and format not attested (Q10)
-      logVerbose(app, `PackageAddonUI: not yet attested: add-on detail and description files are not written (${NOTE} Q10)`);
+      // 6. remember the author fields in the add-on's detail file; write the description file when not empty
+      try {
+        const f = addonDocFiles(app, src);
+        // inferred: without a loaded dictionary the helper's default dictionary is the starting point
+        const dict: Record<string, string> = app.run('GetGlobal', { in_VariableName: 'PackageAddon_DetailDict' }) ?? f.helper.GetDefaultDetailDict();
+        for (const [key, field] of DETAIL_FIELDS) dict[key] = String(prop.val(field) ?? '');
+        f.helper.saveAddonDetails(f.detail, dict);
+        const description = String(prop.val('Description') ?? '');
+        if (description !== '') app.run('WizardHelper', {}).TextToFile(f.description, description);
+      } catch (e) { logVerbose(app, `Failed to remember addon details ${errDesc(e)}`); }
       // 7. through the command bus, so it is logged
       const res = app.run('PackageAddon', { SrcDir: src, DestinationPath: dst, Overwrite: overwrite, ExcludeDirs: state.excludeDirs });
       if (res) await sdkMsgBox(String(res), 'AfterImage', true);
