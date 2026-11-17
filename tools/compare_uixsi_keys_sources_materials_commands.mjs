@@ -470,7 +470,9 @@ ok('Add/RemoveFromContainer: unknown Target = lookup error', co.unknown.every(e 
 
 // ---- keys
 const k = got.keys;
-eq('SaveActionKey: key at the key-marker time (7), not at Time; current frame unchanged; Time not written back', k.action, [NONE, [[1, 0], [7, 3]], true, 99, ['native SaveActionKey']]);
+// CMD-B8a: the native SaveActionKey keys the fcurve of the single unblended action clip that drives the parameter; posx is
+// driven by its own fcurve here, so the native entry skips it (the action-clip case is in compare_fcurve_key_task_commands.mjs).
+eq('SaveActionKey: native entry called (no action clip drives posx: skipped); current frame unchanged; Time not written back', k.action, [NONE, [[1, 0]], true, 99, ['native SaveActionKey']]);
 eq('SaveActionKey: Source other than "Action" / "FCurve" = siErrCancelled (case-sensitive)', [k.bogus, k.caseSensitive], [CANCEL('SaveActionKey'), CANCEL('SaveActionKey')]);
 eq('SaveActionKey Source "FCurve": routed by preferences.animation.save_key_command (other, 1, 2, 3, other)', k.fcurve.map(x => x[0]),
   [['SaveKey'], ['SaveKeyOnKeyable'], ['SaveKeyOnMarkedKeyable', 'native SaveKeyOnMarkedKeyable'], ['SaveKeyOnCharacterKeySet'], ['SaveKey']]);
