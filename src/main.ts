@@ -39,6 +39,7 @@ import { registerDuplicateRenderingSimulationScriptsCommands } from './commands/
 import { registerAddonDocWizardCommands } from './commands/addonDocWizard';
 import { registerUiGroupViewTaskCommands } from './commands/uiGroupViewTasks';
 import { registerFcurveCopyPasteRotationTaskCommands } from './commands/fcurveCopyPasteRotationTasks';
+import { registerMeshCurveStepTaskCommands } from './commands/meshCurveStepTasks';
 import { registerSyflexScriptsCommands } from './commands/syflexScripts';
 import { registerAddonScriptsCommands } from './commands/addonScripts';
 import { registerFcurveKeyTasksCommands } from './commands/fcurveKeyTasks';
@@ -155,6 +156,7 @@ registerOperatorsScriptsCommands(app);
 registerDuplicateRenderingSimulationScriptsCommands(app);
 registerAddonDocWizardCommands(app);
 registerUiGroupViewTaskCommands(app);
+registerMeshCurveStepTaskCommands(app);
 registerSyflexScriptsCommands(app);
 registerAddonScriptsCommands(app);
 registerFcurveKeyTasksCommands(app);
