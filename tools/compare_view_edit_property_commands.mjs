@@ -225,11 +225,11 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
     ck('SIInstantiate', 'instance content follows the master hierarchy and geometry', inst?.children.length === 1 && ic.children.length === 1 && ic.primitive.operators[0].master === sph && eq(pos(ic), pos(sph)), names(inst?.children));
     r = run('SIInstantiate', { InputObjs: [model], NbItems: 2, Name: 'copyOfModel' }); ck('SIInstantiate', 'NbItems / Name', ok(r) && r.v.length === 2 && r.v[0].name === 'copyOfModel' && r.v[1].name === 'copyOfModel1', names(r.v));
     A.undo(); ck('SIInstantiate', 'undo removes the instances', !allObjs().some(o => /^copyOfModel/.test(o.name)));
-    r = run('SIInstantiate', { InputObjs: [inst] }); ck('SIInstantiate', 'an instance cannot be instantiated', /itself an instance/.test(r.err ?? ''), r);
-    r = run('GetMaster', { InputObjs: [inst] }); ck('GetMaster', 'returns the master of an instance', ok(r) && r.v.length === 1 && r.v[0] === model, r);
-    A.select([cube]); r = run('GetMaster'); ck('GetMaster', 'default args on a non-instance: empty', ok(r) && r.v.length === 0, r);
+    r = run('SIInstantiate', { InputObjs: [inst] }); ck('SIInstantiate', 'an instance in the input is replaced by its master (CMD-B8e contract)', ok(r) && r.v.length === 1 && r.v[0].instanceMaster === model, r); A.undo();
+    r = run('GetMaster', { InputObjs: [inst] }); ck('GetMaster', 'returns the master of an instance (one object, CMD-B8e contract)', ok(r) && r.v === model, r);
+    A.select([cube]); r = run('GetMaster'); ck('GetMaster', 'default args on a non-instance: Value left unset', ok(r) && r.v === undefined, r);
     r = run('GetInstances', { InputObjs: [model] }); ck('GetInstances', 'returns the instances of a master', ok(r) && r.v.length === 1 && r.v[0] === inst, names(r.v));
-    r = run('GetInstances'); ck('GetInstances', 'default args on a non-master: empty', ok(r) && r.v.length === 0, r);
+    r = run('GetInstances'); ck('GetInstances', 'default args on a non-master: Value left unset', ok(r) && r.v === undefined, r);
     A.select([model]); r = run('Instance'); ck('Instance', 'default args: instance of the selected model, selected', ok(r) && r.v.length === 1 && r.v[0].instanceMaster === model && eq(names(A.selection), [r.v[0].name]), r);
     A.undo(); ck('Instance', 'undo removes it', run('GetInstances', { InputObjs: [model] }).v.length === 1);
     A.select([cube]); r = run('Instance'); ck('Instance', 'non-model: error', /is not a model/.test(r.err ?? ''), r);

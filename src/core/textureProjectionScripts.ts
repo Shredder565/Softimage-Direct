@@ -190,11 +190,12 @@ function vertsOfItem(it: X3DObject | Cluster | SubComponent, m: MeshData): numbe
 const KIND_ITEMS = ['UV', 'Planar XY', 'Planar YZ', 'Planar XZ', 'Cylindrical', 'Spherical', 'Cubic', 'Spatial', 'Camera Projection', 'Unique UVs'].map(k => ({ label: k, value: k }));
 const LABEL: Record<string, string> = { pnt: 'Point', edge: 'Edge', poly: 'Polygon', sample: 'Sample' };
 export function uniqueClusterName(o: X3DObject, base: string) { let n = base, i = 1; while (o.clusters.some(c => c.name === n)) n = `${base}${i++}`; return n; }
-/** The complete sample cluster of an object, created on demand (undoable). */
+/** The complete sample cluster of an object, created on demand (undoable). CMD-B8d shared facts: the last complete
+ *  texture-coordinate cluster is reused, a new one is named `Texture_Coordinates`. */
 export function sampleCluster(app: App, o: X3DObject): Cluster {
-  const have = o.clusters.find(c => c.compKind === 'sample' && c.isComplete); if (have) return have;
+  const have = o.clusters.filter(c => c.compKind === 'sample' && c.isComplete).pop(); if (have) return have;
   const m = meshOf(o); const n = m ? sampleOffsets(m).total : 0;
-  const c = new Cluster(uniqueClusterName(o, LABEL.sample), 'sample', new Set(Array.from({ length: n }, (_, i) => i))); c.set('alwayscomplete', true);
+  const c = new Cluster(uniqueClusterName(o, 'Texture_Coordinates'), 'sample', new Set(Array.from({ length: n }, (_, i) => i))); c.set('alwayscomplete', true);
   app.record('Create Cluster', () => o.addCluster(c), () => o.removeCluster(c)); return c;
 }
 /** Every UV property of an object's sample clusters. */
@@ -205,7 +206,7 @@ export function supportsOfProperty(o: X3DObject, p: Property): X3DObject[] {
   for (const s of ((p as any).supports ?? []) as X3DObject[]) if (!out.includes(s)) out.push(s);
   return out.filter(s => s.parentObj !== null);
 }
-function newUVProperty(app: App, o: X3DObject, name: string, kind: string, support: X3DObject | null, mainSupport = true): Property {
+export function newUVProperty(app: App, o: X3DObject, name: string, kind: string, support: X3DObject | null, mainSupport = true): Property {
   const p = new Property(name, 'uvprojection', [enumP('kind', kind, KIND_ITEMS, 'Projection'), str('support', support && mainSupport ? support.name : '', 'Texture Support', { readOnly: true }),
     num('urepeat', 1, 'U Repeat', { min: 0.01 }), num('vrepeat', 1, 'V Repeat', { min: 0.01 }), num('uoffset', 0, 'U Offset'), num('voffset', 0, 'V Offset'), bool('swapuv', false, 'Swap UV')]);
   (p as any).supports = support ? [support] : [];
@@ -215,11 +216,12 @@ function newUVProperty(app: App, o: X3DObject, name: string, kind: string, suppo
 /** The projection definition (`projdef`) of a UV property: U/V translation, scaling and rotation of the projection. */
 export function projDefOf(p: Property): ParamSet {
   let d = (p as any).projdef as ParamSet | undefined;
-  if (!d) {
-    d = new ParamSet('projdef', 'projdef', [num('projtrsu', 0, 'Translation U'), num('projtrsv', 0, 'Translation V'), num('projsclu', 1, 'Scaling U'), num('projsclv', 1, 'Scaling V'), num('projrotu', 0, 'Rotation U'), num('projrotv', 0, 'Rotation V')]);
-    d.parent = p; (p as any).projdef = d;
-  }
+  if (!d) { d = makeProjDef('projdef'); d.parent = p; (p as any).projdef = d; }
   return d;
+}
+/** A projection definition object (CMD-B8d names it `<PropertyName>_Def`; one definition can serve several UV properties). */
+export function makeProjDef(name: string): ParamSet {
+  return new ParamSet(name, 'projdef', [num('projtrsu', 0, 'Translation U'), num('projtrsv', 0, 'Translation V'), num('projsclu', 1, 'Scaling U'), num('projsclv', 1, 'Scaling V'), num('projrotu', 0, 'Rotation U'), num('projrotv', 0, 'Rotation V')]);
 }
 /** Per-sample UVs of one UV property (edited UVs when present, else the projection through its support). */
 export function propertyUVs(o: X3DObject, p: Property): Float32Array | null {
@@ -259,15 +261,28 @@ export function scaleUVs(app: App, p: Property, samples: number[], su: number, s
 }
 
 // ------------------------------------------------------------------ task stand-ins (call shapes of the note; behaviour Q4)
-/** SIFindUniqueTextureName: a UV property name not yet used on any of the objects. */
+// Since row CMD-B8d the script commands run the task commands of src/commands/primTasksTexture.ts. That file builds on
+// findUniqueTextureName, makeSupport, newUVProperty, createTextureBasicGeo (support fit and UV mapping) and
+// getTextureUVDomains below; cameraTextureProj, connectToSupport, createTextureSpatialTask and
+// createTextureUVDomainTask are no longer called by the commands and stay only as `Application.textureProjection` helpers.
+/** The unique-name rule of CMD-B8d (docs/ghidra/cmd-b8d-primtasks-texture-binary.md, "Unique-name rule"): every
+ *  texture-coordinate (sample) cluster of every object is a naming scope; the name is passed through the scopes until
+ *  a whole pass leaves it unchanged. An empty proposal is `Texture_Projection`; without any scope the proposal is
+ *  returned as it is. */
 export function findUniqueTextureName(objs: X3DObject[], proposed: string): string {
-  const base = proposed || 'Texture_Projection'; // inferred: name used when none is proposed
-  const taken = new Set<string>(); for (const o of objs) for (const c of o.clusters) for (const p of c.properties) taken.add(p.name);
-  if (!taken.has(base)) return base;
-  let i = 1; while (taken.has(`${base}${i}`)) i++; return `${base}${i}`; // inferred: numbering scheme
+  let name = proposed || 'Texture_Projection';
+  const scopes: Cluster[] = []; for (const o of objs) for (const c of o.clusters) if (c.compKind === 'sample' && !scopes.includes(c)) scopes.push(c);
+  if (!scopes.length) return name;
+  const uniqueIn = (c: Cluster, n: string) => { // inferred: the suffix scheme (a trailing number is counted up: base, base1, base2...)
+    const taken = new Set(c.properties.map(p => p.name)); if (!taken.has(n)) return n;
+    const m = /^(.*?)(\d+)$/.exec(n); const stem = m ? m[1] : n;
+    let i = m ? Number(m[2]) + 1 : 1; while (taken.has(`${stem}${i}`)) i++; return `${stem}${i}`;
+  };
+  for (let pass = 0; pass < 1000; pass++) { const before = name; for (const c of scopes) name = uniqueIn(c, name); if (name === before) break; }
+  return name;
 }
 
-const KIND_OF_TYPE: Record<number, string> = { [siProjPlanar]: 'Planar XY', [siProjCylindrical]: 'Cylindrical', [siProjSpherical]: 'Spherical', [siProjLollipop]: 'Spherical', [siProjSpatial]: 'Spatial', [siProjCubic]: 'Cubic' };
+export const KIND_OF_TYPE: Record<number, string> = { [siProjPlanar]: 'Planar XY', [siProjCylindrical]: 'Cylindrical', [siProjSpherical]: 'Spherical', [siProjLollipop]: 'Spherical', [siProjSpatial]: 'Spatial', [siProjCubic]: 'Cubic' };
 const SHAPE_OF_TYPE: Record<number, string> = { [siProjPlanar]: 'Square', [siProjCylindrical]: 'Cylinder', [siProjSpherical]: 'Sphere', [siProjLollipop]: 'Sphere', [siProjSpatial]: 'Cube', [siProjCubic]: 'Cube' };
 const TYPE_LABEL: Record<number, string> = { [siProjPlanar]: 'Planar', [siProjCylindrical]: 'Cylindrical', [siProjSpherical]: 'Spherical', [siProjLollipop]: 'Lollipop', [siProjSpatial]: 'Spatial', [siProjCubic]: 'Cubic' };
 const PLANE_LABEL = ['XY', 'XZ', 'YZ'];
@@ -279,7 +294,7 @@ function setLocalFromGlobal(o: X3DObject, parent: X3DObject, global: THREE.Matri
   l.set('posx', p.x); l.set('posy', p.y); l.set('posz', p.z); l.set('rotx', e.x * r); l.set('roty', e.y * r); l.set('rotz', e.z * r); l.set('sclx', s.x); l.set('scly', s.y); l.set('sclz', s.z);
 }
 /** A texture support object: an implicit shape spanning -1..1 in its own frame (GeoX/Y/Z = 2), fitted by its transform. */
-function makeSupport(app: App, name: string, type: number, plane: number, parent: X3DObject, frame: THREE.Matrix4, mn: number[], mx: number[], visible: boolean): X3DObject {
+export function makeSupport(app: App, name: string, type: number, plane: number, parent: X3DObject, frame: THREE.Matrix4, mn: number[], mx: number[], visible: boolean): X3DObject {
   const sup = makeImplicit(app.scene.uniqueName(name || 'Texture_Support'), SHAPE_OF_TYPE[type] ?? 'Square'); // inferred: default support name
   (sup as any).type = 'texturesupport'; (sup as any).projectionKind = type === siProjPlanar ? `Planar ${PLANE_LABEL[plane] ?? 'XY'}` : TYPE_LABEL[type]; (sup as any).projectionType = type; (sup as any).projectionPlane = plane;
   const prim = sup.primitive!; prim.set('size', 2);
