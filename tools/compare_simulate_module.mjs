@@ -178,11 +178,17 @@ if (sw.module !== 'Simulate' || sw.select !== 'Simulate') {
   diffs.push(`SwitchToolbar Target=5 → ${sw.module}/${sw.select}`);
 } else notes.push('SwitchToolbar Target=5 → Simulate');
 
-// SyCreateCloth → ApplyCloth: C3DClothProp params + C3DClothOp stack chrome (no Syflex GDI)
+// ApplyCloth: C3DClothProp params + C3DClothOp stack chrome (no Syflex GDI).
+// SyCreateCloth no longer routes to ApplyCloth: since CMD-B7b (docs/ghidra/cmd-b7b-syflex-scripts.md) it follows the
+// cloth.vbs contract (ClothCls cluster, MassMap / StiffMap, syCloth + syProperties stand-in operators); its full check
+// is tools/compare_syflex_script_commands.mjs. Here: it is registered and applies a syCloth operator.
 const cloth = await page.evaluate(() => {
   window.Application.run('CreatePrim', { PresetObj: 'Grid', GeometryType: 'MeshSurface' });
   const grid = window.Application.selectedObjects?.[0];
   window.Application.run('SyCreateCloth', {});
+  const syClothOp = !!grid?.primitive?.operators?.some?.(op => op.type === 'syCloth');
+  window.Application.select([grid]);
+  window.Application.run('ApplyCloth', {});
   const sel = window.Application.selection || [];
   const clothProp = [...sel].find?.(x => x?.type === 'cloth')
     || grid?.properties?.find?.(p => p.type === 'cloth')
@@ -195,6 +201,7 @@ const cloth = await page.evaluate(() => {
   const opTabs = (clothOp?.layout || []).map(t => t.tab).filter(Boolean);
   return {
     hasSy: window.Application.commands.has('SyCreateCloth'),
+    syClothOp,
     hasApply: window.Application.commands.has('ApplyCloth'),
     clothProp: !!clothProp,
     clothOp: !!clothOp,
@@ -209,8 +216,10 @@ const cloth = await page.evaluate(() => {
 });
 if (!cloth.hasSy || !cloth.hasApply) diffs.push(`cloth cmds Sy=${cloth.hasSy} Apply=${cloth.hasApply}`);
 else notes.push('SyCreateCloth + ApplyCloth present');
-if (!cloth.clothProp) diffs.push('SyCreateCloth did not create cloth property');
-else notes.push('SyCreateCloth → C3DClothProp via ApplyCloth');
+if (!cloth.syClothOp) diffs.push('SyCreateCloth did not apply a syCloth operator (CMD-B7b contract)');
+else notes.push('SyCreateCloth → syCloth operator (CMD-B7b contract)');
+if (!cloth.clothProp) diffs.push('ApplyCloth did not create cloth property');
+else notes.push('ApplyCloth → C3DClothProp');
 if (!cloth.clothOp) diffs.push('ApplyCloth missing clothop stack chrome');
 else notes.push('ApplyCloth → C3DClothOp on stack');
 if (!cloth.hasMass || !cloth.hasShear) diffs.push(`cloth prop sns Mass=${cloth.hasMass} Shear=${cloth.hasShear}`);

@@ -52,8 +52,9 @@ const DEFAULT_ERRORS = {
   SIAddToGroupLowLevel: /^not yet attested: the pick session that asks for the Target group/,
   AddGroup: /^not yet attested: the pick session that asks for the Target model/,
   MoveObjectToLayer: /^not yet attested: the pick session that asks for the Target layer/,
-  SetInstanceGroup: /^SetInstanceGroup needs a hair Object$/,
-  RemoveInstanceGroup: /^RemoveInstanceGroup needs an Object$/,
+  // CMD-B7a (docs/ghidra/cmd-b7a-uitasks-group-view-binary.md) replaced the inferred registrations: an empty Object list is 0x8000ffff
+  SetInstanceGroup: /^SetInstanceGroup: the Object list is empty \(status 0x8000ffff\)$/,
+  RemoveInstanceGroup: /^RemoveInstanceGroup: the Object list is empty \(status 0x8000ffff\)$/,
 };
 
 const all = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../data/commands_full.json'), 'utf8'));
@@ -480,8 +481,8 @@ const got = await page.evaluate(({ COMMANDS }) => {
   A.undo();
 
   reset(); const hair = mk('hair_emitter'); reset();
-  eq('SetInstanceGroup: object must be a hair object', run('SetInstanceGroup', { Object: 'cube', Group: 'GA' }).err, 'cube is not a hair object');
-  eq('SetInstanceGroup: needs a group', run('SetInstanceGroup', { Object: 'hair_emitter' }).err, 'SetInstanceGroup needs a Group');
+  eq('SetInstanceGroup: object must be a hair object', run('SetInstanceGroup', { Object: 'cube', Group: 'GA' }).err, 'SetInstanceGroup: cube is not a group container (status 0x80070057)');
+  eq('SetInstanceGroup: needs a group', run('SetInstanceGroup', { Object: 'hair_emitter' }).err, 'SetInstanceGroup: the Group list is empty (status 0x80070057)');
   { const l = A.log.length; run('SetInstanceGroup', { Object: 'hair_emitter', Group: 'GA' });
     eq('SetInstanceGroup: stores the instance group, logs the unattested instancing', [hair.instanceGroup === GA, logFrom(l).some(t => /^SetInstanceGroup: hair_emitter instance group = GA; not yet attested: instantiation/.test(t))], [true, true]);
     undoRedo('SetInstanceGroup', () => hair.instanceGroup?.name ?? null, null, 'GA'); }
