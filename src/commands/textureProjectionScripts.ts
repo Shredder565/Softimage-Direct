@@ -1,14 +1,16 @@
 // Ledger row CMD-12a. Brief: docs/ghidra/cmd-12a-texture-projection-scripts.md, "Wire contract". Original code written from that contract only.
 //
 // 12 script commands that create, connect, fit and show texture projections (UV properties) and their texture
-// supports. The model half and the stand-ins for the C++ texture tasks (call shapes attested, behaviour open: Q4) are
-// in src/core/textureProjectionScripts.ts.
+// supports. The model half is in src/core/textureProjectionScripts.ts. The C++ texture tasks the scripts call
+// (SIFindUniqueTextureName, SICreateTextureBasicGeo, SICameraTextureProj, SIConnectToSupport, SICreateTextureSpatial,
+// SICreateTextureUVDomain, SIGetTextureUVDomains, ChangeUVInput) are the commands of row CMD-B8d
+// (src/commands/primTasksTexture.ts) and are run through the command bus.
 //
 // Conventions / known gaps (each is also logged or commented where it bites):
 //  - In/out and output arguments are handed back as a plain object keyed by argument name (the output-argument list
 //    of a scripting caller); commands without any output argument return nothing.
-//  - The texture tasks are stand-ins built on this build's projection model; where a stand-in cannot do something
-//    sensible it writes a "not yet attested" line to the log.
+//  - The texture tasks are built on this build's projection model; where a task cannot do something sensible it
+//    writes a "not yet attested" line to the log.
 //  - The contour stretching operator is created, connected and parameterised, but its UV solve belongs to the
 //    operator's own row: the UVs are left as they are and the log says so.
 //  - The name is registered once (function entry: returns the operators). The interactive entry (corner picking,
@@ -35,13 +37,12 @@ function globalScale(o: X3DObject): [number, number, number] {
 
 // ------------------------------------------------------------------ basic projection per object (shared helper)
 function basicProjectionPerObject(app: App, command: string, items: Item[], supportName: string, proposed: string, parenting: boolean, type: number, plane: number, fitting: number): string {
-  const owners: X3DObject[] = []; for (const it of items) { const o = TP.ownerOf(it); if (o && !owners.includes(o)) owners.push(o); }
-  const unique = TP.findUniqueTextureName(owners, proposed);
+  const unique = String(app.run('SIFindUniqueTextureName', { InputObj: items, PropertyName: proposed }).PropertyName);
   for (const it of items) {
     // parent of the new support: the item itself; a polygon cluster stands for its owning 3D object
     let parent: X3DObject | null = null;
     if (parenting) parent = it instanceof X3DObject ? it : TP.ownerOf(it); // inferred: other non-object items also use their owning object
-    TP.createTextureBasicGeo(app, { command, input: [it], supportName, propertyName: unique, parent, type, plane, visible: true, existing: null, fitting });
+    app.run('SICreateTextureBasicGeo', { InputObj: [it], SupportName: supportName, PropertyName: unique, Parent: parent, ProjectionType: type, ProjectionPlane: plane, Visibility: true, Fitting: fitting });
   }
   return unique;
 }
@@ -214,7 +215,7 @@ export function registerTextureProjectionScriptCommands(app: App) {
       // 1. parent of the support: the first input item, else the scene root
       const parent = truthy(a.Parenting) ? (TP.ownerOf(items[0]) ?? app.scene.root) : app.scene.root; // inferred: a component item stands for its object
       // 2. one support for the whole input, projected into the existing property
-      const { support } = TP.createTextureBasicGeo(app, { command: 'CreateSubprojection', input: items, supportName: text(a.SupportName), propertyName: '', parent, type, plane, visible: true, existing: prop, fitting });
+      const support = app.run('SICreateTextureBasicGeo', { InputObj: items, SupportName: text(a.SupportName), PropertyName: '', Parent: parent, ProjectionType: type, ProjectionPlane: plane, Visibility: true, TextureProjection: prop, Fitting: fitting })['3DObjTexture'] as X3DObject | null;
       const o = TP.ownerOf(prop); const m = TP.meshOf(o);
       const samples = () => { const s = new Set<number>(); if (o && m) for (const it of items) if (TP.ownerOf(it) === o && (it instanceof X3DObject || it instanceof Cluster || TP.isSubComponent(it))) for (const x of TP.samplesOfItem(it, m)) s.add(x); return [...s]; };
       // 3. aspect correction
@@ -248,8 +249,9 @@ export function registerTextureProjectionScriptCommands(app: App) {
     execute(app, a) {
       const items = TP.resolveItems(app, a.InputObjs);
       const out: Record<string, any> = { Name: a.Name, Camera: a.Camera };
-      const r = TP.cameraTextureProj(app, 'CameraTextureProj', items, text(a.Name), a.Camera);
-      if (!r) return out;
+      const task = app.run('SICameraTextureProj', { InputObj: items, PropertyName: text(a.Name), PrimObjTexture: a.Camera });
+      if (!task || !task['3DObjCamera']) return out; // the task returned nothing
+      const r = { camera: task['3DObjCamera'] as X3DObject, PropertyName: String(task.PropertyName) };
       out.Camera = r.camera; out.Name = r.PropertyName;
       // swim: for every input that is a 3D object, the first property of that name on each of its sample clusters
       for (const it of items) {
@@ -257,8 +259,7 @@ export function registerTextureProjectionScriptCommands(app: App) {
         for (const c of it.clusters) {
           if (c.compKind !== 'sample') continue;
           const p: any = c.properties.find(x => x.name === r.PropertyName); if (!p) continue;
-          const old = p.uvInputAction;
-          app.record('Swim UV', () => { p.uvInputAction = 0; p.swim = true; }, () => { p.uvInputAction = old; p.swim = old === 0; }); // siChangeUVInputActionSwim = 0; inferred: recorded on the property (this build has no UV operator stack)
+          app.run('ChangeUVInput', { TextureProjection: p, MoveAction: 0 }); // SwimUVW: siChangeUVInputActionSwim = 0
         }
       }
       return out;
@@ -271,8 +272,8 @@ export function registerTextureProjectionScriptCommands(app: App) {
     args: [{ name: 'InputObjs' }, { name: 'Name', default: '' }, { name: 'TextureSupport', default: '' }],
     execute(app, a) {
       const all = TP.resolveItems(app, a.InputObjs); const sup = TP.resolveObject(app, a.TextureSupport);
-      const r = TP.connectToSupport(app, 'ConnectToTextureProj', all.filter(it => it !== sup), text(a.Name), a.TextureSupport);
-      return r ? { Name: r.PropertyName, TextureSupport: r.support } : { Name: a.Name, TextureSupport: a.TextureSupport };
+      const r = app.run('SIConnectToSupport', { InputObj: all.filter(it => it !== sup), PropertyName: text(a.Name), PrimObjTexture: a.TextureSupport });
+      return r && r['3DObjTexture'] ? { Name: r.PropertyName, TextureSupport: r['3DObjTexture'] } : { Name: a.Name, TextureSupport: a.TextureSupport };
     },
   });
 
@@ -281,7 +282,7 @@ export function registerTextureProjectionScriptCommands(app: App) {
     description: 'Spatial texture coordinates taken from the object\'s own geometry.',
     args: [{ name: 'InputObjs' }, { name: 'Name', default: '' }],
     execute(app, a) {
-      const r = TP.createTextureSpatialTask(app, TP.resolveItems(app, a.InputObjs), text(a.Name));
+      const r = app.run('SICreateTextureSpatial', { InputObj: TP.resolveItems(app, a.InputObjs), PropertyName: text(a.Name) });
       return { Name: r ? r.PropertyName : a.Name }; // the created object reported by the task is discarded
     },
   });
@@ -293,7 +294,7 @@ export function registerTextureProjectionScriptCommands(app: App) {
     execute(app, a) {
       const supportName = text(a.SupportName); let propertyName = text(a.PropertyName);
       if (!propertyName && supportName) propertyName = supportName;
-      TP.createTextureUVDomainTask(app, 'CreateTextureUVDomain', 'NurbsTextureCtrl', TP.resolveItems(app, a.InputObjs), supportName, propertyName, true);
+      app.run('SICreateTextureUVDomain', { PresetObj: 'NurbsTextureCtrl', InputObj: TP.resolveItems(app, a.InputObjs), SupportName: supportName, PropertyName: propertyName, Visibility: true });
       return { SupportName: supportName, PropertyName: propertyName }; // the names are not read back from the task
     },
   });
@@ -323,7 +324,7 @@ export function registerTextureProjectionScriptCommands(app: App) {
       args: [{ name: 'InputObjs' }, { name: 'Type', default: type }],
       execute(app, a) {
         const t = Number(a.Type); // the value, not the command name, decides
-        for (const sup of TP.getTextureUVDomains(TP.resolveItems(app, a.InputObjs))) {
+        for (const sup of (app.run('SIGetTextureUVDomains', { InputObjs: TP.resolveItems(app, a.InputObjs) }) ?? []) as X3DObject[]) {
           const p = sup.property('visibility')?.get('viewvis'); if (!p) continue;
           app.setParam(p, t === -1 ? !p.value : t !== 0, 'SetValue'); // inferred: toggled directly (this build's ToggleValue is a view-toggle stand-in); render visibility untouched
         }

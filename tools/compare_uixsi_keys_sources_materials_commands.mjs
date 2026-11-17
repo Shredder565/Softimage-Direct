@@ -441,7 +441,7 @@ ok('DeleteUnusedMaterials defaults: empty selection is not a material library', 
 eq('DeleteAllUnusedMaterials defaults: Nothing to delete', [D.DeleteAllUnusedMaterials.r, D.DeleteAllUnusedMaterials.log], [NONE, ['info:Nothing to delete']]);
 ok('MergeScene defaults: SIMergeScene / file browser flagged not yet attested', D.MergeScene.r.v === '<none>' && D.MergeScene.log.some(l => /not yet attested: SIMergeScene and its file browser/.test(l)), D.MergeScene);
 eq('CreateCurve defaults: an empty curve object, handed back as the Value output', [D.CreateCurve.n, D.CreateCurve.made, D.CreateCurve.calls], [1, ['crvlist'], ['SICreateCurve (stand-in)', 'SISetCurvePoints (stand-in)']]);
-ok('AssembleNurbsMesh defaults: no surface mesh, flagged not yet attested', D.AssembleNurbsMesh.r.v === '<none>' && D.AssembleNurbsMesh.log.some(l => /not yet attested: SIAssembleNurbsMesh without a surface mesh/.test(l)) && D.AssembleNurbsMesh.made.length === 0, D.AssembleNurbsMesh);
+ok('AssembleNurbsMesh defaults: no surface mesh, SIAssembleNurbsMesh creates nothing (CMD-B8e contract)', D.AssembleNurbsMesh.r.v === '<none>' && !D.AssembleNurbsMesh.r.err && D.AssembleNurbsMesh.made.length === 0, D.AssembleNurbsMesh);
 ok('AddComponentTool defaults: empty selection = SplitEdgeTool', D.AddComponentTool.calls.includes('SplitEdgeTool') && /split/i.test(D.AddComponentTool.tool ?? ''), D.AddComponentTool);
 eq('ToggleContinuousDraw defaults: Views.ContinuousDraw negated, one SetValue', [D.ToggleContinuousDraw.r, D.ToggleContinuousDraw.views, D.ToggleContinuousDraw.calls], [NONE, { ContinuousDraw: true }, ['GetValue', 'SetValue']]);
 
@@ -569,8 +569,8 @@ eq('ApplyPath UI without a user session: Cancel (inferred), set deleted', pa.uiB
 // ---- AssembleNurbsMesh
 const as = got.assemble;
 eq('AssembleNurbsMesh: test surfaces', as.inputs, [true, true]);
-eq('AssembleNurbsMesh scripted: assembled object selected and auto-inspected (stand-in for SIAssembleNurbsMesh)', [as.run, as.made],
-  [[NONE], [1, true, true, 'AutoInspect', true, ['SIAssembleNurbsMesh (stand-in)', 'SelectObj', 'AutoInspect'], []]]);
+eq('AssembleNurbsMesh scripted: assembled object selected and auto-inspected (through SIAssembleNurbsMesh, row CMD-B8e)', [as.run, as.made],
+  [[NONE], [1, true, true, 'AutoInspect', true, ['SIAssembleNurbsMesh', 'SelectObj', 'AutoInspect'], []]]);
 eq('AssembleNurbsMesh dialog entry: no surface mesh = silent', as.uiNoSurface, [NONE, false]);
 eq('AssembleNurbsMesh dialog entry: the four dialog values', as.uiDialog, [true, ['Tolerance', 'CopyClusterFlag', 'CopyMaterialFlag', 'CenterGeomCenterFlag']]);
 eq('AssembleNurbsMesh dialog Cancel: silent, no error', as.uiCancel, [NONE, 0]);
@@ -602,5 +602,5 @@ if (diffs.length) {
 }
 console.log(`OK CMD-B6a uixsi keys / sources / materials commands: ${checks} checks, ${NAMES.length} commands exercised (contract tables + registry dump; no XSIBATCH golden yet)`);
 console.log('   fully wired: AddToContainer / RemoveFromContainer (group targets), SaveActionKey, SaveKeyOnMarkedKeyable (Q1 inferred), DeleteUnusedImageClips, DeleteUnusedImageSources, DeleteUnusedAnimationSources, DeleteUnusedMaterials, DeleteAllUnusedMaterials, Align (scripted + UI entry), ApplyPath (scripted + UI entry)');
-console.log('   partly wired: InspectMaterial (SIGetMaterialShader stand-in), Store...Properties x3 (SIStoreProp stand-in, Q9), SaveShapeKey (solo-index fix: combiner not modelled), OffsetValueMap / SaveOffsetKeys (native twins are placeholders), DeleteUnusedCacheSources / DeleteUnusedAudioSources (source kinds not modelled), CreateCurve (stand-ins; interpolated type), AssembleNurbsMesh (SIAssembleNurbsMesh stand-in; dialog layout Q7), AddComponentTool (AddPointOnCurveTool not on the bus), ToggleContinuousDraw (Views object stand-in)');
+console.log('   partly wired: InspectMaterial (SIGetMaterialShader stand-in), Store...Properties x3 (SIStoreProp stand-in, Q9), SaveShapeKey (solo-index fix: combiner not modelled), OffsetValueMap / SaveOffsetKeys (native twins are placeholders), DeleteUnusedCacheSources / DeleteUnusedAudioSources (source kinds not modelled), CreateCurve (stand-ins; interpolated type), AssembleNurbsMesh (SIAssembleNurbsMesh of CMD-B8e: assembly itself not attested; dialog layout Q7), AddComponentTool (AddPointOnCurveTool not on the bus), ToggleContinuousDraw (Views object stand-in)');
 console.log('   stand-in / not yet attested: MergeScene (SIMergeScene not on the bus), folder targets of Add/RemoveFromContainer (MoveToFolder / RemoveFromFolder)');
