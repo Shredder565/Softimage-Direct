@@ -186,39 +186,33 @@ const c = await page.evaluate(() => {
   const res = [...NAV, 'DeletePaintShapeKey', 'SavePaintShapeKey'].map(n => T.run(n));
   const info = T.logFrom(m).filter(l => l.startsWith('info:'));
   out.bare = { res, frame: app.anim.frame, notYet: info.filter(l => /not yet attested/.test(l)).length, q: info.map(l => /Q[12]\)$/.test(l)) };
-  // ---- with hooks (the lookups here are this script's stand-in for the native commands)
-  const keys = [3, 10, 20].map(t => ({ name: `k${t}`, time: t })); const calls = [];
-  F.lookup = (which, shape, time) => {
-    calls.push([which, Array.isArray(shape) ? shape.map(x => x?.name ?? x) : shape, time ?? null]);
-    if (!keys.length) return null;
-    if (which === 'First') return keys[0];
-    if (which === 'Last') return keys[keys.length - 1];
-    if (which === 'Prev') return [...keys].reverse().find(k => k.time < time) ?? null;
-    if (which === 'Next') return keys.find(k => k.time > time) ?? null;
-    return [...keys].sort((x, y) => Math.abs(x.time - time) - Math.abs(y.time - time))[0];
-  };
+  // ---- with the native lookups of CMD-B9a (Get<which>PaintShapeKey on the stand-in paint model, app.xsiPaint)
+  const XP = app.xsiPaint; const shape = XP.createShape('ColorShape', 'shapeX'); const shapeName = shape.name;
+  for (const t of [3, 10, 20]) XP.addShapeKey(shape, t);
   const frames = [];
-  T.run('FirstPaintShapeKey'); frames.push(app.anim.frame);
-  T.run('LastPaintShapeKey', { Shape: 'shapeX' }); frames.push(app.anim.frame);
-  T.run('PrevPaintShapeKey'); frames.push(app.anim.frame);                 // Time defaults to the current frame (20) -> 10
-  T.run('NextPaintShapeKey', { Time: 3 }); frames.push(app.anim.frame);    // -> 10
-  T.run('ClosestPaintShapeKey', { Time: 17 }); frames.push(app.anim.frame); // -> 20
-  T.run('PrevPaintShapeKey', { Time: 1 }); frames.push(app.anim.frame);    // no key -> unchanged
-  out.nav = { frames, calls: calls.slice() };
+  T.run('FirstPaintShapeKey', { Shape: shape }); frames.push(app.anim.frame);
+  T.run('LastPaintShapeKey', { Shape: shapeName }); frames.push(app.anim.frame);        // object argument by name
+  T.run('PrevPaintShapeKey', { Shape: shape }); frames.push(app.anim.frame);            // Time defaults to the current frame (20) -> 10
+  T.run('NextPaintShapeKey', { Shape: shape, Time: 3 }); frames.push(app.anim.frame);   // -> 10
+  T.run('ClosestPaintShapeKey', { Shape: shape, Time: 17 }); frames.push(app.anim.frame); // -> 20
+  T.run('PrevPaintShapeKey', { Shape: shape, Time: 1 }); frames.push(app.anim.frame);   // nothing earlier: the native lookup returns the first key -> 3
+  const empty = XP.createShape('ColorShape', 'noKeys'); app.anim.frame = 6;
+  T.run('FirstPaintShapeKey', { Shape: empty }); frames.push(app.anim.frame);           // no key -> unchanged
+  out.nav = { frames };
   // ---- delete: only when the timeline sits on the key
-  const deleted = []; F.deleteKey = (k) => { deleted.push(k.name); keys.splice(keys.indexOf(k), 1); };
+  const deleted = []; F.deleteKey = (k) => { deleted.push(k.Time); shape.keys.splice(shape.keys.indexOf(k), 1); };
   app.anim.frame = 11; m = app.log.length;
-  T.run('DeletePaintShapeKey', { Time: 10 });
+  T.run('DeletePaintShapeKey', { Shape: shape, Time: 10 });
   const off = [deleted.slice(), T.logFrom(m).filter(l => l.startsWith('info:'))];
   app.anim.frame = 10; m = app.log.length;
-  T.run('DeletePaintShapeKey', { Time: 11 });
-  out.del = { off, on: [deleted.slice(), T.logFrom(m).filter(l => l.startsWith('info:')), keys.map(k => k.time)] };
+  T.run('DeletePaintShapeKey', { Shape: shape, Time: 11 });
+  out.del = { off, on: [deleted.slice(), T.logFrom(m).filter(l => l.startsWith('info:')), shape.keys.map(k => k.Time).sort((x, y) => x - y)] };
   // ---- save
   const saves = []; F.saveNative = (shape, t) => saves.push([Array.isArray(shape) ? shape.map(x => x?.name ?? x) : shape, t]);
   app.anim.frame = 7; m = app.log.length;
-  const sv = [T.run('SavePaintShapeKey', { Shape: 'shapeX', Time: 3 }), T.run('SavePaintShapeKey')];
+  const sv = [T.run('SavePaintShapeKey', { Shape: shapeName, Time: 3 }), T.run('SavePaintShapeKey')];
   out.save = { sv, saves, frame: app.anim.frame, notYet: T.logFrom(m).filter(l => /not yet attested/.test(l)).length };
-  F.lookup = null; F.saveNative = null; F.deleteKey = null;
+  F.saveNative = null; F.deleteKey = null;
   // ---- manipulator tool
   const mt = T.run('PaintShapeManipTool');
   out.manip = [mt, F.marking, F.PaintTool.val('CurrentTool')];
@@ -308,13 +302,12 @@ eq('A10: deletes the current (sub) key set and clears the scene parameter; undo 
 eq('A10 on a top-level key set: nested sets go with it, no fallback', [b.del.d2, b.del.all, b.del.cur, b.del.rootHas], [NONE, V(['CharKeySet', 'MSub']), '', false]);
 
 // ---- B
-eq('B without the native side: no throw, timeline unchanged, one "not yet attested" line (Q1/Q2) per command', c.bare,
-  { res: Array(7).fill(NONE), frame: 4, notYet: 7, q: Array(7).fill(true) });
-eq('B navigation: the timeline jumps to the returned key; no key = no change', c.nav.frames, [3, 20, 10, 10, 20, 20]);
-eq('B navigation: lookup, Shape (default selection) and Time (default current frame) passed to the native lookup', c.nav.calls,
-  [['First', ['cubeA'], null], ['Last', 'shapeX', null], ['Prev', ['cubeA'], 20], ['Next', ['cubeA'], 3], ['Closest', ['cubeA'], 17], ['Prev', ['cubeA'], 1]]);
+const NOSHAPE = { err: 'Argument 1 must be a 2D paint shape (status 0x80070057)' };
+eq('B with a 3D object selected: the six lookups fail in the native Get...PaintShapeKey (0x80070057), timeline unchanged; SavePaintShapeKey logs "not yet attested" (Q1)', c.bare,
+  { res: [NOSHAPE, NOSHAPE, NOSHAPE, NOSHAPE, NOSHAPE, NOSHAPE, NONE], frame: 4, notYet: 1, q: [true] });
+eq('B navigation through the native lookups: the timeline jumps to the returned key; shape without keys = no change', c.nav.frames, [3, 20, 10, 10, 20, 3, 6]);
 eq('B6: closest key not on the current frame: nothing deleted, nothing logged', c.del.off, [[], []]);
-eq('B6: closest key on the current frame (Time argument ignored for the test): logged and deleted', c.del.on, [['k10'], ['info:Deleting key: k10'], [3, 20]]);
+eq('B6: closest key on the current frame (Time argument ignored for the test): logged and deleted', c.del.on, [[10], ['info:Deleting key: FxPaintShapeKey at 10'], [3, 20]]);
 eq('B7: native save called with Shape and the key time; timeline left on the key time', c.save, { sv: [NONE, NONE], saves: [['shapeX', 7], [['cubeA'], 7]], frame: 7, notYet: 0 });
 eq('B8: marking text and select-shape tool id 80', c.manip, [NONE, 'PosX,PosY,SclX,SclY,PivX,PivY,RotZ', 80]);
 
