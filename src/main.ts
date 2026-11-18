@@ -47,6 +47,7 @@ import { registerFcurveLayerMarkingCommands } from './commands/fcurveLayerMarkin
 import { registerPrimTasksCommands } from './commands/primTasksPrims';
 import { registerXsiPaintTaskCommands } from './commands/xsiPaintTasks';
 import { registerPhonemeSpeechTaskCommands } from './commands/phonemeSpeechTasks';
+import { registerFxCoreTaskCommands } from './commands/fxCoreTasks';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -167,6 +168,7 @@ registerFcurveCopyPasteRotationTaskCommands(app);
 registerPrimTasksCommands(app);
 registerXsiPaintTaskCommands(app);
 registerPhonemeSpeechTaskCommands(app);
+registerFxCoreTaskCommands(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);
