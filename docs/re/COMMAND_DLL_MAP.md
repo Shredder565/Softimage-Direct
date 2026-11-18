@@ -576,6 +576,139 @@ of the command's contract (see the note). No code is recorded here.
 | `SetFxTrackerSearchArea` | `Application\bin\fxcore.dll` | Do `0x18007d1c0` -> workers `0x18007d8c0` (point), `0x18007d7f0` (template), `0x18007d720` (search) -> per-value helper `0x18007d3f0`, then `0x18007d2f0` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
 | `SetFxTrackerTemplateArea` | `Application\bin\fxcore.dll` | Do `0x18007d1c0` -> workers `0x18007d8c0` (point), `0x18007d7f0` (template), `0x18007d720` (search) -> per-value helper `0x18007d3f0`, then `0x18007d2f0` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
 | `SetFxTrackerTrackedPoint` | `Application\bin\fxcore.dll` | Do `0x18007d1c0` -> workers `0x18007d8c0` (point), `0x18007d7f0` (template), `0x18007d720` (search) -> per-value helper `0x18007d3f0`, then `0x18007d2f0` | CMD-B9g | [cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md](../ghidra/cmd-b9g-fxcore-fxop-shapepoints-tracker-binary.md) | SPEC |
+| `Particle Type Pop-up Menu` | `Application\bin\tasks.dll` | `Do 0x180061930 -> menu 0x180061890, filler 0x180061490` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `SIMatchSubComponent` | `Application\bin\tasks.dll` | `Do 0x180038650 -> 0x180038600` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `CopyCacheFiles` | `Application\bin\tasks.dll` | `Do 0x1800760d0 -> worker 0x1800744a0` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `Goal Pop-up Menu` | `Application\bin\tasks.dll` | `Do 0x180061930 -> menu 0x180061890, filler 0x180061020` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `RenameCPSetLayoutItems` | `Application\bin\tasks.dll` | `Do 0x180064890 (body 0x1800648c0)` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `CreateObjectFromPreset` | `Application\bin\tasks.dll` | `Do 0x18006f810 -> worker 0x18006f630` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `ObjImport` | `Application\bin\tasks.dll` | `Do 0x180033b90 -> bridge 0x180032fc0 -> XSIOnCommand loader 0x180033430` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `SIObjExport` | `Application\bin\tasks.dll` | `Do 0x180033b90 -> bridge 0x180032fc0 -> XSIOnCommand loader 0x180033430` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `FindObjects` | `Application\bin\tasks.dll` | `Do 0x180035510 -> 0x1800350a0` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `GetCurrentPass` | `Application\bin\tasks.dll` | `Do 0x1800372e0` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `SetCurrentParType` | `Application\bin\tasks.dll` | `Do 0x180048f50 -> 0x180048710` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `SetDefaultKeyMap` | `Application\bin\tasks.dll` | `Do 0x180024e30 -> 0x180024d70` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `DumpCacheHeader` | `Application\bin\tasks.dll` | `Do 0x18007d400 -> 0x18007d320` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `CollapseOp` | `Application\bin\tasks.dll` | `Do 0x180011790 -> 0x180010cf0` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC-PARTIAL |
+| `ReorderSceneItem` | `Application\bin\tasks.dll` | `Do 0x180039120 -> 0x180038d60` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `ImportPrefs` | `Application\bin\tasks.dll` | `Do 0x18007dad0 -> callback 0x18007da80 -> 0x18007d9c0` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `CacheObjectsIntoFile_Private` | `Application\bin\tasks.dll` | `Do 0x180079fd0 -> 0x180079750` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC-PARTIAL |
+| `PickPosition` | `Application\bin\tasks.dll` | `Do 0x18006ed60` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
+| `FilterPSet` | `Application\bin\tasks.dll` | `Do 0x180038260 -> 0x1800380e0 -> predicate 0x180037cd0` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC-PARTIAL |
+| `PickElement` | `Application\bin\tasks.dll` | `Do 0x18006e350 (UnPack 0x18006e9e0, RePack 0x18006e700)` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `PickObject` | `Application\bin\tasks.dll` | `same task as PickElement` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `GetNumberOfKnots` | `Application\bin\tasks.dll` | `Do 0x18006db30` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `GetCurvePercentageAtKnotIndex` | `Application\bin\tasks.dll` | `Do 0x18006ded0` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `EnumElements` | `Application\bin\tasks.dll` | `Do 0x180031570` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `Obstalce Pop-up Menu` | `Application\bin\tasks.dll` | `Do 0x180061930 -> 0x180061890` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `GetExternalReferences` | `Application\bin\tasks.dll` | `Do 0x18001f5f0 -> worker 0x18001f2e0` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `UpdateExternalReference` | `Application\bin\tasks.dll` | `Do 0x18002c470 -> worker 0x18002be70` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `ImportCustomFile` | `Application\bin\tasks.dll` | `Do 0x180022280 -> worker 0x180021910` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `System` | `Application\bin\tasks.dll` | `Do 0x180053290 -> worker 0x180053160` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `SetReferencePlane` | `Application\bin\tasks.dll` | `Do 0x180050770 -> worker 0x18004fc30` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC-PARTIAL |
+| `CrashXSI` | `Application\bin\tasks.dll` | `dispatch row 11 run 0x180054ec0` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `DumpMemoryStats` | `Application\bin\tasks.dll` | `dispatch row 12 run 0x180054f10` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `GetUnevaluatedPrimitiveForConstructionHistory` | `Application\bin\tasks.dll` | `dispatch row 13 run 0x180055070` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `IsSoftimageDevDrop` | `Application\bin\tasks.dll` | `dispatch row 15 run 0x180055290` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `SIGetHelpPath` | `Application\bin\tasks.dll` | `dispatch row 5 run 0x180054fe0` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `ICEOfflineRefresh` | `Application\bin\tasks.dll` | `dispatch row 16 run 0x180055270` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `UnloadAddonLib` | `Application\bin\tasks.dll` | `dispatch row 0 run 0x18002ce20 (+8 browser 0x18002d000)` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `UnloadAllAddonLibs` | `Application\bin\tasks.dll` | `dispatch row 3 run 0x18002d310` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `ReloadAddonLib` | `Application\bin\tasks.dll` | `dispatch row 1 run 0x18002c6a0 (+8 browser 0x18002c880)` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `ReloadAllAddonLibs` | `Application\bin\tasks.dll` | `dispatch row 4 run 0x18002cb90` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `UnloadAllCOMLibs` | `Application\bin\tasks.dll` | `dispatch row 2 run 0x18002d5b0` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
+| `TestPluginHost` | `Application\bin\tasks.dll` | `no dispatch row` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC-PARTIAL |
+| `SICreateRefPlane` | `Application\bin\tasks.dll` | `Do 0x18003d6e0 -> worker 0x18003d290` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC-PARTIAL |
+| `SaveSceneAs` | `Application\bin\tasks.dll` | `Do 0x180084ba0` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC-PARTIAL |
+| `AddToTOC` | `Application\bin\tasks.dll` | `Do thunk 0x1800575d0 -> worker 0x180057430` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `Open SE on Override parent` | `Application\bin\tasks.dll` | `Do 0x180063070 -> worker 0x180062ec0` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC-PARTIAL |
+| `SetReference` | `Application\bin\tasks.dll` | `Do 0x1800269e0 -> worker 0x180026780` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC-PARTIAL |
+| `GetCurveLength` | `Application\bin\tasks.dll` | `Do 0x18006d750` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `EvaluateCurveAt` | `Application\bin\tasks.dll` | `Do 0x18006cb40` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `Event Pop-up Menu` | `Application\bin\tasks.dll` | `Do 0x180061930 -> 0x180061890; collector 0x180060b90` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `SISaveDuplicateXformForUndo` | `Application\bin\tasks.dll` | `Do 0x180024940, Undo 0x180024a60` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `CopyCacheFiles2` | `Application\bin\tasks.dll` | `Do 0x180076120 -> worker 0x180075260` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `ExportCustomFile` | `Application\bin\tasks.dll` | `Do 0x180018190 -> worker 0x180017c80` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `CreatePreset` | `Application\bin\tasks.dll` | `Do 0x18006ffa0 -> worker 0x18006fd90` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `SILoadPreset` | `Application\bin\tasks.dll` | `Do 0x1800716c0 -> worker 0x180070d50` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `InspectBrowse` | `Application\bin\tasks.dll` | `Do thunk 0x180061f10 -> worker 0x180061dd0` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `InspectExternalReference` | `Application\bin\tasks.dll` | `Do thunk 0x180022a90 -> worker 0x180022660` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `GetKeyboardState` | `Application\bin\tasks.dll` | `Do thunk 0x180037620 -> 0x180037580` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `Force Pop-up Menu` | `Application\bin\tasks.dll` | `Do 0x180061930 -> 0x180061890; collector 0x180060dc0` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `SavePreset` | `Application\bin\tasks.dll` | `Do 0x180073cf0 -> worker 0x180072d60` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `TagForDelete` | `Application\bin\tasks.dll` | `Do thunk 0x18005fbc0 -> 0x18005fb40; Undo 0x18005fc10` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `GetUserPref` | `Application\bin\tasks.dll` | `Do 0x180036790 -> worker 0x180036640` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `Emission Pop-up Menu` | `Application\bin\tasks.dll` | `Do 0x180061930 -> 0x180061890; collector 0x1800607e0` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `SaveBackupScene` | `Application\bin\tasks.dll` | `Do 0x180084460` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `NavigateNode` | `Application\bin\tasks.dll` | `Do 0x18008c630 -> worker 0x18008b890; UnPackArg 0x18008c830` | CMD-B11d | [cmd-b11d-tasks-b10-confirmations-binary.md](../ghidra/cmd-b11d-tasks-b10-confirmations-binary.md) | SPEC |
+| `SelectNeighborObj` | `Application\bin\tasks.dll` | `script-backed command object (0x18003fe50 runs the command script); task Do/Undo/Redo no-ops` | CMD-B11d | [cmd-b11d-tasks-b10-confirmations-binary.md](../ghidra/cmd-b11d-tasks-b10-confirmations-binary.md) | SPEC |
+| `CreateFolder` | `Application\bin\tasks.dll` | `Do 0x180085fb0 -> worker 0x180085bf0; UnPackArg 0x1800862d0` | CMD-B11d | [cmd-b11d-tasks-b10-confirmations-binary.md](../ghidra/cmd-b11d-tasks-b10-confirmations-binary.md) | SPEC |
+| `MoveToFolder` | `Application\bin\tasks.dll` | `Do 0x180088980 -> worker 0x180086c10; UnPackArg 0x1800877a0` | CMD-B11d | [cmd-b11d-tasks-b10-confirmations-binary.md](../ghidra/cmd-b11d-tasks-b10-confirmations-binary.md) | SPEC-PARTIAL |
+| `RemoveFromFolder` | `Application\bin\tasks.dll` | `Do 0x180088980 -> worker 0x1800885e0; UnPackArg 0x180088f40` | CMD-B11d | [cmd-b11d-tasks-b10-confirmations-binary.md](../ghidra/cmd-b11d-tasks-b10-confirmations-binary.md) | SPEC |
+| `PinUVComponents` | `Application\bin\tasks.dll` | `Do 0x1800562d0 -> worker 0x180056570 (mode by script name: Pin 1, PinAll 2, UnPin 3, UnPinAll 4); UnPackArg 0x180056fa0` | CMD-B11d | [cmd-b11d-tasks-b10-confirmations-binary.md](../ghidra/cmd-b11d-tasks-b10-confirmations-binary.md) | SPEC |
+| `UnPinUVComponents` | `Application\bin\tasks.dll` | `Do 0x1800562d0 -> worker 0x180056570 (mode by script name: Pin 1, PinAll 2, UnPin 3, UnPinAll 4); UnPackArg 0x180056fa0` | CMD-B11d | [cmd-b11d-tasks-b10-confirmations-binary.md](../ghidra/cmd-b11d-tasks-b10-confirmations-binary.md) | SPEC |
+| `PinAllUVComponents` | `Application\bin\tasks.dll` | `Do 0x1800562d0 -> worker 0x180056570 (mode by script name: Pin 1, PinAll 2, UnPin 3, UnPinAll 4); UnPackArg 0x180056fa0` | CMD-B11d | [cmd-b11d-tasks-b10-confirmations-binary.md](../ghidra/cmd-b11d-tasks-b10-confirmations-binary.md) | SPEC |
+| `UnPinAllUVComponents` | `Application\bin\tasks.dll` | `Do 0x1800562d0 -> worker 0x180056570 (mode by script name: Pin 1, PinAll 2, UnPin 3, UnPinAll 4); UnPackArg 0x180056fa0` | CMD-B11d | [cmd-b11d-tasks-b10-confirmations-binary.md](../ghidra/cmd-b11d-tasks-b10-confirmations-binary.md) | SPEC |
+| `GetSize` | `Application\bin\tasks.dll` | `Do 0x180037950 -> worker 0x180037880; outputs 0x180037a30` | CMD-B11d | [cmd-b11d-tasks-b10-confirmations-binary.md](../ghidra/cmd-b11d-tasks-b10-confirmations-binary.md) | SPEC |
+| `Tag` | `Application\bin\tasks.dll` | `Do 0x180080990 -> 0x18007f4d0 -> tag path 0x1800821f0 (add 0x1800805b0); UnPackArg 0x180082e00` | CMD-B11d | [cmd-b11d-tasks-b10-confirmations-binary.md](../ghidra/cmd-b11d-tasks-b10-confirmations-binary.md) | SPEC |
+| `Untag` | `Application\bin\tasks.dll` | `Do 0x180080990 -> 0x18007f4d0 -> tag path 0x1800821f0 (remove 0x1800828c0); UnPackArg 0x180082e00` | CMD-B11d | [cmd-b11d-tasks-b10-confirmations-binary.md](../ghidra/cmd-b11d-tasks-b10-confirmations-binary.md) | SPEC |
+| `MoveComponent` | `not in transformmanager.dll (see note)` | `not implemented in transformmanager.dll (CLSID bytes at 0x18006c2a8, one consumer ref 0x180051f05; absent from DllGetCla` | CMD-B11i | [cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md](../ghidra/cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md) | SPEC-PARTIAL |
+| `CreateConnectionMap` | `Application\bin\action.dll` | `Do 0x180029780 -> worker 0x180029630 -> full map 0x1800288a0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC-PARTIAL |
+| `CreateEmptyConnectionMap` | `Application\bin\action.dll` | `Do 0x180029780 -> worker 0x180029630 -> empty map 0x180029430` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
+| `CreateValueMap` | `Application\bin\action.dll` | `Do 0x180032750 -> worker 0x180032600 -> full map 0x1800314b0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC-PARTIAL |
+| `CreateEmptyValueMap` | `Application\bin\action.dll` | `Do 0x180032750 -> worker 0x180032600 -> empty map 0x1800313a0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
+| `AddMappingRule` | `Application\bin\action.dll` | `Do 0x180001480 -> worker 0x180001320` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
+| `DeleteMappingRule` | `Application\bin\action.dll` | `Do 0x180036530 -> worker 0x1800363a0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
+| `GetMappingRule` | `Application\bin\action.dll` | `Do 0x18003da30 -> worker 0x18003d8c0; RePack 0x18003db40` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
+| `GetNumMappingRules` | `Application\bin\action.dll` | `Do 0x18003dea0 -> worker 0x18003de40; RePack 0x18003df50` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
+| `SetMappingRule` | `Application\bin\action.dll` | `Do 0x180060470 -> worker 0x1800601e0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
+| `RemoveActionItem` | `Application\bin\action.dll` | `Do 0x180056e30 -> worker 0x180056a40` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
+| `GetStoreActionDefaults` | `Application\bin\action.dll` | `Do 0x1800652d0 -> store worker 0x180063c90; RePack 0x180066a70` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC-PARTIAL |
+| `LoadActionPreset` | `Application\bin\action.dll` | `Do 0x180040c10 -> worker 0x18003f510` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC-PARTIAL |
+| `CopySourceActionToFolder` | `Application\bin\action.dll` | `Do 0x180028310 -> worker 0x180027ee0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
+| `AddPoseActionItems` | `Application\bin\action.dll` | `Do 0x180001dc0 -> worker 0x180001d20 -> 0x180001a20` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC-PARTIAL |
+| `MergeClips` | `Application\bin\action.dll` | `Do 0x180044bb0 -> worker 0x180044210; RePack 0x1800453e0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC-PARTIAL |
+| `StoreViseme` | `Application\bin\action.dll` | `Do 0x180071880 -> worker 0x180070f00` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
+| `SetupEvolverVisemes` | `Application\bin\action.dll` | `Do 0x180069cf0 -> worker 0x180068990` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC-PARTIAL |
+| `CreateVisemeAction` | `Application\bin\action.dll` | `Do 0x180030ab0 -> worker 0x180030170` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
+| `CreateEvolverSpeechAction` | `Application\bin\action.dll` | `Do 0x18002a9d0 -> worker 0x180029fa0` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
+| `CreateSpeechAction` | `Application\bin\action.dll` | `Do 0x18002f630 -> worker 0x18002e6b0` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
+| `FreezeLipSync` | `Application\bin\action.dll` | `Do 0x18003c200 (not decompiled) -> worker 0x18003b710` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC-PARTIAL |
+| `CopyShape` | `Application\bin\action.dll` | `Do 0x180027700 -> worker 0x180027370, copier 0x180026c00` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
+| `CreateShapeGroup` | `Application\bin\action.dll` | `Do 0x18002d710 -> worker 0x18002cf20` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC-PARTIAL |
+| `SetShapeGroup` | `Application\bin\action.dll` | `Do 0x180060ec0 -> worker 0x180060cd0` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
+| `StripDeformOperators` | `Application\bin\action.dll` | `Do 0x1800727e0 -> worker 0x180072470, stripper 0x180072950` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
+| `Open SE for Link With Deform` | `Application\bin\action.dll` | `Do 0x1800480e0 -> worker 0x180047f70` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
+| `RemoveEffect` | `Application\bin\action.dll` | `Do 0x180057ec0 -> worker 0x1800577d0` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
+| `ResetOffset` | `Application\bin\action.dll` | `Do 0x18005a240 -> worker 0x180059bf0` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC-PARTIAL |
+| `CutClipInSpace` | `Application\bin\action.dll` | `Do 0x180033ac0 -> worker 0x1800331e0` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC-PARTIAL |
+| `CreateOffsetEffect` | `Application\bin\action.dll` | `Do 0x18002b980 -> worker 0x18002b020` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
+| `PlotCamSeqToActions` | `Application\bin\action.dll` | `Do 0x180049e40 -> worker 0x1800490f0 (apply/cleanup 0x180048a00)` | CMD-B11g | [cmd-b11g-action-camseq-b10-confirmations-binary.md](../ghidra/cmd-b11g-action-camseq-b10-confirmations-binary.md) | SPEC |
+| `GetSceneFrameSetFromCamSeq` | `Application\bin\action.dll` | `Do 0x18003e260 (UnPackArg 0x18003e680, Undo/Redo no-op 0x180027ae0)` | CMD-B11g | [cmd-b11g-action-camseq-b10-confirmations-binary.md](../ghidra/cmd-b11g-action-camseq-b10-confirmations-binary.md) | SPEC |
+| `PlotCamSeqShape` | `Application\bin\action.dll` | `Do 0x18004d530 -> worker 0x18004bf80` | CMD-B11g | [cmd-b11g-action-camseq-b10-confirmations-binary.md](../ghidra/cmd-b11g-action-camseq-b10-confirmations-binary.md) | SPEC-PARTIAL |
+| `ToggleMuteSolo` | `Application\bin\vm.dll` | `Do 0x180006c60 (UnPack 0x180006ce0)` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC-PARTIAL |
+| `SetViewCamera` | `Application\bin\vm.dll` | `Do 0x1800072f0 -> resolver 0x1800073c0` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `AlignViewCamera` | `Application\bin\vm.dll` | `Do 0x180001910 -> worker 0x180001400` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `ViewTranslate` | `Application\bin\vm.dll` | `Do 0x180008c40 (shared task, UnPack 0x1800093b0)` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `ViewNudgeLeft` | `Application\bin\vm.dll` | `Do 0x180008c40 (shared task, UnPack 0x1800093b0)` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `ViewNudgeRight` | `Application\bin\vm.dll` | `Do 0x180008c40 (shared task, UnPack 0x1800093b0)` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `ViewNudgeUp` | `Application\bin\vm.dll` | `Do 0x180008c40 (shared task, UnPack 0x1800093b0)` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `ViewNudgeDown` | `Application\bin\vm.dll` | `Do 0x180008c40 (shared task, UnPack 0x1800093b0)` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `ExportImageClip` | `Application\bin\vm.dll` | `Do 0x180031df0 (UnPack 0x180032440)` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `CameraUndo` | `Application\bin\vm.dll` | `Do 0x1800029d0` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `CameraRedo` | `Application\bin\vm.dll` | `Do 0x180001d00` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `ResetAllViews` | `Application\bin\vm.dll` | `Do 0x180001f90 (Undo 0x180002400, Redo 0x1800023f0)` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `Frame Contextual` | `Application\bin\vm.dll` | `Do 0x180003fc0` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `GetViewIndex` | `Application\bin\vm.dll` | `Do 0x180004c90 (RePack 0x180004ce0)` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `Hide Back Facing Polygons` | `Application\bin\vm.dll` | `Do 0x180007b50` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `SaveFastPlaybackCache` | `Application\bin\vm.dll` | `Do 0x180003660` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC-PARTIAL |
+| `LoadFastPlaybackCache` | `Application\bin\vm.dll` | `Do 0x1800032e0` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC-PARTIAL |
+| `Show3DContextMenu` | `Application\bin\vm.dll` | `Do 0x180007980` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
+| `StartTimedPlayback` | `Application\bin\vm.dll` | `Do 0x1800301d0 (mode 2 of shared Capture/Flipbook task; UnPack 0x1800316a0)` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC-PARTIAL |
+| `TranslateUVW` | `Application\bin\transformmanager.dll` | `UnPackArg 0x180053e40 (shared reader 0x180052d00); Do 0x1800503c0 shared` | CMD-B11i | [cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md](../ghidra/cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md) | SPEC-PARTIAL |
+| `RotateUVW` | `Application\bin\transformmanager.dll` | `UnPackArg 0x180023610 (shared reader 0x180052d00); Do 0x1800503c0 shared` | CMD-B11i | [cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md](../ghidra/cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md) | SPEC-PARTIAL |
+| `ScaleUVW` | `Application\bin\transformmanager.dll` | `UnPackArg 0x1800239f0 (shared reader 0x180052d00); Do shared (inferred)` | CMD-B11i | [cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md](../ghidra/cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md) | SPEC-PARTIAL |
+| `TranslatePivot` | `not in transformmanager.dll (see note)` | `not implemented in transformmanager.dll (CLSID 8eee27b3-... absent from DllGetClassObject)` | CMD-B11i | [cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md](../ghidra/cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md) | SPEC-PARTIAL |
 
 ## Earlier rows (not yet itemised per command)
 
@@ -700,26 +833,15 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 <!-- BEGIN GENERATED: registry -->
 | Command | Implemented in | Handler |
 |---------|----------------|---------|
-| `CrashXSI` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
-| `DumpMemoryStats` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
-| `GetUnevaluatedPrimitiveForConstructionHistory` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
-| `IsSoftimageDevDrop` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
-| `System` | `tasks.dll` | CLSID `{a121de74-7132-11d3-8d44-00609419fcaf}` |
 | `InspectObj` | `uixsiscripts.vbs` (VBScript) | `InspectObjProc` |
 | `SetValue` | (CLSID not specific to one binary) | CLSID `{c089b901-8481-11d2-b118-00a024c79287}` |
 | `GetValue` | `tasks.dll` | CLSID `{32455721-e6bc-11d2-ac79-00a02485cecb}` |
-| `SetReference` | `tasks.dll` | CLSID `{bdc2d423-8da5-11d4-aefd-0090275ae282}` |
 | `SetReference2` | `shadertasks.dll`, `tasks.dll`, `shaderhelper.dll`, `sicoresdk.dll` | CLSID `{de9980e7-3d8e-41fd-9fea-ed65f79a6d62}` |
 | `AutoInspect` | `uixsiscripts.vbs` (VBScript) | `AutoInspectProc` |
 | `AutoInspectEnabled` | `uixsiscripts.vbs` (VBScript) | `FAutoInspectEnabled` |
 | `InspectEnvelopeWeights` | `uixsiscripts.vbs` (VBScript) | `InspectEnvelopeWeightsProc` |
-| `InspectBrowse` | `tasks.dll` | CLSID `{e33918d2-8d40-11d3-b4a4-00a02485cecb}` |
 | `SetUserPref` | `tasks.dll` | CLSID `{6f80466d-06f2-11d3-80d5-00a0c9ac19a9}` |
-| `GetUserPref` | `tasks.dll` | CLSID `{ef512ce5-07d8-11d3-80d6-00a0c9ac19a9}` |
-| `SetDefaultKeyMap` | `tasks.dll` | CLSID `{42769051-e0a2-436e-92c3-8c96f1a94c95}` |
-| `GetKeyboardState` | `tasks.dll` | CLSID `{e641d1ef-0ecf-11d3-80dd-00a0c9ac19a9}` |
 | `GetBBox` | `tasks.dll` | CLSID `{3329ba54-fe3c-11d2-bc28-00a0c9612b97}` |
-| `SIMatchSubComponent` | `tasks.dll` | CLSID `{04791ffa-bfa7-11d2-80ae-00a0c955b335}` |
 | `SIFilter` | `tasks.dll`, `corehelper.dll`, `mohelper.dll` | CLSID `{bb18b93e-b9f6-11d2-80ad-00a0c955b335}` |
 | `Parent Tool` | `tasks.dll`, `mcp.dll` | CLSID `{90e7affb-c38b-11d2-ac73-00a02485cecb}` |
 | `Delete Selected` | `scnmgr.dll`, `xsievents.dll` | CLSID `{48becc30-5e5e-11d4-8c2c-009027bc3a0e}` |
@@ -730,17 +852,14 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `CreateTransformGroup` | `uixsiscripts.vbs` (VBScript) | `FCreateTransformGroup` |
 | `RemoveTransformGroup` | `uixsiscripts.vbs` (VBScript) | `FRemoveTransformGroup` |
 | `ParentObjects` | `uixsiscripts.vbs` (VBScript) | `ParentObjectsProc` |
-| `TagForDelete` | `tasks.dll` | CLSID `{ec7663e7-2f0b-11d3-bffd-00a0248f9397}` |
 | `FreezeObj` | `optasks.dll`, `propertytasks.dll`, `sicurvetasks.dll`, `tasks.dll`, `action.dll`, `corehelper.dll` … | CLSID `{761b65c4-2f0a-11d3-9196-00a0243e34c4}` |
 | `FreezeModeling` | `uixsiscripts.vbs` (VBScript) | `FreezeModelingProc` |
-| `CollapseOp` | `tasks.dll` | CLSID `{46ff1dac-9ec0-40f5-a19b-f5ac46846da4}` |
 | `InspectLastOperator` | `tasks.dll` | CLSID `{ee0d5df0-58e0-11d4-bc9c-00d0b719022b}` |
 | `Freeze Selected` | (CLSID not specific to one binary) | CLSID `{00000000-0000-0000-0000-000000000000}` |
 | `Delete Selected Branch` | (CLSID not specific to one binary) | CLSID `{00000000-0000-0000-0000-000000000000}` |
 | `DeleteMotionDerivator` | `optasks.dll` | CLSID `{38b25a31-26da-11d4-8bd6-009027bc381b}` |
 | `DeleteAll` | `tasks.dll` | CLSID `{6e4d3de5-5ad1-48fa-9811-49f8be59a576}` |
 | `Duplicate` | `duplicate.vbs` (VBScript) | `DuplicateProc` |
-| `SISaveDuplicateXformForUndo` | `tasks.dll` | CLSID `{d6d73e5d-d6ea-47e1-83c0-051ce5230f99}` |
 | `Clone` | `duplicate.vbs` (VBScript) | `CloneProc` |
 | `SIDuplicate` | (CLSID not specific to one binary) | CLSID `{747d257f-d01b-11d2-80c4-00a0c9ac19a9}` |
 | `DuplicateSymmetry` | `duplicate.vbs` (VBScript) | `DuplicateSymmetryFunc` |
@@ -748,48 +867,26 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `Duplicate/Extrude Multiple` | `scnmgr.dll`, `xsievents.dll` | CLSID `{48becc30-5e5e-11d4-8c2c-009027bc3a0e}` |
 | `Instance` | `duplicate.vbs` (VBScript) | `OldInstanceToCloneProc` |
 | `SIGetPreset` | `tasks.dll` | CLSID `{393c6ad2-e6b4-11d2-a02c-0000f875df68}` |
-| `PickPosition` | `tasks.dll` | CLSID `{525195c8-0fbf-11d3-bc2f-00a0c9612b97}` |
-| `EnumElements` | `tasks.dll` | CLSID `{6d34bf79-18fc-11d3-bc37-00a0c9612b97}` |
-| `FilterPSet` | `tasks.dll` | CLSID `{5aa63e2d-1f52-11d3-80e6-00a0c9ac19a9}` |
-| `SavePreset` | `tasks.dll`, `action.dll`, `sipluginhosts.dll`, `sicoresdk.dll` | CLSID `{ec19ceb7-b236-11d3-8d7b-00609419fcaf}` |
-| `SILoadPreset` | `tasks.dll`, `chanmgr.dll` | CLSID `{d93084b1-5587-11d3-801f-00a0248f9397}` |
-| `CreatePreset` | `tasks.dll`, `sicoresdk.dll` | CLSID `{d90e0a30-b0df-11d3-ae58-00a0c96e63e1}` |
-| `CreateObjectFromPreset` | `tasks.dll` | CLSID `{24221da9-7761-11d3-80f8-00a0c9ac19a9}` |
-| `FindObjects` | `tasks.dll`, `sicoresdk.dll` | CLSID `{2b24aba0-b7f6-11d3-ae58-00a0c96e63e1}` |
 | `Add3DObjectToScene` | `modeltasks.dll`, `primtasks.dll`, `tasks.dll`, `_3dobject2.dll`, `scnmgr.dll`, `sicoresdk.dll` | CLSID `{a0d59008-3e15-11d3-8bac-00a024ee586f}` |
-| `CreateFolder` | `tasks.dll`, `ut.dll` | CLSID `{c0cd68b0-2832-11d4-b6a3-006094eb029c}` |
 | `CreateEnvironment` | `tasks.dll`, `corehelper.dll`, `environments.dll` | CLSID `{98531be5-b33d-46fa-80d4-41d795584ad5}` |
 | `SetCurrentEnvironment` | `environments.dll` | CLSID `{9b4cc51c-20c2-4d0d-9c7c-abdd509b55ca}` |
 | `AddContainerToEnvironment` | `tasks.dll`, `environments.dll` | CLSID `{6eed640c-73b9-4b7b-86c3-ae582eebf9cb}` |
 | `CreateEnvironmentCache` | `corehelper.dll`, `environments.dll`, `simulationop.dll` | CLSID `{3d2a7149-320c-49a4-9625-8d61bda0c60c}` |
 | `SIStoreEnvironmentCacheToMixer` | `environments.dll` | CLSID `{8ffda6cb-588f-419f-afac-31070af56815}` |
-| `MoveToFolder` | `tasks.dll` | CLSID `{a907fa52-2cb9-11d4-b6a3-006094eb029c}` |
-| `RemoveFromFolder` | `tasks.dll` | CLSID `{2c1c6594-2dba-11d4-b6a4-006094eb029c}` |
 | `RemoveFolder` | `tasks.dll` | CLSID `{de5fd1e2-2dc3-11d4-b6a4-006094eb029c}` |
-| `SICreateRefPlane` | `tasks.dll` | CLSID `{b85255a9-1c5a-11d4-b7e9-0008c7a011a6}` |
 | `SetCurrentReferencePlane` | `tasks.dll`, `viewinteraction.dll` | CLSID `{2f76bc8f-f028-11d2-ac7c-00a02485cecb}` |
-| `SetReferencePlane` | `tasks.dll`, `viewinteraction.dll` | CLSID `{9860fe78-9aa3-4a4a-b764-5d52578b4f36}` |
 | `Instantiate` | `duplicate.vbs` (VBScript) | `InstanceProc` |
 | `CopyStyle` | (CLSID not specific to one binary) | CLSID `{3f4aac42-27d6-11d6-9e5b-0000e22bd0d9}` |
 | `SetInstanceGroup` | `grouptask.dll` | CLSID `{e0717f47-0ac4-4faa-b35a-7c56951e6ddf}` |
 | `RemoveInstanceGroup` | `grouptask.dll` | CLSID `{d534de9f-55e4-41c2-a5ca-2cfbe354d3e6}` |
 | `SceneRefresh` | `tasks.dll` | CLSID `{2168f0b6-0d40-11d7-be20-00a0c9615daf}` |
-| `SIGetHelpPath` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
 | `BeginUndo` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
 | `EndUndo` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
 | `Undo` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
 | `Undo (alternate)` | `uixsiscripts.vbs` (VBScript) | `UndoProc` |
 | `Redo` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
 | `Redo (alternate)` | `uixsiscripts.vbs` (VBScript) | `RedoProc` |
-| `GetExternalReferences` | `tasks.dll` | CLSID `{687fafb2-ad49-4b97-8f5d-e3faca1e42db}` |
-| `InspectExternalReference` | `tasks.dll` | CLSID `{e5b3bcb8-af83-4e7b-b288-854226695785}` |
-| `UpdateExternalReference` | `tasks.dll` | CLSID `{a3e3dfe1-c2bc-46d7-8977-271f04fcd1ac}` |
-| `ReorderSceneItem` | `tasks.dll`, `schematicview.dll` | CLSID `{495b9325-f3f1-4fdb-8a61-9f8aeb30dcce}` |
-| `ImportCustomFile` | `tasks.dll` | CLSID `{8c51ca84-fe5f-46f3-b6ec-69db89dd3d78}` |
-| `ExportCustomFile` | `tasks.dll` | CLSID `{d8e1ecec-d9d0-45e8-a074-be3f73c4bc01}` |
-| `ICEOfflineRefresh` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
 | `SelectObj` | `optasks.dll`, `primtasks.dll`, `sicurvetasks.dll`, `simeshtasks.dll`, `tasks.dll`, `action.dll` … | CLSID `{79581ba0-99bb-11d2-8bbb-00aa00135f7b}` |
-| `SelectNeighborObj` | `selection.vbs` (VBScript) | `SelectNeighborObj` |
 | `SelectGeometryComponents` | `optasks.dll`, `primtasks.dll`, `sicurvetasks.dll`, `simeshtasks.dll`, `tasks.dll`, `action.dll` … | CLSID `{79581ba0-99bb-11d2-8bbb-00aa00135f7b}` |
 | `AddToSelection` | `tasks.dll`, `selectionmgr.dll`, `pickmgr.dll`, `sicoresdk.dll`, `viewinteraction.dll` | CLSID `{38eddd00-d255-11d2-8bcf-00aa006130ef}` |
 | `RemoveFromSelection` | `tasks.dll`, `selectionmgr.dll`, `actioncore.dll`, `pickmgr.dll`, `sicoresdk.dll`, `viewinteraction.dll` | CLSID `{38eddd02-d255-11d2-8bcf-00aa006130ef}` |
@@ -831,11 +928,8 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `SelectPolygonOutline` | `tasks.dll` | CLSID `{9b13ed79-f264-46ef-9982-4b025b238d02}` |
 | `SelectAllConnectedComponents` | `tasks.dll` | CLSID `{35ced1f5-b9da-43d5-af12-17de288ca1db}` |
 | `Cycle Selection Mode` | `uixsiscripts.vbs` (VBScript) | `CycleSelectionModeProc` |
-| `PickElement` | `tasks.dll` | CLSID `{5c87875c-0a31-11d3-bc2d-00a0c9612b97}` |
-| `PickObject` | `tasks.dll` | CLSID `{5c87875c-0a31-11d3-bc2d-00a0c9612b97}` |
 | `InfoSelection` | `uixsiscripts.vbs` (VBScript) | `InfoSelectionProc` |
 | `InfoScene` | `uixsiscripts.vbs` (VBScript) | `InfoSceneProc` |
-| `NavigateNode` | `tasks.dll`, `expressions.dll` | CLSID `{74debd17-439a-11d4-b49e-00d0b71903e4}` |
 | `ToggleParameterValue` | `uixsiscripts.vbs` (VBScript) | `ToggleParameterValueProc` |
 | `ToggleSelectability` | `uixsiscripts.vbs` (VBScript) | `ToggleParameterValueProc` |
 | `MakeAllUnselectable` | `selection.vbs` (VBScript) | `MakeAllSelectableProc` |
@@ -844,7 +938,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `SelectParallelEdgeLoop` | `selection.vbs` (VBScript) | `SelectExtendParallelEdgeLoopProc` |
 | `SelectNSidedPolygons` | `selection.vbs` (VBScript) | `SelectNSidedPolygonProc` |
 | `GenerateInfoReport` | `tasks.dll` | CLSID `{bf217ee1-695a-4def-8fa3-98e4c6e01ce8}` |
-| `GetSize` | `tasks.dll` | CLSID `{af3e86ea-eb7c-490c-a557-8462c690f428}` |
 | `Translate` | `transformmanager.dll` | CLSID `{b2f1ad2e-83bd-11d2-91cf-00a0c9612e3a}` |
 | `Rotate` | `transformmanager.dll` | CLSID `{b2f1ad2d-83bd-11d2-91cf-00a0c9612e3a}` |
 | `Scale` | `transformmanager.dll` | CLSID `{b2f1ad2c-83bd-11d2-91cf-00a0c9612e3a}` |
@@ -853,24 +946,16 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `Turn OFF Interactive SRT` | (CLSID not specific to one binary) | CLSID `{00000000-0000-0000-0000-000000000000}` |
 | `XYZ Transform ` | `toolmanager.dll` | CLSID `{0461b2c7-0ae3-11d2-8065-00a0c955b335}` |
 | `Transform Set New ` | (CLSID not specific to one binary) | CLSID `{00000000-0000-0000-0000-000000000000}` |
-| `TranslateUVW` | `transformmanager.dll` | CLSID `{b2f1ad2e-83bd-11d2-91cf-00a0c9612e3a}` |
-| `RotateUVW` | `transformmanager.dll` | CLSID `{b2f1ad2d-83bd-11d2-91cf-00a0c9612e3a}` |
-| `ScaleUVW` | `transformmanager.dll` | CLSID `{b2f1ad2c-83bd-11d2-91cf-00a0c9612e3a}` |
 | `Toggle Snapping` | `transformmanager.dll` | CLSID `{e60d5ac3-ed4f-454d-a1ef-6c82c7276ca6}` |
 | `Toggle Point Snap` | `transformmanager.dll` | CLSID `{95c4c0ea-1b0e-42dd-a971-81bcbdd0e9fc}` |
 | `Toggle Grid Snap` | `transformmanager.dll` | CLSID `{b01473fe-af48-4646-949b-f289be7da553}` |
 | `Toggle Curve Snap` | `transformmanager.dll` | CLSID `{a8924726-2a79-4457-a495-64c5e5ca3849}` |
 | `Toggle Proportional` | `transformmanager.dll` | CLSID `{03a88ea8-2ddc-476e-9f19-8c3124b626cd}` |
 | `SetNeutralPose` | `tasks.dll` | CLSID `{651b8bdb-a324-4be5-a63a-a849c8ed35c3}` |
-| `TranslatePivot` | `tasks.dll`, `viewinteraction.dll` | CLSID `{8eee27b3-a9e4-4987-a355-92f0665be870}` |
 | `SaveKeyOnPath` | `pathanimtask.dll`, `kinecns.dll` | CLSID `{aef278f7-e088-11d2-977c-00a0243e3463}` |
 | `ApplyCns` | `uixsiscripts.vbs` (VBScript) | `ApplyTrajectoryProc` |
 | `ConvertPosAnimToPath` | `uixsiscripts.vbs` (VBScript) | `ConvertPosAnimToPathProc` |
 | `PathRetime` | `uixsiscripts.vbs` (VBScript) | `PathRetimeProc` |
-| `GetCurveLength` | `tasks.dll` | CLSID `{c1e68290-0d3a-11d3-bc2e-00a0c9612b97}` |
-| `EvaluateCurveAt` | `tasks.dll` | CLSID `{c54341b9-0d52-11d3-bc2e-00a0c9612b97}` |
-| `GetNumberOfKnots` | `tasks.dll` | CLSID `{656fc3b1-7c05-11d3-97b9-00a0243e3463}` |
-| `GetCurvePercentageAtKnotIndex` | `tasks.dll` | CLSID `{656fc3b2-7c05-11d3-97b9-00a0243e3463}` |
 | `AddProp` | `uixsiscripts.vbs` (VBScript) | `AddPropProc` |
 | `CreateWeightMap` | `uixsiscripts.vbs` (VBScript) | `CreateWeightMap` |
 | `CreateVertexColorSupport` | `gap.dll`, `si3dobjectmodel.dll`, `sicoresdk.dll` | CLSID `{ab483760-38c0-11d4-b8ff-0800690c8bd0}` |
@@ -911,7 +996,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `SIGetOriginalValueOfOverridden` | `propertytasks.dll` | CLSID `{7e0f4019-60d2-4395-a42f-06c26c7fd459}` |
 | `SIGetOverriddenParameters` | `propertytasks.dll`, `sicoresdk.dll` | CLSID `{bc652f97-d8cf-4bc5-bfdd-7c2569f56729}` |
 | `SIStoreProp` | `propertytasks.dll`, `imageclip.dll`, `sicoresdk.dll` | CLSID `{51297d82-1ac1-11d3-9e82-00a0248f947c}` |
-| `Open SE on Override parent` | `tasks.dll` | CLSID `{bd7111d4-3ee8-11d3-9e84-00a0248f947c}` |
 | `SetEnvelopeRefPoses` | `propertytasks.dll` | CLSID `{fc604326-7a6e-11d3-99ca-00a0243f0e60}` |
 | `AddProxyParam` | `propertytasks.dll`, `action.dll`, `sicoresdk.dll` | CLSID `{7df95d5e-2121-11d4-a64f-00a0c9ec5ef7}` |
 | `RemoveProxyParam` | `propertytasks.dll`, `sicoresdk.dll` | CLSID `{d3520b6e-21cd-11d4-a64f-00a0c9ec5ef7}` |
@@ -928,7 +1012,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `TagStepMarks` | `Charac_Tools.js` (JScript) | `TagStepMarksProc` |
 | `GenDiffuseMap` | `GPUSurfaceFX.js` (JScript) | `XSI_GenerateDiffuseMap` |
 | `GenNormalMap` | `GPUSurfaceFX.js` (JScript) | `XSI_GenerateNormalMap` |
-| `RenameCPSetLayoutItems` | `tasks.dll` | CLSID `{1bbd2841-aefc-478a-a61e-d2e34766c3cd}` |
 | `siCreateRetargetMapping` | `propertytasks.dll` | CLSID `{cbe3e960-1e81-4a77-a16f-28c075787a5c}` |
 | `siWriteRetargetMapping` | `propertytasks.dll` | CLSID `{b8b04cc5-fe11-438e-a42c-c7c58eb5c4b6}` |
 | `siWriteRetargetComponentData` | `propertytasks.dll` | CLSID `{06602467-ed04-48d7-9c52-c257b40768e2}` |
@@ -1148,19 +1231,11 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `ExplodeCompound` | `actioncore.dll` | CLSID `{9517f6f5-6d59-11d4-b4c1-00d0b7142c4a}` |
 | `ImportAction` | `action.dll` | CLSID `{12a3efcf-e543-11d2-b352-00105a1e6ce9}` |
 | `ImportRefAction` | `action.dll` | CLSID `{12a3efcf-e543-11d2-b352-00105a1e6ce9}` |
-| `LoadActionPreset` | `action.dll` | CLSID `{12a3efcf-e543-11d2-b352-00105a1e6ce9}` |
 | `ExportAction` | `action.dll` | CLSID `{12a3efd1-e543-11d2-b352-00105a1e6ce9}` |
 | `SIStoreAction` | `action.dll`, `imageclip.dll`, `actioncore.dll`, `si3dobjectmodel.dll`, `sicoresdk.dll` | CLSID `{12a3efcd-e543-11d2-b352-00105a1e6ce9}` |
 | `StoreAction` | `action.vbs` (VBScript) | `StoreActionProc` |
 | `GetInputAndStoreAction` | `action.vbs` (VBScript) | `GetInputAndStoreActionProc` |
 | `GetInputAndStoreAction2` | `action.vbs` (VBScript) | `GetInputAndStoreActionProc2` |
-| `GetStoreActionDefaults` | `action.dll`, `imageclip.dll`, `actioncore.dll`, `si3dobjectmodel.dll`, `sicoresdk.dll` | CLSID `{12a3efcd-e543-11d2-b352-00105a1e6ce9}` |
-| `CreateSpeechAction` | `action.dll` | CLSID `{f4a0e1e6-77ef-4ea5-b92a-193c0bf2c178}` |
-| `FreezeLipSync` | `action.dll` | CLSID `{bc71a1b3-439e-48eb-be67-934acc6147c6}` |
-| `CreateVisemeAction` | `action.dll` | CLSID `{5e9f232b-9446-47e3-bc71-2b4419dc414e}` |
-| `StoreViseme` | `action.dll` | CLSID `{073dfffa-4f94-413a-b386-2db1c0a4d610}` |
-| `SetupEvolverVisemes` | `action.dll` | CLSID `{54a09888-4c17-4120-a57f-39c3395d0bca}` |
-| `CreateEvolverSpeechAction` | `action.dll` | CLSID `{afc0e8f6-2cbb-43c2-befa-e68ed151a8a8}` |
 | `GenerateLipSync` | `EvolverLipSync.js` (JScript) | `GenerateLipSyncProc` |
 | `AddTransition` | `action.dll`, `actioncore.dll` | CLSID `{c030ada0-1a8f-11d3-b35b-00105a1e6ce9}` |
 | `AddClipRelation` | `actioncore.dll`, `sicoresdk.dll` | CLSID `{2b6f1f13-69fd-4fea-96ac-d2ff702774db}` |
@@ -1169,34 +1244,17 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `ApplyAction` | `action.dll`, `imageclip.dll`, `_3dobject2.dll`, `actioncore.dll`, `actionhelper.dll` | CLSID `{12a3efd3-e543-11d2-b352-00105a1e6ce9}` |
 | `PlotAndApplyAction` | `uixsiscripts.vbs` (VBScript) | `PlotAndApplyActionProc` |
 | `PasteAction` | `action.vbs` (VBScript) | `GetInputAndPasteActionProc` |
-| `CreateValueMap` | `action.dll` | CLSID `{004f7515-fcbd-11d2-bdfe-00a0243e3543}` |
-| `CreateEmptyValueMap` | `action.dll` | CLSID `{004f7515-fcbd-11d2-bdfe-00a0243e3543}` |
-| `CreateConnectionMap` | `action.dll` | CLSID `{004f7514-fcbd-11d2-bdfe-00a0243e3543}` |
-| `CreateEmptyConnectionMap` | `action.dll` | CLSID `{004f7514-fcbd-11d2-bdfe-00a0243e3543}` |
-| `AddMappingRule` | `action.dll` | CLSID `{280a45b1-4422-11d3-9c67-0060970a2bc8}` |
-| `SetMappingRule` | `action.dll` | CLSID `{fd595ace-c3d9-11d3-b38d-00105a1e6ce9}` |
-| `DeleteMappingRule` | `action.dll` | CLSID `{87eab571-443d-11d3-9c67-0060970a2bc8}` |
-| `GetNumMappingRules` | `action.dll` | CLSID `{bdd3f140-4446-11d3-9c67-0060970a2bc8}` |
-| `GetMappingRule` | `action.dll` | CLSID `{9b4b0f32-4456-11d3-9c67-0060970a2bc8}` |
 | `GetDrivingActions` | `action.dll`, `graphic.dll` | CLSID `{7249a5d5-c3e9-11d4-b8b5-00a0c92469be}` |
 | `PlotCurve` | `uixsiscripts.vbs` (VBScript) | `PlotCurveProc` |
 | `PlotShape` | `action.dll` | CLSID `{aaf411c1-bcb2-11d4-b4dd-00d0b7142c4a}` |
 | `EqualizeAction` | `action.dll` | CLSID `{03819cd3-43c5-11d4-bdde-00a0c961747d}` |
 | `GetInputAndPlotKeyableToAction` | `uixsiscripts.vbs` (VBScript) | `GetInputAndPlotKeyableToActionProc` |
 | `PlotConstrainedTransforms` | `uixsiscripts.vbs` (VBScript) | `PlotConstrainedTransformsProc` |
-| `AddPoseActionItems` | `action.dll` | CLSID `{9e1ddb90-ead8-11d3-b395-00105a1e6ce9}` |
-| `CopySourceActionToFolder` | `action.dll` | CLSID `{600255c0-46ac-11d4-b4ab-00d0b7142c4a}` |
-| `MergeClips` | `action.dll` | CLSID `{eb00f267-d99b-46a3-ae61-7d8b923b5f59}` |
 | `SetDefaultWeight` | `action.vbs` (VBScript) | `SetDefaultWeightProc` |
 | `EditClip` | `action.vbs` (VBScript) | `EditClipProc` |
-| `CreateOffsetEffect` | `action.dll` | CLSID `{beebd686-5c15-11d4-a53d-009027bc6584}` |
-| `ResetOffset` | `action.dll` | CLSID `{b08e95bb-58f1-11d4-a53c-009027bc6584}` |
-| `RemoveEffect` | `action.dll` | CLSID `{37a40422-ab72-11d4-a54d-009027bc6584}` |
-| `RemoveActionItem` | `action.dll` | CLSID `{0be818ac-36cd-400f-a05c-e622a8a24e55}` |
 | `EqualizeClips` | `action.vbs` (VBScript) | `EqualizeClipsProc` |
 | `AddBridgeTransition` | `action.vbs` (VBScript) | `AddBridgeTransitionFunc` |
 | `AddTWTransition` | `action.dll` | CLSID `{7bec3ab9-5655-11d4-bde6-00a0c961747d}` |
-| `CutClipInSpace` | `action.dll` | CLSID `{ba76fd14-6ec1-11d4-b4c1-00d0b7142c4a}` |
 | `ReconnectMixer` | `actioncore.dll` | CLSID `{c976d03e-61ec-41c4-a40a-21869c2a7ed8}` |
 | `DeleteUnusedMixerTracks` | `action.vbs` (VBScript) | `DeleteUnusedMixerTracksProc` |
 | `CollapseLayers` | `action.dll` | CLSID `{afdd0f73-3eb4-4c3d-a36e-6ee27e92185c}` |
@@ -1207,9 +1265,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `PlotKeyableToActions` | `uixsiscripts.vbs` (VBScript) | `PlotKeyableToActionsProc` |
 | `AddShotClip` | `modeltasks.dll`, `actioncore.dll` | CLSID `{65cfe35a-a90c-4786-8d8c-b87a128004fb}` |
 | `GetShotClip` | `actioncore.dll` | CLSID `{fd3d98b2-7b7b-4246-9a2f-9abcdc2583c1}` |
-| `PlotCamSeqToActions` | `action.dll` | CLSID `{d1404f70-9769-409d-bfb8-008a6a69caa0}` |
-| `PlotCamSeqShape` | `action.dll` | CLSID `{6868201f-0d9e-4689-9a38-b7d823796d57}` |
-| `GetSceneFrameSetFromCamSeq` | `action.dll` | CLSID `{8ece62e1-41c9-4e18-84cc-97a1b0d8d625}` |
 | `Create2DSkeleton` | `chains.vbs` (VBScript) | `CreateSkeletonProc` |
 | `Create3DSkeleton` | `chains.vbs` (VBScript) | `CreateSkeletonProc` |
 | `SICreateSkeleton` | `sicoresdk.dll`, `viewinteraction.dll` | CLSID `{59c1e31b-bdf1-11d2-8433-00a0c961747d}` |
@@ -1246,18 +1301,13 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `SelectShapeKey` | `action.dll` | CLSID `{eaa03724-f9bd-11d2-9c61-0060970a2bc8}` |
 | `ApplyShapeKey` | `action.dll` | CLSID `{12a3efd4-e543-11d2-b352-00105a1e6ce9}` |
 | `ReplaceShapeKey` | `action.dll` | CLSID `{eaa03725-f9bd-11d2-9c61-0060970a2bc8}` |
-| `CopyShape` | `action.dll` | CLSID `{7116d731-7ec0-11d4-9c8a-00d0b719049e}` |
 | `ConvertShapeReferenceMode` | `action.dll` | CLSID `{b0adeabc-9e68-42a0-949a-116a0e31aeef}` |
 | `LinkDeform` | `action.dll` | CLSID `{14fafb72-9954-48eb-8d61-ba60dea49dc7}` |
 | `LinkDeformWithOri` | `action.dll` | CLSID `{14fafb72-9954-48eb-8d61-ba60dea49dc7}` |
 | `SaveDeformKey` | `uixsiscripts.vbs` (VBScript) | `SaveDeformKeyProc` |
 | `ApplyDeformKey` | `uixsiscripts.vbs` (VBScript) | `ApplyDeformKeyProc` |
-| `Open SE for Link With Deform` | `action.dll` | CLSID `{e04f9e50-7db5-4ae8-a2b5-b62a9ac617a0}` |
 | `OpenShapeEditor` | `uixsiscripts.vbs` (VBScript) | `OpenShapeEditorProc` |
-| `StripDeformOperators` | `action.dll` | CLSID `{eaa03726-f9bd-11d2-9c61-0060970a2bc8}` |
 | `SITransferShapeAnimation` | `optasks.dll`, `action.dll` | CLSID `{3b019512-6257-4a4d-b10e-8558ab464b55}` |
-| `CreateShapeGroup` | `action.dll` | CLSID `{e2997ab9-1abd-4fa5-b883-57924b83b469}` |
-| `SetShapeGroup` | `action.dll`, `sicoresdk.dll` | CLSID `{d7e2480b-7d29-4455-a82a-882835edb6d5}` |
 | `SetSelFilter` | `selectionmgr.dll` | CLSID `{d9eb4110-dcac-11d2-8bd1-00aa006130ef}` |
 | `ActivatePolygonSelTool` | `selectionmgr.dll` | CLSID `{d9eb4110-dcac-11d2-8bd1-00aa006130ef}` |
 | `ActivatePolygonSelToolWithNoObjStateChange` | `selectionmgr.dll` | CLSID `{d9eb4110-dcac-11d2-8bd1-00aa006130ef}` |
@@ -1359,7 +1409,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `Move Joint Tool` | `siuitasks.dll`, `tasks.dll`, `selectionmgr.dll`, `toolmanager.dll` | CLSID `{0461b2c6-0ae3-11d2-8065-00a0c955b335}` |
 | `Show Previous Manipulator` | `manipmgr.dll` | CLSID `{0461b2c0-0ae3-11d2-8065-00a0c955b335}` |
 | `Show Next Manipulator` | `manipmgr.dll` | CLSID `{0461b2c0-0ae3-11d2-8065-00a0c955b335}` |
-| `MoveComponent` | `tasks.dll`, `imageclipeditor.dll`, `transformmanager.dll`, `viewinteraction.dll` | CLSID `{da55a811-5f86-11d2-b11c-00a0c906811e}` |
 | `GetPrim` | `primitives.vbs` (VBScript) | `GetPrimProc` |
 | `CreatePrim` | `primitives.vbs` (VBScript) | `CreatePrimProc` |
 | `GetPresetModel` | `primitives.vbs` (VBScript) | `GetPresetModelProc` |
@@ -1394,7 +1443,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `ExportMaterialLibrary` | `modeltasks.dll`, `imageclip.dll` | CLSID `{200bfe4d-e316-4464-a9a5-fde08f290898}` |
 | `AssignMaterial` | `uixsiscripts.vbs` (VBScript) | `AssignMaterialProc` |
 | `UnAssignMaterial` | `uixsiscripts.vbs` (VBScript) | `UnAssignMaterialProc` |
-| `ExportImageClip` | `vm.dll` | CLSID `{f7c3aa73-4d27-4333-a281-3774a90b194b}` |
 | `CreateLibrary` | `modeltasks.dll`, `imageclip.dll` | CLSID `{00f3ee76-b355-4c3d-bc54-45db22466e30}` |
 | `MoveToLibrary` | `imageclip.dll` | CLSID `{adf52b4f-f0f3-40ad-ae77-d079ca84f3b6}` |
 | `SetCurrentMaterialLibrary` | `modeltasks.dll`, `imageclip.dll` | CLSID `{e9e64654-0032-4193-87a0-310a9612df72}` |
@@ -1414,7 +1462,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `PlayRealTimeFromStart` | `mcp.dll` | CLSID `{9ff65990-22a3-11d3-bff8-00a0248f9397}` |
 | `PlayForwardsFromStart` | `mcp.dll` | CLSID `{9ff65990-22a3-11d3-bff8-00a0248f9397}` |
 | `PlayBackwardsFromEnd` | `mcp.dll` | CLSID `{9ff65990-22a3-11d3-bff8-00a0248f9397}` |
-| `StartTimedPlayback` | `vm.dll` | CLSID `{f8b60ef4-7ec2-11d3-8e88-00a0c982dd9a}` |
 | `Refresh` | `tasks.dll` | CLSID `{1600581c-1a86-11d3-bc37-00a0c9612b97}` |
 | `DelayedRefresh` | `tasks.dll` | CLSID `{c57f98e2-6a92-4328-b7c1-692aed6b130a}` |
 | `UnhideAll` | `layers.vbs` (VBScript) | `UnhideAllProc` |
@@ -1424,19 +1471,9 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `SIHideObjects` | `layers.vbs` (VBScript) | `HideObjectsProc` |
 | `SIUnhideObjects` | `layers.vbs` (VBScript) | `UnhideObjectsProc` |
 | `CameraReset` | `vm.dll` | CLSID `{0461b2b4-0ae3-11d2-8065-00a0c955b335}` |
-| `CameraUndo` | `vm.dll` | CLSID `{41973541-1cf0-4935-abf2-1ef3f1a71db4}` |
 | `Undo Camera (alternate)` | `uixsiscripts.vbs` (VBScript) | `CameraUndoProc` |
-| `CameraRedo` | `vm.dll` | CLSID `{0f2e5216-a4ff-435f-a934-eb69d88395f9}` |
 | `Redo Camera (alternate)` | `uixsiscripts.vbs` (VBScript) | `CameraRedoProc` |
 | `GetViewCamera` | `vm.dll` | CLSID `{8d8bbbd5-af43-45ea-853d-a31a47109cf2}` |
-| `GetViewIndex` | `vm.dll` | CLSID `{1b211a79-d67f-4b2f-b8cc-8f4027f126cd}` |
-| `SaveFastPlaybackCache` | `vm.dll` | CLSID `{4927de03-3e0e-4126-8d59-6d34ce0b7ddd}` |
-| `LoadFastPlaybackCache` | `vm.dll` | CLSID `{b613c9a6-acb1-4a63-a674-d64609dbefc0}` |
-| `ViewTranslate` | `vm.dll` | CLSID `{ad992d4b-5d42-431b-959e-d569b6495687}` |
-| `ViewNudgeLeft` | `vm.dll` | CLSID `{ad992d4b-5d42-431b-959e-d569b6495687}` |
-| `ViewNudgeRight` | `vm.dll` | CLSID `{ad992d4b-5d42-431b-959e-d569b6495687}` |
-| `ViewNudgeUp` | `vm.dll` | CLSID `{ad992d4b-5d42-431b-959e-d569b6495687}` |
-| `ViewNudgeDown` | `vm.dll` | CLSID `{ad992d4b-5d42-431b-959e-d569b6495687}` |
 | `SetViewDisplayMode` | `uixsiscripts.vbs` (VBScript) | `SetViewDisplayModeProc` |
 | `ToggleHeadlightDisplayMode` | `uixsiscripts.vbs` (VBScript) | `ToggleHeadlightDisplayModeProc` |
 | `ToggleViewDisplayMode` | `uixsiscripts.vbs` (VBScript) | `ToggleViewDisplayModeProc` |
@@ -1447,17 +1484,13 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `FrameAll` | `vm.dll` | CLSID `{0461b2b6-0ae3-11d2-8065-00a0c955b335}` |
 | `Toggle Manipulator mode` | `manipmgr.dll` | CLSID `{0461b2c4-0ae3-11d2-8065-00a0c955b335}` |
 | `Frame Selection` | `vm.dll` | CLSID `{0461b2b6-0ae3-11d2-8065-00a0c955b335}` |
-| `Frame Contextual` | `vm.dll` | CLSID `{248c1d05-7023-4107-bb0f-905b655e0dc8}` |
 | `Center Selection` | `vm.dll` | CLSID `{d048b3fd-8bcd-4292-83c9-3b93eea82ea2}` |
-| `Hide Back Facing Polygons` | `vm.dll` | CLSID `{0461b2c1-0ae3-11d2-8065-00a0c955b335}` |
 | `Frame All` | `vm.dll` | CLSID `{0461b2b6-0ae3-11d2-8065-00a0c955b335}` |
 | `Show/Hide Grid` | `vm.dll` | CLSID `{0461b2c2-0ae3-11d2-8065-00a0c955b335}` |
 | `Toggle Field Guide` | `uixsiscripts.vbs` (VBScript) | `ToggleFieldGuideProc` |
 | `Toggle Pixel Zoom` | `vm.dll` | CLSID `{6399a7e0-50dc-4731-bd1f-1a874c17d35b}` |
 | `Zoom In` | `vm.dll` | CLSID `{553c67a0-c71d-4e6d-b862-80d0bc44c03c}` |
 | `Zoom Out` | `vm.dll` | CLSID `{553c67a0-c71d-4e6d-b862-80d0bc44c03c}` |
-| `SetViewCamera` | `vm.dll` | CLSID `{c6f8fc98-6363-4661-aa78-c92d895b75aa}` |
-| `AlignViewCamera` | `vm.dll` | CLSID `{075fb349-89bd-42fa-8d2d-b9e83c0f284d}` |
 | `Top View` | `uixsiscripts.vbs` (VBScript) | `TopViewProc` |
 | `Bottom View` | `uixsiscripts.vbs` (VBScript) | `BottomViewProc` |
 | `Right View` | `uixsiscripts.vbs` (VBScript) | `RightViewProc` |
@@ -1474,7 +1507,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `IsolateAll` | `vm.dll` | CLSID `{93c85bba-fbca-41a0-80e2-c2c9e5fada31}` |
 | `Maximize/Restore Current Viewport` | `vm.dll` | CLSID `{ff811500-0d20-11d3-bfe5-00a0248f9397}` |
 | `Camera Visibility Options` | `vm.dll` | CLSID `{6ff26831-0d57-11d3-bfe5-00a0248f9397}` |
-| `ToggleMuteSolo` | `vm.dll` | CLSID `{7ad7df80-1441-11d3-bfec-00a0248f9397}` |
 | `CaptureViewport` | `vm.dll` | CLSID `{f8b60ef4-7ec2-11d3-8e88-00a0c982dd9a}` |
 | `SwitchToolbar` | `toolbarobj.dll` | CLSID `{b5c21641-0f82-11d3-bfe8-00a0248f9397}` |
 | `OpenICETreeView` | `uixsiscripts.vbs` (VBScript) | `OpenICETreeProc` |
@@ -1482,15 +1514,11 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `Copy` | `tasks.dll` | CLSID `{ec7663e4-2f0b-11d3-bffd-00a0248f9397}` |
 | `Paste` | `tasks.dll`, `xsievents.dll` | CLSID `{ec7663e6-2f0b-11d3-bffd-00a0248f9397}` |
 | `CopyPaste` | `optasks.dll`, `tasks.dll`, `actioncore.dll` | CLSID `{2c8a5f31-8556-11d3-b4a2-00a02485cecb}` |
-| `AddToTOC` | `tasks.dll`, `action.dll` | CLSID `{bd02d462-9240-11d3-b4a8-009027bc38d5}` |
 | `OpenAnimationEditor` | `siviewtasks.dll` | CLSID `{a64dac70-1e45-11d5-bced-00d0b719022b}` |
 | `OpenNetView` | `siviewtasks.dll` | CLSID `{c7461ff7-d02c-438a-a507-d4ebd588ef6f}` |
 | `SetDisplayMode` | `uixsiscripts.vbs` (VBScript) | `SetDisplayMode` |
 | `ToggleValue` | `uixsiscripts.vbs` (VBScript) | `ToggleValueProc` |
-| `ResetAllViews` | `vm.dll` | CLSID `{0461b2b4-0ae3-11d2-8065-00a0c955b335}` |
 | `` | `tasks.dll` | CLSID `{82382d12-3bf6-11d4-bc93-00d0b719022b}` |
-| `Show3DContextMenu` | `vm.dll` | CLSID `{0fd6b0ba-6d51-11d4-a8c2-00c04f8edf15}` |
-| `ImportPrefs` | `tasks.dll` | CLSID `{4a4c8cc1-a451-11d4-b4b0-00d0b71903e4}` |
 | `RunPerformanceTest` | `tasks.dll`, `gppgcmdlauncherctrl.dll` | CLSID `{0ed17cf6-d6a3-4b06-ba4d-9be4b7924df9}` |
 | `AddUserTab` | `siuitasks.dll` | CLSID `{f4b294dd-2e8f-422a-a10f-f0e9a1c6ee4c}` |
 | `AddUserKeyword` | `siuitasks.dll` | CLSID `{f4b294dd-2e8f-422a-a10f-f0e9a1c6ee4c}` |
@@ -1500,16 +1528,10 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `SIMergeScene` | `modeltasks.dll` | CLSID `{81ab7cd1-2262-11d3-b949-00a024c78ee3}` |
 | `MarkObjectDirty` | (CLSID not specific to one binary) | CLSID `{00000000-0000-0000-0000-000000000000}` |
 | `NewScene` | `tasks.dll` | CLSID `{6e4d3de5-5ad1-48fa-9811-49f8be59a576}` |
-| `SaveSceneAs` | `tasks.dll` | CLSID `{b8686985-61cf-11d5-ad17-0090275802bf}` |
 | `SaveScene` | `tasks.dll` | CLSID `{973f7447-bd33-4349-9d59-d1c9cad1b3a3}` |
-| `SaveBackupScene` | `tasks.dll` | CLSID `{f2ddabc1-983c-4f6b-8998-26da7e72f47f}` |
 | `OpenScene` | `tasks.dll` | CLSID `{fcad9bc1-645a-11d5-ad18-0090275802bf}` |
 | `CopyExtFilesIntoProject` | `modeltasks.dll`, `tasks.dll` | CLSID `{cf8c9f24-9d07-11d3-b96b-009027bc3e07}` |
-| `CopyCacheFiles` | `tasks.dll` | CLSID `{0e36c4ee-ef78-4f41-b381-2e960ff33d68}` |
-| `DumpCacheHeader` | `tasks.dll` | CLSID `{46a94ed1-aa64-4832-836b-7242f5c7b276}` |
-| `CopyCacheFiles2` | `tasks.dll` | CLSID `{d8c94826-abd7-4d76-8cf2-fa206ad224bb}` |
 | `CacheObjectsIntoFile` | `simulation.vbs` (VBScript) | `CacheObjectsIntoFileProc` |
-| `CacheObjectsIntoFile_Private` | `tasks.dll` | CLSID `{4c0c8234-baaa-4a8f-a94c-5e890b1e1785}` |
 | `ApplySoftBody` | `particle.vbs` (VBScript) | `ApplySoftBodyProc` |
 | `ApplyCloth` | `particle.vbs` (VBScript) | `ApplyClothProc` |
 | `ApplyParticleShader` | `particle.vbs` (VBScript) | `ApplyParticleShaderProc` |
@@ -1530,15 +1552,8 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `SIAddParticleForce` | `forces.dll`, `sicoresdk.dll` | CLSID `{4cfc0e50-e434-11d5-a281-00d0b7190223}` |
 | `CreateEventSource` | `sparks.dll` | CLSID `{68f37254-3a7d-4739-843d-05eaf66343cf}` |
 | `SetEventObstacle` | `activedb.dll`, `sparks.dll` | CLSID `{266f48d4-8ddd-40ac-a3b0-99c2bbd841a0}` |
-| `SetCurrentParType` | `tasks.dll`, `viewinteraction.dll` | CLSID `{2f76bc8f-f028-11d2-ac7c-00a02485cecb}` |
 | `AddUserParameter` | `sparks.dll`, `sicoresdk.dll` | CLSID `{a289896c-c37f-40cf-b471-2b57b4f3fcb8}` |
 | `RemoveUserParameter` | `sparks.dll`, `sicoresdk.dll` | CLSID `{e8b1490d-8471-4e7a-94ba-5295e1bb7980}` |
-| `Particle Type Pop-up Menu` | `tasks.dll` | CLSID `{025698cb-cc9f-48b4-b196-b631960e5c4b}` |
-| `Event Pop-up Menu` | `tasks.dll` | CLSID `{ca5c1755-7e4f-4d48-8a61-f33e2a605c43}` |
-| `Goal Pop-up Menu` | `tasks.dll` | CLSID `{10fd904a-159a-4118-b255-c69244eccd6a}` |
-| `Obstalce Pop-up Menu` | `tasks.dll` | CLSID `{8fbbf318-15f8-4e96-8c09-92fbe12bfef7}` |
-| `Emission Pop-up Menu` | `tasks.dll` | CLSID `{f036a29f-357a-4be7-bef6-16f4238cedfa}` |
-| `Force Pop-up Menu` | `tasks.dll` | CLSID `{e6d29635-a3a0-4d60-88e8-5e86605360cb}` |
 | `CreateFramebuffer` | `rendercore.dll`, `sicoresdk.dll` | CLSID `{16da976b-687f-43eb-8a05-c30e7e1752f7}` |
 | `CreateRenderChannel` | `rendercore.dll`, `sicoresdk.dll` | CLSID `{fda875ff-245b-4dd9-a52c-3dbbb8f60167}` |
 | `RemoveRenderChannel` | `rendercore.dll`, `sicoresdk.dll` | CLSID `{63ea7a1d-2ade-424c-8aa6-9962014d252f}` |
@@ -1546,7 +1561,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `CreatePass` | `Rendering.vbs` (VBScript) | `CreatePassProc` |
 | `CreatePassFromLayers` | `Rendering.vbs` (VBScript) | `CreatePassFromLayersProc` |
 | `CreateImageBasedLightingPass` | `Rendering.vbs` (VBScript) | `CreateImageBasedLightingPass` |
-| `GetCurrentPass` | `tasks.dll` | CLSID `{2f76bc83-f028-11d2-ac7c-00a02485cecb}` |
 | `SetCurrentPass` | `tasks.dll`, `viewinteraction.dll` | CLSID `{2f76bc8f-f028-11d2-ac7c-00a02485cecb}` |
 | `DeleteCurrentPass` | (CLSID not specific to one binary) | CLSID `{dd531990-ccc2-11d2-ac73-00a02485cecb}` |
 | `SICreateEmptyPartition` | `rendercore.dll`, `sicoresdk.dll` | CLSID `{075d89ea-2e77-47a3-b5cb-7f714aef264a}` |
@@ -1601,10 +1615,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `ReprojectUVW` | `Texture.vbs` (VBScript) | `ReprojectUVWProc` |
 | `InspectUVW` | `Texture.vbs` (VBScript) | `InspectUVWProc` |
 | `InspectAllUVW` | `Texture.vbs` (VBScript) | `InspectAllUVWProc` |
-| `PinUVComponents` | `tasks.dll`, `sicoresdk.dll` | CLSID `{00bef78c-5d15-4cec-8038-d31c6c7f4fb2}` |
-| `PinAllUVComponents` | `tasks.dll`, `sicoresdk.dll` | CLSID `{00bef78c-5d15-4cec-8038-d31c6c7f4fb2}` |
-| `UnPinUVComponents` | `tasks.dll`, `sicoresdk.dll` | CLSID `{00bef78c-5d15-4cec-8038-d31c6c7f4fb2}` |
-| `UnPinAllUVComponents` | `tasks.dll`, `sicoresdk.dll` | CLSID `{00bef78c-5d15-4cec-8038-d31c6c7f4fb2}` |
 | `SICreateModel` | `modeltasks.dll`, `primtasks.dll`, `imageclip.dll`, `converter.dll`, `customdisplayhost.dll`, `xsievents.dll` … | CLSID `{bcb70445-0a0d-11d3-ac82-00a02485cecb}` |
 | `CreateModel` | `Model.vbs` (VBScript) | `CreateModelProc` |
 | `ExportModel` | `modeltasks.dll`, `_3dobject2.dll` | CLSID `{4e8acff0-7767-11d3-8902-00a024ee6238}` |
@@ -1642,19 +1652,9 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `AddDelta` | `Model.vbs` (VBScript) | `AddDeltaProc` |
 | `Lock` | `modeltasks.dll`, `tasks.dll`, `fcurve.dll`, `imageclip.dll`, `actionhelper.dll`, `props.dll` … | CLSID `{b3c0b1a1-0a4c-11d4-b980-009027bc3e07}` |
 | `Unlock` | `modeltasks.dll`, `tasks.dll`, `fcurve.dll`, `imageclip.dll`, `actionhelper.dll`, `props.dll` … | CLSID `{b3c0b1a1-0a4c-11d4-b980-009027bc3e07}` |
-| `Tag` | `modeltasks.dll`, `tasks.dll`, `fcurve.dll`, `imageclip.dll`, `actionhelper.dll`, `props.dll` … | CLSID `{b3c0b1a1-0a4c-11d4-b980-009027bc3e07}` |
-| `Untag` | `modeltasks.dll`, `tasks.dll`, `fcurve.dll`, `imageclip.dll`, `actionhelper.dll`, `props.dll` … | CLSID `{b3c0b1a1-0a4c-11d4-b980-009027bc3e07}` |
-| `UnloadAddonLib` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
-| `UnloadAllAddonLibs` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
-| `ReloadAddonLib` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
-| `ReloadAllAddonLibs` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
-| `UnloadAllCOMLibs` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
-| `TestPluginHost` | `tasks.dll` | CLSID `{b5097d5a-0331-42fb-bf47-e87677da16a8}` |
 | `CreateUserDataMapAndPickTemplate` | `UserDataScripts.vbs` (VBScript) | `CreateUserDataMapAndPickTemplateFunc` |
 | `InspectUserData` | `UserDataScripts.vbs` (VBScript) | `InspectUserDataFromObjListSub` |
 | `DeformMotion` | `customcommands.dll` (None) | `None` |
-| `ObjImport` | `customcommands.dll` (None) | `None` |
-| `SIObjExport` | `customcommands.dll` (None) | `None` |
 | `OBJ Import...` | `importexport.vbs` (VBScript) | `WavefrontImport` |
 | `InspectDevices` | `uixsiscripts.vbs` (VBScript) | `InspectDevicesProc` |
 | `StartChannelCapture` | `uixsiscripts.vbs` (VBScript) | `StartCaptureProc` |
