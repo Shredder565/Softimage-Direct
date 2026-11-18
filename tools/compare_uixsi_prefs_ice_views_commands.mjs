@@ -605,7 +605,8 @@ eq('PlotCameraSequencer, empty sequencer plot: error propagates, clips / range /
 eq('PlotCameraSequencer: an invalid range fails in the plot commands (E_INVALIDARG)', po.badRange, true);
 eq('PlotCameraSequencer: camera plotted, animation clips and compounds deleted (shape / audio kept), PlayControl In / Out = range', po.applied,
   [NONE, 'SequencerCamera_Plot', 2, [['oldShape', 'oldAudio'], []], [5, 40], { StartFrame: 5, EndFrame: 40 }]);
-eq('PlotCameraSequencer: unlock / plot-to-actions / shape plot flagged not yet attested, no error', po.notes, [3, []]);
+// PlotCamSeqToActions and PlotCamSeqShape are on the bus since CMD-B10 (inferred, they log their own open parts): only the unlock is flagged here
+eq('PlotCameraSequencer: unlock flagged not yet attested (plot-to-actions / shape plot delegated), no error', po.notes, [1, []]);
 eq('PlotCameraSequencer: undoable', po.undo, [[['oldAnim', 'oldShape', 'oldAudio'], ['oldCompound']], [1, 100], false]);
 eq('PlotCameraSequencer ApplyToCamera false: the plotted camera\'s clip is taken out of the delete', po.clipKept, [NONE, [['oldShape', 'oldAudio', 'SequencerCamera_Plot_Action'], []], true, [3, 30]]);
 

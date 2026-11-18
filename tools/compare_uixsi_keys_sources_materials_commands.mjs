@@ -465,8 +465,10 @@ const co = got.containers;
 eq('AddToContainer, Target is a Group: SIAddToGroup', co.add, [NONE, ['cube', 'sphere', 'sphere1'], ['SIAddToGroup']]);
 eq('RemoveFromContainer, Target is a Group: RemoveFromGroup', co.remove, [NONE, ['cube', 'sphere'], ['RemoveFromGroup']]);
 eq('AddToContainer: empty InputObjs is passed through (the group command takes the selection)', co.addSelection, ['cube', 'sphere', 'sphere1']);
-eq('AddToContainer, Target is not a Group: MoveToFolder (not on the bus, flagged)', co.folder, [NONE, true]);
-eq('RemoveFromContainer, Target is not a Group: RemoveFromFolder (not on the bus, flagged)', co.folderRemove, [NONE, true]);
+// MoveToFolder is on the bus since CMD-B10 (inferred); a Target that is not a folder fails there and the error propagates
+eq('AddToContainer, Target is not a Group: MoveToFolder (CMD-B10) rejects a non-folder Target', co.folder, [{ err: 'MoveToFolder: Target is not a folder' }, false]);
+// RemoveFromFolder is on the bus since CMD-B10 (inferred); a Target that is not a folder fails there and the error propagates
+eq('RemoveFromContainer, Target is not a Group: RemoveFromFolder (CMD-B10) rejects a non-folder Target', co.folderRemove, [{ err: 'RemoveFromFolder: Target is not a folder' }, false]);
 ok('Add/RemoveFromContainer: unknown Target = lookup error', co.unknown.every(e => /"noSuchThing" is not in the scene/.test(e ?? '')), co.unknown);
 
 // ---- keys
@@ -604,4 +606,4 @@ if (diffs.length) {
 console.log(`OK CMD-B6a uixsi keys / sources / materials commands: ${checks} checks, ${NAMES.length} commands exercised (contract tables + registry dump; no XSIBATCH golden yet)`);
 console.log('   fully wired: AddToContainer / RemoveFromContainer (group targets), SaveActionKey, SaveKeyOnMarkedKeyable (Q1 inferred), DeleteUnusedImageClips, DeleteUnusedImageSources, DeleteUnusedAnimationSources, DeleteUnusedMaterials, DeleteAllUnusedMaterials, Align (scripted + UI entry), ApplyPath (scripted + UI entry)');
 console.log('   partly wired: InspectMaterial (SIGetMaterialShader stand-in), Store...Properties x3 (SIStoreProp stand-in, Q9), SaveShapeKey (solo-index fix: combiner not modelled), OffsetValueMap / SaveOffsetKeys (native twins are placeholders), DeleteUnusedCacheSources / DeleteUnusedAudioSources (source kinds not modelled), CreateCurve (interpolated type: SICreateCurve Q6 of CMD-B8f), AssembleNurbsMesh (SIAssembleNurbsMesh of CMD-B8e: assembly itself not attested; dialog layout Q7), AddComponentTool (AddPointOnCurveTool not on the bus), ToggleContinuousDraw (Views object stand-in)');
-console.log('   stand-in / not yet attested: MergeScene (SIMergeScene not on the bus), folder targets of Add/RemoveFromContainer (MoveToFolder / RemoveFromFolder)');
+console.log('   stand-in / not yet attested: MergeScene (SIMergeScene not on the bus), (folder targets of Add/RemoveFromContainer now reach the CMD-B10 MoveToFolder / RemoveFromFolder)');

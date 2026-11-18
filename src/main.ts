@@ -38,6 +38,8 @@ import { registerOperatorsScriptsCommands } from './commands/operatorsScripts';
 import { registerDuplicateRenderingSimulationScriptsCommands } from './commands/duplicateRenderingSimulationScripts';
 import { registerAddonDocWizardCommands } from './commands/addonDocWizard';
 import { registerUiGroupViewTaskCommands } from './commands/uiGroupViewTasks';
+import { registerInferredB10Views } from './commands/inferredB10Views';
+import { registerInferredB10Scene } from './commands/inferredB10Scene';
 import { registerFcurveCopyPasteRotationTaskCommands } from './commands/fcurveCopyPasteRotationTasks';
 import { registerMeshCurveStepTaskCommands } from './commands/meshCurveStepTasks';
 import { registerSyflexScriptsCommands } from './commands/syflexScripts';
@@ -169,6 +171,8 @@ registerPrimTasksCommands(app);
 registerXsiPaintTaskCommands(app);
 registerPhonemeSpeechTaskCommands(app);
 registerFxCoreTaskCommands(app);
+registerInferredB10Views(app);   // CMD-B10, inferred batch
+registerInferredB10Scene(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);

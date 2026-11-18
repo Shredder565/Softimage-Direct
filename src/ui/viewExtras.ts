@@ -234,6 +234,7 @@ export function installViewExtras(C: Ctx) {
   window.addEventListener('renderregion', () => { regionTool = !regionTool; app.logMsg('info', regionTool ? 'Render Region: drag a rectangle in a viewport' : 'Render Region tool off'); });
   window.addEventListener('deleterenderregion', () => { for (const vp of vps) X(vp).region = null; C.needs(); });
   window.addEventListener('navtool', (e: any) => { const t = e.detail?.tool ?? 'Navigation Tool'; navTool = navTool === t ? null : t; app.events.emit('selection'); });
+  (window as any).__navTool = { get: () => navTool, set: (t: string | null) => { navTool = t && NAV_TOOLS.includes(t) ? t : null; app.events.emit('selection'); return navTool; } };
   window.addEventListener('displaytoggle', (e: any) => displayMenu(vps[C.active()], e.detail?.item ?? 'Headlight', []));
   window.addEventListener('renderregion-toggle', () => { for (const vp of vps) { const x = X(vp); if (x.region) { (x as any).hidden = !(x as any).hidden; } } C.needs(); });
   window.addEventListener('renderregion-refresh', () => { regionInvalidate(); C.needs(); });

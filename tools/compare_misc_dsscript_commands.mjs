@@ -405,7 +405,8 @@ const got = await page.evaluate(async ({ NAMES }) => {
     // focused viewport B shows the scene camera "Camera"
     const r6 = run('CreateShotCameraAndSwitch', { CameraName: 'FocusShot', WithoutInterest: false }); const c6 = r6.raw;
     d.switchFocused = r6.err ?? [c6?.name, c6 && close(pos(c6), pos(src)), !!find('FocusShot_Interest'), c6?.primitive.val('fov')];
-    d.switchNote = logFrom(m).some(l => /CreateShotCameraAndSwitch: not yet attested/.test(l));
+    // SetViewCamera is on the bus since CMD-B10 (inferred): the switch now happens instead of being flagged
+    d.switchNote = [window.__vm.active().viewCamera ?? null, logFrom(m).some(l => /CreateShotCameraAndSwitch: not yet attested/.test(l))];
     // no usable active view: error 1530, nothing returned
     const vm = window.__vm; window.__vm = undefined; m = mark(); const n0 = names().length;
     d.noView = [pub(run('CreateShotCameraAndSwitch')), logFrom(m, ['error']), names().length - n0]; window.__vm = vm;
@@ -631,7 +632,7 @@ eq('CreateShotCamera from a built-in viewport camera: viewport pose, std from th
 ok('CreateShotCamera: a source that is not a camera fails (inferred)', /source camera "cube" not found/.test(ca.unknown), ca.unknown);
 eq('CreateShotCameraAndSwitch siViewportA: Views.ViewA.TopCamera as source (orthographic)', ca.switchTop, ['TopShot', true, true, []]);
 eq('CreateShotCameraAndSwitch focused viewport: the scene camera it shows; WithoutInterest false builds the interest', ca.switchFocused, ['FocusShot', true, true, 40]);
-ok('CreateShotCameraAndSwitch: the view switch is flagged not yet attested', ca.switchNote, ca);
+eq('CreateShotCameraAndSwitch: the views switch to the new cameras through SetViewCamera (CMD-B10)', ca.switchNote, ['FocusShot', false]);   // DestViewport defaults to the current view in both calls; the second switch wins
 eq('CreateShotCameraAndSwitch: no camera for the view = error 1530, nothing returned', ca.noView, [NONE, [`error:${T[1530]}`], 0]);
 eq('GetPrimCameraWithoutInterest: camera only (no root, no interest), outputs, autoupdatecoidist off, selected, object filter', ca.solo,
   [['3DObjCamera', 'Primitive'], 'Solo', 'camera', true, true, ['Solo'], 0, true, 'object']);

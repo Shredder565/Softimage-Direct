@@ -182,14 +182,8 @@
  },
  "Camera Sequencer": {
   "total": 7,
-  "registered": 2,
-  "missing": [
-   "AddShotClip",
-   "GetSceneFrameSetFromCamSeq",
-   "GetShotClip",
-   "PlotCamSeqShape",
-   "PlotCamSeqToActions"
-  ]
+  "registered": 7,
+  "missing": []
  },
  "Character Rigging": {
   "total": 31,
@@ -403,11 +397,8 @@
  },
  "Customization": {
   "total": 2,
-  "registered": 0,
-  "missing": [
-   "CreateAndEditCommand",
-   "EditCommand"
-  ]
+  "registered": 2,
+  "missing": []
  },
  "Deformation": {
   "total": 55,
@@ -432,12 +423,8 @@
  },
  "Drawing": {
   "total": 14,
-  "registered": 11,
-  "missing": [
-   "2D Chain Tool",
-   "3D Chain Tool",
-   "AddParticleTool"
-  ]
+  "registered": 14,
+  "missing": []
  },
  "Edit": {
   "total": 117,
@@ -533,11 +520,8 @@
  },
  "General": {
   "total": 10,
-  "registered": 8,
-  "missing": [
-   "ReconnectModel",
-   "Untag"
-  ]
+  "registered": 10,
+  "missing": []
  },
  "Generator": {
   "total": 1,
@@ -561,20 +545,8 @@
  },
  "Manipulation": {
   "total": 51,
-  "registered": 40,
-  "missing": [
-   "DirectManipTool",
-   "LastTool",
-   "ManipulateTool",
-   "RotateUVW",
-   "ScaleUVW",
-   "TimeSliderTool",
-   "Toggle Manipulator mode",
-   "Toggle Snapping",
-   "TranslatePivot",
-   "TranslateUVW",
-   "VirtualSliderTool"
-  ]
+  "registered": 51,
+  "missing": []
  },
  "Modeling": {
   "total": 274,
@@ -604,29 +576,8 @@
  },
  "Navigation": {
   "total": 22,
-  "registered": 2,
-  "missing": [
-   "Cam3dsMaxNavigTool",
-   "CamDollyTool",
-   "CamDriveTool",
-   "CamFlyTool",
-   "CamMayaZoomTool",
-   "CamNavigTool",
-   "CamOrbitTool",
-   "CamPanZoomTool",
-   "CamPivotTool",
-   "CamRectZoomTool",
-   "CamRollTool",
-   "CamTrackTool",
-   "CamWalkTool",
-   "CamZoomTool",
-   "CreateFolder",
-   "MoveToFolder",
-   "NavigateNode",
-   "RemoveFolder",
-   "RemoveFromFolder",
-   "SetCurrentEnvironment"
-  ]
+  "registered": 22,
+  "missing": []
  },
  "Operator": {
   "total": 11,
@@ -635,11 +586,8 @@
  },
  "Paint": {
   "total": 7,
-  "registered": 5,
-  "missing": [
-   "PaintSelectTool",
-   "PaintTextureTool"
-  ]
+  "registered": 7,
+  "missing": []
  },
  "Preferences": {
   "total": 2,
@@ -727,22 +675,13 @@
  },
  "Scripting": {
   "total": 4,
-  "registered": 0,
-  "missing": [
-   "AddCustomOp",
-   "AddScriptedOp",
-   "AddScriptedOpFromFile",
-   "ConvertScriptedOp"
-  ]
+  "registered": 4,
+  "missing": []
  },
  "Selection": {
   "total": 108,
-  "registered": 105,
-  "missing": [
-   "GenerateInfoReport",
-   "GetSize",
-   "PickDeformerByVertexTool"
-  ]
+  "registered": 108,
+  "missing": []
  },
  "Simulation": {
   "total": 118,
@@ -798,25 +737,13 @@
  },
  "Source": {
   "total": 6,
-  "registered": 3,
-  "missing": [
-   "CreateLibrary",
-   "MoveToLibrary",
-   "SetCurrentMaterialLibrary"
-  ]
+  "registered": 6,
+  "missing": []
  },
  "Texturing": {
   "total": 75,
-  "registered": 68,
-  "missing": [
-   "ConnectMap",
-   "InspectAllUVW",
-   "InspectUVW",
-   "PinAllUVComponents",
-   "PinUVComponents",
-   "UnPinAllUVComponents",
-   "UnPinUVComponents"
-  ]
+  "registered": 75,
+  "missing": []
  },
  "Toolbar": {
   "total": 6,
@@ -825,11 +752,8 @@
  },
  "Transform": {
   "total": 5,
-  "registered": 3,
-  "missing": [
-   "DeleteMotionDerivator",
-   "MoveComponent"
-  ]
+  "registered": 5,
+  "missing": []
  },
  "Transport Control": {
   "total": 23,
@@ -843,42 +767,16 @@
  },
  "Viewing": {
   "total": 191,
-  "registered": 157,
+  "registered": 183,
   "missing": [
-   "AlignViewCamera",
-   "Back View",
-   "CameraRedo",
-   "CameraUndo",
    "ClearUserKeyword",
    "ClearUserTab",
-   "DelayedRefresh",
-   "Frame Contextual",
-   "Front View",
    "GetUserKeyword",
    "GetUserTab",
-   "GetViewIndex",
-   "Hide Back Facing Polygons",
-   "LoadFastPlaybackCache",
    "RemoveUserKeyword",
    "RemoveUserTab",
-   "ResetAllViews",
-   "ResetDirectX",
-   "Right View",
-   "RunPerformanceTest",
-   "SaveFastPlaybackCache",
-   "SetDropMessage",
    "SetUserKeyword",
-   "SetUserTab",
-   "SetViewCamera",
-   "Show3DContextMenu",
-   "StartTimedPlayback",
-   "ToggleMuteSolo",
-   "ToggleMuteSolo",
-   "ViewNudgeDown",
-   "ViewNudgeLeft",
-   "ViewNudgeRight",
-   "ViewNudgeUp",
-   "ViewTranslate"
+   "SetUserTab"
   ]
  },
  "Views": {
@@ -888,10 +786,7 @@
  },
  "file": {
   "total": 5,
-  "registered": 3,
-  "missing": [
-   "InstallCustomPreferences",
-   "RefreshCustomPreferences"
-  ]
+  "registered": 5,
+  "missing": []
  }
 }
