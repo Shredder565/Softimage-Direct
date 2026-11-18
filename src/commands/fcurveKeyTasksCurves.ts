@@ -15,7 +15,7 @@ import { mapSetCurveTypeToInterp } from '../core/mixer';
 import { unset } from './viewEditPropertyHelpers';
 import {
   S_OK, S_NOTHING, E_INVALIDARG, SOURCE, BRANCH, SCOPE, type Mode, stateOf, setStatus, logNya, message, fail,
-  enumLong, truthy, timeArg, layerCurve, layersOf, animatedValue, precheckSkips,
+  enumLong, truthy, timeArg, layerCurve, layersOf, animatedValue, precheckSkips, writeKey, removeKey,
   resolveItems, parameterList, objectList, keyableParams, paramSetsOf, isParam,
 } from './fcurveKeyTasksShared';
 
@@ -199,6 +199,49 @@ function reactivate(fc: FCurve, [a, b]: Range) {
   fc.inactiveRanges = out;
 }
 
+/** Curve kind of a parameter's (real or temporary) fcurve: 10 boolean, 15 integer, 20 standard (as GetFCurveInfo). */
+const kindOf = (fc: FCurve | undefined, p: Parameter): number => Number((fc as any)?.kind ?? (p.def.type === 'bool' ? 10 : p.def.type === 'int' ? 15 : 20));
+const bit = (x: unknown): 0 | 1 => (typeof x === 'boolean' ? x : Number(x) !== 0) ? 1 : 0;
+
+/**
+ * ActivateFCurve step 4: a frame range on a boolean fcurve (kind 10) is written as keys, with the RemoveKey / SaveKey
+ * workers, so that the curve reads `v` over [start, end] and keeps what it had outside. `fc` undefined = the
+ * temporary case (animatable parameter without an fcurve). Returns the number of sub-tasks that did something.
+ */
+function booleanRange(app: App, p: Parameter, fc: FCurve | undefined, [start, end]: Range, v: 0 | 1): number {
+  const keys = fc ? fc.keys : [];
+  // inferred: the two constant getters of the curve (offsets 0x170 / 0x188) are what this build's curve reads before
+  // its first and after its last key (constant extrapolation); without keys both are the value when no key.
+  const noKey = bit((fc as any)?.valueWhenNoKey ?? p.value);
+  const leading = keys.length ? bit(keys[0].value) : noKey;
+  const trailing = keys.length ? bit(keys[keys.length - 1].value) : noKey;
+  // inferred: a boolean fcurve is a step curve, so the left side of key i holds the value of key i - 1
+  const leftOf = (i: number) => i > 0 ? bit(keys[i - 1].value) : leading;
+  const at = (t: number) => { let x = leading; for (const k of keys) { if (k.time - t > 1e-12) break; x = bit(k.value); } return x; };
+  // 1. early out
+  if (at(start) === v && at(end) !== v) return 0;
+  // 2. the values before and after the range, the keys inside it
+  const iStart = keys.findIndex(k => k.time > start);
+  const iEnd = keys.findIndex(k => k.time > end);
+  const temp = !fc;
+  const before = temp ? leading : iStart >= 0 ? leftOf(iStart) : trailing;
+  const after = temp ? trailing : iEnd >= 0 ? leftOf(iEnd) : trailing;
+  const inside = keys.filter(k => k.time > start && k.time <= end).map(k => k.time);
+  const firstIsFirst = temp || iStart === 0;
+  const other = v ? 0 : 1;
+  let n = 0;
+  // 3. RemoveKey sub-tasks
+  for (const t of inside) if (removeKey(app, 'Remove key', p, 0, t, 0).removed) n++;
+  // 4. SaveKey sub-tasks at the start (and one time unit before it: one frame, inferred in the note)
+  if (before !== v) {
+    if (firstIsFirst) { writeKey(app, 'Save key', p, 0, start - 1, other, 0); n++; }
+    writeKey(app, 'Save key', p, 0, start, v, 0); n++;
+  }
+  // 5. SaveKey sub-task at the end
+  if (after !== v) { writeKey(app, 'Save key', p, 0, end, other, 0); n++; }
+  return n;
+}
+
 function activateFCurve(app: App, command: string, mode: Mode, a: Record<string, any>): void {
   const activate = unset(a.Activate) ? true : truthy(a.Activate);
   // parameter set
@@ -225,23 +268,81 @@ function activateFCurve(app: App, command: string, mode: Mode, a: Record<string,
       range = s <= e ? [s, e] : [e, s];   // a reversed range is swapped
     }
   }
-  const done: FCurve[] = [];
-  for (const p of list) { const fc = app.anim.fcurves.get(p); if (fc && !done.includes(fc)) done.push(fc); }
-  if (!done.length) { setStatus(app, command, S_NOTHING); return; }
-  if (range) logNya(app, command, 'the boundary keys the range branch inserts and the value it re-applies at the current time; the range is only deactivated / reactivated', 'Q4');
-  const apply = (on: boolean) => {
-    for (const fc of done) {
-      if (!range) fc.muted = !on; else if (on) reactivate(fc, range); else deactivate(fc, range);
-      if (fc.keys.length && fc.activeAt(app.anim.frame)) fc.param.value = fc.eval(app.anim.frame);   // the curve drives again
+  const v: 0 | 1 = activate ? 1 : 0;
+  const done: FCurve[] = [];   // the command's own undo list: curves muted / range-switched
+  let subTasks = 0;
+  const seen = new Set<Parameter>();
+  for (const p of list) {
+    if (seen.has(p)) continue; seen.add(p);
+    // step 1: the real fcurve, else a temporary one for an animatable parameter, else the parameter is left alone
+    const fc = app.anim.fcurves.get(p);
+    if (!fc && !p.animatable) continue;
+    const boolean = kindOf(fc, p) === 10;
+    if (!range) {
+      // step 2, whole curve
+      if (fc) { if (!done.includes(fc)) done.push(fc); continue; }
+      if (!boolean) continue;                       // temporary case, other kinds: nothing
+      // temporary case, boolean parameter: the value at the current time is toggled (Activate is not looked at)
+      const old = p.value; const flipped = p.def.type === 'bool' ? !bit(old) : (bit(old) ? 0 : 1);
+      app.record('Set value', () => { p.value = flipped; }, () => { p.value = old; });
+      subTasks++;
+      continue;
     }
-  };
-  // undo is the same operation with Activate inverted, as read
-  app.record(activate ? 'Activate fcurve' : 'Deactivate fcurve', () => apply(activate), () => apply(!activate));
+    if (!boolean) {
+      // step 3, range on a non-boolean fcurve; in the temporary case only the throw-away curve is touched
+      if (fc && !done.includes(fc)) done.push(fc);
+      continue;
+    }
+    // step 4, range on a boolean fcurve: nested key commands carry the undo, the parameter is not on the own undo list
+    const n = booleanRange(app, p, fc, range, v);
+    if (n) {
+      subTasks += n;
+      const now = app.anim.fcurves.get(p); const old = p.value;
+      if (now && now.keys.length && now.activeAt(app.anim.frame)) {
+        // the edited curve drives the parameter again (end-of-edit notification)
+        let x = bit(now.keys[0].value); for (const k of now.keys) { if (k.time > app.anim.frame) break; x = bit(k.value); }
+        const shown = p.def.type === 'bool' ? x === 1 : x;
+        if (shown !== old) app.record('Activate fcurve', () => { p.value = shown; }, () => { p.value = old; });
+      }
+    }
+  }
+  if (!done.length && !subTasks) { setStatus(app, command, S_NOTHING); return; }
+  if (done.length) {
+    const apply = (on: boolean) => {
+      for (const fc of done) {
+        if (!range) fc.muted = !on; else if (on) reactivate(fc, range); else deactivate(fc, range);
+        if (fc.keys.length && fc.activeAt(app.anim.frame)) fc.param.value = fc.eval(app.anim.frame);   // the curve drives again
+      }
+    };
+    // undo is the same operation with Activate inverted, as read
+    app.record(activate ? 'Activate fcurve' : 'Deactivate fcurve', () => apply(activate), () => apply(!activate));
+  }
   setStatus(app, command, S_OK);
   emit(app);
 }
 
 // ------------------------------------------------------------------ RemoveAnimation
+/** SourceMask bits as the RemoveAnimation code tests them: 1 fcurve, 2 expression, 4 any, 0x10 constraints. */
+const RM = { fcurve: 1, expression: 2, any: 4, constraint: 0x10 } as const;
+/**
+ * The "static" test of RemoveAnimation: a curve without keys is static; otherwise every key holds the value of the
+ * first key (1e-12) and both tangent slopes of every key are at most 1e-6. A layer curve must also be zero.
+ */
+function isStatic(fc: FCurve, layerForm: boolean): boolean {
+  const ks = fc.keys; if (!ks.length) return true;
+  const v0 = ks[0].value;
+  for (let i = 0; i < ks.length; i++) {
+    const k = ks[i];
+    if (Math.abs(k.value - v0) > 1e-12) return false;
+    // inferred mapping onto this build's keys: a tangent is the handle value (Left / Right) against the key value,
+    // over the distance to the neighbouring key (the slope the evaluator uses); no neighbour = one frame
+    const dl = i > 0 ? k.time - ks[i - 1].time : 1, dr = i + 1 < ks.length ? ks[i + 1].time - k.time : 1;
+    const sl = dl ? 2 * (k.value - (k.left ?? k.value)) / dl : 0, sr = dr ? 2 * ((k.right ?? k.value) - k.value) / dr : 0;
+    if (Math.abs(sl) > 1e-6 || Math.abs(sr) > 1e-6) return false;
+  }
+  return !layerForm || Math.abs(v0) <= 1e-12;
+}
+
 function removeAnimation(app: App, a: Record<string, any>): void {
   const command = 'RemoveAnimation';
   const st = stateOf(app);
@@ -251,34 +352,38 @@ function removeAnimation(app: App, a: Record<string, any>): void {
   const base = unset(a.BaseAnimation) ? true : truthy(a.BaseAnimation);
   const layerAnim = unset(a.LayerAnimation) ? true : truthy(a.LayerAnimation);
   const mask = enumLong(a.SourceMask, SOURCE, SOURCE.siAnySource);
-  if (staticOnly) logNya(app, command, 'StaticFCurves; taken as "remove only fcurves whose keys all hold one value"', 'Q3');
-  if (!base) logNya(app, command, 'BaseAnimation; taken as "leave the base-layer sources in place"', 'Q3');
-  if (mask !== SOURCE.siAnySource) logNya(app, command, 'the per-source-type filtering by SourceMask; fcurve and expression sources are matched by their bits', 'Q3');
+  const any = (mask & RM.any) !== 0;
+  const layerPass = layerAnim && (mask & (RM.fcurve | RM.any)) !== 0;
+  if ((mask & RM.constraint) !== 0) logNya(app, command, 'the constraint pass (mask bit 0x10): it depends on state-flag bit 17 of F3DGetCompleteAnimationState, whose name was not read; constraints are left in place', 'Q11');
 
   interface Work { p: Parameter; saved: number | null; fc?: FCurve; ex?: any; layers: [number, FCurve][] }
-  const work: Work[] = []; const lockedOwners: string[] = [];
+  const work: Work[] = []; const lockedLayers: string[] = [];
   for (const p of list) {
     // 1. the value at Time is read and saved
     const raw = time === app.anim.frame ? p.value : animatedValue(app, p, time);
     const saved = typeof raw === 'number' ? raw : typeof raw === 'boolean' ? (raw ? 1 : 0) : null;
     const w: Work = { p, saved, layers: [] };
-    // 2. collector
+    const layers = layersOf(app, p);
+    // 2e / 2f. the base source is queued when BaseAnimation is true, the type filter accepts it and, with
+    //          StaticFCurves, it is a static fcurve on a parameter without animation-layer entries
     if (base) {
       const fc = app.anim.fcurves.get(p);
-      const isStatic = !!fc && fc.keys.every(k => k.value === fc.keys[0].value);
-      if (fc && wantsFCurve(mask) && (!staticOnly || isStatic)) w.fc = fc;
+      if (fc && (any || (mask & RM.fcurve) !== 0) && (!staticOnly || (isStatic(fc, false) && !layers.length))) w.fc = fc;
       const ex = app.anim.expressions.get(p);
-      if (ex && wantsExpression(mask) && !staticOnly) w.ex = ex;
+      if (ex && (any || (mask & RM.expression) !== 0) && !staticOnly) w.ex = ex;   // a non-fcurve source is never static
     }
-    // 6. layer animation
-    if (layerAnim) for (const l of layersOf(app, p)) {
-      if (st.layers.locked(l)) { const owner = p.owner.fullName; if (!lockedOwners.includes(owner)) lockedOwners.push(owner); continue; }
-      w.layers.push([l, layerCurve(app, p, l)!]);
+    // 6. layer pass: masks containing 1 or 4 only
+    if (layerPass) for (const l of layers) {
+      const lfc = layerCurve(app, p, l)!;
+      if (staticOnly && !isStatic(lfc, true)) continue;   // a non-static layer curve is left in place
+      // a locked keying layer logs warning 0x37 with the layer's path; the removal request is still issued
+      if (st.layers.locked(l)) { const path = st.layers.path?.(l) ?? `Layer${l}`; if (!lockedLayers.includes(path)) lockedLayers.push(path); }
+      w.layers.push([l, lfc]);
     }
     if (w.fc || w.ex || w.layers.length) work.push(w);
   }
-  if (lockedOwners.length) message(app, command, 0x37, 4, lockedOwners);
-  // 3. nothing collected and no layer work
+  if (lockedLayers.length) message(app, command, 0x37, 4, lockedLayers);
+  // 3. nothing queued and no layer work
   if (!work.length) { setStatus(app, command, S_NOTHING); return; }
   // 4. removal, 5. the saved value is written back so that the parameter keeps the value it showed
   const olds = work.map(w => w.p.value);
@@ -287,7 +392,8 @@ function removeAnimation(app: App, a: Record<string, any>): void {
       if (w.fc) app.anim.fcurves.delete(w.p);
       if (w.ex) app.anim.expressions.delete(w.p);
       for (const [l] of w.layers) st.layerCurves.get(l)?.delete(w.p);
-      const left = app.anim.fcurves.has(w.p) || app.anim.expressions.has(w.p);
+      // "no remaining mixer entry": layer entries are the mixer entries of this build; a remaining base source keeps driving
+      const left = app.anim.fcurves.has(w.p) || app.anim.expressions.has(w.p) || layersOf(app, w.p).length > 0;
       if (w.saved !== null && !left) w.p.value = w.p.def.type === 'bool' ? w.saved !== 0 : w.saved;
     }
   }, () => {

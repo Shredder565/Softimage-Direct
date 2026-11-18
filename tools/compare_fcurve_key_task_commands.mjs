@@ -371,13 +371,43 @@ const got = await page.evaluate(({ NAMES, WRAPPED }) => {
     app.select([sph]); d.keyableSelection = [run('ActivateFCurveOnKeyable', { Activate: false }).st, muted()]; run('ActivateFCurve', { Type: 3 }); app.select([]);
     // ranges
     let l = markL();
-    d.range = [run('ActivateFCurve', { InputObjs: PX, Activate: false, StartFrame: 8, EndFrame: 4 }).st, fx.inactiveRanges, fx.muted, nya(l, /boundary keys/)];
+    d.range = [run('ActivateFCurve', { InputObjs: PX, Activate: false, StartFrame: 8, EndFrame: 4 }).st, fx.inactiveRanges, fx.muted, nya(l, /./), keys(px)];
     A.frame = 2; const at2 = px.value; px.value = -1; A.frame = 6; d.rangeDrive = [r4(at2), px.value, (A.frame = 10, r4(px.value))];
     d.rangeMore = [run('ActivateFCurve', { InputObjs: PX, Activate: false, StartFrame: 7, EndFrame: 9 }).st, fx.inactiveRanges];
     d.reactivate = [run('ActivateFCurve', { InputObjs: PX, Activate: true, StartFrame: 5, EndFrame: 6 }).st, fx.inactiveRanges];
     app.undo(); d.rangeUndo = fx.inactiveRanges;
     d.startOnly = [run('ActivateFCurve', { InputObjs: PX, Activate: false, StartFrame: 3 }).st, fx.muted, fx.inactiveRanges.length]; run('ActivateFCurve', { InputObjs: PX });
     d.badStart = run('ActivateFCurve', { InputObjs: PX, StartFrame: 'x', EndFrame: 3 }).status;
+    // ---- batch 9: the temporary case and boolean fcurves (kind 10)
+    const bp = keyable(cube).find(p => p.def.type === 'bool' && p.animatable) ?? [cube, ...cube.allProperties()].flatMap(s => s.params).find(p => p.def.type === 'bool' && p.animatable);
+    d.boolParam = !!bp;
+    if (bp) {
+      const bool0 = bp.value;
+      const fresh = (v, ks = []) => { A.fcurves.delete(bp); A.frame = 1; bp.value = v; for (const [t, x] of ks) run('SaveKey', { InputObjs: [bp], Time: t, Value: x }); };
+      const range = (act, s, e) => run('ActivateFCurve', { InputObjs: [bp], Activate: act, StartFrame: s, EndFrame: e }).st;
+      // whole curve, temporary case
+      fresh(true); l = markL();
+      d.tempToggle = [run('ActivateFCurve', { InputObjs: [bp], Activate: true }).st, bp.value, has(bp)];
+      app.undo(); d.tempToggleUndo = bp.value;
+      fresh(false); d.tempToggleOff = [run('ActivateFCurve', { InputObjs: [bp], Activate: false }).st, bp.value];
+      d.tempOther = [run('ActivateFCurve', { InputObjs: 'tCube.kine.local.posz', Activate: false, StartFrame: 2, EndFrame: 5 }).st, has(pz)];
+      // range, temporary case: keys !v one frame before the start, v at the start, !v at the end
+      fresh(false); app.undoStack.splice(0);   // the undo stack is capped: count from an empty stack
+      d.tempRange = [range(true, 5, 10), keys(bp), A.fcurves.get(bp)?.inactiveRanges ?? null, app.undoStack.length];
+      app.undo(); d.tempRangeUndo = has(bp);
+      fresh(true); d.tempRangeSame = [range(true, 5, 10), has(bp)];
+      // range on a real boolean fcurve
+      fresh(false, [[1, 0], [6, 1], [8, 0], [20, 1]]); d.boolInside = [range(false, 5, 10), keys(bp)];
+      fresh(false, [[1, 0], [20, 1]]); d.boolBounds = [range(true, 10, 5), keys(bp), A.fcurves.get(bp).inactiveRanges, A.fcurves.get(bp).muted];
+      app.undo(); d.boolBoundsUndo = keys(bp);
+      fresh(false, [[1, 1], [8, 0]]); d.boolEarlyOut = [range(true, 5, 10), keys(bp)];
+      fresh(false, [[8, 1]]); d.boolFirstKey = [range(false, 5, 10), keys(bp)];
+      fresh(false, [[1, 0], [3, 1]]); d.boolTrailing = [range(false, 5, 10), keys(bp)];
+      // whole curve on a real boolean fcurve: muted like any other kind
+      fresh(false, [[1, 0], [20, 1]]); d.boolMute = [run('ActivateFCurve', { InputObjs: [bp], Activate: false }).st, A.fcurves.get(bp).muted, keys(bp)];
+      d.boolNya = nya(l, /./);
+      A.fcurves.delete(bp); bp.value = bool0;
+    }
     out.activate = d;
   }
 
@@ -398,8 +428,40 @@ const got = await page.evaluate(({ NAMES, WRAPPED }) => {
     d.any = [run('RemoveAnimation', { InputObjs: [PX, PY] }).st, has(px), A.expressions.has(py)];
     // StaticFCurves / BaseAnimation: established only as arguments; the inferred reading is logged
     reset(); anim(); run('SaveKey', { InputObjs: PY, Time: 1, Value: 2 }); run('SaveKey', { InputObjs: PY, Time: 9, Value: 2 });
-    let l = markL(); d.static = [run('RemoveAnimation', { InputObjs: [PX, PY], StaticFCurves: true }).st, has(px), has(py), nya(l, /StaticFCurves/)];
-    l = markL(); d.noBase = [run('RemoveAnimation', { InputObjs: PX, BaseAnimation: false }).st, has(px), nya(l, /BaseAnimation/)];
+    let l = markL(); d.static = [run('RemoveAnimation', { InputObjs: [PX, PY], StaticFCurves: true }).st, has(px), has(py), nya(l, /./)];
+    l = markL(); d.noBase = [run('RemoveAnimation', { InputObjs: PX, BaseAnimation: false }).st, has(px), nya(l, /./)];
+    // ---- batch 9: the static test, SourceMask bits, layer pass
+    {
+      const FC = A.fcurves.get(px).constructor;
+      const flat = (p, v, extra) => { const fc = new FC(p); fc.addKey(1, v, extra); fc.addKey(9, v); return fc; };
+      const PZ = 'tCube.kine.local.posz';
+      const layer1 = (p, fc) => { if (!S.layerCurves.has(1)) S.layerCurves.set(1, new Map()); S.layerCurves.get(1).set(p, fc); };
+      const inL1 = (p) => !!S.layerCurves.get(1)?.has(p);
+      // a constant curve whose first key has a tangent is not static; a curve without keys is
+      reset(); A.fcurves.set(py, flat(py, 2, { right: 3 })); A.fcurves.set(pz, new FC(pz));
+      d.staticTangent = [run('RemoveAnimation', { InputObjs: [PY, PZ], StaticFCurves: true }).st, has(py), has(pz)];
+      // within the tolerances: values 1e-13 apart
+      reset(); { const fc = flat(py, 2); fc.keys[1].value = 2 + 1e-13; fc.keys[1].left = fc.keys[1].right = 2 + 1e-13; A.fcurves.set(py, fc); }
+      d.staticTolerance = [run('RemoveAnimation', { InputObjs: PY, StaticFCurves: true }).st, has(py)];
+      // an expression is never static
+      reset(); A.setExpression(py, '5', () => undefined);
+      d.staticExpr = [run('RemoveAnimation', { InputObjs: PY, StaticFCurves: true }).st, A.expressions.has(py)];
+      // a static base curve on a parameter with layer entries stays; a layer curve goes only when constant and zero
+      reset(); A.layers.push({ name: '', locked: false }, { name: 'L1', locked: false });
+      A.fcurves.set(py, flat(py, 2)); layer1(py, flat(py, 0)); A.fcurves.set(pz, flat(pz, 2)); layer1(pz, flat(pz, 1));
+      d.staticLayers = [run('RemoveAnimation', { InputObjs: [PY, PZ], StaticFCurves: true }).st, has(py), inL1(py), has(pz), inL1(pz)];
+      // BaseAnimation false: the base source stays, the layer pass still runs
+      reset(); A.layers.push({ name: '', locked: false }, { name: 'L1', locked: false }); anim(); layer1(px, flat(px, 1)); A.frame = 1; const shownL = px.value;
+      d.noBaseLayer = [run('RemoveAnimation', { InputObjs: PX, BaseAnimation: false }).st, has(px), inL1(px), px.value === shownL];
+      // the layer pass runs for masks containing 1 or 4 only
+      layer1(px, flat(px, 1));
+      d.maskExprNoLayer = [run('RemoveAnimation', { InputObjs: PX, SourceMask: 2 }).st, has(px), inL1(px)];
+      d.maskFcurveLayer = [run('RemoveAnimation', { InputObjs: PX, SourceMask: 1 }).st, has(px), inL1(px)];
+      // mask bit 0x10 (constraints): still open (state-flag bit 17), logged
+      reset(); anim(); l = markL();
+      d.maskConstraint = [run('RemoveAnimation', { InputObjs: PX, SourceMask: 0x10 }).st, has(px), nya(l, /constraint/)];
+      l = markL(); d.maskAnyQuiet = [run('RemoveAnimation', { InputObjs: PX }).st, has(px), nya(l, /./)];
+    }
     // layers
     reset(); A.layers.push({ name: 'Base', locked: false }, { name: 'L1', locked: false }, { name: 'L2', locked: true });
     anim(); run('SaveKey', { InputObjs: PX, Time: 1, Value: 3, Layer: 1 });
@@ -408,6 +470,8 @@ const got = await page.evaluate(({ NAMES, WRAPPED }) => {
     app.undo(); d.layerUndo = !!S.layerCurves.get(1)?.has(px);
     A.layers[1].locked = true; let m = markM();
     d.layerLocked = [run('RemoveAnimation', { InputObjs: PX }).st, msgs(m).map(x => [x[1], x[2], x[3].length]), !!S.layerCurves.get(1)?.has(px)];
+    d.layerLockedName = [/\.Mixer\./.test(S.messages[S.messages.length - 1]?.names[0] ?? ''), A.layers[1].locked];
+    app.undo(); d.layerLockedUndo = !!S.layerCurves.get(1)?.has(px);
     reset(); anim(); A.marked.add(px); d.marked = [run('RemoveAnimation').st, has(px)];
     out.removeAnim = d;
   }
@@ -580,11 +644,22 @@ eq('Type 2 (siAnimatedParameters): the fcurve-animated parameters of the input o
 eq('Type siInputParams: the input list (default marked)', a.input, ['0', [false, true, false]]);
 eq('ActivateFCurveOnKeyable: keyable parameters of the input objects; default = selection', [a.keyable, a.keyableSelection], [['0', [true, true, false]], ['0', [false, false, true]]]);
 eq('ActivateFCurveOnMarkedKeyable: marked keyable only; nothing marked = nothing', [a.markedKeyable, a.markedNothing], [['0', [false, true, false]], ['1', [false, false, false]]]);
-eq('range: reversed range swapped, deactivated between the two times, not muted; boundary keys logged as not yet attested', a.range, ['0', [[4, 8]], false, true]);
+eq('range on a non-boolean fcurve: reversed range swapped, deactivated between the two times, not muted, no key written, nothing logged as open', a.range, ['0', [[4, 8]], false, false, [[1, 0], [11, 10]]]);
 eq('a deactivated range does not drive; outside it does', a.rangeDrive, [0.28, -1, 9.72]);
 eq('ranges accumulate; Activate=true reactivates a range', [a.rangeMore, a.reactivate], [['0', [[4, 9]]], ['0', [[4, 5], [6, 9]]]]);
 eq('range undo = inverse operation', a.rangeUndo, [[4, 9]]);
 eq('StartFrame without EndFrame = whole curve; non-numeric StartFrame fails', [a.startOnly, a.badStart], [['0', true, 1], INVALID]);
+ok('the fixture has an animatable boolean parameter', a.boolParam === true);
+eq('whole curve, temporary case, boolean parameter: the value is toggled whatever Activate says, no fcurve is left; undo', [a.tempToggle, a.tempToggleUndo, a.tempToggleOff], [['0', false, false], true, ['0', true]]);
+eq('temporary case, other kinds: nothing (status 1), also with a range', a.tempOther, ['1', false]);
+eq('range, temporary case: !v one frame before the start, v at the start, !v at the end; keys only, one undo step', [a.tempRange, a.tempRangeUndo], [['0', [[4, 0], [5, 1], [10, 0]], [], 1], false]);
+eq('range, temporary case, the parameter already reads v: nothing', a.tempRangeSame, ['1', false]);
+eq('boolean range: keys with start < time <= end are removed; no boundary key where the curve already reads v', a.boolInside, ['0', [[1, 0], [20, 1]]]);
+eq('boolean range (reversed range swapped): v keyed at the start, !v at the end, the range is not deactivated; undo through the key sub-tasks', [a.boolBounds, a.boolBoundsUndo], [['0', [[1, 0], [5, 1], [10, 0], [20, 1]], [], false], [[1, 0], [20, 1]]]);
+eq('boolean range early out: v at the start and not v at the end = nothing done', a.boolEarlyOut, ['1', [[1, 1], [8, 0]]]);
+eq('boolean range, first key after the start is the first key of the curve: !v one frame before the start', a.boolFirstKey, ['0', [[4, 1], [5, 0], [10, 1]]]);
+eq('boolean range, no key after the start: both sides are the trailing constant', a.boolTrailing, ['0', [[1, 0], [3, 1], [5, 0], [10, 1]]]);
+eq('whole curve on a real boolean fcurve: muted like any other kind; nothing of the family logs "not yet attested"', [a.boolMute, a.boolNya], [['0', true, [[1, 0], [20, 1]]], false]);
 
 // ---- RemoveAnimation
 const ra = got.removeAnim;
@@ -592,9 +667,16 @@ eq('RemoveAnimation: sources removed, the parameter keeps the value it showed; n
 eq('RemoveAnimation undo / redo; nothing to remove = status 1', [ra.undo, ra.redo, ra.nothing], [[true, [[1, 0], [11, 10]]], false, ['1']]);
 eq('RemoveAnimation Time: the value at Time is written back', ra.atTime, ['0', false, 10]);
 eq('SourceMask: fcurve only, expression only, any', [ra.maskFcurve, ra.maskExpr, ra.any], [['0', false, true], ['0', true, false], ['0', false, false]]);
-eq('StaticFCurves / BaseAnimation: inferred reading, logged as not yet attested', [ra.static, ra.noBase], [['0', true, false, true], ['1', true, true]]);
+eq('StaticFCurves: only constant fcurves go; BaseAnimation false: the base source stays; neither is logged as open', [ra.static, ra.noBase], [['0', true, false, false], ['1', true, false]]);
+eq('static test: a tangent above 1e-6 is not static, a curve without keys is', ra.staticTangent, ['0', true, false]);
+eq('static test: key values within 1e-12; an expression is never static', [ra.staticTolerance, ra.staticExpr], [['0', false], ['1', true]]);
+eq('StaticFCurves with layers: the base curve stays when the parameter has layer entries; a layer curve goes only when constant and zero', ra.staticLayers, ['0', true, false, true, true]);
+eq('BaseAnimation false with a layer entry: layer entry removed, base fcurve kept and still driving', ra.noBaseLayer, ['0', true, false, true]);
+eq('layer pass only for masks containing 1 or 4', [ra.maskExprNoLayer, ra.maskFcurveLayer], [['1', true, true], ['0', false, false]]);
+eq('mask 0x10 (constraints): not an fcurve / expression filter; constraint pass still open and logged; default mask logs nothing', [ra.maskConstraint, ra.maskAnyQuiet], [['1', true, true], ['0', false, false]]);
 eq('LayerAnimation false keeps the layer entries; true removes them; undo', [ra.layerKept, ra.layer, ra.layerUndo], [['0', false, true], ['0', false], true]);
-eq('locked keying layer: skipped with warning 0x37 naming the owner', ra.layerLocked, ['1', [['37', 4, 1]], true]);
+eq('locked keying layer: warning 0x37 (severity 4), the removal is still issued', ra.layerLocked, ['0', [['37', 4, 1]], false]);
+eq('warning 0x37 names the layer path; the layer stays locked; undo puts the entry back', [ra.layerLockedName, ra.layerLockedUndo], [[true, true], true]);
 eq('default list = marked', ra.marked, ['0', false]);
 
 // ---- UI path
@@ -608,4 +690,5 @@ if (diffs.length) {
 }
 console.log(`OK CMD-B8a fcurve / key task commands: ${checks} checks, ${NAMES.length} commands exercised (contract + registry dump; no XSIBATCH golden)`);
 console.log('   fully wired (command layer): IsAnimated, GetSource, GetFCurveInfo, GetKeyInfo, AddFCurve, SaveKeyOnKeyable, SaveKeyOnMarkedKeyable, RemoveKey, RemoveKeyOnKeyable, RemoveKeyOnMarkedKeyable, NextKey, PrevKey, FirstKey, LastKey, SaveActionKey');
-console.log('   partly wired: SaveKey family (layer keys stored, not mixed; Euler composition), EvalFCurve (Q5), SetCurveType (values outside 1..3), ActivateFCurve x3 (range boundary keys, Q4), RemoveAnimation (StaticFCurves / BaseAnimation / SourceMask, Q3)');
+console.log('   batch 9 contracts: ActivateFCurve x3 (temporary case, boolean range keys), RemoveAnimation (static test, BaseAnimation, SourceMask bits, layer pass on locked layers)');
+console.log('   partly wired: SaveKey family (layer keys stored, not mixed; Euler composition), EvalFCurve (Q5), SetCurveType (values outside 1..3), RemoveAnimation (constraint pass, mask 0x10: state-flag bit 17 not named, Q11)');

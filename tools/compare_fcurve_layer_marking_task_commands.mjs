@@ -111,9 +111,29 @@ const got = await page.evaluate(async ({ NAMES }) => {
     app.undo(); L.delUndo = [names(), cur()]; app.redo();
 
     // names ['', 'B'], current 1
-    m = mark(); L.dup = [st('DuplicateAnimationLayer'), names(), cur(), A.layers[1].trackParam8 === true, !!A.layers[2].trackParam8, tasks(), logFrom(m).filter(l => /DuplicateAnimationLayer: not yet attested.*Q4/.test(l)).length];
+    // batch 9: layer content (one fcurve per layered parameter, kept by the CMD-B8a row) on layer 1 and on a layer above it
+    const KS = app.fcurveKeyTasks; const cpx = kl(cube, 'posx'), cpy = kl(cube, 'posy');
+    const FC = A.fcurve(kl(sph, 'posz'), true).constructor; A.fcurves.delete(kl(sph, 'posz'));
+    const mk = (p, v) => { const fc = new FC(p); fc.addKey(1, v); fc.addKey(9, v + 1); return fc; };
+    const content = () => [...KS.layerCurves.entries()].sort((a, b) => a[0] - b[0]).map(([i, mp]) => [i, [...mp.entries()].map(([p, fc]) => [p.name, fc.keys.map(k => [k.time, k.value])])]).filter(x => x[1].length);
+    KS.layerCurves.clear(); const srcCurve = mk(cpx, 3); KS.layerCurves.set(1, new Map([[cpx, srcCurve]]));
+    A.layers[1].locked = true;
+    m = mark(); const dupSt = st('DuplicateAnimationLayer'); const dupArgs = plain(S.subTasks[0]?.args);
+    L.dup = [dupSt, names(), cur(), A.layers[1].trackParam8 === true, !!A.layers[2].trackParam8, tasks(), logFrom(m).filter(l => /DuplicateAnimationLayer: not yet attested/.test(l)).length];
+    L.dupCopy = [A.layers.map(l => l.trackName ?? null), A.layers.map(l => !!l.mute), A.layers.map(l => l.locked), dupArgs];
+    L.dupContent = [content(), KS.layerCurves.get(2).get(cpx) !== srcCurve, KS.layerCurves.get(1).get(cpx) === srcCurve];
+    A.layers[1].locked = false;
     m = mark(); L.dupBase = [st('DuplicateAnimationLayer', { Layer: 0 }), names(), has(m, /^error:DuplicateAnimationLayer: invalid layer index .*0x27/)];
-    app.undo(); L.dupUndo = [names(), cur(), !!A.layers[1].trackParam8]; app.redo();
+    L.dupRange = [st('DuplicateAnimationLayer', { Layer: 9 }), names()];
+    app.undo(); L.dupUndo = [names(), cur(), !!A.layers[1].trackParam8]; L.dupUndoContent = [content(), !!A.layers[1].mute]; app.redo();
+    L.dupRedoContent = content();
+    // a second duplication of the original: the layers above move up by one, "_copy" is not appended twice
+    KS.layerCurves.get(2).set(cpy, mk(cpy, 7));
+    L.dupAgain = [st('DuplicateAnimationLayer', { Layer: 2 }), names(), cur(), content(), A.layers.map(l => !!l.mute)];
+    app.undo(); L.dupAgainUndo = [names(), cur(), content()];
+    // the muted original adds nothing to the animated value any more: the copy takes over its contribution
+    L.dupMuteValue = [KS.layers.muted(1), KS.layers.muted(2)];
+    KS.layerCurves.clear(); A.layers[1].mute = false; A.layers[1].locked = false;
 
     // names ['', 'B', 'B'], current 2
     m = mark(); L.lockBase = [st('LockAnimationLayer', { Layer: 0 }), has(m, /^error:LockAnimationLayer: .*0x27/)];
@@ -319,10 +339,19 @@ eq('DeleteAnimationLayer base layer: invalid index, error 0x27', L.delBase, [NOT
 eq('DeleteAnimationLayer index >= count: invalid', L.delRange, [NOTHING, ['', '', 'B']]);
 eq('DeleteAnimationLayer middle layer: no SetCurrentAnimationLayer sub-task; current index follows its layer (inferred, logged)', L.delMiddle, [OKS, ['', 'B'], 1, ['DeleteObj'], true]);
 eq('DeleteAnimationLayer undo', L.delUndo, [['', '', 'B'], 2]);
-eq('DuplicateAnimationLayer: copy above the source, source track parameter 8 set, copy made current; open parts logged (Q4)', L.dup,
-  [OKS, ['', 'B', 'B'], 2, true, false, ['{42eb14da-bcab-4e24-bee6-b8a0bb496c3a}', 'SetValue', 'SetCurrentAnimationLayer', 'SetValue'], 2]);
-eq('DuplicateAnimationLayer base layer: invalid index', L.dupBase, [NOTHING, ['', 'B', 'B'], true]);
+eq('DuplicateAnimationLayer: "_copy" clip above the original, original track parameter 8 set, copy made current; nothing logged as open', L.dup,
+  [OKS, ['', 'B', 'B_copy'], 2, true, false, ['{42eb14da-bcab-4e24-bee6-b8a0bb496c3a}', 'SetValue', 'SetCurrentAnimationLayer', 'SetValue'], 0]);
+eq('Layer Clip Helper commit, duplicate flag: track "<track>_copy", the original muted, the lock state not copied', L.dupCopy,
+  [[null, 'BTrack', 'BTrack_copy'], [false, true, false], [false, true, false], { Clip: 'Scene_Root.Mixer.BTrack', Flag: 1, Items: 1, NewTrack: 'BTrack_copy', NewClip: 'B_copy', Layer: 2 }]);
+eq('the items of the layer are duplicated under the same parameters (own copies), the original untouched', L.dupContent,
+  [[[1, [['posx', [[1, 3], [9, 4]]]]], [2, [['posx', [[1, 3], [9, 4]]]]]], true, true]);
+eq('DuplicateAnimationLayer base layer / index >= count: invalid index, status 1', [L.dupBase, L.dupRange], [[NOTHING, ['', 'B', 'B_copy'], true], [NOTHING, ['', 'B', 'B_copy']]]);
 eq('DuplicateAnimationLayer undo', L.dupUndo, [['', 'B'], 1, false]);
+eq('undo removes the copied items and the mute; redo puts them back', [L.dupUndoContent, L.dupRedoContent], [[[[1, [['posx', [[1, 3], [9, 4]]]]]], false], [[1, [['posx', [[1, 3], [9, 4]]]]], [2, [['posx', [[1, 3], [9, 4]]]]]]]);
+eq('duplicating a "_copy" layer: no second suffix, copy current, its items copied one layer up', L.dupAgain,
+  [OKS, ['', 'B', 'B_copy', 'B_copy'], 3, [[1, [['posx', [[1, 3], [9, 4]]]]], [2, [['posx', [[1, 3], [9, 4]]], ['posy', [[1, 7], [9, 8]]]]], [3, [['posx', [[1, 3], [9, 4]]], ['posy', [[1, 7], [9, 8]]]]]], [false, true, true, false]]);
+eq('undo of the second duplication', L.dupAgainUndo, [['', 'B', 'B_copy'], 2, [[1, [['posx', [[1, 3], [9, 4]]]]], [2, [['posx', [[1, 3], [9, 4]]], ['posy', [[1, 7], [9, 8]]]]]]]);
+eq('keying-layer seam: the original reads as muted, the copy does not', L.dupMuteValue, [true, false]);
 eq('LockAnimationLayer Layer 0: error 0x27, status 1', L.lockBase, [NOTHING, true]);
 eq('LockAnimationLayer default (current layer): Lock sub-task; IsAnimationLayerLocked', L.lock, [OKS, [false, false, true], ['Lock'], true, false]);
 eq('LockAnimationLayer on a locked layer: warning 0x32, status 1', L.lockAgain, [NOTHING, true]);
@@ -425,5 +454,6 @@ if (diffs.length) {
   process.exit(1);
 }
 console.log(`OK CMD-B8b animation layer / marking / expression / relative value / source task commands: ${checks} checks, ${NAMES.length} commands exercised (contract + registry dump; no XSIBATCH golden)`);
-console.log('   fully wired (command layer): Get/SetCurrentAnimationLayer, GetNumberOfAnimationLayers, AddAnimationLayer, DeleteAnimationLayer, Lock/UnlockAnimationLayer, IsAnimationLayerLocked, GetMarking, GetNumRelativeValues, GetRelativeValue, RemoveRelativeValue');
-console.log('   partly wired: DuplicateAnimationLayer (Q4), Set/Clear/AddTo/RemoveFromMarking (relative paths, Q2), SetExpr (locks, class Q5, model delta), EditExpr (stand-in editor), SetRelativeValues (multi-link interpolation, Q7), ConnectSource (model delta)');
+console.log('   fully wired (command layer): Get/SetCurrentAnimationLayer, GetNumberOfAnimationLayers, AddAnimationLayer, DeleteAnimationLayer, DuplicateAnimationLayer, Lock/UnlockAnimationLayer, IsAnimationLayerLocked, GetMarking, GetNumRelativeValues, GetRelativeValue, RemoveRelativeValue');
+console.log('   batch 9 contract: DuplicateAnimationLayer (Layer Clip Helper copy, "_copy" names, original muted)');
+console.log('   partly wired: Set/Clear/AddTo/RemoveFromMarking (relative paths, Q2), SetExpr (locks, class Q5, model delta), EditExpr (stand-in editor), SetRelativeValues (multi-link interpolation, Q7), ConnectSource (model delta)');

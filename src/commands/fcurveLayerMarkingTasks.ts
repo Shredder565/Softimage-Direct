@@ -25,6 +25,7 @@
 import { App, CommandDef } from '../core/commands';
 import { Node, X3DObject, Model } from '../core/scene';
 import { Parameter } from '../core/params';
+import { FCurve } from '../core/animation';
 import { SiStatusError } from './alembicSeqCam';
 import { unset, boolArg, findNode, findObject, paramsOf } from './viewEditPropertyHelpers';
 import { siName } from './characterKeySets';
@@ -45,8 +46,10 @@ export interface AnimLayer {
   locked: boolean;
   /** Name of the mixer track that holds the layer ("<Name>Track" or "LayerTrack1"); the base layer has none. */
   trackName?: string;
-  /** Track parameter (0x402, 8), set on the source layer by DuplicateAnimationLayer; meaning not attested (Q4). */
+  /** Track parameter (0x402, 8), set on the original layer by DuplicateAnimationLayer. */
   trackParam8?: boolean;
+  /** The layer track's `mute` parameter: position 8 of the track's parameter list (mapping inferred in the note from the spdl order). */
+  mute?: boolean;
 }
 /** The animation layers of one model. */
 export interface AnimLayerSet {
@@ -282,32 +285,76 @@ function deleteAnimationLayer(app: App, a: Record<string, any>): void {
     }
   });
   invalidIndex(app, C, flagged, done);
-  // Q3: the worker's status was not recoverable; 0 when a layer was deleted, else 1, as the sibling tasks (inferred)
-  setStatus(app, C, done ? S_OK : S_NOTHING);
+  setStatus(app, C, done ? S_OK : S_NOTHING);   // read: 0 when at least one layer was deleted, 1 otherwise
+}
+
+/** `_copy` is appended only when the name does not already contain it. An unnamed (default-named) item stays unnamed. */
+const withCopy = (name: string | undefined): string | undefined => !name ? name : name.includes('_copy') ? name : `${name}_copy`;   // inferred: unnamed stays unnamed
+type LayerCurves = Map<number, Map<Parameter, FCurve>>;
+/** The fcurves of the layers above the base layer (kept by the CMD-B8a row): layer index -> parameter -> fcurve. */
+const layerCurvesOf = (app: App): LayerCurves | null => (app as any).fcurveKeyTasks?.layerCurves ?? null;
+function cloneCurve(fc: FCurve): FCurve {
+  const c = new FCurve(fc.param);
+  c.keys = fc.keys.map(k => ({ ...k })); c.extrap = fc.extrap; c.interp = fc.interp; c.muted = fc.muted;
+  c.activeStart = fc.activeStart; c.activeEnd = fc.activeEnd; c.inactiveRanges = fc.inactiveRanges.map(r => [...r] as [number, number]);
+  return c;
+}
+/**
+ * Layer Clip Helper, commit with the duplicate flag, on the layer content: the items of layer `i` of a model (one
+ * fcurve per layered parameter) are duplicated under the same parameters into layer `i + 1`; the layers above move
+ * up by one. Returns the number of duplicated items.
+ */
+function duplicateLayerContent(app: App, m: Model, i: number): number {
+  const lc = layerCurvesOf(app); if (!lc) return 0;
+  const mine = (p: Parameter) => modelOf(app, ownerObject(p)) === m;
+  const top = Math.max(0, ...lc.keys());
+  for (let l = top; l > i; l--) {
+    const from = lc.get(l); if (!from) continue;
+    let to = lc.get(l + 1);
+    for (const [p, fc] of [...from]) if (mine(p)) { if (!to) { to = new Map(); lc.set(l + 1, to); } to.set(p, fc); from.delete(p); }
+  }
+  let n = 0; const src = lc.get(i);
+  if (src) for (const [p, fc] of [...src]) if (mine(p)) { let to = lc.get(i + 1); if (!to) { to = new Map(); lc.set(i + 1, to); } to.set(p, cloneCurve(fc)); n++; }
+  return n;
 }
 
 function duplicateAnimationLayer(app: App, a: Record<string, any>): void {
   const C = 'DuplicateAnimationLayer';
   const models = normalisedModels(app, a.InputObjs); const flagged: Model[] = []; let done = 0;
-  editLayers(app, C, models, () => {
-    for (const m of models) {
-      const set = animLayersOf(app, m); const i = resolveLayer(set, intArg(a.Layer, -1));
-      if (i < 1 || i >= set.layers.length) { flagged.push(m); continue; }
-      const src = set.layers[i];
-      // task {42eb14da-...} (inferred: duplicates the layer clip onto a new layer track above the source)
-      subTask(app, '{42eb14da-bcab-4e24-bee6-b8a0bb496c3a}', { Clip: layerPath(set, i), Flag: 1 });
-      set.layers.splice(i + 1, 0, { name: src.name, locked: false, trackName: src.trackName });
-      logNya(app, C, `the task that copies the layer clip of ${layerPath(set, i)} (animation content is not copied)`, 'Q4');
-      subTask(app, 'SetValue', { Target: `${layerPath(set, i)} (0x402, 8)`, Value: true });
-      src.trackParam8 = true;
-      logNya(app, C, 'the meaning of track parameter (0x402, 8) set on the source layer', 'Q4');
-      subTask(app, 'SetCurrentAnimationLayer', { InputObjs: pathOf(m), Layer: i + 1, CreateLayer: false });
-      setCurrentOn(app, set, i + 1, false);
-      done++;
-    }
-  });
+  // the layer content is put back as it was on undo
+  const lc = layerCurvesOf(app);
+  const takeCurves = () => lc ? new Map([...lc].map(([l, mp]) => [l, new Map(mp)] as [number, Map<Parameter, FCurve>])) : null;
+  const putCurves = (snap: ReturnType<typeof takeCurves>) => { if (!lc || !snap) return; lc.clear(); for (const [l, mp] of snap) lc.set(l, new Map(mp)); };
+  const oldCurves = takeCurves();
+  let items = 0;
+  try {
+    editLayers(app, C, models, () => {
+      for (const m of models) {
+        const set = animLayersOf(app, m); const i = resolveLayer(set, intArg(a.Layer, -1));
+        if (i < 1 || i >= set.layers.length) { flagged.push(m); continue; }   // the base layer cannot be duplicated
+        const src = set.layers[i]; const clip = layerPath(set, i);
+        // 3. Layer Clip Helper: register the clip, commit with the duplicate flag 1. The copy is unlocked and sits
+        //    directly above the original, so it is layer i + 1 and the layers above move up by one.
+        const copy: AnimLayer = { name: withCopy(src.name) ?? '', locked: false, trackName: withCopy(src.trackName) };
+        const n = duplicateLayerContent(app, m, i); items += n;
+        set.layers.splice(i + 1, 0, copy);
+        subTask(app, '{42eb14da-bcab-4e24-bee6-b8a0bb496c3a}', { Clip: clip, Flag: 1, Items: n, NewTrack: copy.trackName ?? null, NewClip: copy.name, Layer: i + 1 });
+        // 4. track parameter (0x402, 8) of the original track = mute (by spdl position, inferred in the note)
+        subTask(app, 'SetValue', { Target: `${clip} (0x402, 8)`, Value: true });
+        src.trackParam8 = true; src.mute = true;
+        // 5. the copy becomes the current layer
+        subTask(app, 'SetCurrentAnimationLayer', { InputObjs: pathOf(m), Layer: i + 1, CreateLayer: false });
+        setCurrentOn(app, set, i + 1, false);
+        done++;
+      }
+    });
+  } catch (e) { putCurves(oldCurves); throw e; }
+  if (items || (done && lc && lc.size)) {
+    const newCurves = takeCurves();
+    app.record(C, () => putCurves(newCurves), () => putCurves(oldCurves));
+  }
   invalidIndex(app, C, flagged, done);
-  setStatus(app, C, done ? S_OK : S_NOTHING);   // Q3, as DeleteAnimationLayer
+  setStatus(app, C, done ? S_OK : S_NOTHING);   // read: 0 when at least one layer was duplicated, 1 when none was
 }
 
 function lockAnimationLayer(app: App, C: string, a: Record<string, any>, dfltLock: boolean): void {
