@@ -39,46 +39,46 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 | CMD-03 | File | 110 | 63 | 47 | TODO |
 | CMD-04 | Simulation | 118 | 72 | 46 | TODO |
 | CMD-05 | Rendering | 175 | 137 | 38 | TODO |
-| CMD-06 | Viewing | 191 | 157 | 34 | TODO |
-| CMD-07 | Edit | 117 | 84 | 33 | TODO |
-| CMD-08 | Character Rigging | 31 | 4 | 27 | TODO |
-| CMD-09 | Property | 125 | 101 | 24 | TODO |
-| CMD-10 | Animation Mixer | 113 | 93 | 20 | TODO |
-| CMD-11 | Modeling | 274 | 254 | 20 | TODO |
-| CMD-12 | Navigation | 22 | 2 | 20 | TODO |
-| CMD-13 | Animation | 186 | 175 | 11 | TODO |
-| CMD-14 | Manipulation | 51 | 40 | 11 | TODO |
-| CMD-15 | Deformation | 55 | 45 | 10 | TODO |
-| CMD-16 | Texturing | 75 | 68 | 7 | TODO |
-| CMD-17 | Camera Sequencer | 7 | 2 | 5 | TODO |
-| CMD-18 | Scripting | 4 | 0 | 4 | TODO |
-| CMD-19 | Drawing | 14 | 11 | 3 | TODO |
-| CMD-20 | Selection | 108 | 105 | 3 | TODO |
-| CMD-21 | Source | 6 | 3 | 3 | TODO |
-| CMD-22 | Customization | 2 | 0 | 2 | TODO |
-| CMD-23 | General | 10 | 8 | 2 | TODO |
-| CMD-24 | Paint | 7 | 5 | 2 | TODO |
-| CMD-25 | Transform | 5 | 3 | 2 | TODO |
-| CMD-26 | file | 5 | 3 | 2 | TODO |
-| CMD-27 | Action | 1 | 0 | 1 | TODO |
-| CMD-28 | Animation mixer | 5 | 4 | 1 | TODO |
-| CMD-29 | Cache | 2 | 2 | 0 | AUDIT |
-| CMD-30 | Camera | 1 | 1 | 0 | AUDIT |
-| CMD-31 | Cluster | 16 | 16 | 0 | AUDIT |
-| CMD-32 | Constraint | 27 | 27 | 0 | AUDIT |
-| CMD-33 | Devices | 5 | 5 | 0 | AUDIT |
-| CMD-34 | Generator | 1 | 1 | 0 | AUDIT |
-| CMD-35 | Group | 16 | 16 | 0 | AUDIT |
-| CMD-36 | ICE | 5 | 5 | 0 | AUDIT |
-| CMD-37 | Layer | 20 | 20 | 0 | AUDIT |
-| CMD-38 | Operator | 11 | 11 | 0 | AUDIT |
-| CMD-39 | Preferences | 2 | 2 | 0 | AUDIT |
-| CMD-40 | Primitive | 131 | 131 | 0 | AUDIT |
-| CMD-41 | Toolbar | 6 | 6 | 0 | AUDIT |
-| CMD-42 | Transport Control | 23 | 23 | 0 | AUDIT |
-| CMD-43 | VertexColor | 1 | 1 | 0 | AUDIT |
-| CMD-44 | Views | 5 | 5 | 0 | AUDIT |
-| | **Total** | **2950** | **2303** | **647** | |
+| CMD-06 | Edit | 117 | 84 | 33 | TODO |
+| CMD-07 | Character Rigging | 31 | 4 | 27 | TODO |
+| CMD-08 | Property | 125 | 101 | 24 | TODO |
+| CMD-09 | Animation Mixer | 113 | 93 | 20 | TODO |
+| CMD-10 | Modeling | 274 | 254 | 20 | TODO |
+| CMD-11 | Animation | 186 | 175 | 11 | TODO |
+| CMD-12 | Deformation | 55 | 45 | 10 | TODO |
+| CMD-13 | Viewing | 191 | 183 | 8 | TODO |
+| CMD-14 | Action | 1 | 0 | 1 | TODO |
+| CMD-15 | Animation mixer | 5 | 4 | 1 | TODO |
+| CMD-16 | Cache | 2 | 2 | 0 | AUDIT |
+| CMD-17 | Camera | 1 | 1 | 0 | AUDIT |
+| CMD-18 | Camera Sequencer | 7 | 7 | 0 | AUDIT |
+| CMD-19 | Cluster | 16 | 16 | 0 | AUDIT |
+| CMD-20 | Constraint | 27 | 27 | 0 | AUDIT |
+| CMD-21 | Customization | 2 | 2 | 0 | AUDIT |
+| CMD-22 | Devices | 5 | 5 | 0 | AUDIT |
+| CMD-23 | Drawing | 14 | 14 | 0 | AUDIT |
+| CMD-24 | General | 10 | 10 | 0 | AUDIT |
+| CMD-25 | Generator | 1 | 1 | 0 | AUDIT |
+| CMD-26 | Group | 16 | 16 | 0 | AUDIT |
+| CMD-27 | ICE | 5 | 5 | 0 | AUDIT |
+| CMD-28 | Layer | 20 | 20 | 0 | AUDIT |
+| CMD-29 | Manipulation | 51 | 51 | 0 | AUDIT |
+| CMD-30 | Navigation | 22 | 22 | 0 | AUDIT |
+| CMD-31 | Operator | 11 | 11 | 0 | AUDIT |
+| CMD-32 | Paint | 7 | 7 | 0 | AUDIT |
+| CMD-33 | Preferences | 2 | 2 | 0 | AUDIT |
+| CMD-34 | Primitive | 131 | 131 | 0 | AUDIT |
+| CMD-35 | Scripting | 4 | 4 | 0 | AUDIT |
+| CMD-36 | Selection | 108 | 108 | 0 | AUDIT |
+| CMD-37 | Source | 6 | 6 | 0 | AUDIT |
+| CMD-38 | Texturing | 75 | 75 | 0 | AUDIT |
+| CMD-39 | Toolbar | 6 | 6 | 0 | AUDIT |
+| CMD-40 | Transform | 5 | 5 | 0 | AUDIT |
+| CMD-41 | Transport Control | 23 | 23 | 0 | AUDIT |
+| CMD-42 | VertexColor | 1 | 1 | 0 | AUDIT |
+| CMD-43 | Views | 5 | 5 | 0 | AUDIT |
+| CMD-44 | file | 5 | 5 | 0 | AUDIT |
+| | **Total** | **2950** | **2395** | **555** | |
 <!-- END GENERATED: commands -->
 
 ### P1 sub-rows (hand-maintained; survive regeneration)
@@ -160,4 +160,5 @@ to diff `data/spdl/spdl.json` against `src/data/opdefs.json` and the operator cl
 | CMD-B9-SPEECHOP | (new) | Speech operator / speech clip source (interfaces `bffe85f4-f600-45de-8c87-148b44f5c527`, blend evaluation `915d0a04-daa0-40ce-9817-ff62cb5249b2`), speech editor view of `phonemeui.dll` (selection flags used by `SpeechOpMoveWords`), playback controller `3e57caba-2b4c-438b-89aa-eee5fe5bbf38` | - | TODO | closes `GetPhonemeBlendFromSpeechClip`, `PlaybackTimeRange` and the MoveWords selection question |
 | CMD-B9-FXOPS | (new) | FX Tree objects behind the `fxcore.dll` commands: `C3DFxTreeObject`, operator type-name table of `AddFxOp`, clip in / out operators of `AddImageClipFxOp`, File Input / File Output operators, paint clip operator `C3DFxFilePaintOp`, 2D shape classes (Bezier `e0ca3fde-...`, point `810998a1-...`), warper correspondence, tracker parameter rows | - | TODO | closes `AddFxOp`, `AddImageClipFxOp`, `AddPassInputFxOp`, `MakeWarperShapePair`, `RevertPaintClip`, the three tracking commands |
 | CMD-B9-FXHELPER | (new) | `FxCoreHelper.dll` `fx_cmd::` exports (`GetArgUnknownFromIdx`, `GetArgStringFromIdx`, `GetAsSafeArray`, `GetConnectionFromName`, `CreateListAddToList`) | - | TODO | connection name / number grammar for `ConnectFxOp`, `DisconnectFxOp`, `SetFxOpCnxFlag`; closes `DisconnectFxOp`, `SetFxOpAttrib` |
+| CMD-B10 | (new) | **Inferred batch, no analyst note.** 91 registry commands of the categories Navigation (14 `Cam…Tool` navigation tools, `CreateFolder`, `MoveToFolder`, `RemoveFolder`, `RemoveFromFolder`, `NavigateNode`, `SetCurrentEnvironment`), Viewing (`AlignViewCamera`, `Front` / `Back` / `Right View`, `CameraUndo` / `CameraRedo`, `DelayedRefresh`, `Frame Contextual`, `GetViewIndex`, `Hide Back Facing Polygons`, `Save` / `LoadFastPlaybackCache`, `ResetAllViews`, `ResetDirectX`, `RunPerformanceTest`, `SetDropMessage`, `SetViewCamera`, `Show3DContextMenu`, `StartTimedPlayback`, `ToggleMuteSolo`, `ViewNudge…` ×4, `ViewTranslate`), Manipulation (`DirectManipTool`, `LastTool`, `ManipulateTool`, `TimeSliderTool`, `VirtualSliderTool`, `Toggle Manipulator mode`, `Toggle Snapping`, `TranslatePivot`, `TranslateUVW`, `RotateUVW`, `ScaleUVW`), Texturing (`ConnectMap`, `InspectUVW`, `InspectAllUVW`, `PinUVComponents`, `UnPinUVComponents`, `PinAllUVComponents`, `UnPinAllUVComponents`), Camera Sequencer (`AddShotClip`, `GetShotClip`, `GetSceneFrameSetFromCamSeq`, `PlotCamSeqToActions`, `PlotCamSeqShape`), Scripting (`AddScriptedOp`, `AddScriptedOpFromFile`, `AddCustomOp`, `ConvertScriptedOp`), Drawing (`2D Chain Tool`, `3D Chain Tool`, `AddParticleTool`), Selection (`GetSize`, `GenerateInfoReport`, `PickDeformerByVertexTool`), Source (`CreateLibrary`, `MoveToLibrary`, `SetCurrentMaterialLibrary`), Customization (`EditCommand`, `CreateAndEditCommand`), General (`ReconnectModel`, `Untag`, plus its counterpart `Tag`, which was not on the bus either), Paint (`PaintSelectTool`, `PaintTextureTool`), Transform (`MoveComponent`, `DeleteMotionDerivator`), file (`InstallCustomPreferences`, `RefreshCustomPreferences`) | 91 (+ `Tag`) | WIRE-PARTIAL | **Wired 2026-11-18 by inference** (`src/commands/inferredB10Views.ts`, `inferredB10Scene.ts`, shared `inferredB10Shared.ts`, argument lists `inferredB10Args.ts` from `data/command_registry.json`); check `tools/compare_inferred_b10_commands.mjs` (contract = the inferred behaviour, no golden). Every registration is marked `// inferred`. Stand-in models added where `src` had none: explorer folders (`FolderNode`), source libraries (`LibraryNode`, `scene.libraryState`), Camera Sequencer shot clips (`app.camSeqB10`), scripted operators (`ScriptedOperatorB10`, geometry pass-through), parameter tags (`anim.paramTagsB10`), custom preferences (`app.customPreferencesB10`). Branches logging "not yet attested": 3ds Max / Maya mouse mappings, `3D Chain Tool` depth placement, particle insertion, envelope weights for `PickDeformerByVertexTool`, texture pixel painting, back-face culled drawing, `SetViewCamera` follow, drop-message display, cached playback images, absolute UVW rotate / scale, W coordinate, edge components in UVW commands, `ConnectMap` evaluation, Camera Sequencer action / shape-key creation, scripted-op `Update` execution and plug-in types, command editor dialog, `ReconnectModel` mapping, `MoveComponent` slide / proportional. Questions for the analyst in the PR |
 | GOLD-B9 | (new) | XSIBATCH goldens for the cheap batch-9 cases (`CreateFxTree`, `Add2DShape` type strings, paint colour set / swap / reset, `SpeechOpInsertWord` first-word trim, `SpeechOpSplitPhonemes` threshold, `AddPaintShapePoint` undo) | - | TODO | needs `device_bash` or a process tool on the PC |

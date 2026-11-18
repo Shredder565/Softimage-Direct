@@ -701,7 +701,8 @@ export function registerMiscDsScriptCommands(app: App) {
       if (!source) { const full = `Views.View${letter}.${active}Camera`; if (cameraSource(app, full)) source = full; }
       if (!source) { app.logMsg('error', miscDsText(1530)); return undefined; }
       const cam = createShotCamera(app, 'CreateShotCameraAndSwitch', source, a.CameraName, boolArg(a.WithoutInterest));
-      if (!delegate(app, SET_VIEW_CAMERA, { Camera: cam.fullName, Viewport: a.DestViewport }).done) logNya(app, 'CreateShotCameraAndSwitch', `the view-camera switch command is not available; viewport ${String(siConst(a.DestViewport))} keeps its camera`);
+      // contract step 4: SetViewCamera <full name>, DestViewport – positional, so the registry names CameraName / View
+      if (!delegate(app, SET_VIEW_CAMERA, { CameraName: cam.fullName, View: a.DestViewport }).done) logNya(app, 'CreateShotCameraAndSwitch', `the view-camera switch command is not available; viewport ${String(siConst(a.DestViewport))} keeps its camera`);
       return cam;
     },
   });

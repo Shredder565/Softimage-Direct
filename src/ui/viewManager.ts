@@ -157,6 +157,7 @@ export function viewManager(app: App, host: HTMLElement) {
   (app as any).symMirror = (o: X3DObject, kind: 'point' | 'edge' | 'polygon', items: (number | string)[]) => { const sm = symmetryMapOf(o, ((app as any).symPlane as any) ?? undefined); const mesh = o.primitive?.mesh(); if (!sm || !mesh) return []; return items.map(it => mirrorComponent(mesh, sm.map, kind, it)).filter((x): x is number | string => x !== null); };
   (window as any).__vm = {
     active: () => vps[active], viewports: () => vps, setActive: (i: number) => { if (!vps[i]) return false; vps[active].el.classList.remove('active'); active = i; vps[active].el.classList.add('active'); needs = true; return true; }, view: (name: string) => { const vp = vps[active]; camSnap(vp); switchView(vp, name); needs = true; }, zoom: (f: number) => zoomBy(vps[active], f), nudge: (dx: number, dy: number) => nudge(vps[active], dx, dy),
+    orbitTarget: () => orbit.target,
     undoCamera: () => camUndo(vps[active]), redoCamera: () => camRedo(vps[active]), toggleBackground: () => { scene.background = new THREE.Color(black() ? SI.background : 0x000000); needs = true; },
     manipSize: (f: number) => { gizmoPx = Math.max(20, Math.min(300, gizmoPx * f)); SI.transformSize = Math.round(gizmoPx * 30 / 70); needs = true; }, display: (mode: string) => { setDisplay(vps[active], mode); needs = true; }, displayOf: () => vps[active].display,
     cameraMenu: (label: string) => cameraMenu(vps[active], label), visibility: (label: string) => visibilityMenu(vps[active], label), flags: () => vps[active].flags, wireOnShaded: () => { const vp = vps[active]; vp.flags['Wire on Shaded'] = !vp.flags['Wire on Shaded']; needs = true; },
@@ -213,7 +214,7 @@ export function viewManager(app: App, host: HTMLElement) {
   const orbit = { target: new THREE.Vector3(...DEFAULT_CAMERA_INTEREST) };
   const switchView = (vp: Viewport, name: string) => {
     const c = vp.camera;
-    if (name === 'Top') { c.position.set(0, 100, 0); c.up.set(0, 0, -1); } else if (name === 'Front') { c.position.set(0, 0, 100); c.up.set(0, 1, 0); } else if (name === 'Right') { c.position.set(100, 0, 0); c.up.set(0, 1, 0); } else { c.position.set(...DEFAULT_CAMERA_POS); c.up.set(0, 1, 0); }
+    if (name === 'Top') { c.position.set(0, 100, 0); c.up.set(0, 0, -1); } else if (name === 'Front') { c.position.set(0, 0, 100); c.up.set(0, 1, 0); } else if (name === 'Right') { c.position.set(100, 0, 0); c.up.set(0, 1, 0); } else if (name === 'Back') { c.position.set(0, 0, -100); c.up.set(0, 1, 0); } else if (name === 'Left') { c.position.set(-100, 0, 0); c.up.set(0, 1, 0); } else if (name === 'Bottom') { c.position.set(0, -100, 0); c.up.set(0, 0, 1); } else { c.position.set(...DEFAULT_CAMERA_POS); c.up.set(0, 1, 0); }
     vp.name = name; vp.head.view.textContent = name; c.lookAt(orbit.target); (c as any)._zoom = 20;
   };
   let active = 1; vps[active].el.classList.add('active');
