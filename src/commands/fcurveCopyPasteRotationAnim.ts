@@ -11,10 +11,12 @@
 //    higher layer logs "not yet attested".
 //  * A parameter driven by a quaternion source (ConvertEulerToQuat) is not copied: duplicating the shared
 //    quaternion object was not described.
-//  * CopyAnimContainer is SPEC-PARTIAL: the argument handling and the "multiple" flag are as read; the collection
-//    and the application to the targets are inferred (matched by relative path) and say so in the log.
+//  * CopyAnimContainer matches by name key (leaf-first dotted names under the container, upper case): a matched
+//    target parameter gets a duplicate of the source through the nested ConnectSource, an unmatched animatable one
+//    goes through the nested RemoveAnimation.
 import { App, CommandDef } from '../core/commands';
 import { Parameter, ParamSet } from '../core/params';
+import { X3DObject, Kinematics, Primitive } from '../core/scene';
 import { findParam } from './index';
 import {
   Args, AnimRecord, AnimSource, S_OK, S_NOTHING, E_INVALIDARG,
@@ -116,33 +118,76 @@ function pasteAnimation(app: App, command: 'PasteAllAnimation' | 'PasteAnimation
   setStatus(app, command, pastedAll ? S_OK : S_NOTHING);
 }
 
-// ------------------------------------------------------------------ CopyAnimContainer (SPEC-PARTIAL)
+// ------------------------------------------------------------------ CopyAnimContainer
+/** The children of a tree item as the container walk sees them. Child 3D objects are not entered (inferred, as paramsBeneath). */
+function childrenOf(x: Item): Item[] {
+  if (x instanceof Parameter) return [];
+  if (x instanceof X3DObject) return [...x.params, x.kinematics, ...x.properties, ...(x.primitive ? [x.primitive] : [])];
+  if (x instanceof Kinematics) return [x.local];
+  if (x instanceof Primitive) return [...x.params, ...x.operators];
+  return [...x.params];
+}
+/**
+ * Name key of a parameter under a container item: the names of the parameter and of its parents joined with ".",
+ * leaf first, up to but not including the container; with the "multiple" flag the container's own name is the
+ * last segment. Upper case, so the match is case-insensitive. Names are the scripting path segments of this build.
+ */
+function nameKey(p: Parameter, container: Item, multiple: boolean): string {
+  const full = scriptPath(p), prefix = scriptPath(container);
+  if (!full.startsWith(prefix + '.')) return '';
+  const segs = full.slice(prefix.length + 1).split('.').reverse();
+  if (multiple) segs.push(prefix.split('.').pop()!);
+  return segs.join('.').toUpperCase();
+}
+
 function copyAnimContainer(app: App, a: Args): void {
+  const C = 'CopyAnimContainer';
   // UnPackArg: InputObj is an object list, or one element reference / hierarchy wrapped in a one-item list.
   const sources = unset(a.InputObj) ? [] : inputItems(app, a.InputObj).map(x => x.item);
   if (!sources.length) throw fail(E_INVALIDARG, 'CopyAnimContainer: InputObj is not an object list, an element reference or a hierarchy');
   const targets = unset(a.Target) ? [] : inputItems(app, a.Target).map(x => x.item);
   const multiple = sources.length >= 2 || targets.length >= 2;
-  logNya(app, 'CopyAnimContainer', 'what is collected from the source container and how its parameters are matched on the targets: animated parameters are matched by their path relative to the container', 'Q1');
-  if (multiple && sources.length >= 2) logNya(app, 'CopyAnimContainer', 'pairing of several source containers with the targets: every source is applied to every target', 'Q1');
-  // Working data: the animation beneath the source container(s).
-  const work: AnimRecord[] = [];
-  for (const s of sources) work.push(...collect(app, 'CopyAnimContainer', s, true, true).records);
-  if (!work.length) { setStatus(app, 'CopyAnimContainer', S_NOTHING); return; }
-  const touched = new Set<Parameter>();
-  for (const t of targets) animatableBeneath(t).forEach(p => touched.add(p));
-  let n = 0;
-  transact(app, 'CopyAnimContainer', touched, () => {
-    for (const t of targets) {
-      const full = scriptPath(t); const beneath = animatableBeneath(t);
-      for (const rec of work) {
-        const p = rec.path === '' ? (t instanceof Parameter ? t : undefined) : beneath.find(q => scriptPath(q) === `${full}.${rec.path}`);
-        if (p && !sources.includes(p)) { connect(app, p, rec.source); n++; }
-      }
+  const A = app.anim; const Q = stateOf(app).quatSources;
+  // Collection: key -> connected source (the fcurve first, else the expression); the first key wins. A child
+  // without a source that has children is descended into, the key root staying the container item.
+  const map = new Map<string, AnimSource>();
+  const collectFrom = (container: Item, x: Item) => {
+    for (const c of childrenOf(x)) {
+      if (c instanceof Parameter) {
+        if (Q.has(c) && !A.fcurves.has(c)) { logNya(app, C, `duplication of the quaternion source of ${scriptPath(c)}: not copied`); continue; }
+        const src = duplicateSource(app, c, true, true); if (!src) continue;
+        const key = nameKey(c, container, multiple);
+        if (key && !map.has(key)) map.set(key, src);
+      } else collectFrom(container, c);
     }
-  });
+  };
+  for (const s of sources) collectFrom(s, s);
+  if (!map.size) { setStatus(app, C, S_NOTHING); return; }
+  // Apply: every animatable parameter beneath a target gets a duplicate of the same-named source, or loses its animation.
+  const work: { p: Parameter; src: AnimSource | undefined }[] = [];
+  const walk = (container: Item, x: Item) => {
+    for (const c of childrenOf(x)) {
+      if (!(c instanceof Parameter)) { walk(container, c); continue; }
+      if (!c.animatable || c.def.readOnly) continue;
+      work.push({ p: c, src: map.get(nameKey(c, container, multiple)) });
+    }
+  };
+  for (const t of targets) walk(t, t);
+  const removeAnimation = (app as any).fcurveKeyTasks?.native?.RemoveAnimation as CommandDef | undefined;
+  let n = 0;
+  transact(app, C, work.map(w => w.p), () => {
+    for (const { p, src } of work) {
+      if (src) { connect(app, p, src); n++; continue; }   // ConnectSource with a fresh duplicate
+      // not found: the nested RemoveAnimation on that single parameter (current time, source mask 4 = any)
+      const animated = A.fcurves.has(p) || A.expressions.has(p) || Q.has(p) || !!(app as any).fcurveKeyTasks?.layerCurves && [...(app as any).fcurveKeyTasks.layerCurves.values()].some((m: Map<Parameter, unknown>) => m.has(p));
+      if (!animated) continue;
+      if (removeAnimation) removeAnimation.execute(app, { InputObjs: [p], Time: null, StaticFCurves: false, BaseAnimation: true, LayerAnimation: true, SourceMask: 4 });
+      else A.removeAnimation(p);
+      Q.delete(p); n++;
+    }
+  }, { values: true });
   refresh(app);
-  setStatus(app, 'CopyAnimContainer', n ? S_OK : S_NOTHING);
+  setStatus(app, C, n ? S_OK : S_NOTHING);
 }
 
 const arg = (name: string, dflt: any = null) => ({ name, default: dflt });

@@ -299,7 +299,7 @@ const SELECT_SHAPE_TOOL = 80;
 
 const shapeArg = (app: App, a: any): any => (a === undefined || a === null || a === '' ? [...app.selection] : a);   // collection handler: the selection
 const frameArg = (app: App, t: any): number => (t === undefined || t === null || t === '' ? Number(app.anim.frame) : Number(t));   // frame handler: the current frame
-const keyTimeOf = (key: any): number => Number(typeof key?.val === 'function' ? key.val('time') : key?.time);
+const keyTimeOf = (key: any): number => Number(typeof key?.val === 'function' ? key.val('time') : key?.time ?? key?.Time);   // `Time`: the key object of the native lookups (CMD-B9a)
 
 function nativeLookup(app: App, command: string, which: PaintKeyLookup, shape: any, time?: number): any {
   const native = `Get${which}PaintShapeKey`;
@@ -614,7 +614,7 @@ export function registerCharacterKeySetCommands(app: App) {
       const key = nativeLookup(app, 'DeletePaintShapeKey', 'Closest', shapeArg(app, a.Shape), frameArg(app, a.Time));
       if (!key) return;
       if (Math.abs(keyTimeOf(key) - Number(app.anim.frame)) >= 0.001) return;   // the current frame, not the Time argument
-      app.logMsg('info', `Deleting key: ${key?.fullName ?? key?.name ?? key}`);
+      app.logMsg('info', `Deleting key: ${key?.fullName ?? key?.name ?? (key?.kind ? `${key.kind} at ${keyTimeOf(key)}` : key)}`);   // inferred: text for a key object without a name (stand-in paint model)
       if (fxPaint.deleteKey) fxPaint.deleteKey(key);
       else app.logMsg('info', notYet('DeletePaintShapeKey', 'deleting a paint shape key object; nothing was deleted', 'Q2'));
     },

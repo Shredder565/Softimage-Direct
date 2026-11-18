@@ -43,6 +43,10 @@ export interface KeyingLayerSeam {
   count(): number;
   /** F3DIsKeyingLayerLocked. */
   locked(layer: number): boolean;
+  /** The layer track's `mute` parameter (set on the original by DuplicateAnimationLayer): a muted layer adds nothing. */
+  muted?(layer: number): boolean;
+  /** Path of the layer, as named by RemoveAnimation's warning 0x37. */
+  path?(layer: number): string;
 }
 
 export interface FcurveKeyTasksState {
@@ -88,6 +92,8 @@ export function stateOf(app: App): FcurveKeyTasksState {
       current: () => Math.max(0, app.anim.currentLayer),
       count: () => Math.max(1, app.anim.layers.length),
       locked: (i: number) => !!app.anim.layers[i]?.locked,
+      muted: (i: number) => !!(app.anim.layers[i] as any)?.mute,
+      path: (i: number) => `${app.scene.root.name}.Mixer.${(app.anim.layers[i] as any)?.trackName ?? `Layer${i}`}`,
     },
     layerCurves: new Map(), layerKeyRefused: null, noLayerMixerEntry: null, skipParameter: null,
     reapplyValueOnRemove: false, evalWithoutCurve: 0,
@@ -286,7 +292,8 @@ export function layersOf(app: App, p: Parameter): number[] {
 export function animatedValue(app: App, p: Parameter, time: number): number {
   const base = app.anim.fcurve(p);
   let v = base && base.keys.length ? base.eval(time) : Number(p.value);
-  for (const l of layersOf(app, p)) { const fc = layerCurve(app, p, l)!; if (fc.keys.length) v += fc.eval(time); }
+  const muted = stateOf(app).layers.muted;
+  for (const l of layersOf(app, p)) { if (muted?.(l)) continue; const fc = layerCurve(app, p, l)!; if (fc.keys.length) v += fc.eval(time); }
   return v;
 }
 /** Precheck 2.5: true = skip this parameter (status 1, not an error). */

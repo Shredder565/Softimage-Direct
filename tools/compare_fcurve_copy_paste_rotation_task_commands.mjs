@@ -183,8 +183,26 @@ const got = await page.evaluate(({ NAMES }) => {
     base(); Q.layer = [st('ScaleAndOffset', { InputObjs: 'tCube', Offset: 2, Layer: 1 }), keys(cx), st('ScaleAndOffset', { InputObjs: 'tCube', Offset: 2, Layer: 0, Ripple: false }), keys(cx)];
     base(); Q.type1 = [st('SISequence', { InputObjs: X, Type: 1, Offset: 4, Ripple: false }), keys(cx), keys(cy)];
     base(); Q.nothing = st('ScaleAndOffset', { InputObjs: 'tSphere', Offset: 4 });
-    base(); let m = mark(); Q.type3 = [st('Sequence', { Offset: 5, Ripple: false }), keys(cx), keys(cy), nyaFrom(m) >= 1];
+    base(); let m = mark(); Q.type3 = [st('Sequence', { Offset: 5, Ripple: false }), keys(cx), keys(cy), nyaFrom(m)];
     base(); m = mark(); run('SISequence', { InputObjs: X, Type: 1, Offset: 1, 'Discrete Time': true, Ripple: false }); Q.discreteNya = nyaFrom(m);
+    // ---- batch 9: Mode table (Type 3 only), Discrete Time, ripple rules, range snapping
+    Q.modes = {};
+    for (const mode of [1, 2, 3, 4, 5, 9]) { base(); Q.modes[mode] = [st('Sequence', { Offset: 5, Ripple: false, Mode: mode }), keys(cx)]; }
+    base(); m = mark(); Q.modeSymbol = [st('Sequence', { Offset: 5, Ripple: false, Mode: ':siFCurvesAnimationSources:siSequenceMode' }), nyaFrom(m)];
+    base(); m = mark(); Q.modeUnknownSymbol = [st('Sequence', { Offset: 5, Ripple: false, Mode: 'siSomeOtherMode' }), keys(cx), nyaFrom(m)];
+    base(); Q.modeNotType3 = [st('ScaleAndOffset', { InputObjs: 'tCube', Offset: 2, Mode: 5, Ripple: false }), keys(cx)];
+    base(); Q.discrete = [st('SISequence', { InputObjs: X, Type: 1, Offset: 1.4, 'Discrete Time': true, Ripple: false }), keys(cx)];
+    base(); Q.discreteOff = [st('SISequence', { InputObjs: X, Type: 1, Offset: 1.4, Ripple: false }), keys(cx)];
+    base(); Q.rippleNegative = [st('ScaleAndOffset', { InputObjs: 'tCube', Offset: -3, StartFrame: 10, EndFrame: 20, Pivot: 1 }), keys(cx), keys(cy)];
+    app.undo(); Q.rippleNegativeUndo = [keys(cx), keys(cy)];
+    base(); Q.ripplePositive = [st('ScaleAndOffset', { InputObjs: 'tCube', Offset: 3, StartFrame: 10, EndFrame: 20, Pivot: 1 }), keys(cx), keys(cy)];
+    base(); Q.rippleEndAnchored = [st('ScaleAndOffset', { InputObjs: 'tCube', Scale: 2, StartFrame: 1, EndFrame: 10, Pivot: 10 }), keys(cx), keys(cy)];
+    base(); Q.rippleEndAnchoredOffsetOnly = [st('ScaleAndOffset', { InputObjs: 'tCube', Offset: 2, StartFrame: 1, EndFrame: 10, Pivot: 10 }), keys(cx)];
+    base(); setKeys(cx, [[0.8, 0], [10, 1], [20.3, 2], [30, 3]]);
+    Q.snap = [st('SISequence', { InputObjs: X, Type: 1, Scale: 2, StartFrame: 1, EndFrame: 20, Pivot: 1, Ripple: false }), keys(cx)];
+    base(); setKeys(cx, [[0.8, 0], [10, 1], [20.3, 2], [30, 3]]);
+    Q.snapOffset = [st('SISequence', { InputObjs: X, Type: 1, Offset: 2, StartFrame: 1, EndFrame: 20, Pivot: 5, Ripple: false }), keys(cx)];
+    base(); Q.emptyRange = [st('SISequence', { InputObjs: X, Type: 1, Offset: 2, StartFrame: 12, EndFrame: 18, Ripple: false }), keys(cx)];
     base(); Q.type2Param = [st('Sequence', { InputObjs: 'tCube.kine.local', Type: ':siAnimParams:siSequenceType', Offset: 1, Ripple: false }), keys(cx), keys(cy)];
   }
 
@@ -204,6 +222,7 @@ const got = await page.evaluate(({ NAMES }) => {
     run('CopyAllAnimation', { InputObjs: 'tCube', BaseAnimation: false }); N.baseOff = clip().length;
     app.select([cube]); run('CopyAllAnimation'); N.selectionDefault = clip().length; app.select([]);
     // paste by relative path on two objects; the clipboard can be pasted repeatedly
+    app.undoStack.splice(0);   // the undo stack is capped: start the count from an empty stack
     const u2 = app.undoStack.length;
     N.pasteAll = [st('PasteAllAnimation', { InputObjs: 'tSphere,tNull' }), keys(sx), keys(sy), A.expression(P(sph, 'sclx')) ?? null, keys(P(nul, 'posx')), A.expression(P(nul, 'sclx')) ?? null, app.undoStack.length - u2];
     A.fcurves.get(sx).keys[0].value = 99; N.clipboardIndependent = [S.animClipboard[0].source.keys[0].value, keys(cx)[0][1]];
@@ -233,11 +252,30 @@ const got = await page.evaluate(({ NAMES }) => {
     const T = {}; out.container = T;
     base(); const m = mark();
     T.copy = [st('CopyAnimContainer', { InputObj: 'tCube.kine.local', Target: 'tSphere.kine.local,tNull.kine.local' }), keys(sx), keys(sy), keys(P(nul, 'posx')), keys(sz), nyaFrom(m) >= 1, top()];
+    T.copyNya = nyaFrom(m);
     app.undo(); T.undo = [keys(sx), keys(P(nul, 'posx')), keys(cx)];
     T.object = [st('CopyAnimContainer', { InputObj: 'tCube', Target: 'tSphere' }), keys(sx)];
     T.errors = [st('CopyAnimContainer', {}), st('CopyAnimContainer', { InputObj: 'no_such_object', Target: 'tSphere' })];
     T.noTarget = st('CopyAnimContainer', { InputObj: 'tCube' });
     T.nothingToCopy = st('CopyAnimContainer', { InputObj: 'tKid', Target: 'tSphere' });
+    // ---- batch 9: name keys, duplicates, unmatched target parameters
+    base(); T.ownCopy = [st('CopyAnimContainer', { InputObj: 'tCube.kine.local', Target: 'tSphere.kine.local' }), A.fcurves.get(sx) !== A.fcurves.get(cx), A.fcurves.get(sx).keys[0] !== A.fcurves.get(cx).keys[0]];
+    base(); setKeys(sz, [[1, 1], [5, 2]]); setKeys(sx, [[2, 9]]); A.frame = 5; const shown = sz.value;
+    T.unmatched = [st('CopyAnimContainer', { InputObj: 'tCube.kine.local', Target: 'tSphere.kine.local' }), keys(sx), keys(sy), keys(sz), sz.value === shown, top()];
+    app.undo(); T.unmatchedUndo = [keys(sx), keys(sy), keys(sz)]; A.frame = 1;
+    base(); A.setExpression(cz, '5', () => undefined);
+    T.expression = [st('CopyAnimContainer', { InputObj: 'tCube.kine.local', Target: 'tSphere.kine.local' }), A.expression(sz) ?? null, keys(sx)];
+    A.removeAnimation(cz); A.removeAnimation(sz);
+    // "multiple": the container's own name is the last key segment, so differently named containers do not match
+    base(); setKeys(sx, [[2, 9]]);
+    T.multipleNames = [st('CopyAnimContainer', { InputObj: 'tCube', Target: 'tSphere,tNull' }), keys(sx), keys(P(nul, 'posx'))];
+    base(); T.multipleNothing = st('CopyAnimContainer', { InputObj: 'tCube', Target: 'tSphere,tNull' });
+    base(); setKeys(sx, [[2, 9]]); T.single = [st('CopyAnimContainer', { InputObj: 'tCube', Target: 'tSphere' }), keys(sx), keys(sy)];
+    // a parameter has no children: nothing is collected
+    base(); T.parameter = [st('CopyAnimContainer', { InputObj: X, Target: 'tSphere.kine.local.posx' }), keys(sx)];
+    // first key wins: two source containers with the same keys
+    base(); setKeys(P(nul, 'posx'), [[3, 7]]);
+    T.firstWins = [st('CopyAnimContainer', { InputObj: 'tCube.kine.local,tNull.kine.local', Target: 'tSphere.kine.local' }), keys(sx)];
   }
 
   // ================= rotation commands
@@ -385,8 +423,21 @@ eq('SelectedKeysOnly: only selected keys move, the selection follows', Q.selecte
 eq('Layer > 0: nothing in this build (status 1); Layer 0 = base fcurve', Q.layer, [NOTHING, CX, OKS, shifted(CX, 2)]);
 eq('SISequence Type 1: the inputs as given', Q.type1, [OKS, shifted(CX, 4), CY]);
 eq('no fcurve transformed: status 1', Q.nothing, NOTHING);
-eq('Sequence default Type 3: scene fcurves, the unread scene walk logged as not yet attested', Q.type3, [OKS, shifted(CX, 5), shifted(CY, 5), true]);
-eq('Discrete Time true logged as not yet attested', Q.discreteNya, 1);
+eq('Sequence default Type 3 (Mode 2): the plain fcurves of the scene, nothing logged as open', Q.type3, [OKS, shifted(CX, 5), shifted(CY, 5), 0]);
+eq('Discrete Time is no longer logged as open', Q.discreteNya, 0);
+eq('Type 3 Mode table, plain fcurves: transformed in modes 1, 2, 3; left alone in 4, 5 (and outside 1..5)', Q.modes,
+  { 1: [OKS, shifted(CX, 5)], 2: [OKS, shifted(CX, 5)], 3: [OKS, shifted(CX, 5)], 4: [NOTHING, CX], 5: [NOTHING, CX], 9: [NOTHING, CX] });
+eq('Mode symbol: siFCurvesAnimationSources = 2; another symbol is logged as open (Q10) and taken as 2', [Q.modeSymbol, Q.modeUnknownSymbol], [[OKS, 0], [OKS, shifted(CX, 5), 1]]);
+eq('Mode is used only with Type 3', Q.modeNotType3, [OKS, shifted(CX, 2)]);
+eq('Discrete Time: keys are put back on whole frames after the transform', [Q.discrete, Q.discreteOff], [[OKS, [[2, 0], [11, 1], [21, 2], [31, 3]]], [OKS, [[2.4, 0], [11.4, 1], [21.4, 2], [31.4, 3]]]]);
+eq('Ripple with a negative offset: scale pass, then offset pass on the range without ripple (later keys do not follow)', Q.rippleNegative, [OKS, [[1, 0], [7, 1], [17, 2], [30, 3]], [[5, 5], [12, 6]]]);
+eq('undo of the two-pass edit', Q.rippleNegativeUndo, [CX, CY]);
+eq('Ripple with a positive offset: one call, later keys follow', Q.ripplePositive, [OKS, [[1, 0], [13, 1], [23, 2], [33, 3]], [[5, 5], [18, 6]]]);
+eq('Ripple is dropped when the pivot is nearer the range end and the scale is not 1', Q.rippleEndAnchored, [OKS, [[-8, 0], [10, 1], [20, 2], [30, 3]], [[0, 5], [15, 6]]]);
+eq('end-anchored without scale: Ripple kept', Q.rippleEndAnchoredOffsetOnly, [OKS, [[3, 0], [12, 1], [22, 2], [32, 3]]]);
+eq('range snapping: ends move onto the keys inside the start / end frame, the pivot follows, the scale keeps the far end where the unsnapped one would land', Q.snap, [OKS, [[0.8, 0], [18.822564, 1], [39, 2], [30, 3]].sort((a, b) => a[0] - b[0])]);
+eq('range snapping, pivot not on a range end: only a key before the start / after the end inside the frame is snapped onto', Q.snapOffset, [OKS, [[2.8, 0], [12, 1], [22.3, 2], [30, 3]]]);
+eq('no key inside the range: the curve is left alone, status 1', Q.emptyRange, [NOTHING, CX]);
 eq('Sequence Type as siAnimParams token on a parameter set', Q.type2Param, [OKS, shifted(CX, 1), shifted(CY, 1)]);
 
 // 8. animation clipboard
@@ -417,7 +468,15 @@ eq('empty input list: status 1', N.emptyList, [NOTHING, NOTHING, NOTHING]);
 
 // 9. CopyAnimContainer
 const T = got.container;
-eq('CopyAnimContainer: container animation applied to every target (inferred matching, logged), one undo step', T.copy, [OKS, CX, CY, CX, null, true, 'CopyAnimContainer']);
+eq('CopyAnimContainer: container animation applied to every target by name key, one undo step, nothing logged as open', [T.copy.slice(0, 5), T.copy[6], T.copyNya], [[OKS, CX, CY, CX, null], 'CopyAnimContainer', 0]);
+eq('each target gets its own duplicate of the source', T.ownCopy, [OKS, true, true]);
+eq('unmatched animatable target parameter: nested RemoveAnimation (value kept); matched ones are replaced; one undo step', T.unmatched, [OKS, CX, CY, null, true, 'CopyAnimContainer']);
+eq('undo puts the target animation back', T.unmatchedUndo, [[[2, 9]], null, [[1, 1], [5, 2]]]);
+eq('an expression source is copied when the parameter has no fcurve', T.expression, [OKS, '5', CX]);
+eq('"multiple" flag: the container name ends the key, differently named containers match nothing and the targets lose their animation', [T.multipleNames, T.multipleNothing], [[OKS, null, null], NOTHING]);
+eq('single source and target: the container name is not part of the key', T.single, [OKS, CX, CY]);
+eq('a parameter as container has no children: nothing collected, status 1', T.parameter, [NOTHING, null]);
+eq('several sources: the first key stored wins', T.firstWins, [OKS, CX]);
 eq('CopyAnimContainer undo', T.undo, [null, null, CX]);
 eq('CopyAnimContainer with objects', T.object, [OKS, CX]);
 eq('InputObj missing / unresolvable: 0x80070057', T.errors, [INVALID, INVALID]);
@@ -453,4 +512,5 @@ if (diffs.length) {
 }
 console.log(`OK CMD-B8c fcurve copy / paste / key selection / rotation / sequence task commands: ${checks} checks, ${NAMES.length} commands exercised (contract + registry dump; no XSIBATCH golden)`);
 console.log('   fully wired (command layer): CopyKeys, CutKeys, DeleteKeys, PasteKeys, SelectKeysInTimespan, DeselectAllKeys, CopyAllAnimation, CopyAnimation, PasteAllAnimation, PasteAnimation (base layer)');
-console.log('   partly wired: CopyAnimContainer (Q1), Sequence / SISequence / ScaleAndOffset (Type 3 walk, Mode, Discrete Time, ripple passes), ConvertEulerToQuat / ConvertQuatToEuler / MakeRotationsContinuous (alternative triple Q8)');
+console.log('   batch 9 contracts: CopyAnimContainer (name keys, ConnectSource / RemoveAnimation per target parameter), Sequence / SISequence / ScaleAndOffset (Mode table on plain fcurves, snapping, ripple rules, Discrete Time)');
+console.log('   partly wired: Sequence / SISequence (Type 3: the mixer part of the walk, action sources / clips / markers, is not wired), ConvertEulerToQuat / ConvertQuatToEuler / MakeRotationsContinuous (alternative triple Q8)');

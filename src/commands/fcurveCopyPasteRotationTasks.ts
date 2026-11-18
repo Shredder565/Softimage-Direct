@@ -211,43 +211,129 @@ function deselectAllKeys(app: App): void {
 }
 
 // ------------------------------------------------------------------ Sequence / SISequence / ScaleAndOffset
+const NEAR = 1e-7;
+/**
+ * `Mode` (used with `Type` 3 only): 1..5 as the code tests them. Only siFCurvesAnimationSources (2, the registry
+ * default) was read by name; another symbol is logged and taken as the default.
+ */
+function sequenceMode(app: App, command: string, v: any): number {
+  if (unset(v)) return 2;
+  if (typeof v === 'number') return Math.trunc(v);
+  const s = String(v).trim(); if (/^-?\d+$/.test(s)) return Number(s);
+  const tok = (s.match(/:?([A-Za-z0-9_]+)(?::|$)/)?.[1] ?? s).toLowerCase();
+  if (tok === 'sifcurvesanimationsources') return 2;
+  logNya(app, command, `the symbolic names of Mode 1, 3, 4 and 5 ("${s}" is taken as siFCurvesAnimationSources = 2)`, 'Q10');
+  return 2;
+}
+/** True when the scene holds mixer content (action sources, clips, markers) the `Type` 3 walk would also visit. */
+function hasMixerContent(app: App): boolean {
+  const hosts: any[] = [app.scene.root, ...app.scene.allObjects()];
+  for (const h of hosts) for (const pr of (h.properties ?? []) as any[]) {
+    if (pr.type === 'actionsource') return true;
+    if (pr.type === 'mixer' && ((pr.clips?.length ?? 0) > 0 || String(pr.get?.('markers')?.value ?? '') !== '')) return true;
+  }
+  return false;
+}
+interface SeqArgs { start: number; end: number; pivot: number; scale: number; offset: number; ripple: boolean; selectedOnly: boolean; discrete: boolean }
+/**
+ * The curve's own scale-and-offset (one call): keys of [start, end] go to (t - pivot) * scale + pivot + offset; with
+ * ripple the keys after the range follow the end of the range (inferred from the earlier registration: the method is
+ * known only by its call site, Q10). Returns false when no key was taken.
+ */
+function scaleOffsetCurve(app: App, p: Parameter, start: number, end: number, pivot: number, scale: number, offset: number, ripple: boolean, selectedOnly: boolean): boolean {
+  const A = app.anim; const fc = A.fcurves.get(p); if (!fc) return false;
+  const map = (t: number) => (t - pivot) * scale + pivot + offset;
+  const take = (k: Key) => inRange(k.time, start, end) && (!selectedOnly || A.selectedKeys.has(keyId(p, k.time)));
+  if (!fc.keys.some(take)) return false;
+  const edge = ripple ? map(end) - end : 0;
+  const moves = new Map<number, number | null>(); const moved: Key[] = []; const kept: Key[] = [];
+  for (const k of fc.keys) {
+    if (take(k)) { const t = map(k.time); moves.set(k.time, t); moved.push({ ...k, time: t }); }
+    else if (edge && k.time > end) { moves.set(k.time, k.time + edge); moved.push({ ...k, time: k.time + edge }); }
+    else kept.push(cloneKey(k));
+  }
+  // A key that is not moved and now shares its time with a moved key gives way to it.
+  const next = [...kept.filter(k => !moved.some(m => sameTime(m.time, k.time))), ...moved];
+  for (const k of kept) if (moved.some(m => sameTime(m.time, k.time)) && !moves.has(k.time)) A.selectedKeys.delete(keyId(p, k.time));
+  putKeys(app, p, next); moveSelection(app, p, moves);
+  return true;
+}
+/** The per-fcurve routine (steps 4 to 7 of the contract). Returns true when the curve was transformed. */
+function sequenceCurve(app: App, p: Parameter, q: SeqArgs): boolean {
+  const A = app.anim; const fc = A.fcurves.get(p); if (!fc || !fc.keys.length) return false;
+  let { start, end, pivot, scale } = q;
+  // 4. range snapping. inferred: the bounds of a frame are half a frame either side of it
+  const lo = Math.round(start) - 0.5, hi = Math.round(end) + 0.5;
+  const first = fc.keys.find(k => k.time >= lo);
+  let last: Key | undefined; for (const k of fc.keys) if (k.time <= hi) last = k;
+  if (!first || !last || first.time > last.time) return false;   // no key inside the range: the curve is left alone
+  const pivotOnStart = Math.abs(pivot - start) < NEAR, pivotOnEnd = Math.abs(pivot - end) < NEAR;
+  const pivotOnAnEnd = pivotOnStart || pivotOnEnd;
+  const start0 = start, end0 = end, pivot0 = pivot;
+  if (first.time < Math.round(start0) + 0.5 && (first.time < start0 || (pivotOnAnEnd && first.time !== start0))) start = first.time;
+  if (last.time > Math.round(end0) - 0.5 && (last.time > end0 || (pivotOnAnEnd && last.time !== end0))) end = last.time;
+  if (start > end) { start = start0; end = end0; }   // one key inside both frames: the given range is kept (inferred)
+  if (pivotOnStart) pivot = start; else if (pivotOnEnd) pivot = end;
+  if (Math.abs(pivot - first.time) < NEAR) pivot = first.time; else if (Math.abs(pivot - last.time) < NEAR) pivot = last.time;
+  // 5. anchor side: 2 when the pivot is nearer the range end than the range start, 4 otherwise
+  const anchor = Math.abs(pivot - end) < Math.abs(pivot - start) ? 2 : 4;
+  const scaling = Math.abs(scale - 1) >= 1e-6;
+  const snapped = start !== start0 || end !== end0;
+  if (scaling && snapped && Math.abs(pivot - (anchor === 2 ? end : start)) < NEAR) {
+    // the far snapped end lands where the unsnapped far end would have landed
+    const far0 = anchor === 2 ? start0 : end0, far1 = anchor === 2 ? start : end;
+    if (Math.abs(far1 - pivot) > NEAR) scale = ((far0 - pivot0) * scale + pivot0 - pivot) / (far1 - pivot);   // inferred algebra from the stated goal
+  }
+  // 6. ripple rules
+  const ripple = q.ripple && !(anchor === 2 && scaling);
+  let done: boolean;
+  if (ripple && q.offset < 0) {
+    // two calls: scale only, then offset only on the scaled range (scale 1, pivot 0, ripple off)
+    done = scaleOffsetCurve(app, p, start, end, pivot, scale, 0, true, q.selectedOnly);
+    const s1 = (start - pivot) * scale + pivot, e1 = (end - pivot) * scale + pivot;
+    done = scaleOffsetCurve(app, p, Math.min(s1, e1), Math.max(s1, e1), 0, 1, q.offset, false, q.selectedOnly) || done;
+  } else done = scaleOffsetCurve(app, p, start, end, pivot, scale, q.offset, ripple, q.selectedOnly);
+  if (!done) return false;
+  // 7. Discrete Time: the keys are put back on whole frames (inferred in the note from the argument name)
+  if (q.discrete) {
+    const cur = A.fcurves.get(p)!; const moves = new Map<number, number | null>(); const byTime = new Map<number, Key>();
+    for (const k of cur.keys) {
+      const t = Math.round(k.time);
+      const old = byTime.get(t); if (old) moves.set(old.time, null);   // inferred: of two keys on one frame the later one stays
+      byTime.set(t, k); if (t !== k.time) moves.set(k.time, t);
+    }
+    const next = [...byTime].map(([t, k]) => ({ ...k, time: t }));
+    for (const [from, to] of moves) if (to === null) A.selectedKeys.delete(keyId(p, from));
+    putKeys(app, p, next); moveSelection(app, p, moves);
+  }
+  return true;
+}
+
 function sequence(app: App, command: string, a: Args): void {
-  const A = app.anim;
   const scale = numArg(a.Scale, 1), offset = numArg(a.Offset, 0);
   if (Math.abs(scale - 1) < 1e-6 && Math.abs(offset) < 1e-6) { setStatus(app, command, S_NOTHING); return; }
   if (Math.abs(scale) < 1e-6) throw fail(E_FAIL, `${command}: Scale is zero`);
   const type = scopeOf(a.Type);
   if (type !== 1 && type !== 2 && type !== 3) throw fail(E_FAIL, `${command}: Type ${String(a.Type)} is not 1, 2 or 3`);
-  const start = numArg(a.StartFrame, 1), end = numArg(a.EndFrame, 100), pivot = numArg(a.Pivot, 1);
-  const ripple = boolArg(a.Ripple), selectedOnly = boolArg(a.SelectedKeysOnly);
+  const q: SeqArgs = {
+    start: numArg(a.StartFrame, 1), end: numArg(a.EndFrame, 100), pivot: numArg(a.Pivot, 1), scale, offset,
+    ripple: boolArg(a.Ripple), selectedOnly: boolArg(a.SelectedKeysOnly), discrete: boolArg(a['Discrete Time']),
+  };
   const layer = numArg(a.Layer, -1);
-  if (type === 3) logNya(app, command, 'Type 3 scene walk and the meaning of Mode there: the plain parameter fcurves of the scene are transformed, fcurves held by action sources / clips are not', 'Missing (a)');
-  if (boolArg(a['Discrete Time'])) logNya(app, command, 'effect of Discrete Time: key times are not rounded', 'Missing (b)');
-  if (ripple && (offset < 0 || pivot >= end)) logNya(app, command, 'the split into a scale pass and an offset pass with Ripple (negative offset / end-anchored scale): done as one pass', 'Missing (b)');
   // Only the base layer (index 0) carries fcurves in this build: Layer < 0 = all layers, 0 = base, other = nothing here.
-  const params = layer > 0 ? [] : scopeParams(app, a.InputObjs, type, true);
-  const map = (t: number) => (t - pivot) * scale + pivot + offset;
-  let done = 0;
-  transact(app, command, params, () => {
-    for (const p of params) {
-      const fc = A.fcurves.get(p); if (!fc || !fc.keys.length) continue;
-      const take = (k: Key) => inRange(k.time, start, end) && (!selectedOnly || A.selectedKeys.has(keyId(p, k.time)));
-      if (!fc.keys.some(take)) continue;
-      // Ripple: the keys after the range follow the end of the range (inferred from the earlier registration; Missing (b)).
-      const edge = ripple ? map(end) - end : 0;
-      const moves = new Map<number, number | null>(); const moved: Key[] = []; const kept: Key[] = [];
-      for (const k of fc.keys) {
-        if (take(k)) { const t = map(k.time); moves.set(k.time, t); moved.push({ ...k, time: t }); }
-        else if (edge && k.time > end) { moves.set(k.time, k.time + edge); moved.push({ ...k, time: k.time + edge }); }
-        else kept.push(cloneKey(k));
-      }
-      // A key that is not moved and now shares its time with a moved key gives way to it.
-      const next = [...kept.filter(k => !moved.some(m => sameTime(m.time, k.time))), ...moved];
-      for (const k of kept) if (moved.some(m => sameTime(m.time, k.time)) && !moves.has(k.time)) A.selectedKeys.delete(keyId(p, k.time));
-      putKeys(app, p, next); moveSelection(app, p, moves);
-      done++;
+  let params: Parameter[];
+  if (layer > 0) params = [];
+  else if (type === 3) {
+    // Scene walk; Mode is used only here. Plain fcurves (not owned by an action source) are transformed in modes
+    // 1, 2 and 3; modes 4 and 5 leave them alone. The fcurves of this build's `app.anim.fcurves` are all plain.
+    const mode = sequenceMode(app, command, a.Mode);
+    params = mode >= 1 && mode <= 3 ? scopeParams(app, a.InputObjs, 3, true) : [];
+    if (mode >= 2 && mode <= 5 && hasMixerContent(app)) {
+      app.logMsg('info', `${command}: not wired in this build: the mixer part of the Type 3 walk for Mode ${mode} (action-source fcurves and AnimStart / AnimEnd, clip time controls, mixer markers); only plain fcurves are transformed`);
     }
-  });
+  } else params = scopeParams(app, a.InputObjs, type, true);
+  let done = 0;
+  transact(app, command, params, () => { for (const p of params) if (sequenceCurve(app, p, q)) done++; });
   refresh(app);
   setStatus(app, command, done ? S_OK : S_NOTHING);
 }
