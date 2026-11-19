@@ -52,6 +52,7 @@ import { registerPhonemeSpeechTaskCommands } from './commands/phonemeSpeechTasks
 import { registerFxCoreTaskCommands } from './commands/fxCoreTasks';
 import { registerTasksB11aCommands } from './commands/tasksB11a';
 import { registerTasksB11bCommands } from './commands/tasksB11b';
+import { registerTasksB11cCommands } from './commands/tasksB11c';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -175,6 +176,7 @@ registerPhonemeSpeechTaskCommands(app);
 registerFxCoreTaskCommands(app);
 registerTasksB11aCommands(app);   // CMD-B11a
 registerTasksB11bCommands(app);   // CMD-B11b, tasks.dll
+registerTasksB11cCommands(app);   // CMD-B11c (tasks.dll)
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
