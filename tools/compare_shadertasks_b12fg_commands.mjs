@@ -117,7 +117,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_OK: DO }) => {
     ok('RemoveShaderFromCnxPoint: nothing disconnected -> S_FALSE (1), nothing else', !r.err && last() === 1 && r.v === null, r);
     ok('RemoveShaderFromCnxPoint: Source not a shader -> 0x80070057', status(run('RemoveShaderFromCnxPoint', { Source: 'sphere', InputObjs: [{ owner: ph, name: 'ambient' }] }), '80070057'));
     A.run('SIConnectShaderToCnxPoint', { Source: img, InputObjs: [{ owner: ph, name: 'ambient' }] });
-    A.lockRecordsB11.set(ph, [{ level: 0xffff, type: 0 }]);
+    A.lockRecordsB11.set(ph, [{ id: 0, lockLevel: 0xffff, tagLevel: 0, type: 0 }]);
     r = run('RemoveShaderFromCnxPoint', { Source: img, InputObjs: [{ owner: ph, name: 'ambient' }] });
     ok('RemoveShaderFromCnxPoint: locked point -> lock error, skipped (S_FALSE)', src(ph, 'ambient') === img && has(r, /locked/) && last() === 1, r);
     A.lockRecordsB11.delete(ph);
@@ -243,7 +243,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_OK: DO }) => {
     r = run('MoveShaderCompoundPort', { InputObj: pA, Step: 5 });
     ok('MoveShaderCompoundPort: refused move -> S_FALSE, no change', !r.err && last() === 1 && comp.exposed.indexOf(pA) === i0, r);
     ok('MoveShaderCompoundPort: Step 0 -> 0x80070057', status(run('MoveShaderCompoundPort', { InputObj: pA, Step: 0 }), '80070057'));
-    A.lockRecordsB11.set(comp, [{ level: 0xffff, type: 0 }]);
+    A.lockRecordsB11.set(comp, [{ id: 0, lockLevel: 0xffff, tagLevel: 0, type: 0 }]);
     ok('MoveShaderCompoundPort: locked compound -> 0x80070005', status(run('MoveShaderCompoundPort', { InputObj: pA, Step: -1 }), '80070005'));
     ok('RenameShaderCompoundPort: locked compound -> 0x80070005', status(run('RenameShaderCompoundPort', { InputObj: pA, Name: 'x' }), '80070005'));
     ok('RemoveShaderCompoundPort: locked compound -> 0x80070005', status(run('RemoveShaderCompoundPort', { InputObj: pA }), '80070005'));

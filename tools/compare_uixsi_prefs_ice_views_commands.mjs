@@ -628,7 +628,8 @@ eq('InspectLocks: no Net View open = a new one; default input = the selection', 
 
 // ---- rename
 const rn = got.rename;
-eq('RenamePropAndRebind: renamed, name references updated (stand-in for the C++ command, flagged Q8)', rn.rename, [NONE, 'NewProj', 'NewProj', 'Else', 1]);
+// RenamePropAndRebind_Internal is on the bus since CMD-B12f: the wrapper delegates to it, so its own Q8 stand-in flag is no longer logged.
+eq('RenamePropAndRebind: renamed, name references updated (by RenamePropAndRebind_Internal, CMD-B12f)', rn.rename, [NONE, 'NewProj', 'NewProj', 'Else', 0]);
 eq('RenamePropAndRebind: undoable; UpdateRefs false leaves references; property by name', [rn.undo, rn.noRefs], [['MyProj', 'MyProj'], [NONE, 'Second', 'MyProj']]);
 eq('RenamePropAndRebind: a taken name gets a suffix (inferred); default input = the selection', [rn.collision, rn.fromSelection], [[NONE, 'Taken1', 'Taken1'], [NONE, 'Picked']]);
 eq('RenamePropAndRebind: empty name without UI = nothing, flagged', rn.emptyName, [NONE, 'Picked', 1]);

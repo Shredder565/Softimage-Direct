@@ -357,17 +357,23 @@ function renamePropAndRebind(app: App, a: Record<string, any>) {
   const updateRefs = boolOf(a.UpdateRefs, true), updateWild = boolOf(a.UpdateWildcards, true);
   for (const p of props) {
     const siblings: Node[] = ((p.parent as any)?.properties ?? []).filter((x: Node) => x !== p);
-    // name check (inferred condition): a valid script name not used by a sibling
-    if (!VALID_NAME.test(name) || siblings.some(s => s.name === name)) { raise(app, C, 0x6f, name); throw fail(E_FAIL, `${C}: "${name}" is not a valid name for ${p.name}`); }
+    // name check (inferred condition: the name is not a valid script name)
+    if (!VALID_NAME.test(name)) { raise(app, C, 0x6f, name); throw fail(E_FAIL, `${C}: "${name}" is not a valid name for ${p.name}`); }
+    let nn = name; for (let i = 1; siblings.some(s => s.name === nn); i++) nn = `${name}${i}`;   // inferred: a taken name gets a numeric suffix (as the CMD-B6a wrapper reads it, Q8)
     const oldName = p.name, oldFull = p.fullName;
+    if (oldName === nn) continue;
     // the SetValue sub-task on <property>.Name
-    const old = p.name; app.record('SetValue', () => { p.name = name; }, () => { p.name = old; });
+    app.record('SetValue', () => { p.name = nn; }, () => { p.name = oldName; });
     if (updateRefs) {
       const newFull = p.fullName;
-      for (const m of allMaterials(app.scene)) for (const { p: q } of referenceParams(m)) {
+      // shader parameters of every material, and (inferred) string parameters of the owner's other properties
+      const owner = owningObject(p);
+      const refs = allMaterials(app.scene).flatMap(m => referenceParams(m).map(x => x.p));
+      for (const q of (owner as any)?.allProperties?.() ?? []) if (q !== p) for (const x of q.params) if (x.def.type === 'string' && !x.def.readOnly && typeof x.value === 'string' && !refs.includes(x)) refs.push(x);
+      for (const q of refs) {
         if (q.value === oldFull) app.setParam(q, newFull);
-        else if (q.value === oldName) app.setParam(q, name);
-        else if (typeof q.value === 'string' && q.value.endsWith('.' + oldName) && !/[*?]/.test(q.value)) app.setParam(q, q.value.slice(0, -oldName.length) + name);
+        else if (q.value === oldName) app.setParam(q, nn);
+        else if (typeof q.value === 'string' && q.value.endsWith('.' + oldName) && !/[*?]/.test(q.value)) app.setParam(q, q.value.slice(0, -oldName.length) + nn);
       }
     }
     if (updateWild) logNya(app, C, `the wildcard reference rewrite rules; wildcard references to "${oldName}" were left as they were`);
