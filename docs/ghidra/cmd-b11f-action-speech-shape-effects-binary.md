@@ -189,7 +189,7 @@ Creates a speech source whose items are an explicit parameter list, grouped by E
   the source is added to the mixer; with undo recording references to `KeyList` and the source
   are kept.
 
-### `FreezeLipSync`: SPEC-PARTIAL
+### `FreezeLipSync`: SPEC (promoted 2026-11-19, batch 12; see "Batch 12 answers")
 
 Bakes the model's speech actions into fcurves on the driven parameters and deletes the speech sources.
 
@@ -228,7 +228,7 @@ Copies a stored shape key onto other clusters.
 - Each new key is wrapped in an item and collected in an output list (kept on the task).
   Returns `S_FALSE` when no target was copied, else `S_OK`.
 
-### `CreateShapeGroup`: SPEC-PARTIAL
+### `CreateShapeGroup`: SPEC (promoted 2026-11-19, batch 12; see "Batch 12 answers")
 
 Puts a set of shape keys into a newly named shape group.
 
@@ -301,7 +301,7 @@ Removes the effect (per-item offset expressions and their animation) from a clip
   cleared (set to empty).
 - With undo recording a reference to the clip is kept.
 
-### `ResetOffset`: SPEC-PARTIAL
+### `ResetOffset`: SPEC (promoted 2026-11-19, batch 12; see "Batch 12 answers")
 
 Resets the clip offset of parameters driven by the mixer at a given time.
 
@@ -316,7 +316,7 @@ Resets the clip offset of parameters driven by the mixer at a given time.
 - If some input parameter is not mixer-driven, `XSIACTION2` 0x3f6 is raised (`0x80070057`).
 - Missing: the key value written (SaveKey sub-task arguments partly unread).
 
-### `CutClipInSpace`: SPEC-PARTIAL
+### `CutClipInSpace`: SPEC (promoted 2026-11-19, batch 12; see "Batch 12 answers")
 
 Splits a clip by objects: the items that animate the given objects move to a new clip.
 
@@ -359,3 +359,106 @@ Adds an offset effect to a clip so that each item can be offset by its own `para
 5. CutClipInSpace: sub-task classes at `0x180136cc8` / `0x180136d18`.
 6. The tag property read through constant `0x180134e18` by the control finder (inferred: the
    Face Robot keyword / tag string).
+
+## Batch 12 answers (PR #183 questions)
+
+Read 2026-11-19 from the same `action.dll` (sha256 `71769ec1…7ce85f86`) through REA / Ghidra.
+Addresses are image addresses. Constant GUIDs were read as bytes and named from
+`data/command_registry.json` (handler CLSIDs) and `data/spdl/spdl.json` (class refs).
+
+### Q1 SetupEvolverVisemes: Evolver mapping file (parser `0x1800f7b80`) — answered; output order open
+
+- The file is XML, read with the generic XML parser. Load failure -> `0x80004005`. The root
+  must contain an element `PhonemeVisemeMappingProfile`, else `0x8000FFFF` (both then logged as
+  0x444 by the command, as before).
+- All descendant elements are walked; every element whose tag is `Phoneme` (case-insensitive)
+  is one viseme entry. Its child elements are read in document order (tag compare is
+  case-insensitive; a child's text is its `_value`):
+  | Child | Meaning |
+  |-------|---------|
+  | `Unicode` | text parsed as hexadecimal; the number is the entry key (phoneme code) and the text itself becomes the start of the viseme name. If the text is not hex the whole `Phoneme` element is dropped. |
+  | `FonixCode` | appended to the name as `_` + text, so name = `<Unicode text>_<FonixCode>` (Unicode must come first, it assigns the name). |
+  | `PhonemeType` | integer, clamped to 0..2 (default 0 when absent). |
+  | `Shape` | attributes `name` (non-empty) and `weight` (parsed as double): one (shape name -> weight) pair; later pairs with the same name overwrite. |
+- Result: a map phoneme code -> {name, PhonemeType, shape-weight map}; every shape name met is
+  also collected in a set (used by the two helper passes to find the driven parameters).
+- Example (layout only): `<…><PhonemeVisemeMappingProfile><Phoneme><Unicode>0041</Unicode><FonixCode>AA</FonixCode><PhonemeType>1</PhonemeType><Shape name="jawOpen" weight="0.8"/></Phoneme>…`
+  gives entry 0x41, name `0041_AA`, type 1, `jawOpen` = 0.8.
+- **Open:** which output list is `KeyList` and which `Action`; UnPackArg (`0x18006a140`) reads
+  only `Model` (a model, or the first item of a list), `ClipList` and `FileName`, so the outputs
+  are bound elsewhere (keep the registry-order guess, inferred).
+
+### Q2 FreezeLipSync (worker `0x18003b710`) — answered (Do wrapper `0x18003c200` not needed)
+
+- Model from the input (model interface, else `SIGetModelFrom3DObject`); no input -> `S_FALSE`.
+  The model's mixer is looked up without creating it; no mixer -> `S_FALSE`.
+- Every speech source (class `12a3efc5-…` = `C3DAction2`) in the mixer is visited. For each
+  source entry whose item record has kind `0x1a` **and** whose item object answers interface
+  `915d0a04-daa0-40ce-9817-ff62cb5249b2` (a "write yourself into an fcurve" interface; this is what
+  kind 0x1a means in practice: a speech-driven channel item):
+  1. target path = `<model name>` + `.` + entry name; resolved to an element; unresolved -> entry skipped.
+  2. the target must be an animatable parameter (interface `12a3ef98-e543-11d2-b352-00105a1e6ce9`).
+  3. **Existing fcurve:** a `DeleteObj` sub-task (flag `0x10`) removes it first.
+  4. A new fcurve is created (`F3DCreateFCurve`) and **filled by the speech item itself** (the
+     item's interface method receives the entry name, the item data and the new fcurve: the
+     keys are whatever the speech item writes, not a sampling done by action.dll).
+  5. An `AddFCurve` sub-task (`920f5f50-…`, constant `0x1801369f8`) connects the fcurve to the parameter.
+- After the source's entries: if at least one entry was frozen, a `DeleteObj` (flag `0x10`)
+  deletes the speech source.
+- Sub-tasks are kept only when recording undo; without undo the command returns `S_FALSE`.
+
+### Q3 CreateShapeGroup helpers — answered
+
+- **Key collection `0x18002dac0`:** every input item must be a shape key, else `0x80070057`.
+  All keys must have the same owner (first key's owner = reference; a different owner ->
+  `0x80070057`; a key without owner -> `0x80004003`). The common owner (cluster) is returned.
+- **Name resolution `0x18002d320`:** if the owner is null or `Name` is empty, **no name is
+  resolved** (the group name stays empty; no automatic name). Otherwise the distinct group names
+  of all shape keys under the owner are collected; if `Name` is not among them it is used as is;
+  if it is, a unique variant is produced by helper `0x18002d1d0` (not read; inferred: a numeric
+  suffix, Softimage style `Name1`, `Name2`…).
+
+### Q4 ResetOffset (worker `0x180059bf0`) and CutClipInSpace (worker `0x1800331e0`) — answered
+
+- **ResetOffset:** for the single contributing clip at `Time`, the clip's item for the parameter
+  is fetched (item index from the contribution query) together with that item's offset
+  parameter; a `SaveKey` sub-task (`5ad1fd80-…`, constant `0x180136a18`) is run on it at `Time`
+  with the value argument 0 and the undo flag. (inferred) The key is the item offset value 0,
+  i.e. "no offset" at that time. Message ids confirmed: 0x3fb (more than one), 0x3fc (none),
+  0x3f6 (some parameter not mixer-driven, raised once at the end), all `0x80070057`.
+- **CutClipInSpace sub-tasks (corrects the earlier inference):**
+  1. the clip's source is duplicated by an action-duplicator object (class
+     `6d89e10a-ec1d-11d2-b353-00105a1e6ce9`, created directly, not a command);
+  2. **`AddTrack`** (handler `67b8773c-…`, constant `0x180136cc8`) on the model, root compound,
+     track class `23201237-…` = `C3DAnimActionTrack`, no name, insert position −1 (end);
+  3. **`CopyClipToTrack`** (handler `acd20b45-…`, constant `0x180136d18`) with the model, the
+     original clip, the duplicated source, the new track and Time = original clip start
+     (frames -> seconds); its output is the new clip.
+  Then the per-item activation swap as already written.
+
+### Q5 — partly answered
+
+- **Face Robot tag property (`0x180134e18`):** GUID `fd1a0da8-ae6f-4580-9367-b5bc1f112880`,
+  the **user keywords** property (same GUID as in cmd-b7a); the control finder matches tokens in
+  the object's comma-separated user keywords.
+- **StoreViseme capability bit:** the parameter's capability word is read; when bit `0x2` is
+  clear the value is stored. When bit `0x2` is set, a per-parameter attribute (id `0x10`) is read;
+  if it is a 16-bit unsigned value whose bit `0x2` is clear the value is still stored, else the
+  parameter is skipped (inferred: bit 2 = read-only, attribute 0x10 = instance override).
+  StoreViseme also sets source parameters FrameStart (constant `0x180135898`) = 1.0 and FrameEnd
+  (`0x1801358a8`) = 5.0, and `Name` (`0x180136818`) only when a name was given.
+- **Open SE "linker" `0x180139140`:** this constant is `IID_IUnknown`
+  (`00000000-0000-0000-c000-000000000046`), not a linker interface; Open SE hands the task's own
+  IUnknown to the transient view (correct the earlier note wording).
+- **CopyShape after errors 101 / 102:** the per-target loop continues when the copier returns
+  without a key (counted only when a key was made); any negative HRESULT from the copier stops
+  the command with that HRESULT. Whether 101 / 102 return negative is not read (inferred: they
+  behave like error 100 and skip the target). Source owner missing -> `0x8000FFFF`; target items
+  that are not clusters are skipped silently; return `S_FALSE` when nothing was copied.
+- **Shape-weight item path:** open (not read).
+
+### Status after these answers
+
+- `FreezeLipSync`, `CreateShapeGroup`, `ResetOffset`, `CutClipInSpace`: **SPEC** (remaining
+  points marked `(inferred)` above).
+- `SetupEvolverVisemes`: stays **SPEC-PARTIAL** (output list order only).

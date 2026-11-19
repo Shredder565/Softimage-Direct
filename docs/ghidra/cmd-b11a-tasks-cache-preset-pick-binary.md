@@ -265,7 +265,7 @@ Wire contract:
   when the UI is running and `ShowInNetview` is true, runs `OpenNetView` with `URL` = the
   produced file. Returns 0. Not undoable.
 
-### `CollapseOp`: SPEC-PARTIAL
+### `CollapseOp`: SPEC (promoted 2026-11-19, batch 12; see "Batch 12 answers")
 
 Wire contract:
 - Args: `InputObjs` (list), `Relative` (default true), `CollapseOperators` (output list).
@@ -299,7 +299,7 @@ Wire contract:
   with this task as callback `(inferred: deferred execution)`; on that id the callback
   re-validates and loads the file through the framework preference loader. Returns 0.
 
-### `CacheObjectsIntoFile_Private`: SPEC-PARTIAL
+### `CacheObjectsIntoFile_Private`: SPEC (promoted 2026-11-19, batch 12; see "Batch 12 answers")
 
 Wire contract:
 - Args as registered; UnPackArg reads `ObjectsToCache`, `PathID`, `FirstFrame`,
@@ -347,3 +347,123 @@ Wire contract:
 | Q3 | ReorderSceneItem Undo repeats the move with the stored arguments, not the recorded previous position | `0x1800391c0`, `0x180039510` |
 | Q4 | Preference names read by CopyCacheFiles / SetDefaultKeyMap (decompiler dropped the arguments) | disassemble the calls |
 | Q5 | siPSetRelationship numeric values | SDK enum headers |
+
+## Batch 12 answers (PR #183 B11a questions)
+
+Read 2026-11-19 through REA / Ghidra on the same `tasks.dll` (sha256 `d760b7aa…`). Functions
+read: `0x180035610`, `0x1800350a0` (FindObjects), `0x1800491b0`, `0x180048710`
+(SetCurrentParType), `0x180037cd0` (FilterPSet predicate), `0x180078660` (cache plan
+builder), `0x180079ac0`, `0x180079dd0` (cache writers, separator from the instruction
+stream), `0x18007a110` (CacheObjectsIntoFile_Private RePackArg), task vtable `0x1800a4ea0`
+slot 15 = `0x18000ebb0` (CollapseOp per-operator step), `0x180024d70` (SetDefaultKeyMap
+worker); string table and import-name table of `tasks.dll`.
+
+### Q1 `SIMatchSubComponent`: what `F3DMatchSubComponent` tests: OPEN (outside tasks.dll)
+
+- `F3DMatchSubComponent(IDSComponentHierarchy*, I3DElemRef*)` is an import. Its name sits
+  in the import-name block that ends with `mohelper.dll`, so it is exported by
+  `mohelper.dll` `(inferred from import-table layout)`. Nothing in `tasks.dll` tests the
+  component; the task only forwards the two arguments and turns S_OK into `Result` = true.
+  The contract in §3 stands (SPEC at command level); the predicate needs `mohelper.dll`
+  (row CMD-B8-HELPERS).
+
+### Q2 `FindObjects` `Type` and message 0x3eb: ANSWERED
+
+- UnPackArg reads `Path` and `Type` as plain strings (no default other than empty).
+- `Type` is turned into a class id by a DS variant type change to VT `0x60` (the DS
+  "GUID" variant type). So `Type` must be a class-id string the variant converter accepts
+  `(inferred: a "{xxxxxxxx-…}" GUID string; a class *name* is not looked up here)`.
+  **If the conversion fails the command returns 1 (S_FALSE) and writes no list**; no message.
+- The object database (generic object `0x18009d068` / `0x18009d058`) is asked for all
+  objects of that class (slot 0x90, flag 1). The output list is created only once the
+  enumeration has started. Each object: if it has active data and a model, the model's
+  flag parameter (GUID `0x18009d938`) is read and the object is **skipped when bit 0x8 is
+  set**; objects without active data or without a model are always kept. An optional
+  filter callback can drop objects. An enumeration error is returned as is.
+- 0x3eb is not a dictionary id here: it is the error code passed to the error raiser
+  with severity 2 and a literal text. Both given: text "Both path and type given",
+  `0x80070057`. Path only, or neither: the text is the (empty) `Type` string,
+  `0x80004001`.
+
+### Q3 `SetCurrentParType` Type 2 and Types > 3: ANSWERED (class name open)
+
+- UnPackArg reads `Type` as a raw long, then `Value` as an object (component hierarchy)
+  and checks its class id only for Types 0–3 (0 pass `bfdaf164…`, 1 layer `479f2e10…`,
+  2 `a15b3913-073f-11d4-b7df-0008c7a011a6`, 3 particle type `4c038ff0…`); mismatch
+  `0x80004005`. **Types outside 0..3 are not rejected by UnPackArg**: Do then returns
+  `0x8000FFFF` (E_UNEXPECTED) inside the graph-update bracket, so nothing changes.
+  Negative Types behave the same.
+- Type 2: Do gets the 3D content container (`SIGet3DContentContainer`, create flag 1),
+  asks it (slot 0x80) for a sub-container identified by the GUID pair `0x18009d8f8` /
+  `0x18009d848`, records the old current item (first run) and sets `Value` current in
+  that sub-container (slot 0x18). The class `a15b3913` is not named in `tasks.dll`
+  `(inferred: the environment class, i.e. the same current-item switch that
+  SetCurrentEnvironment exposes; not attested)`.
+- Only Type 0 (passes) fires the two pass-change events `0x20510029` / `0x2051002a` with
+  the old and new pass names; Type 1 (layers) fires none.
+
+### Q4 cache path templates, PathID 5, ResolvedPath separator, siPSetRelationship: MOSTLY ANSWERED
+
+- The five template preferences are read in this order (string table order matches the
+  read order, ids 0..4) `(inferred mapping of id to name from that order)`:
+  0 `simulation.cachetemplateprojectpath`, 1 `simulation.cachetemplatelocalpath`,
+  2 `simulation.cachetemplatepatha`, 3 `simulation.cachetemplatepathb`,
+  4 `simulation.cachetemplatepathc`; file-name template `simulation.cachetemplatefilename`.
+- `CacheObjectsIntoFile_Private` `PathID`: unsigned check `< 6`. 0..4 pick the template
+  above; **5 uses `AlternativePath` as the template**; anything else (including -1)
+  returns `0x80070057` without a message. An empty chosen template logs (severity 2)
+  XSITASKS 0x41e with the template and returns `0x80070057`.
+- Per object (objects without a 3D object interface are skipped): tokens `model` = model
+  name, `object` = object name, `version` = `Version`; plus a per-object integer read from
+  the object's cache settings, default 1 = **samples per frame** (sub-steps). `Attributes`
+  is split on `,`, each item trimmed; item *i* goes with input object *i*; item *i* of
+  `TargetCacheObjects` likewise. The resolved file path's directory (text before the last
+  `\`) is created; empty directory: `0x80070057`; directory creation failure: XSITASKS 0x420
+  (severity 2) and `0x8000FFFF`.
+- Writers: Type 0 walks frames `FirstFrame`..`LastFrame` in steps of `FramesPerStep`,
+  counting in sub-steps (time advances by one sample, 1/substeps frame, per written step;
+  with substeps 1 the time is exactly the frame); Type 1 writes one sample per `FrameSet`
+  entry. Progress bar title XSITASKS 0x432. All cache files are closed at the end
+  (`F3DCloseCacheFile`).
+- **`ResolvedPath`**: for each object the first resolved file name is appended followed by
+  `,` (0x2c); RePackArg drops the final character. So `ResolvedPath` = the per-object file
+  names joined with `,`.
+- `siPSetRelationship`: OPEN. The FilterPSet predicate only ANDs `Relationship` with a
+  parameter (GUID `0x18009cfc8`) read from the property; the numeric values are not in
+  `tasks.dll`. Additional predicate facts: a property whose element read fails with
+  `0x80020003` is not kept (no error); a property exposing the shared-property interface
+  (`0x18009bda8`) with at most one owner is always kept; with several owners the first
+  owner's property is tested and, when `Include` is true, kept only if the owner count is
+  below 3.
+
+### Q5 ReorderSceneItem MoveAction, CollapseOp slot 15, cache writers, DumpCacheHeader XML, SetDefaultKeyMap unknown name
+
+- **ReorderSceneItem `MoveAction`**: passed unchanged to `SIMoveObjectInHier(item, parent,
+  tagEDSDestination, marker, &previous)` (import from `ut.dll` `(inferred from import
+  layout)`), so MoveAction is an `EDSDestination` value. Its numbering is not in
+  `tasks.dll`; only 1 and 2 use `Marker`. The wire agent's 0 first / 1 before / 2 after /
+  3 last stays `(inferred)`, consistent with Marker use. PARTIAL.
+- **CollapseOp per-operator step (slot 15, `0x18000ebb0`)**: ANSWERED (shape). For an
+  operator with at least one input: takes the geometry of input 0; walks the object's
+  construction stack for the first operator *not* of the collapsed family; if found it
+  is muted through a disable task (class `0x18009c208`, slot 0x48) for the evaluation.
+  Reads the point positions at the current time from the operator output (A) and from
+  the last input (B); **if the point counts differ it stops silently**. Offsets are
+  A − B per point; when `Relative` is true each offset is rotated into the point's local
+  reference frame (3×3 matrix per point). Then: creates a point cluster on the whole
+  object (class `0x18009c408`), creates a shape key named **`Offsets`** on it
+  (`F3DCreateShapeKey`, reference mode value 1 when `Relative`, 2 otherwise), writes the
+  offsets into the key, connects it through a shape-combiner element (classes
+  `0x18009c228`, `0x18009c1e8`, mode 2, flag 4) `(inferred: applies the shape key in a
+  shape-combine operator)`, re-enables the muted operator, and finally runs a task of
+  class `0x18009c848` on the original operator `(inferred: deletes it)`. All sub-tasks are
+  added as child tasks when the record flag is set, so Undo undoes them. Errors stop the
+  step without an HRESULT surfacing (the step returns nothing meaningful).
+- **Cache writers**: see Q4. The per-sample write itself is `0x180078240` (not read; it
+  ends in `F3DWriteNodeGraphClientCacheToFile` `(inferred from the import list)`).
+- **DumpCacheHeader XML**: OPEN. `F3DDumpCacheHeaderFromFile` is an import (`mohelper.dll`
+  `(inferred)`); the XML layout is produced there.
+- **SetDefaultKeyMap unknown name**: ANSWERED. First run saves preference
+  `Interaction.defaultkeymap`; the manager call (slot 62) result is **ignored**, so an
+  unknown name gives no error from this task and the command still returns 1 on the first
+  run (0 on redo). Whatever the manager does with an unknown name is outside `tasks.dll`.

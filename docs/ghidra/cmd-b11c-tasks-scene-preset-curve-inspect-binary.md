@@ -86,7 +86,7 @@ SDK's `siOnBeginFileExport` / `siOnEndFileExport` / `siOnCustomFileExport` order
 
 ## 3. Contracts
 
-### `SICreateRefPlane`: SPEC-PARTIAL
+### `SICreateRefPlane`: SPEC (promoted 2026-11-19, batch 12; see "Batch 12 answers")
 
 Wire contract:
 - Args: `InputObjs` (list, required), `Value` (return: list of created reference planes).
@@ -107,7 +107,7 @@ Wire contract:
 - Missing: what the per-item helper (class at `0x18009d108`) sets on the plane, and the
   container identity.
 
-### `SaveSceneAs`: SPEC-PARTIAL
+### `SaveSceneAs`: SPEC (promoted 2026-11-19, batch 12; see "Batch 12 answers")
 
 Wire contract:
 - Args: `SceneFileName` (string, required), `CopyExtFiles` (`siExternalFilesOperation`,
@@ -393,3 +393,144 @@ Wire contract:
 4. SICreateRefPlane per-plane helper class (`0x18009d108`).
 5. EvaluateCurveAt `Local` meaning (binary: length versus normalised parameter).
 6. XSITASKS message texts for the ids listed in section 2.1.
+
+## Batch 12 answers (PR #183 B11c questions)
+
+Read through Ghidra in `tasks.dll` (2026-11-19, batch 12). GUIDs are read from the image's
+data section; command / class names come from `data/command_registry.json` and
+`data/spdl/spdl.json`.
+
+### Q1. `siInspectBrowseMode` and `siPresetLocation` values
+
+- **`siPresetLocation`** (SavePreset `PresetLocation`): the binary's branch table, read
+  together with the SDK enum names the wire agent already uses, gives
+  `siDefaultLocation` = 0, `siFactoryLocation` = 1, `siUserLocation` = 2,
+  `siWorkgroupLocation` = 3, `siProjectLocation` = 4. 0 and 1 both resolve to install
+  path type 3, 2 to type 1, 3 to the workgroup path, 4 to type 0. Those path types are the
+  `siInstallationPath` numbers (0 project, 1 user, 2 workgroup, 3 factory) `(inferred:
+  SDK numbering)`, which agrees with the names: **default = factory**. The wire's
+  inferred 0..4 numbering is confirmed.
+- **`siInspectBrowseMode`** (InspectBrowse `Mode`, worker `0x180061dd0`): 1..4 are accepted.
+  Each mode calls a different method on the inspection-history object: 1 → slot `0x30`
+  with `Length`, 2 → slot `0x38` with `Length`, 3 → slot `0x48` (no `Length`), 4 → slot
+  `0x40` (no `Length`). When the history object's state query (slot `0x80`) answers
+  non-zero, slot `0x88` runs instead and the mode is ignored. The history object lives
+  outside `tasks.dll`, so the names of 3 and 4 stay `(inferred)`: 1 = `siNext` (forward),
+  2 = `siPrevious` (back), 3 and 4 = jump to one end each (which end is open). Note that 3
+  and 4 call the history methods in the opposite order to their numbers (3 → the later
+  slot `0x48`). Result is always 0 on success; a failed history lookup returns its error.
+
+### Q2. SaveSceneAs helpers
+
+- **File-name builder `0x180083ae0`** (step 3 of Do): reads `SceneFileName` from the exec
+  context; **if it is empty, uses the ambient value `DS_SZ_SEGMENT_PATHNAME`** (the
+  current scene's path, so `SaveSceneAs ""` saves over the current scene file). The name
+  is then passed through a path-object helper (created by class id, set path, get
+  path back: normalisation of the path, `(inferred)`), and the result is **written back
+  into the `SceneFileName` argument**, so the command log / later steps see the
+  resolved name. The extension test of step 4 is made on this resolved name.
+- **External-file copy `0x180083750`** (step 1, `CopyExtFiles` != 0): null path →
+  `0x80004003`; mode 0 → `0x80070057` (not reached from SaveSceneAs, which skips the call
+  for 0). Otherwise it runs the command **`CopyExtFilesIntoProject`** (command GUID
+  `cf8c9f26-9d07-11d3-b96b-009027bc3e07`, through the command-map server) with arguments
+  `SceneFileName` = the given path, `Models` = "" (all), `UpdateSourcePaths` = true,
+  `ConsiderOnlyFilesUnderProject` = (`CopyExtFiles` == 2); `Overwrite` is left at its
+  default (false). Its HRESULT is returned (and ignored by SaveSceneAs, which goes on).
+  So `siCopyExtFilesAll`-style value 1 copies every external file, value 2 only the files
+  already under the project `(inferred names; numeric meaning attested)`.
+
+**SaveSceneAs → SPEC.**
+
+### Q3. SetReference: slot `0x200` / the reference descriptor
+
+Worker `0x180026780`. The target's slot `0x200` returns an owner object and a 24-byte
+descriptor whose first 16 bytes are a GUID (plus an 8-byte extra). On the first run the
+worker creates a soft object reference to the owner **with that descriptor**
+(`F3DCreateObjectReferenceEx`), keeps the descriptor, and converts the new value (must be
+an array, vt `0x200c`) to an internal item list (`0x180026cd0`). The old value is the
+caller-supplied saved array when there is one, else it is read from the owner's getter
+(vtable slot `0xd0`, index 26); it must also be an array, else `0x80070057`. The value is
+then written with the owner's setter (slot `0xd8`, index 27) **keyed by the descriptor
+GUID**, and the owner is refreshed (`0x180026330`). Undo runs the same worker with the
+saved old array and first-run flag 0 (old value re-read from the owner first). Lock check:
+lock level 4 → `0x80070005`; null owner → `0x80004003`.
+So the descriptor is a "reference slot id" on the owner: the target is a parameter that
+stores a list of object references (an array of names / objects), and SetReference
+replaces that list. Which classes expose slot `0x200` is outside `tasks.dll`
+**(open: owner class names)**; for the wire: treat `Target` as a reference-list parameter,
+`Value` as an array of object names, and set / restore the whole array.
+SetReference stays **SPEC-PARTIAL** only for the owner identity; the value semantics are
+complete.
+
+### Q4. SICreateRefPlane per-plane helper `0x18009d108`
+
+Worker `0x18003d290`. GUIDs: container class `8fb0a8d8-2aa2-11d4-b6a3-006094eb029c`
+= **`C3DRefPlaneFolder`** (SPDL `c3drefplanefolder.spdl`), plane class
+`a15b3913-073f-11d4-b7df-0008c7a011a6` = **`C3DReferencePlane`**
+(`c3dreferenceplane.spdl`), helper class `9860fe78-9aa3-4a4a-b764-5d52578b4f36` = the
+handler CLSID of the command **"set reference plane"** (registry index 101, handled in
+`tasks.dll` / `viewinteraction.dll`). Per input item, in order:
+1. create a `C3DReferencePlane` and add it to the scene's reference-plane folder (any
+   failure stops the loop and leaves what was created so far);
+2. create the output collection on first use and add the plane to it;
+3. create a "set reference plane" task and run it with (plane, input item), i.e.
+   **same as `SetReferencePlane` with the new plane and that component / object**
+   (contract in CMD-B11b);
+4. failure in 2 or 3 stops the loop.
+After the loop, if planes were created and it is the first run, an undo record keeps the
+input list and the output list. Nothing is created when the input list is empty.
+**SICreateRefPlane → SPEC** (inferred: the plane's placement is whatever
+`SetReferencePlane` does).
+
+### Q5. Rest
+
+- **SILoadPreset resolver `0x1800723d0`**: empty name → `0x80070057`. When the name has no
+  extension, `.Preset` is appended. If the resulting path does not exist on disk (path
+  object's exists-check), the preset search `SIFindPresetPath(family, name)` is tried
+  (searches the family's preset folders, `(inferred)` factory / user / workgroup) and its
+  result replaces the name on success. The original name is kept when the file exists.
+  The resolver's error (or the search's) decides the "not found" branch of SILoadPreset
+  (batch → `0x80030002`, UI → message `0x95` and file picker). **Cancel** of the picker was
+  not read (picker `0x180070a00`, open).
+- **GetUserPref** (`0x180036640`): null name or output → `0x80004003`. The name is passed
+  through `SIRemapUserPref` (legacy table lives outside `tasks.dll`, open) and **the
+  remapped name is used for all three lookups** (correction to the note above, which said
+  the CPM helper uses the original name): preferences manager first; if that fails,
+  ambient values manager; if that does not answer exactly S_OK (any other result,
+  including S_FALSE), the CPM helper's ambient value. If the CPM lookup fails its HRESULT
+  is returned; else the value is copied and the result is 1.
+- **InspectExternalReference** (`0x180022660`): order of the three holders asked of
+  `Target`: (1) interface `481262ff-7ddb-11d0-a57f-00a0c91412de` (the **expression
+  source**, as in CMD-B8a / B8c): its referenced names; (2) interface
+  `904c98e0-88f8-11d0-84d5-00a0243e3543`: finds the first nested object of class
+  `032f2e31-38af-11d3-8bab-00a024ee586f` (search kinds 1 / 4 / `0x16`) and lists the
+  external references of its operator (interface `473feb00-…`); (3) the operator-port
+  interface `473feb00-64ed-11d1-84c6-00a0243e3543` on the target itself. Names are joined
+  with `,` (no spaces). During the walk the global "switching resolution" flag is set
+  and cleared after. Result 0 only when a holder answered **and** the last name read
+  succeeded, else `0x80070057`.
+- **CopyCacheFiles2 entry builder `0x180076730`**: default frame range = the scene's play
+  control In (`0x14`) and Out (`0x15`) frames: start = In, count = Out − In + 1. Each input
+  object is expanded: groups / containers → their 3D-object members; other objects are
+  searched for the cache operators they carry. For each 3D object the builder looks
+  through its operators for a **cache-on-file reader** (class `cbb627a6-…`): when found,
+  the entry uses that operator's parameter 1 as start frame and parameter 2 + 1 as frame
+  count `(inferred: start / end-offset of the cached sequence)`; when none is found, one
+  entry with the scene range is added. Entry = (model name, object name, start, count);
+  the total frame count (for the progress bar) is the sum of the counts. Objects that are
+  not 3D objects after expansion → `0x8000ffff` (stops the build).
+- **EvaluateCurveAt** (`0x18006cb40`): confirmed. `Local` = true → `Value` is passed
+  straight to the curve evaluator as its **normalised parameter (0..1 scale,
+  `(inferred)`: the evaluator is the one GetCurveLength uses)**; `Local` = false →
+  `Value` is an arc length, divided by the total length (0 when length < 1e-12). It is
+  **not** a 0..100 percentage. The outputs are always transformed by the object's global
+  transform (position by the full matrix, tangent and normal by the inverse-transpose,
+  not renormalised); `Local` has no effect on the space. A missing curve leaves all
+  nine outputs at 0; the returned HRESULT on that path is not set by the task (treat as
+  success).
+
+### Still open after batch 12
+
+- InspectBrowse: which end modes 3 and 4 jump to (history object outside `tasks.dll`).
+- SetReference: owner classes exposing slot `0x200`.
+- SILoadPreset: picker cancel result; `SIRemapUserPref` legacy table.

@@ -589,10 +589,10 @@ of the command's contract (see the note). No code is recorded here.
 | `SetCurrentParType` | `Application\bin\tasks.dll` | `Do 0x180048f50 -> 0x180048710` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
 | `SetDefaultKeyMap` | `Application\bin\tasks.dll` | `Do 0x180024e30 -> 0x180024d70` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
 | `DumpCacheHeader` | `Application\bin\tasks.dll` | `Do 0x18007d400 -> 0x18007d320` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
-| `CollapseOp` | `Application\bin\tasks.dll` | `Do 0x180011790 -> 0x180010cf0` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC-PARTIAL |
+| `CollapseOp` | `Application\bin\tasks.dll` | `Do 0x180011790 -> 0x180010cf0` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
 | `ReorderSceneItem` | `Application\bin\tasks.dll` | `Do 0x180039120 -> 0x180038d60` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
 | `ImportPrefs` | `Application\bin\tasks.dll` | `Do 0x18007dad0 -> callback 0x18007da80 -> 0x18007d9c0` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
-| `CacheObjectsIntoFile_Private` | `Application\bin\tasks.dll` | `Do 0x180079fd0 -> 0x180079750` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC-PARTIAL |
+| `CacheObjectsIntoFile_Private` | `Application\bin\tasks.dll` | `Do 0x180079fd0 -> 0x180079750` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
 | `PickPosition` | `Application\bin\tasks.dll` | `Do 0x18006ed60` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC |
 | `FilterPSet` | `Application\bin\tasks.dll` | `Do 0x180038260 -> 0x1800380e0 -> predicate 0x180037cd0` | CMD-B11a | [cmd-b11a-tasks-cache-preset-pick-binary.md](../ghidra/cmd-b11a-tasks-cache-preset-pick-binary.md) | SPEC-PARTIAL |
 | `PickElement` | `Application\bin\tasks.dll` | `Do 0x18006e350 (UnPack 0x18006e9e0, RePack 0x18006e700)` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
@@ -605,7 +605,7 @@ of the command's contract (see the note). No code is recorded here.
 | `UpdateExternalReference` | `Application\bin\tasks.dll` | `Do 0x18002c470 -> worker 0x18002be70` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
 | `ImportCustomFile` | `Application\bin\tasks.dll` | `Do 0x180022280 -> worker 0x180021910` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
 | `System` | `Application\bin\tasks.dll` | `Do 0x180053290 -> worker 0x180053160` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
-| `SetReferencePlane` | `Application\bin\tasks.dll` | `Do 0x180050770 -> worker 0x18004fc30` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC-PARTIAL |
+| `SetReferencePlane` | `Application\bin\tasks.dll` | `Do 0x180050770 -> worker 0x18004fc30` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
 | `CrashXSI` | `Application\bin\tasks.dll` | `dispatch row 11 run 0x180054ec0` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
 | `DumpMemoryStats` | `Application\bin\tasks.dll` | `dispatch row 12 run 0x180054f10` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
 | `GetUnevaluatedPrimitiveForConstructionHistory` | `Application\bin\tasks.dll` | `dispatch row 13 run 0x180055070` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
@@ -618,8 +618,8 @@ of the command's contract (see the note). No code is recorded here.
 | `ReloadAllAddonLibs` | `Application\bin\tasks.dll` | `dispatch row 4 run 0x18002cb90` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
 | `UnloadAllCOMLibs` | `Application\bin\tasks.dll` | `dispatch row 2 run 0x18002d5b0` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC |
 | `TestPluginHost` | `Application\bin\tasks.dll` | `no dispatch row` | CMD-B11b | [cmd-b11b-tasks-pick-curve-extref-misc-binary.md](../ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md) | SPEC-PARTIAL |
-| `SICreateRefPlane` | `Application\bin\tasks.dll` | `Do 0x18003d6e0 -> worker 0x18003d290` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC-PARTIAL |
-| `SaveSceneAs` | `Application\bin\tasks.dll` | `Do 0x180084ba0` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC-PARTIAL |
+| `SICreateRefPlane` | `Application\bin\tasks.dll` | `Do 0x18003d6e0 -> worker 0x18003d290` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
+| `SaveSceneAs` | `Application\bin\tasks.dll` | `Do 0x180084ba0` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
 | `AddToTOC` | `Application\bin\tasks.dll` | `Do thunk 0x1800575d0 -> worker 0x180057430` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC |
 | `Open SE on Override parent` | `Application\bin\tasks.dll` | `Do 0x180063070 -> worker 0x180062ec0` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC-PARTIAL |
 | `SetReference` | `Application\bin\tasks.dll` | `Do 0x1800269e0 -> worker 0x180026780` | CMD-B11c | [cmd-b11c-tasks-scene-preset-curve-inspect-binary.md](../ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md) | SPEC-PARTIAL |
@@ -653,9 +653,9 @@ of the command's contract (see the note). No code is recorded here.
 | `Tag` | `Application\bin\tasks.dll` | `Do 0x180080990 -> 0x18007f4d0 -> tag path 0x1800821f0 (add 0x1800805b0); UnPackArg 0x180082e00` | CMD-B11d | [cmd-b11d-tasks-b10-confirmations-binary.md](../ghidra/cmd-b11d-tasks-b10-confirmations-binary.md) | SPEC |
 | `Untag` | `Application\bin\tasks.dll` | `Do 0x180080990 -> 0x18007f4d0 -> tag path 0x1800821f0 (remove 0x1800828c0); UnPackArg 0x180082e00` | CMD-B11d | [cmd-b11d-tasks-b10-confirmations-binary.md](../ghidra/cmd-b11d-tasks-b10-confirmations-binary.md) | SPEC |
 | `MoveComponent` | `not in transformmanager.dll (see note)` | `not implemented in transformmanager.dll (CLSID bytes at 0x18006c2a8, one consumer ref 0x180051f05; absent from DllGetCla` | CMD-B11i | [cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md](../ghidra/cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md) | SPEC-PARTIAL |
-| `CreateConnectionMap` | `Application\bin\action.dll` | `Do 0x180029780 -> worker 0x180029630 -> full map 0x1800288a0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC-PARTIAL |
+| `CreateConnectionMap` | `Application\bin\action.dll` | `Do 0x180029780 -> worker 0x180029630 -> full map 0x1800288a0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
 | `CreateEmptyConnectionMap` | `Application\bin\action.dll` | `Do 0x180029780 -> worker 0x180029630 -> empty map 0x180029430` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
-| `CreateValueMap` | `Application\bin\action.dll` | `Do 0x180032750 -> worker 0x180032600 -> full map 0x1800314b0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC-PARTIAL |
+| `CreateValueMap` | `Application\bin\action.dll` | `Do 0x180032750 -> worker 0x180032600 -> full map 0x1800314b0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
 | `CreateEmptyValueMap` | `Application\bin\action.dll` | `Do 0x180032750 -> worker 0x180032600 -> empty map 0x1800313a0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
 | `AddMappingRule` | `Application\bin\action.dll` | `Do 0x180001480 -> worker 0x180001320` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
 | `DeleteMappingRule` | `Application\bin\action.dll` | `Do 0x180036530 -> worker 0x1800363a0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
@@ -663,29 +663,29 @@ of the command's contract (see the note). No code is recorded here.
 | `GetNumMappingRules` | `Application\bin\action.dll` | `Do 0x18003dea0 -> worker 0x18003de40; RePack 0x18003df50` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
 | `SetMappingRule` | `Application\bin\action.dll` | `Do 0x180060470 -> worker 0x1800601e0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
 | `RemoveActionItem` | `Application\bin\action.dll` | `Do 0x180056e30 -> worker 0x180056a40` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
-| `GetStoreActionDefaults` | `Application\bin\action.dll` | `Do 0x1800652d0 -> store worker 0x180063c90; RePack 0x180066a70` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC-PARTIAL |
+| `GetStoreActionDefaults` | `Application\bin\action.dll` | `Do 0x1800652d0 -> store worker 0x180063c90; RePack 0x180066a70` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
 | `LoadActionPreset` | `Application\bin\action.dll` | `Do 0x180040c10 -> worker 0x18003f510` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC-PARTIAL |
 | `CopySourceActionToFolder` | `Application\bin\action.dll` | `Do 0x180028310 -> worker 0x180027ee0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
-| `AddPoseActionItems` | `Application\bin\action.dll` | `Do 0x180001dc0 -> worker 0x180001d20 -> 0x180001a20` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC-PARTIAL |
+| `AddPoseActionItems` | `Application\bin\action.dll` | `Do 0x180001dc0 -> worker 0x180001d20 -> 0x180001a20` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC |
 | `MergeClips` | `Application\bin\action.dll` | `Do 0x180044bb0 -> worker 0x180044210; RePack 0x1800453e0` | CMD-B11e | [cmd-b11e-action-maps-rules-sources-binary.md](../ghidra/cmd-b11e-action-maps-rules-sources-binary.md) | SPEC-PARTIAL |
 | `StoreViseme` | `Application\bin\action.dll` | `Do 0x180071880 -> worker 0x180070f00` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
 | `SetupEvolverVisemes` | `Application\bin\action.dll` | `Do 0x180069cf0 -> worker 0x180068990` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC-PARTIAL |
 | `CreateVisemeAction` | `Application\bin\action.dll` | `Do 0x180030ab0 -> worker 0x180030170` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
 | `CreateEvolverSpeechAction` | `Application\bin\action.dll` | `Do 0x18002a9d0 -> worker 0x180029fa0` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
 | `CreateSpeechAction` | `Application\bin\action.dll` | `Do 0x18002f630 -> worker 0x18002e6b0` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
-| `FreezeLipSync` | `Application\bin\action.dll` | `Do 0x18003c200 (not decompiled) -> worker 0x18003b710` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC-PARTIAL |
+| `FreezeLipSync` | `Application\bin\action.dll` | `Do 0x18003c200 (not decompiled) -> worker 0x18003b710` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
 | `CopyShape` | `Application\bin\action.dll` | `Do 0x180027700 -> worker 0x180027370, copier 0x180026c00` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
-| `CreateShapeGroup` | `Application\bin\action.dll` | `Do 0x18002d710 -> worker 0x18002cf20` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC-PARTIAL |
+| `CreateShapeGroup` | `Application\bin\action.dll` | `Do 0x18002d710 -> worker 0x18002cf20` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
 | `SetShapeGroup` | `Application\bin\action.dll` | `Do 0x180060ec0 -> worker 0x180060cd0` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
 | `StripDeformOperators` | `Application\bin\action.dll` | `Do 0x1800727e0 -> worker 0x180072470, stripper 0x180072950` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
 | `Open SE for Link With Deform` | `Application\bin\action.dll` | `Do 0x1800480e0 -> worker 0x180047f70` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
 | `RemoveEffect` | `Application\bin\action.dll` | `Do 0x180057ec0 -> worker 0x1800577d0` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
-| `ResetOffset` | `Application\bin\action.dll` | `Do 0x18005a240 -> worker 0x180059bf0` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC-PARTIAL |
-| `CutClipInSpace` | `Application\bin\action.dll` | `Do 0x180033ac0 -> worker 0x1800331e0` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC-PARTIAL |
+| `ResetOffset` | `Application\bin\action.dll` | `Do 0x18005a240 -> worker 0x180059bf0` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
+| `CutClipInSpace` | `Application\bin\action.dll` | `Do 0x180033ac0 -> worker 0x1800331e0` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
 | `CreateOffsetEffect` | `Application\bin\action.dll` | `Do 0x18002b980 -> worker 0x18002b020` | CMD-B11f | [cmd-b11f-action-speech-shape-effects-binary.md](../ghidra/cmd-b11f-action-speech-shape-effects-binary.md) | SPEC |
 | `PlotCamSeqToActions` | `Application\bin\action.dll` | `Do 0x180049e40 -> worker 0x1800490f0 (apply/cleanup 0x180048a00)` | CMD-B11g | [cmd-b11g-action-camseq-b10-confirmations-binary.md](../ghidra/cmd-b11g-action-camseq-b10-confirmations-binary.md) | SPEC |
 | `GetSceneFrameSetFromCamSeq` | `Application\bin\action.dll` | `Do 0x18003e260 (UnPackArg 0x18003e680, Undo/Redo no-op 0x180027ae0)` | CMD-B11g | [cmd-b11g-action-camseq-b10-confirmations-binary.md](../ghidra/cmd-b11g-action-camseq-b10-confirmations-binary.md) | SPEC |
-| `PlotCamSeqShape` | `Application\bin\action.dll` | `Do 0x18004d530 -> worker 0x18004bf80` | CMD-B11g | [cmd-b11g-action-camseq-b10-confirmations-binary.md](../ghidra/cmd-b11g-action-camseq-b10-confirmations-binary.md) | SPEC-PARTIAL |
+| `PlotCamSeqShape` | `Application\bin\action.dll` | `Do 0x18004d530 -> worker 0x18004bf80` | CMD-B11g | [cmd-b11g-action-camseq-b10-confirmations-binary.md](../ghidra/cmd-b11g-action-camseq-b10-confirmations-binary.md) | SPEC |
 | `ToggleMuteSolo` | `Application\bin\vm.dll` | `Do 0x180006c60 (UnPack 0x180006ce0)` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC-PARTIAL |
 | `SetViewCamera` | `Application\bin\vm.dll` | `Do 0x1800072f0 -> resolver 0x1800073c0` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
 | `AlignViewCamera` | `Application\bin\vm.dll` | `Do 0x180001910 -> worker 0x180001400` | CMD-B11h | [cmd-b11h-vm-view-commands-b10-confirmations-binary.md](../ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md) | SPEC |
@@ -709,6 +709,101 @@ of the command's contract (see the note). No code is recorded here.
 | `RotateUVW` | `Application\bin\transformmanager.dll` | `UnPackArg 0x180023610 (shared reader 0x180052d00); Do 0x1800503c0 shared` | CMD-B11i | [cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md](../ghidra/cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md) | SPEC-PARTIAL |
 | `ScaleUVW` | `Application\bin\transformmanager.dll` | `UnPackArg 0x1800239f0 (shared reader 0x180052d00); Do shared (inferred)` | CMD-B11i | [cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md](../ghidra/cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md) | SPEC-PARTIAL |
 | `TranslatePivot` | `not in transformmanager.dll (see note)` | `not implemented in transformmanager.dll (CLSID 8eee27b3-... absent from DllGetClassObject)` | CMD-B11i | [cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md](../ghidra/cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md) | SPEC-PARTIAL |
+| `GetConnectionSet` | `Application\bin\optasks.dll` | Do `0x180020090`, CLSID `825449e3-8706-11d2-8091-00a0c955b335` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC-PARTIAL |
+| `GetSurfaceFromCurvesConnectionSet` | `Application\bin\optasks.dll` | Do `0x180020090`, CLSID `825449e3-8706-11d2-8091-00a0c955b335` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC-PARTIAL |
+| `GetGeneratorInputsForDisposal` | `Application\bin\optasks.dll` | Do `0x180031860`, CLSID `85759d87-aacb-4837-863b-b268035a3f7d` | CMD-B12e | [cmd-b12e-optasks-generator-transfers-binary.md](../ghidra/cmd-b12e-optasks-generator-transfers-binary.md) | SPEC |
+| `TogglePropVolume` | `Application\bin\optasks.dll` | Do `0x180063950`, CLSID `e9bba0e0-4a7f-48f6-aade-95c94e0888f6` | CMD-B12c | [cmd-b12c-optasks-envelope-weights-volumes-binary.md](../ghidra/cmd-b12c-optasks-envelope-weights-volumes-binary.md) | SPEC-PARTIAL |
+| `GetConnectedPropVolume` | `Application\bin\optasks.dll` | Do `0x18005e6b0`, CLSID `9230d7a9-5c92-491a-908e-e1f8bdf7b396` | CMD-B12c | [cmd-b12c-optasks-envelope-weights-volumes-binary.md](../ghidra/cmd-b12c-optasks-envelope-weights-volumes-binary.md) | SPEC |
+| `InspectPropVolume` | `Application\bin\optasks.dll` | Do `0x1800611f0`, CLSID `05af89a5-3b06-48af-a897-4204529e0828` | CMD-B12c | [cmd-b12c-optasks-envelope-weights-volumes-binary.md](../ghidra/cmd-b12c-optasks-envelope-weights-volumes-binary.md) | SPEC |
+| `SITransferCenter` | `Application\bin\optasks.dll` | Do `0x1800664e0`, CLSID `412f8ee4-c4e2-11d4-b863-009027bc6587` | CMD-B12e | [cmd-b12e-optasks-generator-transfers-binary.md](../ghidra/cmd-b12e-optasks-generator-transfers-binary.md) | SPEC |
+| `SIApplyFlexEnv` | `Application\bin\optasks.dll` | Do `0x180075c60`, CLSID `f8c8c073-acdc-11d2-99b7-00a0243f0e60` | CMD-B12c | [cmd-b12c-optasks-envelope-weights-volumes-binary.md](../ghidra/cmd-b12c-optasks-envelope-weights-volumes-binary.md) | SPEC |
+| `SIApplyFlexEnvWithWeight` | `Application\bin\optasks.dll` | Do `0x1800766e0`, CLSID `2fd07801-c7cc-4292-a8ef-8f09bce70620` | CMD-B12c | [cmd-b12c-optasks-envelope-weights-volumes-binary.md](../ghidra/cmd-b12c-optasks-envelope-weights-volumes-binary.md) | SPEC |
+| `SIApplyDeformByCage` | `Application\bin\optasks.dll` | Do `0x18006f1a0`, CLSID `6f378031-89b6-4216-a31c-3d84e01c927f` | CMD-B12c | [cmd-b12c-optasks-envelope-weights-volumes-binary.md](../ghidra/cmd-b12c-optasks-envelope-weights-volumes-binary.md) | SPEC |
+| `SILocalAssignFlexEnv` | `Application\bin\optasks.dll` | Do `0x18007a170`, CLSID `56242c30-fdc4-11d2-99c2-00a0243f0e60` | CMD-B12c | [cmd-b12c-optasks-envelope-weights-volumes-binary.md](../ghidra/cmd-b12c-optasks-envelope-weights-volumes-binary.md) | SPEC-PARTIAL |
+| `ResetFlexEnvPtsAssignment` | `Application\bin\optasks.dll` | Do `0x18007a170`, CLSID `56242c30-fdc4-11d2-99c2-00a0243f0e60` | CMD-B12c | [cmd-b12c-optasks-envelope-weights-volumes-binary.md](../ghidra/cmd-b12c-optasks-envelope-weights-volumes-binary.md) | SPEC-PARTIAL |
+| `SIModifyFlexEnvWght` | `Application\bin\optasks.dll` | Do `0x18007ffc0`, CLSID `61199760-1a84-11d3-99c3-00a0243f0e60` | CMD-B12c | [cmd-b12c-optasks-envelope-weights-volumes-binary.md](../ghidra/cmd-b12c-optasks-envelope-weights-volumes-binary.md) | SPEC-PARTIAL |
+| `SISymEnvWeight` | `Application\bin\optasks.dll` | Do `0x1800917e0`, CLSID `d4a5193a-7b48-43e3-9372-b63e780d9f49` | CMD-B12c | [cmd-b12c-optasks-envelope-weights-volumes-binary.md](../ghidra/cmd-b12c-optasks-envelope-weights-volumes-binary.md) | SPEC |
+| `LockEnvelopeWeights` | `Application\bin\optasks.dll` | Do `0x18007d5a0`, CLSID `ee4cc939-6415-48de-9245-33b1bcce8349` | CMD-B12c | [cmd-b12c-optasks-envelope-weights-volumes-binary.md](../ghidra/cmd-b12c-optasks-envelope-weights-volumes-binary.md) | SPEC |
+| `ConnectWeightMap` | `Application\bin\optasks.dll` | Do `0x1800e7af0`, CLSID `31ca68f0-bd5c-11d2-99b8-00a0243f0e60` | CMD-B12c | [cmd-b12c-optasks-envelope-weights-volumes-binary.md](../ghidra/cmd-b12c-optasks-envelope-weights-volumes-binary.md) | SPEC |
+| `AddMappingNode` | `Application\bin\optasks.dll` | Do `0x18003f140`, CLSID `e04fcc31-79d2-11d2-99ad-00a0243f0e60` | CMD-B12c | [cmd-b12c-optasks-envelope-weights-volumes-binary.md](../ghidra/cmd-b12c-optasks-envelope-weights-volumes-binary.md) | SPEC-PARTIAL |
+| `ConnectOperatorParameter` | `Application\bin\optasks.dll` | Do `0x18002bf10`, CLSID `6834c96b-0b64-412a-9f65-68d4939b172b` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC |
+| `DisconnectOperatorParameter` | `Application\bin\optasks.dll` | Do `0x1800bffd0`, CLSID `e1e79b2c-c035-41dd-ae0e-eadd3249c24b` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC |
+| `UpdateConnectOnOp` | `Application\bin\optasks.dll` | Do `0x1800356f0`, CLSID `9c8384e2-da33-11d2-ac75-00a02485cecb` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC-PARTIAL |
+| `MoveOperator` | `Application\bin\optasks.dll` | Do `0x180032d40`, CLSID `3fb6dc14-739e-11d4-bdd0-00a0c9615daf` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC |
+| `ChangeGeneratorInputReadPosition` | `Application\bin\optasks.dll` | Do `0x180052440`, CLSID `f6d1643e-b6d2-4b98-b22a-96fe98fad39d` | CMD-B12e | [cmd-b12e-optasks-generator-transfers-binary.md](../ghidra/cmd-b12e-optasks-generator-transfers-binary.md) | SPEC |
+| `GetGeneratorInputReadPosition` | `Application\bin\optasks.dll` | Do `0x180060980`, CLSID `49451678-ec7a-4537-a27e-38e5c13bfa10` | CMD-B12e | [cmd-b12e-optasks-generator-transfers-binary.md](../ghidra/cmd-b12e-optasks-generator-transfers-binary.md) | SPEC |
+| `GetGeneratorInputReadPosition_UIOnly` | `Application\bin\optasks.dll` | Do `0x180060980`, CLSID `49451678-ec7a-4537-a27e-38e5c13bfa10` | CMD-B12e | [cmd-b12e-optasks-generator-transfers-binary.md](../ghidra/cmd-b12e-optasks-generator-transfers-binary.md) | SPEC |
+| `CopyAnimationAcrossGenerator` | `Application\bin\optasks.dll` | Do `0x180059190`, CLSID `4a2386fc-aac4-4b83-89a6-396bead3dac3` | CMD-B12e | [cmd-b12e-optasks-generator-transfers-binary.md](../ghidra/cmd-b12e-optasks-generator-transfers-binary.md) | SPEC-PARTIAL |
+| `CycleChecking` | `Application\bin\optasks.dll` | Do `0x18002eab0`, CLSID `8fb755e3-06e3-11d7-be20-00a0c9615daf` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC |
+| `ReplaceICECompoundNode` | `Application\bin\optasks.dll` | Do `0x1800c3b30`, CLSID `ce6ac9da-b883-4129-a6c4-2ba96eee4bce` | CMD-B12a | [cmd-b12a-optasks-ice-compound-ports-binary.md](../ghidra/cmd-b12a-optasks-ice-compound-ports-binary.md) | SPEC-PARTIAL |
+| `PrivateGetCompoundConstructionMode` | `Application\bin\optasks.dll` | Do `0x1800aa710`, CLSID `fc8efed4-79b8-48be-90ca-e44cddd8feb7` | CMD-B12a | [cmd-b12a-optasks-ice-compound-ports-binary.md](../ghidra/cmd-b12a-optasks-ice-compound-ports-binary.md) | SPEC |
+| `CleanDisconnectedICENodes` | `Application\bin\optasks.dll` | Do `0x1800abff0`, CLSID `6489ed18-8f26-4062-b1e0-726ba316a1f9` | CMD-B12b | [cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md](../ghidra/cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md) | SPEC |
+| `AddAttributeToSetDataICENode` | `Application\bin\optasks.dll` | Do `0x180092b60`, CLSID `80f29d44-c124-4eef-b261-1592123d61a3` | CMD-B12b | [cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md](../ghidra/cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md) | SPEC |
+| `RemoveAttributeFromSetDataICENode` | `Application\bin\optasks.dll` | Do `0x1800bd0c0`, CLSID `b1b29707-e69c-47d0-b28d-e52ce4fc5970` | CMD-B12b | [cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md](../ghidra/cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md) | SPEC-PARTIAL |
+| `AddPortToICENode2` | `Application\bin\optasks.dll` | Do `0x1800a34b0`, CLSID `443328d5-87ac-40f5-8f21-e5d8a6de4dd1` | CMD-B12b | [cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md](../ghidra/cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md) | SPEC |
+| `RemovePortFromICENode` | `Application\bin\optasks.dll` | Do `0x1800bffd0`, CLSID `87f7b094-2482-4112-883d-75574f5f3573` | CMD-B12b | [cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md](../ghidra/cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md) | SPEC-PARTIAL |
+| `TransferICETree` | `Application\bin\optasks.dll` | Do `0x1800bc3e0`, CLSID `3613f42b-4b81-4390-854c-fad9bb6c222e` | CMD-B12b | [cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md](../ghidra/cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md) | SPEC |
+| `SetICESimInitState` | `Application\bin\optasks.dll` | Do `0x1800c48c0`, CLSID `af2d7c8e-e256-4d35-98c5-aad158924d09` | CMD-B12b | [cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md](../ghidra/cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md) | SPEC-PARTIAL |
+| `RemoveICESimInitState` | `Application\bin\optasks.dll` | Do `0x1800048c0`, CLSID `c12151b0-ff9a-4d5c-b485-9d9b337b0b65` | CMD-B12b | [cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md](../ghidra/cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md) | SPEC-PARTIAL |
+| `CreateICENodeComment` | `Application\bin\optasks.dll` | Do `0x1800b0d60`, CLSID `bfb82c5f-307b-40ea-b9fb-8f9a329c0288` | CMD-B12b | [cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md](../ghidra/cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md) | SPEC |
+| `AddNodeToICECompoundNode` | `Application\bin\optasks.dll` | Do `0x1800a1dc0`, CLSID `84f10d5c-d904-4b8e-83f5-a24976d3f3d6` | CMD-B12b | [cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md](../ghidra/cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md) | SPEC |
+| `RemoveNodeFromICECompoundNode` | `Application\bin\optasks.dll` | Do `0x1800a1dc0`, CLSID `c83a610b-fc27-404f-9c07-1e3d3feada85` | CMD-B12b | [cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md](../ghidra/cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md) | SPEC |
+| `AddExposedParamToICECompoundNode` | `Application\bin\optasks.dll` | Do `0x180093f00`, CLSID `26cb16ed-194a-4427-b56a-be703f019673` | CMD-B12a | [cmd-b12a-optasks-ice-compound-ports-binary.md](../ghidra/cmd-b12a-optasks-ice-compound-ports-binary.md) | SPEC-PARTIAL |
+| `EditExposedParamInICECompoundNode` | `Application\bin\optasks.dll` | Do `0x1800b5c60`, CLSID `60381d74-bde7-4980-82d4-a48f6f5780c5` | CMD-B12a | [cmd-b12a-optasks-ice-compound-ports-binary.md](../ghidra/cmd-b12a-optasks-ice-compound-ports-binary.md) | SPEC-PARTIAL |
+| `RemoveExposedParamFromICECompoundNode` | `Application\bin\optasks.dll` | Do `0x1800bff80`, CLSID `bf8f591a-6c3e-417c-a2ff-25e6f765f374` | CMD-B12a | [cmd-b12a-optasks-ice-compound-ports-binary.md](../ghidra/cmd-b12a-optasks-ice-compound-ports-binary.md) | SPEC |
+| `RemoveExposedPortPassThrough` | `Application\bin\optasks.dll` | Do `0x1800bffd0`, CLSID `a91d22e2-c883-41ab-9330-4e1a317f56b5` | CMD-B12a | [cmd-b12a-optasks-ice-compound-ports-binary.md](../ghidra/cmd-b12a-optasks-ice-compound-ports-binary.md) | SPEC |
+| `SetPortType` | `Application\bin\optasks.dll` | Do `0x180006220`, CLSID `66803e82-0cdb-445a-af5d-128efaaf5dec` | CMD-B12b | [cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md](../ghidra/cmd-b12b-optasks-ice-nodes-ports-simstate-binary.md) | SPEC |
+| `SubstituteOpInput` | `Application\bin\optasks.dll` | Do `0x18005ceb0`, CLSID `4b382841-216f-11d5-ad0a-0090275802bf` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC |
+| `AddInputToOperator` | `Application\bin\optasks.dll` | Do `0x18005ceb0`, CLSID `4b382841-216f-11d5-ad0a-0090275802bf` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC |
+| `RemoveInputFromOperator` | `Application\bin\optasks.dll` | Do `0x18005ceb0`, CLSID `4b382841-216f-11d5-ad0a-0090275802bf` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC |
+| `SIBasicTransferClusterPropertiesAcrossGenOp` | `Application\bin\optasks.dll` | Do `0x180050190`, CLSID `7be54750-3839-464f-9d42-5e1822056f25` | CMD-B12e | [cmd-b12e-optasks-generator-transfers-binary.md](../ghidra/cmd-b12e-optasks-generator-transfers-binary.md) | SPEC-PARTIAL |
+| `SIBasicTransferClustersAcrossGenOp` | `Application\bin\optasks.dll` | Do `0x18004f690`, CLSID `81f70f51-067c-42c9-8a7b-3db10ace0688` | CMD-B12e | [cmd-b12e-optasks-generator-transfers-binary.md](../ghidra/cmd-b12e-optasks-generator-transfers-binary.md) | SPEC |
+| `TransferPropertiesAcrossGenOp` | `Application\bin\optasks.dll` | Do `0x180069f20`, CLSID `edca5404-3e79-4ede-b59a-d438b050c362` | CMD-B12e | [cmd-b12e-optasks-generator-transfers-binary.md](../ghidra/cmd-b12e-optasks-generator-transfers-binary.md) | SPEC-PARTIAL |
+| `TransferClusterPropertiesAcrossGenOp` | `Application\bin\optasks.dll` | Do `0x180067740`, CLSID `f00335b8-9ed0-4595-93f5-886e7f2aa73d` | CMD-B12e | [cmd-b12e-optasks-generator-transfers-binary.md](../ghidra/cmd-b12e-optasks-generator-transfers-binary.md) | SPEC-PARTIAL |
+| `GenerateAutomaticUVs` | `Application\bin\optasks.dll` | Do `0x18005e290`, CLSID `706986e9-06f3-4604-b7c3-5d0f396de0f3` | CMD-B12c | [cmd-b12c-optasks-envelope-weights-volumes-binary.md](../ghidra/cmd-b12c-optasks-envelope-weights-volumes-binary.md) | SPEC-PARTIAL |
+| `TransferShapeAnimationAcrossGenOp` | `Application\bin\optasks.dll` | Do `0x18006ad80`, CLSID `b261a1ba-ab27-4bd5-9bec-f17314245140` | CMD-B12e | [cmd-b12e-optasks-generator-transfers-binary.md](../ghidra/cmd-b12e-optasks-generator-transfers-binary.md) | SPEC |
+| `DisconnectFromSimulationOp` | `Application\bin\optasks.dll` | Do `0x180030bc0`, CLSID `84854b58-b16a-4b4a-9c37-54483ff41aa1` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC |
+| `ConnectBevelProfileCurve` | `Application\bin\optasks.dll` | Do `0x18005a9f0`, CLSID `777f2102-a2e7-4721-b977-0030b1b2f6a9` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC |
+| `DisconnectBevelProfileCurve` | `Application\bin\optasks.dll` | Do `0x18005c3e0`, CLSID `73849979-93e6-470e-8f61-2b3e2b54b247` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC |
+| `ConnectPlaneReferenceToSlicePolygonsOp` | `Application\bin\optasks.dll` | Do `0x180053eb0`, CLSID `53e49e93-b205-4c81-a553-4c82e36c92d9` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC |
+| `DisconnectPlaneReferenceFromSlicePolygonsOp` | `Application\bin\optasks.dll` | Do `0x18005c3e0`, CLSID `e85b7bc9-d0d0-4859-9fed-b975d3e1be4d` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC |
+| `CreateGridAndConnectToSlicePolygonsOp` | `Application\bin\optasks.dll` | Do `0x18005a9f0`, CLSID `e22d0a9f-7e9e-474c-bd97-3bf58a796fe8` | CMD-B12d | [cmd-b12d-optasks-operator-inputs-connections-binary.md](../ghidra/cmd-b12d-optasks-operator-inputs-connections-binary.md) | SPEC |
+| `PropertyTransfer` | `Application\bin\optasks.dll` | Do `0x180003710`, CLSID `d5b91e0f-d65f-4ced-8cac-811e801f54e8` | CMD-B12e | [cmd-b12e-optasks-generator-transfers-binary.md](../ghidra/cmd-b12e-optasks-generator-transfers-binary.md) | SPEC-PARTIAL |
+| `GetICECompoundPortProperties` | `Application\bin\optasks.dll` | Do `0x1800b80c0`, CLSID `55fec68a-1300-4425-af00-52a29fca153d` | CMD-B12a | [cmd-b12a-optasks-ice-compound-ports-binary.md](../ghidra/cmd-b12a-optasks-ice-compound-ports-binary.md) | SPEC-PARTIAL |
+| `HideAllPortValues` | `Application\bin\optasks.dll` | Do `0x1800ba750`, CLSID `a7c8afef-aabf-4bc6-a6cb-505e4065327c` | CMD-B12a | [cmd-b12a-optasks-ice-compound-ports-binary.md](../ghidra/cmd-b12a-optasks-ice-compound-ports-binary.md) | SPEC-PARTIAL |
+| `MoveICECompoundPort` | `Application\bin\optasks.dll` | Do `0x1800b9df0`, CLSID `f1b5f0c8-a84f-431b-9581-a64349401c84` | CMD-B12a | [cmd-b12a-optasks-ice-compound-ports-binary.md](../ghidra/cmd-b12a-optasks-ice-compound-ports-binary.md) | SPEC |
+| `RenameICEPPGLayoutGroup` | `Application\bin\optasks.dll` | Do `0x180004e50`, CLSID `6c0a3174-80f4-4e8b-b6d2-2b617206c665` | CMD-B12a | [cmd-b12a-optasks-ice-compound-ports-binary.md](../ghidra/cmd-b12a-optasks-ice-compound-ports-binary.md) | SPEC |
+| `MoveICECompoundPortsAndLayoutGroups` | `Application\bin\optasks.dll` | Do `0x180005580`, CLSID `7713d549-6ba4-4cbc-b57a-7f182e778408` | CMD-B12a | [cmd-b12a-optasks-ice-compound-ports-binary.md](../ghidra/cmd-b12a-optasks-ice-compound-ports-binary.md) | SPEC-PARTIAL |
+| `CreateLayoutGroupInICECompoundNode` | `Application\bin\optasks.dll` | Do `0x180001750`, CLSID `e6a70747-727c-4c59-8967-df7e35f45e4d` | CMD-B12a | [cmd-b12a-optasks-ice-compound-ports-binary.md](../ghidra/cmd-b12a-optasks-ice-compound-ports-binary.md) | SPEC |
+| `AddObjectsToShader` | `Application\bin\shadertasks.dll` | Do `0x180038410`, CLSID `c85e1a71-db03-11d2-aa5f-00aa0068d2c0` | CMD-B12f | [cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md](../ghidra/cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md) | SPEC |
+| `RemoveObjectsFromShader` | `Application\bin\shadertasks.dll` | Do `0x180038410`, CLSID `187240f1-e211-11d2-aa69-00aa0068d2c0` | CMD-B12f | [cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md](../ghidra/cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md) | SPEC |
+| `RemoveShaderFromCnxPoint` | `Application\bin\shadertasks.dll` | Do `0x18000ca50`, CLSID `be45d284-e229-11d2-aa69-00aa0068d2c0` | CMD-B12f | [cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md](../ghidra/cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md) | SPEC |
+| `RemoveAllShadersFromCnxPoint` | `Application\bin\shadertasks.dll` | Do `0x18000c060`, CLSID `46919ce1-ec5d-11d2-aa71-00aa0068d2c0` | CMD-B12f | [cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md](../ghidra/cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md) | SPEC |
+| `UIMapButton` | `Application\bin\shadertasks.dll` | Do `0x18003a790`, CLSID `34f30cd2-12b8-11d3-aa89-00aa0068d2c0` | CMD-B12f | [cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md](../ghidra/cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md) | SPEC-PARTIAL |
+| `SetInstanceDataValue` | `Application\bin\shadertasks.dll` | Do `0x18004b6f0`, CLSID `fae06638-2003-11d3-a06b-0000f875df68` | CMD-B12f | [cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md](../ghidra/cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md) | SPEC-PARTIAL |
+| `SIGetMaterialShader` | `Application\bin\shadertasks.dll` | Do `0x18000da70`, CLSID `5e28e280-24e7-11d3-bffa-00a0248f9397` | CMD-B12f | [cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md](../ghidra/cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md) | SPEC-PARTIAL |
+| `ReplaceShader` | `Application\bin\shadertasks.dll` | Do `0x180035dc0`, CLSID `91c3b502-3965-11d3-b22e-00a0c9a8ad15` | CMD-B12f | [cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md](../ghidra/cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md) | SPEC-PARTIAL |
+| `ReplaceShaderWithProgID` | `Application\bin\shadertasks.dll` | Do `0x180036a10`, CLSID `5db21aad-4449-4dd8-98a9-745e801059bd` | CMD-B12f | [cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md](../ghidra/cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md) | SPEC-PARTIAL |
+| `ReplaceShaderWithPreset` | `Application\bin\shadertasks.dll` | Do `0x180037310`, CLSID `b5a3c021-3b8c-11d3-b22e-00a0c9a8ad15` | CMD-B12f | [cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md](../ghidra/cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md) | SPEC |
+| `SIRebindByNameUserData` | `Application\bin\shadertasks.dll` | Do `0x1800454f0`, CLSID `4a1613c1-572c-4d7d-8e95-19271f58b0fc` | CMD-B12f | [cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md](../ghidra/cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md) | SPEC-PARTIAL |
+| `RenamePropAndRebind_Internal` | `Application\bin\shadertasks.dll` | Do `0x180048af0`, CLSID `cf3d546a-458d-4d02-ace0-b39ee913fdda` | CMD-B12f | [cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md](../ghidra/cmd-b12f-shadertasks-shaders-cnx-arrays-binary.md) | SPEC-PARTIAL |
+| `CreateShaderCompound` | `Application\bin\shadertasks.dll` | Do `0x180011cc0`, CLSID `3b0965e0-dc2f-4bb6-818d-08cd2c3c6211` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC-PARTIAL |
+| `NestShaders` | `Application\bin\shadertasks.dll` | Do `0x180024c50`, CLSID `482fe713-3adc-4a55-a11c-1c5d7d923266` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC-PARTIAL |
+| `UnnestShaders` | `Application\bin\shadertasks.dll` | Do `0x1800261a0`, CLSID `7939d67b-77af-4649-ad94-7afa93943562` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC-PARTIAL |
+| `AddShaderCompoundPort` | `Application\bin\shadertasks.dll` | Do `0x18000f9e0`, CLSID `b4eca6f7-0b60-4769-a13f-fe8d1d0d404e` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC-PARTIAL |
+| `RemoveShaderCompoundPort` | `Application\bin\shadertasks.dll` | Do `0x18001c580`, CLSID `4429f144-8c5d-499c-aafe-cbdc9ca57044` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC |
+| `MoveShaderCompoundPort` | `Application\bin\shadertasks.dll` | Do `0x1800193d0`, CLSID `b88b985e-20e0-4771-b85c-d45d5027ddcd` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC |
+| `RenameShaderCompoundPort` | `Application\bin\shadertasks.dll` | Do `0x180020480`, CLSID `41deb46b-b08f-4adb-a253-2427ed78b8e7` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC |
+| `ExportShaderCompound` | `Application\bin\shadertasks.dll` | Do `0x18004f680`, CLSID `b1679add-fd7a-4e8c-acea-45ef795e7f7d` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC |
+| `ImportShaderCompound` | `Application\bin\shadertasks.dll` | Do `0x180051ad0`, CLSID `34f0f2e9-6f5b-4ace-a4a3-55c5ecb319f2` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC |
+| `ExplodeShaderCompound` | `Application\bin\shadertasks.dll` | Do `0x1800161c0`, CLSID `c95d3960-2733-4383-a941-833de2aa502c` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC-PARTIAL |
+| `SetShaderCompoundProperties` | `Application\bin\shadertasks.dll` | Do `0x180022aa0`, CLSID `6e1f9169-09f8-4915-8b7a-68446ca86a37` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC |
+| `SetShaderCompoundPortProperties` | `Application\bin\shadertasks.dll` | Do `0x180021f20`, CLSID `a5485033-b832-40fd-ba19-41752d542b81` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC |
+| `GetShaderCompoundPortProperties` | `Application\bin\shadertasks.dll` | Do `0x1800172a0`, CLSID `28a7cd73-9a39-4175-8539-53d8069dbffa` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC-PARTIAL |
+| `ExportShaderTree` | `Application\bin\shadertasks.dll` | Do `0x1800511a0`, CLSID `60c4f494-a0e4-42d6-b260-3ad35ae3497f` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC-PARTIAL |
+| `ImportShaderTree` | `Application\bin\shadertasks.dll` | Do `0x180051ad0`, CLSID `4127c28c-fde9-4325-bdd9-aafc0a83a9ba` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC |
+| `ExportShaderDefinition` | `Application\bin\shadertasks.dll` | Do `0x18004fd60`, CLSID `de3bfbe1-eab2-4a5d-a9d4-60ad12a00d8b` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC-PARTIAL |
+| `ReplaceShadersDefinition` | `Application\bin\shadertasks.dll` | Do `0x180054760`, CLSID `3323a961-6741-4860-8504-a54f490e0417` | CMD-B12g | [cmd-b12g-shadertasks-compounds-trees-binary.md](../ghidra/cmd-b12g-shadertasks-compounds-trees-binary.md) | SPEC-PARTIAL |
 
 ## Earlier rows (not yet itemised per command)
 
@@ -836,7 +931,7 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `InspectObj` | `uixsiscripts.vbs` (VBScript) | `InspectObjProc` |
 | `SetValue` | (CLSID not specific to one binary) | CLSID `{c089b901-8481-11d2-b118-00a024c79287}` |
 | `GetValue` | `tasks.dll` | CLSID `{32455721-e6bc-11d2-ac79-00a02485cecb}` |
-| `SetReference2` | `shadertasks.dll`, `tasks.dll`, `shaderhelper.dll`, `sicoresdk.dll` | CLSID `{de9980e7-3d8e-41fd-9fea-ed65f79a6d62}` |
+| `SetReference2` | `shadertasks.dll`, `tasks.dll`, `shaderhelper.dll`, `sicoresdk.dll` | CLSID `{de9980e7-3d8e-41fd-9fea-ed65f79a6d62}` | batch 12: CLSID not in the `shadertasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
 | `AutoInspect` | `uixsiscripts.vbs` (VBScript) | `AutoInspectProc` |
 | `AutoInspectEnabled` | `uixsiscripts.vbs` (VBScript) | `FAutoInspectEnabled` |
 | `InspectEnvelopeWeights` | `uixsiscripts.vbs` (VBScript) | `InspectEnvelopeWeightsProc` |
@@ -960,7 +1055,7 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `CreateWeightMap` | `uixsiscripts.vbs` (VBScript) | `CreateWeightMap` |
 | `CreateVertexColorSupport` | `gap.dll`, `si3dobjectmodel.dll`, `sicoresdk.dll` | CLSID `{ab483760-38c0-11d4-b8ff-0800690c8bd0}` |
 | `PaintVertexColors` | `gap.dll`, `mentalray.dll` | CLSID `{17007160-416e-11d4-b902-0800690c8bd0}` |
-| `PaintWeights` | `optasks.dll`, `gap.dll`, `sicoresdk.dll` | CLSID `{73c34ae0-9d75-11d4-b918-0800690c8bd0}` |
+| `PaintWeights` | `optasks.dll`, `gap.dll`, `sicoresdk.dll` | CLSID `{73c34ae0-9d75-11d4-b918-0800690c8bd0}` | batch 12: CLSID not in the `optasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
 | `SIMakeLocal` | `optasks.dll`, `propertytasks.dll` | CLSID `{2975a557-2276-11d3-80e6-00a0c9ac19a9}` |
 | `MakeLocal` | `uixsiscripts.vbs` (VBScript) | `MakeLocalFunc` |
 | `RemoveAllProperties` | `uixsiscripts.vbs` (VBScript) | `RemoveAllPropertiesProc` |
@@ -972,11 +1067,11 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `SIAddPropEx` | `propertytasks.dll` | CLSID `{b683cd81-22c1-11d3-80e6-00a0c9ac19a9}` |
 | `SIUnAssignMaterial` | `propertytasks.dll` | CLSID `{c11ffe86-8e6b-4986-a698-c030d1ee45c3}` |
 | `SICreateMaterial` | `propertytasks.dll`, `shadertasks.dll`, `sicoresdk.dll` | CLSID `{3b75c06e-4d3f-458a-b591-13b65ed6603a}` |
-| `SICreateMaterialDD` | `propertytasks.dll`, `shadertasks.dll`, `sicoresdk.dll` | CLSID `{3b75c06e-4d3f-458a-b591-13b65ed6603a}` |
+| `SICreateMaterialDD` | `propertytasks.dll`, `shadertasks.dll`, `sicoresdk.dll` | CLSID `{3b75c06e-4d3f-458a-b591-13b65ed6603a}` | batch 12: CLSID not in the `shadertasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
 | `SelectObjectsUsingMaterial` | `uixsiscripts.vbs` (VBScript) | `SelectObjectsUsingMaterialProc` |
 | `SelectMaterialsUsedBy` | `uixsiscripts.vbs` (VBScript) | `SelectMaterialsUsedByProc` |
 | `SIAddCustomParameter` | `propertytasks.dll`, `sicoresdk.dll` | CLSID `{1d4d499c-d0c4-11d2-a5fa-00a0c9ec5ef7}` |
-| `SetClusterPropertyValues` | `optasks.dll`, `propertytasks.dll`, `tasks.dll`, `si3dobjectmodel10.dll`, `sicppsdk.dll`, `weighteditor.dll` … | CLSID `{35fba75e-3ddf-11d3-bc3c-00a0c9612b97}` |
+| `SetClusterPropertyValues` | `optasks.dll`, `propertytasks.dll`, `tasks.dll`, `si3dobjectmodel10.dll`, `sicppsdk.dll`, `weighteditor.dll` … | CLSID `{35fba75e-3ddf-11d3-bc3c-00a0c9612b97}` | batch 12: CLSID not in the `optasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
 | `CreateUserNormals` | `propertytasks.dll` | CLSID `{695279f7-58a5-4dd9-8380-d5da89ef2294}` |
 | `ResetUserNormals` | `propertytasks.dll` | CLSID `{ee56a128-e3ce-47a2-add3-4e02ffa92a93}` |
 | `RemoveUserNormals` | `propertytasks.dll` | CLSID `{1ffdd217-e4c2-45c9-91da-b85c536314b4}` |
@@ -1017,10 +1112,7 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `siWriteRetargetComponentData` | `propertytasks.dll` | CLSID `{06602467-ed04-48d7-9c52-c257b40768e2}` |
 | `CreateUserMotion` | `uixsiscripts.vbs` (VBScript) | `CreateUserMotionProc` |
 | `ApplyOperator` | (CLSID not specific to one binary) | CLSID `{46cee370-8bb2-11d2-ac56-00a02485cecb}` |
-| `GetConnectionSet` | `optasks.dll`, `sicurvetasks.dll`, `sparks.dll`, `sicoresdk.dll` | CLSID `{825449e3-8706-11d2-8091-00a0c955b335}` |
-| `GetSurfaceFromCurvesConnectionSet` | `optasks.dll`, `sicurvetasks.dll`, `sparks.dll`, `sicoresdk.dll` | CLSID `{825449e3-8706-11d2-8091-00a0c955b335}` |
 | `ApplyOp` | `operators.vbs` (VBScript) | `ApplyOpFunc` |
-| `GetGeneratorInputsForDisposal` | `optasks.dll` | CLSID `{85759d87-aacb-4837-863b-b268035a3f7d}` |
 | `SelectGeneratorInputs` | `operators.vbs` (VBScript) | `SelectGeneratorInputs` |
 | `HideGeneratorInputs` | `operators.vbs` (VBScript) | `HideGeneratorInputs` |
 | `DeleteGeneratorInputs` | `operators.vbs` (VBScript) | `DeleteGeneratorInputs` |
@@ -1029,37 +1121,20 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `ApplySnapFaceOp` | `operators.vbs` (VBScript) | `ApplySnapFaceOpFunc` |
 | `ApplyPropVolumeOp` | `operators.vbs` (VBScript) | `ApplyPropVolumeOpProc` |
 | `InitPropVolume` | `optasks.dll`, `primtasks.dll` | CLSID `{c5dc6089-0efd-4361-a84f-0840b708a657}` |
-| `TogglePropVolume` | `optasks.dll` | CLSID `{e9bba0e0-4a7f-48f6-aade-95c94e0888f6}` |
-| `GetConnectedPropVolume` | `optasks.dll` | CLSID `{9230d7a9-5c92-491a-908e-e1f8bdf7b396}` |
-| `InspectPropVolume` | `optasks.dll` | CLSID `{05af89a5-3b06-48af-a897-4204529e0828}` |
 | `SpinEdgeForward` | `uixsiscripts.vbs` (VBScript) | `SpinEdgeForwardProc` |
 | `SpinEdgeBackward` | `uixsiscripts.vbs` (VBScript) | `SpinEdgeBackwardProc` |
 | `SetCurveKnotMultiplicity` | `operators.vbs` (VBScript) | `ApplySetCurveKnotMultiplicityOpFunc` |
-| `SITransferCenter` | `optasks.dll` | CLSID `{412f8ee4-c4e2-11d4-b863-009027bc6587}` |
 | `ExtractFromComponents` | `operators.vbs` (VBScript) | `ApplyExtractFromPartClsFunc` |
 | `siTrimWith` | `optasks.dll` | CLSID `{222cbe2b-217e-431c-a6d0-d2abfe8194c2}` |
 | `ApplyFlexEnv` | `operators.vbs` (VBScript) | `ApplyFlexibleEnvelopeProc` |
-| `SIApplyFlexEnv` | `optasks.dll`, `sicoresdk.dll` | CLSID `{f8c8c073-acdc-11d2-99b7-00a0243f0e60}` |
-| `SIApplyFlexEnvWithWeight` | `optasks.dll` | CLSID `{2fd07801-c7cc-4292-a8ef-8f09bce70620}` |
 | `SIApplyDeformBySpine` | `optasks.dll` | CLSID `{f9498641-02f5-11d3-9137-00a0244eeb76}` |
-| `SIApplyDeformByCage` | `optasks.dll` | CLSID `{6f378031-89b6-4216-a31c-3d84e01c927f}` |
 | `ApplyDeformByCage` | `operators.vbs` (VBScript) | `ApplyDeformByCageFunc` |
-| `SILocalAssignFlexEnv` | `optasks.dll` | CLSID `{56242c30-fdc4-11d2-99c2-00a0243f0e60}` |
-| `ResetFlexEnvPtsAssignment` | `optasks.dll` | CLSID `{56242c30-fdc4-11d2-99c2-00a0243f0e60}` |
-| `SIModifyFlexEnvWght` | `optasks.dll`, `weighteditor.dll` | CLSID `{61199760-1a84-11d3-99c3-00a0243f0e60}` |
 | `SISmoothEnvWght` | `optasks.dll` | CLSID `{083e381f-ccc3-426e-82de-4c1a150250e7}` |
 | `LimitEnvelopeDeformers` | `uixsiscripts.vbs` (VBScript) | `LimitEnvelopeDeformersProc` |
-| `SISymEnvWeight` | `optasks.dll` | CLSID `{d4a5193a-7b48-43e3-9372-b63e780d9f49}` |
 | `RemoveFlexEnvDeformer` | `optasks.dll` | CLSID `{a3293413-b294-11d3-99d6-009027bc6509}` |
 | `RemoveFlexEnv` | `optasks.dll` | CLSID `{936e8bd0-ae82-11d3-99d6-009027bc6509}` |
-| `LockEnvelopeWeights` | `optasks.dll` | CLSID `{ee4cc939-6415-48de-9245-33b1bcce8349}` |
 | `LockEnvelopePointWeights` | `optasks.dll` | CLSID `{7eab797e-361e-45db-bba4-5c9a3f987025}` |
 | `ClearEnvelopeWeightLocks` | `optasks.dll` | CLSID `{119de848-61f4-44bc-9121-ebe0db32df64}` |
-| `ConnectWeightMap` | `optasks.dll` | CLSID `{31ca68f0-bd5c-11d2-99b8-00a0243f0e60}` |
-| `AddMappingNode` | `optasks.dll` | CLSID `{e04fcc31-79d2-11d2-99ad-00a0243f0e60}` |
-| `ConnectOperatorParameter` | `optasks.dll` | CLSID `{6834c96b-0b64-412a-9f65-68d4939b172b}` |
-| `DisconnectOperatorParameter` | `optasks.dll` | CLSID `{e1e79b2c-c035-41dd-ae0e-eadd3249c24b}` |
-| `UpdateConnectOnOp` | `optasks.dll`, `activedb.dll`, `adaptorop.dll`, `textureop.dll` | CLSID `{9c8384e2-da33-11d2-ac75-00a02485cecb}` |
 | `LocalAssignFlexEnv` | `operators.vbs` (VBScript) | `LocalAssignFlexibleEnvelopeFunc` |
 | `ApplyKinematicOp` | `operators.vbs` (VBScript) | `ApplyKinematicOpFunc` |
 | `SplitEdge` | `operators.vbs` (VBScript) | `ApplySplitEdgeFunc` |
@@ -1069,47 +1144,23 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `WeldPoints` | `operators.vbs` (VBScript) | `ApplyWeldPointsFunc` |
 | `MoveOperatorAfter` | `optasks.dll`, `primtasks.dll`, `viewinteraction.dll` | CLSID `{3fb6dc14-739e-11d4-bdd0-00a0c9615daf}` |
 | `MoveOperatorBefore` | `optasks.dll`, `primtasks.dll`, `viewinteraction.dll` | CLSID `{3fb6dc14-739e-11d4-bdd0-00a0c9615daf}` |
-| `MoveOperator` | `optasks.dll`, `primtasks.dll`, `viewinteraction.dll` | CLSID `{3fb6dc14-739e-11d4-bdd0-00a0c9615daf}` |
-| `ChangeGeneratorInputReadPosition` | `optasks.dll` | CLSID `{f6d1643e-b6d2-4b98-b22a-96fe98fad39d}` |
-| `GetGeneratorInputReadPosition` | `optasks.dll` | CLSID `{49451678-ec7a-4537-a27e-38e5c13bfa10}` |
-| `GetGeneratorInputReadPosition_UIOnly` | `optasks.dll` | CLSID `{49451678-ec7a-4537-a27e-38e5c13bfa10}` |
-| `CopyAnimationAcrossGenerator` | `optasks.dll` | CLSID `{4a2386fc-aac4-4b83-89a6-396bead3dac3}` |
 | `SwapOperators` | `optasks.dll` | CLSID `{3fb6dc06-739e-11d4-bdd0-00a0c9615daf}` |
 | `DeactivateAbove` | `optasks.dll`, `tasks.dll` | CLSID `{f474765c-67ba-40d4-8f92-b83d81b08b46}` |
-| `CycleChecking` | `optasks.dll`, `fcurve.dll` | CLSID `{8fb755e3-06e3-11d7-be20-00a0c9615daf}` |
 | `ResetActor` | `optasks.dll` | CLSID `{de9ced62-dd93-406d-b8db-ed7e4c5350ab}` |
 | `ConnectICENodes` | `optasks.dll` | CLSID `{deb83777-b5d9-4a1c-be8b-848fa6eca194}` |
 | `DisconnectICENodePort` | `optasks.dll` | CLSID `{9821e356-5283-45f9-965b-dd69004cc0a5}` |
 | `AddICENode` | `optasks.dll` | CLSID `{2ca63f7d-4d58-4ba4-a226-bd981e110f66}` |
 | `AddICECompoundNode` | `optasks.dll`, `rendertree.dll` | CLSID `{b7bbf3e0-50ba-47e1-a121-a85ed2e18101}` |
-| `ReplaceICECompoundNode` | `optasks.dll`, `scnmgr.dll` | CLSID `{ce6ac9da-b883-4129-a6c4-2ba96eee4bce}` |
 | `SIApplyICEOp` | `optasks.dll` | CLSID `{14c0ed4c-4d33-4697-8f84-bbde2c0baa58}` |
 | `ApplyICEOp` | `operators.vbs` (VBScript) | `FApplyICEOpProc` |
-| `PrivateGetCompoundConstructionMode` | `optasks.dll` | CLSID `{fc8efed4-79b8-48be-90ca-e44cddd8feb7}` |
 | `ExportICECompoundNode` | `optasks.dll` | CLSID `{01b0b17d-ef3d-438f-81d5-3e8f90f7d9be}` |
 | `ApplyICETemplate` | `operators.vbs` (VBScript) | `ApplyMDTemplateProc` |
 | `GeneratePointCloudWithICETerminal` | `operators.vbs` (VBScript) | `GeneratePointCloudProc` |
 | `GeneratePointCloudWithICETemplate` | `operators.vbs` (VBScript) | `GeneratePointCloudWithTemplateProc` |
-| `CleanDisconnectedICENodes` | `optasks.dll` | CLSID `{6489ed18-8f26-4062-b1e0-726ba316a1f9}` |
-| `AddAttributeToSetDataICENode` | `optasks.dll` | CLSID `{80f29d44-c124-4eef-b261-1592123d61a3}` |
-| `RemoveAttributeFromSetDataICENode` | `optasks.dll` | CLSID `{b1b29707-e69c-47d0-b28d-e52ce4fc5970}` |
 | `AddPortToICENode` | `optasks.dll` | CLSID `{443328d5-87ac-40f5-8f21-e5d8a6de4dd1}` |
-| `AddPortToICENode2` | `optasks.dll` | CLSID `{443328d5-87ac-40f5-8f21-e5d8a6de4dd1}` |
-| `RemovePortFromICENode` | `optasks.dll` | CLSID `{87f7b094-2482-4112-883d-75574f5f3573}` |
-| `TransferICETree` | `optasks.dll` | CLSID `{3613f42b-4b81-4390-854c-fad9bb6c222e}` |
-| `SetICESimInitState` | `optasks.dll` | CLSID `{af2d7c8e-e256-4d35-98c5-aad158924d09}` |
-| `RemoveICESimInitState` | `optasks.dll` | CLSID `{c12151b0-ff9a-4d5c-b485-9d9b337b0b65}` |
 | `CreateICECompoundNode` | `optasks.dll` | CLSID `{63e1ca40-eea3-41f1-aa52-a5b1bacef904}` |
-| `CreateICENodeComment` | `optasks.dll` | CLSID `{bfb82c5f-307b-40ea-b9fb-8f9a329c0288}` |
 | `ExplodeICECompoundNode` | `optasks.dll` | CLSID `{b1be0f7b-6022-4e29-abad-b1711a51fb8c}` |
-| `AddNodeToICECompoundNode` | `optasks.dll` | CLSID `{84f10d5c-d904-4b8e-83f5-a24976d3f3d6}` |
-| `RemoveNodeFromICECompoundNode` | `optasks.dll` | CLSID `{c83a610b-fc27-404f-9c07-1e3d3feada85}` |
-| `AddExposedParamToICECompoundNode` | `optasks.dll` | CLSID `{26cb16ed-194a-4427-b56a-be703f019673}` |
-| `EditExposedParamInICECompoundNode` | `optasks.dll` | CLSID `{60381d74-bde7-4980-82d4-a48f6f5780c5}` |
 | `EditICECompoundProperties` | `optasks.dll` | CLSID `{3e56120d-af46-4263-9280-dfe9507db032}` |
-| `RemoveExposedParamFromICECompoundNode` | `optasks.dll` | CLSID `{bf8f591a-6c3e-417c-a2ff-25e6f765f374}` |
-| `RemoveExposedPortPassThrough` | `optasks.dll` | CLSID `{a91d22e2-c883-41ab-9330-4e1a317f56b5}` |
-| `SetPortType` | `optasks.dll` | CLSID `{66803e82-0cdb-445a-af5d-128efaaf5dec}` |
 | `SetStaticICEAttributeType` | `optasks.dll` | CLSID `{bf1968c3-aecc-4751-b015-3bead256214f}` |
 | `AddStaticICEAttribute` | `optasks.dll`, `sicoresdk.dll` | CLSID `{a3386f3d-c5c1-4e16-8dfb-ecfeecc56baf}` |
 | `RemoveStaticICEAttribute` | `optasks.dll`, `sicoresdk.dll` | CLSID `{ba2015ca-7fe1-4688-b403-fcafa2e0852c}` |
@@ -1117,17 +1168,7 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `ToggleICEAttributeAlwaysEvaluated` | `optasks.dll` | CLSID `{c98dd3f8-d700-4d95-8910-5096f1400e13}` |
 | `Invert Polygons` | `scnmgr.dll`, `xsievents.dll` | CLSID `{48becc30-5e5e-11d4-8c2c-009027bc3a0e}` |
 | `Subdivide` | `scnmgr.dll`, `xsievents.dll` | CLSID `{48becc30-5e5e-11d4-8c2c-009027bc3a0e}` |
-| `SubstituteOpInput` | `optasks.dll` | CLSID `{4b382841-216f-11d5-ad0a-0090275802bf}` |
-| `AddInputToOperator` | `optasks.dll` | CLSID `{4b382841-216f-11d5-ad0a-0090275802bf}` |
-| `RemoveInputFromOperator` | `optasks.dll` | CLSID `{4b382841-216f-11d5-ad0a-0090275802bf}` |
-| `SIBasicTransferClusterPropertiesAcrossGenOp` | `optasks.dll` | CLSID `{7be54750-3839-464f-9d42-5e1822056f25}` |
-| `SIBasicTransferClustersAcrossGenOp` | `optasks.dll` | CLSID `{81f70f51-067c-42c9-8a7b-3db10ace0688}` |
 | `TransferAllPropertiesAcrossGenOp` | `optasks.dll` | CLSID `{e73d3b5a-354e-466b-b12b-e666f3a560f5}` |
-| `TransferPropertiesAcrossGenOp` | `optasks.dll` | CLSID `{edca5404-3e79-4ede-b59a-d438b050c362}` |
-| `TransferClusterPropertiesAcrossGenOp` | `optasks.dll` | CLSID `{f00335b8-9ed0-4595-93f5-886e7f2aa73d}` |
-| `GenerateAutomaticUVs` | `optasks.dll` | CLSID `{706986e9-06f3-4604-b7c3-5d0f396de0f3}` |
-| `TransferShapeAnimationAcrossGenOp` | `optasks.dll` | CLSID `{b261a1ba-ab27-4bd5-9bec-f17314245140}` |
-| `DisconnectFromSimulationOp` | `optasks.dll` | CLSID `{84854b58-b16a-4b4a-9c37-54483ff41aa1}` |
 | `ApplyHairOp` | `uixsiscripts.vbs` (VBScript) | `ApplyHairOp` |
 | `ApplyHairDynamicsOp` | `uixsiscripts.vbs` (VBScript) | `ApplyHairDynamicsOp` |
 | `ApplyHairSplineGenOp` | `uixsiscripts.vbs` (VBScript) | `ApplyHairSplineGenOp` |
@@ -1149,28 +1190,16 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `ApplyHairPuffOp` | `uixsiscripts.vbs` (VBScript) | `ApplyHairPuffOp` |
 | `ApplyHairRotateOp` | `uixsiscripts.vbs` (VBScript) | `ApplyHairRotateOp` |
 | `ConnectMap` | `optasks.dll` | CLSID `{c70b63f3-2d25-11d5-bdeb-00a0c9615daf}` |
-| `ConnectBevelProfileCurve` | `optasks.dll` | CLSID `{777f2102-a2e7-4721-b977-0030b1b2f6a9}` |
-| `DisconnectBevelProfileCurve` | `optasks.dll` | CLSID `{73849979-93e6-470e-8f61-2b3e2b54b247}` |
-| `ConnectPlaneReferenceToSlicePolygonsOp` | `optasks.dll` | CLSID `{53e49e93-b205-4c81-a553-4c82e36c92d9}` |
-| `DisconnectPlaneReferenceFromSlicePolygonsOp` | `optasks.dll` | CLSID `{e85b7bc9-d0d0-4859-9fed-b975d3e1be4d}` |
-| `CreateGridAndConnectToSlicePolygonsOp` | `optasks.dll` | CLSID `{e22d0a9f-7e9e-474c-bd97-3bf58a796fe8}` |
 | `ConvertScriptedOp` | `scriptedopeditor.dll` | CLSID `{532b8303-b52e-11d5-81a9-00a0c9ac19a9}` |
 | `AddScriptedOp` | `ophost.dll`, `sicoresdk.dll` | CLSID `{f44c09e7-3b99-4e69-b5f8-8c88cd1b25c9}` |
 | `AddCustomOp` | `action.dll`, `ophost.dll`, `sicoresdk.dll` | CLSID `{f33c09e7-3b99-4e69-b5f8-8c88cd1b25c8}` |
 | `AddScriptedOpFromFile` | `ophost.dll` | CLSID `{7fba5233-d05d-4cb7-a107-b5b08e513f1c}` |
-| `PropertyTransfer` | `optasks.dll` | CLSID `{d5b91e0f-d65f-4ced-8cac-811e801f54e8}` |
 | `AlignBezierKnotsTangents` | `operators.vbs` (VBScript) | `AlignBezierKnotsTangentsFunc` |
 | `CreateSimulatedICETree` | `operators.vbs` (VBScript) | `CreateSimulatedICETreeProc` |
 | `GetICECompoundProperties` | `optasks.dll` | CLSID `{1728169f-6fdc-4d78-b1b5-7db9226fcb5c}` |
-| `GetICECompoundPortProperties` | `optasks.dll` | CLSID `{55fec68a-1300-4425-af00-52a29fca153d}` |
 | `ApplyThickness` | `operators.vbs` (VBScript) | `ApplyThicknessProc` |
 | `CapHole` | `operators.vbs` (VBScript) | `CapHoleProc` |
 | `ApplySliceBetweenTwoVertices` | `operators.vbs` (VBScript) | `ApplySliceBetweenTwoVerticesProc` |
-| `HideAllPortValues` | `optasks.dll` | CLSID `{a7c8afef-aabf-4bc6-a6cb-505e4065327c}` |
-| `MoveICECompoundPort` | `optasks.dll` | CLSID `{f1b5f0c8-a84f-431b-9581-a64349401c84}` |
-| `RenameICEPPGLayoutGroup` | `optasks.dll` | CLSID `{6c0a3174-80f4-4e8b-b6d2-2b617206c665}` |
-| `MoveICECompoundPortsAndLayoutGroups` | `optasks.dll` | CLSID `{7713d549-6ba4-4cbc-b57a-7f182e778408}` |
-| `CreateLayoutGroupInICECompoundNode` | `optasks.dll` | CLSID `{e6a70747-727c-4c59-8967-df7e35f45e4d}` |
 | `SIConvert` | `optasks.dll`, `sicoresdk.dll` | CLSID `{6c5fded2-994f-11d2-ac5c-00a02485cecb}` |
 | `RemoveCnsType` | `optasks.dll`, `sicoresdk.dll` | CLSID `{f65e43d2-cc09-11d2-ac73-00a02485cecb}` |
 | `RemoveCns` | `optasks.dll` | CLSID `{f65e43d3-cc09-11d2-ac73-00a02485cecb}` |
@@ -1307,7 +1336,7 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `SaveDeformKey` | `uixsiscripts.vbs` (VBScript) | `SaveDeformKeyProc` |
 | `ApplyDeformKey` | `uixsiscripts.vbs` (VBScript) | `ApplyDeformKeyProc` |
 | `OpenShapeEditor` | `uixsiscripts.vbs` (VBScript) | `OpenShapeEditorProc` |
-| `SITransferShapeAnimation` | `optasks.dll`, `action.dll` | CLSID `{3b019512-6257-4a4d-b10e-8558ab464b55}` |
+| `SITransferShapeAnimation` | `optasks.dll`, `action.dll` | CLSID `{3b019512-6257-4a4d-b10e-8558ab464b55}` | batch 12: CLSID not in the `optasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
 | `SetSelFilter` | `selectionmgr.dll` | CLSID `{d9eb4110-dcac-11d2-8bd1-00aa006130ef}` |
 | `ActivatePolygonSelTool` | `selectionmgr.dll` | CLSID `{d9eb4110-dcac-11d2-8bd1-00aa006130ef}` |
 | `ActivatePolygonSelToolWithNoObjStateChange` | `selectionmgr.dll` | CLSID `{d9eb4110-dcac-11d2-8bd1-00aa006130ef}` |
@@ -1429,7 +1458,7 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `SIAddImageOp` | `imageclip.dll` | CLSID `{327d6270-8007-4524-982c-e1775b1bbed6}` |
 | `SIAddImageSource` | `modeltasks.dll`, `imageclip.dll`, `shaderhelper.dll` | CLSID `{0f42cf75-1de8-11d3-b37a-00105a1e70de}` |
 | `SIAddWritableImageSource` | `imageclip.dll` | CLSID `{a7fdb2d1-73f0-486a-ac47-621f31517299}` |
-| `SIAddImageClip` | `modeltasks.dll`, `shadertasks.dll`, `imageclip.dll`, `shaderhelper.dll` | CLSID `{eef8d702-1ebe-11d3-b37a-00105a1e70de}` |
+| `SIAddImageClip` | `modeltasks.dll`, `shadertasks.dll`, `imageclip.dll`, `shaderhelper.dll` | CLSID `{eef8d702-1ebe-11d3-b37a-00105a1e70de}` | batch 12: CLSID not in the `shadertasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
 | `SICreateImageClip` | `imageclip.dll`, `shaderhelper.dll`, `sparks.dll`, `spreadsheet.dll`, `si3dobjectmodel.dll` | CLSID `{e2be2c7c-364b-11d3-b37b-00105a1e70de}` |
 | `SICreateImageClip2` | `imageclip.dll`, `shaderhelper.dll`, `sparks.dll`, `spreadsheet.dll`, `si3dobjectmodel.dll` | CLSID `{e2be2c7c-364b-11d3-b37b-00105a1e70de}` |
 | `SICreateDefaultImageClip` | `imageclip.dll`, `shaderhelper.dll`, `sparks.dll`, `spreadsheet.dll`, `si3dobjectmodel.dll` | CLSID `{e2be2c7c-364b-11d3-b37b-00105a1e70de}` |
@@ -1513,7 +1542,7 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `Cut` | `tasks.dll`, `xsievents.dll` | CLSID `{ec7663e5-2f0b-11d3-bffd-00a0248f9397}` |
 | `Copy` | `tasks.dll` | CLSID `{ec7663e4-2f0b-11d3-bffd-00a0248f9397}` |
 | `Paste` | `tasks.dll`, `xsievents.dll` | CLSID `{ec7663e6-2f0b-11d3-bffd-00a0248f9397}` |
-| `CopyPaste` | `optasks.dll`, `tasks.dll`, `actioncore.dll` | CLSID `{2c8a5f31-8556-11d3-b4a2-00a02485cecb}` |
+| `CopyPaste` | `optasks.dll`, `tasks.dll`, `actioncore.dll` | CLSID `{2c8a5f31-8556-11d3-b4a2-00a02485cecb}` | batch 12: CLSID not in the `optasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
 | `OpenAnimationEditor` | `siviewtasks.dll` | CLSID `{a64dac70-1e45-11d5-bced-00d0b719022b}` |
 | `OpenNetView` | `siviewtasks.dll` | CLSID `{c7461ff7-d02c-438a-a507-d4ebd588ef6f}` |
 | `SetDisplayMode` | `uixsiscripts.vbs` (VBScript) | `SetDisplayMode` |
@@ -1539,7 +1568,7 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `ConnectParticleInitState` | `sparks.dll` | CLSID `{d3b53df8-39b4-4c0c-b175-7a0daaa627be}` |
 | `DisconnectParticleInitState` | `sparks.dll` | CLSID `{12291e58-62b3-46f3-9980-22ef0a372fbc}` |
 | `SetParticleInitState` | `sparks.dll` | CLSID `{21bc9523-f52e-47a3-9595-85c859fd995d}` |
-| `UpdateParticleTypeConnections` | `optasks.dll`, `activedb.dll`, `sparks.dll` | CLSID `{4b5e7344-9b4d-4f34-bb1a-075a7a9886e0}` |
+| `UpdateParticleTypeConnections` | `optasks.dll`, `activedb.dll`, `sparks.dll` | CLSID `{4b5e7344-9b4d-4f34-bb1a-075a7a9886e0}` | batch 12: CLSID not in the `optasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
 | `AddParticleEmitter` | `sparks.dll` | CLSID `{d9a016a1-451e-11d3-800a-00a0248f9397}` |
 | `AddParticleObstacle` | `sparks.dll` | CLSID `{e46afe32-48ff-11d3-8a87-00a024197c03}` |
 | `AddClothClusters` | `sparks.dll` | CLSID `{cfdc1390-8aaa-11d4-a256-00d0b7190223}` |
@@ -1703,19 +1732,9 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `MakeBipedCharacterKeySet` | `CharacterRigging\makeCharacterKeySet.js` (JScript) | `makeBipedCharacterKeySet` |
 | `MakeQuadrupedCharacterKeySet` | `CharacterRigging\makeCharacterKeySet.js` (JScript) | `makeQuadrupedCharacterKeySet` |
 | `SetKeyableRig` | `CharacterRigging\makeCharacterKeySet.js` (JScript) | `setKeyableRig` |
-| `AddObjectsToShader` | `shadertasks.dll`, `action.dll`, `imageclip.dll` | CLSID `{c85e1a71-db03-11d2-aa5f-00aa0068d2c0}` |
-| `RemoveObjectsFromShader` | `shadertasks.dll` | CLSID `{187240f1-e211-11d2-aa69-00aa0068d2c0}` |
 | `SIGetShaderOnCnxPoint` | `shadertasks.dll` | CLSID `{09decdf0-82a5-11d3-ae46-00a0c96e63e1}` |
-| `RemoveShaderFromCnxPoint` | `propertytasks.dll`, `shadertasks.dll`, `sicoresdk.dll` | CLSID `{be45d284-e229-11d2-aa69-00aa0068d2c0}` |
-| `RemoveAllShadersFromCnxPoint` | `shadertasks.dll` | CLSID `{46919ce1-ec5d-11d2-aa71-00aa0068d2c0}` |
 | `SIApplyShader` | `propertytasks.dll`, `shadertasks.dll`, `sparks.dll`, `xsievents.dll`, `sicoresdk.dll` | CLSID `{41080962-e785-11d2-aa70-00aa0068d2c0}` |
 | `ApplyShader` | `uixsiscripts.vbs` (VBScript) | `GetMaterialProc` |
-| `UIMapButton` | `shadertasks.dll` | CLSID `{34f30cd2-12b8-11d3-aa89-00aa0068d2c0}` |
-| `SetInstanceDataValue` | `propertytasks.dll`, `shadertasks.dll`, `sicoresdk.dll` | CLSID `{fae06638-2003-11d3-a06b-0000f875df68}` |
-| `SIGetMaterialShader` | `shadertasks.dll` | CLSID `{5e28e280-24e7-11d3-bffa-00a0248f9397}` |
-| `ReplaceShader` | `shadertasks.dll` | CLSID `{91c3b502-3965-11d3-b22e-00a0c9a8ad15}` |
-| `ReplaceShaderWithProgID` | `shadertasks.dll` | CLSID `{5db21aad-4449-4dd8-98a9-745e801059bd}` |
-| `ReplaceShaderWithPreset` | `shadertasks.dll` | CLSID `{b5a3c021-3b8c-11d3-b22e-00a0c9a8ad15}` |
 | `SIConnectShaderWithBlendsInsp` | `Rendering.vbs` (VBScript) | `SIConnectShaderWithBlendsInsp` |
 | `BlendInPresetsWithPorts` | `Rendering.vbs` (VBScript) | `BlendInPresetsWithPorts` |
 | `BlendInPresetsWithPortsInsp` | `Rendering.vbs` (VBScript) | `BlendInPresetsWithPortsInsp` |
@@ -1730,8 +1749,6 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `BlendClipsInTextureLayers` | `Rendering.vbs` (VBScript) | `BlendClipsInTextureLayers` |
 | `BlendClipsInTextureLayersInsp` | `Rendering.vbs` (VBScript) | `BlendClipsInTextureLayersInsp` |
 | `UpgradeShaders` | `UpgradeShaders.vbs` (VBScript) | `UpgradeShaders` |
-| `SIRebindByNameUserData` | `optasks.dll`, `shadertasks.dll` | CLSID `{4a1613c1-572c-4d7d-8e95-19271f58b0fc}` |
-| `RenamePropAndRebind_Internal` | `shadertasks.dll` | CLSID `{cf3d546a-458d-4d02-ace0-b39ee913fdda}` |
 | `DisconnectAndDeleteShaders` | `shadertasks.dll` | CLSID `{16e87237-87c4-4cfb-9e60-c8c6d9517a2c}` |
 | `DisconnectAndDeleteOrUnnestShaders` | `shadertasks.dll` | CLSID `{16e87237-87c4-4cfb-9e60-c8c6d9517a2c}` |
 | `InsertShader` | `Rendering.vbs` (VBScript) | `InsertShader` |
@@ -1742,32 +1759,15 @@ Generated by `tools/parse_dscommandmap.py` from `Application\CommandMaps\XSI.DSC
 | `RemoveTextureLayers` | `shadertasks.dll`, `sicoresdk.dll` | CLSID `{e83f9a34-0de0-4244-ae6a-d551ba2f7272}` |
 | `MoveTextureLayers` | `shadertasks.dll`, `sicoresdk.dll` | CLSID `{1da1ee90-8a55-4257-a7dc-8221e2fcf029}` |
 | `AddTextureLayerPorts` | `shadertasks.dll`, `shaderhelper.dll`, `sicoresdk.dll` | CLSID `{612fe1e6-12cd-46b3-8679-fcfaab16fa5f}` |
-| `SIAddArrayElement` | `shadertasks.dll`, `shaderhelper.dll`, `sparks.dll`, `si3dobjectmodel.dll`, `sicoresdk.dll` | CLSID `{17e2221e-3c31-4bf7-b49a-4abf7ad010d8}` |
-| `SIRemoveArrayElement` | `shadertasks.dll`, `sparks.dll`, `sicoresdk.dll` | CLSID `{a60a917a-cf1c-4be0-b5d1-197d750a4d31}` |
-| `SISwapArrayElements` | `shadertasks.dll`, `sicoresdk.dll` | CLSID `{6fbe63cb-d6fc-47d0-8c6d-2e419127faa8}` |
+| `SIAddArrayElement` | `shadertasks.dll`, `shaderhelper.dll`, `sparks.dll`, `si3dobjectmodel.dll`, `sicoresdk.dll` | CLSID `{17e2221e-3c31-4bf7-b49a-4abf7ad010d8}` | batch 12: CLSID not in the `shadertasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
+| `SIRemoveArrayElement` | `shadertasks.dll`, `sparks.dll`, `sicoresdk.dll` | CLSID `{a60a917a-cf1c-4be0-b5d1-197d750a4d31}` | batch 12: CLSID not in the `shadertasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
+| `SISwapArrayElements` | `shadertasks.dll`, `sicoresdk.dll` | CLSID `{6fbe63cb-d6fc-47d0-8c6d-2e419127faa8}` | batch 12: CLSID not in the `shadertasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
 | `CreateShaderFromPreset` | `shadertasks.dll`, `molight.dll`, `shaderhelper.dll`, `sparks.dll`, `xgs.dll`, `props.dll` … | CLSID `{bbbbee29-9a74-46fc-8f43-bfebbabfd1bd}` |
-| `CreateShadersFromMaterialPreset` | `shadertasks.dll`, `molight.dll`, `shaderhelper.dll`, `sparks.dll`, `xgs.dll`, `props.dll` … | CLSID `{bbbbee29-9a74-46fc-8f43-bfebbabfd1bd}` |
-| `CreateShaderFromCLSID` | `shadertasks.dll`, `molight.dll`, `shaderhelper.dll`, `sparks.dll`, `xgs.dll`, `props.dll` … | CLSID `{bbbbee29-9a74-46fc-8f43-bfebbabfd1bd}` |
-| `CreateShaderFromProgID` | `shadertasks.dll`, `molight.dll`, `shaderhelper.dll`, `sparks.dll`, `xgs.dll`, `props.dll` … | CLSID `{bbbbee29-9a74-46fc-8f43-bfebbabfd1bd}` |
-| `AddShaderAttachedComment` | `shadertasks.dll`, `molight.dll`, `shaderhelper.dll`, `sparks.dll`, `xgs.dll`, `props.dll` … | CLSID `{bbbbee29-9a74-46fc-8f43-bfebbabfd1bd}` |
-| `CreateShaderCompound` | `shadertasks.dll` | CLSID `{3b0965e0-dc2f-4bb6-818d-08cd2c3c6211}` |
-| `NestShaders` | `modeltasks.dll`, `shadertasks.dll`, `shaderhelper.dll` | CLSID `{482fe713-3adc-4a55-a11c-1c5d7d923266}` |
-| `UnnestShaders` | `modeltasks.dll`, `shadertasks.dll` | CLSID `{7939d67b-77af-4649-ad94-7afa93943562}` |
-| `AddShaderCompoundPort` | `shadertasks.dll`, `shaderhelper.dll` | CLSID `{b4eca6f7-0b60-4769-a13f-fe8d1d0d404e}` |
-| `RemoveShaderCompoundPort` | `shadertasks.dll` | CLSID `{4429f144-8c5d-499c-aafe-cbdc9ca57044}` |
-| `MoveShaderCompoundPort` | `shadertasks.dll` | CLSID `{b88b985e-20e0-4771-b85c-d45d5027ddcd}` |
-| `RenameShaderCompoundPort` | `shadertasks.dll` | CLSID `{41deb46b-b08f-4adb-a253-2427ed78b8e7}` |
-| `ExportShaderCompound` | `shadertasks.dll` | CLSID `{b1679add-fd7a-4e8c-acea-45ef795e7f7d}` |
-| `ImportShaderCompound` | `shadertasks.dll` | CLSID `{34f0f2e9-6f5b-4ace-a4a3-55c5ecb319f2}` |
-| `ExplodeShaderCompound` | `shadertasks.dll` | CLSID `{c95d3960-2733-4383-a941-833de2aa502c}` |
-| `SetShaderCompoundProperties` | `shadertasks.dll` | CLSID `{6e1f9169-09f8-4915-8b7a-68446ca86a37}` |
+| `CreateShadersFromMaterialPreset` | `shadertasks.dll`, `molight.dll`, `shaderhelper.dll`, `sparks.dll`, `xgs.dll`, `props.dll` … | CLSID `{bbbbee29-9a74-46fc-8f43-bfebbabfd1bd}` | batch 12: CLSID not in the `shadertasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
+| `CreateShaderFromCLSID` | `shadertasks.dll`, `molight.dll`, `shaderhelper.dll`, `sparks.dll`, `xgs.dll`, `props.dll` … | CLSID `{bbbbee29-9a74-46fc-8f43-bfebbabfd1bd}` | batch 12: CLSID not in the `shadertasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
+| `CreateShaderFromProgID` | `shadertasks.dll`, `molight.dll`, `shaderhelper.dll`, `sparks.dll`, `xgs.dll`, `props.dll` … | CLSID `{bbbbee29-9a74-46fc-8f43-bfebbabfd1bd}` | batch 12: CLSID not in the `shadertasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
+| `AddShaderAttachedComment` | `shadertasks.dll`, `molight.dll`, `shaderhelper.dll`, `sparks.dll`, `xgs.dll`, `props.dll` … | CLSID `{bbbbee29-9a74-46fc-8f43-bfebbabfd1bd}` | batch 12: CLSID not in the `shadertasks.dll` `DllGetClassObject` chain (row CMD-B12-ELSE) |
 | `SetShaderCompoundPropertiesEx` | `shadertasks.dll` | CLSID `{6e1f9169-09f8-4915-8b7a-68446ca86a37}` |
 | `GetShaderCompoundProperties` | `shadertasks.dll` | CLSID `{c54f9fef-b202-470a-9265-61bc5dea95fa}` |
-| `SetShaderCompoundPortProperties` | `shadertasks.dll`, `shaderhelper.dll` | CLSID `{a5485033-b832-40fd-ba19-41752d542b81}` |
-| `GetShaderCompoundPortProperties` | `shadertasks.dll`, `rendertree.dll`, `shaderhelper.dll` | CLSID `{28a7cd73-9a39-4175-8539-53d8069dbffa}` |
-| `ExportShaderTree` | `shadertasks.dll` | CLSID `{60c4f494-a0e4-42d6-b260-3ad35ae3497f}` |
-| `ImportShaderTree` | `shadertasks.dll` | CLSID `{4127c28c-fde9-4325-bdd9-aafc0a83a9ba}` |
-| `ExportShaderDefinition` | `shadertasks.dll` | CLSID `{de3bfbe1-eab2-4a5d-a9d4-60ad12a00d8b}` |
-| `ReplaceShadersDefinition` | `shadertasks.dll`, `rendercore.dll`, `shadercodeeditor.dll`, `shaderhelper.dll` | CLSID `{3323a961-6741-4860-8504-a54f490e0417}` |
 | `ShowFaceRobotActPanel` | `siuitasks.dll` | CLSID `{3ea2aaac-44c4-4fb0-9a62-248ee72edead}` |
 <!-- END GENERATED: registry -->

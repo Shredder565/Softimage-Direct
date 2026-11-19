@@ -82,7 +82,7 @@ the no-op Undo / Redo of the query commands.
 
 ## 3. Contracts
 
-### `CreateConnectionMap`: SPEC-PARTIAL
+### `CreateConnectionMap`: SPEC (promoted 2026-11-19, batch 12; see "Batch 12 answers")
 
 Wire contract:
 - Args: `Obj1` (model, required), `Obj2` (model, optional at the binary level), output
@@ -107,7 +107,7 @@ Wire contract:
 - Lock check on `Obj1` (see 2), then get / create the model's mixer, create a connection
   mapping template, append it to the mixer, return it. No rules.
 
-### `CreateValueMap`: SPEC-PARTIAL
+### `CreateValueMap`: SPEC (promoted 2026-11-19, batch 12; see "Batch 12 answers")
 
 Wire contract:
 - Args: `Obj1`, `Obj2` (models), `Mode` (default 4), `Scope` (default 1), `UseNames`
@@ -198,7 +198,7 @@ Wire contract:
   that cannot be removed raises `0x80070057` with message id 0x9f (item name) and the
   command returns `0x80020009`.
 
-### `GetStoreActionDefaults`: SPEC-PARTIAL
+### `GetStoreActionDefaults`: SPEC (promoted 2026-11-19, batch 12; see "Batch 12 answers")
 
 Wire contract:
 - Args: `Model`, `InputObj` (list), `Mode` (default 1), outputs `From`, `To` (double),
@@ -240,7 +240,7 @@ Wire contract:
   the target's list; the helper task is kept as a sub-task when undo is recorded.
 - `0x80004003` if either list is missing; returns `S_FALSE` when nothing was copied.
 
-### `AddPoseActionItems`: SPEC-PARTIAL
+### `AddPoseActionItems`: SPEC (promoted 2026-11-19, batch 12; see "Batch 12 answers")
 
 Wire contract:
 - Args: `InputObjs` (action sources), `Name` (default `OFFSET_ROOT`).
@@ -274,3 +274,123 @@ Wire contract:
 - Error code returned by `GetMappingRule` for an out-of-range index (not recoverable from
   the decompile).
 - `GetStoreActionDefaults` range computation inside the store worker `0x180063c90`.
+
+## Batch 12 answers (PR #183 B11e questions)
+
+Read through Ghidra on `action.dll` (same sha256 as above), 2026-11-19. Behaviour only.
+
+### Q1 `CreateConnectionMap` / `CreateValueMap` collectors, direction, length mismatch
+
+- **Collectors** (`0x1800292e0` connection map, `0x180031250` value map) are the same
+  walk: the given model is appended first, then its children (child enumeration of
+  kind 2) are visited recursively, depth first, pre-order. So each list is "the model
+  itself, then every descendant in hierarchy order". Nothing is filtered by type.
+- **Connection map** (`0x1800288a0`):
+  - The two lists must have the same length. On a mismatch nothing is created, no
+    error is raised and the command succeeds with no `MappingTemplate` output.
+  - Otherwise the empty connection map is made on `Obj1`'s mixer (as
+    `CreateEmptyConnectionMap`), then for each position i one rule is **appended at the
+    end**: **From = full name of the i-th object of `Obj2`'s list, To = full name of
+    the i-th object of `Obj1`'s list** (the rule-insert call takes From before To, as in
+    `AddMappingRule` `0x180001320`). This corrects the earlier note (which had
+    From = `Obj1`). The first rule is therefore model2 → model1.
+- **Value map** (`0x1800314b0`):
+  - Length mismatch fails with **`0x8000FFFF`** (no map, no message).
+  - The value map template is created on `Obj1`'s mixer.
+  - Pairing: without `UseNames`, by position. With `UseNames`, for each object of
+    `Obj2`'s list its name is first passed through a name-remapping lookup on a
+    connection-map-class object of the mixer (inferred: an existing connection map is
+    used to translate names; when it returns nothing the name is used unchanged), and
+    the **first object of `Obj1`'s list whose full name contains that name as a
+    substring** is its partner. An `Obj2` object with no partner adds no rule.
+  - Channels: 18 slots per pair, 9 global (`kine.global.{scl,rot,pos}{x,y,z}`, used when
+    `Scope` bit 2 is set) and 9 local (`kine.local.*`, `Scope` bit 1). `Mode` bits pick
+    the scl / rot / pos groups (the per-channel test is behind a jump table, inferred).
+  - **Direction: difference = value on the `Obj1` object minus value on the `Obj2`
+    object** (the `Obj1` value is read first, the `Obj2` value is subtracted from it).
+  - Rule **From = `<Obj1 object full name>.<channel>`**, **To = `this + <difference>`**
+    printed with `%lf` (`this + %lf`), or an empty expression when |difference| < 1e-9.
+    Rules are appended at the end in object order, global channels before local ones.
+  - Allocation failure → `0x8007000E`.
+
+### Q2 Mapping rules
+
+- **`GetMappingRule`** (`0x18003d8c0`): no template → `0x80004003`. `Index` greater
+  than the rule count → returns **`S_FALSE` (1)** and writes no output. Note `Index` equal
+  to the count is still accepted (position count − 1 for Index = count; Index 0 → rule 1).
+  **On success the worker also returns `S_FALSE` (1)**, after writing From, To, Active,
+  PoseOffset; callers must treat 1 as success. A failing flag read returns that HRESULT.
+- **`SetMappingRule`** (`0x1800601e0`): position = `min(max(Index,1) − 1, count)` — the
+  upper clamp is the count itself, not count − 1, so an `Index` past the end addresses
+  one-past-the-end; the read of the old rule at that position then fails and the command
+  stops with that error, changing nothing (inferred: the failing HRESULT comes from the
+  template). Order of steps: read old From / To → read old Active / PoseOffset (if the
+  template has the rule-flag interface) → set Active (if ≥ 0) → set PoseOffset (if ≥ 0)
+  → replace From / To. A flag write failure aborts before From / To are replaced.
+- **New-rule flags**: `AddMappingRule` (`0x180001320`) only inserts (position, count 1,
+  From, To); it never sets Active / PoseOffset, so a new rule has the template's
+  defaults (set in the template class, not in `action.dll`; open, inferred Active = true,
+  PoseOffset = false).
+- **Empty From / To**: the workers reject only *null* strings (`0x80004003` for
+  `AddMappingRule`; `SetMappingRule` stops without change). A non-null empty string is
+  written as given. Whether an omitted / empty script argument arrives as null depends
+  on the argument marshalling (inferred: an empty BSTR is null, so `AddMappingRule`
+  with `""` fails with `0x80004003`).
+
+### Q3 `GetStoreActionDefaults` worker `0x180063c90`, parameter classes
+
+- Parameter-class mask bits (from `Mode`): **1 = static values**, **2 = fcurves**
+  (animated parameters, optional plot / key reduction step with tolerance 0.01),
+  **4 = expressions**, **8 = constraints / other driving operators** (enumerated per
+  parameter; in query mode each one counts **3** items). Static values (bit 1) are only
+  stored for a parameter for which nothing else was stored.
+- The input list is first filtered to the model (`F3DActionFilterListWithModel`). Each
+  parameter is dereferenced through proxies and named by its stripped action name.
+- `Size` = number of items the store would create (counter incremented per stored
+  fcurve, expression, static value, removed animation, constraint × 3).
+- **From / To** (when the caller does not supply a range):
+  1. at least one fcurve stored → the union of the stored fcurves' key ranges
+     (min start, max end; helper `0x180063040`, inferred union);
+  2. else, an expression or constraint stored → the current scene time span
+     (timeline start / stop, in frames);
+  3. else, only static values → **From = 1, To = 5**;
+  4. else (nothing) → 0, 0.
+  When the call supplies a range (store path with explicit From / To) those values
+  are used as given.
+- If nothing would be stored and the mask is non-zero, no source is returned
+  (query: `Size` 0).
+- Storage kind 1 adds the source to the mixer; kind 2 attaches it through an extra
+  task (transient); kind 0 leaves it unowned — consistent with the earlier note.
+
+### Q4 `LoadActionPreset`, `AddPoseActionItems`, `MergeClips`
+
+- **`LoadActionPreset`** (`0x18003f510`): the full path is `<folder>` + `\` (added
+  only when the folder does not already end in `\`) + `<file>`. The extension test is
+  **case-insensitive** (`.Preset`, `.xsi`, `.eani`). `.eani` fires file event
+  `0x20510015` before the load and **`0x20510016` after** it. The source's name
+  parameter is set to `Name` or, when empty, the file base name. The three format
+  loaders themselves stay open.
+- **`AddPoseActionItems`** (`0x180001a20`): item names are `Name` + a fixed suffix,
+  nine suffixes from the adjacent string table `kine.local.sclx`, `.scly`, `.sclz`,
+  `.rotx`, `.roty`, `.rotz`, `.posx`, `.posy`, `.posz` (`0x1801151c0`…) — i.e.
+  `<Name>.kine.local.<chan>` (the `.` separator is inferred). The per-source check:
+  the source must expose the action-source interface `12a3ef95-e543-11d2-b352-00105a1e6ce9`
+  and its pose-item list query must return **no existing list**; sources that already
+  have pose items are skipped silently. Two passes: first the nine items are added one
+  by one (the last add flagged as final), then the nine values 1, 1, 1, 0, 0, 0, 0, 0, 0
+  are written in one call.
+- **`MergeClips`** collector (`0x180044d60`): null input → `0x80004003`. For each input
+  that is a clip (interface `2320122c-d1b9-11d2-b34b-00105a1e6ce9`) and not of an
+  excluded family (families-manager test, inferred: non-action clips are dropped), the
+  model is taken from the first clip; the span is min(clip start) / max(clip end)
+  starting from +1e30 / −1e30; every **active** item of the clip's source is grouped by
+  item name. No usable clip → `S_FALSE`, which the command reports as message 0xe3.
+  Per-clip conversion (`0x1800430e0`): reads six clip timing values; animated items
+  (item kind 0x1e) are rebuilt as a new fcurve named `Merged FCurve`, keys mapped
+  through the clip's time scale, merge tolerance 1e-6 (inferred). Rest open.
+
+### Q5
+
+- `CopySourceActionToFolder` name collisions: the copy is done by the helper class
+  `0x180135018` outside `action.dll`; open.
+- Registry flag `0x80`: not an `action.dll` question (command map); open.
