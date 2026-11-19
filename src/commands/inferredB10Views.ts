@@ -1,13 +1,19 @@
 // Row CMD-B10 (INFERRED batch): tool activation, navigation and 3D-view commands of the registry categories
 // Navigation, Viewing, Manipulation, Drawing, Paint and Selection that were missing from the command bus.
-// See inferredB10Shared.ts for the sources. All registrations below are `// inferred`.
+// See inferredB10Shared.ts for the sources. Registrations marked `// inferred` are reasoned; those marked `// B11h §…`
+// follow the wire contracts of docs/ghidra/cmd-b11h-vm-view-commands-b10-confirmations-binary.md (vm.dll, read
+// 2026-11-18) and docs/re/WIRE_CORRECTIONS_B11.md; open parts there keep `// inferred` and log "not yet attested".
 import * as THREE from 'three';
 import { App, InteractiveTool } from '../core/commands';
-import { X3DObject, Camera } from '../core/scene';
+import { X3DObject, Camera, Property } from '../core/scene';
 import { hostFs } from '../core/sdkHelpersHostFs';
 import { tool as viewTool } from '../ui/viewManager';
+import { iemsState } from '../core/importExportModelScripts';
+import { looksLikeImageFile, isImageClip, imageClips } from '../core/textureLayers';
+import { B10_ARGS } from './inferredB10Args';
 import {
-  b10, regB10, logNyaB10, unset, num, boolA, objsOf, findObj, moveComponents, vm, viewports, viewIndex, withView, orbitTarget, translateGlobal,
+  b10, regB10, logNyaB10, unset, num, boolA, objsOf, findObj, moveComponents, vm, viewports, withView, orbitTarget,
+  fail, setStatus, camState, camApply, camChange, setViewLabel, E_FAIL, E_INVALIDARG, S_FALSE, type VP,
 } from './inferredB10Shared';
 
 const ev = (name: string, detail?: any) => window.dispatchEvent(new CustomEvent(name, { detail }));
@@ -20,8 +26,57 @@ const NAV: Record<string, string> = {
   CamWalkTool: 'Walk Tool', CamZoomTool: 'Zoom Tool',
 };
 
+const isCam = (o: any): o is X3DObject => o instanceof X3DObject && (o instanceof Camera || o.type === 'camera');
+/** View argument (B11h §2): -1 (or unset) = the active view, any other value a 0-based view index (siViewportA..D accepted);
+ *  -1 when the view does not exist. */
+function viewAt(v: any): number {
+  const V = vm(); if (!V) return -1;
+  const all = viewports(); const letter = /siViewport([A-D])(?![a-z])/i.exec(String(v ?? ''))?.[1];
+  const n = letter ? letter.toUpperCase().charCodeAt(0) - 65 : Math.trunc(num(v, -1));
+  if (n === -1) return all.indexOf(V.active());
+  return n >= 0 && n < all.length ? n : -1;
+}
+/** Grow a world box by an object's geometry points (or its centre). */
+function expandByObject(box: THREE.Box3, o: X3DObject) {
+  const M = o.globalMatrix(); const pos: ArrayLike<number> | undefined = o.primitive?.mesh?.()?.positions;
+  if (pos && pos.length) { for (let k = 0; k < pos.length; k += 3) box.expandByPoint(new THREE.Vector3(pos[k], pos[k + 1], pos[k + 2]).applyMatrix4(M)); }
+  else box.expandByPoint(new THREE.Vector3().setFromMatrixPosition(M));
+}
+/** Frame one view on objects: orthographic views centre and zoom on the box, perspective views keep their direction. */
+function frameView(vp: VP, objs: X3DObject[]) {
+  const box = new THREE.Box3(); for (const o of objs) expandByObject(box, o); if (box.isEmpty()) return;
+  const c = box.getCenter(new THREE.Vector3()); const size = Math.max(box.getSize(new THREE.Vector3()).length(), 2); const cam = vp.camera as any;
+  if (vp.kind === 'ortho') { const dir = cam.getWorldDirection(new THREE.Vector3()); cam.position.copy(c).sub(dir.multiplyScalar(100)); cam._zoom = size * 0.6; cam.lookAt(c); }
+  else { const t = vm()?.orbitTarget?.(); const d = cam.position.clone().sub(t ?? c); if (d.lengthSq() < 1e-12) d.set(0, 0, 1); d.normalize().multiplyScalar(size * 1.2); t?.copy(c); cam.position.copy(c).add(d); cam.lookAt(c); }
+  cam.updateMatrixWorld();
+}
+/** The view looks through a scene camera and follows it (B11h §SetViewCamera); the attachment ends when the view changes. */
+function poseFromCamera(vp: VP, cam: X3DObject) {
+  const M = cam.globalMatrix(); const pos = new THREE.Vector3().setFromMatrixPosition(M);
+  const fwd = new THREE.Vector3(0, 0, -1).transformDirection(M); const up = new THREE.Vector3(0, 1, 0).transformDirection(M);
+  vp.camera.position.copy(pos); vp.camera.up.copy(up); vp.camera.lookAt(pos.clone().add(fwd)); vp.camera.updateMatrixWorld();
+}
+function attachCamera(vp: VP, cam: X3DObject) {
+  (vp.x ??= {}).viewCamera = cam; (vp as any).viewCamera = cam.name; setViewLabel(vp, cam.name); poseFromCamera(vp, cam);
+}
+function clipOf(app: App, x: any): Property | undefined {
+  if (isImageClip(x)) return x;
+  if (typeof x !== 'string' || !x) return undefined;
+  const n = x.replace(/^Clips\./, '').split('.').pop();
+  return imageClips(app.scene).find(c => c.name === x || c.name === n);
+}
+
 export function registerInferredB10Views(app: App) {
   const st = b10(app);
+  // views attached to a scene camera follow it (SetViewCamera)
+  const follow = () => {
+    for (const vp of viewports()) {
+      const cam: X3DObject | null | undefined = vp.x?.viewCamera; if (!cam) continue;
+      if (vp.name !== cam.name || ![...app.scene.allObjects()].includes(cam)) { vp.x.viewCamera = null; continue; }
+      poseFromCamera(vp, cam);
+    }
+  };
+  for (const e of ['params', 'frame', 'scene'] as const) app.events.on(e, follow);
 
   // ================================================================ navigation tools
   for (const [name, label] of Object.entries(NAV)) {
@@ -186,93 +241,136 @@ export function registerInferredB10Views(app: App) {
       execute(app) { const V = vm(); if (!V) { app.logMsg('info', `${name}: no 3D view is open`); return null; } V.view(view); return view; },
     });
   }
-  regB10(app, 'AlignViewCamera', { // inferred: Axis 0/1/2 = X/Y/Z; the view camera looks down that axis at its interest (or the selection)
+  // ---------------------------------------------------------------- B11h (vm.dll) view commands
+  const B11H = 'CMD-B11h';
+  /** STD direction codes of AlignViewCamera (B11h: +Y 0, -Y 1, +Z 2, -Z 3, +X 4, -X 5 = Top, Bottom, Front, Back, Right, Left):
+   *  direction from the interest to the camera, and the camera up vector. */
+  const STD_DIR: [number, number, number, number, number, number][] = [[0, 1, 0, 0, 0, -1], [0, -1, 0, 0, 0, 1], [0, 0, 1, 0, 1, 0], [0, 0, -1, 0, 1, 0], [1, 0, 0, 0, 1, 0], [-1, 0, 0, 0, 1, 0]];
+  const ALIGN_CODE: Record<number, number> = { 1: 4, [-1]: 5, 2: 0, [-2]: 1, 3: 2, [-3]: 3 };
+  regB10(app, 'AlignViewCamera', { // B11h §AlignViewCamera: Axis 1/2/3 = X/Y/Z (NegativeAxis negates), 0 = restore the pre-alignment camera
     undoable: false,
     execute(app, a) {
-      const all = viewports(); const i = viewIndex(a.View); const vp = all[i];
-      if (!vp) { app.logMsg('info', 'AlignViewCamera: no 3D view is open'); return null; }
-      const ax = Math.max(0, Math.min(2, Math.trunc(num(a.Axis)))); const sgn = boolA(a.NegativeAxis) ? -1 : 1;
-      let target = orbitTarget();
-      if (boolA(a.AlignSelected) && app.selectedObjects.length) { target = new THREE.Vector3(); for (const o of app.selectedObjects) target.add(new THREE.Vector3().setFromMatrixPosition(o.globalMatrix())); target.divideScalar(app.selectedObjects.length); }
-      const cam = vp.camera; const dist = Math.max(1, cam.position.distanceTo(target));
-      const dir = new THREE.Vector3(); dir.setComponent(ax, sgn);
-      cam.position.copy(target).addScaledVector(dir, dist);
-      cam.up.set(0, 1, 0); if (ax === 1) cam.up.set(0, 0, -sgn);
-      cam.lookAt(target); cam.updateMatrixWorld();
-      if (boolA(a.AlignSelected)) vm().orbitTarget?.()?.copy(target);
-      return ['X', 'Y', 'Z'][ax];
+      let axis = Math.trunc(num(a.Axis)); if (boolA(a.NegativeAxis)) axis = -axis;
+      if (axis !== 0 && !(axis in ALIGN_CODE)) throw fail('AlignViewCamera', E_FAIL, `Axis ${a.Axis} is not 0, 1, 2 or 3`);
+      const i = viewAt(a.View); const vp = viewports()[i];
+      if (!vp) return; // B11h §2: no view = success, nothing done
+      const x = vp.x ?? (vp.x = {});
+      if (axis === 0) { // restore the camera saved before the first alignment, clear it
+        if (x.alignSaved) { camChange(app, i, 'Reset XYZ'); camApply(vp, x.alignSaved); x.alignSaved = null; }
+        x.alignState = 0; return;
+      }
+      if (!x.alignSaved) x.alignSaved = camState(vp); // saved once, before the first alignment
+      const code = ALIGN_CODE[axis]; const [dx, dy, dz, ux, uy, uz] = STD_DIR[code];
+      // reference frame: identity, or the first selected object's axes with AlignSelected (B11h; not its centre)
+      const q = new THREE.Quaternion(); const first = boolA(a.AlignSelected) ? app.selectedObjects[0] : undefined;
+      if (first) first.globalMatrix().decompose(new THREE.Vector3(), q, new THREE.Vector3());
+      camChange(app, i, 'Align'); // inferred: label of the alignment camera change (not named in the note)
+      const cam = vp.camera; const target = orbitTarget(); const dist = Math.max(1e-6, cam.position.distanceTo(target));
+      cam.position.copy(target).addScaledVector(new THREE.Vector3(dx, dy, dz).applyQuaternion(q), dist);
+      cam.up.copy(new THREE.Vector3(ux, uy, uz).applyQuaternion(q)); cam.lookAt(target); cam.updateMatrixWorld();
+      x.alignState = { 1: 1, 2: 2, 3: 4 }[Math.abs(axis)]; x.alignDirection = code;
     },
   });
-  regB10(app, 'CameraUndo', { undoable: false, execute(app, a) { const i = viewIndex(a.View); if (i < 0) return null; withView(i, () => vm().undoCamera()); return i; } }); // inferred
-  regB10(app, 'CameraRedo', { undoable: false, execute(app, a) { const i = viewIndex(a.View); if (i < 0) return null; withView(i, () => vm().redoCamera()); return i; } }); // inferred
-  regB10(app, 'Frame Contextual', { // inferred: Frame Selection with a selection, Frame All without
+  regB10(app, 'CameraUndo', { undoable: false, execute(app, a) { const i = viewAt(a.View); if (i >= 0) withView(i, () => vm().undoCamera()); } }); // B11h §CameraUndo: steps the view camera history back
+  regB10(app, 'CameraRedo', { undoable: false, execute(app, a) { const i = viewAt(a.View); if (i >= 0) withView(i, () => vm().redoCamera()); } }); // B11h §CameraRedo
+  regB10(app, 'Frame Contextual', { // B11h §Frame Contextual: frame selection when something is selected, else frame all; one view unless AllViews
     undoable: false,
     execute(app, a) {
-      const sel = app.selectedObjects.length > 0;
-      if (!boolA(a.AllViews) && viewports().length > 1) logNyaB10(app, 'Frame Contextual', 'framing one view only; the view manager frames all 3D views');
-      ev(sel ? 'framesel' : 'frameall');
-      return sel ? 'selection' : 'all';
+      const all = viewports(); const sel = app.selectedObjects.length > 0 || !!app.compSel;
+      const objs = sel ? (app.selectedObjects.length ? app.selectedObjects : [app.compSel!.obj]) : [...app.scene.allObjects()].filter(o => o.visible);
+      const which = boolA(a.AllViews) ? all.map((_, k) => k) : [viewAt(a.View)].filter(k => k >= 0);
+      for (const k of which) { camChange(app, k, 'Frame'); frameView(all[k], objs); }
     },
   });
-  regB10(app, 'ResetAllViews', { // inferred: each view camera goes back to its view's default position
-    label: 'Reset (All 3D Views)', undoable: false,
+  regB10(app, 'ResetAllViews', { // B11h §ResetAllViews: every view (AllViews) or one goes to its home camera; undoable (saved cameras)
+    label: 'Reset (All 3D Views)',
     execute(app, a) {
-      const all = viewports(); if (!all.length) return 0;
-      const which = boolA(a.AllViews) ? all.map((_, i) => i) : [viewIndex(a.View)];
-      for (const i of which) if (all[i]) withView(i, () => vm().view(all[i].name));
-      return which.length;
+      const all = viewports(); const which = boolA(a.AllViews) ? all.map((_, k) => k) : [viewAt(a.View)].filter(k => k >= 0);
+      if (!which.length) return;
+      const saved = which.map(k => ({ cam: camState(all[k]), attached: all[k].x?.viewCamera ?? null, label: (all[k] as any).viewCamera }));
+      const home = which.map(k => all[k].x?.viewCamera ? 'Camera' : all[k].name); // inferred: a view looking through a scene camera goes back to the user camera
+      app.record('Reset', () => {
+        which.forEach((k, j) => { const vp = all[k]; if (vp.x) vp.x.viewCamera = null; delete (vp as any).viewCamera; camChange(app, k, 'Reset'); withView(k, () => vm().view(home[j])); });
+      }, () => {
+        which.forEach((k, j) => { const vp = all[k]; camApply(vp, saved[j].cam); if (saved[j].attached) { (vp.x ??= {}).viewCamera = saved[j].attached; (vp as any).viewCamera = saved[j].label; } });
+      });
     },
   });
-  regB10(app, 'GetViewIndex', { undoable: false, execute() { return viewIndex(-1); } }); // inferred: 0..3 = views A..D, -1 without a view manager
-  regB10(app, 'SetViewCamera', { // inferred: the view looks through the named camera (the view takes the camera's name)
+  regB10(app, 'GetViewIndex', { // B11h §GetViewIndex: 0-based index of the active 3D view; no active view = error
+    undoable: false,
+    execute() { const V = vm(); const i = V ? viewports().indexOf(V.active()) : -1; if (i < 0) throw fail('GetViewIndex', E_FAIL, 'no active 3D view'); return i; },
+  });
+  /** Render pass camera: the Camera parameter of the current pass (scene.currentPass, else the last pass). */
+  const passCamera = (): X3DObject | undefined => {
+    const s = app.scene as any; const pass = s.currentPass ?? app.scene.passes[app.scene.passes.length - 1];
+    const n = pass?.val?.('Camera'); const o = n ? findObj(app, String(n)) : undefined;
+    return o && isCam(o) ? o : undefined;
+  };
+  const KEYWORD_VIEW: Record<string, string> = { user: 'User', top: 'Top', front: 'Front', right: 'Right' };
+  regB10(app, 'SetViewCamera', { // B11h §SetViewCamera: the view looks through the camera (stays attached); keywords user/top/front/right/render [pass]
     undoable: false,
     execute(app, a) {
-      const all = viewports(); const i = viewIndex(a.View); const vp = all[i];
-      const name = String(a.CameraName ?? '');
-      const cam = findObj(app, name);
-      if (!cam || !(cam instanceof Camera || cam.type === 'camera')) throw new Error(`SetViewCamera: ${name || '(no name)'} is not a camera`);
-      if (!vp) { app.logMsg('info', 'SetViewCamera: no 3D view is open'); return null; }
-      const M = cam.globalMatrix(); const pos = new THREE.Vector3().setFromMatrixPosition(M);
-      const fwd = new THREE.Vector3(0, 0, -1).transformDirection(M);
-      vp.camera.position.copy(pos); vp.camera.lookAt(pos.clone().add(fwd)); vp.camera.updateMatrixWorld();
-      (vp as any).viewCamera = cam.name;
-      logNyaB10(app, 'SetViewCamera', 'keeping the view attached to the camera when it moves; the view takes its pose once');
-      return cam.name;
+      const all = viewports(); const i = viewAt(a.View); const vp = all[i];
+      if (!vp) return; // no view: success, nothing done
+      const name = String(a.CameraName ?? ''); const obj = name ? findObj(app, name) : undefined;
+      const kw = name.trim().toLowerCase();
+      let cam: X3DObject | undefined = obj && isCam(obj) && (obj.fullName === name || obj.name === name) ? obj : undefined;
+      if (!cam && (kw === 'render' || kw === 'render pass')) {
+        cam = passCamera();
+        if (!cam) { logNyaB10(app, 'SetViewCamera', 'the render pass camera when the current pass names no camera object of the scene', B11H); return; }
+      }
+      if (cam) { camChange(app, i, 'Set Camera'); attachCamera(vp, cam); return; }
+      const view = KEYWORD_VIEW[kw];
+      if (!view) throw fail('SetViewCamera', E_FAIL, `${name || '(no name)'} is not a camera of the view or a view camera keyword`);
+      camChange(app, i, 'Set Camera'); if (vp.x) vp.x.viewCamera = null; delete (vp as any).viewCamera;
+      withView(i, () => vm().view(view));
     },
   });
-  regB10(app, 'Hide Back Facing Polygons', { // inferred: per-view toggle
+  regB10(app, 'Hide Back Facing Polygons', { // B11h §Hide Back Facing Polygons: toggles display flag 5 of the active view
     undoable: false,
     execute(app) {
-      const vp = viewports()[viewIndex(-1)]; if (!vp) return null;
+      const vp = viewports()[viewAt(-1)]; if (!vp) return;
       const k = 'Hide Back Facing Polygons'; vp.flags[k] = !vp.flags[k];
-      logNyaB10(app, k, 'drawing with back faces culled (the view manager draws double-sided); the view flag is toggled');
-      return vp.flags[k];
+      logNyaB10(app, k, 'drawing with back faces culled (meaning of display flag 5 assumed from the name; the view manager draws double-sided); the view flag is toggled', B11H);
     },
   });
-  regB10(app, 'ToggleMuteSolo', { // inferred: Target 0..3 = view A..D, other = active view; Mode 0 = mute, 1 = solo
+  regB10(app, 'ToggleMuteSolo', { // B11h §ToggleMuteSolo: Target 0..3 = view A..D, 4 = active view, > 4 nothing; Mode 0 mute, 1 solo
     undoable: false,
     execute(app, a) {
-      const all = viewports(); const t = num(a.Target, 4); const i = t >= 0 && t < all.length ? t : viewIndex(-1); const vp = all[i];
-      if (!vp) return null;
-      const x = vp.x ?? (vp.x = { muted: false, solo: false });
-      if (num(a.Mode) === 1) { x.solo = !x.solo; for (const v of all) if (v !== vp && v.x) v.x.solo = false; } else x.muted = !x.muted;
-      return num(a.Mode) === 1 ? !!x.solo : !!x.muted;
+      const all = viewports(); const t = Math.trunc(num(a.Target, 4)); const idx = t === 4 ? viewAt(-1) : t;
+      if (!(idx >= 0 && idx < 4)) return;
+      const vp = all[idx]; if (!vp) return;
+      const x = vp.x ?? (vp.x = {}); x.muted = !!x.muted; x.solo = !!x.solo;
+      if (num(a.Mode) === 1) { x.solo = !x.solo; for (const v of all) if (v !== vp && v.x) v.x.solo = false; } // inferred: solo is exclusive (view-manager internal, unread)
+      else x.muted = !x.muted;
     },
   });
-  const nudge = (name: string) => regB10(app, name, { // inferred: X / Y in half pixels of the view; selected objects move in view space
+  /** World-space bounding box of the selection: selected objects' geometry, or the selected components' points. */
+  const selectionBox = (): THREE.Box3 => {
+    const box = new THREE.Box3(); const cs = app.compSel as any;
+    if (cs && cs.obj?.primitive?.mesh?.()) {
+      const m = cs.obj.primitive.mesh(); const M = cs.obj.globalMatrix(); const pts = new Set<number>();
+      if (cs.kind === 'point') for (const p of cs.points) pts.add(p);
+      else if (cs.kind === 'polygon') for (const f of cs.polygons) for (const v of m.polygons[f] ?? []) pts.add(v);
+      else for (const e of cs.edges ?? []) for (const v of String(e).split('-')) pts.add(Number(v));
+      for (const p of pts) box.expandByPoint(new THREE.Vector3(m.positions[p * 3], m.positions[p * 3 + 1], m.positions[p * 3 + 2]).applyMatrix4(M));
+      return box;
+    }
+    for (const o of app.selectedObjects) expandByObject(box, o);
+    return box;
+  };
+  const nudge = (name: string) => regB10(app, name, { // B11h §ViewTranslate: X / Y in window pixels on the projected selection box centre, applied through Translate
     execute(app, a) {
-      const all = viewports(); const vp = all[viewIndex(a.View)];
-      const objs = app.selectedObjects; if (!objs.length) return 0;
-      if (!vp) { app.logMsg('info', `${name}: no 3D view is open`); return 0; }
-      const cam = vp.camera as any; const h = Math.max(1, (vp as any).el?.clientHeight || 400);
-      const target = orbitTarget();
-      const unit = vp.kind === 'ortho' ? ((cam._zoom ?? 20) * 2) / h : (2 * Math.tan(THREE.MathUtils.degToRad((cam.fov ?? 45) / 2)) * cam.position.distanceTo(target)) / h;
-      const half = name === 'ViewTranslate' ? 1 : 0.5;
-      const right = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 0), up = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 1);
-      const d = right.multiplyScalar(num(a.X) * unit * half).add(up.multiplyScalar(num(a.Y) * unit * half));
-      translateGlobal(app, objs, d, name);
-      if (name === 'ViewTranslate') logNyaB10(app, name, 'the unit of X / Y (pixels of the view are used)');
-      return objs.length;
+      const all = viewports(); const i = viewAt(a.View); const vp = all[i];
+      if (!vp) throw fail(name, E_INVALIDARG, 'no 3D view');
+      const box = selectionBox(); if (box.isEmpty()) return; // empty selection: nothing
+      const c = box.getCenter(new THREE.Vector3()); const cam = vp.camera as any; cam.updateMatrixWorld();
+      const el = (vp as any).el as HTMLElement | undefined; const w = Math.max(2, el?.clientWidth || 2), h = Math.max(2, el?.clientHeight || 2);
+      const ndc = c.clone().project(cam); const hw = (w - 1) / 2, hh = (h - 1) / 2;
+      const moved = new THREE.Vector3((ndc.x * hw + num(a.X)) / hw, (ndc.y * hh + num(a.Y)) / hh, ndc.z).unproject(cam);
+      const d = moved.sub(c);
+      // inferred: RefMode bit 0x800 from the private preference 3D_TRANSFO_REFERENTIAL_CHANGED is not modelled (siGlobal only)
+      app.run('Translate', { X: d.x, Y: d.y, Z: d.z, Delta: 'siRelative', RefMode: 'siGlobal', AxesFilter: 7, Mode: 'siRelative' });
     },
   });
   for (const n of ['ViewNudgeDown', 'ViewNudgeLeft', 'ViewNudgeRight', 'ViewNudgeUp', 'ViewTranslate']) nudge(n);
@@ -293,28 +391,6 @@ export function registerInferredB10Views(app: App) {
     undoable: false,
     execute(app, a) { st.dropMessage = String(a.Message ?? ''); logNyaB10(app, 'SetDropMessage', 'where the message is shown while dragging onto a 3D view'); return st.dropMessage; },
   });
-  regB10(app, 'Show3DContextMenu', { // inferred: opens the 3D view context menu at the active view
-    undoable: false,
-    execute(app) {
-      const vp = viewports()[viewIndex(-1)] as any; const el: HTMLElement | undefined = vp?.el;
-      if (!el) { app.logMsg('info', 'Show3DContextMenu: no 3D view is open'); return false; }
-      const r = el.getBoundingClientRect();
-      el.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, button: 2 }));
-      return true;
-    },
-  });
-  regB10(app, 'StartTimedPlayback', { // inferred: plays the scene range once in the target view and reports the frame rate
-    undoable: false,
-    execute(app, a) {
-      const A = app.anim; const t0 = performance.now(); const saved = A.frame; let n = 0;
-      for (let f = A.startFrame; f <= A.endFrame; f++) { A.frame = f; n++; }
-      A.frame = saved;
-      const s = (performance.now() - t0) / 1000; const fps = s > 0 ? n / s : n;
-      if (num(a.Target, -1) >= 0) logNyaB10(app, 'StartTimedPlayback', 'restricting the playback to one view');
-      app.logMsg('info', `StartTimedPlayback: ${n} frames in ${s.toFixed(3)} s (${fps.toFixed(1)} fps)`);
-      return fps;
-    },
-  });
   regB10(app, 'RunPerformanceTest', { // inferred: Type 0 evaluates the frame range for Duration seconds and reports the rate
     undoable: false,
     execute(app, a) {
@@ -330,26 +406,81 @@ export function registerInferredB10Views(app: App) {
       return st.perf.fps;
     },
   });
+  regB10(app, 'Show3DContextMenu', { // B11h §Show3DContextMenu: the viewer controller shows the 3D view context menu
+    undoable: false,
+    execute(app) {
+      const vp = viewports()[viewAt(-1)] as any; const el: HTMLElement | undefined = vp?.el;
+      if (!el) { app.logMsg('info', 'Show3DContextMenu: no 3D view is open'); return; }
+      const r = el.getBoundingClientRect(); // inferred: shown at the view centre (the controller's position is not in the note)
+      el.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, button: 2 }));
+    },
+  });
+  regB10(app, 'StartTimedPlayback', { // B11h §StartTimedPlayback: Target is 1-based (<= 0 = active view); plays the range once, logs the elapsed ms
+    undoable: false,
+    execute(app, a) {
+      const t = Math.trunc(num(a.Target, -1)); const i = t <= 0 ? viewAt(-1) : t - 1;
+      const A = app.anim; const saved = { frame: A.frame, start: A.startFrame, end: A.endFrame }; const t0 = performance.now();
+      try { for (let f = A.startFrame; f <= A.endFrame; f++) { A.frame = f; for (const o of app.scene.allObjects()) o.primitive?.geom(); } }
+      finally { A.startFrame = saved.start; A.endFrame = saved.end; A.frame = saved.frame; }
+      const ms = performance.now() - t0;
+      app.logMsg('info', `StartTimedPlayback: ${Math.round(ms)} ms`);
+      logNyaB10(app, 'StartTimedPlayback', `the text of message XSIVM 0x13e (the elapsed time is logged as is)${t > 0 ? `; playing in view ${i} only (this build evaluates the scene, not one view)` : ''}`, B11H);
+    },
+  });
   for (const name of ['SaveFastPlaybackCache', 'LoadFastPlaybackCache'] as const) {
-    regB10(app, name, { // inferred: the cache holds the frames last played in the view; stored in the session file system
+    regB10(app, name, { // B11h §Save / LoadFastPlaybackCache (SPEC-PARTIAL): the display driver's image cache, saved to / loaded from FileName
       undoable: false,
       execute(app, a) {
-        const i = viewIndex(a.View); const file = String(a.FileName ?? '');
-        if (!file) throw new Error(`${name}: FileName is required`);
-        if (name === 'SaveFastPlaybackCache') {
-          const frames: number[] = []; for (let f = app.anim.startFrame; f <= app.anim.endFrame; f++) frames.push(f);
-          st.playbackCaches.set(i, { frames, file });
-          hostFs.writeFile(file, JSON.stringify({ view: i, frames }));
-          logNyaB10(app, name, 'the cached images (the frame list is saved)');
-          return frames.length;
+        const save = name === 'SaveFastPlaybackCache'; let file = String(a.FileName ?? '');
+        if (!file) { // empty FileName: modal file browser (*.cache, <install>\Render_Pictures); cancel ends the command
+          const title = save ? 'Save Fast Playback Cache' : 'Load Fast Playback Cache';
+          const got = iemsState.fileBrowser?.(title, 'Fast Playback Cache (*.cache)|*.cache|All Files (*.*)|*.*', save ? 'save' : 'open');
+          if (typeof got !== 'string') { logNyaB10(app, name, `the modal file browser "${title}" (no file browser in this build; treated as cancelled)`, B11H); return; }
+          if (!got) return; file = got;
         }
-        const d = JSON.parse(hostFs.readFile(file));
-        st.playbackCaches.set(i, { frames: d.frames ?? [], file });
-        logNyaB10(app, name, 'playing back cached images (the frame list is loaded)');
-        return (d.frames ?? []).length;
+        const i = viewAt(a.View); if (i < 0) { setStatus(app, name, S_FALSE); return; } // no view: S_FALSE
+        if (save) {
+          const frames: number[] = []; for (let f = app.anim.startFrame; f <= app.anim.endFrame; f++) frames.push(f);
+          try { hostFs.writeFile(file, JSON.stringify({ view: i, frames })); } catch (e: any) { throw fail(name, E_FAIL, String(e?.message ?? e)); }
+          st.playbackCaches.set(i, { frames, file });
+          logNyaB10(app, name, 'the cache file layout (display driver); a frame-list stand-in is written', B11H);
+        } else {
+          let d: any; try { d = JSON.parse(hostFs.readFile(file)); } catch (e: any) { throw fail(name, E_FAIL, `cannot load ${file}`); }
+          st.playbackCaches.set(i, { frames: Array.isArray(d?.frames) ? d.frames : [], file });
+          logNyaB10(app, name, 'playing back the cached images (display driver); the frame-list stand-in is loaded', B11H);
+        }
+        setStatus(app, name, S_FALSE); // success returns S_FALSE
       },
     });
   }
+  // ---------------------------------------------------------------- ExportImageClip (B11h, new)
+  const MOVIE = /\.(avi|mov|qt|mpe?g|mp4)$/i; // inferred: the movie formats of the image writers
+  B10_ARGS.ExportImageClip ??= [{ name: 'Clip', default: null }, { name: 'FileName', default: '' }, { name: 'StartFrame', default: 1 }, { name: 'EndFrame', default: 1 }, { name: 'StepFrame', default: 1 }];
+  regB10(app, 'ExportImageClip', { // B11h §ExportImageClip: writes the clip's images for Start..End by Step to FileName
+    label: 'Export Image Clip', category: 'Rendering', undoable: false,
+    execute(app, a) {
+      const C = 'ExportImageClip';
+      const clip = clipOf(app, a.Clip); if (!clip) throw fail(C, E_INVALIDARG, 'Argument 1 must be an image clip');
+      const file = String(a.FileName ?? '');
+      if (!file || !(looksLikeImageFile(file) || MOVIE.test(file))) throw fail(C, E_INVALIDARG, 'Argument 2 must specify a image file name');
+      let s = Math.trunc(num(a.StartFrame, 1)), e = Math.trunc(num(a.EndFrame, 1)), step = Math.trunc(num(a.StepFrame, 1)) || 1;
+      if ((step < 0 && s < e) || (step > 0 && e < s)) [s, e] = [e, s];
+      const count = Math.abs(Math.trunc((e - s + 1) / step));
+      let out = file;
+      if (count > 1 && !MOVIE.test(file) && !file.includes('[')) { // sequence token before the first '.' of the file name
+        const cut = Math.max(file.lastIndexOf('\\'), file.lastIndexOf('/')) + 1; const dot = file.indexOf('.', cut);
+        out = dot < 0 ? `${file}.[${s}..${e}]` : `${file.slice(0, dot)}.[${s}..${e}]${file.slice(dot)}`;
+      }
+      app.logMsg('info', `Writting ${out}`);
+      const images: number[] = [];
+      for (let f = s; f <= e; f += step) { if (count > 1) app.logMsg('info', ` Frame ${f}`); images.push(f); }
+      if (!images.length) return; // a negative step leaves Start > End: nothing written
+      const size = { width: Number(clip.val('XRes') ?? clip.val('ResX') ?? 0) || null, height: Number(clip.val('YRes') ?? clip.val('ResY') ?? 0) || null };
+      try { hostFs.writeFile(out, JSON.stringify({ clip: clip.name, source: clip.val('filename') ?? '', frames: images, ...size })); }
+      catch { throw fail(C, E_FAIL, "Couldn't open file for writting"); }
+      logNyaB10(app, C, 'the image pixels of the clip (image data is not modelled; a stand-in listing the written frames is saved)', B11H);
+    },
+  });
 
   // ================================================================ manipulation toggles
   regB10(app, 'Toggle Snapping', { // inferred: the MCP snap "ON" button

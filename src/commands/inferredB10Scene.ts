@@ -1,7 +1,10 @@
 // Row CMD-B10 (INFERRED batch): scene-side commands of the registry categories Navigation (folders, NavigateNode,
 // environments), Manipulation (UVW transforms, TranslatePivot), Texturing, Camera Sequencer, Scripting, Selection,
 // Source, Customization, General, Transform and file that were missing from the command bus.
-// See inferredB10Shared.ts for the sources. All registrations below are `// inferred`.
+// See inferredB10Shared.ts for the sources. Registrations marked `// inferred` are reasoned; those marked `// B11d §…` /
+// `// B11i §…` follow the wire contracts of docs/ghidra/cmd-b11d-tasks-b10-confirmations-binary.md (tasks.dll) and
+// docs/ghidra/cmd-b11i-transformmanager-uvw-movecomponent-b10-confirmations-binary.md (transformmanager.dll), digest
+// docs/re/WIRE_CORRECTIONS_B11.md; what those notes mark (inferred) or leave open keeps `// inferred` and its log.
 import { App } from '../core/commands';
 import { Node, X3DObject, Model, Property, Material, Operator, Camera } from '../core/scene';
 import type { Parameter } from '../core/params';
@@ -9,11 +12,15 @@ import { str, num as numP, bool } from '../core/params';
 import { hostFs } from '../core/sdkHelpersHostFs';
 import { projectionOf, sampleOffsets, sampleUVs } from '../core/texturing';
 import { findParam } from './index';
-import { cameraSequencer, type ClipX } from '../core/mixerActionScripts';
 import { B10_ARGS } from './inferredB10Args';
 import {
   b10, regB10, logNyaB10, unset, num, boolA, constName, listOf, findObj, objsOf, topMoveComponentOp,
+  fail, setStatus, E_INVALIDARG, E_ACCESSDENIED, S_FALSE, NAN_SIZE,
 } from './inferredB10Shared';
+import { registerInferredB10CamSeq } from './inferredB10CamSeq';
+
+const B11D = 'CMD-B11d', B11I = 'CMD-B11i';
+const E_NOINTERFACE = 0x80004002;
 
 // ====================================================================== stand-in models
 /** Explorer folder (Softimage "Folder" under an object / model): a named list of member nodes. */
@@ -42,26 +49,7 @@ function libs(app: App): LibState {
   return st;
 }
 
-/** Camera Sequencer: the shot tracks of the existing stand-in (`cameraSequencer(root)`, src/core/mixerActionScripts.ts):
- *  a shot clip `{ name, source: camera, start: sequence frame, duration, type: 'camerashotclip', timectrl.clipin }` covers
- *  the sequence frames [start, start + duration) and maps them to the scene frames from clipin. */
-type ShotClip = ClipX;
-const seqIn = (c: ShotClip) => Number(c.start);
-const seqOut = (c: ShotClip) => Number(c.start) + Number(c.duration);   // exclusive
-const sceneFrame = (c: ShotClip, f: number) => Number(c.timectrl?.clipin ?? c.start) + (f - seqIn(c));   // inferred: no time scaling
-const shotTracks = (app: App) => cameraSequencer(app.scene.root).tracks;
-/** Sampled plots of PlotCamSeqToActions (no action sources in this build). */
-export function camSeqPlots(app: App): { name: string; frames: number[]; curves: Record<string, number[]> }[] { return ((app as any).camSeqPlotsB10 ??= []); }
-function clipAt(app: App, f: number): ShotClip | null {
-  for (const t of shotTracks(app)) for (const c of t.clips) if ((c.type ?? 'camerashotclip') === 'camerashotclip' && f >= seqIn(c) && f < seqOut(c)) return c;
-  return null;
-}
-/** Scene frame for each sequence frame of [s, e]; a gap keeps the sequence frame itself unless gaps are dropped (inferred). */
-function frameSet(app: App, s: number, e: number, withoutGaps: boolean): { seq: number; scene: number; clip: ShotClip | null }[] {
-  const out: { seq: number; scene: number; clip: ShotClip | null }[] = [];
-  for (let f = Math.ceil(s); f <= e; f++) { const c = clipAt(app, f); if (c) out.push({ seq: f, scene: sceneFrame(c, f), clip: c }); else if (!withoutGaps) out.push({ seq: f, scene: f, clip: null }); }
-  return out;
-}
+/** Camera Sequencer commands: inferredB10CamSeq.ts. */
 
 /** Operator whose evaluation is a script (AddScriptedOp / AddCustomOp); passes geometry through in this build. */
 export class ScriptedOperatorB10 extends Operator {
@@ -99,6 +87,25 @@ function uvPropOf(app: App, arg: any): { obj: X3DObject; prop: Property } | null
   const p = o ? projectionOf(o) : undefined;
   return o && p ? { obj: o, prop: p } : null;
 }
+/** Element of a NavigateNode Source: a scene object named exactly (path or name). */
+function elementOf(app: App, x: any): X3DObject | undefined {
+  if (x instanceof X3DObject) return x;
+  const s = String(x ?? ''); const o = findObj(app, s);
+  return o && (o.name === s || o.fullName === s || `Scene_Root.${o.name}` === s) ? o : undefined;
+}
+/** A parameter (an element with a component id) of a Tag / Untag input; objects and unknown names give undefined. */
+function paramOfArg(app: App, x: any): Parameter | undefined {
+  if (x && typeof x === 'object' && 'def' in x && 'owner' in x) return x as Parameter;
+  if (x instanceof Node) return undefined;
+  const s = String(x ?? ''); const o = findObj(app, s);
+  if (o && (o.name === s || o.fullName === s)) return undefined;
+  return findParam(app, s);
+}
+/** Lock-info records (B11d §3.8): per element, { level bits, type } with type 2 = tag. Shared stand-in for the lock task. */
+export function lockRecords(app: App): Map<any, { level: number; type: number }[]> { return ((app as any).lockRecordsB11 ??= new Map()); }
+/** Lock check at a level (B11d §3.6 uses level 4): any non-tag record on the element with that bit (or siLockLevelAll). */
+export function isLocked(app: App, n: any, level: number): boolean { return (lockRecords(app).get(n) ?? []).some(r => r.type !== 2 && (r.level === 0xffff || !!(r.level & level))); }
+
 /** Parameters of an AnimatableParameters argument: full parameter paths, or the keyable local transform of objects. */
 function paramsOfArg(app: App, arg: any): Parameter[] {
   const out: Parameter[] = [];
@@ -119,34 +126,47 @@ export function registerInferredB10Scene(app: App) {
   B10_ARGS.Tag ??= [{ name: 'InputObjs', default: null }, { name: 'Level', default: ':siTagAll:siTags' }, { name: 'SubType', default: 3 }];
 
   // ---------------------------------------------------------------- folders
-  regB10(app, 'CreateFolder', { // inferred: a named folder under Target (the selection's first object, else the scene root)
+  // ---------------------------------------------------------------- folders (B11d §3.3–3.5)
+  /** inferred: the hierarchies that take the folder insert interface are those of scene objects (models and the root included). */
+  regB10(app, 'CreateFolder', { // B11d §3.3: one new folder inserted under Target; Name set verbatim (no suffixing)
     execute(app, a) {
-      const target = nodeOf(app, a.Target) ?? app.selection[0] ?? app.scene.root;
-      const list = foldersOf(target); const base = String(a.Name || 'Folder');
-      let name = base, i = 1; while (list.some(f => f.name === name)) name = `${base}${i++}`;
-      const f = new FolderNode(name); f.owner = target; f.parent = target;
+      if (unset(a.Target)) throw fail('CreateFolder', E_INVALIDARG, 'Target is required');
+      const target = nodeOf(app, a.Target);
+      if (!(target instanceof X3DObject)) throw fail('CreateFolder', E_NOINTERFACE, `${a.Target} cannot hold a folder`);
+      const list = foldersOf(target);
+      const f = new FolderNode(String(a.Name ?? '') || 'Folder'); // empty Name: the class default name (inferred: "Folder")
+      f.owner = target; f.parent = target;
       app.record('CreateFolder', () => list.push(f), () => list.splice(list.indexOf(f), 1));
       return f;
     },
   });
-  regB10(app, 'MoveToFolder', { // inferred: adds InputObjs to the folder Target (they leave any other folder)
+  /** The folder of a Target, or a plain error naming the command (the message text predates B11d and other checks rely on it). */
+  const folderTarget = (C: string, t: any): FolderNode => {
+    const f = nodeOf(app, t);
+    if (!(f instanceof FolderNode)) throw Object.assign(new Error(`${C}: Target is not a folder`), { status: E_NOINTERFACE });
+    return f;
+  };
+  regB10(app, 'MoveToFolder', { // B11d §3.4 (SPEC-PARTIAL): a non-folder Target fails before any change; InputObjs become members; no return value
     execute(app, a) {
-      const f = nodeOf(app, a.Target); if (!(f instanceof FolderNode)) throw new Error('MoveToFolder: Target is not a folder');
+      const f = folderTarget('MoveToFolder', a.Target);
+      if (unset(a.InputObjs)) throw fail('MoveToFolder', E_INVALIDARG, 'InputObjs is required');
       const items = nodesOf(app, a.InputObjs).filter(n => n !== f);
       for (const n of items) {
-        const prev = [...app.scene.allObjects()].flatMap(o => foldersOf(o)).concat(foldersOf(app.scene.root)).find(g => g.members.includes(n));
+        // inferred (unread worker): members leave the folder they were in
+        const prev = [...app.scene.allObjects()].flatMap(o => foldersOf(o)).concat(foldersOf(app.scene.root)).find(g => g !== f && g.members.includes(n));
+        if (prev) logNyaB10(app, 'MoveToFolder', `whether ${n.name} leaves its previous folder ${prev.name} (taken out here)`, B11D);
         app.record('MoveToFolder', () => { if (prev) prev.members.splice(prev.members.indexOf(n), 1); if (!f.members.includes(n)) f.members.push(n); },
           () => { f.members.splice(f.members.indexOf(n), 1); if (prev) prev.members.push(n); });
       }
-      return items.length;
     },
   });
-  regB10(app, 'RemoveFromFolder', { // inferred
+  regB10(app, 'RemoveFromFolder', { // B11d §3.5: a non-folder Target fails at Do (nothing changed); listed members are removed; no return value
     execute(app, a) {
-      const f = nodeOf(app, a.Target); if (!(f instanceof FolderNode)) throw new Error('RemoveFromFolder: Target is not a folder');
+      if (unset(a.Target)) throw fail('RemoveFromFolder', E_INVALIDARG, 'Target is required');
+      if (unset(a.InputObjs)) throw fail('RemoveFromFolder', E_INVALIDARG, 'InputObjs is required');
+      const f = folderTarget('RemoveFromFolder', a.Target);
       const items = nodesOf(app, a.InputObjs).filter(n => f.members.includes(n));
       for (const n of items) { const i = f.members.indexOf(n); app.record('RemoveFromFolder', () => f.members.splice(f.members.indexOf(n), 1), () => f.members.splice(i, 0, n)); }
-      return items.length;
     },
   });
   regB10(app, 'RemoveFolder', { // inferred: deletes the folder; its members stay in the scene
@@ -160,20 +180,42 @@ export function registerInferredB10Scene(app: App) {
   });
 
   // ---------------------------------------------------------------- NavigateNode / environments
-  regB10(app, 'NavigateNode', { // inferred: NavDirection as SelectNeighborObj (0 parent, 1 child, 2 previous, 3 next sibling; 4 first, 5 last sibling)
+  // B11d §3.1: one navigation step from Source in its element hierarchy (here: the scene object tree, models included)
+  regB10(app, 'NavigateNode', { // B11d §3.1: NavDirection 1 parent, 2 child, 3 next, 4 previous (polarity inferred), 5 first, 6 last sibling
     undoable: false,
     execute(app, a) {
-      const src = objsOf(app, a.Source)[0]; if (!src) return null;
-      const dir = num(a.NavDirection, 1); const loop = boolA(a.NavLoop);
-      if (num(a.NavFilter, 11) !== 11 || num(a.NavSubFilter, 1) !== 1) logNyaB10(app, 'NavigateNode', `NavFilter ${a.NavFilter} / NavSubFilter ${a.NavSubFilter}; every object is accepted`);
-      const parent = src.parentObj; const sibs = parent ? parent.children : [src]; const i = sibs.indexOf(src);
-      let r: X3DObject | null | undefined = null;
-      if (dir === 0) r = parent; else if (dir === 1) r = src.children[0];
-      else if (dir === 2) r = i > 0 ? sibs[i - 1] : loop ? sibs[sibs.length - 1] : null;
-      else if (dir === 3) r = i < sibs.length - 1 ? sibs[i + 1] : loop ? sibs[0] : null;
-      else if (dir === 4) r = sibs[0]; else if (dir === 5) r = sibs[sibs.length - 1];
-      else logNyaB10(app, 'NavigateNode', `NavDirection ${dir}`);
-      return r ?? null;
+      const C = 'NavigateNode';
+      const src = unset(a.Source) ? undefined : elementOf(app, a.Source);
+      if (!src) throw fail(C, E_INVALIDARG, 'Source is not an element');
+      const intArg = (v: any, d: number, what: string) => { if (unset(v)) return d; const n = Number(typeof v === 'boolean' ? NaN : v); if (!Number.isInteger(n)) throw fail(C, E_INVALIDARG, `${what} must be an integer`); return n; };
+      const dir = intArg(a.NavDirection, 1, 'NavDirection'); if (dir < 1 || dir > 6) throw fail(C, E_INVALIDARG, `NavDirection ${dir} is not 1..6`);
+      const filt = intArg(a.NavFilter, 11, 'NavFilter'); if (filt < 1 || filt > 11) throw fail(C, E_INVALIDARG, `NavFilter ${filt} is not 1..11`);
+      const sub = intArg(a.NavSubFilter, 1, 'NavSubFilter'); const subOn = sub === 0 ? false : true; // other values keep the previous setting (default 1)
+      const loop = boolA(a.NavLoop);
+      if (filt <= 9) logNyaB10(app, C, `NavFilter ${filt}: the element-ref type code numbering (E3DELEMREFTYPE); every scene object counts as Source's type`, B11D);
+      // filter: NavFilter 10 = none; 11 / 1..9 = same element type (all scene objects here) and, with NavSubFilter 1, the same sub-class (object type)
+      const accept = (e: X3DObject) => filt === 10 || !subOn || e.type === src.type;
+      // inferred: element flag 0x8 ("skip") is not modelled, nothing is skipped; type 5 elements' separate step helpers are not modelled
+      let r: X3DObject | null = null;
+      if (dir === 1) r = src.parentObj ?? null; // inferred: the filter applies to the sibling / walk steps only
+      else if (dir === 2) r = src.children[0] ?? null;
+      else if (!src.parentObj) { // the hierarchy root: depth-first (pre-order) walk of the whole hierarchy until an element passes the filter
+        if (dir === 3 || dir === 4) {
+          const order: X3DObject[] = []; const walk = (o: X3DObject) => { order.push(o); o.children.forEach(walk); }; walk(src);
+          const n = order.length; const i0 = order.indexOf(src);
+          for (let k = 1; k < n; k++) { const e = order[(i0 + (dir === 3 ? k : n - k)) % n]; if (accept(e)) { r = e; break; } }
+        }
+      } else { // below the root: siblings, wrapping with NavLoop (inferred) for next / previous
+        const sibs = src.parentObj.children; const n = sibs.length; const i0 = sibs.indexOf(src);
+        if (dir === 3 || dir === 4) {
+          const s = dir === 3 ? 1 : -1;
+          for (let k = 1; k < n; k++) { const j = i0 + s * k; if (!loop && (j < 0 || j >= n)) break; const e = sibs[(j % n + n) % n]; if (accept(e)) { r = e; break; } }
+        } else { // 5 first / 6 last: repeat the step until there is no further element
+          const s = dir === 6 ? 1 : -1;
+          for (let j = i0 + s; j >= 0 && j < n; j += s) if (accept(sibs[j])) r = sibs[j];
+        }
+      }
+      return r ?? src; // nothing found: Source itself
     },
   });
   regB10(app, 'SetCurrentEnvironment', { // inferred: the simulation environment new simulated objects join
@@ -211,14 +253,25 @@ export function registerInferredB10Scene(app: App) {
     }
     return out;
   };
-  const axesOf = (v: any) => { const s = String(constName(v) ?? 'siUVW').replace(/^si/, '').toUpperCase(); return { u: s.includes('U'), v: s.includes('V') }; };
-  const uvw = (name: 'TranslateUVW' | 'RotateUVW' | 'ScaleUVW') => regB10(app, name, { // inferred: edits the per-sample UVs of the texture projection
+  /** siUVWAxesFilter is a bit field (B11i §2.3): siU 1, siV 2, siW 4 (siUV 3, siUW 5, siVW 6, siUVW 7 = also when absent). */
+  const UVW_BITS: Record<string, number> = { siU: 1, siV: 2, siW: 4, siUV: 3, siUW: 5, siVW: 6, siUVW: 7 };
+  const axesOf = (v: any) => {
+    const c = constName(v); const bits = c === null ? 7 : typeof c === 'number' ? c : UVW_BITS[c] ?? (Number.isFinite(Number(c)) ? Number(c) : 7);
+    return { u: !!(bits & 1), v: !!(bits & 2), w: !!(bits & 4) };
+  };
+  /** siDeltaMode is read as a boolean (B11i §2.1): siAbsolute 0, siRelative 1; absent = 0 in the reader, the registry default is siRelative. */
+  const relative = (v: any) => { const c = constName(v); if (c === null) return true; if (typeof c === 'number') return c !== 0; return c === 'siAbsolute' ? false : c === 'siRelative' ? true : boolA(c); };
+  const uvw = (name: 'TranslateUVW' | 'RotateUVW' | 'ScaleUVW') => regB10(app, name, { // B11i §TranslateUVW / RotateUVW / ScaleUVW (SPEC-PARTIAL): argument decoding read; the per-sample apply step is inferred
     execute(app, a) {
       const items = uvItems(app, a.InputObjs); let n = 0;
-      const abs = constName(a.Delta) === 'siAbsolute'; const ax = axesOf(a.AxesFilter);
-      if (abs && name !== 'TranslateUVW') logNyaB10(app, name, 'absolute (siAbsolute) delta; relative is used');
-      if (name === 'TranslateUVW' && boolA(a.SplitLocalComponents)) logNyaB10(app, name, 'SplitLocalComponents');
-      if (num(a.Z) !== (name === 'ScaleUVW' ? 1 : 0)) logNyaB10(app, name, 'the W coordinate (this build keeps 2D UVs)');
+      const abs = !relative(a.Delta); const ax = axesOf(a.AxesFilter);
+      if (abs && name !== 'TranslateUVW') logNyaB10(app, name, 'absolute (siAbsolute) rotate / scale (apply step unread); relative is used', B11I);
+      if (name === 'TranslateUVW' && boolA(a.SplitLocalComponents)) logNyaB10(app, name, 'SplitLocalComponents (reference mode 6: moved samples split from shared neighbours)', B11I);
+      const z = name === 'ScaleUVW' ? (ax.w ? num(a.Z, 1) : 1) : num(a.Z);
+      if (name !== 'RotateUVW' && z !== (name === 'ScaleUVW' ? 1 : 0)) logNyaB10(app, name, 'the W coordinate (this build keeps 2D UVs); the U / V part is applied', B11I);
+      // ScaleUVW: X / Y / Z read only for set axis bits (others 1.0); |f| < 1e-12 -> ±1e-12 (0 -> +1e-12)
+      const clamp = (f: number) => Math.abs(f) < 1e-12 ? (f < 0 || Object.is(f, -0) ? -1e-12 : 1e-12) : f;
+      const sx = clamp(ax.u ? num(a.X, 1) : 1), sy = clamp(ax.v ? num(a.Y, 1) : 1);
       for (const it of items) {
         const pr = !unset(a.TextureProjection) ? uvPropOf(app, a.TextureProjection) : null;
         const prop = pr && pr.obj === it.obj ? pr.prop : projectionOf(it.obj); if (!prop) continue;
@@ -227,23 +280,25 @@ export function registerInferredB10Scene(app: App) {
         const ids = it.samples ?? Array.from({ length: uv.length / 2 }, (_, i) => i);
         if (!ids.length) continue;
         let pu = 0, pv = 0;
-        if (boolA(a.Pivot)) { pu = num(a.PivotU); pv = num(a.PivotV); } else { for (const i of ids) { pu += uv[i * 2]; pv += uv[i * 2 + 1]; } pu /= ids.length; pv /= ids.length; }
-        const ar = num(a.AspectRatio, 1) || 1; const r = num(a.Z) * Math.PI / 180; const cs = Math.cos(r), sn = Math.sin(r);
+        if (boolA(a.Pivot)) { pu = num(a.PivotU); pv = num(a.PivotV); } else { for (const i of ids) { pu += uv[i * 2]; pv += uv[i * 2 + 1]; } pu /= ids.length; pv /= ids.length; } // inferred: default reference = centre of the samples
+        const ar = !unset(a.TextureProjection) && pr ? (num(a.AspectRatio, 1) || 1) : 1; // AspectRatio only with a resolved TextureProjection
+        const r = num(a.Z) * Math.PI / 180; const cs = Math.cos(r), sn = Math.sin(r);
         for (const i of ids) {
           let u = uv[i * 2], v = uv[i * 2 + 1];
-          if (name === 'TranslateUVW') { if (ax.u) u = abs ? num(a.X) : u + num(a.X); if (ax.v) v = abs ? num(a.Y) : v + num(a.Y); }
-          else if (name === 'ScaleUVW') { if (ax.u) u = pu + (u - pu) * num(a.X, 1); if (ax.v) v = pv + (v - pv) * num(a.Y, 1); }
-          else { const du = (u - pu) * ar, dv = v - pv; u = pu + (du * cs - dv * sn) / ar; v = pv + du * sn + dv * cs; } // inferred: rotation in the UV plane is the Z angle
+          if (name === 'TranslateUVW') { if (ax.u) u = abs ? num(a.X) : u + num(a.X); if (ax.v) v = abs ? num(a.Y) : v + num(a.Y); } // inferred: AxesFilter / absolute in the apply step
+          else if (name === 'ScaleUVW') { u = pu + (u - pu) * sx; v = pv + (v - pv) * sy; }
+          else { const du = (u - pu) * ar, dv = v - pv; u = pu + (du * cs - dv * sn) / ar; v = pv + du * sn + dv * cs; } // Z = the in-plane rotation (B11i); inferred: aspect-corrected
           uv[i * 2] = u; uv[i * 2 + 1] = v;
         }
-        if (name === 'RotateUVW' && (num(a.X) !== 0 || num(a.Y) !== 0)) logNyaB10(app, name, 'rotation about U / V (out of the UV plane)');
+        if (name === 'RotateUVW' && (num(a.X) !== 0 || num(a.Y) !== 0)) logNyaB10(app, name, 'rotation about U / V (out of the UV plane, changes W); this build keeps 2D UVs', B11I);
         app.record(name, () => { (prop as any).uvs = uv; app.events.emit('scene'); }, () => { (prop as any).uvs = before; app.events.emit('scene'); });
         n += ids.length;
       }
-      return n;
+      return n; // inferred: the number of samples changed (the note gives no return value)
     },
   });
   uvw('TranslateUVW'); uvw('RotateUVW'); uvw('ScaleUVW');
+  // B11i: TranslatePivot is not implemented in transformmanager.dll (registry: tasks.dll / viewinteraction.dll, unread)
   regB10(app, 'TranslatePivot', { // inferred: X / Y / Z are added to the transform pivot (local pivot position); the pose is not changed
     execute(app, a) {
       const objs = objsOf(app, a.InputObjs);
@@ -265,17 +320,31 @@ export function registerInferredB10Scene(app: App) {
       },
     });
   }
-  const pinCmd = (name: string, pin: boolean, all: boolean) => regB10(app, name, { // inferred: pinned samples stay fixed when UVs are relaxed
+  /** Pinned flags of a UV property: one bit per element of the cluster it lives on (B11d §3.6). `pinnedSamples` is a derived view. */
+  const pinBits = (prop: Property, total: number): Uint8Array => {
+    const P = prop as any;
+    if (!P.pinnedBits || P.pinnedBits.length !== Math.ceil(total / 8)) P.pinnedBits = new Uint8Array(Math.ceil(total / 8));
+    if (!Object.getOwnPropertyDescriptor(P, 'pinnedSamples')) Object.defineProperty(P, 'pinnedSamples', { get() { const s = new Set<number>(); const b: Uint8Array = this.pinnedBits ?? new Uint8Array(0); for (let i = 0; i < b.length * 8; i++) if (b[i >> 3] & (1 << (i & 7))) s.add(i); return s; } });
+    return P.pinnedBits;
+  };
+  const pinCmd = (name: string, mode: 1 | 2 | 3 | 4) => regB10(app, name, { // B11d §3.6: Pin 1, PinAll 2, UnPin 3, UnPinAll 4 on the UVProp's per-element bit array
     execute(app, a) {
-      const t = uvPropOf(app, a.UVProp); if (!t) throw new Error(`${name}: UVProp is not a texture projection`);
-      const m = t.obj.primitive?.mesh(); const total = m ? sampleOffsets(m).total : 0;
-      const ids = all ? Array.from({ length: total }, (_, i) => i) : intList(a.UVComponents).filter(i => i >= 0 && i < total);
-      const set: Set<number> = ((t.prop as any).pinnedSamples ??= new Set<number>()); const before = new Set(set);
-      app.record(name, () => { for (const i of ids) pin ? set.add(i) : set.delete(i); }, () => { set.clear(); for (const i of before) set.add(i); });
-      return ids.length;
+      if (unset(a.UVProp)) throw fail(name, E_INVALIDARG, 'UVProp is required');
+      const t = uvPropOf(app, a.UVProp); if (!t) throw fail(name, E_INVALIDARG, 'UVProp is not a texture projection');
+      const ids = mode === 1 || mode === 3 ? intList(a.UVComponents) : [];
+      if ((mode === 1 || mode === 3) && !ids.length) throw fail(name, E_INVALIDARG, 'UVComponents is empty');
+      if (isLocked(app, t.prop, 4)) throw fail(name, E_ACCESSDENIED, `${t.prop.name} is locked`);
+      const m = t.obj.primitive?.mesh(); const total = m ? sampleOffsets(m).total : 0; // inferred: the complete sample cluster (element = sample)
+      if (!total) { setStatus(app, name, S_FALSE); return; }
+      if (ids.some(i => !Number.isInteger(i) || i < 0 || i >= total)) throw fail(name, E_INVALIDARG, `UVComponents index out of 0..${total - 1}`);
+      const before = new Uint8Array(pinBits(t.prop, total)); const after = new Uint8Array(before);
+      if (mode === 2) { after.fill(0xff); } else if (mode === 4) after.fill(0);
+      else for (const i of ids) { if (mode === 1) after[i >> 3] |= 1 << (i & 7); else after[i >> 3] &= ~(1 << (i & 7)); }
+      app.record(name, () => { (t.prop as any).pinnedBits = new Uint8Array(after); app.events.emit('params'); }, () => { (t.prop as any).pinnedBits = new Uint8Array(before); app.events.emit('params'); });
+      setStatus(app, name, 0);
     },
   });
-  pinCmd('PinUVComponents', true, false); pinCmd('UnPinUVComponents', false, false); pinCmd('PinAllUVComponents', true, true); pinCmd('UnPinAllUVComponents', false, true);
+  pinCmd('PinUVComponents', 1); pinCmd('UnPinUVComponents', 3); pinCmd('PinAllUVComponents', 2); pinCmd('UnPinAllUVComponents', 4);
   regB10(app, 'ConnectMap', { // inferred: connects a map property (weight map / texture map / vertex colours) to the Target operator or property
     execute(app, a) {
       const map = nodeOf(app, a.PropObj); const tgt = nodeOf(app, a.Target);
@@ -288,61 +357,9 @@ export function registerInferredB10Scene(app: App) {
     },
   });
 
-  // ---------------------------------------------------------------- Camera Sequencer
-  regB10(app, 'AddShotClip', { // inferred: Parent names the shot camera; Frame is the sequence position, StartFrame..EndFrame the scene frames
-    execute(app, a) {
-      const tracks = shotTracks(app); const tname = unset(a.Track) ? 'Shot_Track' : String(listOf(a.Track)[0]).split('.').pop()!;
-      let track = tracks.find(t => t.name === tname); const made = !track;
-      if (!track) track = { name: tname, clips: [] };
-      const cam = unset(a.Parent) ? [...app.scene.allObjects()].find(o => o instanceof Camera || o.type === 'camera') : findObj(app, String(a.Parent));
-      const start = unset(a.StartFrame) ? app.anim.startFrame : num(a.StartFrame); const end = num(a.EndFrame, 100);
-      if (end < start) throw new Error('AddShotClip: EndFrame is before StartFrame');
-      const at = unset(a.Frame) ? (track.clips.length ? Math.max(...track.clips.map(seqOut)) : start) : num(a.Frame);
-      const base = String(a.Name || 'Shot'); let name = base, i = 1; while (track.clips.some(c => c.name === name)) name = `${base}${i++}`;
-      const clip: ShotClip = { name, source: cam?.name ?? '', start: at, duration: end - start + 1, type: 'camerashotclip', timectrl: { clipin: start, clipout: end } };
-      const t = track;
-      app.record('AddShotClip', () => { if (made && !tracks.includes(t)) tracks.push(t); t.clips.push(clip); }, () => { t.clips.splice(t.clips.indexOf(clip), 1); if (made) tracks.splice(tracks.indexOf(t), 1); });
-      return clip;
-    },
-  });
-  regB10(app, 'GetShotClip', { // inferred: GlobalFrame >= 0 is used instead of Frame; between clips the previous clip, not directly over
-    undoable: false,
-    execute(app, a) {
-      const f = num(a.GlobalFrame, -1) >= 0 ? num(a.GlobalFrame) : num(a.Frame);
-      let clip = clipAt(app, f); const over = !!clip;
-      if (!clip) { let best: ShotClip | null = null; for (const t of shotTracks(app)) for (const c of t.clips) if ((c.type ?? 'camerashotclip') === 'camerashotclip' && seqOut(c) <= f && (!best || seqOut(c) > seqOut(best))) best = c; clip = best; }
-      const cam = clip ? findObj(app, String(clip.source)) ?? null : null;
-      return outputs({ Clip: clip, DirectlyOver: over, ActiveCamera: cam });
-    },
-  });
-  regB10(app, 'GetSceneFrameSetFromCamSeq', { // inferred
-    undoable: false,
-    execute(app, a) { return frameSet(app, num(a.StartFrame, 1), num(a.EndFrame, 100), boolA(a.PlotWithoutGaps)).map(x => x.scene); },
-  });
-  const sample = (app: App, params: Parameter[], set: { scene: number }[]) => {
-    const A = app.anim; const saved = A.frame; const curves: Record<string, number[]> = {};
-    for (const p of params) curves[p.fullName] = [];
-    for (const x of set) { A.frame = x.scene; for (const p of params) curves[p.fullName].push(Number(p.value)); }
-    A.frame = saved; return curves;
-  };
-  regB10(app, 'PlotCamSeqToActions', { // inferred: samples the parameters at the scene frame of each sequence frame; unset InputObjs = every animated parameter (what the sequencer drives)
-    execute(app, a) {
-      const params = unset(a.InputObjs) ? [...app.anim.fcurves.keys()].filter(p => app.anim.isAnimated(p)) : paramsOfArg(app, a.InputObjs); const set = frameSet(app, num(a.StartFrame, 1), num(a.EndFrame, 100), boolA(a.PlotWithoutGaps));
-      if (!params.length || !set.length) { app.logMsg('info', 'PlotCamSeqToActions: nothing to plot'); return null; }
-      const act = { name: String(a.ActionName || 'CamSeq_PlotAction'), frames: set.map(x => x.seq), curves: sample(app, params, set) };
-      const cs = camSeqPlots(app); app.record('PlotCamSeqToActions', () => cs.push(act), () => cs.splice(cs.indexOf(act), 1));
-      logNyaB10(app, 'PlotCamSeqToActions', 'creating the action source / mixer clip and the Apply / Delete / fit options; the sampled curves are kept on the sequencer stand-in (app.camSeqPlotsB10)');
-      return [];   // no action source is made in this build, so callers get an empty collection (the sampling is in camSeqPlots)
-    },
-  });
-  regB10(app, 'PlotCamSeqShape', { // inferred: the shape-key counterpart of PlotCamSeqToActions
-    execute(app, a) {
-      const o = objsOf(app, a.InputObjs)[0]; const set = frameSet(app, num(a.StartFrame, 1), num(a.EndFrame, 100), boolA(a.PlotWithoutGaps));
-      if (!o || !set.length) { app.logMsg('info', 'PlotCamSeqShape: nothing to plot'); return null; }
-      logNyaB10(app, 'PlotCamSeqShape', `storing shape keys of ${o.name} (Mode / Content / RefMode); the frame set is returned`);
-      return set.map(x => x.scene);
-    },
-  });
+  // ---------------------------------------------------------------- Camera Sequencer, AddToTOC (inferredB10CamSeq.ts)
+  registerInferredB10CamSeq(app);
+
 
   // ---------------------------------------------------------------- scripted / custom operators
   const addScripted = (C: string, a: Record<string, any>, code: string, type = 'ScriptedOp') => {
@@ -381,11 +398,15 @@ export function registerInferredB10Scene(app: App) {
     if (m) dyn = m.positions.length * 4 + m.polygons.reduce((s, f) => s + f.length * 4 + 4, 0);
     return { stat, dyn };
   };
-  regB10(app, 'GetSize', { // inferred: byte estimate of this build's data (static = parameters, dynamic = geometry)
+  regB10(app, 'GetSize', { // B11d §3.7: exactly one object, else all three outputs are 2^64-1; outputs are doubles
     undoable: false,
     execute(app, a) {
-      let s = 0, d = 0; for (const n of nodesOf(app, a.InputObjs)) { const r = sizeOf(n); s += r.stat; d += r.dyn; }
-      return outputs({ StaticSize: s, DynamicSize: d, Value: s + d });
+      if (unset(a.InputObjs)) throw fail('GetSize', E_INVALIDARG, 'InputObjs is required');
+      const ns = Array.isArray(a.InputObjs) && !a.InputObjs.length ? [] : nodesOf(app, a.InputObjs);
+      if (ns.length !== 1) return outputs({ StaticSize: NAN_SIZE, DynamicSize: NAN_SIZE, Value: NAN_SIZE });
+      const r = sizeOf(ns[0]);
+      logNyaB10(app, 'GetSize', 'the static / dynamic size definitions of C3DInfoReportTraverser (imported); this build\'s parameter / geometry byte estimate is used', B11D);
+      return outputs({ StaticSize: r.stat, DynamicSize: r.dyn, Value: r.stat + r.dyn }); // inferred: total = static + dynamic
     },
   });
   regB10(app, 'GenerateInfoReport', { // inferred
@@ -455,16 +476,37 @@ export function registerInferredB10Scene(app: App) {
       return 0;
     },
   });
-  const tags = (): Map<Parameter, Set<string>> => ((app.anim as any).paramTagsB10 ??= new Map());
+  // B11d §3.8: Tag / Untag are the lock task with SubType 3 / 4; a tag is a lock record of type 2 whose Level is a bitmask of siTags
+  const TAG_BITS: Record<string, number> = { siTagNone: 0, siTag1: 1, siTag2: 2, siTag3: 4, siTag4: 8, siTag5: 16, siTag6: 32, siTag7: 64, siTag8: 128, siTag9: 256, siTag10: 512, siTagAll: 1023 }; // public SDK siTags
+  const tagLevel = (v: any): number => {
+    const c = constName(v); if (c === null) return TAG_BITS.siTagAll; if (typeof c === 'number') return c;
+    return String(c).split(/[|+]/).map(t => t.trim()).reduce((m, t) => m | (TAG_BITS[t] ?? (Number.isFinite(Number(t)) ? Number(t) : 0)), 0);
+  };
   for (const name of ['Tag', 'Untag'] as const) {
-    regB10(app, name, { // inferred: tags are a per-parameter set of level names; siTagAll addresses every level
+    regB10(app, name, { // B11d §3.8
       execute(app, a) {
-        const lv = String(constName(a.Level) ?? 'siTagAll'); const ps = paramsOfArg(app, a.InputObjs); const T = tags();
-        const before = new Map(ps.map(p => [p, new Set(T.get(p) ?? [])]));
-        app.record(name, () => { for (const p of ps) { const s = T.get(p) ?? new Set<string>(); if (name === 'Tag') s.add(lv); else if (lv === 'siTagAll') s.clear(); else s.delete(lv); if (s.size) T.set(p, s); else T.delete(p); } },
-          () => { for (const [p, s] of before) { if (s.size) T.set(p, new Set(s)); else T.delete(p); } });
-        if (num(a.SubType, name === 'Tag' ? 3 : 4) !== (name === 'Tag' ? 3 : 4)) logNyaB10(app, name, `SubType ${a.SubType}`);
-        return ps.length;
+        if (unset(a.InputObjs)) throw fail(name, E_INVALIDARG, 'InputObjs is required');
+        const sub = Math.trunc(num(a.SubType, name === 'Tag' ? 3 : 4));
+        if (sub !== 3 && sub !== 4) { logNyaB10(app, name, `SubType ${sub} (${['lock', 'unlock', 'unlock all'][sub] ?? 'unknown'}: the lock path of this task is not modelled here)`, B11D); return; }
+        const level = tagLevel(a.Level);
+        if (!level) throw fail(name, E_INVALIDARG, `The tag level ${level} is invalid`); // XSITASKS 1073
+        const R = lockRecords(app); const done: Parameter[] = [];
+        for (const x of listOf(a.InputObjs)) {
+          const p = paramOfArg(app, x);
+          if (!p) { app.logMsg('info', `${name}: Warning: XSITASKS 1069: ${x?.fullName ?? x} has no component id; skipped`); continue; }
+          done.push(p);
+        }
+        if (!done.length) { setStatus(app, name, S_FALSE); return; }
+        const before = new Map(done.map(p => [p, (R.get(p) ?? []).map(r => ({ ...r }))]));
+        app.record(name, () => {
+          for (const p of done) {
+            const list = R.get(p) ?? []; let tag = list.find(r => r.type === 2);
+            if (sub === 3) { if (!tag) list.push(tag = { level: 0, type: 2 }); tag.level |= level; }
+            else if (tag) { tag.level &= ~level; if (!tag.level) list.splice(list.indexOf(tag), 1); }
+            if (list.length) R.set(p, list); else R.delete(p);
+          }
+        }, () => { for (const [p, l] of before) { if (l.length) R.set(p, l.map(r => ({ ...r }))); else R.delete(p); } });
+        setStatus(app, name, 0);
       },
     });
   }
@@ -480,6 +522,7 @@ export function registerInferredB10Scene(app: App) {
       return n;
     },
   });
+  // B11d §3.9 / B11i: MoveComponent is implemented neither in tasks.dll nor in transformmanager.dll (Q12 open; next viewinteraction.dll)
   regB10(app, 'MoveComponent', { // inferred: the transform tool's component move: a Move Component operator on top of each object's stack
     execute(app, a) {
       const named = unset(a.InputObjs) ? (app.compSel ? [app.compSel.obj] : app.selectedObjects) : listOf(a.InputObjs).map(x => findObj(app, x)).filter((o): o is X3DObject => !!o);

@@ -4,12 +4,23 @@
 // data/command_registry.json (inferredB10Args.ts); behaviour is reasoned from the registry descriptions / tooltips,
 // publicly documented Softimage scripting semantics and the related commands and view-manager state already in src/.
 // Every registration is marked `// inferred`; branches that could not be reasoned out log "not yet attested".
+//
+// 2026-11-19 (rows CMD-B11d / B11g / B11h / B11i): the analyst read 41 of these handlers from the binaries
+// (docs/ghidra/cmd-b11d-*.md, cmd-b11g-*.md, cmd-b11h-*.md, cmd-b11i-*.md, digest docs/re/WIRE_CORRECTIONS_B11.md).
+// Those registrations now follow the notes' wire contracts and carry a `// B11x §…` reference instead of `// inferred`;
+// what a note still marks (inferred) or leaves open keeps `// inferred` and its "not yet attested" log.
 import * as THREE from 'three';
 import { App, CommandDef } from '../core/commands';
 import { X3DObject, MoveComponentOperator } from '../core/scene';
 import { B10_ARGS, B10_DESC, B10_CATEGORY } from './inferredB10Args';
+import { SiStatusError } from './alembicSeqCam';
 
 export const B10_NOTE = 'CMD-B10 inferred batch';
+/** HRESULTs named by the B11 notes. */
+export const S_FALSE = 1, E_FAIL = 0x80004005, E_INVALIDARG = 0x80070057, E_POINTER = 0x80004003, E_ACCESSDENIED = 0x80070005,
+  S_WARN = 0x562e80c7, NAN_SIZE = 18446744073709551615;
+/** A command failure with the status the contract names; the message starts with the command name. */
+export const fail = (cmd: string, status: number, what: string) => new SiStatusError(status, `${cmd}: ${what}`);
 
 export interface B10State {
   registered: string[];
@@ -24,12 +35,16 @@ export interface B10State {
   perf: { type: number; frames: number; seconds: number; fps: number } | null;
   /** In-memory fast playback caches per view index (Save / LoadFastPlaybackCache). */
   playbackCaches: Map<number, { frames: number[]; file: string }>;
+  /** Last non-error status (HRESULT) per command where the contract returns S_FALSE / a warning code instead of a value. */
+  status: Record<string, number>;
+  /** Labels of the camera changes made by the B11h view commands, per view index (the view's camera history labels). */
+  camLabels: { view: number; label: string }[];
 }
 
 export function b10(app: App): B10State {
   return ((app as any).inferredB10 ??= {
     registered: [], skipped: [], tool: { current: null, lastAux: null }, dropMessage: '', delayedRefresh: [], perf: null,
-    playbackCaches: new Map(),
+    playbackCaches: new Map(), status: {}, camLabels: [],
   } as B10State);
 }
 
@@ -48,9 +63,10 @@ export function regB10(app: App, name: string, def: Omit<CommandDef, 'name' | 'l
   st.registered.push(name);
 }
 
-export function logNyaB10(app: App, command: string, what: string) {
-  app.logMsg('info', `${command}: not yet attested: ${what} (${B10_NOTE})`);
+export function logNyaB10(app: App, command: string, what: string, note = B10_NOTE) {
+  app.logMsg('info', `${command}: not yet attested: ${what} (${note})`);
 }
+export function setStatus(app: App, command: string, code: number) { b10(app).status[command] = code; }
 export const unset = (v: any) => v === undefined || v === null || v === '';
 export const num = (v: any, d = 0) => { const n = Number(v); return unset(v) || !Number.isFinite(n) ? d : n; };
 export const boolA = (v: any) => typeof v === 'string' ? /^(true|1|yes|-1)$/i.test(v.trim()) : !!v;
@@ -102,6 +118,24 @@ export function withView<T>(i: number, f: () => T): T {
   try { return f(); } finally { if (i >= 0 && i !== prev && prev >= 0) V.setActive(prev); }
 }
 export function orbitTarget(): THREE.Vector3 { const t = vm()?.orbitTarget?.(); return t ? t.clone() : new THREE.Vector3(); }
+
+// ------------------------------------------------------------------ view cameras (B11h)
+export type CamState = { pos: THREE.Vector3; up: THREE.Vector3; tgt: THREE.Vector3; zoom: number; name: string; quat: THREE.Quaternion };
+export function camState(vp: VP): CamState {
+  const c = vp.camera as any;
+  return { pos: c.position.clone(), up: c.up.clone(), tgt: orbitTarget(), zoom: c._zoom ?? 20, name: vp.name, quat: c.quaternion.clone() };
+}
+export function camApply(vp: VP, st: CamState) {
+  const c = vp.camera as any; c.position.copy(st.pos); c.up.copy(st.up); vm()?.orbitTarget?.()?.copy(st.tgt); c._zoom = st.zoom;
+  setViewLabel(vp, st.name); c.quaternion.copy(st.quat); c.updateMatrixWorld();
+}
+export function setViewLabel(vp: VP, name: string) { vp.name = name; const h = (vp as any).head?.view; if (h) h.textContent = name; }
+/** Open a camera change on view `i`: the view manager's camera history takes a snapshot (its `zoom(1)` entry point snapshots
+ *  and leaves the camera unchanged); the label is kept in b10(app).camLabels. */
+export function camChange(app: App, i: number, label: string) {
+  withView(i, () => vm()?.zoom?.(1));
+  b10(app).camLabels.push({ view: i, label });
+}
 
 /** Translate objects by a world-space delta, written to their local positions (undoable through setParam). */
 export function translateGlobal(app: App, objs: X3DObject[], d: THREE.Vector3, label: string) {
