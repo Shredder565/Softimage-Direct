@@ -10,7 +10,7 @@ import { App, CommandDef } from '../core/commands';
 import { hostFs } from '../core/sdkHelpersHostFs';
 import { installPath } from './tasksB11cShared';
 import {
-  S_OK, S_FALSE, E_INVALIDARG, E_FAIL, IcePortB12, IceNodeB12, IceCompoundB12, type LayoutItem,
+  S_OK, S_FALSE, E_INVALIDARG, E_FAIL, E_ACCESSDENIED, IcePortB12, IceNodeB12, IceCompoundB12, type LayoutItem,
   stateOf, fail, setStatus, raise, logNya, edit, iceArg, listArg, editableCompound, lockCheck, dropFromLayout, findLayout,
   uniqueGroupName, blankExposed, unset, makeCompound,
 } from './optasksB12iceModel';
@@ -140,13 +140,32 @@ function movePort(app: App, a: Record<string, any>) {
 }
 
 // ------------------------------------------------------------------ GetICECompoundPortProperties / EditExposedParamInICECompoundNode
+/** Enum text of an exposed port (batch-13 addendum Q2b step 5): split on ";", each item split at its first ","; items
+ *  without a "," or with an empty part are dropped; the last item may omit its ";". */
+function parseEnum(text: string): [string, string][] {
+  const out: [string, string][] = [];
+  for (const item of text.split(';')) {
+    const i = item.indexOf(',');
+    if (i < 0) continue;
+    const first = item.slice(0, i), second = item.slice(i + 1);
+    if (first && second) out.push([first, second]);
+  }
+  return out;
+}
+/** Enum text rebuilt from the item list (Q2a): "first,second;" per item, every item followed by ";". */
+const enumText = (items: [string, string][]) => items.map(([a, b]) => `${a},${b};`).join('');
+/** Worker check shared by the two commands: the port must be listed by its compound (else 0x80004005). */
+function listedPort(C: string, port: IcePortB12, c: IceCompoundB12) {
+  if (!c.inputs.includes(port) && !c.outputs.includes(port)) throw fail(E_FAIL, `${C}: ${port.fullName} is not a port of ${c.fullName}`);
+}
 function getPortProps(app: App, a: Record<string, any>) {
   const C = 'GetICECompoundPortProperties';
-  const { port } = exposedArg(app, C, a.Parameter);
+  const { port, c } = exposedArg(app, C, a.Parameter);
+  listedPort(C, port, c);
   const e = port.exposed ?? blankExposed();
-  // inferred (open question 2): the order of EditExposedParamInICECompoundNode's arguments
-  const out = [port.name, e.min, e.max, e.picking, e.description, e.exposeType, e.enumText, e.ppgGroup];
-  nya(app, C, 'the list and order of the OutputArgs values; returned as Name, Min, Max, Picking, Description, ExposeType, Enum, PPGLayoutGroup');
+  // OutputArgs (batch-13 addendum Q2a): an 8-element array Name, Min, Max, Picking, Description, ExposeType (I4), Enum,
+  // PPGLayoutGroup. Name = the display name (this build keeps one name per port, so the internal name is the same).
+  const out = [port.name, e.min, e.max, e.picking, e.description, e.exposeType | 0, enumText(parseEnum(e.enumText)), e.ppgGroup];
   a.OutputArgs = out;
   setStatus(app, C, S_OK);
   return out;
@@ -154,35 +173,41 @@ function getPortProps(app: App, a: Record<string, any>) {
 function editExposed(app: App, a: Record<string, any>) {
   const C = 'EditExposedParamInICECompoundNode';
   const { port, c } = exposedArg(app, C, a.Parameter);
-  lockCheck(app, C, c);   // inferred: the shared lock check of the compound edits
+  lockCheck(app, C, c);
+  listedPort(C, port, c);
+  // ExposeType is an opaque integer passed through to the compound (numbering in the ICE core).
   const exposeType = intArg(a.ExposeType, 0);
   if (!Number.isFinite(exposeType)) throw fail(E_INVALIDARG, `${C}: ExposeType must be an integer`);
+  // Batch-13 addendum Q2b: only an empty Name means "leave unchanged"; every other field is applied when it differs from
+  // the current value, an empty string included. (Every run of this build is undoable, so the "current" record is
+  // always read; a non-undoable run would count every field as changed, with the same end state.)
   edit(app, C, [c.tree], () => {
     const e = port.exposed ??= blankExposed();
-    // inferred (open question 2): an empty string leaves that property unchanged
     const name = str(a.Name);
     if (name && name !== port.name) {
       let n = name, i = 1; const taken = (x: string) => [...c.inputs, ...c.outputs].some(q => q !== port && q.name === x);
       while (taken(n)) n = `${name}${i++}`;   // inferred: unique among the compound's ports
       port.name = n;
     }
-    if (str(a.Min)) e.min = str(a.Min);
-    if (str(a.Max)) e.max = str(a.Max);
-    if (str(a.Picking)) e.picking = str(a.Picking);
-    if (str(a.Description)) e.description = str(a.Description);
-    e.exposeType = exposeType;
-    if (str(a.Enum)) e.enumText = str(a.Enum);
+    const set = (k: 'min' | 'max' | 'picking' | 'description', v: string) => { if (e[k] !== v) e[k] = v; };
+    set('min', str(a.Min)); set('max', str(a.Max)); set('picking', str(a.Picking)); set('description', str(a.Description));
+    if (e.exposeType !== exposeType) e.exposeType = exposeType;
+    const en = enumText(parseEnum(str(a.Enum)));
+    if (enumText(parseEnum(e.enumText)) !== en) e.enumText = en;
     const grp = str(a.PPGLayoutGroup);
-    if (grp && port.side === 'in') {
-      // inferred: the port moves into that layout group (created at the end of the layout when missing)
+    if (grp !== e.ppgGroup) {
       e.ppgGroup = grp;
-      dropFromLayout(c.layout, port, false);
-      const hit = findLayout(c.layout, grp);
-      if (hit && hit.item.kind === 'group') hit.item.items.push({ kind: 'port', port });
-      else c.layout.push({ kind: 'group', name: grp, items: [{ kind: 'port', port }] });
+      if (port.side === 'in') {
+        // inferred: the port moves into that layout group (created at the end of the layout when missing); an empty
+        // group puts it back at the end of the top level of the layout
+        dropFromLayout(c.layout, port, false);
+        const hit = grp ? findLayout(c.layout, grp) : null;
+        if (!grp) c.layout.push({ kind: 'port', port });
+        else if (hit && hit.item.kind === 'group') hit.item.items.push({ kind: 'port', port });
+        else c.layout.push({ kind: 'group', name: grp, items: [{ kind: 'port', port }] });
+      }
     }
   });
-  nya(app, C, 'which empty strings mean "leave unchanged" (empty = unchanged here), the ExposeType values and the Enum string format');
   setStatus(app, C, S_OK);
   return port;
 }
@@ -280,17 +305,46 @@ function hideAll(app: App, a: Record<string, any>) {
   const nodes = listArg(app, a.InputObjs, true).filter((x): x is IceNodeB12 => x instanceof IceNodeB12);
   if (!nodes.length) { setStatus(app, C, S_FALSE); return; }
   const st = stateOf(app);
-  const trees = [...new Set(nodes.map(n => n.tree))];
-  edit(app, C, trees, () => {
-    for (const n of nodes) {
-      if (n.inReferencedModel) { raise(app, C, 'XSIOPTASKS 0x425', 1, n.fullName); continue; }
-      // inferred (open question 4): every input port's value display is hidden
-      for (const p of n.inputs) p.valueShown = false;
-    }
-  });
-  nya(app, C, 'the per-node hide rule (every input port, connected or not, is hidden here)');
-  if (st.refreshFlag) { st.refreshes++; window.dispatchEvent(new CustomEvent('ice-tree-refresh')); }
-  setStatus(app, C, S_OK);
+  // Per node (batch-13 addendum Q4a): a node in a referenced model logs XSIOPTASKS 0x425 (severity 2) and that node
+  // returns 0x80070005; the others are walked.
+  let refused = false;
+  const listed: IceNodeB12[] = [];
+  for (const n of nodes) {
+    if (n.inReferencedModel) { raise(app, C, 'XSIOPTASKS 0x425', 2, n.fullName); refused = true; continue; }
+    listed.push(n);
+  }
+  // The hide step: nothing for a read-only compound (or a node that cannot show values: every node of this build can);
+  // otherwise every value-displayable port is set to the target state when it differs, connected or not, and a compound's
+  // inner nodes are walked the same way. inferred: the value-displayable ports are the node's input ports.
+  // Returns whether anything changed (the task's refresh flag).
+  const walk = (n: IceNodeB12, shown: boolean): boolean => {
+    let changed = false;
+    if (n instanceof IceCompoundB12 && n.readOnly) return false;
+    for (const p of n.inputs) if (p.valueShown !== shown) { p.valueShown = shown; changed = true; }
+    if (n instanceof IceCompoundB12) for (const k of n.graph.nodes) changed = walk(k, shown) || changed;
+    return changed;
+  };
+  const refresh = () => { st.refreshes++; window.dispatchEvent(new CustomEvent('ice-tree-refresh')); };
+  if (listed.length) {
+    const trees = [...new Set(listed.map(n => n.tree))];
+    // Undo runs the same walk with the target state "shown": every listed port is shown, also the ones hidden before
+    // the command (no per-port state is kept, only the node list).
+    let first = true;
+    app.record(C, () => {
+      let changed = false; for (const n of listed) changed = walk(n, false) || changed;
+      for (const t of trees) t.touch();
+      if (first) { first = false; if (changed && st.refreshFlag) refresh(); } else if (changed) refresh();
+    }, () => {
+      let changed = false; for (const n of listed) changed = walk(n, true) || changed;
+      for (const t of trees) t.touch();
+      if (changed) refresh();
+    });
+    app.events.emit('scene');
+  }
+  // inferred: with every node refused the command fails with 0x80070005; with some refused, the others stay hidden and
+  // the status is 0x80070005 (whether Do passes a per-node failure on is not in the note)
+  if (refused && !listed.length) throw fail(E_ACCESSDENIED, `${C}: every node is in a referenced model`);
+  setStatus(app, C, refused ? E_ACCESSDENIED : S_OK);
 }
 
 // ------------------------------------------------------------------ PrivateGetCompoundConstructionMode
