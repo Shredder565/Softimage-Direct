@@ -429,7 +429,8 @@ eq('native twins kept for the five names with a script entry and a native entry'
 // ---- defaults
 const D = got.defaults;
 const silent = (n) => eq(`${n} with default arguments: silent no-op`, [D[n].r, D[n].log, D[n].made], [NONE, [], []]);
-eq('InspectMaterial defaults: nothing selected, nothing to inspect', [D.InspectMaterial.r, D.InspectMaterial.log, D.InspectMaterial.calls], [NONE, [], ['SIGetMaterialShader (stand-in)', 'InspectObj']]);
+// SIGetMaterialShader is on the bus since CMD-B12f (shadertasks.dll), so InspectMaterial delegates to it instead of its stand-in.
+eq('InspectMaterial defaults: nothing selected, nothing to inspect', [D.InspectMaterial.r, D.InspectMaterial.log, D.InspectMaterial.calls], [NONE, [], ['SIGetMaterialShader', 'InspectObj']]);
 for (const n of ['StoreGeomApproxProperties', 'StoreMaterialProperties', 'StoreVisibilityProperties', 'DeleteUnusedCacheSources', 'DeleteUnusedImageSources', 'DeleteUnusedImageClips', 'DeleteUnusedAnimationSources', 'DeleteUnusedAudioSources', 'Align', 'ApplyPath']) silent(n);
 for (const n of ['AddToContainer', 'RemoveFromContainer']) ok(`${n} defaults: the empty Target fails the dictionary lookup`, /dictionary lookup failed/.test(D[n].r.err ?? ''), D[n]);
 eq('SaveActionKey defaults: native SaveActionKey', [D.SaveActionKey.r, D.SaveActionKey.calls], [NONE, ['native SaveActionKey']]);
@@ -447,7 +448,7 @@ ok('AddComponentTool defaults: empty selection = SplitEdgeTool', D.AddComponentT
 eq('ToggleContinuousDraw defaults: Views.ContinuousDraw negated, one SetValue', [D.ToggleContinuousDraw.r, D.ToggleContinuousDraw.views, D.ToggleContinuousDraw.calls], [NONE, { ContinuousDraw: true }, ['GetValue', 'SetValue']]);
 
 // ---- InspectMaterial
-eq('InspectMaterial: the surface shader of the object\'s material, keyword set Rendering, selection unchanged', got.inspectMaterial, [NONE, 1, true, 'Rendering', true, ['SIGetMaterialShader (stand-in)', 'InspectObj']]);
+eq('InspectMaterial: the surface shader of the object\'s material, keyword set Rendering, selection unchanged', got.inspectMaterial, [NONE, 1, true, 'Rendering', true, ['SIGetMaterialShader', 'InspectObj']]);
 eq('InspectMaterial: selection when InputObjs is empty', got.inspectMaterialSel, [true]);
 
 // ---- Store...Properties
