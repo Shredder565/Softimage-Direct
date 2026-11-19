@@ -206,12 +206,12 @@ const got = await page.evaluate(async ({ NAMES }) => {
     let m = mark();
     d.notATree = [pub(run('MakeICETreeBranch', { Operator: cube.primitive.operators[0] })), pub(run('MakeICETreeBranch', { Operator: cube })), logFrom(m)];
     m = mark();
-    d.branch = [pub(run('MakeICETreeBranch', { Operator: tree })), tree.branch === true, tree.branchHost === pc, pc.primitive.operators.includes(tree), nya(m, 'MakeICETreeBranch')];
+    d.branch = [pub(run('MakeICETreeBranch', { Operator: tree })), tree.branch === true, tree.branchHost === pc, pc.primitive.operators.includes(tree), nya(m, 'MakeICETreeBranch') + nya(m, 'TransferICETree')];   // CMD-B12b: TransferICETree on the bus flags the branch itself
     app.undo(); d.branchUndo = [tree.branch === undefined, tree.branchHost === undefined]; app.redo();
     const pc2 = mkCloud('pc2'); const tree2 = run('CreateICETree', { InputObjs: 'pc2' }).raw;
     run('MakeICETreeBranch', { Operator: 'pc2.ICETree' }); d.byName = [tree2.branch === true, tree2.branchHost === pc2];
     m = mark();
-    d.promote1 = [pub(run('PromoteICETree', { Operator: tree })), tree.branchHost?.name, nya(m, 'PromoteICETree')];
+    d.promote1 = [pub(run('PromoteICETree', { Operator: tree })), tree.branchHost?.name, nya(m, 'PromoteICETree') + nya(m, 'TransferICETree')];
     d.promote2 = [pub(run('PromoteICETree', { Operator: tree })), tree.branchHost?.name];
     m = mark(); d.promoteAtRoot = [pub(run('PromoteICETree', { Operator: tree })), tree.branchHost?.name, logFrom(m)];
     m = mark(); d.promoteUnderRoot = [pub(run('PromoteICETree', { Operator: tree2 })), tree2.branchHost === pc2, logFrom(m)];
