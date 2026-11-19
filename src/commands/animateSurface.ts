@@ -6,7 +6,7 @@ import { App } from '../core/commands';
 import { FCurve, type Key } from '../core/animation';
 import { Parameter } from '../core/params';
 import {
-  Constraint, DEFORM_TYPES, Property, X3DObject,
+  Constraint, Property, X3DObject,
   mixerOf, syncMixer, type MixerClip,
 } from '../core/scene';
 import { mapSetCurveTypeToInterp } from '../core/mixer';
@@ -26,11 +26,6 @@ const COMMANDS = (gap as { commands: GapCommand[] }).commands;
 
 type Args = Record<string, any>;
 type Handler = (app: App, a: Args) => unknown;
-
-const STRIP_DEFORM = new Set<string>([
-  ...Object.values(DEFORM_TYPES),
-  'lattice', 'wave', 'crvdeform', 'deformbyspineop2',
-]);
 
 type KeyClip = { name: string; time: number; value: number; left?: number; right?: number; interp?: number };
 let keyClip: KeyClip[] = [];
@@ -644,14 +639,6 @@ const HANDLERS: Record<string, Handler> = {
     syncMixer(mix);
     return { start: second.start };
   },
-  CreateOffsetEffect(app, a) {
-    const mix = mixerOf(mixHost(app, null));
-    const clip = clipBySpec(clipsOf(mix), a.Clip);
-    if (!clip) return null;
-    clip.offsetEffect = true;
-    syncMixer(mix);
-    return { name: clip.name, offsetEffect: true };
-  },
   CreateScaleEffect(app, a) {
     const mix = mixerOf(mixHost(app, null));
     const clip = clipBySpec(clipsOf(mix), a.Clip);
@@ -660,24 +647,11 @@ const HANDLERS: Record<string, Handler> = {
     syncMixer(mix);
     return { name: clip.name, scaleEffect: true };
   },
-  RemoveEffect(app, a) {
-    const mix = mixerOf(mixHost(app, null));
-    const clip = clipBySpec(clipsOf(mix), a.Clip);
-    if (!clip) return null;
-    clip.offsetEffect = false;
-    clip.scaleEffect = false;
-    clip.weightKeys = undefined;
-    syncMixer(mix);
-    return { name: clip.name };
-  },
-  ResetOffset(app, a) { return resetClipCurves(app, a.InputObjs ?? a.Clip); },
+  // CreateOffsetEffect / RemoveEffect / ResetOffset: contract versions in actionB11fClips.ts (CMD-B11f)
   ResetEffectAtFrame(app, a) { return resetClipCurves(app, a.Clip); },
   ResetAllEffectCurves(app, a) { return resetClipCurves(app, a.Clip); },
   ResetSelectedEffectCurves(app, a) { return resetClipCurves(app, a.Clip); },
-  GetStoreActionDefaults(app) {
-    const animated = [...app.anim.fcurves.values()].filter(fc => fc.keys.length).length;
-    return { From: app.anim.startFrame, To: app.anim.endFrame, Size: animated };
-  },
+  // GetStoreActionDefaults: contract version in actionB11eSources.ts (CMD-B11e)
   CollapseLayers(app, a) {
     const stored = app.run('StoreAction', storeOverlapping(a));
     if (app.anim.layers.length > 1) {
@@ -692,46 +666,13 @@ const HANDLERS: Record<string, Handler> = {
     const keepInactive = a['Keep Inactive Actions'] === true;
     return clips.filter(c => (keepInactive || !c.mute) && (!consider || (time >= c.start && time < c.start + c.duration))).map(c => c.source);
   },
-  RemoveActionItem(app, a) {
-    const name = String(a.Name || a.Source || '');
-    if (!name) return null;
-    const mix = mixerOf(mixHost(app, null));
-    const clips = clipsOf(mix);
-    const i = clips.findIndex(c => c.name === name || c.source === name);
-    if (i < 0) return null;
-    clips.splice(i, 1);
-    syncMixer(mix);
-    return name;
-  },
+  // RemoveActionItem: contract version in actionB11eSources.ts (CMD-B11e)
 
   SaveShapeKey: (app, a) => app.run('StoreShapeKey', { InputObj: a.InputObj, Name: a.Name, Frame: a.Time }),
-  CopyShape(app, a) {
-    const src = namedObject(app, a.Source);
-    const dst = namedObject(app, a.Target);
-    if (!src || !dst) {
-      app.logMsg('info', 'CopyShape: Source and Target are required');
-      return null;
-    }
-    const keys = src.properties.filter(p => p.type === 'shapekey');
-    for (const sk of keys) cloneShape(dst, sk);
-    app.events.emit('scene');
-    return keys.length;
-  },
+  // CopyShape: contract version in actionB11fShape.ts (CMD-B11f)
   TransferShapeAnimation(app, a) { return transferShapes(app, a); },
   SITransferShapeAnimation(app, a) { return transferShapes(app, a); },
-  StripDeformOperators(app, a) {
-    let n = 0;
-    for (const o of app.targets(a.InputObj)) {
-      const prim = o.primitive; if (!prim) continue;
-      for (const op of [...prim.operators]) {
-        if (!STRIP_DEFORM.has(op.type) || op.type === 'shapblend') continue;
-        prim.removeOperator(op);
-        n++;
-      }
-    }
-    app.events.emit('scene');
-    return n;
-  },
+  // StripDeformOperators: contract version in actionB11fShape.ts (CMD-B11f)
 
   ApplyPath(app, a) {
     if (a.Path == null || a.Path === '') { app.logMsg('info', 'ApplyPath: Path is required'); return null; }

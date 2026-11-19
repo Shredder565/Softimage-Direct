@@ -153,7 +153,7 @@ const got = await page.evaluate(async ({ NAMES }) => {
   {
     const d = {}; let n0 = S.calls.length; app.select([cube, sphere]); let m = mark();
     d.run = pub(run('LoadPreset', { PresetObj: 'Presets/x.Preset' }));
-    d.calls = S.calls.slice(n0).map(c => `${c.command}(${c.args.FileName},${c.args.InputObj?.name}):${c.ran}`); d.log = logFrom(m).length;
+    d.calls = S.calls.slice(n0).map(c => `${c.command}(${c.args.FileName},${c.args.InputObj?.name}):${c.ran}`); d.log = logFrom(m).filter(l => /SILoadPreset: not yet attested/.test(l)).length;   // SILoadPreset is on the bus since CMD-B11c
     n0 = S.calls.length; run('LoadPreset', { PresetObj: 'Presets/x.Preset', InputObj: 'sphere1' }); d.explicit = S.calls.slice(n0).map(c => c.args.InputObj?.name);
     n0 = S.calls.length; app.select([]); run('LoadPreset', { PresetObj: 'Presets/x.Preset' }); d.empty = S.calls.length - n0;
     d.install = [pub(run('InstallAddon', { FileName: 'Addons/tools.xsiaddon' })), JSON.stringify(S.addons)];
@@ -448,8 +448,8 @@ eq('AddModelClip', Mo.add, ['{Clip}', 'rigClip', 'rigSrc', 'Models/rig.emdl', tr
 eq('AddModelClip: unknown source', Mo.bad, ['{Clip}', null]);
 // misc
 const Mi = got.misc;
-eq('LoadPreset: one low-level call per object, in order', Mi.calls, ['SILoadPreset(Presets/x.Preset,cube):false', 'SILoadPreset(Presets/x.Preset,sphere):false']);
-eq('LoadPreset: no value', Mi.run, NONE); ok('LoadPreset: stand-in logged', Mi.log === 2);
+eq('LoadPreset: one low-level call per object, in order', Mi.calls, ['SILoadPreset(Presets/x.Preset,cube):true', 'SILoadPreset(Presets/x.Preset,sphere):true']);
+eq('LoadPreset: no value', Mi.run, NONE); ok('LoadPreset: SILoadPreset (CMD-B11c) logs its unmodelled file picker once per object', Mi.log === 2);
 eq('LoadPreset: explicit input', Mi.explicit, ['sphere1']); eq('LoadPreset: empty input', Mi.empty, 0);
 eq('InstallAddon', Mi.install, [NONE, JSON.stringify([{ file: 'Addons/tools.xsiaddon', installPath: 7 }])]);
 eq('InstallAddon: second', Mi.install2, [NONE, 2]);

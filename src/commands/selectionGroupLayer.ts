@@ -339,6 +339,8 @@ export function registerSelectionGroupLayerCommands(app: App) {
 
   // inferred: hierarchy navigation. NavigDirection from the registry's menu entries: 0 parent, 1 first child,
   // 2 previous sibling, 3 next sibling, 4 first, 5 last (first / last taken as first / last sibling).
+  // B11d §3.2: tasks.dll's SelectNeighborObj only runs the command's script (no native direction table), so this 0-based
+  // encoding stays inferred; it is NOT NavigateNode's (1-based: 1 parent, 2 child, 3 next, 4 previous, 5 first, 6 last).
   // HierarchyLevel NODE selects the node, BRANCH the node with its descendants; AddToSelection extends.
   sel('SelectNeighborObj', 'Select Neighbor', [{ name: 'InputObjs', default: null }, { name: 'NavigDirection', default: 0 }, { name: 'HierarchyLevel', default: 'NODE' }, { name: 'AddToSelection', default: false }], (app, a) => {
     const dir = Number(a.NavigDirection);
