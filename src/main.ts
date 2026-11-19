@@ -65,6 +65,8 @@ import { registerUnfoldB13bCommands } from './commands/unfoldB13b';
 import { registerCrosswalkB13cCommands } from './commands/crosswalkB13c';
 import { registerMotorB13dCommands } from './commands/motorB13d';
 import { registerPluginsB13eCommands } from './commands/pluginsB13e';
+import { registerFaceRobotB14dCommands } from './commands/faceRobotB14d';
+import { registerFaceRobotB14eCommands } from './commands/faceRobotB14e';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -201,6 +203,8 @@ registerUnfoldB13bCommands(app);   // CMD-B13b (Unfold3D.64.dll contracts)
 registerCrosswalkB13cCommands(app);   // CMD-B13c (dotXSIConverter.64.dll contracts)
 registerMotorB13dCommands(app);   // CMD-B13d (CDKMotionTransform.64.dll contracts)
 registerPluginsB13eCommands(app);   // CMD-B13e (small plug-in DLL contracts)
+registerFaceRobotB14dCommands(app);   // CMD-B14d (Face Robot retarget / mocap / stage)
+registerFaceRobotB14eCommands(app);   // CMD-B14e (Face Robot export / weights / tongue)
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
