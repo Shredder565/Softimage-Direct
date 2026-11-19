@@ -674,10 +674,7 @@ const HANDLERS: Record<string, Handler> = {
   ResetEffectAtFrame(app, a) { return resetClipCurves(app, a.Clip); },
   ResetAllEffectCurves(app, a) { return resetClipCurves(app, a.Clip); },
   ResetSelectedEffectCurves(app, a) { return resetClipCurves(app, a.Clip); },
-  GetStoreActionDefaults(app) {
-    const animated = [...app.anim.fcurves.values()].filter(fc => fc.keys.length).length;
-    return { From: app.anim.startFrame, To: app.anim.endFrame, Size: animated };
-  },
+  // GetStoreActionDefaults: contract version in actionB11eSources.ts (CMD-B11e)
   CollapseLayers(app, a) {
     const stored = app.run('StoreAction', storeOverlapping(a));
     if (app.anim.layers.length > 1) {
@@ -692,17 +689,7 @@ const HANDLERS: Record<string, Handler> = {
     const keepInactive = a['Keep Inactive Actions'] === true;
     return clips.filter(c => (keepInactive || !c.mute) && (!consider || (time >= c.start && time < c.start + c.duration))).map(c => c.source);
   },
-  RemoveActionItem(app, a) {
-    const name = String(a.Name || a.Source || '');
-    if (!name) return null;
-    const mix = mixerOf(mixHost(app, null));
-    const clips = clipsOf(mix);
-    const i = clips.findIndex(c => c.name === name || c.source === name);
-    if (i < 0) return null;
-    clips.splice(i, 1);
-    syncMixer(mix);
-    return name;
-  },
+  // RemoveActionItem: contract version in actionB11eSources.ts (CMD-B11e)
 
   SaveShapeKey: (app, a) => app.run('StoreShapeKey', { InputObj: a.InputObj, Name: a.Name, Frame: a.Time }),
   CopyShape(app, a) {
