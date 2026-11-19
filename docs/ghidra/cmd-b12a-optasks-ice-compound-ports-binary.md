@@ -1,6 +1,6 @@
 # CMD-B12a: ICE compound editing commands read from `optasks.dll` (AddExposedParamToICECompoundNode, EditExposedParamInICECompoundNode, RemoveExposedParamFromICECompoundNode, RemoveExposedPortPassThrough, GetICECompoundPortProperties, MoveICECompoundPort, MoveICECompoundPortsAndLayoutGroups, CreateLayoutGroupInICECompoundNode, RenameICEPPGLayoutGroup, HideAllPortValues, PrivateGetCompoundConstructionMode, ReplaceICECompoundNode)
 
-Row: **CMD-B12a**. Status: **SPEC** (6 names), **SPEC-PARTIAL** (6 names); per command below.
+Row: **CMD-B12a**. Status: **SPEC** (9 names), **SPEC-PARTIAL** (3 names); per command below (3 promoted in batch 13, see addendum).
 Run: 2026-11-19, si-analyst worker, unattended, batch 12 (binary first, REA + Ghidra 12.1.4 on the PC)
 **No XSIBATCH golden**: nothing here was executed. No decompiler output or disassembly is reproduced.
 
@@ -115,7 +115,7 @@ Wire contract:
   towards the top, positive = towards the bottom, inferred from the sign) within that side.
 - Undo moves it back from the new position by the inverse step.
 
-### `GetICECompoundPortProperties`: SPEC-PARTIAL
+### `GetICECompoundPortProperties`: SPEC (promoted batch 13, see addendum)
 
 Wire contract:
 - Args: `Parameter` (an exposed port / parameter of a compound, required), output
@@ -126,7 +126,7 @@ Wire contract:
   `EditExposedParamInICECompoundNode` arguments they are Name, Min, Max, Picking,
   Description, ExposeType, Enum, PPGLayoutGroup (inferred).
 
-### `EditExposedParamInICECompoundNode`: SPEC-PARTIAL
+### `EditExposedParamInICECompoundNode`: SPEC (promoted batch 13, see addendum)
 
 Wire contract:
 - Args: `Parameter` (exposed port, required), `Name`, `Min`, `Max`, `Picking`,
@@ -188,7 +188,7 @@ Wire contract:
      pass-through node (delete sub-task, flag `0x10`).
 - Each step is recorded as a sub-task when undoable.
 
-### `HideAllPortValues`: SPEC-PARTIAL
+### `HideAllPortValues`: SPEC (promoted batch 13, see addendum)
 
 Wire contract:
 - Args: `InputObjs` (list; default selection). Only items that are ICE nodes
@@ -236,3 +236,71 @@ Wire contract:
 3. `AddExposedParamToICECompoundNode` and `ReplaceICECompoundNode` helper workers.
 4. `HideAllPortValues` per-node rule; XSIOPTASKS 0x425, 0x111, 0x174 texts.
 5. `CreateLayoutGroupInICECompoundNode` one-name undo path (rename to empty).
+
+## Addendum 2026-11-19 (batch 13): PR #185 answers
+
+Run: si-analyst worker, REA + Ghidra 12.1.4 on the PC, same binary (sha256 above). Answers to the wire
+agent's questions on this row. No decompiler output reproduced; behaviour described in prose.
+
+**Q1 `MoveICECompoundPortsAndLayoutGroups` `MoveAction`: OPEN (not in optasks).** UnPackArg
+(`0x180005780`) reads `MoveAction` as an unsigned integer with no range check and stores it; the worker
+(`0x1800053c0`) hands it unchanged to the compound's "move ports / groups" method (compound interface
+slot `0x1e0`, together with the name list, the marker and an out "was-changed" flag and undo blob). The
+numbering is decided in the ICE core, not here. Keep the existing 0 = before, 1 = after reading as
+`(inferred)`; values above 1 are not rejected by the command.
+
+**Q2a `GetICECompoundPortProperties` `OutputArgs`: ANSWERED.** Task slot 15 is `0x1800b7f90`; the
+property reader `0x1800c4b20` fills a property record and RePackArg (`0x1800b8100`, task slot 9) writes
+`OutputArgs` as an 8-element variant array (VT_ARRAY|VT_VARIANT), in this order:
+0 `Name` (BSTR), 1 `Min` (BSTR), 2 `Max` (BSTR), 3 `Picking` (BSTR), 4 `Description` (BSTR),
+5 `ExposeType` (VT_I4), 6 `Enum` (BSTR), 7 `PPGLayoutGroup` (BSTR).
+The names are certain: the record offsets read here are the same offsets
+`EditExposedParamInICECompoundNode`'s UnPackArg (`0x1800b6010`) fills from those argument names.
+- `Name` is the exposed port's display name; when that is empty, the port's internal name is returned.
+- `Enum` is rebuilt from the port's enum item list as `first,second;` per item, every item followed by
+  `;` (so a non-empty result always ends with `;`).
+- Errors: null port or compound → message `0x111` (severity 2), `0x80070057`; the port cannot be found
+  in the compound → `0x80004005`; null output → `0x80004003`.
+
+**Q2b `EditExposedParamInICECompoundNode` "unchanged" rule: ANSWERED.** Worker `0x1800b59f0`
+(task slot 15), apply step `0x1800c4e60`:
+1. Clears sub-tasks; null port / compound → `0x111`, `0x80070057`. Lock check on the compound
+   (`0x80070005`). Port not found in the compound → `0x80004005`.
+2. When the run is undoable, the current properties are read first (kept for undo), and each field is
+   applied **only when it differs from the current value**. When the run is not undoable there is no
+   "current" record, so every field counts as changed.
+3. `Name` is the only field where empty means "leave unchanged": it is applied only when non-empty
+   (and different). Every other string field (`Min`, `Max`, `Picking`, `Description`, `Enum`,
+   `PPGLayoutGroup`) is applied when it differs, **including to an empty value** (passing "" clears it,
+   inferred for `Min` / `Max` / `PPGLayoutGroup`, which the record passes without a change bit).
+   Change bits handed to the compound: Name `0x8`, Picking `0x1`, ExposeType `0x2`, Description `0x10`.
+4. `ExposeType` is an opaque integer passed through to the compound (no range check in optasks); its
+   numbering is in the ICE core (still OPEN; keep it a stored integer).
+5. `Enum` parsing: the string is split on `;`; each item is split at its first `,` into two parts;
+   items without a `,` or with an empty part are dropped silently; the last item may omit the trailing
+   `;`. The two parts keep their order (the same `first,second` order `GetICECompoundPortProperties`
+   returns).
+6. When undoable, the properties after the edit are re-read and kept for Redo; Undo re-applies the
+   saved "before" record (inferred: Undo body not read this batch).
+
+**Q4a `HideAllPortValues` per-node rule: ANSWERED.** Per node (`0x1800ba5b0`):
+1. A node inside a referenced model → warning `XSIOPTASKS 0x425` (severity 2) and that node returns
+   `0x80070005`.
+2. The hide step (`0x1800baa10`) does nothing for a read-only / referenced compound, nor for a node
+   whose "can show values" query (node slot `0xb8`) is false. Otherwise it lists the node's ports and,
+   for every port entry the node marks as value-displayable (entry flag at `+0x18`, inferred meaning),
+   sets that port's "show value" flag to the target state when it differs; any change sets the task's
+   refresh flag (so the tree view is only refreshed when something changed). **Connectedness is not
+   tested**: all listed ports are hidden.
+3. If the node is a compound, the same walk is applied recursively to its inner nodes
+   (`0x1800ba4a0`).
+4. Undo runs the walk with target state "shown" for every listed port: it does not remember which
+   ports were already hidden before the command, so it shows all of them (observed: no per-port state
+   is stored, only the node list).
+
+**Q4b `CreateLayoutGroupInICECompoundNode` one-name undo: not re-read this batch** (contract already
+SPEC; the one-name "rename back to empty" path stands as written).
+
+**Promoted SPEC-PARTIAL → SPEC:** `GetICECompoundPortProperties`, `EditExposedParamInICECompoundNode`,
+`HideAllPortValues`. Still SPEC-PARTIAL: `MoveICECompoundPortsAndLayoutGroups` (Q1),
+`AddExposedParamToICECompoundNode`, `ReplaceICECompoundNode`.
