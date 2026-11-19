@@ -157,7 +157,8 @@ const got = await page.evaluate(async ({ NAMES, DEFAULT_FAILS: DF }) => {
   // ---- CollapseOp
   {
     const op = cube.primitive.operators[0]; const r = run('CollapseOp', { InputObjs: [op] });
-    ok('CollapseOp: per-operator step not yet attested, empty output', Array.isArray(r.v) && !r.v.length && nya(r) === 1, r);
+    // batch 12: the per-operator step is wired (tools/compare_b12_b11_corrections.mjs); the generator has no input -> nothing
+    ok('CollapseOp: an operator without input (the generator) gives nothing', Array.isArray(r.v) && !r.v.length && nya(r) === 0, r);
   }
   // ---- RenameCPSetLayoutItems
   {
@@ -239,12 +240,13 @@ const got = await page.evaluate(async ({ NAMES, DEFAULT_FAILS: DF }) => {
     const nv0 = S.netViews.length; run('DumpCacheHeader', { SourcePath: 'C:\\b11a\\c.icecache' }); ok('DumpCacheHeader opens the Net View on the XML file', S.netViews.length === nv0 + 1 && S.netViews[nv0].url === 'C:\\b11a\\c.xml', S.netViews.length - nv0);
     document.querySelectorAll('.uixsi-netview-window').forEach(w => w.closest('.floating, .ppg-float')?.remove?.());
 
-    const p0 = S.cachePlans.length; const c = run('CacheObjectsIntoFile_Private', { ObjectsToCache: 'cube', PathID: 5, FirstFrame: 4, Type: 1, FrameSet: [4, 5, 6], AlternativePath: 'C:\\c\\x_#.icecache' });
-    ok('CacheObjectsIntoFile_Private Type 1: frame set plan, ResolvedPath', c.v === 'C:\\c\\x_4.icecache' && S.cachePlans.length === p0 + 1 && S.cachePlans[p0].frames.join() === '4,5,6' && S.ambient.Datamanagement_CachingToFiles === 0, [c.err, c.v]);
+    // batch 12: PathID 5 = AlternativePath as the path template; the file name comes from the file-name template
+    const p0 = S.cachePlans.length; const c = run('CacheObjectsIntoFile_Private', { ObjectsToCache: 'cube', PathID: 5, FirstFrame: 4, Type: 1, FrameSet: [4, 5, 6], AlternativePath: 'C:\\c\\[object]' });
+    ok('CacheObjectsIntoFile_Private Type 1: frame set plan, ResolvedPath', c.v === 'C:\\c\\cube\\cube_A_4.icecache' && S.cachePlans.length === p0 + 1 && S.cachePlans[p0].frames.join() === '4,5,6' && S.ambient.Datamanagement_CachingToFiles === 0, [c.err, c.v]);
     ok('CacheObjectsIntoFile_Private: FrameSet not an array -> E_INVALIDARG', status(run('CacheObjectsIntoFile_Private', { ObjectsToCache: 'cube', Type: 1, FrameSet: 'x' })) === 0x80070057);
     ok('CacheObjectsIntoFile_Private: other Type -> E_NOTIMPL', status(run('CacheObjectsIntoFile_Private', { ObjectsToCache: 'cube', Type: 3 })) === 0x80004001);
-    const t0 = run('CacheObjectsIntoFile_Private', { ObjectsToCache: 'cube', FirstFrame: 1, LastFrame: 5, FramesPerStep: 2, AlternativePath: 'C:\\c\\y_#.icecache' });
-    ok('CacheObjectsIntoFile_Private Type 0: frame range with step', S.cachePlans[S.cachePlans.length - 1].frames.join() === '1,3,5' && t0.v === 'C:\\c\\y_1.icecache', t0);
+    const t0 = run('CacheObjectsIntoFile_Private', { ObjectsToCache: 'cube', PathID: 5, FirstFrame: 1, LastFrame: 5, FramesPerStep: 2, AlternativePath: 'C:\\c' });
+    ok('CacheObjectsIntoFile_Private Type 0: frame range with step', S.cachePlans[S.cachePlans.length - 1].frames.join() === '1,3,5' && t0.v === 'C:\\c\\cube_A_1.icecache', t0);
   }
   reset();
   return out;

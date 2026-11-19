@@ -5,7 +5,7 @@
 // Model mapping: StoreShapeKey of this build keeps shape keys on the object; such a key counts as owned by the
 // object's complete point cluster (the stand-in for the shape cluster). Keys owned by a real point cluster are used as is.
 import { App } from '../core/commands';
-import { Cluster, Model, Operator, Property, X3DObject, construction } from '../core/scene';
+import { Cluster, Model, Node, Operator, Property, X3DObject, construction } from '../core/scene';
 import { str, int, num } from '../core/params';
 import { ensureShapeBase, ensureShapeOperator } from '../core/shape';
 import { pref } from './uixsiKeysSourcesMaterialsShared';
@@ -101,27 +101,32 @@ function setGroups(app: App, keys: Property[], name: string, label: string) {
   const before = keys.map(groupOf);   // old group names saved first (undo recording)
   app.record(label, () => keys.forEach(k => { (k as any).shapeGroup = name; }), () => keys.forEach((k, i) => { (k as any).shapeGroup = before[i]; }));
 }
-/** inferred (helper 0x18002dac0 unread): shape keys of the input, objects and clusters giving their keys. */
-function collectKeys(app: App, v: any): Property[] {
-  const out: Property[] = [];
+/** Key collection 0x18002dac0 (batch 12 Q3): every input item must be a shape key (else E_INVALIDARG); all keys must have
+ *  the first key's owner (a different owner E_INVALIDARG, a key without owner E_POINTER). Returns the keys and the owner. */
+function collectKeys(app: App, C: string, v: any): { keys: Property[]; owner: Node } {
+  const keys: Property[] = []; let owner: Node | null = null;
   for (const x of listOf(v)) {
-    const k = findShapeKey(app, x); if (k) { out.push(k); continue; }
-    const o = x instanceof X3DObject ? x : typeof x === 'string' ? findObject(app, x) : undefined;
-    if (o) { out.push(...o.properties.filter(isShapeKey)); for (const c of o.clusters) out.push(...c.properties.filter(isShapeKey)); continue; }
-    if (x instanceof Cluster) out.push(...x.properties.filter(isShapeKey));
+    const k = findShapeKey(app, x);
+    if (!k) throw fail(E_INVALIDARG, `${C}: ${String((x as any)?.name ?? x)} is not a shape key`);
+    const w = k.parent as Node | null;
+    if (!w) throw fail(E_POINTER, `${C}: ${k.name} has no owner`);
+    if (!owner) owner = w; else if (w !== owner) throw fail(E_INVALIDARG, `${C}: ${k.name} does not belong to ${owner.name}`);
+    if (!keys.includes(k)) keys.push(k);
   }
-  return [...new Set(out)];
+  return { keys, owner: owner! };
 }
 function createShapeGroup(app: App, a: Record<string, any>) {
   const C = 'CreateShapeGroup';
   if (unset(a.InputObj) || a.Name === undefined || a.Name === null) { setStatus(app, C, S_OK); return null; }   // nothing done
-  const keys = collectKeys(app, a.InputObj);
+  const { keys, owner } = collectKeys(app, C, a.InputObj);
   if (!keys.length) { setStatus(app, C, S_OK); return null; }
-  // name resolution (helper 0x18002d320 unread, open question 3): inferred unique name when empty or taken
-  logNya(app, C, 'the group name rule (helper 0x18002d320); an empty name becomes "ShapeGroup", a name used by other keys gets a numeric suffix');
-  const others = new Set(allShapeKeys(app).filter(k => !keys.includes(k)).map(groupOf).filter(Boolean));
-  const base = String(a.Name) || 'ShapeGroup';
-  let name = base; for (let i = 1; others.has(name); i++) name = `${base}${i}`;
+  // name resolution 0x18002d320: empty Name -> no name (the group name stays empty); a Name already used by a shape key of
+  // the owner is made unique (helper 0x18002d1d0 unread; inferred: numeric suffix Name1, Name2, ...)
+  const base = String(a.Name); let name = '';
+  if (base) {
+    const used = new Set(((owner as any).properties as Property[] ?? []).filter(isShapeKey).map(groupOf).filter(Boolean));
+    name = base; for (let i = 1; used.has(name); i++) name = `${base}${i}`;
+  }
   setGroups(app, keys, name, 'Create shape group');
   setStatus(app, C, S_OK);
   return name;

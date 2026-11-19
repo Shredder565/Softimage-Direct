@@ -82,6 +82,8 @@ export class MappingTemplate extends Property {
   /** The template's rule-flag interface (Active / PoseOffset). inferred: both template kinds have it. */
   hasFlags = true;
   record: { name: string; active: boolean } | null = null;
+  /** Flags a new rule gets (AddMappingRule only inserts; the defaults live in the template class, inferred values). */
+  defaultFlags(): { active: boolean; poseOffset: boolean } { return { active: true, poseOffset: false }; }
   constructor(name: string, readonly mapKind: MapKind) { super(name, mapKind === 'connection' ? 'ConnectionMappingTemplate' : 'ValueMappingTemplate', []); }
   // contract slots of the rule-list interface (0-based positions)
   insert(pos: number, rules: MapRule[]) { this.rules.splice(pos, 0, ...rules); }

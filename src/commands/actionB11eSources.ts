@@ -2,7 +2,7 @@
 // (action.dll). Brief: docs/ghidra/cmd-b11e-action-maps-rules-sources-binary.md, section 3 (RemoveActionItem ...
 // MergeClips). Original code written from that prose contract only. Helpers: actionB11eModel.ts.
 import { App } from '../core/commands';
-import { Node, Property, Model, X3DObject } from '../core/scene';
+import { Node, Property, Model, X3DObject, Constraint } from '../core/scene';
 import type { Parameter } from '../core/params';
 import { int, str } from '../core/params';
 import { isActionSource, isCompoundRecord, sourceOf, toGlobal, ClipNode, mixerX } from '../core/mixerActionScripts';
@@ -57,6 +57,39 @@ const STORE_MASK: Record<number, number> = { 0: 0, 1: 1, 2: 2, 3: 4, 4: 8, 5: 0x
 function ownerObj(p: Parameter): X3DObject | null {
   let n: any = p.owner; while (n && !(n instanceof X3DObject)) n = n.parent; return n ?? null;
 }
+/** The store worker 0x180063c90 in query mode (batch 12 Q3). Mask bits: 1 static values, 2 fcurves, 4 expressions,
+ *  8 constraints / other driving operators (3 items each). Static values only for parameters with nothing else stored.
+ *  From / To: union of the stored fcurves' key ranges; else the scene span when an expression or constraint is stored;
+ *  else 1 / 5 when only static values; else 0 / 0. */
+function storeQuery(app: App, input: any[], mask: number): { From: number; To: number; Size: number } {
+  const objs: X3DObject[] = []; const direct: Parameter[] = [];
+  for (const x of input) {
+    const n = x instanceof Node ? x : findNode(app, x);
+    if (n instanceof X3DObject) { if (!objs.includes(n)) objs.push(n); }
+    else if (x && typeof x === 'object' && 'def' in x && 'owner' in x) direct.push(x as Parameter);
+    else if (typeof x === 'string') { for (const [p] of app.anim.fcurves) if (p.fullName === x) direct.push(p); for (const [p] of app.anim.expressions) if (p.fullName === x && !direct.includes(p)) direct.push(p); }
+  }
+  // the parameters of the input: the given ones, the objects' keyable local transform and their animated parameters (inferred)
+  const params: Parameter[] = [...direct];
+  const add = (p: Parameter) => { if (!params.includes(p)) params.push(p); };
+  for (const o of objs) o.kinematics.local.params.filter(p => p.keyable).forEach(add);
+  for (const [p] of app.anim.fcurves) if (objs.includes(ownerObj(p) as X3DObject)) add(p);
+  for (const [p] of app.anim.expressions) if (objs.includes(ownerObj(p) as X3DObject)) add(p);
+  let size = 0, from = Infinity, to = -Infinity, curves = 0, exprOrCns = 0, statics = 0;
+  for (const p of params) {
+    let storedHere = false;
+    const fc = app.anim.fcurves.get(p);
+    if ((mask & 2) && fc && fc.keys.length) { size++; curves++; storedHere = true; from = Math.min(from, fc.keys[0].time); to = Math.max(to, fc.keys[fc.keys.length - 1].time); }
+    if ((mask & 4) && app.anim.expressions.has(p)) { size++; exprOrCns++; storedHere = true; }
+    if ((mask & 1) && !storedHere) { size++; statics++; }
+  }
+  if (mask & 8) for (const o of objs) for (const c of o.properties) if (c instanceof Constraint) { size += 3; exprOrCns++; } // inferred: constraints enumerated per object
+  if (!size) return { From: 0, To: 0, Size: 0 }; // nothing would be stored: no source
+  if (curves) return { From: from, To: to, Size: size };
+  if (exprOrCns) return { From: app.anim.startFrame, To: app.anim.endFrame, Size: size };
+  if (statics) return { From: 1, To: 5, Size: size };
+  return { From: 0, To: 0, Size: size };
+}
 function storeDefaults(app: App, a: Record<string, any>) {
   const C = 'GetStoreActionDefaults';
   const type = String(a.Type ?? 'ReturnOnly');
@@ -67,31 +100,23 @@ function storeDefaults(app: App, a: Record<string, any>) {
     return app.run('StoreAction', { Model: a.Model ?? '', InputObj: a.InputObj ?? '', Mode: numArg(a.Mode, 1) });
   }
   // query mode: only InputObj and Mode are read
-  const objs: X3DObject[] = []; const direct: Parameter[] = [];
   const input = unset(a.InputObj) ? app.selectedObjects : listOf(a.InputObj); // inferred: unset InputObj = the selection
-  for (const x of input) {
-    const n = x instanceof Node ? x : findNode(app, x);
-    if (n instanceof X3DObject) objs.push(n);
-    else if (typeof x === 'string') { for (const [p] of app.anim.fcurves) if (p.fullName === x) direct.push(p); }
-  }
-  const owned = (p: Parameter) => direct.includes(p) || objs.includes(ownerObj(p) as X3DObject);
-  logNya(app, C, 'how the store worker computes From / To / Size; the key range and the count of the parameters the Mode classes select are returned');
-  const params = new Set<Parameter>();
-  let from = Infinity, to = -Infinity;
-  if (mask & 1) for (const [p, fc] of app.anim.fcurves) if (fc.keys.length && owned(p)) { params.add(p); from = Math.min(from, fc.keys[0].time); to = Math.max(to, fc.keys[fc.keys.length - 1].time); }
-  if (mask & 2) for (const [p] of app.anim.expressions) if (owned(p)) params.add(p);
-  if (mask & 4) logNya(app, C, 'the constraint parameter class (mask 4); constraints are not counted');
-  if (mask & 8) for (const o of objs) for (const p of o.kinematics.local.params) if (p.keyable) params.add(p); // inferred: static values = keyable local transform
-  if (!Number.isFinite(from)) { from = app.anim.startFrame; to = app.anim.endFrame; } // inferred: no curve -> the scene range
-  return { From: from, To: to, Size: params.size };
+  const r = storeQuery(app, input, mask);
+  Object.assign(a, r);
+  setStatus(app, C, S_OK);
+  return r;
 }
 
 // ------------------------------------------------------------------ LoadActionPreset
 const PRESET_EXT = ['.preset', '.xsi', '.eani'];
 function loadActionPreset(app: App, a: Record<string, any>) {
   const C = 'LoadActionPreset';
-  const file = unset(a.FileName) ? '' : String(a.FileName);
-  const ext = (/\.[^.\\/]+$/.exec(file)?.[0] ?? '').toLowerCase(); // inferred: case-insensitive extension test
+  const given = unset(a.FileName) ? '' : String(a.FileName);
+  // batch 12 Q4: full path = <folder> + "\" (only when the folder does not end in one) + <file>. inferred: a bare file
+  // name takes the folder kept under Nle\animmix\action; a path carries its own folder
+  const lastFolder = b11e(app).registry['Nle\\animmix\\action'];
+  const file = given && !/[\\/]/.test(given) && lastFolder ? lastFolder + (lastFolder.endsWith('\\') ? '' : '\\') + given : given;
+  const ext = (/\.[^.\\/]+$/.exec(file)?.[0] ?? '').toLowerCase(); // case-insensitive extension test (batch 12)
   if (!file || !PRESET_EXT.includes(ext)) {
     app.logMsg('error', `${C}: XSIACTION2 message 0x33: ${file || '(no file)'}`);
     throw fail(E_INVALIDARG, `${C}: "${file}" is not a .Preset, .xsi or .eani file`);
@@ -103,7 +128,7 @@ function loadActionPreset(app: App, a: Record<string, any>) {
   const st = b11e(app); const prevFolder = st.registry['Nle\\animmix\\action'];
   app.record(C, () => { st.registry['Nle\\animmix\\action'] = folder; }, () => { if (prevFolder === undefined) delete st.registry['Nle\\animmix\\action']; else st.registry['Nle\\animmix\\action'] = prevFolder; });
   if ((model as any).referencedModel && (model as any).lockFlags) { const was = mix.val('Active'); app.record(C, () => mix.set('Active', true), () => mix.set('Active', was)); }
-  if (ext === '.eani') st.fileEvents.push({ id: 0x20510015, type: 10, file });
+  if (ext === '.eani') st.fileEvents.push({ id: 0x20510015, type: 10, file }); // before the load
   logNya(app, C, `the ${ext === '.preset' ? 'preset' : ext === '.xsi' ? 'scene-source' : '.eani'} loader and the item post-processing; an empty action source is created`);
   const base = file.split(/[\\/]/).pop()!.replace(/\.[^.]+$/, '');
   const name = String(a.Name || base);
@@ -111,6 +136,7 @@ function loadActionPreset(app: App, a: Record<string, any>) {
   const storage = numArg(a.ActionStorage, 0);
   if (storage !== -1) { src.set('storage', storage); if (storage === 0) src.set('filename', ''); }
   app.record(C, () => model.addProperty(src), () => model.removeProperty(src));
+  if (ext === '.eani') st.fileEvents.push({ id: 0x20510016, type: 10, file }); // post-load event (batch 12 Q4)
   setStatus(app, C, S_OK);
   return src;
 }
@@ -144,7 +170,7 @@ function copySourceActionToFolder(app: App, a: Record<string, any>) {
 }
 
 // ------------------------------------------------------------------ AddPoseActionItems
-// inferred: the nine suffixes (scale / rotation / position x, y, z), matching the identity values 1,1,1,0,0,0,0,0,0
+// Batch 12 Q4: <Name>.kine.local.{scl,rot,pos}{x,y,z} (the "." separator inferred); identity values 1,1,1,0,0,0,0,0,0
 const POSE_SUFFIX = ['.kine.local.sclx', '.kine.local.scly', '.kine.local.sclz', '.kine.local.rotx', '.kine.local.roty', '.kine.local.rotz', '.kine.local.posx', '.kine.local.posy', '.kine.local.posz'];
 const POSE_VALUES = [1, 1, 1, 0, 0, 0, 0, 0, 0];
 function addPoseActionItems(app: App, a: Record<string, any>) {
@@ -152,16 +178,18 @@ function addPoseActionItems(app: App, a: Record<string, any>) {
   if (unset(a.InputObjs)) throw fail(E_POINTER, `${C}: InputObjs is required`);
   const base = String(a.Name ?? 'OFFSET_ROOT');
   const names = POSE_SUFFIX.map(s => base + s);
-  logNya(app, C, 'the nine item-name suffixes and the per-source conflict check (slot 13); kine.local scl / rot / pos x, y, z are used and a source that already has one of them is skipped');
   const done: Property[] = [];
   for (const x of listOf(a.InputObjs)) {
     const src = x instanceof Node ? (isActionSource(x) ? x as Property : undefined) : sourceArg(app, x);
-    if (!src) continue;
-    if (itemsOf(src).some(i => names.includes(i))) continue;
-    const before = snapSource(src);
-    const v = srcJson<Record<string, number>>(src, 'data'); names.forEach((n, i) => { v[n] = POSE_VALUES[i]; });
+    if (!src) continue; // no action-source interface
+    const S = src as any;
+    if (Array.isArray(S.poseItems) && S.poseItems.length) continue; // the source already has a pose-item list: skipped silently
+    const before = snapSource(src); const beforePose = S.poseItems;
+    // pass 1: the nine items are added one by one (value 0 until pass 2); pass 2: the nine values in one call
+    const v = srcJson<Record<string, number>>(src, 'data'); names.forEach(n => { v[n] = 0; });
+    names.forEach((n, i) => { v[n] = POSE_VALUES[i]; });
     const after = { ...before, data: JSON.stringify(v) }; after.items = new Set([...Object.keys(v), ...Object.keys(srcJson(src, 'fcurves')), ...Object.keys(srcJson(src, 'expressions'))]).size;
-    app.record(C, () => writeSource(src, after), () => writeSource(src, before));
+    app.record(C, () => { writeSource(src, after); S.poseItems = [...names]; }, () => { writeSource(src, before); S.poseItems = beforePose; });
     done.push(src);
   }
   setStatus(app, C, done.length ? S_OK : S_FALSE);

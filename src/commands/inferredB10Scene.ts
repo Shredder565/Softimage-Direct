@@ -101,10 +101,14 @@ function paramOfArg(app: App, x: any): Parameter | undefined {
   if (o && (o.name === s || o.fullName === s)) return undefined;
   return findParam(app, s);
 }
-/** Lock-info records (B11d §3.8): per element, { level bits, type } with type 2 = tag. Shared stand-in for the lock task. */
-export function lockRecords(app: App): Map<any, { level: number; type: number }[]> { return ((app as any).lockRecordsB11 ??= new Map()); }
+/** Lock-info record (B11d batch 12 Q3): { component id, lock level (16 bit), tag level (16 bit), lock type }, type 2 = tag. */
+export interface LockRecord { id: number; lockLevel: number; tagLevel: number; type: number }
+/** Lock-info records per element. Shared stand-in for the lock task. */
+export function lockRecords(app: App): Map<any, LockRecord[]> { return ((app as any).lockRecordsB11 ??= new Map()); }
 /** Lock check at a level (B11d §3.6 uses level 4): any non-tag record on the element with that bit (or siLockLevelAll). */
-export function isLocked(app: App, n: any, level: number): boolean { return (lockRecords(app).get(n) ?? []).some(r => r.type !== 2 && (r.level === 0xffff || !!(r.level & level))); }
+export function isLocked(app: App, n: any, level: number): boolean { return (lockRecords(app).get(n) ?? []).some(r => r.type !== 2 && (r.lockLevel === 0xffff || !!(r.lockLevel & level))); }
+/** Component id of a parameter (inferred stand-in: its index in the owner's parameter list, plus 1; 0 is the object). */
+const componentId = (p: Parameter): number => { const o: any = (p as any).owner; const i = o?.params?.indexOf?.(p) ?? -1; return i + 1; };
 
 /** Parameters of an AnimatableParameters argument: full parameter paths, or the keyable local transform of objects. */
 function paramsOfArg(app: App, arg: any): Parameter[] {
@@ -146,8 +150,9 @@ export function registerInferredB10Scene(app: App) {
     if (!(f instanceof FolderNode)) throw Object.assign(new Error(`${C}: Target is not a folder`), { status: E_NOINTERFACE });
     return f;
   };
-  regB10(app, 'MoveToFolder', { // B11d §3.4 (SPEC-PARTIAL): a non-folder Target fails before any change; InputObjs become members; no return value
+  regB10(app, 'MoveToFolder', { // B11d §3.4 + batch 12 Q2 (SPEC-PARTIAL): NULL folder -> 1; one membership call does the move
     execute(app, a) {
+      if (unset(a.Target)) { setStatus(app, 'MoveToFolder', S_FALSE); return; } // NULL folder: returns 1, no change
       const f = folderTarget('MoveToFolder', a.Target);
       if (unset(a.InputObjs)) throw fail('MoveToFolder', E_INVALIDARG, 'InputObjs is required');
       const items = nodesOf(app, a.InputObjs).filter(n => n !== f);
@@ -181,7 +186,7 @@ export function registerInferredB10Scene(app: App) {
 
   // ---------------------------------------------------------------- NavigateNode / environments
   // B11d §3.1: one navigation step from Source in its element hierarchy (here: the scene object tree, models included)
-  regB10(app, 'NavigateNode', { // B11d §3.1: NavDirection 1 parent, 2 child, 3 next, 4 previous (polarity inferred), 5 first, 6 last sibling
+  regB10(app, 'NavigateNode', { // B11d §3.1 + batch 12 Q1: 1 parent, 2 child, 3 next, 4 previous (confirmed), 5 first, 6 last sibling
     undoable: false,
     execute(app, a) {
       const C = 'NavigateNode';
@@ -192,28 +197,39 @@ export function registerInferredB10Scene(app: App) {
       const filt = intArg(a.NavFilter, 11, 'NavFilter'); if (filt < 1 || filt > 11) throw fail(C, E_INVALIDARG, `NavFilter ${filt} is not 1..11`);
       const sub = intArg(a.NavSubFilter, 1, 'NavSubFilter'); const subOn = sub === 0 ? false : true; // other values keep the previous setting (default 1)
       const loop = boolA(a.NavLoop);
+      // The hierarchy: the scene object tree under its root (models included). Flags bit 0x8 of an element: the stand-in
+      // field `navFlags` (inferred; this build has no element flag word).
+      let root: X3DObject = src; while (root.parentObj) root = root.parentObj;
+      const order: { e: X3DObject; depth: number }[] = []; const walk = (o: X3DObject, d: number) => { order.push({ e: o, depth: d }); o.children.forEach(c => walk(c, d + 1)); }; walk(root, 0);
+      const depthOf = (e: X3DObject) => order.find(x => x.e === e)!.depth;
+      const below = order.filter(x => x.e !== root);
+      /** One step 3 / 4 from `from` below the root: leaf -> next / previous leaf (depth-first); with children -> next /
+       *  previous element at the same depth; NavLoop wraps to the first / last of that sequence; back at Source = none. */
+      const step = (from: X3DObject): X3DObject | null => {
+        const seq = from.children.length ? below.filter(x => x.depth === depthOf(from)).map(x => x.e) : below.filter(x => !x.e.children.length).map(x => x.e);
+        const i = seq.indexOf(from); const s = dir === 3 ? 1 : -1; let j = i + s;
+        if (j < 0 || j >= seq.length) { if (!loop) return null; j = dir === 3 ? 0 : seq.length - 1; }
+        const r = seq[j]; return r && r !== src ? r : null;
+      };
       if (filt <= 9) logNyaB10(app, C, `NavFilter ${filt}: the element-ref type code numbering (E3DELEMREFTYPE); every scene object counts as Source's type`, B11D);
-      // filter: NavFilter 10 = none; 11 / 1..9 = same element type (all scene objects here) and, with NavSubFilter 1, the same sub-class (object type)
+      // NavFilter / NavSubFilter apply only in the root walk (batch 12); 10 = none, 11 / 1..9 = same type and, with
+      // NavSubFilter 1, the same sub-class (object type)
       const accept = (e: X3DObject) => filt === 10 || !subOn || e.type === src.type;
-      // inferred: element flag 0x8 ("skip") is not modelled, nothing is skipped; type 5 elements' separate step helpers are not modelled
       let r: X3DObject | null = null;
-      if (dir === 1) r = src.parentObj ?? null; // inferred: the filter applies to the sibling / walk steps only
+      if (dir === 1) r = src.parentObj ?? null; // inferred: parent / child steps are not filtered
       else if (dir === 2) r = src.children[0] ?? null;
-      else if (!src.parentObj) { // the hierarchy root: depth-first (pre-order) walk of the whole hierarchy until an element passes the filter
+      else if (src === root) {
         if (dir === 3 || dir === 4) {
-          const order: X3DObject[] = []; const walk = (o: X3DObject) => { order.push(o); o.children.forEach(walk); }; walk(src);
-          const n = order.length; const i0 = order.indexOf(src);
-          for (let k = 1; k < n; k++) { const e = order[(i0 + (dir === 3 ? k : n - k)) % n]; if (accept(e)) { r = e; break; } }
+          // inferred: the nested sub-hierarchies of the root are its depth-first elements; the walk applies the filter
+          const list = below.map(x => x.e); const n = list.length;
+          for (let k = 0; k < n; k++) { const e = list[dir === 3 ? k : n - 1 - k]; if (accept(e)) { r = e; break; } }
         }
-      } else { // below the root: siblings, wrapping with NavLoop (inferred) for next / previous
-        const sibs = src.parentObj.children; const n = sibs.length; const i0 = sibs.indexOf(src);
-        if (dir === 3 || dir === 4) {
-          const s = dir === 3 ? 1 : -1;
-          for (let k = 1; k < n; k++) { const j = i0 + s * k; if (!loop && (j < 0 || j >= n)) break; const e = sibs[(j % n + n) % n]; if (accept(e)) { r = e; break; } }
-        } else { // 5 first / 6 last: repeat the step until there is no further element
-          const s = dir === 6 ? 1 : -1;
-          for (let j = i0 + s; j >= 0 && j < n; j += s) if (accept(sibs[j])) r = sibs[j];
-        }
+      } else if (dir === 3 || dir === 4) {
+        r = step(src);
+        for (let guard = 0; r && ((r as any).navFlags & 0x8) && guard < order.length; guard++) r = step(r); // flag 0x8: repeat the step
+      } else { // 5 first / 6 last sibling (NavLoop for 5 / 6 open)
+        const sibs = src.parentObj!.children; const i0 = sibs.indexOf(src); const s = dir === 6 ? 1 : -1;
+        for (let j = i0 + s; j >= 0 && j < sibs.length; j += s) if (accept(sibs[j])) r = sibs[j]; // inferred: the first / last helpers keep the filter (not read)
       }
       return r ?? src; // nothing found: Source itself
     },
@@ -493,16 +509,20 @@ export function registerInferredB10Scene(app: App) {
         const R = lockRecords(app); const done: Parameter[] = [];
         for (const x of listOf(a.InputObjs)) {
           const p = paramOfArg(app, x);
-          if (!p) { app.logMsg('info', `${name}: Warning: XSITASKS 1069: ${x?.fullName ?? x} has no component id; skipped`); continue; }
+          // component id 0 (the object itself): XSITASKS 1069 (0x42d) with the object's path, severity 4, skipped
+          if (!p) { app.logMsg('info', `WARNING : ${name}: [XSITASKS 1069: text not in the dictionary] ${x?.fullName ?? x}`); continue; }
           done.push(p);
         }
         if (!done.length) { setStatus(app, name, S_FALSE); return; }
+        const lv = level & 0xffff; // stored as 16 bits
         const before = new Map(done.map(p => [p, (R.get(p) ?? []).map(r => ({ ...r }))]));
+        // lock-info record {component id, lock level (16 bit), tag level (16 bit), lock type}; Tag adds / Untag removes
+        // {id, 0, Level, 2}. inferred: one type-2 record per element whose tag level accumulates the added bits
         app.record(name, () => {
           for (const p of done) {
             const list = R.get(p) ?? []; let tag = list.find(r => r.type === 2);
-            if (sub === 3) { if (!tag) list.push(tag = { level: 0, type: 2 }); tag.level |= level; }
-            else if (tag) { tag.level &= ~level; if (!tag.level) list.splice(list.indexOf(tag), 1); }
+            if (sub === 3) { if (!tag) list.push(tag = { id: componentId(p), lockLevel: 0, tagLevel: 0, type: 2 }); tag.tagLevel = (tag.tagLevel | lv) & 0xffff; }
+            else if (tag) { tag.tagLevel &= ~lv & 0xffff; if (!tag.tagLevel) list.splice(list.indexOf(tag), 1); }
             if (list.length) R.set(p, list); else R.delete(p);
           }
         }, () => { for (const [p, l] of before) { if (l.length) R.set(p, l.map(r => ({ ...r }))); else R.delete(p); } });

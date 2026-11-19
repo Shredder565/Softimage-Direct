@@ -107,7 +107,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     const rx = cube.kinematics.local.get('rotx'); const hadCurve = A.anim.fcurves.has(rx); const u1 = A.undoStack.length;
     const f = run('FreezeLipSync', { Model: 'Scene_Root' });
     ok('FreezeLipSync freezes the six speech channels into fcurves and deletes the speech source', f.v === 6 && A.anim.fcurves.get(rx)?.keys.length === 1 && !root.properties.includes(s) && nya(f) === 1, [f.v, f.err]);
-    ok('FreezeLipSync uses AddFCurve and DeleteObj sub-tasks', S.subtasks.some(t => t.command === 'FreezeLipSync' && t.task === 'AddFCurve') && S.subtasks.some(t => t.command === 'FreezeLipSync' && t.task === 'DeleteObj' && t.detail === 'Talk'));
+    ok('FreezeLipSync uses AddFCurve and DeleteObj sub-tasks', S.subtasks.some(t => t.command === 'FreezeLipSync' && t.task === 'AddFCurve') && S.subtasks.some(t => t.command === 'FreezeLipSync' && t.task === 'DeleteObj' && /^Talk\b/.test(t.detail)));
     undoAll(u1); ok('FreezeLipSync undo restores the source and the curves', root.properties.includes(s) && A.anim.fcurves.has(rx) === hadCurve);
     delete cube.frTag; undoAll(u0); ok('CreateSpeechAction undo removes source and cluster', srcs().length === n0 && cube.clusters.length === c0);
     ok('CreateSpeechAction with an empty Face returns S_FALSE', run('CreateSpeechAction').v === null && status() === 1);
@@ -123,7 +123,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
   // ---- SetupEvolverVisemes
   { const u0 = A.undoStack.length; const n0 = srcs().length;
     const r0 = run('SetupEvolverVisemes', { Model: 'Scene_Root', ClipList: [], FileName: 'C:\\evolver.txt' });
-    ok('SetupEvolverVisemes without a parser logs 0x444 and fails', /SetupEvolverVisemes/.test(r0.err ?? '') && r0.log.some(l => /0x444/.test(l)) && nya(r0) === 1, r0);
+    ok('SetupEvolverVisemes with an unreadable mapping file logs 0x444 and fails (batch 12: built-in XML parser)', /SetupEvolverVisemes/.test(r0.err ?? '') && r0.log.some(l => /0x444/.test(l)) && nya(r0) === 0, r0);
     S.evolverParser = () => ({ prefix: 'EV_', visemes: [{ name: 'AA', phoneme: 2, values: { 'cube.kine.local.posx': 5 } }] });
     const px = cube.kinematics.local.get('posx'); const v0 = px.value;
     const r = run('SetupEvolverVisemes', { Model: 'Scene_Root', ClipList: [], FileName: 'C:\\evolver.txt' }); const s = r.v?.Action?.[0];
@@ -146,9 +146,11 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     const r3 = run('CopyShape', { Source: 'cube', Target: clAll }); ok('CopyShape: a source that is not a cluster shape key is error 100', r3.v === null && r3.log.some(l => /error 100/.test(l)), r3);
     ok('CopyShape onto the object (complete point cluster stand-in)', run('CopyShape', { Source: sk, Target: 'cube' }).v?.[0]?.parent === cube);
     // groups
-    const g = run('CreateShapeGroup', { InputObj: [sk], Name: '' }); ok('CreateShapeGroup: empty name -> ShapeGroup', g.v === 'ShapeGroup' && sk.shapeGroup === 'ShapeGroup' && nya(g) === 1, g);
-    const g2 = run('CreateShapeGroup', { InputObj: [key], Name: 'ShapeGroup' }); ok('CreateShapeGroup: a taken name gets a suffix', g2.v === 'ShapeGroup1' && key.shapeGroup === 'ShapeGroup1', g2.v);
-    A.undo(); ok('CreateShapeGroup undo', !key.shapeGroup);
+    // batch 12 (Q3): empty Name sets no name; a name used by a shape key of the owner is made unique; one owner only
+    const g = run('CreateShapeGroup', { InputObj: [sk], Name: 'ShapeGroup' }); ok('CreateShapeGroup: a free name is used as is', g.v === 'ShapeGroup' && sk.shapeGroup === 'ShapeGroup' && nya(g) === 0, g);
+    const g0 = run('CreateShapeGroup', { InputObj: [key], Name: '' }); ok('CreateShapeGroup: empty name -> no name', g0.v === '' && !key.shapeGroup, g0); A.undo();
+    run('CreateShapeGroup', { InputObj: [key], Name: 'G1' }); const g2 = run('CreateShapeGroup', { InputObj: [key], Name: 'G1' }); ok('CreateShapeGroup: a taken name gets a suffix', g2.v === 'G11' && key.shapeGroup === 'G11', g2.v);
+    A.undo(); A.undo(); ok('CreateShapeGroup undo', !key.shapeGroup);
     ok('CreateShapeGroup with no input does nothing', run('CreateShapeGroup', { Name: 'x' }).v === null);
     ok('SetShapeGroup: empty Name is E_INVALIDARG', /0x80070057/.test(run('SetShapeGroup', { InputObj: [sk], Name: '' }).err ?? ''));
     const bad = run('SetShapeGroup', { InputObj: [sk, 'cube'], Name: 'G' }); ok('SetShapeGroup: a non-key item is E_POINTER and changes nothing', /0x80004003/.test(bad.err ?? '') && sk.shapeGroup === 'ShapeGroup', bad.err);
@@ -191,7 +193,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     // ResetOffset
     const posx = cube.kinematics.local.get('posx');
     const ro = run('ResetOffset', { InputObjs: 'cube.kine.local.posx', Time: 5 });
-    ok('ResetOffset keys the single contributing clip item at Time', ro.v === 1 && items().some(it => it.param.some(k => k.time === 5 && k.value === 0)) && nya(ro) === 1, [ro.err, ro.v]);
+    ok('ResetOffset keys the single contributing clip item at Time', ro.v === 1 && items().some(it => it.param.some(k => k.time === 5 && k.value === 0)) && nya(ro) === 0, [ro.err, ro.v]);
     const none = run('ResetOffset', { InputObjs: 'cube.kine.local.posx', Time: 100000 }); ok('ResetOffset with no contributing action is 0x3fc', /0x3fc/.test(none.err ?? '') && /0x80070057/.test(none.err ?? ''), none.err);
     const nd = run('ResetOffset', { InputObjs: 'cube.kine.local.pposx', Time: 5 }); ok('ResetOffset on a parameter not driven by the mixer is 0x3f6', /0x3f6/.test(nd.err ?? ''), nd.err);
     A.run('StoreAction', { InputObj: 'cube', Mode: 4, Name: 'Act2', AddClip: true, ClipOffset: 1 });

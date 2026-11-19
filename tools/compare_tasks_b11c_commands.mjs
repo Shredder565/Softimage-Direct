@@ -28,8 +28,9 @@ const NAMES = [
   'SILoadPreset', 'SISaveDuplicateXformForUndo', 'SaveBackupScene', 'SavePreset', 'SaveSceneAs', 'SetReference', 'TagForDelete',
 ];
 // Required input without a usable default (cube selected): the default run must fail with a message naming the command.
-const DEFAULT_FAILS = new Set(['CopyCacheFiles2', 'CreatePreset', 'EvaluateCurveAt', 'ExportCustomFile', 'GetCurveLength', 'GetUserPref',
-  'InspectExternalReference', 'SILoadPreset', 'SaveBackupScene', 'SavePreset', 'SaveSceneAs', 'SetReference']);
+// batch 12: EvaluateCurveAt without a curve succeeds with zero outputs; SaveSceneAs with an empty name saves to the current scene path
+const DEFAULT_FAILS = new Set(['CopyCacheFiles2', 'CreatePreset', 'ExportCustomFile', 'GetCurveLength', 'GetUserPref',
+  'InspectExternalReference', 'SILoadPreset', 'SaveBackupScene', 'SavePreset', 'SetReference']);
 
 const reg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'command_registry.json'), 'utf8')).commands;
 const full = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'commands_full.json'), 'utf8'));
@@ -90,9 +91,9 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     ok('SaveSceneAs returns S_FALSE', S.lastStatus?.status === 1, S.lastStatus);
     ok('SaveSceneAs does not enter the undo stack', !A.undoStack.some(u => u.label === 'SaveSceneAs'));
     const r2 = run('SaveSceneAs', { SceneFileName: 'C:\\B11c\\scenes\\two' });
-    ok('SaveSceneAs: a name without an extension gets .scn (inferred, logged)', r2.v === 'C:\\B11c\\scenes\\two.scn' && hfs.isFile('C:\\B11c\\scenes\\two.scn') && has(r2, /not yet attested: the target file-name builder/), r2);
+    ok('SaveSceneAs: a name without an extension is kept (batch 12) and has no converter -> 0x80070057', status(r2, '80070057') && !hfs.isFile('C:\\B11c\\scenes\\two.scn'), r2);
     ok('SaveSceneAs: CopyExtFiles above 2 -> 0x80070057', status(run('SaveSceneAs', { SceneFileName: f, CopyExtFiles: 3 }), '80070057'));
-    const r3 = run('SaveSceneAs', { SceneFileName: f, CopyExtFiles: 1 }); ok('SaveSceneAs: CopyExtFiles 1 logs the unread copy helper', !r3.err && nya(r3) >= 2, r3);
+    const c0 = (S.copyExtCalls ?? []).length; const r3 = run('SaveSceneAs', { SceneFileName: f, CopyExtFiles: 1 }); ok('SaveSceneAs: CopyExtFiles 1 runs CopyExtFilesIntoProject (batch 12)', !r3.err && (S.copyExtCalls ?? []).length === c0 + 1, r3);
     ok('SaveSceneAs: other extension without converter -> 0x80070057', status(run('SaveSceneAs', { SceneFileName: 'C:\\B11c\\scenes\\x.b11x' }), '80070057'));
     let got = null; S.registerCustomConverter('b11x', 'B11xExport', (ctx) => { got = ctx; hfs.ensureFolder(hfs.parentPath(ctx.fileName)); hfs.writeFile(ctx.fileName, 'custom'); });
     const r4 = run('SaveSceneAs', { SceneFileName: 'C:\\B11c\\scenes\\x.b11x' });
@@ -281,7 +282,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     const ec = run('EvaluateCurveAt', { InputObj: circ, Value: 0.25 }).v;
     ok('EvaluateCurveAt on a circle: unit tangent, unit normal towards the centre', ec && Math.abs(Math.hypot(ec.TanX, ec.TanY, ec.TanZ) - 1) < 1e-3 && Math.abs(Math.hypot(ec.NorX, ec.NorY, ec.NorZ) - 1) < 1e-3 && (ec.NorX * ec.PosX + ec.NorY * ec.PosY + ec.NorZ * ec.PosZ) < 0, ec);
     ok('GetCurveLength: not a curve -> 0x80004002', status(run('GetCurveLength', { InputObj: 'cube' }), '80004002'));
-    ok('EvaluateCurveAt: not a curve -> 0x80004002', status(run('EvaluateCurveAt', { InputObj: 'cube' }), '80004002'));
+    { const e = run('EvaluateCurveAt', { InputObj: 'cube' }); ok('EvaluateCurveAt: not a curve -> nine zero outputs, success (batch 12)', !e.err && Object.values(e.v ?? { x: 1 }).every(v => v === 0), e); }
     A.undo(); A.undo(); reset();
   }
   // ================= SICreateRefPlane
