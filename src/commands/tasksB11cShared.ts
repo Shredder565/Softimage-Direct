@@ -190,14 +190,21 @@ export function presetParams(n: Node): Record<string, any> {
   for (const p of n.params) { const v = p.value; if (p.def.readOnly) continue; if (v === null || ['number', 'string', 'boolean'].includes(typeof v)) out[p.name] = v; }
   return out;
 }
-/** Candidate files of a preset name (0x1800723d0 was not opened; inferred: the name, then <root>\Data\DSPresets\<family>\<name>.Preset). */
+/** SILoadPreset resolver 0x1800723d0 (batch 12 Q5): ".Preset" is appended when the name has no extension; when that
+ *  path does not exist, SIFindPresetPath(family, name) searches the family's preset folders (inferred: user, workgroup,
+ *  factory, project) and its result replaces the name. null = not found. */
 export function resolvePresetFile(app: App, name: string, family: string | null): string | null {
-  const withExt = (f: string) => extOf(f) ? f : f + '.Preset';
-  if (isAbsolute(name)) { for (const f of [name, withExt(name)]) if (hostFs.isFile(f)) return f; return null; }
+  const file = extOf(name) ? name : name + '.Preset';
+  if (hostFs.isFile(file)) return file;
+  return siFindPresetPath(app, family, file);
+}
+/** SIFindPresetPath stand-in: <root>\Data\DSPresets[\<family>]\<base name> under the install paths. */
+export function siFindPresetPath(app: App, family: string | null, name: string): string | null {
+  const base = hostFs.baseName(name);
   for (const t of [1, 2, 3, 0]) {
     const root = installPath(app, t); if (!root) continue;
     const dir = family ? hostFs.join(hostFs.join(root, 'Data\\DSPresets'), family) : hostFs.join(root, 'Data\\DSPresets');
-    for (const f of [hostFs.join(dir, name), hostFs.join(dir, withExt(name))]) if (hostFs.isFile(f)) return f;
+    const f = hostFs.join(dir, base); if (hostFs.isFile(f)) return f;
   }
   return null;
 }

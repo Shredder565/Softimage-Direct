@@ -214,16 +214,17 @@ const got = await page.evaluate(async ({ NAMES }) => {
     d.run = pub(run('SymEnvWeight', { SubComp: sub, SymmetryAxis: 0 }));
     d.templateAfter = tplOf().length;
     d.selectionKept = app.selection.length === sel0.length && app.selection[0] === sel0[0];
-    // each left point now has the weights of its mirror point with the two deformers swapped (template pairs envL / envR)
+    // the mirroring is SISymEnvWeight's (CMD-B12c contract): the weights of each listed (left) point are copied to its
+    // symmetric point with the two deformers swapped (template pairs envL / envR); the listed points keep theirs
     d.pairs = (tplOf()[0]?.pairs ?? []).some(p => p.includes('envL') && p.includes('envR'));
-    d.mirrored = left.every(i => Math.abs(env.weights[i][iL] - 0.75) < 1e-6 && Math.abs(env.weights[i][iR] - 0.25) < 1e-6);
-    d.rightUntouched = left.every(i => Math.abs(env.weights[mirror(i)][iR] - 0.75) < 1e-6);
+    d.mirrored = left.every(i => Math.abs(env.weights[mirror(i)][iR] - 1) < 1e-6 && Math.abs(env.weights[mirror(i)][iL]) < 1e-6);
+    d.rightUntouched = left.every(i => Math.abs(env.weights[i][iL] - 1) < 1e-6 && Math.abs(env.weights[i][iR]) < 1e-6);
     d.note = logFrom(m).some(l => /SymEnvWeight: not yet attested/.test(l));
     // second run: the template exists, none is created
     run('SymEnvWeight', { SubComp: sub, SymmetryAxis: 0 }); d.templateSecond = tplOf().length;
     // default SubComp = the selection (point components)
-    app.selectComponents(g, 'point', left); for (const i of left) { env.weights[i][iL] = 1; env.weights[i][iR] = 0; }
-    run('SymEnvWeight'); d.fromSelection = left.every(i => Math.abs(env.weights[i][iL] - 0.75) < 1e-6);
+    app.selectComponents(g, 'point', left); for (const i of left) { const j = mirror(i); env.weights[j][iR] = 0.75; env.weights[j][iL] = 0.25; }
+    run('SymEnvWeight'); d.fromSelection = left.every(i => Math.abs(env.weights[mirror(i)][iR] - 1) < 1e-6);
     app.setSelMode('object');
     // UI entry: template present -> no question; template missing -> Yes / No box (1071 / 1072)
     await S.symEnvWeightUI({ SubComp: sub }); d.uiNoBox = !q('.miscds-yesno');
@@ -566,7 +567,7 @@ eq('AppendBone: InputObjs by name', bo.byName, [true, 3, [4, 3, 0], 3]);
 const sy = got.sym;
 eq('SymEnvWeight: test envelope built', [sy.envelope, sy.leftPoints, sy.templateBefore], ['ok', true, 0]);
 eq('SymEnvWeight: no template on the deformer model -> CreateSymmetryMappingTemplate, once', [sy.run, sy.templateAfter, sy.templateSecond, sy.pairs], [NONE, 1, 1, true]);
-eq('SymEnvWeight: weights mirrored for the listed points only, selection kept', [sy.mirrored, sy.rightUntouched, sy.selectionKept], [true, true, true]);
+eq('SymEnvWeight: listed points\' weights copied to their symmetric points (SISymEnvWeight), listed points kept, selection kept', [sy.mirrored, sy.rightUntouched, sy.selectionKept], [true, true, true]);
 ok('SymEnvWeight: the C++ mirroring step is flagged not yet attested (Q2)', sy.note, sy);
 eq('SymEnvWeight: default SubComp = the selection', sy.fromSelection, true);
 eq('SymEnvWeight UI entry: template present = no question', sy.uiNoBox, true);

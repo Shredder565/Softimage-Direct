@@ -7,11 +7,12 @@ import { Parameter } from '../core/params';
 import { Cluster, Model, Property, X3DObject } from '../core/scene';
 import { editMixer, mixerX, resolveItem } from '../core/mixerActionScripts';
 import {
-  E_POINTER, E_FAIL, S_OK, S_FALSE, KIND_SPEECH_CHANNEL, type SourceX, type ItemInfo,
+  E_POINTER, E_FAIL, S_OK, S_FALSE, KIND_SPEECH_CHANNEL, type SourceX, type ItemInfo, type EvolverMapping,
   stateOf, setStatus, subtask, fail, logNya, unset, findObject, modelOf, ownerObject, paramsOf, paramByPath, strippedName, itemPath,
   resolveMixer, newSource, addItem, addSource, sourceData, isSpeechSource, findMouthControls, controlChannelParams,
 } from './actionB11fModel';
 
+const E_UNEXPECTED = 0x8000ffff;
 const TAG_NYA = 'the Face Robot tag property read by the control finder (constant 0x180134e18, open question 6); this build reads the `frTag` field or the `tag` parameter of an `frtag` property';
 const text = (v: any) => (unset(v) ? '' : String(v));
 
@@ -28,8 +29,10 @@ function storeViseme(app: App, a: Record<string, any>) {
   addItem(src, 'PhonemeType', Number(a.PhonemeType ?? 0) | 0);
   let stored = 0;
   for (const p of list) {
-    // Capability bit 2 = siReadOnly in the public siCapabilities enum (siAnimatable 1, siReadOnly 2): not storable.
-    if (p.def.readOnly) continue;
+    // Batch 12 Q5: capability bit 0x2 clear -> stored; set -> the per-parameter attribute 0x10 is read and the value is still
+    // stored when it is a 16-bit value with bit 0x2 clear (inferred: read-only / instance override). Stand-in for the
+    // attribute: `attributes[0x10]` on the parameter.
+    if (p.def.readOnly) { const att = (p as any).attributes?.[0x10]; if (!(typeof att === 'number' && att >= 0 && att <= 0xffff && !(att & 0x2))) continue; }
     addItem(src, itemPath(app, model, strippedName(p)), Number(p.value));   // F3DAction_StoreStaticValue
     stored++;
   }
@@ -40,6 +43,34 @@ function storeViseme(app: App, a: Record<string, any>) {
 }
 
 // ------------------------------------------------------------------ SetupEvolverVisemes
+/** Evolver mapping file (parser 0x1800f7b80, batch 12 Q1): XML; load failure E_FAIL, no PhonemeVisemeMappingProfile
+ *  E_UNEXPECTED. Every `Phoneme` element (any depth, case-insensitive) is one entry: `Unicode` (hex; the entry key, and
+ *  the start of the name; not hex -> entry dropped), `FonixCode` (appended as "_" + text), `PhonemeType` (clamped 0..2,
+ *  default 0), `Shape` name / weight pairs (later pairs overwrite). Entries are returned in key order (inferred). */
+export function parseEvolverMapping(text: string): EvolverMapping | number {
+  let doc: Document;
+  try { doc = new DOMParser().parseFromString(text, 'application/xml'); } catch { return E_FAIL; }
+  if (!text.trim() || doc.getElementsByTagName('parsererror').length) return E_FAIL;
+  const all = Array.from(doc.getElementsByTagName("*"));
+  const lc = (e: Element) => e.tagName.toLowerCase();
+  const profile = all.find(e => lc(e) === 'phonemevisememappingprofile');
+  if (!profile) return E_UNEXPECTED;
+  const byCode = new Map<number, { name: string; phoneme: number; values: Record<string, number> }>();
+  for (const ph of Array.from(profile.getElementsByTagName("*")).filter(e => lc(e) === 'phoneme')) {
+    let name: string | null = null; let code = -1; let type = 0; const shapes: Record<string, number> = {}; let dropped = false;
+    for (const ch of Array.from(ph.children)) {
+      const t = lc(ch); const v = (ch.textContent ?? '').trim();
+      if (t === 'unicode') { if (!/^[0-9a-f]+$/i.test(v)) { dropped = true; break; } code = parseInt(v, 16); name = v; }
+      else if (t === 'fonixcode') { if (name !== null) name += '_' + v; }
+      else if (t === 'phonemetype') { const n = parseInt(v, 10); type = Number.isFinite(n) ? Math.max(0, Math.min(2, n)) : 0; }
+      else if (t === 'shape') { const sn = ch.getAttribute('name') ?? ''; if (sn) shapes[sn] = Number(ch.getAttribute('weight')); }
+    }
+    if (dropped || name === null) continue;
+    byCode.set(code, { name, phoneme: type, values: shapes });
+  }
+  return { visemes: [...byCode.entries()].sort((x, y) => x[0] - y[0]).map(([, v]) => v) };
+}
+
 function setupEvolverVisemes(app: App, a: Record<string, any>) {
   const C = 'SetupEvolverVisemes';
   const model = modelOf(app, a.Model);
@@ -50,13 +81,13 @@ function setupEvolverVisemes(app: App, a: Record<string, any>) {
   const fs = (app as any).hostFs;
   let body = '';
   try { if (file && fs?.exists?.(file)) body = String(fs.readFile(file)); } catch { body = ''; }
-  const parser = stateOf(app).evolverParser;
-  if (!parser) logNya(app, C, 'the Evolver mapping file format (parser 0x1800f7b80, open question 1); no parser is installed in this build');
-  const mapping = parser ? parser(body, file) : null;
-  if (!mapping) {
+  const parser = stateOf(app).evolverParser;   // a script / check may still install its own parser
+  const parsed = parser ? (parser(body, file) ?? E_FAIL) : parseEvolverMapping(body);
+  if (typeof parsed === 'number') {
     app.logMsg('error', `${C}: the Evolver mapping file "${file}" could not be read (XSIACTION2 0x444)`);
-    throw fail(E_FAIL, `${C}: the Evolver mapping file "${file}" could not be read`);
+    throw fail(parsed, `${C}: the Evolver mapping file "${file}" could not be read`);
   }
+  const mapping = parsed;
   logNya(app, C, 'how ClipList selects the driven parameters (helpers 0x180068420 / 0x180068280); the parameters named by the mapping file are used');
   // Output lists: KeyList = parameters whose value changed, Action = the new sources (inferred from the argument names;
   // the note leaves the assignment open, open question 1).
@@ -157,32 +188,45 @@ function createEvolverSpeechAction(app: App, a: Record<string, any>) {
 }
 
 // ------------------------------------------------------------------ FreezeLipSync
+/** The speech item's "write yourself into an fcurve" interface (915d0a04-...): the keys the item writes. Stand-in: the
+ *  source's `speechKeys[<item path>]` list; an item without it writes one key with its value at the source FrameStart. */
+function speechItemFill(src: SourceX, path: string, value: number, fc: FCurve): void {
+  const keys: { time: number; value: number }[] | undefined = (src as any).speechKeys?.[path];
+  if (Array.isArray(keys) && keys.length) { for (const k of keys) fc.addKey(Number(k.time), Number(k.value)); return; }
+  fc.addKey(Number(src.frameStart ?? src.val('FrameStart') ?? 1), Number(value)); // inferred: no speech data in this build
+}
 function freezeLipSync(app: App, a: Record<string, any>) {
+  // Batch 12 Q2: per kind-0x1a item: target <model>.<item>; must be an animatable parameter; an existing fcurve is deleted
+  // (DeleteObj flag 0x10); a new fcurve is created, filled by the speech item, and connected by AddFCurve; the speech source
+  // is deleted (DeleteObj 0x10) only when at least one item was frozen.
   const C = 'FreezeLipSync';
   const model = modelOf(app, a.Model);
   if (!model || !model.property('mixer')) { setStatus(app, C, S_FALSE); return 0; }
-  let total = 0;
+  let total = 0; let fallback = false;
   for (const src of model.properties.filter(isSpeechSource)) {
     let frozen = 0;
     for (const [path, value] of Object.entries(sourceData(src))) {
       if (src.itemInfo[path]?.kind !== KIND_SPEECH_CHANNEL) continue;
       const rel = model !== app.scene.root && path.startsWith(model.name + '.') ? path.slice(model.name.length + 1) : path;   // `<model name>.` + item name
-      const p = resolveItem(app.scene as any, rel, model).param; if (!p) continue;
+      const p = resolveItem(app.scene as any, rel, model).param; if (!p) continue;   // unresolved: skipped
+      if (!p.animatable) continue;   // not an animatable parameter
       const old = app.anim.fcurves.get(p);
-      if (old) subtask(app, C, 'DeleteObj', `${p.fullName} fcurve (flag 0x10)`);   // inferred: replaced
-      const fc = new FCurve(p); fc.addKey(Number(src.frameStart ?? src.val('FrameStart') ?? 1), Number(value));   // F3DCreateFCurve, filled from the item
+      if (old) subtask(app, C, 'DeleteObj', `${p.fullName} fcurve (flag 0x10)`);
+      const fc = new FCurve(p);   // F3DCreateFCurve
+      if (!(src as any).speechKeys?.[path]) fallback = true;
+      speechItemFill(src, path, Number(value), fc);
       app.record('Freeze lip sync', () => { app.anim.fcurves.set(p, fc); }, () => { if (old) app.anim.fcurves.set(p, old); else app.anim.fcurves.delete(p); });
       subtask(app, C, 'AddFCurve', p.fullName);
       frozen++;
     }
     if (!frozen) continue;
     total += frozen;
-    subtask(app, C, 'DeleteObj', src.name);
+    subtask(app, C, 'DeleteObj', `${src.name} (flag 0x10)`);
     const mix = mixerX(model);
     if (mix.clips.some(c => c.source === src.name)) editMixer(app, mix, app.scene.root, 'Delete source clips', () => { mix.clips.splice(0, mix.clips.length, ...mix.clips.filter(c => c.source !== src.name)); });
     app.record('Delete speech source', () => model.removeProperty(src), () => { if (!model.properties.includes(src)) model.addProperty(src); });
   }
-  if (total) logNya(app, C, 'the fill rule of the frozen fcurve (sampled speech evaluation, open question 2); one key with the item value at the source FrameStart is written');
+  if (fallback) logNya(app, C, 'the speech evaluation the item writes into the fcurve (this build keeps no speech data on the item); one key with the item value at the source FrameStart is written');
   app.events.emit('params');
   setStatus(app, C, total ? S_OK : S_FALSE);
   return total;

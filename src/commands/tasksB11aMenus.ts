@@ -16,6 +16,7 @@ import { App } from '../core/commands';
 import { Node, X3DObject, Model, Property, Operator, Pass, Layer } from '../core/scene';
 import { currentPass } from './duplicateRenderingSimulationScriptsShared';
 import { particleScripts } from './particleScripts';
+import { collapseOperator } from './tasksB11aCollapse';
 import {
   b11a, reg, fail, setStatus, logNya, interactive, unset, text, boolA, num, nodeArg, nodesArg, rawItems, isPass, isLayer, isParType, ownerModel, objOf,
   S_OK, S_FALSE, E_NOTIMPL, E_NOINTERFACE, E_FAIL, E_UNEXPECTED, E_INVALIDARG, type MenuRecord,
@@ -34,6 +35,9 @@ function classIdOf(n: Node): string | null {
   if (n instanceof Pass) return CLS.pass;
   if (n instanceof Layer) return CLS.layer;
   if (isParType(n)) return CLS.parType;
+  // a15b3913-073f-11d4-b7df-0008c7a011a6: named C3DReferencePlane by the B11c batch-12 answer (SPDL c3dreferenceplane.spdl);
+  // the B11a answer leaves the class name open (inferred there: environment). This build follows the SPDL name.
+  if (n instanceof Property && /refplane/i.test(n.type)) return CLS.contentItem;
   if (n instanceof Operator) return SIM_OP_CLASS[n.type] ?? null;
   return null;
 }
@@ -143,6 +147,9 @@ function* everyNode(app: App): Generator<Node> {
   for (const p of S.root.properties) yield p;
   yield* S.passes; yield* S.layers; yield* S.materials; yield* S.groupList; yield* particleScripts(app).particleTypes;
 }
+/** The owning model's flag parameter (GUID 0x18009d938 in the note). inferred stand-in: a `flags` field or a `Flags`
+ *  parameter on the model; 0 when the build keeps neither. */
+export const modelFlags = (m: Model): number => Number((m as any).flags ?? m.val?.('Flags') ?? 0) | 0;
 /** Variant type 0x60 conversion of `Type` to a class id: a GUID (braces optional); null when it is not one. */
 const guidOf = (s: string): string | null => { const m = /^\{?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\}?$/i.exec(s.trim()); return m ? m[1].toLowerCase() : null; };
 
@@ -198,21 +205,20 @@ export function registerTasksB11aMenus(app: App) {
   reg(app, 'FindObjects', {
     undoable: false,
     execute(app, a) {
+      // Batch 12 (note Q2): Type is converted to a class id (DS variant type 0x60); no class-name lookup. 0x3eb is the
+      // error code raised with severity 2 and a literal text: "Both path and type given" / the (empty) Type string.
       const C = 'FindObjects'; const path = text(a.Path), type = text(a.Type);
+      // (the bus logs the raised text as an error line, i.e. severity 2)
       if (path && type) throw fail(E_INVALIDARG, `${C}: Both path and type given`);
-      if (!type) throw fail(E_NOTIMPL, `${C}: not implemented: search by path (message 0x3eb, type "${type}")`);
+      if (!type) throw fail(E_NOTIMPL, `${C}: ${type}`);
       const guid = guidOf(type);
-      let match: ((n: Node) => boolean) | null = guid ? FIND_CLASSES[guid] ?? null : null;
-      if (!match && !guid) {
-        // inferred convenience: a type name of this build (the conversion to a class id needs the class table)
-        const t = type.toLowerCase(); match = n => n.type.toLowerCase() === t || n.constructor.name.toLowerCase() === t;
-        logNya(app, C, `the class id of "${type}" (no class table in this build); objects whose type is "${type}" are listed`);
-      }
+      if (!guid) { setStatus(app, C, S_FALSE); return undefined; } // failed conversion: S_FALSE, no list written
+      const match = FIND_CLASSES[guid] ?? null;
       if (!match) { logNya(app, C, `the objects of class {${guid}} (not in this build's class table)`); setStatus(app, C, S_FALSE); return []; }
       const out: Node[] = [];
       for (const n of everyNode(app)) {
         if (out.includes(n) || !match(n)) continue;
-        const m = ownerModel(n); if (m && m !== app.scene.root && (m as any).ref) continue; // owning model flag bit 3 (inferred: referenced model)
+        const m = ownerModel(n); if (m && (modelFlags(m) & 0x8)) continue; // owning model's flag parameter, bit 0x8 set: skipped
         out.push(n);
       }
       setStatus(app, C, S_FALSE);
@@ -238,19 +244,17 @@ export function registerTasksB11aMenus(app: App) {
       if (want) {
         const cls = classIdOf(v);
         if (cls === null && !(v instanceof X3DObject) && !(v instanceof Property)) throw fail(E_NOINTERFACE, `${C}: ${v.name} has no class id`);
-        if (cls !== want) {
-          if (type === 2) logNya(app, C, 'the objects held by the 3D content container (class a15b3913-...); none exist in this build');
-          throw fail(E_FAIL, `${C}: ${v.name} is not of the class Type ${type} asks for`);
-        }
+        if (cls !== want) throw fail(E_FAIL, `${C}: ${v.name} is not of the class Type ${type} asks for`);
       }
       const S = app.scene as any, A = app as any;
       let get: () => Node | null, set: (n: Node | null) => void;
       switch (type) {
         case 0: get = () => currentPass(app) ?? null; set = n => { S.currentPass = n; }; break;
         case 1: get = () => A.currentLayer ?? app.scene.layers[0] ?? null; set = n => { A.currentLayer = n; }; break;
+        // Type 2: current item of the 3D content container's sub-container (GUID pair 0x18009d8f8 / 0x18009d848); no events
         case 2: get = () => st.currentContentItem; set = n => { st.currentContentItem = n; }; break;
         case 3: get = () => st.currentParType; set = n => { st.currentParType = n as Property | null; }; break;
-        default: throw fail(E_UNEXPECTED, `${C}: Type ${type} is not 0..3`);
+        default: throw fail(E_UNEXPECTED, `${C}: Type ${type} is not 0..3`); // not rejected by UnPackArg: Do returns E_UNEXPECTED, nothing changes
       }
       const old = get();
       const apply = (from: Node | null, to: Node | null, fire: boolean) => {
@@ -301,11 +305,15 @@ export function registerTasksB11aMenus(app: App) {
 
   reg(app, 'CollapseOp', {
     execute(app, a) {
+      // Batch 12 (note Q5): the per-operator step (task slot 15) is tasksB11aCollapse.ts. Each operator that can be
+      // collapsed gives its "Offsets" shape key in the output list (inferred: what "resulting objects" are).
       const C = 'CollapseOp'; const relative = boolA(a.Relative ?? true);
-      const ops = nodesArg(app, a.InputObjs).filter(n => n.kind === 'operator');
+      const ops = nodesArg(app, a.InputObjs).filter((n): n is Operator => n instanceof Operator);
       const out: Node[] = [];
-      for (const op of ops) logNya(app, C, `the per-operator collapse step (task slot 15, Relative = ${relative}) for ${op.name}; nothing is collapsed`);
+      for (const op of ops) { const r = collapseOperator(app, op, relative); if (r) out.push(r.key); }
+      app.events.emit('scene');
       setStatus(app, C, S_OK);
+      a.Value = out; // RePackArg writes the list to the argument named Value
       return out;
     },
   });

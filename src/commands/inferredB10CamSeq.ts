@@ -11,10 +11,10 @@ import { findParam } from './index';
 import { siString } from '../ui/si';
 import { B10_ARGS } from './inferredB10Args';
 import {
-  cameraSequencer, mixerX, allModels, clipType, sourceOf, sourceItemsRaw, T_ANIM, T_ANIM_CPD, T_SHAPE, type ClipX, type ClipRef,
+  cameraSequencer, mixerX, allModels, clipType, sourceOf, sourceItemsRaw, uniqueClipName, T_ANIM, T_ANIM_CPD, T_SHAPE, T_SHAPE_CPD, type ClipX, type ClipRef,
 } from '../core/mixerActionScripts';
 import { syncMixer } from '../core/scene';
-import { regB10, logNyaB10, unset, num, boolA, listOf, findObj, setStatus, S_WARN } from './inferredB10Shared';
+import { b10, regB10, logNyaB10, unset, num, boolA, listOf, findObj, setStatus, S_WARN } from './inferredB10Shared';
 
 const B11G = 'CMD-B11g';
 
@@ -43,6 +43,8 @@ function emptyFrameSet(app: App, C: string) {
   app.logMsg('error', `${C}: ${siString('XSIMSGCAT', 463) ?? 'Unable to plot Camera Sequencer unless there are shot clips.'}`);
   setStatus(app, C, S_WARN);
 }
+/** Sub-tasks run by the Camera Sequencer plot commands (registry names), newest last: `app.inferredB10.subtasks`. */
+function subtaskB10(app: App, command: string, task: string, detail: string) { const st: any = b10(app); (st.subtasks ??= []).push({ command, task, detail }); }
 const outputs = (pairs: Record<string, any>): any[] & Record<string, any> => Object.assign(Object.values(pairs), pairs);
 
 /** siFCurveInterpolation (1 constant, 2 linear, 3 cubic) -> key interpolation of this build. */
@@ -164,32 +166,75 @@ export function registerInferredB10CamSeq(app: App) {
     }, () => { doomed.forEach((d, i) => { d.mix.clips.splice(0, d.mix.clips.length, ...before[i].clips); d.mix.compounds.splice(0, d.mix.compounds.length, ...before[i].compounds); syncMixer(d.mix); }); });
   }
 
-  regB10(app, 'PlotCamSeqShape', { // B11g §PlotCamSeqShape (SPEC-PARTIAL): one shape key per frame-set entry and one shape clip per input object
+  /** Shape clips of every mixer (records of type mixershapeclip), with the object owning the driven shape key: the text
+   *  of the clip source before the first "." (this build's shape clips name their key `<object>.<key>`). */
+  function shapeClips(app: App): { clip: ClipX; mix: ReturnType<typeof mixerX>; owner: X3DObject | null; holder: ClipX }[] {
+    const out: { clip: ClipX; mix: ReturnType<typeof mixerX>; owner: X3DObject | null; holder: ClipX }[] = [];
+    for (const model of allModels(app.scene)) {
+      if (!model.property('mixer')) continue; const mix = mixerX(model);
+      for (const c of mix.clips) {
+        if (clipType(c) !== T_SHAPE) continue;
+        const cpd = (mix.compounds as ClipX[]).find(k => (k.clips ?? []).includes(c.name)); // the compound owner when nested
+        out.push({ clip: c, mix, owner: findObj(app, String(c.source ?? '').split('.')[0]) ?? null, holder: cpd ?? c });
+      }
+    }
+    return out;
+  }
+  regB10(app, 'PlotCamSeqShape', { // B11g §PlotCamSeqShape + batch 12: default list, old-clip collection, track / compound, keys and clips
     execute(app, a) {
       const C = 'PlotCamSeqShape';
       const explicit = !unset(a.InputObjs) && listOf(a.InputObjs).length > 0;
-      let objs: X3DObject[] = explicit ? listOf(a.InputObjs).map(x => x instanceof X3DObject ? x : findObj(app, String(x))).filter((o): o is X3DObject => !!o) : [];
-      if (!explicit) objs = app.selectedObjects.filter(o => !!o.primitive?.mesh()); // inferred: the default list (helper 0x18004ab60, unread) = shape-animatable selected objects
+      let objs: X3DObject[] = []; const doomed = new Map<ReturnType<typeof mixerX>, Set<ClipX>>();
+      const doom = (mix: ReturnType<typeof mixerX>, c: ClipX) => { let s = doomed.get(mix); if (!s) doomed.set(mix, s = new Set()); s.add(c); };
+      if (explicit) objs = listOf(a.InputObjs).map(x => x instanceof X3DObject ? x : findObj(app, String(x))).filter((o): o is X3DObject => !!o);
+      else for (const r of shapeClips(app)) { if (r.owner && !objs.includes(r.owner)) objs.push(r.owner); doom(r.mix, r.holder); } // 0x18004ab60: objects already driven by shape clips
       const start = num(a.StartFrame, 1), end = num(a.EndFrame, 100);
       const set = frameSet(app, start, end, boolA(a.PlotWithoutGaps));
       if (!set.length) { emptyFrameSet(app, C); return; }
       if (!objs.length) { app.logMsg('info', `${C}: Warning: XSIACTION2 message 0x446 (no object to plot)`); return outputs({ KeyList: null, ClipList: null }); }
-      const mode = constOf(a.Mode), content = constOf(a.Content), ref = constOf(a.RefMode);
-      logNyaB10(app, C, `the shape key / clip helpers (Mode ${mode || 4}, Content ${content || 0}, RefMode ${ref || 0}, key naming): keys store the evaluated points, clips use this build's mixer records`, B11G);
+      const mode = Number(constOf(a.Mode) || 4) || 4, content = constOf(a.Content), ref = constOf(a.RefMode);
+      const apply = boolA(a.ApplyKeys ?? true);
+      const name = String(a.Name || 'SQ_PlotShape');
+      logNyaB10(app, C, 'the scripting name of the shape clip parameter set to Mode (78ae1830-...) and the one-key shape clip helper (0x18004a8e0); `mode` on the compound record and one clip per key are used', B11G);
       const keys: Property[] = [], clips: ClipX[] = []; const A = app.anim; const saved = A.frame;
       for (const o of objs) {
         if (!o.primitive?.mesh()) continue;
         const model: Model = (o.model as Model | undefined) ?? app.scene.root; const mix = mixerX(model);
-        const old = explicit ? mix.clips.filter(c => clipType(c) === T_SHAPE && String(c.source ?? '').startsWith(`${o.name}.`)) : [];
-        const base = String(a.Name || 'CamSeq_PlotShape');
+        // 0x18004b150 (explicit inputs): the clips driving the object's shape keys (compound owner when nested)
+        if (explicit) for (const r of shapeClips(app)) if (r.owner === o && r.mix === mix) doom(mix, r.holder);
+        // 0x18004a530: AddTrack (root compound, C3DShapeActionTrack, no name, at the end), then CreateCompound at frame 1
+        const track = Math.max(-1, ...mix.clips.filter(c => clipType(c) === T_SHAPE).map(c => Number(c.track ?? 0)), ...(mix.compounds as ClipX[]).filter(c => c.type === T_SHAPE_CPD).map(c => Number(c.track ?? 0))) + 1;
+        subtaskB10(app, C, 'AddTrack', `${model.name}: C3DShapeActionTrack ${track} at the end`);
+        const cpdName = uniqueClipName(mix, name);
+        const compound = { name: cpdName, clips: [] as string[], start: 1, duration: 1, track, type: T_SHAPE_CPD, mode } as unknown as ClipX & { clips: string[] };
+        subtaskB10(app, C, 'CreateCompound', `${cpdName} on track ${track} @ frame 1 (Mode ${mode})`);
+        // 0x18004cd70: one Store Shape Key per frame-set entry (scene frame, Duration 0, Sampling 0, Content, RefMode)
         const made: Property[] = [];
-        try { set.forEach((x, k) => { A.frame = x.scene; const m = o.primitive!.mesh()!; made.push(new Property(app.scene.uniqueName(`${base}_${k}`), 'shapekey', [str('data', JSON.stringify(Array.from(m.positions)), 'Positions', { readOnly: true }), int('points', m.positions.length / 3, 'Points', { readOnly: true }), int('frame', x.scene, 'Frame', { readOnly: true })])); }); }
-        finally { A.frame = saved; }
-        const clip: ClipX = { name: `${base}_Clip`, source: `${o.name}.${base}`, start, duration: Math.max(1, end - start + 1), track: 0, type: T_SHAPE, timectrl: { clipin: start, clipout: end } } as ClipX;
-        const oldBefore = [...mix.clips];
-        app.record(C, () => { for (const k of made) o.addProperty(k); mix.clips.push(clip); syncMixer(mix); }, () => { for (const k of made) o.removeProperty(k); mix.clips.splice(mix.clips.indexOf(clip), 1); syncMixer(mix); });
-        if (boolA(a.ApplyKeys ?? true) && old.length) app.record('DeleteObj', () => { mix.clips.splice(0, mix.clips.length, ...mix.clips.filter(c => !old.includes(c))); syncMixer(mix); }, () => { mix.clips.splice(0, mix.clips.length, ...oldBefore, clip); syncMixer(mix); });
-        keys.push(...made); clips.push(clip);
+        try {
+          for (const x of set) {
+            A.frame = x.scene; const m = o.primitive!.mesh()!;
+            made.push(new Property(app.scene.uniqueName(name), 'shapekey', [str('data', JSON.stringify(Array.from(m.positions)), 'Positions', { readOnly: true }), int('points', m.positions.length / 3, 'Points', { readOnly: true }), int('frame', x.scene, 'Frame', { readOnly: true }), int('refmode', Number(ref) || 0, 'RefMode', { readOnly: true }), int('content', Number(content) || 0, 'Content', { readOnly: true })]));
+            subtaskB10(app, C, 'StoreShapeKey', `${o.name} @ ${x.scene}`);
+          }
+        } finally { A.frame = saved; }
+        // ApplyKeys: one shape clip per key at StartFrame + i (sequence frames), duration -1 (default: 1 frame, inferred)
+        const made2: ClipX[] = apply ? made.map((k, i) => ({ name: `${k.name}_Clip`, source: `${o.name}.${k.name}`, start: start + i, duration: 1, track, type: T_SHAPE, mode, timectrl: { clipin: start + i, clipout: start + i } } as unknown as ClipX)) : [];
+        compound.clips.push(...made2.map(c => c.name));
+        if (made2.length) { compound.start = Math.min(compound.start, made2[0].start); compound.duration = Math.max(1, made2[made2.length - 1].start + 1 - compound.start); }
+        app.record(C, () => { for (const k of made) o.addProperty(k); mix.compounds.push(compound as any); mix.clips.push(...made2); syncMixer(mix); },
+          () => { for (const k of made) o.removeProperty(k); const i = mix.compounds.indexOf(compound as any); if (i >= 0) mix.compounds.splice(i, 1); mix.clips.splice(0, mix.clips.length, ...mix.clips.filter(c => !made2.includes(c))); syncMixer(mix); });
+        if (apply && made.length) subtaskB10(app, C, 'StripDeformOperators', o.name); // on the last key's owner
+        keys.push(...made); clips.push(...made2);
+      }
+      // ApplyKeys: DeleteObj (flag 0x10) on the collected old clips
+      if (apply) for (const [mix, cs] of doomed) {
+        // a doomed compound takes its member clips with it (they are not among this run's new clips)
+        const gone = new Set([...cs].flatMap(c => c.clips ?? []));
+        const before = { clips: [...mix.clips], compounds: [...mix.compounds] };
+        const after = { clips: mix.clips.filter(c => !cs.has(c) && !(gone.has(c.name) && !clips.includes(c))), compounds: mix.compounds.filter(c => !cs.has(c as ClipX)) };
+        const put = (x: typeof before) => { mix.clips.splice(0, mix.clips.length, ...x.clips); mix.compounds.splice(0, mix.compounds.length, ...x.compounds); syncMixer(mix); };
+        app.record('DeleteObj', () => put(after), () => put(before));
+        subtaskB10(app, C, 'DeleteObj', `${cs.size} old shape clip(s) (flag 0x10)`);
       }
       return outputs({ KeyList: keys.length ? keys : null, ClipList: clips.length ? clips : null });
     },

@@ -206,12 +206,12 @@ const got = await page.evaluate(async ({ NAMES }) => {
     let m = mark();
     d.notATree = [pub(run('MakeICETreeBranch', { Operator: cube.primitive.operators[0] })), pub(run('MakeICETreeBranch', { Operator: cube })), logFrom(m)];
     m = mark();
-    d.branch = [pub(run('MakeICETreeBranch', { Operator: tree })), tree.branch === true, tree.branchHost === pc, pc.primitive.operators.includes(tree), nya(m, 'MakeICETreeBranch')];
+    d.branch = [pub(run('MakeICETreeBranch', { Operator: tree })), tree.branch === true, tree.branchHost === pc, pc.primitive.operators.includes(tree), nya(m, 'MakeICETreeBranch') + nya(m, 'TransferICETree')];   // CMD-B12b: TransferICETree on the bus flags the branch itself
     app.undo(); d.branchUndo = [tree.branch === undefined, tree.branchHost === undefined]; app.redo();
     const pc2 = mkCloud('pc2'); const tree2 = run('CreateICETree', { InputObjs: 'pc2' }).raw;
     run('MakeICETreeBranch', { Operator: 'pc2.ICETree' }); d.byName = [tree2.branch === true, tree2.branchHost === pc2];
     m = mark();
-    d.promote1 = [pub(run('PromoteICETree', { Operator: tree })), tree.branchHost?.name, nya(m, 'PromoteICETree')];
+    d.promote1 = [pub(run('PromoteICETree', { Operator: tree })), tree.branchHost?.name, nya(m, 'PromoteICETree') + nya(m, 'TransferICETree')];
     d.promote2 = [pub(run('PromoteICETree', { Operator: tree })), tree.branchHost?.name];
     m = mark(); d.promoteAtRoot = [pub(run('PromoteICETree', { Operator: tree })), tree.branchHost?.name, logFrom(m)];
     m = mark(); d.promoteUnderRoot = [pub(run('PromoteICETree', { Operator: tree2 })), tree2.branchHost === pc2, logFrom(m)];
@@ -628,7 +628,8 @@ eq('InspectLocks: no Net View open = a new one; default input = the selection', 
 
 // ---- rename
 const rn = got.rename;
-eq('RenamePropAndRebind: renamed, name references updated (stand-in for the C++ command, flagged Q8)', rn.rename, [NONE, 'NewProj', 'NewProj', 'Else', 1]);
+// RenamePropAndRebind_Internal is on the bus since CMD-B12f: the wrapper delegates to it, so its own Q8 stand-in flag is no longer logged.
+eq('RenamePropAndRebind: renamed, name references updated (by RenamePropAndRebind_Internal, CMD-B12f)', rn.rename, [NONE, 'NewProj', 'NewProj', 'Else', 0]);
 eq('RenamePropAndRebind: undoable; UpdateRefs false leaves references; property by name', [rn.undo, rn.noRefs], [['MyProj', 'MyProj'], [NONE, 'Second', 'MyProj']]);
 eq('RenamePropAndRebind: a taken name gets a suffix (inferred); default input = the selection', [rn.collision, rn.fromSelection], [[NONE, 'Taken1', 'Taken1'], [NONE, 'Picked']]);
 eq('RenamePropAndRebind: empty name without UI = nothing, flagged', rn.emptyName, [NONE, 'Picked', 1]);

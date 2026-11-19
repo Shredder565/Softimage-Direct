@@ -117,8 +117,8 @@ function referencesTo(app: App, p: Property, name: string): Parameter[] {
   return out;
 }
 function renameAndRebind(app: App, props: Property[], newName: string, updateRefs: boolean, updateWildcards: boolean) {
+  if (!newName) { logNya(app, 'RenamePropAndRebind', 'the rename command with an empty name; nothing was renamed', 'Q8'); return; }   // checked before the internal command, which raises 0x6f on a bad name (CMD-B12f)
   if (delegate(app, RENAME_INTERNAL, { Properties: props, PropertyName: newName, UpdateRefs: updateRefs, UpdateWildcards: updateWildcards }).done) return;
-  if (!newName) { logNya(app, 'RenamePropAndRebind', 'the rename command with an empty name; nothing was renamed', 'Q8'); return; }
   let rebound = 0;
   for (const p of props) {
     const siblings: Property[] = (p.parent as any)?.properties ?? [];

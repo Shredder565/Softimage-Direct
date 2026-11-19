@@ -47,7 +47,7 @@ const NAMES = [
 // Required input without a default: the default run must fail with a message naming the command.
 // B11: CreateFolder / NavigateNode / GetSize / Tag / Untag require their object argument; Save / LoadFastPlaybackCache
 // with an empty FileName open a file browser (treated as cancelled here) instead of failing.
-const DEFAULT_FAILS = new Set(['MoveToFolder', 'RemoveFromFolder', 'RemoveFolder', 'SetCurrentEnvironment', 'SetViewCamera',
+const DEFAULT_FAILS = new Set(['RemoveFromFolder', 'RemoveFolder', 'SetCurrentEnvironment', 'SetViewCamera',
   'CreateFolder', 'NavigateNode', 'GetSize', 'Tag', 'Untag', 'PinUVComponents', 'UnPinUVComponents', 'PinAllUVComponents', 'UnPinAllUVComponents', 'ConnectMap', 'AddCustomOp',
   'AddScriptedOpFromFile', 'ConvertScriptedOp', 'MoveToLibrary', 'SetCurrentMaterialLibrary', 'ReconnectModel', 'InstallCustomPreferences']);
 
@@ -220,7 +220,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
   // customization / general
   ok('EditCommand on a known command', run('EditCommand', { CommandName: 'CreatePrim' }).v === true);
   ok('EditCommand on an unknown command returns false', run('EditCommand', { CommandName: 'NoSuchCmd' }).v === false);
-  { const p = cube.kinematics.local.get('posy'); run('Tag', { InputObjs: 'cube.kine.local.posy', Level: 'siTag1' }); const T = A.lockRecordsB11; const tag = () => T.get(p)?.find(r => r.type === 2)?.level ?? 0;   // B11: tag = lock record type 2, Level bitmask
+  { const p = cube.kinematics.local.get('posy'); run('Tag', { InputObjs: 'cube.kine.local.posy', Level: 'siTag1' }); const T = A.lockRecordsB11; const tag = () => T.get(p)?.find(r => r.type === 2)?.tagLevel ?? 0;   // B11 / batch 12: tag = lock record type 2, tag level bitmask
     ok('Tag', tag() === 1);
     run('Untag', { InputObjs: 'cube.kine.local.posy' }); ok('Untag siTagAll clears every level', !T.has(p)); A.undo(); ok('Untag undo', tag() === 1); }
   { const r = run('ReconnectModel', { Model: 'Scene_Root' }); ok('ReconnectModel logs the unattested mapping', r.v === 0 && nya(r) === 1, r.err); }

@@ -32,8 +32,9 @@ const NAMES = ['CrashXSI', 'DumpMemoryStats', 'EnumElements', 'GetCurvePercentag
 //  required input without a default (PickElement SelFilter, SetReferencePlane Target, X3DObject, *AddonLib FileName),
 //  the cube has no curve geometry (knot queries: 0x80004002), no file "" (ImportCustomFile: 0x11c),
 //  no command processor in the browser (System), no handler row (TestPluginHost: 0x80020003).
+// batch 12: UpdateExternalReference with a NULL Target fails with 0x80004003 before the list is read
 const DEFAULT_FAILS = new Set(['PickElement', 'SetReferencePlane', 'GetUnevaluatedPrimitiveForConstructionHistory', 'UnloadAddonLib', 'ReloadAddonLib',
-  'GetNumberOfKnots', 'GetCurvePercentageAtKnotIndex', 'ImportCustomFile', 'System', 'TestPluginHost']);
+  'GetNumberOfKnots', 'GetCurvePercentageAtKnotIndex', 'ImportCustomFile', 'System', 'TestPluginHost', 'UpdateExternalReference']);
 
 const reg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'command_registry.json'), 'utf8')).commands;
 const full = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'commands_full.json'), 'utf8'));
@@ -155,14 +156,18 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     let list = run('GetExternalReferences').v; ok('GetExternalReferences lists models with resolutions', Array.isArray(list) && list.includes(m) && !list.includes(m2) && !list.includes(cube), list?.map(x => x.name));
     m.ref.switching = true; list = run('GetExternalReferences').v; ok('GetExternalReferences skips a model being switched', !list.includes(m)); delete m.ref.switching;
     ok('GetExternalReferences is not undoable (no undo entry)', (() => { const u = A.undoStack.length; run('GetExternalReferences'); return A.undoStack.length === u; })());
+    // batch 12 (note Q3): each path must resolve to an existing scene element; count mismatch -> S_FALSE, no change
     let r = run('UpdateExternalReference', { Target: m }); ok('UpdateExternalReference empty list -> status 1, no change', status() === 1 && !r.err && m.ref.resolutions[0] === 'Models/rig_lo.emdl');
-    r = run('UpdateExternalReference', { Target: m, InputObjs: 'Models/a.emdl,Models/b.emdl' });
-    ok('UpdateExternalReference sets path i on resolution i', !r.err && m.ref.resolutions.join() === 'Models/a.emdl,Models/b.emdl' && m.ref.file === 'Models/a.emdl', [r.err, m.ref]);
+    r = run('UpdateExternalReference', { Target: m, InputObjs: 'sphere,cube' });
+    ok('UpdateExternalReference sets path i on resolution i', !r.err && m.ref.resolutions.join() === 'sphere,cube' && m.ref.file === 'sphere', [r.err, m.ref]);
     A.undo(); ok('UpdateExternalReference undo restores the old paths', m.ref.resolutions.join() === 'Models/rig_lo.emdl,Models/rig_hi.emdl' && m.ref.file === 'Models/rig_lo.emdl', m.ref);
-    A.redo(); ok('UpdateExternalReference redo re-applies the new paths', m.ref.resolutions.join() === 'Models/a.emdl,Models/b.emdl'); A.undo();
-    r = run('UpdateExternalReference', { Target: m, InputObjs: 'Models/a.emdl' }); ok('UpdateExternalReference count mismatch -> 0x80070057', /80070057/.test(r.err ?? ''), r.err);
-    r = run('UpdateExternalReference', { Target: m, InputObjs: 'Models/a.emdl,bad|path' }); ok('UpdateExternalReference invalid path logs "Invalid reference [<path>]"', r.err && r.log.includes('Invalid reference [bad|path]'), r.log);
-    r = run('UpdateExternalReference', { Target: cube, InputObjs: 'Models/a.emdl' }); ok('UpdateExternalReference on a target without references: info, success', !r.err && status() === 0 && r.log.length >= 1, r);
+    A.redo(); ok('UpdateExternalReference redo re-applies the new paths', m.ref.resolutions.join() === 'sphere,cube'); A.undo();
+    r = run('UpdateExternalReference', { Target: m, InputObjs: 'sphere' }); ok('UpdateExternalReference count mismatch -> status 1, no change', !r.err && status() === 1 && m.ref.resolutions[0] === 'Models/rig_lo.emdl', r);
+    r = run('UpdateExternalReference', { Target: m, InputObjs: 'sphere,nosuch_b11b' }); ok('UpdateExternalReference unresolved path logs "Invalid reference [<path>]"', r.err && r.log.includes('Invalid reference [nosuch_b11b]'), r.log);
+    r = run('UpdateExternalReference', { Target: cube, InputObjs: 'sphere' }); ok('UpdateExternalReference on a target without a resolution object -> 0x80070057', /80070057/.test(r.err ?? ''), r);
+    r = run('UpdateExternalReference', { Target: m2, InputObjs: 'sphere' }); ok('UpdateExternalReference with 0 resolutions -> success, no change', !r.err && status() === 0 && m2.ref.resolutions.length === 0, r);
+    m.externalRefSubObject = {}; r = run('UpdateExternalReference', { Target: m, InputObjs: 'sphere,cube' }); delete m.externalRefSubObject;
+    ok('UpdateExternalReference: sub-object found -> XSITASKS 0x42f warning, success, no change', !r.err && status() === 0 && r.log.some(l => /^WARNING : /.test(l)) && m.ref.resolutions[0] === 'Models/rig_lo.emdl', r);
     A.scene.root.removeChild(m); A.scene.root.removeChild(m2); reset();
   }
   // ---- ImportCustomFile
@@ -191,8 +196,8 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     ok(`${C}: half sizes at least 2.0, active`, tp && tp.sizeU >= 2 && tp.sizeV >= 2 && tp.active === true, tp);
     A.undo(); ok(`${C}: undo restores the previous plane`, U.transientPlane !== tp);
     cube.kinematics.local.get('posx').value = 0;
-    r = run(C, { Target: 'RefPlanes.Transform', InputObj: 'cube.pnt[0,1,2]' }); ok(`${C}: component -> plane, frame logged as not yet attested`, !r.err && U.transientPlane?.inputs[0] === 'cube.pnt[0,1,2]' && nya(r) === 1, r); A.undo();
-    r = run(C, { Target: cube, InputObj: cube }); ok(`${C}: target without a reference plane fails`, /80004002/.test(r.err ?? ''), r.err);
+    r = run(C, { Target: 'RefPlanes.Transform', InputObj: 'cube.pnt[0,1,2]' }); ok(`${C}: component (kind 6) -> plane from the component frame (batch 12)`, !r.err && U.transientPlane?.inputs[0] === 'cube.pnt[0,1,2]' && nya(r) === 0, r); A.undo();
+    r = run(C, { Target: cube, InputObj: cube }); ok(`${C}: target without a reference plane -> 0x80070057 (batch 12)`, /80070057/.test(r.err ?? ''), r.err);
     A.select([]); r = run(C, { Target: 'RefPlanes.Transform' }); ok(`${C}: no element -> status 1`, !r.err && status() === 1, r); reset();
   }
   // ---- GetUnevaluatedPrimitiveForConstructionHistory

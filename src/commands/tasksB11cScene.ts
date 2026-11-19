@@ -26,17 +26,39 @@ function saveTo(app: App, C: string, file: string, allowNoExt: boolean): number 
   return runConverter(app, conv, { fileName: file, target: [app.scene.root], frame: app.anim.frame, userData: null, command: C });
 }
 
+/** DS_SZ_SEGMENT_PATHNAME: the current scene's path. This build keeps no scene path of its own: the last path a save
+ *  command wrote, else `<project>\Scenes\<scene name>.scn` (inferred). */
+function currentScenePath(app: App): string {
+  const own = (app as any).scenePath; if (typeof own === 'string' && own) return own;
+  const saved = stateOf(app).savedScenes; if (saved.length) return saved[saved.length - 1];
+  return hostFs.join(hostFs.join(alembicState.projectPath, 'Scenes'), `${currentSceneName()}.scn`);
+}
+/** External-file copy helper 0x180083750: runs CopyExtFilesIntoProject (Models "", UpdateSourcePaths true,
+ *  ConsiderOnlyFilesUnderProject = mode 2, Overwrite default). NULL path E_POINTER, mode 0 E_INVALIDARG; returns its HRESULT. */
+function copyExtFiles(app: App, path: string, mode: number): number {
+  if (!path) return E_POINTER;
+  if (mode === 0) return E_INVALIDARG;
+  try {
+    app.run('CopyExtFilesIntoProject', { SceneFileName: path, Models: '', UpdateSourcePaths: true, ConsiderOnlyFilesUnderProject: mode === 2 });
+    return S_OK;
+  } catch (e: any) { return Number(e?.status) || E_FAIL; }
+}
+
 function saveSceneAs(app: App, a: Record<string, any>) {
+  // Batch 12 (note Q2): an empty SceneFileName saves to the current scene path; the normalised name is written back into
+  // the argument and the extension test uses it. CopyExtFiles 1 / 2 run CopyExtFilesIntoProject (2: files under the
+  // project only); its result is ignored.
   const C = 'SaveSceneAs';
   const st = stateOf(app); st.progress.push('');   // the progress bar is reset
   const mode = enumArg(a.CopyExtFiles, COPY_EXT) ?? 0;
   if (mode < 0 || mode > 2) throw fail(E_INVALIDARG, `${C}: CopyExtFiles must be 0..2`);
-  let file = text(a.SceneFileName);
-  if (!file) throw fail(E_INVALIDARG, `${C}: no scene file name`);   // required argument (SceneIO handler)
-  if (mode !== 0) logNya(app, C, `the external-file copy helper (mode ${mode}); no external file was copied`);
+  const given = text(a.SceneFileName);
+  if (mode !== 0) copyExtFiles(app, given, mode);   // 1. argument 0 as given
   // 2. pending operations: none are queued in this build
-  // 3. target file name: the builder 0x180083ae0 was not opened; inferred: the given name, ".scn" added when it has no extension
-  if (!extOf(file)) { file += '.scn'; logNya(app, C, 'the target file-name builder; ".scn" was appended to a name without an extension'); }
+  // 3. target file name: the given name, or the current scene path; normalised by the path object, written back
+  let file = given || currentScenePath(app);
+  try { file = hostFs.normalize(file); } catch { /* the path object keeps an unnormalisable name as given (inferred) */ }
+  a.SceneFileName = file;
   a.CopyExtFiles = mode;
   const r = saveTo(app, C, file, false);
   if (r !== S_OK) { raise(app, C, 'XSITASKS 0x43a', file); throw fail(E_FAIL, `${C}: could not save "${file}"`); }
@@ -126,7 +148,7 @@ function copyCacheFiles2(app: App, a: Record<string, any>) {
   return { Copied: copied, Failed: failed };
 }
 
-/** GetUserPref: preferences manager, then ambient values, then the CPM helper with the original name. */
+/** GetUserPref: preferences manager, then ambient values, then the CPM helper; the remapped name for all three (batch 12). */
 function getUserPref(app: App, a: Record<string, any>) {
   const C = 'GetUserPref';
   const name = typeof a.Target === 'string' ? a.Target : unset(a.Target) ? '' : null;
@@ -142,8 +164,8 @@ function getUserPref(app: App, a: Record<string, any>) {
   else {
     const amb = pref(app, remapped, undefined) ?? pref(app, 'preferences.' + remapped, undefined);
     if (amb !== undefined) v = amb;
-    else if (/^operationmode$/i.test(name)) v = (app as any).immediate ? 1 : 0;   // CPM helper: the MCP's Immed flag (stand-in)
-    else { logNya(app, C, `the legacy-name table and the CPM helper; "${name}" is not known`); throw fail(E_FAIL, `${C}: unknown preference "${name}"`); }
+    else if (/^operationmode$/i.test(remapped)) v = (app as any).immediate ? 1 : 0;   // CPM helper (remapped name; also after an S_FALSE ambient answer): the MCP's Immed flag (stand-in)
+    else { logNya(app, C, `the legacy-name table and the CPM helper; "${remapped}" is not known`); throw fail(E_FAIL, `${C}: unknown preference "${remapped}"`); }
   }
   a.Value = v; setStatus(app, C, S_FALSE);
   return v;
@@ -171,6 +193,20 @@ export function registerTasksB11cSceneCommands(app: App) {
     name: 'SaveSceneAs', label: 'Save Scene As', category: 'File', undoable: false,
     args: [{ name: 'SceneFileName', default: null }, { name: 'CopyExtFiles', default: ':siDoNotCopyExtFiles:siExternalFilesOperation' }],
     execute: (app, a) => saveSceneAs(app, a),
+  });
+  // CopyExtFilesIntoProject (modeltasks.dll per docs/re/COMMAND_DLL_MAP.md): named by the batch-12 SaveSceneAs answer and
+  // missing from the bus. Registry arguments; the body is outside tasks.dll, so the call is recorded and logged.
+  if (!app.commands.has('CopyExtFilesIntoProject')) reg({
+    name: 'CopyExtFilesIntoProject', label: 'Copy External Files Into Project', category: 'File', undoable: false,
+    args: [{ name: 'SceneFileName', default: '' }, { name: 'Overwrite', default: false }, { name: 'Models', default: null }, { name: 'UpdateSourcePaths', default: true },
+      { name: 'Files', default: '' }, { name: 'IgnoreFilesFromRefModel', default: true }, { name: 'ConsiderOnlyFilesUnderProject', default: false },
+      { name: 'ExcludedPaths', default: 'ExcludedPaths_UsePrefValue' }, { name: 'ForceUseToken', default: false }],
+    execute(app, a) {
+      const C = 'CopyExtFilesIntoProject';
+      ((stateOf(app) as any).copyExtCalls ??= []).push({ ...a });
+      logNya(app, C, 'the external-file copy itself (modeltasks.dll); the request is recorded in app.tasksB11c.copyExtCalls');
+      setStatus(app, C, S_OK);
+    },
   });
   reg({
     name: 'SaveBackupScene', label: 'Save Backup Scene', category: 'File', undoable: false,
