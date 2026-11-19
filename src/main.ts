@@ -57,6 +57,7 @@ import { registerActionB11eCommands } from './commands/actionB11eSources';
 import { registerActionB11fCommands } from './commands/actionB11f';
 import { registerOptasksB12IceCommands } from './commands/optasksB12ice';
 import { registerOptasksB12cCommands } from './commands/optasksB12c';
+import { registerOptasksB12dCommands } from './commands/optasksB12d';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -185,6 +186,7 @@ registerActionB11eCommands(app); // CMD-B11e
 registerActionB11fCommands(app);   // CMD-B11f (action.dll contracts)
 registerOptasksB12IceCommands(app);   // CMD-B12a / CMD-B12b (optasks.dll ICE)
 registerOptasksB12cCommands(app);   // CMD-B12c (optasks.dll envelope / weight map / prop volume contracts)
+registerOptasksB12dCommands(app);   // CMD-B12d (optasks.dll operator inputs / connections)
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
