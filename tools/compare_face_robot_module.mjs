@@ -184,8 +184,10 @@ if (stage.diagnoseDisabled !== true) diffs.push('Diagnose tool should be grey un
 else notes.push('Diagnose grey until pick');
 if (!stage.enabled) diffs.push('faceRobotEnabled false after Enable');
 else notes.push('faceRobotEnabled');
-if (stage.currentStage !== 1) diffs.push(`fr_GetCurrentStage want=1 got=${stage.currentStage}`);
-else notes.push('fr_GetCurrentStage=1');
+// CMD-B14d (WIRE_CORRECTIONS_B14 item 1): fr_GetCurrentStage returns the scene's stage code (0, 10, 15, ... 60), not
+// the Control Panel tab; the ?demo scene has no ActiveFaceRobot, so the code is 0.
+if (stage.currentStage !== 0) diffs.push(`fr_GetCurrentStage want=0 (stage code, no face robot) got=${stage.currentStage}`);
+else notes.push('fr_GetCurrentStage=0 (stage code)');
 if (JSON.stringify(stage.stageTabs) !== JSON.stringify(['Stage 1', 'Stage 2', 'Stage 3', 'Stage 4', 'Stage 5', 'Stage 6'])) {
   diffs.push(`stage tabs got=${(stage.stageTabs || []).join('|')}`);
 } else notes.push('stage tray tabs 1–6');
@@ -214,11 +216,12 @@ const s5 = await page.evaluate(() => {
   }));
   const type = ctrlHost?.querySelector('.fr-stage-type')?.textContent?.trim() ?? null;
   const titleUrl = ctrlHost?.querySelector('.fr-stage-title-url')?.textContent?.trim() ?? null;
-  const stage = window.Application.run('fr_GetCurrentStage');
-  return { slots, type, titleUrl, stage, activeTab: ctrlHost?.querySelector('.fr-stage-tab.active')?.textContent?.trim() };
+  const stage = window.Application.__faceRobotStage;   // the Control Panel stage tab (fr_GetCurrentStage is the scene's code)
+  const code = window.Application.run('fr_GetCurrentStage');
+  return { slots, type, titleUrl, stage, code, activeTab: ctrlHost?.querySelector('.fr-stage-tab.active')?.textContent?.trim() };
 });
-if (s5.stage !== 5) diffs.push(`fr_SwitchFaceLayout(5) stage got=${s5.stage}`);
-else notes.push('fr_SwitchFaceLayout(5)');
+if (s5.stage !== 5 || s5.code !== 0) diffs.push(`fr_SwitchFaceLayout(5) Control Panel stage got=${s5.stage}, stage code got=${s5.code}`);
+else notes.push('fr_SwitchFaceLayout(5) -> Control Panel stage 5 (stage code stays 0)');
 if (s5.type !== 'FaceStage5_UpperSideView') diffs.push(`Stage5 type got=${s5.type}`);
 else notes.push('Stage5 FaceStage5_UpperSideView shell');
 const s5frames = (s5.slots || []).map(s => s.frame);
