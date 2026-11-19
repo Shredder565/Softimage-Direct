@@ -60,6 +60,8 @@ import { registerOptasksB12cCommands } from './commands/optasksB12c';
 import { registerOptasksB12dCommands } from './commands/optasksB12d';
 import { registerOptasksB12eCommands } from './commands/optasksB12e';
 import { registerShadertasksB12Commands } from './commands/shadertasksB12';
+import { registerUnfoldB13bCommands } from './commands/unfoldB13b';
+import { registerCrosswalkB13cCommands } from './commands/crosswalkB13c';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -191,6 +193,8 @@ registerOptasksB12cCommands(app);   // CMD-B12c (optasks.dll envelope / weight m
 registerOptasksB12dCommands(app);   // CMD-B12d (optasks.dll operator inputs / connections)
 registerOptasksB12eCommands(app);   // CMD-B12e (optasks.dll generator transfers)
 registerShadertasksB12Commands(app);   // CMD-B12f / CMD-B12g (shadertasks.dll contracts)
+registerUnfoldB13bCommands(app);   // CMD-B13b (Unfold3D.64.dll contracts)
+registerCrosswalkB13cCommands(app);   // CMD-B13c (dotXSIConverter.64.dll contracts)
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
