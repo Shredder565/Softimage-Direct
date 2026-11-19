@@ -95,7 +95,7 @@ are the custom property `RenderSetup`, which has the same name. The handler for 
 ### 2.4 Shared helpers
 - **Find property by name** (0x18003afc0): scans `SceneItem::GetProperties` for an exact name match. Tag properties are
   matched by name only.
-- **Actor model** (0x18003bac0): walks up the parents from the node to the first Model (class id 0x4a). The
+- **Actor model** (0x18003bac0): walks up the parents from the node to the first Model (class id 0x4a). The walk starts at the selected node itself, so a selected Model is its own actor model (corrected batch 14). The
   error is `Failed to find the actor model.`. If that model is the scene root the error is
   `Actor descriptions must be contained by a single model (scene root not supported).` (the text varies slightly per command).
 - **Actor root** (0x18003bc50, called with "report" true by most commands): the model must have exactly one
@@ -181,7 +181,8 @@ Wire contract:
   maximum = node count (inferred)). It then checks: not the scene root, actor root resolved (may insert `GlobalSRT`), no nested models, and the COG resolved.
 - Purge temporary objects over the model (§2.4). Ensure `RTKNode` on the actor root (wire 0x200).
 - Over the COG subtree (recursive, skipping lights and cameras): ensure `RTKNode` (wire 0x200), delete any existing `RTKEnd`, and
-  add `RTKEnd` to every node with no children.
+  add `RTKEnd` to every node with no children. "No children" counts every child (lights, cameras and non-X3DObject children
+  included), so a joint whose only child is a light or camera gets no `RTKEnd` (corrected batch 14).
 - If Shift was held: ensure `RTKActor` on the actor root and fit Radius/Height (§2.4).
 - Errors: model, root, nested-model and COG messages from §2.4. Each aborts silently after its message.
 
@@ -241,18 +242,22 @@ Wire contract:
 - If Shift is **not** held: when a direct child already carries `RTKSphere`, a message says `The foot node already has a
   collision sphere as a child. You will need to add additional collision spheres manually.` Otherwise two
   collision spheres are created (0x180024530). One is placed under the foot node and one under its lowest descendant (the lowest global Y).
-  Each sphere is built like AddColSphere without opening the inspector. Radius = 0.25 × home `py`, or 0.25 if the node has no `RTKHomePose`.
-  Both spheres are lowered by the same amount (radius + (globalY − home py)). When the foot has no lower descendant,
-  the second sphere is offset by home `py` in Z. Both spheres are temporarily parented to the scene root and then put back.
-  (inferred: these are heel and toe spheres. The bound helpers 0x18003d2e0, 0x18003b0a0, 0x18000d070 and 0x18003ca80 are unread.)
+  (corrected batch 14) The two host nodes are searched over the foot's subtree **including the foot itself**, by global Z:
+  the node with the smallest global Z (heel host) and the node with the largest global Z (toe host). One sphere is built under each,
+  heel first, like AddColSphere without the inspector, so they are named `<heelHost>_CS` and `<toeHost>_CS`.
+  Both radii = 0.25 × the **foot node's own** `RTKHomePose.py` (read once, before the spheres are built), or 0.25 if the foot has no `RTKHomePose`.
+  The heel sphere's global Y is **set** (not offset) to radius + (foot global Y − foot home `py`), X and Z kept. If heel host and
+  toe host are different nodes, the toe sphere gets the same global Y with its own X and Z. If they are the same node, the toe sphere
+  is put at the heel sphere's X, that Y, and heel Z + home `py`. Both spheres are temporarily parented to the scene root and then put back.
+  (0x18003d2e0, 0x18000d070 and 0x18003ca80 remain unread.)
 
 ### `BvrAddColSphere`: SPEC
 Wire contract:
 - Args: none. Return: empty. Gate: §2.3.
 - The node's parent must not be a Model (`The Add Collision Sphere action can not be applied to the root node of an actor.`).
 - Adds a `Sphere` primitive named `<node>_CS` as a child of the node. Its global translation is set to the node's global
-  translation. Its `radius` = |node global Y − min Y of the node's geometry| (helper 0x180024d10, unread), or 1.0 when
-  no bound is found.
+  translation. Its `radius` = |node global Y − min **global** Y of the node's own geometry| (helper 0x180024d10 in global mode,
+  no recursion into children), or 1.0 when no bound is found (corrected batch 14).
 - Ensures `RTKNode` on the sphere. Adds `RTKSphere` with `Radius` (siFloat, default = computed radius, [0, FLT_MAX],
   {0, 100}, capability 6). Sets wire colour 0x1ef.
 - Opens `InspectObj("<sphere fullname>.Sphere", "", "Collision Sphere", 3, true)`.
@@ -266,23 +271,23 @@ Wire contract:
 - Requires a polygon mesh with at least 1 triangle (`The Add Floor action can not be applied to a node without an associated
   polygon mesh.`). If a direct child carries `RTKFloor`: `A floor node already exists under the selected node.`
 - Adds a Null `Floor` under the node. Its local transform is identity with translation (0, minY, 0), where minY and maxY come
-  from helper 0x180024d10. Ensures `RTKNode` on the null (wire 0x200). Adds `RTKFloor` with `Top` (siFloat, default
+  from helper 0x180024d10 in **local** mode (raw geometry point positions, no transform, no recursion into children) (corrected batch 14). Ensures `RTKNode` on the null (wire 0x200). Adds `RTKFloor` with `Top` (siFloat, default
   maxY − minY, or 0 if no bound, [0, FLT_MAX], {0, 100}, capability 6).
 
 ### `BvrSetCollisionOnly`: SPEC
 Wire contract:
 - Args: none. Return: empty. Gate: §2.3. Requires `RTKNode` (`The Set Collision Only action requires the selected node
   to be initialized. Please initialize the actor and try again.`).
-- Sets `RTKNode.VisualizationOnly` and `RTKNode.CollisionOnly` (inferred values: false and true). If the node has no `RTKEffector`, sets wire colour 0xf9.
+- Sets `RTKNode.VisualizationOnly` = false and `RTKNode.CollisionOnly` = true (read from the binary, corrected batch 14). If the node has no `RTKEffector`, sets wire colour 0xf9.
 
 ### `BvrSetVisualOnly`: SPEC
 Wire contract:
-- Same as SetCollisionOnly with the `Set Visual Only` message. Values (inferred): VisualizationOnly true, CollisionOnly false.
+- Same as SetCollisionOnly with the `Set Visual Only` message. Values: VisualizationOnly true, CollisionOnly false (read from the binary, corrected batch 14).
   Wire colour 0x334 when there is no `RTKEffector`.
 
 ### `BvrSetDefault`: SPEC
 Wire contract:
-- Same as SetCollisionOnly with the `Set Default` message. Values (inferred): both false. Wire colour 0x200 when there is no `RTKEffector`.
+- Same as SetCollisionOnly with the `Set Default` message. Values: both false (read from the binary, corrected batch 14). Wire colour 0x200 when there is no `RTKEffector`.
 - (The inferred values follow from RemoveFoot's colour mapping: VisualizationOnly gives 0x334, CollisionOnly gives 0xf9, otherwise 0x200.)
 
 ### `BvrAddJointLimit`: SPEC
@@ -300,11 +305,11 @@ Wire contract:
 - Model and scene root checks. Actor root check. The model must have sources (`The Make Skill action requires the actor to have
   associated action sources.`). `RTKNode` on the root (`... requires the actor to be initialized. ...`). `RTKHomePose` on the root
   (`... requires the actor home pose being set (Set Home).`).
-- Ensures `Skill` on the actor root. Sets `Source` (inferred: the selected source index). Runs a modal InspectObj `Make Skill` (mode 4).
+- Ensures `Skill` on the actor root. Sets `Source` to the source index: 0 when an X3DObject is selected; for a selected ActionSource, the index of the first source in `Model::GetSources` with the same name (the source count if none matches) (corrected batch 14). Runs a modal InspectObj `Make Skill` (mode 4).
 - On OK: reads `Threshold`, `Skill` and `Transfer`, and turns the command log off. Collects foot tags (0x18003aa30. inferred: nodes with `RTKEffector`).
   If Skill = 2 and Transfer is off and there are no foot tags: `To create a locomotion skill the actor must have foot tags. Please tag
   the feet and try again.`
-- Otherwise it sets the source's `type` parameter (value unread).
+- Otherwise it takes source number `Source` from `Model::GetSources` and sets that source's `type` parameter to a value computed earlier in the worker (not a literal. inferred: derived from the chosen `Skill`; still open after batch 14).
   - **Transfer on**: an OK/Cancel box about source FCurves if animated. Then `PickObject("Select Target Model", "Select Target Model")`.
     Errors: same model (`The target actor for a skill transfer cannot be the same as the source actor.`), bad root (`The target for the
     skill transfer is not a valid actor (bad root node).`), target root without `RTKNode` (`... is not initialized for Behavior.`).
@@ -319,7 +324,7 @@ Wire contract:
 - Args: none. Return: empty. Gate: as MakeSkill (X3DObject or ActionSource).
 - Model, scene root and actor root checks. The model must have sources (`The Loop Skill action requires the actor to have associated
   action sources.`).
-- Ensures `LoopSkill` on the actor root. Sets `Source` (inferred: the selected source index). Then
+- Ensures `LoopSkill` on the actor root. Sets `Source` to the source index passed by `_Execute` (inferred, same scheme as MakeSkill: 0 for an X3DObject, name-matched index for an ActionSource) (corrected batch 14). Then
   `InspectObj(<prop>, "", "Loop Skill", 1, false)`. The looping itself is done by `LoopSkill_PPGEvent` (not read).
   Its messages include `The range given for making the motion loopable is invalid.`
 
@@ -331,7 +336,7 @@ Wire contract:
 ### `BvrImportBVHAction`: SPEC
 Wire contract:
 - Args: none. Return: empty. Gate: §2.3 (target actor node).
-- Model and scene root checks. Ensures `BVHActor` on the **model**. Sets `Mode` (inferred: the action mode). Sets the PPG help attribute
+- Model and scene root checks. Ensures `BVHActor` on the **model**. Sets `Mode` = 11 (corrected batch 14). Sets the PPG help attribute
   to `<FactoryPath>/Doc/<DocLangPref>/xsidocs.chm::/behave12.htm`. Runs a modal InspectObj `Import BVH Action` (mode 4).
 - On OK: runs `BvrAddBVHAction(model, BVHFile, ActionName, Scale, Optimize, Filter, Remove, Root)`.
 
@@ -382,15 +387,14 @@ Wire contract:
 - `BvrLoadActor` (SPEC-PARTIAL): no selection is needed. Opens a dialog `Load Actor` with the same filter and InitDir. Reads the `.wgmp` sidecar if present.
   Runs `SIImportDotXSIFile(path, scene root)`. If the root gained a child, the child at the old count index is treated as the actor model:
   temporary objects are purged and the weight maps are applied (0x180009080, unread). Then runs `DeselectAll`.
-- `BvrImportBVHActor` (SPEC-PARTIAL): no selection is needed. Ensures `BVHActor` on the scene root. Help attribute `.../behave11.htm`. Sets `Mode`.
+- `BvrImportBVHActor` (SPEC-PARTIAL): no selection is needed. Ensures `BVHActor` on the scene root. Help attribute `.../behave11.htm`. Sets `Mode` = 0 (corrected batch 14).
   Runs a modal InspectObj `Import BVH Actor`. On OK it reads BVHFile, ActorName, Filter, Remove, Root, Box and Scale, and turns the command log off.
   Builds the actor model from the BVH (0x180040450, unread). Runs 0x180039200 (unread). Then Initialize on the new model with Shift-held
   behaviour (adds and fits `RTKActor`), then SetHome without Shift (adds `RTKFixHomeBase` and stores the home pose).
 
 ## 4. Open questions
-1. Exact `PutParameterValue` constants that the decompiler dropped: the VisualizationOnly/CollisionOnly values in the Set* commands,
-   `Mode` in ImportBVHActor/ImportBVHAction, the `Source` index in MakeSkill/MakeLoop, and the source `type` in MakeSkill.
-   These need a disassembly read of the immediate operands.
+1. (Mostly answered in §5, batch 14.) Still open: the value MakeSkill writes to the source `type` (it is a register value, not an
+   immediate), and the SDK name of `Rotate` RefMode value 1.
 2. Unread algorithm bodies: actor generation (0x1800105c0 and callees), skill conversion (0x18002e6d0, 0x180033a30,
    0x1800360b0), skill transfer (0x18000f980), cleanup (0x180004690), BVH actor/action readers (0x180040450, 0x18003f0d0),
    render-setup writer (0x180027b40), home re-base (0x180002970), bound helpers (0x180024d10, 0x180038b60), and weight-map
@@ -398,3 +402,70 @@ Wire contract:
 3. Class ids 0x4d/0x4e/0x50/0x51/0x54/0x55 are taken from `IsA` calls. Their SDK names (chain/light/camera kinds) are inferred from the messages.
 4. `_DefineLayout` and `_PPGEvent` callbacks of the six properties (UI layout, LoopSkill looping, RenderSetup buttons) were not read.
 5. Init flag 0x00800000 is assumed to be `siNoLogging`. This should be confirmed against the SDK header enum.
+
+## 5. Answers to wire PR #187 (2026-11-19, batch 14)
+
+Read from the binary (assembly immediates at the call sites, plus the helper bodies) with Ghidra 12.1.4. No XSIBATCH golden.
+
+**Q1. Set* immediates.** All three write two booleans to `RTKNode` at the default time, then set the wire colour only when the
+node has no `RTKEffector`:
+- BvrSetCollisionOnly (0x180025ea0): VisualizationOnly = false, CollisionOnly = true, wire 0xf9.
+- BvrSetVisualOnly (0x1800268f0): VisualizationOnly = true, CollisionOnly = false, wire 0x334.
+- BvrSetDefault (0x180026070): VisualizationOnly = false, CollisionOnly = false, wire 0x200.
+
+**Q2. Mode / Source / type.**
+- `BVHActor.Mode`: BvrImportBVHAction writes 11. BvrImportBVHActor writes 0. (The `Mode` labels in the layout were not read.)
+- `Skill.Source` (BvrMakeSkill): 0 when the selection is an X3DObject. When it is an ActionSource, it is the index of the first entry in
+  `Model::GetSources` whose name equals the selected source's name (if none matches, the loop ends at the source count).
+  The worker later reads `Source` back and uses it to index `GetSources`.
+- `LoopSkill.Source` (BvrMakeLoop): written from the index argument of the worker (0x18001f770). (inferred: same 0 / name-match
+  scheme as MakeSkill. `MakeLoop_Execute` was not re-read.)
+- Source `type` in BvrMakeSkill: written from a register, not an immediate. The value is not resolved. (inferred: it depends on the
+  chosen `Skill` value.) **Open.**
+
+**Q3. Bound helper 0x180024d10.** It has two flags: "recurse into X3DObject children" and "global". In global mode each geometry
+point is transformed by the node's global transform. In local mode the raw point positions are used. It tracks the min and max of Y only.
+- BvrAddColSphere (through 0x180024fc0) uses global mode, no recursion. The radius is |node global Y − min global Y|. This is consistent
+  off-origin.
+- BvrAddFloor uses local mode, no recursion. Floor translation (0, minY, 0) in the node's local space and `Top` = maxY − minY. This is
+  consistent off-origin, because the Floor null is a child of the node.
+- The two commands do not disagree. Each uses the space that matches where its result is placed.
+
+**Q4. BvrSetFoot spheres.**
+- Hosts: over the foot's subtree including the foot, the node with the smallest global Z (heel) and the node with the largest
+  global Z (toe). Sphere names are `<heelHost>_CS` and `<toeHost>_CS` (the AddColSphere naming), heel built first. When the foot has no
+  descendants, or all of them share the extreme Z, both hosts can be the same node and both spheres get the same requested name.
+  (inferred: Softimage then gives the second one a unique name.)
+- Radius = 0.25 × the **foot node's** own `RTKHomePose.py`, read once, used for both spheres. It is not read from each host or
+  parent. Without `RTKHomePose` on the foot the radius is 0.25 (from a default of 1.0).
+- Placement: as corrected in §3 BvrSetFoot.
+
+**Q5. Rotate `0, 1` in the home pass.** Per the `Rotate` signature in commands_full.json (InputObjs, X, Y, Z, Delta, RefMode,
+Center, ...), the call passes InputObjs = node full name, X/Y/Z = home rx/ry/rz × k (degrees), **Delta = 0** and **RefMode = 1**.
+Center and the later arguments use their defaults. Delta 0 is `siAbsolute` (siDeltaMode: siAbsolute = 0, siRelative = 1, see
+cmd-b11i). (inferred: RefMode 1 is `siGlobal`. That fits the home pose being stored as global XYZ Euler angles. The repo has no
+siRefMode value table to confirm it.)
+
+**Q6. Message texts (exact).**
+- `Is it okay to remove the embedded FCurves on the source rig (the FCurves conflict with the transfer process)?`
+- `Is it okay to remove the embedded FCurves on the target rig (the FCurves conflict with the transfer process)?`
+- `Is it okay to remove the embedded FCurves on the rig (the FCurves conflict with the Make Skill action)?`
+- Foot tags (no transfer, Skill 2): `To create a locomotion skill the actor must have foot tags.\nPlease tag the feet and try again.`
+- Related texts: transfer target `The target actor must have foot tags for a locomotion skill to transfer.\nPlease tag the feet and try again.`.
+  Converter, prefixed by the source name: `<name> failed to convert into a locomotion skill because there are no foot tags on the actor.\nPlease tag the feet and try again.`.
+  `Failed to convert the action source to a Raw skill.  The FCurves are not valid.` and the same text with `Basic` (two spaces after the first period).
+  (inferred: Skill 1 = Raw, 2 = Locomotion and 3 = Basic, or 0 = Default. These follow the Raw/Basic labels.)
+
+**Q7. Walks.**
+- Actor-model walk (0x18003bac0): it tests the starting node first. If the selected node is a Model, that Model is the actor model.
+  Otherwise it climbs through X3DObject parents. A non-X3DObject parent ends the walk with `Failed to find the actor model.`.
+- Home store (0x180001000): writes `RTKHomePose` on the node it is called with (unless that node carries `RTKSphere`), then recurses
+  into X3DObject children when its recurse flag is set. Whether SetHome calls it on the model or on the actor root was not re-read
+  (worker 0x1800051f0). If it is called on the model, the model itself gets `RTKHomePose`. **Partially open.**
+- RTKEnd (0x180004940, from Initialize over the COG subtree): a node that tests as light or camera (0x18003c4a0) is skipped together
+  with its subtree. Otherwise the node gets `RTKNode`, any old `RTKEnd` is deleted, and `RTKEnd` is added when `GetChildren` is empty.
+  The count includes **all** children (lights and cameras too). Recursion visits only X3DObject children.
+
+Promotions: none. BvrMakeSkill stays SPEC-PARTIAL (`type` value and conversion bodies unread). BvrSetHome stays SPEC-PARTIAL
+(0x180002970 unread).
+
