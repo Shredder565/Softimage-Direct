@@ -119,38 +119,60 @@ export function registerTasksB11aCache(app: App) {
   reg(app, 'CacheObjectsIntoFile_Private', {
     undoable: false,
     execute(app, a) {
+      // Batch 12 (note Q4): PathID 0..4 = the path templates, 5 = AlternativePath as the template, otherwise E_INVALIDARG;
+      // the file name is the file-name template; Attributes / TargetCacheObjects item i goes with object i; each object's
+      // samples-per-frame setting (default 1) sets the sub-steps; ResolvedPath = the per-object file names joined with ",".
       const C = 'CacheObjectsIntoFile_Private'; const st = b11a(app);
       const objs = nodesArg(app, a.ObjectsToCache);
-      const pathId = Math.trunc(num(a.PathID, 0)), first = Math.trunc(num(a.FirstFrame, 1)), step = Math.max(1, Math.trunc(num(a.FramesPerStep, 1)));
-      const attrs = rawItems(a.Attributes).map(text); const version = text(a.Version ?? 'A'); const alt = text(a.AlternativePath);
+      const pathId = num(a.PathID, 0) >>> 0; // unsigned check < 6 (-1 fails too)
+      const first = Math.trunc(num(a.FirstFrame, 1)), step = Math.max(1, Math.trunc(num(a.FramesPerStep, 1)));
+      const attrs = rawItems(a.Attributes).map(x => text(x).trim()); const targets = rawItems(a.TargetCacheObjects).map(x => text(x).trim());
+      const version = text(a.Version ?? 'A'); const alt = text(a.AlternativePath);
       const type = Number.isFinite(Number(a.Type)) ? Math.trunc(Number(a.Type)) : 0; // a failed read = 0
-      let frames: number[] = [];
-      if (type === 0) { const lastF = Math.trunc(num(a.LastFrame, 100)); for (let f = first; f <= lastF; f += step) frames.push(f); }
+      let frameSet: number[] = [];
+      let last = first;
+      if (type === 0) last = Math.trunc(num(a.LastFrame, 100));
       else if (type === 1) {
         if (!unset(a.FrameSet) && !Array.isArray(a.FrameSet)) throw fail(E_INVALIDARG, `${C}: FrameSet is not an array`);
-        frames = (Array.isArray(a.FrameSet) ? a.FrameSet : []).map(Number).filter(Number.isFinite); // written only if given
-      } else throw fail(E_NOTIMPL, `${C}: Type ${type} is not 0 (frame range) or 1 (frame set)`);
-      const bar = boolA(a.ShowProgressbar ?? true) ? { title: C, items: [] as string[] } : null;
+        frameSet = (Array.isArray(a.FrameSet) ? a.FrameSet : []).map(Number).filter(Number.isFinite); // written only if given
+      }
+      if (pathId >= 6) throw fail(E_INVALIDARG, `${C}: PathID ${num(a.PathID, 0)} is not 0..5`); // no message
+      const template = pathId === 5 ? alt : pathTemplate(app, pathId);
+      if (!template) { const m = fmt(T(0x41e, 'The path template %s is empty.'), template); app.logMsg('error', `${C}: ${m}`); throw fail(E_INVALIDARG, `${C}: the path template ${pathId} is empty`); }
+      if (type !== 0 && type !== 1) throw fail(E_NOTIMPL, `${C}: Type ${type} is not 0 (frame range) or 1 (frame set)`);
+      const bar = boolA(a.ShowProgressbar ?? true) ? { title: T(0x432, 'Caching...'), items: [] as string[] } : null;
       if (bar) st.progress.push(bar);
       st.ambient.Datamanagement_CachingToFiles = 1;
       const files: string[] = [];
       try {
-        logNya(app, C, 'the plan builder and the cache writers (file naming, cache format; note Q2); the planned files are recorded in app.tasksB11a.cachePlans');
-        for (const o of objs) {
-          const info = cacheInfo(app, o); const tok = { model: info.model, object: info.object, version, frame: frames[0] ?? first };
-          // inferred: PathID 0..4 = the path-template preferences; otherwise AlternativePath, whose "#" stands for the frame
-          const file = pathId >= 0 && pathId < 5 && !alt
-            ? (() => { const d = resolveTokens(app, pathTemplate(app, pathId), tok), n = resolveTokens(app, fileTemplate(app), tok); return d !== null && n !== null ? join(d, n) : join(pathTemplate(app, pathId), fileTemplate(app)); })()
-            : (resolveTokens(app, alt, tok) ?? alt).replace('#', String(frames[0] ?? first));
+        logNya(app, C, 'the per-sample cache writer (0x180078240) and the cache file format; the planned samples are recorded in app.tasksB11a.cachePlans');
+        objs.forEach((o, i) => {
+          if (!(o instanceof X3DObject)) return; // objects without a 3D object interface are skipped
+          const info = cacheInfo(app, o);
+          const substeps = Math.max(1, Math.trunc(Number((o as any).cacheSubsteps ?? 1)) || 1); // samples per frame, default 1
+          // Type 0: FirstFrame..LastFrame in steps of FramesPerStep, one sample = 1/substeps frame. Type 1: one sample per entry.
+          const times: number[] = [];
+          if (type === 0) { for (let f = first; f <= last; f += step) for (let k = 0; k < substeps; k++) { const t = f + k / substeps; if (t <= last) times.push(t); } } // inferred: sub-steps inside each written step
+          else times.push(...frameSet);
+          const tok = { model: info.model, object: info.object, version, frame: times[0] ?? first };
+          const dir = resolveTokens(app, template, tok), name = resolveTokens(app, fileTemplate(app), tok);
+          // a token this build cannot resolve ([project path], [env ...]) stays as text (inferred) and the folder is not created
+          const unresolved = dir === null || name === null;
+          if (unresolved) logNya(app, C, `a path token of "${template}" this build cannot resolve; the template text is kept and no folder is created`);
+          const file = join(dir ?? template, name ?? fileTemplate(app));
+          const cut = file.lastIndexOf('\\'); const folder = cut > 0 ? file.slice(0, cut) : '';
+          if (!folder) throw fail(E_INVALIDARG, `${C}: the resolved path "${file}" has no folder`);
+          if (!unresolved) try { hostFs.ensureFolder(folder); } catch { const m = fmt(T(0x420, 'Cannot copy files. The path %s is invalid.'), folder); app.logMsg('error', `${C}: ${m}`); throw fail(E_UNEXPECTED, `${C}: ${m}`); }
           bar?.items.push(`${info.model}.${info.object}`);
-          if (frames.length) st.cachePlans.push({ object: o.name, file, frames: [...frames], attributes: attrs });
+          if (times.length) st.cachePlans.push({ object: o.name, file, frames: times, attributes: attrs[i] !== undefined ? [attrs[i]] : [], target: targets[i] ?? '', substeps });
           files.push(file);
-        }
+        });
       } finally { st.ambient.Datamanagement_CachingToFiles = 0; }
       setStatus(app, C, S_OK);
-      // RePackArg: ResolvedPath with its last character removed. inferred: the resolved paths each followed by ","
+      // RePackArg: every object's file name followed by "," with the last character dropped
       const resolved = files.map(f => f + ',').join('');
-      return resolved.slice(0, -1);
+      a.ResolvedPath = resolved.slice(0, -1);
+      return a.ResolvedPath;
     },
   });
 }

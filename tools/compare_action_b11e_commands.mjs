@@ -103,7 +103,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     ok('GetNumMappingRules', run('GetNumMappingRules', { MappingTemplate: t }).v === 4);
     const g0 = run('GetMappingRule', { MappingTemplate: t }).v; ok('GetMappingRule Index 0 = rule 1 with flags', g0?.From === 'b' && g0.To === 'B' && g0.Active === true && g0.PoseOffset === false, g0);
     ok('GetMappingRule Index 3', run('GetMappingRule', { MappingTemplate: t, Index: 3 }).v?.From === 'a');
-    const gx = run('GetMappingRule', { MappingTemplate: t, Index: 5 }); ok('GetMappingRule Index > count fails', !!gx.err && nya(gx) === 1, gx);
+    const gx = run('GetMappingRule', { MappingTemplate: t, Index: 5 }); ok('GetMappingRule Index > count -> S_FALSE, no output (batch 12)', !gx.err && gx.v === undefined && A.actionB11e.lastStatus.GetMappingRule === 1, gx);
     t.hasFlags = false; const gn = run('GetMappingRule', { MappingTemplate: t }).v; t.hasFlags = true;
     ok('GetMappingRule without the flag interface: Active / PoseOffset false', gn.Active === false && gn.PoseOffset === false, gn);
     run('SetMappingRule', { MappingTemplate: t, From: 'cc', To: '', Index: 2, Active: 0 });
@@ -125,18 +125,19 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     const m2 = run('CreateModel', { InputObj: nul.name, Name: 'B11eDst' }).v;
     nul.kinematics.local.set('posx', 3); nul.kinematics.local.set('rotz', 0);
     const cm = run('CreateConnectionMap', { Obj1: m1, Obj2: m2 });
-    ok('CreateConnectionMap: one rule per object pair, full names', cm.v?.mapKind === 'connection' && rulesOf(cm.v) === `${cube.fullName}>${nul.fullName}` && cm.v.parent === m1.property('mixer'), [cm.err, cm.v && rulesOf(cm.v)]);
-    ok('CreateConnectionMap logs the unread collector', nya(cm) >= 1);
-    const vm = run('CreateValueMap', { Obj1: m1, Obj2: m2, Mode: 3, Scope: 1 }); const d = 3 - cube.kinematics.local.val('posx');
-    ok('CreateValueMap Mode 3 (translation) Scope 1 (local): three rules, this + %lf', vm.v?.mapKind === 'value' && vm.v.count() === 3 && vm.v.rules[0].from === `${cube.fullName}.kine.local.posx` && vm.v.rules[0].to === (Math.abs(d) < 1e-9 ? '' : `this + ${d.toFixed(6)}`), [vm.err, vm.v?.rules]);
+    // batch 12: collectors = the model then its descendants; From = Obj2's object, To = Obj1's object
+    ok('CreateConnectionMap: one rule per object pair (model first), From = Obj2 object, To = Obj1 object', cm.v?.mapKind === 'connection' && rulesOf(cm.v) === `${m2.fullName}>${m1.fullName}|${nul.fullName}>${cube.fullName}` && cm.v.parent === m1.property('mixer'), [cm.err, cm.v && rulesOf(cm.v)]);
+    ok('CreateConnectionMap: collector attested, nothing logged as not yet attested', nya(cm) === 0);
+    const vm = run('CreateValueMap', { Obj1: m1, Obj2: m2, Mode: 3, Scope: 1 }); const d = cube.kinematics.local.val('posx') - 3;
+    ok('CreateValueMap Mode 3 (translation) Scope 1 (local): three rules per pair, Obj1 - Obj2, this + %lf', vm.v?.mapKind === 'value' && vm.v.count() === 6 && vm.v.rules[3].from === `${cube.fullName}.kine.local.posx` && vm.v.rules[3].to === (Math.abs(d) < 1e-9 ? '' : `this + ${d.toFixed(6)}`), [vm.err, vm.v?.rules]);
     { const dz = nul.kinematics.local.val('posz') - cube.kinematics.local.val('posz'); ok('CreateValueMap: |difference| below 1e-9 -> empty expression', Math.abs(dz) < 1e-9 && vm.v?.rules.find(r => r.from.endsWith('posz'))?.to === '', [dz, vm.v?.rules]); }
-    ok('CreateValueMap Mode 4 Scope 2: 9 channels x local + global', run('CreateValueMap', { Obj1: m1, Obj2: m2, Mode: 4, Scope: 2 }).v?.count() === 18);
-    ok('CreateValueMap Mode 1 Scope 0: global scaling', (() => { const v = run('CreateValueMap', { Obj1: m1, Obj2: m2, Mode: 1, Scope: 0 }).v; return v.count() === 3 && v.rules.every(r => /kine\.global\.scl[xyz]$/.test(r.from)); })());
+    ok('CreateValueMap Mode 4 Scope 2: 9 channels x local + global per pair', run('CreateValueMap', { Obj1: m1, Obj2: m2, Mode: 4, Scope: 2 }).v?.count() === 36);
+    ok('CreateValueMap Mode 1 Scope 0: global scaling', (() => { const v = run('CreateValueMap', { Obj1: m1, Obj2: m2, Mode: 1, Scope: 0 }).v; return v.count() === 6 && v.rules.every(r => /kine\.global\.scl[xyz]$/.test(r.from)); })());
     ok('CreateValueMap Mode 0: no channel', run('CreateValueMap', { Obj1: m1, Obj2: m2, Mode: 0 }).v?.count() === 0);
     const n2 = run('GetPrim', { PresetObj: 'Null', Name: 'b11eNull2' }).v; A.record('reparent', () => m2.addChild(n2), () => root.addChild(n2));
     const before = m1.property('mixer').mappingTemplatesB11e.length;
     const mm = run('CreateValueMap', { Obj1: m1, Obj2: m2 });
-    ok('CreateValueMap: unequal lists -> nothing created', !!mm.err && m1.property('mixer').mappingTemplatesB11e.length === before, mm);
+    ok('CreateValueMap: unequal lists -> 0x8000FFFF, nothing created', /0x8000ffff/.test(mm.err ?? '') && m1.property('mixer').mappingTemplatesB11e.length === before, mm);
     out.models = { m1: m1.name, m2: m2.name };
   }
 
@@ -178,11 +179,14 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     // GetStoreActionDefaults
     const p = cube.kinematics.local.get('posx'); const fc = A.anim.fcurve(p, true);
     fc.keys = [{ time: 5, value: 0, left: 0, right: 0, interp: 3 }, { time: 20, value: 1, left: 1, right: 1, interp: 3 }];
-    const q1 = run('GetStoreActionDefaults', { InputObj: 'cube', Mode: 1 }).v;
-    ok('GetStoreActionDefaults Mode 1: key range and count of animated parameters', q1?.From === 5 && q1.To === 20 && q1.Size === 1, q1);
-    const q4 = run('GetStoreActionDefaults', { InputObj: 'cube', Mode: 4 }).v; const keyable = cube.kinematics.local.params.filter(x => x.keyable).length;
-    ok('GetStoreActionDefaults Mode 4: static values, scene range', q4?.Size === keyable && q4.From === A.anim.startFrame && q4.To === A.anim.endFrame, [q4, keyable]);
-    const q0 = run('GetStoreActionDefaults', { InputObj: 'cube', Mode: 0 }); ok('GetStoreActionDefaults Mode 0 selects nothing; logs the unread worker', q0.v?.Size === 0 && nya(q0) === 1, q0);
+    // batch 12 (Q3): mask bit 1 static values, 2 fcurves, 4 expressions, 8 constraints; From / To rules
+    const q2 = run('GetStoreActionDefaults', { InputObj: 'cube', Mode: 2 }).v;
+    ok('GetStoreActionDefaults Mode 2 (fcurves): key range and count of animated parameters', q2?.From === 5 && q2.To === 20 && q2.Size === 1, q2);
+    const q1 = run('GetStoreActionDefaults', { InputObj: 'cube', Mode: 1 }).v; const keyable = cube.kinematics.local.params.filter(x => x.keyable).length;
+    ok('GetStoreActionDefaults Mode 1 (static values only): From 1, To 5', q1?.Size === keyable && q1.From === 1 && q1.To === 5, [q1, keyable]);
+    const q4 = run('GetStoreActionDefaults', { InputObj: 'cube', Mode: 4 }).v;
+    ok('GetStoreActionDefaults Mode 4 (constraints), none: 0 / 0, Size 0', q4?.Size === 0 && q4.From === 0 && q4.To === 0, q4);
+    const q0 = run('GetStoreActionDefaults', { InputObj: 'cube', Mode: 0 }); ok('GetStoreActionDefaults Mode 0 selects nothing', q0.v?.Size === 0 && nya(q0) === 0, q0);
     ok('GetStoreActionDefaults query does not change the scene', (() => { const u = A.undoStack.length; const n = m1.properties.length; run('GetStoreActionDefaults', { InputObj: 'cube' }); return A.undoStack.length === u && m1.properties.length === n; })());
     const st = run('GetStoreActionDefaults', { InputObj: 'cube', Mode: 4, Type: 'TransientAction' });
     ok('GetStoreActionDefaults Type TransientAction stores (storage kind logged)', st.v?.type === 'actionsource' && st.log.some(l => /storage kind 2/.test(l)), st.err); A.undo();

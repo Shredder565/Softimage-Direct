@@ -132,7 +132,8 @@ function hookInspect(app: App) {
 }
 function inspectBrowse(app: App, a: Record<string, any>) {
   const C = 'InspectBrowse';
-  const mode = enumArg(a.Mode, BROWSE_MODE); const length = unset(a.Length) ? 1 : Math.trunc(Number(a.Length));
+  // Batch 12 Q1: modes 3 and 4 take no Length (it is not read for them)
+  const mode = enumArg(a.Mode, BROWSE_MODE); const length = unset(a.Length) || mode === 3 || mode === 4 ? 1 : Math.trunc(Number(a.Length));
   if (mode === null || mode < 1 || mode > 4 || !Number.isFinite(length) || length < 0) throw fail(E_INVALIDARG, `${C}: Mode must be 1..4 and Length >= 0`);
   const h = stateOf(app).inspect;
   if (!h.history.length) {
@@ -172,8 +173,11 @@ export function registerTasksB11cCurveCommands(app: App) {
       const C = 'EvaluateCurveAt';
       const out: Record<string, number> = { PosX: 0, PosY: 0, PosZ: 0, TanX: 0, TanY: 0, TanZ: 0, NorX: 0, NorY: 0, NorZ: 0 };
       Object.assign(a, out);
+      // Batch 12 Q5: a missing curve leaves the nine outputs at 0 (the task sets no HRESULT on that path: success);
+      // Local = true: Value is the 0..1 normalised parameter; false: an arc length divided by the total length. Never
+      // 0..100. Outputs always global (position by the matrix, tangent / normal by the inverse-transpose).
       const c = curveOf(nodeArg(app, a.InputObj));
-      if (!c) throw fail(E_NOINTERFACE, `${C}: the input is not a NURBS curve`);
+      if (!c) { setStatus(app, C, S_OK); return out; }
       const value = Number(a.Value) || 0;
       let f: number;
       if (!boolArg(a.Local)) { const L = totalLength(c.curve); f = L < 1e-12 ? 0 : value / L; } else f = value;
@@ -190,21 +194,24 @@ export function registerTasksB11cCurveCommands(app: App) {
     name: 'SICreateRefPlane', label: 'Create Reference Plane', category: 'Modeling',
     args: [{ name: 'InputObjs', default: null }],
     execute(app, a) {
+      // Batch 12 Q4: per input item, a C3DReferencePlane is created in the scene's C3DRefPlaneFolder, appended to the
+      // output list, and a "set reference plane" task runs with (plane, item), i.e. SetReferencePlane. A failure stops the
+      // loop and keeps what was created so far. Nothing is created for an empty list.
       const C = 'SICreateRefPlane';
       const items: any[] = unset(a.InputObjs) ? [...app.selection] : listOf(a.InputObjs);
       if (!items.length) { setStatus(app, C, S_OK); return []; }
       const store: Property[] = (app as any).uixsiClipsDisplayAddons?.refPlanes ?? stateOf(app).refPlanes;
+      (store as any).className = 'C3DRefPlaneFolder';
       const planes: Property[] = [];
       for (const it of items) {
         const nameOfItem = it instanceof Node ? it.name : text(it);
-        const host = it instanceof Node ? it : findNode(app, nameOfItem) ?? findNode(app, nameOfItem.split(/[.[]/)[0]);
-        const obj = host instanceof X3DObject ? host : host && (host as any).parent instanceof X3DObject ? (host as any).parent : null;
         const p = new Property(uniqueIn([...store, ...planes], 'RefPlane'), 'refplane', [str('inputs', nameOfItem, 'Inputs')]);
-        (p as any).matrix = (obj ? obj.globalMatrix() : new THREE.Matrix4()).toArray();   // per-item helper (inferred: aligns the plane on the input)
+        (p as any).siClass = 'C3DReferencePlane';
+        app.record('SICreateRefPlane', () => { if (!store.includes(p)) store.push(p); }, () => { const i = store.indexOf(p); if (i >= 0) store.splice(i, 1); });
         planes.push(p);
+        const host = it instanceof Node ? it : findNode(app, nameOfItem) ?? null;
+        try { app.run('SetReferencePlane', { Target: p, InputObj: host instanceof X3DObject ? host : it }); } catch { break; }
       }
-      logNya(app, C, 'what the per-plane helper sets on the plane; it is placed on the input object\'s transform');
-      app.record('SICreateRefPlane', () => { for (const p of planes) if (!store.includes(p)) store.push(p); }, () => { for (const p of planes) { const i = store.indexOf(p); if (i >= 0) store.splice(i, 1); } });
       a.Value = planes; setStatus(app, C, S_OK);
       return planes;
     },

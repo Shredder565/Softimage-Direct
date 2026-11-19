@@ -3,7 +3,8 @@
 // Brief: docs/ghidra/cmd-b11b-tasks-pick-curve-extref-misc-binary.md, section 3. Original code from the prose contract.
 import * as THREE from 'three';
 import type { App } from '../core/commands';
-import { Node, Property, X3DObject, Model, Primitive, geomPoints } from '../core/scene';
+import { Node, Property, X3DObject, Model, Primitive, Cluster, geomPoints } from '../core/scene';
+import { findParam } from './index';
 import { CurveData, curveDomain, evalCurve } from '../core/curves';
 import { hostFs } from '../core/sdkHelpersHostFs';
 import {
@@ -45,6 +46,9 @@ export function percentageAt(c: CurveData, u: number): number {
   return total > 0 ? (upto / total) * 100 : 0;
 }
 
+/** The sub-curves of a curve list: the curve, then `subcurves` when the geometry carries them (text curves of this build). */
+const subCurves = (c: CurveData): CurveData[] => [c, ...(((c as any).subcurves ?? []) as CurveData[])];
+
 // ------------------------------------------------------------------ external references
 interface RefRecord { file: string; resolution: number; resolutions: string[]; switching?: boolean }
 const refOf = (n: any): RefRecord | null => n && n.ref && Array.isArray(n.ref.resolutions) ? n.ref as RefRecord : null;
@@ -75,16 +79,38 @@ function planeSlot(app: App, target: any): { get(): PlaneRecord | null; set(v: P
   }
   return null;
 }
-/** Element of the InputObj list: kind 2 (object) or kind 6 (component string "obj.pnt[...]"). */
-function elementOf(app: App, x: any): { kind: 2; obj: X3DObject; name: string } | { kind: 6; obj: X3DObject; sub: string; items: number[]; name: string } | { kind: 0; name: string } {
+/** Element of the InputObj list: kind 2 (object), kind 6 (component string "obj.pnt[...]"), kind 7 (a cluster-style
+ *  sub-element "obj.cls.<cluster>" or a Cluster node: its elements); anything else kind 0. */
+type PlaneElement = { kind: 2; obj: X3DObject; name: string } | { kind: 6 | 7; obj: X3DObject; sub: string; items: number[]; name: string } | { kind: 0; name: string };
+function elementOf(app: App, x: any): PlaneElement {
   if (x instanceof X3DObject) return { kind: 2, obj: x, name: x.name };
+  if (x instanceof Cluster) { const o = x.obj; if (o) return { kind: 7, obj: o, sub: x.compKind, items: [...x.elements].map(Number).filter(Number.isFinite), name: `${o.name}.cls.${x.name}` }; }
   const s = typeof x === 'string' ? x.trim() : nameOf(x);
   const m = /^(.*)\.(pnt|poly|edge|knot|iso\w*)\[([^\]]*)\]$/.exec(s);
   if (m) {
     const obj = findObj(app, m[1]);
-    if (obj) return { kind: 6, obj, sub: m[2], items: m[3].split(',').map(t => Number(t.split('-')[0])).filter(Number.isFinite), name: `${obj.name}.${m[2]}[${m[3]}]` };
+    if (obj) return { kind: 6, obj, sub: m[2], items: m[3].split(',').flatMap(t => { const r = /^\s*(\d+)\s*-\s*(\d+)\s*$/.exec(t); if (r) { const o: number[] = []; for (let i = Number(r[1]); i <= Number(r[2]); i++) o.push(i); return o; } return [Number(t)]; }).filter(Number.isFinite), name: `${obj.name}.${m[2]}[${m[3]}]` };
   }
+  const c = /^(.*)\.cls\.([^.]+)$/.exec(s);
+  if (c) { const obj = findObj(app, c[1]); const cl = obj?.clusters.find(k => k.name === c[2]); if (obj && cl) return { kind: 7, obj, sub: cl.compKind, items: [...cl.elements].map(Number).filter(Number.isFinite), name: `${obj.name}.cls.${cl.name}` }; }
   return { kind: 0, name: s };
+}
+/** Component frame (object space): rows {axis 1, axis 2, axis 3, origin}; identity unless all three axes are valid.
+ *  inferred (the frame helper is outside the read worker): origin = centroid of the component points, axis 2 = their
+ *  averaged polygon normal, axis 1 = first-to-last point direction made orthogonal to axis 2, axis 3 = axis 1 x axis 2. */
+function componentFrame(o: X3DObject, items: number[]): THREE.Matrix4 {
+  const mesh = o.primitive?.mesh(); const P = mesh?.positions; if (!mesh || !P) return new THREE.Matrix4();
+  const pts = items.filter(i => i >= 0 && i * 3 + 2 < P.length); if (!pts.length) return new THREE.Matrix4();
+  const v = (i: number) => new THREE.Vector3(P[i * 3], P[i * 3 + 1], P[i * 3 + 2]);
+  const origin = pts.reduce((acc, i) => acc.add(v(i)), new THREE.Vector3()).divideScalar(pts.length);
+  const set = new Set(pts); const n = new THREE.Vector3();
+  for (const f of mesh.polygons) if (f.length >= 3 && f.some(p => set.has(p))) n.add(new THREE.Vector3().subVectors(v(f[1]), v(f[0])).cross(new THREE.Vector3().subVectors(v(f[2]), v(f[0]))));
+  const a1 = pts.length > 1 ? v(pts[pts.length - 1]).sub(v(pts[0])) : new THREE.Vector3();
+  if (n.lengthSq() < 1e-20) return new THREE.Matrix4();
+  n.normalize(); a1.sub(n.clone().multiplyScalar(a1.dot(n)));
+  if (a1.lengthSq() < 1e-20) return new THREE.Matrix4();
+  a1.normalize(); const a3 = new THREE.Vector3().crossVectors(a1, n);
+  return new THREE.Matrix4().makeBasis(a1, n, a3).setPosition(origin);
 }
 function objectPlane(o: X3DObject): { matrix: THREE.Matrix4; sizeU: number; sizeV: number } {
   const pts = geomPoints(o.primitive?.geom()); const box = new THREE.Box3();
@@ -107,16 +133,18 @@ export function registerTasksB11bScene(app: App, reg: Reg) {
     execute(app, a) {
       const C = 'GetNumberOfKnots'; const c = curveOf(C, objectArg(app, a.InputObj));
       setStatus(app, C, S_OK);
-      return outputs(app, C, { NbItems: siKnots(c).length });
+      return outputs(app, C, { NbItems: subCurves(c).reduce((n, sc) => n + siKnots(sc).length, 0) }); // all sub-curves (batch 12 Q2)
     },
   });
   reg('GetCurvePercentageAtKnotIndex', {
     description: 'Gets the length percentage of the curve at the given knot index', undoable: false,
     execute(app, a) {
+      // Batch 12 (note Q2): the knot index runs over all sub-curves of the curve list (pair sub-curve, U); out of range
+      // leaves the output at 0.0 (success); the geometry's percentage is written unscaled (0..100 scale inferred).
       const C = 'GetCurvePercentageAtKnotIndex'; const c = curveOf(C, objectArg(app, a.InputObj));
       const index = unset(a.Index) ? 0 : Number(a.Index) >>> 0; // unsigned long
-      const k = siKnots(c); let pct = 0;
-      if (index < k.length) pct = percentageAt(c, k[index]); // out of range: nothing computed, no error
+      let pct = 0, rest = index;
+      for (const sc of subCurves(c)) { const k = siKnots(sc); if (rest < k.length) { pct = percentageAt(sc, k[rest]); break; } rest -= k.length; }
       setStatus(app, C, S_OK);
       return outputs(app, C, { Percentage: pct });
     },
@@ -140,20 +168,28 @@ export function registerTasksB11bScene(app: App, reg: Reg) {
   reg('UpdateExternalReference', {
     description: 'Update External Reference',
     execute(app, a) {
+      // Batch 12 (note Q3): NULL Target E_POINTER; empty list S_FALSE; each piece must resolve to an existing scene element
+      // (any non-zero result is invalid); sub-object 0x18009cb28 FOUND -> XSITASKS 0x42f (severity 4) and S_OK, no change;
+      // resolution count 0 -> success, no change; path count != resolution count -> S_FALSE, no change.
       const C = 'UpdateExternalReference';
-      const paths = unset(a.InputObjs) ? [] : Array.isArray(a.InputObjs) ? a.InputObjs.map(String) : splitList(String(a.InputObjs));
-      if (!paths.length) { setStatus(app, C, S_FALSE); return undefined; } // nothing to change
       const target = unset(a.Target) ? undefined : objectArg(app, a.Target);
+      if (!target) throw fail(E_POINTER, `${C}: no target`);
+      const paths = unset(a.InputObjs) ? [] : Array.isArray(a.InputObjs) ? a.InputObjs.map((x: any) => nameOf(x)) : splitList(String(a.InputObjs));
+      if (!paths.length) { setStatus(app, C, S_FALSE); return undefined; } // nothing to change
       for (const p of paths) {
-        // inferred: a reference path is valid when it is a non-empty name without the characters a file path cannot hold
-        if (!p.trim() || /[<>"|?*]/.test(p)) { app.logMsg('error', `Invalid reference [${p}]`); throw fail(E_INVALIDARG, `${C}: Invalid reference [${p}]`); }
+        const el = findObj(app, p) ?? findParam(app, p); // the element-reference object's path resolution
+        if (!el) { app.logMsg('error', `Invalid reference [${p}]`); throw fail(E_INVALIDARG, `${C}: Invalid reference [${p}]`); } // inferred: the failing code of an unresolved path
       }
-      if (!target) throw fail(E_INVALIDARG, `${C}: no target`);
-      const r = refOf(target);
-      if (!r) { app.logMsg('info', `${tasksText(0x42f)} ${target.name}`.trim()); setStatus(app, C, S_OK); return undefined; } // no external-reference sub-object
-      if (paths.length !== r.resolutions.length) throw fail(E_INVALIDARG, `${C}: ${paths.length} reference path(s) for ${r.resolutions.length} resolution(s) of ${target.name}`);
+      if ((target as any).externalRefSubObject) { // inferred stand-in for sub-object 0x18009cb28 (class not named in the note)
+        app.logMsg('info', `WARNING : ${tasksText(0x42f)} ${target.name}`.trim()); setStatus(app, C, S_OK); return undefined;
+      }
+      const r = refOf(target) ?? refOf({ ref: (target as any).resolution }); // referenced-model branch, else the target's own resolution object
+      if (!r) throw fail(E_INVALIDARG, `${C}: ${target.name} has no resolution object`);
+      if (!r.resolutions.length) { setStatus(app, C, S_OK); return undefined; } // count 0: nothing set
+      if (paths.length !== r.resolutions.length) { setStatus(app, C, S_FALSE); return undefined; } // count mismatch: S_FALSE, no change
       const old = [...r.resolutions]; const oldFile = r.file;
-      const apply = (list: string[], file: string) => { for (let i = 0; i < list.length; i++) r.resolutions[i] = list[i]; r.file = file; app.events.emit('scene'); };
+      const st = b11b(app) as any;
+      const apply = (list: string[], file: string) => { st.switchingFlag = 1; try { for (let i = 0; i < list.length; i++) r.resolutions[i] = list[i]; r.file = file; } finally { st.switchingFlag = 0; } app.events.emit('scene'); };
       const idx = old.indexOf(oldFile); const newFile = idx >= 0 ? paths[idx] : oldFile;
       app.record('Update External Reference', () => apply(paths, newFile), () => apply(old, oldFile));
       setStatus(app, C, S_OK);
@@ -190,24 +226,19 @@ export function registerTasksB11bScene(app: App, reg: Reg) {
   reg('SetReferencePlane', {
     description: 'Set Reference Plane',
     execute(app, a) {
+      // Batch 12 (note Q4): NULL Target or no reference-plane property -> E_INVALIDARG; NULL element -> 1. Element kinds:
+      // 2 object, 6 component, 7 component through a cluster-style sub-element; others -> 1, no change. Components give
+      // the plane matrix rows {axis 1, axis 2, axis 3, origin} when all three axes are valid (else identity), combined with
+      // the owner's global transform; sizes = half the object bounding box X / Z extents, at least 2.0.
       const C = 'SetReferencePlane';
       const slot = unset(a.Target) ? null : planeSlot(app, a.Target);
-      if (!slot) throw fail(E_NOINTERFACE, `${C}: ${unset(a.Target) ? 'no target' : nameOf(a.Target)} has no reference plane`);
+      if (!slot) throw fail(E_INVALIDARG, `${C}: ${unset(a.Target) ? 'no target' : nameOf(a.Target)} has no reference plane`);
       const first = listArg(app, a.InputObj)[0];
       if (first === undefined || first === null) { setStatus(app, C, S_FALSE); return undefined; } // NULL element
       const el = elementOf(app, first);
-      let plane: { matrix: THREE.Matrix4; sizeU: number; sizeV: number };
-      if (el.kind === 2) plane = objectPlane(el.obj);
-      else if (el.kind === 6) {
-        // Known part: the plane is built from the component frame. inferred: centred on the components' global centroid,
-        // oriented like the object; the full component-frame path of the worker was not read.
-        const pts = geomPoints(el.obj.primitive?.geom()); const g = el.obj.globalMatrix(); const c = new THREE.Vector3(); let n = 0;
-        if (pts && el.sub === 'pnt') for (const i of el.items) if (i * 3 + 2 < pts.length) { c.add(new THREE.Vector3(pts[i * 3], pts[i * 3 + 1], pts[i * 3 + 2]).applyMatrix4(g)); n++; }
-        if (n) c.divideScalar(n); else c.setFromMatrixPosition(g);
-        const q = new THREE.Quaternion(); g.decompose(new THREE.Vector3(), q, new THREE.Vector3());
-        plane = { matrix: new THREE.Matrix4().compose(c, q, new THREE.Vector3(1, 1, 1)), sizeU: 2, sizeV: 2 };
-        logNya(app, C, `the component frame of ${el.name} (axes and sizes); the plane is centred on the components and oriented like ${el.obj.name}`);
-      } else { logNya(app, C, `reference planes from an element of this kind (${el.name}); the plane is unchanged`); setStatus(app, C, S_FALSE); return undefined; }
+      if (el.kind === 0) { setStatus(app, C, S_FALSE); return undefined; } // other element kinds: 1, no change
+      const plane = objectPlane(el.obj);
+      if (el.kind !== 2) plane.matrix = new THREE.Matrix4().multiplyMatrices(el.obj.globalMatrix(), componentFrame(el.obj, el.items)); // component x global
       const old = slot.get();
       const next: PlaneRecord = { name: slot.name, inputs: [el.name], matrix: plane.matrix.toArray(), sizeU: plane.sizeU, sizeV: plane.sizeV, active: true, flags: 1 };
       app.record('Set reference plane', () => { slot.set(next); app.events.emit('scene'); }, () => { slot.set(old); app.events.emit('scene'); });

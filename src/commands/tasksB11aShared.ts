@@ -54,7 +54,7 @@ export interface B11aState {
   /** Token values for the cache path templates that the build cannot resolve itself ("project path", "project", "env XSI_USERHOME"). */
   tokens: Record<string, string>;
   /** Cache writes planned by CacheObjectsIntoFile_Private (the writer is not modelled). */
-  cachePlans: { object: string; file: string; frames: number[]; attributes: string[] }[];
+  cachePlans: { object: string; file: string; frames: number[]; attributes: string[]; target?: string; substeps?: number }[];
   /** Files produced by DumpCacheHeader and Net View requests. */
   dumps: { source: string; xml: string; netView: boolean }[];
   netViews: any[];

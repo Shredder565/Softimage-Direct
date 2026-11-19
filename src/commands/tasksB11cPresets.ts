@@ -6,7 +6,7 @@
 // class id (stand-in: the node type), the family, the writable parameter values, the description and whether a
 // thumbnail was asked for. The binary preset format is not modelled.
 import { App, CommandDef } from '../core/commands';
-import { Node, Material, Shader } from '../core/scene';
+import { Node, Material, Shader, X3DObject, Operator } from '../core/scene';
 import { Parameter } from '../core/params';
 import { hostFs } from '../core/sdkHelpersHostFs';
 import { boolArg, findNode } from './viewEditPropertyHelpers';
@@ -112,8 +112,12 @@ function siLoadPreset(app: App, a: Record<string, any>) {
   setStatus(app, C, S_OK);
 }
 
-/** Reference holders of InspectExternalReference (stand-ins, asked in this order). */
-function referenceNames(app: App, n: Node): string[] | null {
+/** Reference holders of InspectExternalReference, asked in the batch-12 order: (1) the expression source (the
+ *  expressions on the target's parameters: the object names they reference), (2) the first nested operator of the target
+ *  (its external references), (3) the operator-port interface on the target itself. null = no holder answered.
+ *  Stand-ins (inferred): an operator's references are its `externalReferences` list, the SetReference store, or its
+ *  file / path string parameters. */
+function operatorRefs(app: App, n: Node): string[] | null {
   const own = (n as any).externalReferences;
   if (Array.isArray(own)) return own.map(String);
   const refs = stateOf(app).references.get(n);
@@ -121,6 +125,15 @@ function referenceNames(app: App, n: Node): string[] | null {
   const fileParams = n.params.filter(p => p.def.type === 'string' && /file|path/i.test(p.name));
   if (fileParams.length) return fileParams.map(p => String(p.value ?? '')).filter(Boolean);
   return null;
+}
+function referenceNames(app: App, n: Node): string[] | null {
+  const own = n instanceof X3DObject ? [...n.params, ...n.kinematics.local.params, ...n.kinematics.global.params] : n.params; // an object's parameters include its transform
+  const exprs = own.map(p => app.anim.expression(p)).filter((e): e is string => !!e);
+  if (exprs.length) { const out: string[] = []; for (const e of exprs) for (const m of e.matchAll(/[A-Za-z_][\w]*(?:\.[A-Za-z_][\w]*)+/g)) { const nm = m[0].split('.')[0]; if (app.scene.find(nm) && !out.includes(nm)) out.push(nm); } return out; }
+  const nested = n instanceof X3DObject ? (n.primitive?.operators ?? []).find(op => operatorRefs(app, op)) : undefined;
+  if (nested) return operatorRefs(app, nested);
+  if (n instanceof Operator || (n as any).externalReferences || stateOf(app).references.has(n)) return operatorRefs(app, n);
+  return operatorRefs(app, n);
 }
 
 /** SetReference Target -> (owner, descriptor). The descriptor's meaning was not read (open question 3). */

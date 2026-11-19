@@ -78,7 +78,7 @@ function resetOffset(app: App, a: Record<string, any>) {
   const C = 'ResetOffset';
   const params = unset(a.InputObjs) ? [...app.anim.marked] : paramsOf(app, a.InputObjs);   // unset = the marked parameters
   const t = unset(a.Time) ? app.anim.frame : Number(a.Time);
-  let notDriven = 0; let keyed = 0; let logged = false;
+  let notDriven = 0; let keyed = 0;
   for (const p of params) {
     const model = ownerObject(p)?.model;
     const driving: { ref: ClipRef; index: number }[] = [];
@@ -91,7 +91,7 @@ function resetOffset(app: App, a: Record<string, any>) {
     if (contributing.length > 1) throw fail(E_INVALIDARG, `${C}: more than one action contributes to ${p.fullName} (XSIACTION2 0x3fb)`);
     if (!contributing.length) throw fail(E_INVALIDARG, `${C}: no action contributes to ${p.fullName} (XSIACTION2 0x3fc)`);
     const { ref, index } = contributing[0];
-    if (!logged) { logNya(app, C, 'the value keyed by the SaveKey sub-task (open question 4); 0 (no offset) is keyed'); logged = true; }
+    // batch 12 Q4: SaveKey on the item offset at Time with value 0 (confirmed)
     editMixer(app, ref.mix, app.scene.root, 'Reset offset', () => { keyParam(effectItems(ref)[index], t, 0); });
     subtask(app, C, 'SaveKey', `${ref.clip.name} item ${index} @ ${t}`);
     keyed++;
@@ -111,19 +111,19 @@ function cutClipInSpace(app: App, a: Record<string, any>) {
   for (const x of listOf(a.InputObjs)) { const o = findObject(app, x); names.add(o ? o.name : String((x as any)?.name ?? x)); }
   const src = sourceOf(ref);
   if (!src) throw fail(E_FAIL, `${C}: ${ref.clip.name} has no action source`);
-  logNya(app, C, 'the identity of the copy-source and add-clip sub-tasks (classes at 0x180136cc8 / 0x180136d18, open question 5); the source is duplicated and a clip of the copy is added on a new track');
-  // copy-source sub-task
+  // batch 12 Q4: (1) the source is duplicated by an action-duplicator object (not a command); (2) AddTrack on the model:
+  // root compound, an animation track (C3DAnimActionTrack), no name, position -1 (end); (3) CopyClipToTrack with the model,
+  // the original clip, the duplicated source, the new track and Time = the original clip start -> the new clip.
   const copy = new Property(uniqueSourceName(ref.model, src.name), src.type, src.params.map(x => ({ ...x.def, value: x.value })));
   for (const k of ['sourceClass', 'itemInfo', 'frameStart', 'frameEnd', 'published']) if ((src as any)[k] !== undefined) (copy as any)[k] = JSON.parse(JSON.stringify((src as any)[k]));
-  app.record('Copy source', () => { if (!ref.model.properties.includes(copy)) ref.model.addProperty(copy); }, () => ref.model.removeProperty(copy));
-  subtask(app, C, 'CopySource', `${src.name} -> ${copy.name}`);
+  app.record('Duplicate source', () => { if (!ref.model.properties.includes(copy)) ref.model.addProperty(copy); }, () => ref.model.removeProperty(copy));
   const made = editMixer(app, ref.mix, app.scene.root, 'Cut clip in space', () => {
     const orig = mappingRules(ref).map(r => ({ ...r }));
-    // add-clip sub-task: a clip of the copy at the original clip's start (frames -> seconds -> frames), same model
-    const track = Math.max(0, ...ref.mix.clips.map(c => Number(c.track ?? 0))) + 1;   // inferred: a free track
+    const track = Math.max(-1, ...ref.mix.clips.filter(c => (c as ClipX).type === undefined || (c as ClipX).type === 'mixeranimclip').map(c => Number(c.track ?? 0))) + 1;   // new animation track at the end
+    subtask(app, C, 'AddTrack', `${ref.model.name}: animation track ${track} at the end`);
     const clip: ClipX = { name: uniqueClipName(ref.mix, ref.clip.name), source: copy.name, start: ref.clip.start, duration: ref.clip.duration, track, weight: ref.clip.weight };
     ref.mix.clips.push(clip);
-    subtask(app, C, 'AddClip', `${clip.name} @ ${clip.start}`);
+    subtask(app, C, 'CopyClipToTrack', `${ref.clip.name} (${copy.name}) -> track ${track} @ ${clip.start}`);
     const fresh = orig.map(r => ({ ...r }));
     orig.forEach((r, i) => {
       const obj = r.target.split('.')[0];

@@ -29,7 +29,8 @@ const ROWS = {
   'CMD-B11i': ['MoveComponent', 'RotateUVW', 'ScaleUVW', 'TranslatePivot', 'TranslateUVW'],
 };
 const NAMES = [...new Set(Object.values(ROWS).flat())];
-const DEFAULT_FAILS = new Set(['CreateFolder', 'MoveToFolder', 'RemoveFromFolder', 'NavigateNode', 'PinUVComponents', 'UnPinUVComponents', 'PinAllUVComponents',
+// batch 12: MoveToFolder with a NULL folder returns 1 (no failure)
+const DEFAULT_FAILS = new Set(['CreateFolder', 'RemoveFromFolder', 'NavigateNode', 'PinUVComponents', 'UnPinUVComponents', 'PinAllUVComponents',
   'UnPinAllUVComponents', 'Tag', 'Untag', 'GetSize', 'SetViewCamera', 'ExportImageClip']);
 
 const reg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'command_registry.json'), 'utf8')).commands;
@@ -82,13 +83,22 @@ const got = await page.evaluate(({ NAMES, DF }) => {
     const sameNext = (src, s, loop) => { const k = root.children; const i = k.indexOf(src); for (let j = 1; j < k.length; j++) { const x = i + s * j; if (!loop && (x < 0 || x >= k.length)) return src; const e = k[(x % k.length + k.length) % k.length]; if (e.type === src.type) return e; } return src; };
     ok('NavigateNode default (1) = parent', nav({ Source: 'cube' }) === root.name);
     ok('NavigateNode 2 = first child; none = Source itself', nav({ Source: root, NavDirection: 2 }) === root.children[0].name && nav({ Source: 'cube', NavDirection: 2 }) === 'cube');
-    ok('NavigateNode 3 = next sibling of the same type (NavFilter 11 + NavSubFilter 1)', nav({ Source: 'cube', NavDirection: 3 }) === sameNext(cube, 1, false).name, [nav({ Source: 'cube', NavDirection: 3 }), kids]);
-    ok('NavigateNode 4 = previous sibling of the same type', nav({ Source: 'cube', NavDirection: 4 }) === sameNext(cube, -1, false).name);
-    const ci = root.children.indexOf(cube);
-    ok('NavigateNode 3 + NavFilter 10 = adjacent sibling', nav({ Source: 'cube', NavDirection: 3, NavFilter: 10 }) === (root.children[ci + 1] ?? cube).name);
-    ok('NavigateNode NavSubFilter 0 = type only (every scene object)', nav({ Source: 'cube', NavDirection: 3, NavSubFilter: 0 }) === (root.children[ci + 1] ?? cube).name);
-    const last = root.children[root.children.length - 1];
-    ok('NavigateNode 3 on the last sibling: not found = Source; NavLoop wraps', nav({ Source: last, NavDirection: 3, NavFilter: 10 }) === last.name && nav({ Source: last, NavDirection: 3, NavFilter: 10, NavLoop: true }) === root.children[0].name);
+    // batch 12 (B11d Q1): below the root a leaf steps to the next / previous leaf (depth first), an element with children to
+    // the next / previous element at the same depth; NavLoop wraps; flag 0x8 repeats the step; the filter applies at the root
+    const dfs = []; const walkT = (o, d) => { dfs.push([o, d]); o.children.forEach(c => walkT(c, d + 1)); }; walkT(root, 0);
+    const leaves = dfs.filter(([o]) => o !== root && !o.children.length).map(([o]) => o);
+    const li = leaves.indexOf(cube);
+    ok('NavigateNode 3 = next leaf (depth first)', nav({ Source: 'cube', NavDirection: 3 }) === (leaves[li + 1] ?? cube).name, [nav({ Source: 'cube', NavDirection: 3 }), leaves.map(o => o.name)]);
+    ok('NavigateNode 4 = previous leaf', nav({ Source: 'cube', NavDirection: 4 }) === (leaves[li - 1] ?? cube).name);
+    const lastLeaf = leaves[leaves.length - 1];
+    ok('NavigateNode 3 on the last leaf: not found = Source; NavLoop wraps to the first leaf', nav({ Source: lastLeaf, NavDirection: 3 }) === lastLeaf.name && nav({ Source: lastLeaf, NavDirection: 3, NavLoop: true }) === leaves[0].name);
+    if (leaves[li + 1] && leaves[li + 2]) { leaves[li + 1].navFlags = 8; ok('NavigateNode: element flag 0x8 repeats the step', nav({ Source: 'cube', NavDirection: 3 }) === leaves[li + 2].name); delete leaves[li + 1].navFlags; }
+    { const P = run('GetPrim', { PresetObj: 'Null', Name: 'b12NavP' }).v, Q = run('GetPrim', { PresetObj: 'Null', Name: 'b12NavQ' }).v, k1 = run('GetPrim', { PresetObj: 'Null', Name: 'b12NavK1' }).v, k2 = run('GetPrim', { PresetObj: 'Null', Name: 'b12NavK2' }).v;
+      P.addChild(k1); Q.addChild(k2);
+      const d1 = []; const w2 = (o, d) => { d1.push([o, d]); o.children.forEach(c => w2(c, d + 1)); }; w2(root, 0);
+      const same = d1.filter(([o, d]) => o !== root && d === 1).map(([o]) => o); const pi = same.indexOf(P);
+      ok('NavigateNode 3 from an element with children = next element at the same depth', nav({ Source: P, NavDirection: 3 }) === (same[pi + 1] ?? P).name, [nav({ Source: P, NavDirection: 3 }), same.map(o => o.name)]);
+      root.removeChild(P); root.removeChild(Q); root.removeChild(k1); root.removeChild(k2); }
     const polys = root.children.filter(o => o.type === cube.type);
     ok('NavigateNode 5 / 6 = first / last sibling of the same type', nav({ Source: 'cube', NavDirection: 5 }) === (polys[0] === cube ? cube : polys[0]).name && nav({ Source: 'cube', NavDirection: 6 }) === (polys[polys.length - 1] === cube ? cube : polys[polys.length - 1]).name, [nav({ Source: 'cube', NavDirection: 5 }), nav({ Source: 'cube', NavDirection: 6 })]);
     ok('NavigateNode on the hierarchy root: pre-order walk (3 = first element, 4 = last element with NavFilter 10)', nav({ Source: root, NavDirection: 3, NavFilter: 10 }) === root.children[0].name && nav({ Source: root, NavDirection: 4, NavFilter: 10 }) === (() => { let o = root; while (o.children.length) o = o.children[o.children.length - 1]; return o.name; })());
@@ -108,6 +118,7 @@ const got = await page.evaluate(({ NAMES, DF }) => {
     const mv2 = run('MoveToFolder', { Target: b, InputObjs: 'sphere' }); ok('MoveToFolder from another folder: taken out, flagged (unread worker)', !a.members.includes(sphere) && b.members.includes(sphere) && nya(mv2) === 1, mv2.log);
     A.undo(); ok('MoveToFolder undo', a.members.includes(sphere) && !b.members.includes(sphere));
     const n0 = a.members.length; const bad = run('MoveToFolder', { Target: 'cube', InputObjs: 'sphere' });
+    { const nf = run('MoveToFolder', { InputObjs: 'sphere' }); ok('MoveToFolder: NULL folder returns 1, no change (batch 12)', !nf.err && st().MoveToFolder === 1 && a.members.length === n0, nf); }
     ok('MoveToFolder: non-folder Target fails, nothing changed', /MoveToFolder: Target is not a folder/.test(bad.err) && a.members.length === n0, bad);
     const rm = run('RemoveFromFolder', { Target: a, InputObjs: 'sphere' }); ok('RemoveFromFolder removes, no return value', rm.v === undefined && !a.members.includes(sphere), rm);
     const rmBad = run('RemoveFromFolder', { Target: 'cube', InputObjs: 'sphere' }); ok('RemoveFromFolder: non-folder Target fails', /RemoveFromFolder: Target is not a folder/.test(rmBad.err), rmBad);
@@ -130,7 +141,7 @@ const got = await page.evaluate(({ NAMES, DF }) => {
       run('UnPinUVComponents', { UVProp: 'cube', UVComponents: [2] }); ok('UnPinUVComponents clears the bits', bits() === '0,3');
       run('PinAllUVComponents', { UVProp: 'cube' }); const all = proj.pinnedSamples.size; ok('PinAllUVComponents sets every bit', all >= total - 7 && all > 3, [all, total]);
       run('UnPinAllUVComponents', { UVProp: 'cube' }); ok('UnPinAllUVComponents clears every bit', proj.pinnedSamples.size === 0); A.undo(); ok('UnPinAll undo', proj.pinnedSamples.size === all);
-      A.lockRecordsB11.set(proj, [{ level: 0xffff, type: 0 }]);
+      A.lockRecordsB11.set(proj, [{ id: 0, lockLevel: 0xffff, tagLevel: 0, type: 0 }]);
       const lk = run('PinUVComponents', { UVProp: 'cube', UVComponents: [1] }); ok('PinUVComponents on a locked UVProp = lock error 0x80070005', lk.status === 0x80070005, lk);
       A.lockRecordsB11.delete(proj);
       const nu = run('PinAllUVComponents', {}); ok('PinAllUVComponents: UVProp required', nu.status === 0x80070057);
@@ -144,13 +155,14 @@ const got = await page.evaluate(({ NAMES, DF }) => {
     ok('GetSize flags the traverser size definitions', nya(run('GetSize', { InputObjs: 'cube' })) === 1);
   }
   {
-    const p = cube.kinematics.local.get('posy'); const R = A.lockRecordsB11; const lv = () => R.get(p)?.find(r => r.type === 2)?.level ?? 0;
+    const p = cube.kinematics.local.get('posy'); const R = A.lockRecordsB11; const lv = () => R.get(p)?.find(r => r.type === 2)?.tagLevel ?? 0; // batch 12: record {id, lockLevel, tagLevel, type}
     const t0 = run('Tag', { InputObjs: 'cube.kine.local.posy', Level: 0 }); ok('Tag Level 0 = E_INVALIDARG, XSITASKS 1073', t0.status === 0x80070057 && /The tag level 0 is invalid/.test(t0.err), t0);
     run('Tag', { InputObjs: 'cube.kine.local.posy', Level: 5 }); ok('Tag stores a type-2 lock record with the Level bits', lv() === 5 && R.get(p).length === 1);
     run('Tag', { InputObjs: 'cube.kine.local.posy', Level: 'siTag2' }); ok('Tag ORs further bits (siTag2 = 2)', lv() === 7);
     run('Untag', { InputObjs: 'cube.kine.local.posy', Level: 4 }); ok('Untag removes only the given bits', lv() === 3);
     run('Tag', { InputObjs: 'cube.kine.local.posy', Level: 1, SubType: 4 }); ok('Tag with SubType 4 untags', lv() === 2);
-    const obj = run('Tag', { InputObjs: 'cube' }); ok('Tag on an object (no component id): warning 1069, skipped, S_FALSE', obj.log.some(l => /XSITASKS 1069/.test(l)) && st().Tag === 1 && !R.has(cube), obj.log);
+    const obj = run('Tag', { InputObjs: 'cube' }); ok('Tag record layout {id, lockLevel 0, tagLevel, type 2}', (() => { const r = R.get(p)?.find(x => x.type === 2); return r && r.lockLevel === 0 && r.id > 0; })());
+    ok('Tag on an object (no component id): warning 1069 (severity 4), skipped, S_FALSE', obj.log.some(l => /^info:WARNING : .*XSITASKS 1069/.test(l)) && st().Tag === 1 && !R.has(cube), obj.log);
     const lockSub = run('Tag', { InputObjs: 'cube.kine.local.posy', SubType: 0 }); ok('Tag SubType 0 (lock path) flagged not yet attested', nya(lockSub) === 1 && lv() === 2);
     run('Untag', { InputObjs: 'cube.kine.local.posy' }); ok('Untag siTagAll (1023) removes the record', !R.has(p)); A.undo(); ok('Untag undo', lv() === 2);
     ok('Tag / Untag: InputObjs required', run('Untag', {}).status === 0x80070057);
@@ -193,7 +205,9 @@ const got = await page.evaluate(({ NAMES, DF }) => {
     A.undo();
     const ps = run('PlotCamSeqShape', { InputObjs: 'cube', StartFrame: 1, EndFrame: 9, PlotWithoutGaps: true, Name: 'PS' });
     const kl = ps.v?.KeyList, cl = ps.v?.ClipList;
-    ok('PlotCamSeqShape: KeyList (one key per frame) and ClipList (one shape clip, clip-in = StartFrame), no Value', kl?.length === 7 && kl.every(k => k.type === 'shapekey' && cube.properties.includes(k)) && cl?.length === 1 && cl[0].type === 'mixershapeclip' && cl[0].timectrl.clipin === 1 && cl[0].timectrl.clipout === 9 && !('Value' in ps.v), [ps.err, kl?.length, cl?.[0]]);
+    // batch 12: ApplyKeys -> one shape clip per key at StartFrame + i, inside a compound named Name on a new shape track
+    const cpd = root.property('mixer')?.compounds?.find(c => c.name === 'PS');
+    ok('PlotCamSeqShape: KeyList (one key per frame) and ClipList (one shape clip per key from StartFrame), no Value', kl?.length === 7 && kl.every(k => k.type === 'shapekey' && cube.properties.includes(k)) && cl?.length === 7 && cl.every((c, i) => c.type === 'mixershapeclip' && c.start === 1 + i && c.timectrl.clipin === 1 + i) && cpd && cpd.clips.length === 7 && !('Value' in ps.v), [ps.err, kl?.length, cl?.[0], cpd]);
     ok('PlotCamSeqShape flags the unread helpers', nya(ps) === 1);
     A.undo(); ok('PlotCamSeqShape undo', !cube.properties.some(p => p.type === 'shapekey' && /^PS_/.test(p.name)));
     A.select([]); const pz = run('PlotCamSeqShape', { StartFrame: 1, EndFrame: 9, PlotWithoutGaps: true });

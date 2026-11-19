@@ -112,10 +112,14 @@ export function registerTasksB11aMisc(app: App) {
 
   reg(app, 'SetDefaultKeyMap', {
     execute(app, a) {
+      // Batch 12 (note Q5): the first run saves preference Interaction.defaultkeymap; the keyboard-mapping manager's
+      // answer is ignored, so an unknown name is no error and the command still returns 1.
       const C = 'SetDefaultKeyMap'; const name = text(a.Name); const saved = currentKeymap;
+      const bag: Record<string, any> = ((app as any).prefValues ??= {});
+      const PREF = 'Interaction.defaultkeymap'; const hadPref = Object.prototype.hasOwnProperty.call(bag, PREF); const oldPref = bag[PREF];
       const known = keymapNames().includes(name);
-      if (!known) logNya(app, C, `what the keyboard-mapping manager does with the key map name "${name}" (not one of this build's key maps); the default key map is kept`);
-      app.record(C, () => { if (known) setKeymap(name); }, () => { setKeymap(saved); });
+      if (!known) logNya(app, C, `what the keyboard-mapping manager does with the key map name "${name}" (outside tasks.dll); the active key map is kept`);
+      app.record(C, () => { bag[PREF] = name; if (known) setKeymap(name); }, () => { if (hadPref) bag[PREF] = oldPref; else delete bag[PREF]; setKeymap(saved); });
       return setStatus(app, C, S_FALSE); // 1 on the first run
     },
   });
