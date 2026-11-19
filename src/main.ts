@@ -63,6 +63,7 @@ import { registerShadertasksB12Commands } from './commands/shadertasksB12';
 import { registerBvrB13aCommands } from './commands/bvrB13a';
 import { registerUnfoldB13bCommands } from './commands/unfoldB13b';
 import { registerCrosswalkB13cCommands } from './commands/crosswalkB13c';
+import { registerMotorB13dCommands } from './commands/motorB13d';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -197,6 +198,7 @@ registerShadertasksB12Commands(app);   // CMD-B12f / CMD-B12g (shadertasks.dll c
 registerBvrB13aCommands(app);   // CMD-B13a (bvrexport.dll contracts)
 registerUnfoldB13bCommands(app);   // CMD-B13b (Unfold3D.64.dll contracts)
 registerCrosswalkB13cCommands(app);   // CMD-B13c (dotXSIConverter.64.dll contracts)
+registerMotorB13dCommands(app);   // CMD-B13d (CDKMotionTransform.64.dll contracts)
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
