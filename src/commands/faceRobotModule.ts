@@ -2,8 +2,6 @@
 // Enable/Disable/Layout ExecuteCommand OK on Desktop but Commands.found=false (plugin).
 // Stage structure dump-attested; FR.dll / synoptic HTML bodies LOCK.
 import { App } from '../core/commands';
-import { Property } from '../core/scene';
-import { str } from '../core/params';
 import frTops from '../data/si/face_robot_module_mcp_tops.json';
 import stage1 from '../data/si/face_robot_stage1_chrome.json';
 import ctrl from '../data/si/face_robot_controller_chrome.json';
@@ -135,22 +133,7 @@ export function registerFaceRobotModuleCommands(app: App) {
     },
   });
 
-  // commands_full: FaceRobot(cmd, arg, id) — FR.dll router stub (no invent body)
-  app.register({
-    name: 'FaceRobot',
-    label: 'FaceRobot',
-    category: 'Custom',
-    args: [
-      { name: 'cmd', default: null },
-      { name: 'arg', default: null },
-      { name: 'id', default: null },
-    ],
-    undoable: false,
-    execute(app, a) {
-      app.logMsg('info', `FaceRobot(${a.cmd ?? ''}, ${a.arg ?? ''}, ${a.id ?? ''}) — FR.dll router LOCK`);
-      return null;
-    },
-  });
+  // FaceRobot(cmd, arg, id): wired from its FR.dll contract in src/commands/faceRobotB14d.ts (CMD-B14d).
 
   // true-95pct unlock: fr_Diagnose ACTIVE args×0 after FaceRobot workgroup (PreparationTools.js RegisterCommand).
   // Empty Softimage invoke may 2028 without scene prep — shell MATCH Softimage arity; FR.dll body stays LOCK.
@@ -176,44 +159,8 @@ export function registerFaceRobotModuleCommands(app: App) {
     });
   }
 
-  // GD-03 — FR.dll Execute deepen: fr_RegenerateMouth / fr_SolveTongue / fr_FitTongue (commands_full arity).
-  // Softimage-faithful TS property-tag contracts; no Softimage binary paste.
-  const frDepth = (name: string, args: { name: string; default: unknown }[], kind: string) => {
-    if (app.commands.has(name)) return;
-    app.register({
-      name,
-      label: name,
-      category: 'Custom',
-      args,
-      undoable: false,
-      execute(app, a) {
-        const host = app.selectedObjects[0] ?? app.scene.root;
-        let p = host.properties.find(x => x.type === 'facerobot' && x.val('kind') === kind);
-        if (!p) {
-          p = new Property(name, 'facerobot', [
-            str('kind', kind, 'FR Kind', { readOnly: true }),
-            str('args', JSON.stringify(a ?? {}), 'Last Args'),
-          ]);
-          app.record(name, () => host.addProperty(p!), () => host.removeProperty(p!));
-        } else {
-          const ap = p.get('args');
-          if (ap) app.setParam(ap, JSON.stringify(a ?? {}));
-        }
-        app.select([p]);
-        app.logMsg('info', `${name} — FR.dll Execute (GD-03 ${kind})`);
-        return p;
-      },
-    });
-  };
-  frDepth('fr_RegenerateMouth', [], 'regenerate_mouth');
-  frDepth('fr_SolveTongue', [{ name: 'Rescale', default: false }], 'solve_tongue');
-  frDepth('fr_FitTongue', [
-    { name: 'HeadNull', default: null },
-    { name: 'TongueMesh', default: null },
-    { name: 'TongueMarkers', default: '' },
-    { name: 'MustDeleteMarkers', default: false },
-    { name: 'Scale', default: 1.0 },
-  ], 'fit_tongue');
+  // fr_RegenerateMouth / fr_SolveTongue / fr_FitTongue: wired from their FR.dll contracts in
+  // src/commands/faceRobotB14eTongue.ts (CMD-B14e, WIRE_CORRECTIONS_B14 items 4-6).
 
   // WR-16 — remaining FaceRobot / AnimationRig RegisterCommand Names from script_register_hosts.json.
   // Name registration only; FR.dll / plugin JS execute bodies stay LOCK (no invent).
@@ -258,44 +205,8 @@ export function registerFaceRobotModuleCommands(app: App) {
     });
   }
 
-  // commands_full: fr_GetCurrentStage — returns current Control Panel stage (1–6)
-  if (!app.commands.has('fr_GetCurrentStage')) {
-    app.register({
-      name: 'fr_GetCurrentStage',
-      label: 'fr_GetCurrentStage',
-      category: 'Custom',
-      args: [],
-      undoable: false,
-      execute(app) {
-        return faceRobotCurrentStage(app);
-      },
-    });
-  }
-
-  // commands_full: fr_SwitchFaceLayout(inLayoutID) — FR.dll; when 1–6, switch Control Panel stage (xsily tray)
-  if (!app.commands.has('fr_SwitchFaceLayout')) {
-    app.register({
-      name: 'fr_SwitchFaceLayout',
-      label: 'fr_SwitchFaceLayout',
-      category: 'Custom',
-      args: [{ name: 'inLayoutID', default: null }],
-      undoable: false,
-      execute(app, a) {
-        // Softimage named arg inLayoutID; also accept bare numeric args from thin callers
-        const raw = a?.inLayoutID ?? (typeof a === 'number' ? a : a?.[0]);
-        const id = Number(raw);
-        if (id >= 1 && id <= 6) {
-          setFaceRobotEnabled(app, true);
-          setFaceRobotStage(app, id);
-          openView(FR_CONTROL_PANEL);
-          app.logMsg('info', `fr_SwitchFaceLayout(${id}) → Control Panel Stage ${id}`);
-          return null;
-        }
-        app.logMsg('info', `fr_SwitchFaceLayout(${a.inLayoutID ?? ''}) — FR.dll body LOCK (non-stage id)`);
-        return null;
-      },
-    });
-  }
+  // fr_GetCurrentStage (stage code 0..60) and fr_SwitchFaceLayout: wired in src/commands/faceRobotB14d.ts (CMD-B14d,
+  // WIRE_CORRECTIONS_B14 items 1-2); the Control Panel stage tabs (1..6) follow fr_SwitchFaceLayout.
 
   // ModifyFaceLayout.js stubs — toggle FR vs Softimage layout names (no invent JS body)
   if (!app.commands.has('fr_ToggleFaceLayout')) {
