@@ -6,13 +6,14 @@
 // Graph model: optasksB12iceModel.ts. Gaps filled by reasoning are marked `// inferred`; branches the note leaves open
 // log "not yet attested".
 import { App, CommandDef } from '../core/commands';
-import { Node, Operator, X3DObject, construction } from '../core/scene';
+import { Node, Operator, X3DObject } from '../core/scene';
+import { isLocked } from './inferredB10Scene';
 import { ICETreeOperator } from '../core/ice';
 import { boolArg } from './viewEditPropertyHelpers';
 import {
   S_OK, S_FALSE, SI_NOCHANGE, E_INVALIDARG, E_FAIL, E_UNEXPECTED, E_POINTER, IcePortB12, IceNodeB12, IceCompoundB12, IceCommentB12,
   DATA_TYPE, DATA_CONTEXT, DATA_STRUCTURE, INSERT_LOC, TYPE_MASK, CONTEXT_MASK, STRUCTURE_MASK, oneBitIn, enumArg, blankExposed,
-  stateOf, fail, setStatus, raise, logNya, edit, iceArg, listArg, editableCompound, nodeOfItem, dropFromLayout, graphOf, unset, type SimInitState,
+  stateOf, fail, setStatus, raise, logNya, edit, iceArg, listArg, editableCompound, nodeOfItem, graphOf, unset, type SimInitState,
 } from './optasksB12iceModel';
 
 const ROW = 'CMD-B12b';
@@ -28,8 +29,9 @@ function portArg(app: App, C: string, v: any): IcePortB12 {
 const uniquePortName = (n: IceNodeB12, base: string) => { const all = [...n.inputs, ...n.outputs]; if (!all.some(p => p.name === base)) return base; let i = 1; while (all.some(p => p.name === `${base}${i}`)) i++; return `${base}${i}`; };
 
 // ------------------------------------------------------------------ AddPortToICENode2 / RemovePortFromICENode
-function addPort(app: App, a: Record<string, any>) {
-  const C = 'AddPortToICENode2';
+// One task class for both names: AddPortToICENode2 writes NewPorts (the created ports); the old name AddPortToICENode
+// returns the single created port and does not fill NewPorts (note section 3).
+function addPort(app: App, a: Record<string, any>, C: 'AddPortToICENode2' | 'AddPortToICENode' = 'AddPortToICENode2') {
   const port = portArg(app, C, a.Port);
   const loc = enumArg(a.InsertLocation, INSERT_LOC);
   if (loc !== 0 && loc !== 1) throw fail(E_INVALIDARG, `${C}: InsertLocation must be siNodePortDataInsertionLocationBefore or ...After`);   // inferred
@@ -45,24 +47,33 @@ function addPort(app: App, a: Record<string, any>) {
     if (n instanceof IceCompoundB12 && fresh.side === 'in') n.layout.push({ kind: 'port', port: fresh });   // inferred: listed in the PPG layout
     return [fresh];
   });
-  a.NewPorts = created;
   setStatus(app, C, S_OK);
+  if (C === 'AddPortToICENode') return created[0] ?? null;
+  a.NewPorts = created;
   return created;
 }
 function removePort(app: App, a: Record<string, any>) {
   const C = 'RemovePortFromICENode';
   const port = portArg(app, C, a.Port);
   const n = port.node;
-  const list = port.side === 'in' ? n.inputs : n.outputs;
-  if (list.filter(p => p.group === port.group).length <= 1) {
-    nya(app, C, `removing the last instance of the port group "${port.group}" of ${n.fullName} (Do 0x1800bffd0 not read); nothing was removed`);
+  // Batch-13 addendum Q5a. 1. a port of a compound is removed as an exposed port: RemoveExposedParamFromICECompoundNode
+  //    runs as a child task on (port, compound).
+  if (n instanceof IceCompoundB12) {
+    app.run('RemoveExposedParamFromICECompoundNode', { Parameter: port, Compound: n });
+    setStatus(app, C, S_OK); return;
+  }
+  // 2. the node's side flag set (inferred: an output port): XSIOPTASKS 0x417 (severity 2), 0x80004005
+  if (port.side === 'out') { raise(app, C, 'XSIOPTASKS 0x417', 2, port.fullName); throw fail(E_FAIL, `${C}: ${port.fullName} cannot be removed`); }
+  // 4. the last instance: decided inside the remove-instance child task, still open
+  if (n.inputs.filter(p => p.group === port.group).length <= 1) {
+    nya(app, C, `removing the last instance of the port group "${port.group}" of ${n.fullName} (decided in the remove-instance child task, not read); nothing was removed`);
     setStatus(app, C, S_FALSE); return;
   }
+  // 3. the connected ports of the instance are disconnected (Disconnect Node Port child task), then the instance is
+  //    removed (remove port-group instance child task). An instance of this build is one port.
   edit(app, C, [n.tree], () => {
-    if (port.side === 'in') n.inputs = n.inputs.filter(p => p !== port); else n.outputs = n.outputs.filter(p => p !== port);
-    // inferred: connections on the removed instance are dropped (both sides of an exposed port)
-    for (const g of [n.parent, n instanceof IceCompoundB12 ? n.graph : null]) if (g) g.links = g.links.filter(l => l.src !== port && l.dst !== port);
-    if (n instanceof IceCompoundB12) dropFromLayout(n.layout, port, false);
+    if (n.parent) for (const l of n.parent.linksTo(port)) n.parent.disconnect(l.dst);
+    n.inputs = n.inputs.filter(p => p !== port);
   });
   setStatus(app, C, S_OK);
 }
@@ -181,7 +192,9 @@ function removeAttribute(app: App, a: Record<string, any>) {
   const n = setDataArg(app, C, a.SetDataNode);
   const name = str(a.AttributeName);
   const at = n.attributes!.find(x => x.name === name) ?? n.attributes!.find(x => x.name.toLowerCase() === name.toLowerCase());
-  if (!at) { nya(app, C, `the behaviour with an unknown attribute name ("${name}" is not on ${n.fullName}); nothing was removed`); setStatus(app, C, S_FALSE); return; }
+  // batch-13 addendum Q5b: an unknown name logs XSIOPTASKS 0x415 (severity 2), changes nothing and succeeds
+  if (!at) { raise(app, C, 'XSIOPTASKS 0x415', 2, `"${name}" on ${n.fullName}`); setStatus(app, C, S_OK); return; }
+  // found: a connected attribute port is disconnected first (Disconnect Node Port child task), then the entry goes
   edit(app, C, [n.tree], () => {
     n.attributes = n.attributes!.filter(x => x !== at);
     n.inputs = n.inputs.filter(p => p !== at.port);
@@ -291,27 +304,76 @@ function removeSimInit(app: App, a: Record<string, any>) {
 }
 
 // ------------------------------------------------------------------ TransferICETree
+/** Low Level Duplicate stand-in: a new ICE tree operator with the same nodes (same ids), links and parameter values. */
+function duplicateTree(op: ICETreeOperator, owner: () => X3DObject | null): ICETreeOperator {
+  const dup = new ICETreeOperator(op.name, owner);
+  dup.getTime = op.getTime;
+  for (const p of op.params) dup.set(p.def.name, p.value);
+  for (const n of op.nodes) {
+    dup.nextId = n.id; const m = dup.addNode(n.type, n.x, n.y);
+    for (const p of n.params.params) m.params.set(p.def.name, p.value);
+  }
+  dup.nextId = op.nextId;
+  dup.links = op.links.map(l => ({ ...l }));
+  return dup;
+}
+/** Mode 1 = copy (addendum Q6a step 6): the original stays where it is, the duplicate is connected to the target in the
+ *  same construction mode with the Branch flag. Value stays the original operator. */
+function copyTree(app: App, C: string, op: ICETreeOperator, target: X3DObject, region: any, branch: boolean) {
+  const to = target.primitive ?? (op.parent as any);   // inferred: without geometry the branch copy is held next to the original
+  if (!to) { setStatus(app, C, S_OK); return op; }
+  const dup = duplicateTree(op, () => target);
+  const d = dup as any;
+  app.record('Move ICETree', () => {
+    dup.region = region; to.addOperator(dup); dup.region = region;
+    if (branch) { d.branch = true; d.branchHost = target; }
+    dup.touch();
+  }, () => { const i = to.operators.indexOf(dup); if (i >= 0) to.operators.splice(i, 1); to.dirty = true; });
+  if (branch) nya(app, C, `Branch = true: the copy of ${op.name} is a branch tree of ${target.name} (the branch evaluation is not in this build)`);
+  app.events.emit('scene');
+  setStatus(app, C, S_OK);
+  return op;
+}
 function transferTree(app: App, a: Record<string, any>) {
   const C = 'TransferICETree';
   const mode = unset(a.Mode) ? 0 : a.Mode;
   if (typeof mode !== 'number' || !Number.isInteger(mode) || (mode !== 0 && mode !== 1)) throw fail(E_INVALIDARG, `${C}: Mode must be 0 or 1`);
   const branch = boolArg(a.Branch);
-  const op = iceArg(app, a.Operator);
-  if (!(op instanceof ICETreeOperator)) throw fail(E_INVALIDARG, `${C}: ${unset(a.Operator) ? 'no Operator given' : `"${String(a.Operator)}" is not an ICE tree operator`}`);
-  const target = iceArg(app, a['3DObject']);
-  if (!(target instanceof X3DObject)) throw fail(E_INVALIDARG, `${C}: ${unset(a['3DObject']) ? 'no 3DObject given' : `"${String(a['3DObject'])}" is not a 3D object`}`);
-  // A tree is moved onto 3DObject's stack when 3DObject has geometry. With Branch it becomes a branch tree of 3DObject
-  // (inferred: it applies to 3DObject's branch); the build evaluates a tree only on the object whose stack holds it, so a
-  // branch tree given a target without geometry (a null, a model) stays on its object and records 3DObject as its branch
-  // host (fields `branch` / `branchHost`, the ones the CMD-B6c stand-in uses).
-  if (!target.primitive && !branch) throw fail(E_INVALIDARG, `${C}: "${target.fullName}" has no geometry to hold an ICE tree`);
+  // Value (RePackArg) is always the operator that was passed in, in Mode 1 too (batch-13 addendum Q6a, step 8).
+  const opIn = unset(a.Operator) ? null : iceArg(app, a.Operator);
+  a.Value = opIn ?? null;
+  // inferred: an operator given that is not an ICE tree is an argument error (the refusals below only cover null)
+  if (opIn && !(opIn instanceof ICETreeOperator)) throw fail(E_INVALIDARG, `${C}: "${String(a.Operator)}" is not an ICE tree operator`);
+  const op = opIn as ICETreeOperator | null;
+  const target = unset(a['3DObject']) ? null : iceArg(app, a['3DObject']);
+  // Every refusal of the helper is a silent no-op; the command still succeeds (addendum Q6a, steps 1-3).
+  const nothing = () => { setStatus(app, C, S_OK); return op; };
+  const locked = (x: any) => !!x && (isLocked(app, x, 0xffff) || (Number(x.lockLevel ?? 0) & 0xffff) !== 0);
+  // 1. null operator or target, or a locked target
+  if (!op || !target || locked(target)) return nothing();
+  // 2. the target is the scene root
+  if (String((target as any).name ?? '').toLowerCase() === 'scene_root') return nothing();
+  // 3. object-kind code 2 or 8; kind 8 forces Branch on. inferred: every 3D object of this build is kind 2; which
+  //    objects are kind 8 is not in the note (question for the analyst), so nothing maps to it here.
+  if (!(target instanceof X3DObject)) return nothing();
+  // A tree is held by 3DObject's stack when 3DObject has geometry. With Branch it is a branch tree of 3DObject; the build
+  // evaluates a tree only on the object whose stack holds it, so a branch tree given a target without geometry (a null,
+  // a model) stays on its object and records 3DObject as its branch host (fields `branch` / `branchHost`, the ones the
+  // CMD-B6c stand-in uses). inferred: without geometry and without Branch the build cannot hold the tree: nothing.
+  if (!target.primitive && !branch) {
+    nya(app, C, `"${target.fullName}" has no geometry to hold the ICE tree in this build; nothing was transferred`);
+    return nothing();
+  }
+  // 4. the operator's construction mode (region) is kept for the new connection
+  const region = op.region;
+  if (mode === 1) return copyTree(app, C, op, target, region, branch);
+  // 5. Mode 0 = move: the operator's owner is lock-checked first
+  if (locked(op.owner?.() ?? null)) return nothing();
   const from = op.parent as any; const to = target.primitive;
   const move = !!to && from !== to;
   const o = op as any; const oldBranch = { branch: o.branch, host: o.branchHost };
   const oldIdx = from ? from.operators.indexOf(op) : -1; const oldRegion = op.region; const oldOwner = op.owner;
-  // inferred: Mode 0 keeps the operator's construction region, Mode 1 puts it in the current construction mode's region
-  const region = mode === 1 ? construction.mode : oldRegion;
-  if (!move && !branch) { setStatus(app, C, S_OK); a.Value = op; return op; }
+  if (!move && !branch) return nothing();
   app.record('Move ICETree', () => {
     if (move) {
       if (from) { from.operators.splice(from.operators.indexOf(op), 1); from.dirty = true; }
@@ -340,6 +402,9 @@ export function optasksB12NodeDefs(): CommandDef[] {
     { name: 'AddPortToICENode2', label: 'Add Port to ICENode', category: 'Edit', description: 'Adds a node port at the specified location.',
       args: [{ name: 'Port', default: null }, { name: 'InsertLocation', default: ':siNodePortDataInsertionLocationBefore:siNodePortDataInsertionLocation' }],
       execute: (app, a) => addPort(app, a) },
+    { name: 'AddPortToICENode', label: 'Add Port to ICENode', category: 'Edit', description: 'Adds a node port at the specified location.',
+      args: [{ name: 'Port', default: null }, { name: 'InsertLocation', default: ':siNodePortDataInsertionLocationBefore:siNodePortDataInsertionLocation' }],
+      execute: (app, a) => addPort(app, a, 'AddPortToICENode') },
     { name: 'RemovePortFromICENode', label: 'Remove Port from ICENode', category: 'Edit', description: 'Remove the specified node port.',
       args: [{ name: 'Port', default: null }], execute: (app, a) => removePort(app, a) },
     { name: 'AddNodeToICECompoundNode', label: 'Add Node To ICE Compound', category: 'Simulation', description: '',

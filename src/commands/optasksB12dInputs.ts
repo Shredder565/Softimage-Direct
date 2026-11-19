@@ -76,7 +76,12 @@ function opInput(app: App, C: string, a: Record<string, any>): any {
 }
 
 // ================================================================== MoveOperator
-const MARKER_CLASS = (n: any) => n instanceof MarkerNode;   // inferred: {dba00978-...} = construction-mode marker (Q4)
+// Batch-13 addendum Q19: class {dba00978-85be-4d94-aec5-422ecb4ee4bd} = the Post Simulation / Secondary Shape stack
+// markers (C3DStackMarkerPostSimulationOp / C3DStackMarkerSecondaryShapeOp share it) → 0x407;
+// class {4ed3b713-1abd-11d4-b83a-009027bc6587} = C3DSCMFixerOp2 → silent stop. Mapped onto this build's nodes:
+// the secondary-shape region marker, a PostSimulationMarker operator, the Continuity Manager (SCMFixer2) operator.
+const MARKER_CLASS = (n: any) => (n instanceof MarkerNode && n.mode === 'secondaryshape') || (n instanceof Operator && /^postsimulationmarker$/i.test(n.type));
+const SCMFIXER_CLASS = (n: any) => n instanceof Operator && n.type === 'scmfixer';
 function moveOperator(app: App, a: Record<string, any>) {
   const C = 'MoveOperator';
   const action = Number(siConst(a.MoveAction) ?? 0), direction = Number(siConst(a.MoveDirection) ?? 0);
@@ -106,9 +111,11 @@ function moveOperator(app: App, a: Record<string, any>) {
     for (const above of ops.slice(at + 1)) if (groupsOf(above).some(g => g.instances.some(i => i.includes(op)))) { message(app, C, 0x407, 2, `${op.name} -> ${above.name}`); setStatus(app, C, S_OK); return; }
     ref = ops[ops.length - 1];   // the current top operator, then handled like MoveAction 2
   }
-  if (action === 2 || action === 0) {
-    // 5. a construction-mode marker reference logs 0x407; the second refused class {4ed3b713-...} has no stand-in here (Q4)
-    if (action === 2 && MARKER_CLASS(ref)) { message(app, C, 0x407, 2, ref!.name); setStatus(app, C, S_OK); return; }
+  // 5. explicit MoveAction 2 only (MoveAction 0 picks the reference itself and skips both class tests):
+  //    a marker-class reference logs 0x407 and stops; a C3DSCMFixerOp2 reference stops silently.
+  if (action === 2) {
+    if (MARKER_CLASS(ref)) { message(app, C, 0x407, 2, ref!.name); setStatus(app, C, S_OK); return; }
+    if (SCMFIXER_CLASS(ref)) { setStatus(app, C, S_OK); return; }
   }
   const before = action === 1;
   // 6. F3DMovePortConnections stand-in: re-insert in the stack. inferred: "before" = evaluated right before the reference.
@@ -147,20 +154,43 @@ function moveOperator(app: App, a: Record<string, any>) {
 function updateConnectOnOp(app: App, a: Record<string, any>) {
   const C = 'UpdateConnectOnOp';
   if (unset(a.InputObjs)) throw fail(E_FAIL, `${C}: InputObjs is required`);
-  const inputs = listOf(a.InputObjs).map(x => elementOf(app, x)).filter((x): x is Connectable => !!x && !(x instanceof PortRef));
+  // one entry per port, in port order; a null / empty array entry = no input given for that port
+  const raw: any[] = Array.isArray(a.InputObjs) ? a.InputObjs.flat() : listOf(a.InputObjs);
+  const inputs: (Connectable | null)[] = raw.map(x => { const el = unset(x) ? null : elementOf(app, x); return el && !(el instanceof PortRef) ? el : null; });
   const opN = unset(a.Operator) ? null : findNode(app, a.Operator);
   const op = opN instanceof Operator ? opN : null;
   if (!op || !inputs.length) throw fail(E_POINTER, `${C}: no operator or no input`);
   const group = Number(a.GroupIndex) | 0, instance = Number(a.GroupInstanceIndex) | 0;
   const force = boolArg(a.ForceDisconnect);
-  if (!groupsOf(op)[group]) throw fail(E_INVALIDARG, `${C}: ${op.name} has no port group ${group}`);
-  // inferred (Q1): mode 3 updates the existing instance port by port; ForceDisconnect clears the ports left without input
-  logNya(app, C, 'mode 3 of the shared connect helper; the instance is updated port by port (AlreadyRefined has no effect in this build)', 'Q1');
+  const g0 = groupsOf(op)[group];
+  if (!g0) throw fail(E_INVALIDARG, `${C}: ${op.name} has no port group ${group}`);
+  // Shared connect helper with the bit mask 0x1 (connect) | 0x2 (disconnect existing) = 3, "replace" (batch-13
+  // addendum Q16). AlreadyRefined only skips the helper's input refinement; this build uses the list as given.
+  // No "add instance" request, so no CycleChecking child task for this command.
+  // inferred: the port query "may be left empty" (port slot 0x68) = a port of a dynamic group of this stand-in.
+  const optional = g0.dynamic;
+  const orphans: X3DObject[] = [];
   editGroup(app, C, op, group, g => {
-    while (g.instances.length <= instance) g.instances.push(Array(g.ports).fill(null));
+    while (g.instances.length <= instance) g.instances.push(Array(g.ports).fill(null));   // inferred: as the other port-group tasks
     const row = g.instances[instance];
-    for (let p = 0; p < g.ports; p++) if (p < inputs.length) row[p] = inputs[p]; else if (force) row[p] = null;
+    for (let p = 0; p < g.ports; p++) {
+      const x = p < inputs.length ? inputs[p] : null;
+      if (x) {
+        // 1. a given input on a connected port: the existing connection is removed first; an object source is collected
+        const old = row[p];
+        if (old && !sameElement(old, x) && old instanceof X3DObject && !orphans.includes(old)) orphans.push(old);
+        row[p] = x;   // 2. then the port is connected to the given input
+      } else if (force && optional) row[p] = null;   // 3. no input: the connection is kept unless ForceDisconnect + optional port
+    }
   });
+  // The collected object sources go to a Delete Objects child task with flag 0x10 (flag meaning not in the note).
+  // inferred: a source still connected to the instance (given again on another port) is not deleted.
+  const row = g0.instances[instance] ?? [];
+  const del = orphans.filter(o => !row.some(t => sameElement(t, o)));
+  if (del.length) {
+    logNya(app, C, 'the meaning of the Delete Objects flag 0x10; the disconnected object sources are deleted with DeleteObj', 'addendum Q16');
+    app.run('DeleteObj', { InputObj: del });
+  }
   setStatus(app, C, S_OK);
 }
 

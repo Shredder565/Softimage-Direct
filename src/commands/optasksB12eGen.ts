@@ -55,9 +55,9 @@ function changeReadPosition(app: App, a: Record<string, any>) {
 }
 
 // ------------------------------------------------------------------ GetGeneratorInputsForDisposal
-// siGenOpInputsDisposalMode names as this build spells them (operatorsScripts.ts): keep 0, hide 1, delete 2.
-// The note reads the numbers as 1 = delete, 2 = hide (question for the analyst); the numbers decide below.
-const DISPOSAL: Record<string, number> = { siKeepGenOpInputs: 0, siHideGenOpInputs: 1, siDeleteGenOpInputs: 2 };
+// siGenOpInputsDisposalMode: keep 0, delete 1, hide 2 (batch-13 addendum Q23: 1 = delete, 2 = hide, anything else
+// including 0 = E_INVALIDARG; the same numbering as operatorsScripts.ts).
+const DISPOSAL: Record<string, number> = { siKeepGenOpInputs: 0, siDeleteGenOpInputs: 1, siHideGenOpInputs: 2 };
 function inputsForDisposal(app: App, a: Record<string, any>) {
   const C = 'GetGeneratorInputsForDisposal';
   const items = nodesArg(app, a.InputObjs);

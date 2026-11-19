@@ -101,7 +101,11 @@ export function setOp(app: App, command: string, op: Node, name: string, value: 
 // siOperationMode / siGeneratorInputsDisposalMode / siConstructionMode. inferred numeric values: the public SDK enums.
 const IMMEDIATE = 'siImmediateOperation', PERSISTENT = 'siPersistentOperation';
 const isImmediate = (v: any) => { const c = siConst(v); return c === IMMEDIATE || c === 1; };
-const DISPOSAL = ['siKeepGenOpInputs', 'siHideGenOpInputs', 'siDeleteGenOpInputs'];
+// siGenOpInputsDisposalMode: 0 keep, 1 delete, 2 hide (GetGeneratorInputsForDisposal, cmd-b12e batch-13 addendum Q23).
+// The modeling.geninputmgt preference numbers them differently: 0 keep, 1 hide, 2 delete (C3DPrefsModeling SPDL items).
+const DISPOSAL = ['siKeepGenOpInputs', 'siDeleteGenOpInputs', 'siHideGenOpInputs'];
+const DEL = 1, HIDE = 2;
+const PREF_TO_DISPOSAL = [0, HIDE, DEL];
 const disposalOf = (v: any): number => { const c = siConst(v); return typeof c === 'number' ? c : Math.max(0, DISPOSAL.indexOf(String(c))); };
 const MODES: Record<string, typeof REGIONS[number] | null> = { siConstructionModeModeling: 'modeling', siConstructionModePrimaryShape: 'shape', siConstructionModeAnimation: 'animation', siConstructionModeSecondaryShape: 'secondaryshape', siConstructionModeDefault: null };
 /** The construction region a ConstructionMode argument names; null = default / not given. */
@@ -252,8 +256,8 @@ function applyGen(app: App, command: string, preset: string, connectionSet: any,
     const root = app.scene.root; app.record('Add ' + obj.name, () => root.addChild(obj), () => root.removeChild(obj));
     ops.push(gen); objects.push(obj);
   }
-  if (!immediate && disposal === 2) { logWarning(app, 'siPersistentOperation ignored with siDeleteGenOpInputs, switching to siImmediateOperation'); immediate = true; }
-  const dispose = disposal === 1 || disposal === 2 ? [...inputs] : [];   // GetGeneratorInputsForDisposal, before any freeze
+  if (!immediate && disposal === DEL) { logWarning(app, 'siPersistentOperation ignored with siDeleteGenOpInputs, switching to siImmediateOperation'); immediate = true; }
+  const dispose = disposal === DEL || disposal === HIDE ? [...inputs] : [];   // GetGeneratorInputsForDisposal, before any freeze
   let live = ops;
   if (immediate) {
     autoInspect(app, ops);
@@ -264,8 +268,8 @@ function applyGen(app: App, command: string, preset: string, connectionSet: any,
     const l = inputs[i].kinematics.local; const d = ['posx', 'posy', 'posz'].map(n => Number(l.val(n)) || 0);
     if (d.some(v => v !== 0)) app.run('Translate', { InputObj: [o], X: d[0], Y: d[1], Z: d[2], Mode: 'siRelative' });   // Translate <output>, dx, dy, dz, 0
   });
-  if (disposal === 2) app.run('DeleteObj', { InputObj: dispose });
-  else if (disposal === 1) app.run('HideAndUnselect', { Target: dispose });
+  if (disposal === DEL) app.run('DeleteObj', { InputObj: dispose });
+  else if (disposal === HIDE) app.run('HideAndUnselect', { Target: dispose });
   return { ops: live, objects, text: groupsText([inputs.map(o => ({ raw: o, text: o.fullName, node: o, obj: o, sub: null }))]), immediate, all: ops };
 }
 /** A property an object uses: its own, else the nearest ancestor's. */
@@ -329,8 +333,8 @@ export function registerOperatorsScriptsCommands(app: App) {
       let immediate = prefImmediate(app);                                   // the ImmediateMode argument is ignored
       let disposal = 0; let prefChanged = false;                            // so is GenOpInputsDisposal
       if (!app.run('AutoInspectEnabled')) {
-        disposal = Math.max(0, Math.min(2, Number((app as any).genInputMgt ?? 0) || 0));   // modeling.geninputmgt
-        if (disposal === 2 && !immediate) { immediate = true; setPrefImmediate(app, true); prefChanged = true; }
+        disposal = PREF_TO_DISPOSAL[Math.max(0, Math.min(2, Number((app as any).genInputMgt ?? 0) || 0))];   // modeling.geninputmgt (0 keep, 1 hide, 2 delete)
+        if (disposal === DEL && !immediate) { immediate = true; setPrefImmediate(app, true); prefChanged = true; }
       }
       let r: GenResult | null = null;
       try {

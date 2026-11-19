@@ -34,7 +34,7 @@ const NAMES = [
   'RemoveICESimInitState', 'TransferICETree',
 ];
 // Default arguments that are usable with the cube selected; every other command needs an ICE object and must fail.
-const DEFAULT_OK = new Set(['HideAllPortValues', 'SetICESimInitState', 'RemoveICESimInitState']);
+const DEFAULT_OK = new Set(['HideAllPortValues', 'SetICESimInitState', 'RemoveICESimInitState', 'TransferICETree']);   // TransferICETree: a null operator is a silent no-op (batch 13)
 
 const reg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'command_registry.json'), 'utf8')).commands;
 const full = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'commands_full.json'), 'utf8'));
@@ -167,11 +167,11 @@ const got = await page.evaluate(({ NAMES, DEFAULT_OK: DO }) => {
     const e1 = run(E, { Parameter: np, Name: 'Amount', Min: '0', Max: '10', Description: 'How much', ExposeType: 2, PPGLayoutGroup: 'Controls' });
     ok(`${E}: applies the properties`, !e1.err && np.name === 'Amount' && np.exposed.min === '0' && np.exposed.max === '10' && lay(c.layout) === 'Controls[Amount]', [e1.err, lay(c.layout)]);
     const g1 = run(G, { Parameter: `${c.fullName}.Amount` });
-    ok(`${G}: Name, Min, Max, Picking, Description, ExposeType, Enum, PPGLayoutGroup (inferred order, logged)`, JSON.stringify(g1.v) === JSON.stringify(['Amount', '0', '10', '', 'How much', 2, '', 'Controls']) && nya(g1) === 1, g1);
+    ok(`${G}: Name, Min, Max, Picking, Description, ExposeType, Enum, PPGLayoutGroup (batch-13 order)`, JSON.stringify(g1.v) === JSON.stringify(['Amount', '0', '10', '', 'How much', 2, '', 'Controls']) && nya(g1) === 0, g1);
     ok(`${G}: not undoable`, A.undoStack.length === u0 + 1);
     ok(`${E}: undo restores`, (A.undo(), np.name === 'factor' && np.exposed.min === '' && lay(c.layout) === 'factor'), lay(c.layout));
     A.redo();
-    ok(`${E}: empty strings leave properties unchanged (inferred, logged)`, (() => { const e = run(E, { Parameter: np, Max: '20' }); return np.exposed.min === '0' && np.exposed.max === '20' && np.name === 'Amount' && nya(e) === 1; })());
+    ok(`${E}: an empty Name leaves the name unchanged; the other fields are applied (batch 13)`, (() => { const e = run(E, { Parameter: np, Min: '0', Max: '20', Description: 'How much', ExposeType: 2, PPGLayoutGroup: 'Controls' }); return np.exposed.min === '0' && np.exposed.max === '20' && np.name === 'Amount' && lay(c.layout) === 'Controls[Amount]' && nya(e) === 0; })());
     ok(`${G}: no compound -> 0x80004005`, status(run(G, { Parameter: `${T}.Add.first` }), '80004005'));
 
     const RM = 'RemoveExposedParamFromICECompoundNode';
@@ -215,7 +215,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_OK: DO }) => {
     const before = S.refreshes; const u0 = A.undoStack.length;
     const r = run(C, { InputObjs: [add, sd, cube] });
     ok(`${C}: input value displays hidden; referenced-model node skipped with XSIOPTASKS 0x425`, add.inputs.every(p => !p.valueShown) && sd.inputs.every(p => p.valueShown) && has(r, /0x425/), r);
-    ok(`${C}: tree view refreshed; per-node rule logged`, S.refreshes === before + 1 && nya(r) === 1);
+    ok(`${C}: tree view refreshed once; status 0x80070005 for the refused node (batch 13)`, S.refreshes === before + 1 && nya(r) === 0 && last() === 0x80070005);
     ok(`${C}: undo restores`, undoOne(u0) && (A.undo(), add.inputs.every(p => p.valueShown)));
     sd.inReferencedModel = false;
     const n = run(C, { InputObjs: [cube] });
@@ -325,7 +325,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_OK: DO }) => {
     const rr = run(R, { SetDataNode: sd, AttributeName: 'Self.Foo' });
     ok(`${R}: entry and port removed`, !rr.err && !sd.attributes.some(a => a.name === 'Self.Foo') && !sd.inputs.includes(at.port) && undoOne(u1), rr.err);
     const un = run(R, { SetDataNode: sd, AttributeName: 'Self.Nope' });
-    ok(`${R}: unknown name logs not yet attested`, !un.err && nya(un) === 1);
+    ok(`${R}: unknown name -> XSIOPTASKS 0x415, nothing changes, succeeds (batch 13)`, !un.err && has(un, /0x415/) && last() === 0 && nya(un) === 0, un);
     ok(`${C}: not a Set Data node -> 0x80070057`, status(run(C, { SetDataNode: nodeT('Add') }), '80070057'));
   }
   // SetPortType
@@ -411,7 +411,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_OK: DO }) => {
     A.undo();
     ok(`${C}: undo clears the branch mark`, op.branch === undefined && fromPrim.operators.includes(op));
     const nul = A.run('GetPrim', { PresetObj: 'Null', Name: 'b12Null' }); reset();
-    ok(`${C}: target without geometry and no Branch -> 0x80070057`, status(run(C, { Operator: op, '3DObject': nul }), '80070057'));
+    ok(`${C}: target without geometry and no Branch -> nothing (silent refusal, build limit logged)`, (() => { const x = run(C, { Operator: op, '3DObject': nul }); return !x.err && fromPrim.operators.includes(op) && nya(x) === 1 && x.v === op; })());
     const bn = run(C, { Operator: op, '3DObject': nul, Branch: true });
     ok(`${C}: Branch to an object without geometry: tree stays, branch host recorded`, !bn.err && fromPrim.operators.includes(op) && op.branchHost === nul);
     A.undo();

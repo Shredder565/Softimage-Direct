@@ -183,8 +183,8 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
   // ================= UpdateConnectOnOp
   {
     let r = run('UpdateConnectOnOp', { Operator: slice, GroupIndex: 1, GroupInstanceIndex: 1, InputObjs: [s3] });
-    ok('UpdateConnectOnOp: updates the inputs of the instance (mode 3 logged)', !r.err && J(inst(slice, 1)) === J([['b12dS1'], ['b12dS3']]) && nya(r) === 1, [r.err, inst(slice, 1)]);
-    A.undo(); ok('UpdateConnectOnOp: undo', J(inst(slice, 1)) === J([['b12dS1'], ['b12dS2']]));
+    ok('UpdateConnectOnOp: replaces the input; the disconnected object source is deleted (flag 0x10 logged)', !r.err && J(inst(slice, 1)) === J([['b12dS1'], ['b12dS3']]) && !A.scene.find('b12dS2') && nya(r) === 1, [r.err, inst(slice, 1)]);
+    A.undo(); ok('UpdateConnectOnOp: undo', J(inst(slice, 1)) === J([['b12dS1'], ['b12dS2']]) && !!A.scene.find('b12dS2'));
     ok('UpdateConnectOnOp: no operator -> 0x80004003', status(run('UpdateConnectOnOp', { InputObjs: 'b12dS1' }), '80004003'));
   }
   // ================= GetConnectionSet / GetSurfaceFromCurvesConnectionSet
@@ -226,8 +226,8 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     twist.lockLevel = 1; r = run('MoveOperator', { Object: o, OperatorToMove: twist }); delete twist.lockLevel;
     ok('MoveOperator: a locked operator stops silently', !r.err && stack() === 'gen,twist,bend,taper' && !has(r, /XSIOPTASKS/), r);
     const marker = prim.explorerChildren().find(n => n.type === 'animationmarker');
-    r = run('MoveOperator', { Object: o, OperatorToMove: twist, MoveAction: 2, OperatorReference: marker });
-    ok('MoveOperator: MoveAction 2 on a construction-mode marker logs 0x407 and stops', !r.err && has(r, /XSIOPTASKS 0x407/) && stack() === 'gen,twist,bend,taper', r);
+    r = run('MoveOperator', { Object: o, OperatorToMove: twist, MoveAction: 2, OperatorReference: prim.explorerChildren().find(n => n.type === 'secondaryshapemarker') });
+    ok('MoveOperator: MoveAction 2 on the Secondary Shape marker (class {dba00978-...}) logs 0x407 and stops', !r.err && has(r, /XSIOPTASKS 0x407/) && stack() === 'gen,twist,bend,taper', r);
     r = run('MoveOperator', { Object: o, OperatorToMove: twist, MoveAction: 1, OperatorReference: marker });
     ok('MoveOperator: MoveAction 1 on a marker moves into that region (inferred)', !r.err && twist.region === 'animation' && stack() === 'gen,bend,taper,twist', [r.err, twist.region, stack()]);
     A.undo(); ok('MoveOperator: undo restores the region', twist.region === 'modeling' && stack() === 'gen,twist,bend,taper');
