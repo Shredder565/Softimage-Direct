@@ -229,7 +229,7 @@ ambient value is untouched.
   non-failure to 1.
 - RePackArg: `Value` = exit code as VT_R8 (double).
 
-### `SetReferencePlane`: SPEC-PARTIAL
+### `SetReferencePlane`: SPEC (promoted 2026-11-19, batch 12; see "Batch 12 answers")
 
 **Wire contract**
 - UnPackArg: NULL context -> `0x80004003`; `Target` (`0x18009de88`); `InputObj` list, first
@@ -327,3 +327,78 @@ UnPack/RePack split); outputs are written with `C3DExecContextHelper::SetArgValu
 - `TestPluginHost`: no implementation in `tasks.dll`; check whether another DLL registers it.
 - `ImportCustomFile` `Frame` is read as a long although the registry describes an object
   argument; the argument handler conversion was not read.
+
+## Batch 12 answers (PR #183 questions)
+
+Run: 2026-11-19, si-analyst worker, batch 12, REA + Ghidra 12.1.4 on `tasks.dll` (same sha256).
+Behaviour only; no decompiler output reproduced. Message texts: `data/si/dict.json` `XSITASKS`.
+
+**Q1 — XSITASKS `0x42f` (1071) and `0x128` (296).** Open. Neither id is in the 41-entry
+`XSITASKS` table of `data/si/dict.json`, and `tasks.dll` holds only the table name (texts are
+loaded at run time with `DictLoadIdstring`). The dictionary file in the install was not
+reachable this run (install folder not connected). Wire: keep a placeholder text, but use the
+attested severities: `0x42f` is logged with severity **4** (UpdateExternalReference, see Q3);
+`0x128` severity as in the reload / unload notes (2).
+
+**Q2 — knot count and percentage scale.** (`GetNumberOfKnots` Do `0x18006db30`,
+`GetCurvePercentageAtKnotIndex` Do `0x18006ded0`.)
+- Both ask the input for its curve-list geometry at the current time (interface
+  `e14a9f51-6cc4-11d1-b79b-00a0243e3694`, `.rdata` `0x18009d4c8`); no geometry -> `0x80004002`.
+- Knot count = that interface's count method (slot `0xe0`); `tasks.dll` does no arithmetic on
+  it. The knot-index method (slot `0xf0`) returns a pair **(sub-curve index, U)**, so the knot
+  index runs over **all sub-curves of the curve list**, and the percentage method (slot `0xd0`)
+  takes that pair. Whether the count is the full knot vector or distinct knots is decided in
+  the geometry DLL, not here: open. Keep the wire's SDK-vector reading `(inferred)`.
+- Percentage: the geometry method's value is written to `Percentage` unchanged (no scaling in
+  `tasks.dll`). Scale **0..100** `(inferred)` from the SDK `GetPercentageFromU` convention; it
+  is not attested in this DLL.
+- Correction: `GetCurvePercentageAtKnotIndex` with `Index >= count` writes nothing (output 0.0)
+  and the Do's return code is not set on that path (treat as success, `(inferred)`).
+
+**Q3 — UpdateExternalReference validation** (worker `0x18002be70`). Corrects the B11b contract:
+1. `Target` NULL -> `0x80004003`. Empty `InputObjs` -> return 1 (S_FALSE), nothing changes.
+2. Undo capture (first undoable call): the current paths are saved before any change.
+3. `InputObjs` is split on `,`. Each piece is given to a fresh element-reference object as a
+   path string; **any non-zero result (also S_FALSE) means invalid**: logs
+   `Invalid reference [<path>]` with severity 2 and returns that code. So the path must resolve
+   to an existing scene element; there is no other syntax check.
+4. Target is asked for sub-object `0x18009cb28`; **when it is found** (lookup S_OK) the task logs
+   XSITASKS `0x42f` (severity 4) and **returns S_OK without changing anything**. (The B11b note
+   said "when it lacks"; the branch is taken on a successful lookup.)
+5. Otherwise: referenced-model branch (sub-object `0x18009c9b8`, its model found by a typed
+   child search) or the target's own resolution object (`0x18009d6b8`). Around the update the
+   global "switching resolution" flag is set to 1, then back to 0; the resolution object gets a
+   begin call (slot `0x130`), its count (slot `0x138`), one set call per entry
+   (slot `0x148`, entry i = path i) and an end call (slot `0x128`).
+6. **Count 0** -> nothing set, success. **Path count != resolution count -> return 1 (S_FALSE),
+   no change** (not `0x80070057`). Neither branch found -> `0x80070057`.
+
+**Q4 — SetReferencePlane** (worker `0x18004fc30`). Now complete enough for SPEC.
+- Target NULL, or Target without the reference-plane property `cc0be455-09b0-11d4-b7e0-0008c7a011a6`
+  -> `0x80070057`. NULL element -> 1.
+- Element kind (from the element, slot `0x180`): **2 = object**, **6 = component (subcomponent of
+  a geometry)**, **7 = component given through a cluster-style sub-element**; any other kind ->
+  returns 1, no change.
+- Kind 6 / 7: a component-frame helper returns an origin and three axis vectors with three
+  validity flags. When all three are valid the plane matrix is rows {axis 1, axis 2, axis 3,
+  origin (w = 1)}; otherwise identity. Then the object path below runs with that matrix.
+- Object path (all kinds): the owning object's global transform at the current time is
+  combined (component matrix x global). The object's bounding box (object space,
+  `(inferred)`) gives **sizeU = (maxX - minX) / 2, sizeV = (maxZ - minZ) / 2**, each clamped to a
+  minimum of **2.0**. (Confirms the wire's U = X extent, V = Z extent; values are half extents.)
+- The property is set with (matrix, active = 1, sizeU, sizeV, 1).
+- Undo data (undoable call): target and element references, the property's previous matrix,
+  flag, sizes and second flag. Return: 0 on the undoable call, 1 when called without undo.
+
+**Q5.**
+- `EnumElements` Capabilities bits: passed unchanged to the imported enumerators; their meaning
+  is not in `tasks.dll`. Open (default `0x80000` stays).
+- Obstacle pop-up class mapping: no new reading; the three classes and kinds 2 / 3 in the
+  contract above stand.
+- `ImportCustomFile` `Frame`: read with the generic "long" argument getter (variant converted
+  to a 32-bit integer by the exec-context helper; `(inferred)` OLE conversion, so a double is
+  rounded). A missing `Frame` leaves the constructor value.
+- `TestPluginHost`: still not found in `tasks.dll`; open.
+
+Status after this run: `SetReferencePlane` **SPEC**; `UpdateExternalReference` stays SPEC with
+the corrections in Q3. `TestPluginHost` stays SPEC-PARTIAL.

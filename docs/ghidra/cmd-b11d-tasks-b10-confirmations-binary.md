@@ -202,3 +202,98 @@ Q12 must be answered from that DLL.
 - MoveToFolder worker `0x180086c10`: whether objects leave their previous folder.
 - GetSize: exact static/dynamic definitions live in the DLL exporting `C3DInfoReportTraverser`.
 - MoveComponent: read `transformmanager.dll` `DllGetClassObject` for CLSID `da55a811…`.
+
+## Batch 12 answers (PR #183 questions)
+
+Run: 2026-11-19, si-analyst worker, batch 12, REA + Ghidra 12.1.4 on `tasks.dll` (same sha256).
+Behaviour only; no decompiler output reproduced.
+
+### Q1 — NavigateNode (worker `0x18008b890`, step helpers `0x18008a100`, `0x18008a360`, `0x180089bc0`, `0x18008a9e0`)
+
+Hierarchy primitives used by every step: root element, first child (with a type mask; the
+steps pass `0xffff` = any), next sibling, parent; "no such element" is `0x80020003`.
+
+- **Polarity confirmed (no longer inferred): 3 = next, 4 = previous.** 3 moves with
+  next-sibling, 4 with parent + walk to the sibling just before Source.
+- Direction 3 / 4, Source **below the root**:
+  - Source is a **leaf** -> next / previous **leaf** in depth-first order: next sibling (else
+    climb until an ancestor has a next sibling), then descend by first child down to a leaf;
+    previous is the mirror (previous sibling, then its last descendant leaf; if Source is the
+    first child, the step continues from the parent's previous leaf).
+  - Source **has children** -> next / previous element **at the same depth** (climbs k levels
+    to find the next / previous ancestor sibling, then descends k levels again; a branch too
+    shallow is skipped).
+  - At the end of the whole tree: `NavLoop` false -> not found; `NavLoop` true -> **wraps** to
+    the first (3) / last (4) element of the tree. Arriving back at Source -> not found.
+- Direction 3 / 4, Source **is the root** of its hierarchy: steps into the hierarchy's
+  **nested sub-hierarchies** (count from the hierarchy; none -> not found). It walks their
+  leaves with the leaf step above (direction 3 forward, 4 backward; element type 5 with
+  sub-class code other than `0x56` uses a separate step pair), takes the child of each, and
+  **applies `NavFilter` / `NavSubFilter` here**: an element is accepted when its 3D type
+  (`F3DFindHierarchy3DType`) equals the filter type and, with `NavSubFilter` 1, its sub-class
+  code equals Source's. Rejected elements continue the walk; back at the start -> not found.
+- Filter on 1 / 2 / 5 / 6: the parent / child helpers (`0x18008a890`, `0x180089140`) and the
+  first / last helpers (`0x1800892a0`, `0x180089740`) were not read. The child helper is
+  called unfiltered inside the root walk and filtered afterwards, so `(inferred)`: parent /
+  child steps are **not** filtered. NavLoop for 5 / 6: open.
+- **Flag `0x8` confirmed**: after a successful step the reached element's flags are read; while
+  bit `0x8` is set the same step is repeated from it.
+- Not found (result 1): the output is Source (and Source's hierarchy is restored). Any other
+  direction value inside the worker -> `0x8000FFFF` (UnPackArg already rejects 0 and > 6).
+- E3DELEMREFTYPE codes 1..9: the type names are not in `tasks.dll`; open.
+
+### Q2 — CreateFolder / MoveToFolder
+
+- Which hierarchies expose the insert interface `d9347b2a…`: decided by the scene objects in
+  other DLLs; open.
+- MoveToFolder worker `0x180086c10` (Ghidra drops most blocks again): folder NULL -> returns 1,
+  no change; otherwise **one call to the folder membership interface (slot `0x78`) does the
+  whole move**; on the undoable call two soft references to the folder are stored. `tasks.dll`
+  itself does not remove the items from a previous folder; whether the membership call does
+  is open (wire's "leaves the old folder" stays `(inferred)`).
+
+### Q3 — Pin*, Tag / Untag, lock record (tag path `0x1800821f0`, lock worker `0x18007f4d0`)
+
+- Pin* bound and lock level: unchanged from 3.6 (bound = element count of the UVProp's parent
+  cluster; lock check level 4).
+- **Lock-info record layout** (both paths): `{+0 component id (int32), +4 lock level (16 bit),
+  +6 tag level (16 bit), +8 lock type (16 bit), +0x10 0 (64 bit), +0x18 0 (byte)}`.
+  - Tag (SubType 3) adds, Untag (4) removes `{id, lock level 0, tag level = Level, type 2}`.
+    Level is stored as 16 bits; it is a bit mask passed through unchanged (siTags numeric values
+    are not in `tasks.dll`; SDK values `(inferred)`).
+  - Lock (SubType 0) adds `{id, lock level, tag level 0, type = lock-type argument (0..4)}`;
+    Unlock (1) / Unlock all (2) remove `{id, lock level, 0, existing lock type}`.
+- Tag / Untag: `Level` 0 -> error `0x80070057` raised with XSITASKS `0x431` (1073, "The tag
+  level %d is invalid"), severity 2. An input whose component id is 0 (the object itself, not a
+  parameter) -> message XSITASKS **`0x42d` (1069)** with the object's path, **severity 4**, skipped
+  (1069 text not in `dict.json`; open). No input processed -> 1. On the undoable call with at
+  least one item, SubType, Level and a snapshot of the input list are kept.
+- Lock / Unlock (SubType 0..2), order of checks: Level > 8 and not `0xffff`, no input list, or
+  lock type > 4 -> nothing done. Level 0 -> error "Cannot lock or unlock with level set to
+  siLockLevelNone." SubType 2 with Level != `0xffff` -> error "When using the RemoveAll
+  parameter, the level must be set to siLockLevelAll." Then a global notification bracket is
+  opened around the loop. Per element:
+  - Lock, or unlock of an element whose current lock type is not 1 or 3: if the element cannot
+    be locked -> XSITASKS `0x42b` (1067) severity 2, skipped.
+  - Unlock of an element whose lock type is 1 or 3 -> XSITASKS `0x42a` (1066, "locked by the
+    system") severity 2, skipped.
+  - Both checks are bypassed when `Password` equals the fixed internal string
+    `TurlututuChapeauPointu`.
+  - Level widening (only when the task's hierarchical option byte is set): lock — bit 2 adds
+    bit 1 if the element is not locked at 1; bit 4 adds 1 and 2 where missing; unlock — bit 2
+    adds 4 if locked at 4; bit 1 adds 4 and 2 where present. An element flagged as inheriting
+    gets bit 1 added.
+  - Unlock: when not locked at that level (and not unlock-all) -> XSITASKS `0x42c` (1068)
+    severity 2, skipped. Otherwise the record is removed (lock type 2 goes through an extra
+    password comparison which, as read, always passes).
+  - After each processed element its animation-related property (CLSID
+    `6de1b670-8072-11d5-aeed-0090275802c9`) is notified, and for objects of one class family the component's
+    lock state is refreshed `(inferred: UI refresh only)`.
+- Undo: on the undoable call with at least one item, SubType, lock type, Password and a list
+  snapshot are kept.
+
+### Status
+
+`NavigateNode` stays **SPEC** (polarity, leaf / same-depth rules, wrap and root-level filter now
+attested). `MoveToFolder` stays **SPEC-PARTIAL** (membership call body outside `tasks.dll`).
+`Tag` / `Untag` SPEC (record and messages corrected).

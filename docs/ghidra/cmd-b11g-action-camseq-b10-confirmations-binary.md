@@ -103,7 +103,7 @@ object into the transient object container).
 - Undo record: when undoable, the args are stored and the parameter list and output list are
   kept as list references; sub-tasks are added to the task's undo list.
 
-### `PlotCamSeqShape`: SPEC-PARTIAL
+### `PlotCamSeqShape`: SPEC (promoted 2026-11-19, batch 12; see "Batch 12 answers")
 
 **Wire contract**
 - Args (UnPackArg): `InputObjs` (list), `Mode` (ulong, default 4), `StartFrame` / `EndFrame`
@@ -151,3 +151,54 @@ object into the transient object container).
 - `PlotCamSeqShape` helper bodies (`0x18004ab60`, `0x18004b150`, `0x18004a530`,
   `0x18004cd70`) and its Undo / Redo.
 - Text of `XSIMSGCAT` id 463 and `XSIACTION2` ids 0x445 / 0x446.
+
+## Batch 12 answers (PR #183 questions)
+
+Read 2026-11-19 from the same `action.dll` through REA / Ghidra; GUIDs read as bytes and named
+from `data/command_registry.json` / `data/spdl/spdl.json`.
+
+### PlotCamSeqShape helpers — answered
+
+- **Default input list (`0x18004ab60`, used when `InputObjs` is empty):** all clips of class
+  `d39d0045-…` = `C3DShapeActionClip` (Mixer Shape Clip) in the scene are enumerated
+  (recursively). For each clip: every item of its source is resolved and the **object owning the
+  driven shape key** (its model-level 3D object) is added to the object list; the clip's compound
+  owner (or the clip itself when not nested) is added to a second list of clips to delete. So an
+  empty `InputObjs` re-plots every object that already has shape clips and replaces those clips.
+- **Old-clip collection (`0x18004b150`, explicit inputs):** for the object's shape-animation
+  container, every cluster's shape keys are visited; for each key, the clips driving it are found
+  by walking its output connections for instances of class `12a3efc6-…` (`C3DInstAction2`,
+  mixer action instance); the clip holding the instance (compound owner when nested) is added.
+  The list is returned only when non-empty.
+- **Source / clip creation (`0x18004a530`):**
+  1. `AddTrack` (handler `67b8773c-…`) on the object's model: root compound, track class
+     `d39d0049-…` = `C3DShapeActionTrack`, no name, position −1 (end).
+  2. `Name` empty -> `SQ_PlotShape`.
+  3. `CreateCompound` (handler `67b8773d-…`; registry args Model, InputObj, Compound, Track,
+     Time, Name, Clip) with an empty input list, the new track, Time = frame 1 (in seconds) and
+     the name -> the new compound clip.
+  4. The clip parameter `78ae1830-241b-11d3-9c66-0060970a2bc8` is set to `Mode` (VT_I4). Its
+     scripting name is not in the SPDL data (open; inferred: the shape clip's instancing / blend
+     mode).
+- **Key storage (`0x18004cd70`):** progress text `XSIACTION2` 0x429 with the frame count. For each
+  frame of the frame set: a **Store Shape Key** sub-task (handler `12a3efd2-…`; registry args
+  InputObj, Name, RefMode, Frame, Duration, Sampling, Content, Force deform stripping, OutputObj)
+  with the shape target, `Name`, `RefMode`, Frame = that global frame, Duration 0, Sampling 0,
+  `Content`, no forced stripping; each key goes to `KeyList`. If `ApplyKeys` is false, stop here
+  (keys only, no clips). Otherwise (progress 0x42a): for key *i* a shape clip is made at
+  `StartFrame` + *i* frames (seconds), duration −1 (default), with `Mode` and `Name` (helper
+  `0x18004a8e0`, not read; inferred: one-key shape clip) and added to `ClipList`; finally a
+  **StripDeformOperators** sub-task (`eaa03726-…`) runs on the last key's owner (inferred: so the
+  plotted shapes are not deformed twice). So keys are stored at scene frames but clips are laid
+  out on consecutive sequence frames from `StartFrame`.
+
+### Other items
+
+- `XSIMSGCAT` 463 text (from `data/si/dict.json`): "Unable to plot Camera Sequencer unless there
+  are shot clips."
+- `XSIACTION2` 0x445 / 0x446 / 0x429 / 0x42a texts: **open** (no XSIACTION2 table in `data/si`).
+- `PlotCamSeqToActions` empty `InputObjs` / animated-test flag 4: **open** (not re-read this run).
+
+### Status
+
+- `PlotCamSeqShape`: **SPEC** (Mode parameter name and the one-key clip helper `(inferred)`).
