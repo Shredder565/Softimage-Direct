@@ -233,3 +233,17 @@ Wire contract:
 6. `TransferAllPropertiesAcrossGenOp` (CMD-B6-CPP): its CLSID `e73d3b5a-354e-466b-b12b-e666f3a560f5`
    is present in optasks.dll's CLSID table (`0x1800d8218`) next to the transfer commands, so it is
    very likely implemented here; it was not in this row's list and was not read.
+
+## Addendum 2026-11-19 (batch 13): PR #185 answers
+
+Run: si-analyst worker, REA + Ghidra 12.1.4 on the PC, same binary. No decompiler output reproduced.
+
+**Q23 `GetGeneratorInputsForDisposal` mode numbering: ANSWERED (contract unchanged).** UnPackArg
+(`0x180031a90`) reads `GenOpInputsDisposal` from the variant's integer field (no variant-type check)
+and maps it to an internal flag: **1 → 0** ("delete" set), **2 → 1** ("hide" set); any other value,
+including 0, → `0x80070057`. This matches `siGenOpInputsDisposalMode` (0 keep, 1 delete, 2 hide).
+Perform (`0x180031860`): internal flag 0 asks each generator (generator interface at `0x1800d8eb8`)
+for its inputs through generator slot `0x20`, flag 1 through slot `0x18`, each into a fresh list that
+is appended to `OutputObjs` in operator order. The value is read only after the whole input list
+resolved (a failing item returns `0x80070057` before the mode is looked at).
+No promotion in this row from this answer (`GetGeneratorInputsForDisposal` was already SPEC).

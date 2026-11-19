@@ -1,6 +1,6 @@
 # CMD-B12d: operator inputs, connections and cycle check read from `optasks.dll` (SubstituteOpInput, AddInputToOperator, RemoveInputFromOperator, MoveOperator, UpdateConnectOnOp, GetConnectionSet, GetSurfaceFromCurvesConnectionSet, ConnectOperatorParameter, DisconnectOperatorParameter, ConnectBevelProfileCurve, DisconnectBevelProfileCurve, ConnectPlaneReferenceToSlicePolygonsOp, DisconnectPlaneReferenceFromSlicePolygonsOp, CreateGridAndConnectToSlicePolygonsOp, DisconnectFromSimulationOp, CycleChecking)
 
-Row: **CMD-B12d**. Status: **SPEC** (12 names), **SPEC-PARTIAL** (4 names); per command below.
+Row: **CMD-B12d**. Status: **SPEC** (14 names), **SPEC-PARTIAL** (2 names); per command below (recounted and 1 promoted in batch 13, see addendum).
 Run: 2026-11-19, si-analyst worker, unattended, batch 12 (binary first, REA + Ghidra 12.1.4 on the PC)
 **No XSIBATCH golden**: nothing here was executed. No decompiler output or disassembly is reproduced.
 
@@ -111,7 +111,7 @@ Wire contract:
 - Errors from the move: `0x80070005` → message **0x5c**, `0x8000000A` → **0x5d**, `0x80004001` → **0x5e**,
   `0x80070057` → **0x60** (all severity 2).
 
-### `UpdateConnectOnOp`: SPEC-PARTIAL
+### `UpdateConnectOnOp`: SPEC (promoted batch 13, see addendum)
 
 Wire contract:
 - Args: `Operator` (required), `GroupIndex` (0), `GroupInstanceIndex` (0), `InputObjs` (required),
@@ -259,3 +259,51 @@ Wire contract:
    of operator parameter id 4.
 6. Q6 `DisconnectFromSimulationOp`: names of the five simulation operator classes.
 7. `XSIOPTASKS` texts 0x3fa, 0x407, 0x5c–0x60, 0x6f, 0x7b–0x7d are not in `data/si`.
+
+## Addendum 2026-11-19 (batch 13): PR #185 answers
+
+Run: si-analyst worker, REA + Ghidra 12.1.4 on the PC, same binary. No decompiler output reproduced.
+
+**Q16 (row Q1) `UpdateConnectOnOp` mode 3: ANSWERED.** The shared connect helper `0x180026970` takes a
+**bit mask**, not an enumeration: bit `0x1` = connect the given inputs, bit `0x2` = disconnect what is
+currently connected. Mode 3 therefore means "replace": the per-port loop (`0x18002a310`) does, for each
+port of the group instance, in port order:
+1. If an input is given for that port and the port is currently connected, the existing connection is
+   removed first. When the source being disconnected is an object element (not an operator output),
+   it is collected in a list; after the loop that list is handed to a "Delete Objects" task
+   (`{dd531990-ccc2-11d2-ac73-00a02485cecb}`) with flag `0x10` (inferred: clean-up of now-orphaned
+   generated inputs).
+2. If an input is given and the port is free, the port is connected to it and the new connection is
+   evaluated at the current time.
+3. If no input is given for that port (null entry): the existing connection is kept, unless
+   `ForceDisconnect` is true and the port answers "yes" to a port query (port slot `0x68`; inferred:
+   optional / may be left empty), in which case it is disconnected and left empty.
+`AlreadyRefined` = true skips the helper's input refinement step (`0x18002b380`) and uses the list as
+given. `UpdateConnectOnOp` passes no port-index array, no "add instance" request and no fallback
+retry (the fallback "connect again with mode 3, log 0x1e" path is only used by callers that add an
+instance). Errors: null operator or list → `0x80004003`; refinement failure → `0x80070057`.
+The whole edit is bracketed by `SI3D_SCENE_INVALID_BEGIN` / `SI3D_SCENE_INVALID_END` notifications.
+
+**Q19 (row Q4) `MoveOperator`: PARTLY ANSWERED; correction.** The two class GUIDs in step 5 of the
+contract above were mis-decoded. Read from the bytes at `0x1800d71a8` and `0x1800d87e8`:
+- marker class: **`{dba00978-85be-4d94-aec5-422ecb4ee4bd}`**: the class reference shared by the
+  `C3DStackMarkerPostSimulationOp` ("Post Simulation Marker") and
+  `C3DStackMarkerSecondaryShapeOp` ("Secondary Shape Marker") SPDLs (`data/spdl/spdl.json`);
+  a reference of this class → `XSIOPTASKS 0x407` (severity 2), stop.
+- silent class: **`{4ed3b713-1abd-11d4-b83a-009027bc6587}`**: `C3DSCMFixerOp2` ("SCM Fixer Op2");
+  a reference of this class → stop, no message.
+Both tests compare the reference operator's class id, and only run for an explicit `MoveAction` 2
+(MoveAction 0 picks the reference itself and skips them). `MoveDirection` is passed unchanged to
+`F3DMovePortConnections` (outside optasks); its `E3DMoveDirection` names remain **OPEN**.
+`MoveOperatorBefore` / `MoveOperatorAfter` (registry defaults `MoveAction` 1 / 2) confirm
+1 = before, 2 = after.
+
+**Q20 (row Q5) `CreateGridAndConnectToSlicePolygonsOp` final child task: OPEN** (not re-read).
+
+**Q22 `CycleChecking` traverser mode 6: OPEN** (the traverser is in the connection server, outside
+optasks; not re-read). Note for the wire: `CycleChecking`'s CLSID
+(`8fb755e3-06e3-11d7-be20-00a0c9615daf`) is also created as a child task by the shared connect helper
+when it adds port-group instances, so connect commands run a cycle check per new input.
+
+**Promoted SPEC-PARTIAL → SPEC:** `UpdateConnectOnOp`. Status line recounted from the headings (the batch-12 line said 12 / 4; the headings give 13 SPEC names and 3 SPEC-PARTIAL names), now 14 / 2. Still SPEC-PARTIAL: `GetConnectionSet`,
+`GetSurfaceFromCurvesConnectionSet`.

@@ -1,6 +1,6 @@
 # CMD-B12b: ICE node / port / attribute / comment / simulation-state commands read from `optasks.dll` (AddPortToICENode2, RemovePortFromICENode, AddNodeToICECompoundNode, RemoveNodeFromICECompoundNode, AddAttributeToSetDataICENode, RemoveAttributeFromSetDataICENode, SetPortType, CleanDisconnectedICENodes, CreateICENodeComment, SetICESimInitState, RemoveICESimInitState, TransferICETree)
 
-Row: **CMD-B12b**. Status: **SPEC** (8 names), **SPEC-PARTIAL** (4 names); per command below.
+Row: **CMD-B12b**. Status: **SPEC** (9 names), **SPEC-PARTIAL** (3 names); per command below (1 promoted in batch 13, see addendum).
 Run: 2026-11-19, si-analyst worker, unattended, batch 12 (binary first, REA + Ghidra 12.1.4 on the PC).
 **No XSIBATCH golden**: nothing here was executed. No decompiler output or disassembly is reproduced.
 
@@ -115,7 +115,7 @@ Wire contract:
 - Do: asks the graph-edit service to add the attribute (name, type, context, structure) to the Set Data node
   (a new attribute entry and its input port). Undo through recorded sub-tasks.
 
-### `RemoveAttributeFromSetDataICENode`: SPEC-PARTIAL
+### `RemoveAttributeFromSetDataICENode`: SPEC (promoted batch 13, see addendum)
 
 Wire contract:
 - Args: `SetDataNode`, `AttributeName` (string, default ""). No return value.
@@ -201,3 +201,74 @@ Wire contract:
 3. `SetPortType` bit `0x10000` meaning; texts of `XSIOPTASKS 0x41C–0x41E`, `0x42E–0x430`.
 4. `SetICESimInitState` / `RemoveICESimInitState`: the simulation-service side (stored property).
 5. `CleanDisconnectedICENodes`: exact "disconnected" rule (root reachability is inferred).
+
+## Addendum 2026-11-19 (batch 13): PR #185 answers
+
+Run: si-analyst worker, REA + Ghidra 12.1.4 on the PC, same binary. No decompiler output reproduced.
+
+**Correction to §2 "Graph-edit service".** For `TransferICETree`, `RemovePortFromICENode` and
+`RemoveAttributeFromSetDataICENode` the object at task offset `+0x38` is **not** an outside ICE service:
+it is a helper sub-object implemented in optasks.dll itself (its own vtable, set by the constructor),
+and the Do method calls its slot 9 (`+0x48`). The helpers read this batch:
+`TransferICETree` vtable `0x1800f3580` → slot 9 `0x1800bb8a0`; `RemovePortFromICENode` vtable
+`0x1800f4460` → slot 9 `0x1800c1ba0`, slot 10 `0x1800c1d50`; `RemoveAttributeFromSetDataICENode`
+vtable `0x1800f3770` → slot 9 `0x1800bcdf0`. The two "no Ghidra function" Do stubs are plain
+forwarders: `0x1800bffd0` calls helper slot 9 with (stored object, undoable flag); `0x1800bd0c0`
+calls it with (stored node, stored attribute name, undoable flag).
+
+**Q6a `TransferICETree` `Mode` / `Branch`: ANSWERED.** Helper `0x1800bb8a0`, args (operator, target,
+Mode, Branch, undoable). Every refusal below is a silent no-op (the command still succeeds):
+1. Null operator or target, or the target is locked (any level): nothing.
+2. The target resolves (interface query, IID at `0x1800d8678`) to an object named `Scene_Root`
+   (case-insensitive), or that name cannot be read: nothing (inferred: the scene root cannot take an
+   ICE tree).
+3. The target's object-kind code must be 2 or 8; any other kind: nothing. Kind 8 **forces `Branch` on**.
+4. The operator's construction mode (region) is looked up and is kept for the new connection.
+5. **Mode 0 = move.** The operator's owner is lock-checked (locked: nothing); the operator's
+   connections are disconnected from its current object and reconnected to the target, in the same
+   construction mode, with `Branch` as the branch flag of the connection.
+6. **Mode 1 = copy.** The operator is duplicated with the "Low Level Duplicate" task
+   (`{747d257f-d01b-11d2-80c4-00a0c9ac19a9}`); the original stays connected to its first main owner
+   (it is reconnected there at the port position recorded when it was detached); the **duplicate** is
+   then connected to the target (same construction mode, `Branch` flag) and evaluated.
+7. On failure after the duplicate was made, the duplicate is deleted with "Delete Objects"
+   (`{dd531990-ccc2-11d2-ac73-00a02485cecb}`) and the original is reconnected to its original object.
+8. **`Value`** (RePackArg `0x1800bc690`) is always the operator that was passed in, also in Mode 1
+   (the copy is not returned).
+
+**Q6b `SetPortType` bit `0x10000`: OPEN (inferred only).** Nothing in optasks names it. By the SDK
+`siICENodeDataType` numbering it is most likely `siICENodeDataString` (inferred); `0xFCBFF` then
+excludes Geometry `0x400`, Execute `0x1000` and Reference `0x2000` (inferred).
+
+**Q5a `RemovePortFromICENode`: PARTLY ANSWERED.** Helper `0x1800c1ba0`:
+1. If the port belongs to an ICE compound (compound interface `fbf83198-…`), the command removes it as
+   an exposed port: it runs "Remove Exposed Parameter from a Compound"
+   (`{bf8f591a-6c3e-417c-a2ff-25e6f765f374}`, i.e. `RemoveExposedParamFromICECompoundNode`'s class) on
+   (port, compound) as a child task (recorded when undoable).
+2. Otherwise it resolves the port's node and asks the node for the port's index and a side flag
+   (`0x1800c1880`). When the flag is non-zero (inferred: an output port) it logs
+   `XSIOPTASKS 0x417` (severity 2) and returns `0x80004005`. Else it converts the index to
+   (group, instance) through the node's operator.
+3. Removal (`0x1800c1d50`): for every port of that group instance that is connected and whose
+   operator says it must be disconnected, a "Disconnect Node Port" child task
+   (`{9821e356-5283-45f9-965b-dd69004cc0a5}`) runs; then an internal "remove port-group instance"
+   child task (class `{e31d9ff9-584f-4001-99f8-658554a565e1}`, no command name) removes the instance.
+   Child tasks are recorded for undo when undoable; a port whose node has no operator interface gives `0x80004003`.
+4. **Last instance: still OPEN.** The command itself does not test the instance count; whether the last
+   instance can be removed is decided inside the remove-instance child task, not read.
+
+**Q5b `RemoveAttributeFromSetDataICENode` unknown name: ANSWERED.** Helper `0x1800bcdf0`:
+1. Clears sub-tasks; null node → message `0x111` (severity 2), `0x80070057`. Inside a graph-update
+   bracket; when undoable a soft reference to the node is stored (once).
+2. The node looks up `AttributeName` (node slot `0x20`), returning found / has-connection flags, the
+   attribute's port index and its saved state (kept on the task for undo).
+3. **Unknown name** → warning `XSIOPTASKS 0x415` (severity 2); nothing changes and the command
+   succeeds.
+4. Found and connected → a "Disconnect Node Port" child task disconnects that port first (recorded
+   when undoable), then the node removes the attribute entry (node slot `0x28`). Found and not
+   connected → removed directly.
+
+**Promoted SPEC-PARTIAL → SPEC:** `RemoveAttributeFromSetDataICENode`.
+Still SPEC-PARTIAL: `RemovePortFromICENode` (last-instance rule), `SetICESimInitState`,
+`RemoveICESimInitState`. `TransferICETree` stays SPEC with the Mode / Branch / Value rules above
+replacing the `(inferred)` text.
