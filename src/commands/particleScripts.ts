@@ -57,7 +57,7 @@ export function particleScripts(app: App): ParticleScriptsState {
 
 // ------------------------------------------------------------------ small helpers
 
-const unset = (v: any) => v === undefined || v === null || v === '' || v === EMPTY_COLLECTION;
+export const unset = (v: any) => v === undefined || v === null || v === '' || v === EMPTY_COLLECTION;
 const same = (a: any, b: string) => String(a ?? '').toLowerCase() === b.toLowerCase();
 const warn = (app: App, text: string) => app.logMsg('info', 'WARNING : ' + text);
 const nya = (app: App, cmd: string, what: string, q: string) => app.logMsg('info', `${cmd}: not yet attested: ${what} (${NOTE} ${q})`);
@@ -77,7 +77,7 @@ const FILTERS: Record<string, (n: Node) => boolean> = {
 };
 
 /** Resolve a collection argument to scene nodes (no selection fallback; the callers decide that). */
-function nodesOf(app: App, arg: any): Node[] {
+export function nodesOf(app: App, arg: any): Node[] {
   if (unset(arg)) return [];
   const st = particleScripts(app);
   const list: any[] = Array.isArray(arg) ? arg : typeof arg === 'string' ? arg.split(',').map(s => s.trim()).filter(Boolean) : [arg];
@@ -102,7 +102,7 @@ function expand(list: Node[]): Node[] {
   return out;
 }
 
-function autoInspect(app: App, nodes: Node[]) {
+export function autoInspect(app: App, nodes: Node[]) {
   particleScripts(app).lastInspect = { via: 'AutoInspect', nodes: [...nodes] };
   if (app.autoInspect && nodes.length) app.events.emit('inspect', nodes[0]);   // inferred: the editor opens on the first element
 }
@@ -160,7 +160,7 @@ function applySimOp(app: App, cmd: string, preset: string, conn: Partial<Particl
 }
 
 /** UpdateParticleTypeConnections: the operator's particle type group follows its emitters' emission properties. */
-function updateParticleTypeConnections(cloud: X3DObject) {
+export function updateParticleTypeConnections(cloud: X3DObject) {
   const op = cloud.primitive?.operators[0]; const c = (op as any)?.connections as ParticleConnections | undefined; if (!c) return;
   const types: Node[] = [];
   for (const e of c.emitters) if (e instanceof X3DObject) for (const p of e.properties) { const t = (p as any).parType; if (p.type === 'EmissionProp' && t && !types.includes(t)) types.push(t); }
@@ -187,7 +187,7 @@ function setLocalMaterial(app: App, o: X3DObject, m: Material) {
 }
 
 /** Default particle renderer (Shared facts): local material, Particle_Renderer on the first port that takes it. */
-function defaultParticleRenderer(app: App, objs: Node[]) {
+export function defaultParticleRenderer(app: App, objs: Node[]) {
   for (const n of objs) {
     const o = asCloud(n); if (!o) continue;
     const mat = new Material(app.scene.uniqueName('Material'));                              // the object's material, made local

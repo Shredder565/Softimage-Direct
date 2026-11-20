@@ -67,6 +67,7 @@ import { registerMotorB13dCommands } from './commands/motorB13d';
 import { registerPluginsB13eCommands } from './commands/pluginsB13e';
 import { registerFaceRobotB14aCommands } from './commands/faceRobotB14a';
 import { registerPropertyTasksB15bCommands } from './commands/propertyTasksB15b';
+import { registerParticlesB15cCommands } from './commands/particlesB15c';
 import { registerFaceRobotB14bCommands } from './commands/faceRobotB14b';
 import { registerFaceRobotB14cCommands } from './commands/faceRobotB14c';
 import { registerFaceRobotB14dCommands } from './commands/faceRobotB14d';
@@ -215,6 +216,7 @@ registerFaceRobotB14dCommands(app);   // CMD-B14d (Face Robot retarget / mocap /
 registerFaceRobotB14eCommands(app);   // CMD-B14e (Face Robot export / weights / tongue)
 registerModelTasksB15aCommands(app);   // CMD-B15a (modeltasks.dll: model / import-export / ref-model / delta contracts)
 registerPropertyTasksB15bCommands(app);   // CMD-B15b (propertytasks.dll contracts; replaces inferred SIAddCustomParam / SICreateMaterial / SIStoreProp)
+registerParticlesB15cCommands(app);   // CMD-B15c (sparks.dll / forces.dll particle commands; replaces the CMD-03b CreateInspectParticleType* entries)
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
