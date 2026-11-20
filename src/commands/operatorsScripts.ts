@@ -26,6 +26,7 @@ import { X3DObject, Node, Operator, Primitive, Property, construction, REGIONS, 
 import { siMsgBox } from '../ui/msgBox';
 import { siString } from '../ui/si';
 import { FrozenGeomOperator } from './model';
+import { isGenerator, genOwner } from './optasksB12eShared';
 import { siConst, unset, copyProperty } from './viewEditPropertyHelpers';
 import { startPickSession, interactive } from './miscDsScriptsPick';
 import {
@@ -370,7 +371,9 @@ export function registerOperatorsScriptsCommands(app: App) {
         setOp(app, 'DuplicateUsingGeomApprox', op, 'SubdivisionDepth', level);
         if (prim.get('subdloop')) setOp(app, 'DuplicateUsingGeomApprox', op, 'useloop', !!prim.val('subdloop'));
         // TransferAllPropertiesAcrossGenOp <op>, <new object>, , True
-        if (!delegate(app, 'TransferAllPropertiesAcrossGenOp', { Operator: op, Target: made, PropertiesToTransfer: null, Delete: true }).done) {
+        // CMD-B16e: the real command needs a generator with an input list; this build's subdivision operator has none
+        const asGen = isGenerator(op) && genOwner(op) === made;
+        if (!asGen || !delegate(app, 'TransferAllPropertiesAcrossGenOp', { Operator: op, Object: made, PropertyTransferType: '', ShareProperty: true }).done) {
           // inferred stand-in: the material and the object's own properties the new object lacks are copied
           const mat = o.material; if (mat) app.record('Transfer material', () => made.setMaterial(mat), () => made.setMaterial(null));
           for (const p of o.properties) if (p.type !== 'visibility' && !made.properties.some(q => q.type === p.type && q.name === p.name)) { const np = copyProperty(p); app.record('Transfer ' + p.name, () => { made.addProperty(np); }, () => made.removeProperty(np)); }

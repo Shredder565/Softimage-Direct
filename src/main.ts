@@ -77,6 +77,7 @@ import { registerClipsSourcesB15dCommands } from './commands/clipsSourcesB15d';
 import { registerRigScriptsB15eCommands } from './commands/rigScriptsB15e';
 import { registerMiscScriptsB15fCommands } from './commands/miscScriptsB15f';
 import { registerInferredB15Commands } from './commands/inferredB15';
+import { registerB16eCommands } from './commands/b16eActioncoreOptasksGap';
 import { registerShellsB15ElseCommands } from './commands/shellsB15Else';
 import { registerShaderCreationB15Commands } from './commands/particlesB15cShaders';
 import iceViewChrome from './data/si/ice_view_chrome.json';
@@ -228,6 +229,7 @@ registerRigScriptsB15eCommands(app);   // CMD-B15e (Character Rigging script com
 registerMiscScriptsB15fCommands(app);   // CMD-B15f (sdkui wizards, lip-sync, UpgradeShaders, default camera, OBJ menu entry)
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
+registerB16eCommands(app);   // CMD-B16e (TransferAllPropertiesAcrossGenOp, AddShotClip, GetShotClip, PaintWeights)
 registerInferredB15Commands(app);   // CMD-B15-ELSE tool / misc commands without an analyst note (inferred)
 registerShellsB15ElseCommands(app);   // CMD-B15-ELSE MarkObjectDirty / AddShaderAttachedComment / GetSkeleton (inferred)
 registerShaderCreationB15Commands(app);   // CMD-B15-ELSE bbbbee29 shader creation family (inferred)

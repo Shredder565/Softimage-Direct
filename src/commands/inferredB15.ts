@@ -7,7 +7,7 @@
 //                   CursorTransformTool "MoveComponent Tool" "Pick Session Tool" ToggleProjectionTool
 //                   "Turn ON Interactive SRT" "Turn OFF Interactive SRT" "Transform Set New " "XYZ Transform " DoNothing
 //   edits:          CopyPaste CopyPartition "Delete Selected Branch" DeleteCurrentLayer "Freeze Selected"
-//                   "Dice Object/Polygons" "Mesh Filter" PaintWeights SISwapArrayElements SIAppendBone
+//                   "Dice Object/Polygons" "Mesh Filter" SISwapArrayElements SIAppendBone
 //   rendering/sim:  RegenerateMaps CreateEnvironmentCache
 import { App, type CommandDef } from '../core/commands';
 import { Node, X3DObject, Property, Partition, Pass, Model } from '../core/scene';
@@ -192,36 +192,7 @@ export function registerInferredB15Commands(app: App) {
       return app2.run('ApplyTopoOp', { PresetObj: app2.compSel?.kind === 'edge' ? 'Filter Edges' : 'Filter Polygons' });
     } });
 
-  // inferred: "Paint Weights": writes Weights at Indices into a weight map (InputObj = the map, or an object whose first
-  // weight map is used) or into an envelope (Deformer = deformer index; Normalize renormalises each point). Flags 0 =
-  // replace; other flags are not attested. OutputObj returns the painted property.
-  reg({ name: 'PaintWeights', label: 'Paint Weights', category: 'Property|Paint', description: 'Paint Weights',
-    args: [{ name: 'InputObj', default: null }, { name: 'Indices', default: null }, { name: 'Weights', default: null }, { name: 'Flags', default: 0 }, { name: 'Deformer', default: 0 },
-      { name: 'Normalize', default: true }, { name: 'OutputObj', default: null }],
-    execute(app2, a) {
-      const C = 'PaintWeights';
-      let target: any = nodesOf(app2, a.InputObj)[0] ?? app2.selection.find(n => n instanceof Property && n.type === 'weightmap');
-      if (target instanceof X3DObject) target = target.allProperties().find(p => p.type === 'weightmap') ?? (target as any).envelope ?? target.properties.find((p: any) => Array.isArray(p.weights));
-      if (!target) throw new Error(`${C}: no weight map or envelope to paint`);
-      const idx: number[] = Array.from((a.Indices ?? []) as ArrayLike<number>).map(Number);
-      const w: number[] = Array.from((a.Weights ?? []) as ArrayLike<number>).map(Number);
-      if (Number(a.Flags) || 0) logInferredNya(app2, C, `Flags ${a.Flags}; the weights replace the old values`);
-      if (target.values instanceof Map) {
-        const map: Map<number, number> = target.values; const before = idx.map(i => map.get(i));
-        app2.record(C, () => idx.forEach((i, k) => map.set(i, w[k] ?? w[w.length - 1] ?? 0)), () => idx.forEach((i, k) => { const b = before[k]; if (b === undefined) map.delete(i); else map.set(i, b); }));
-      } else if (Array.isArray(target.weights)) {
-        const d = Number(a.Deformer) || 0; const norm = a.Normalize !== false;
-        const before = idx.map(i => target.weights[i] ? Float32Array.from(target.weights[i]) : null);
-        app2.record(C, () => idx.forEach((i, k) => {
-          const row: Float32Array = target.weights[i] ?? new Float32Array(Math.max(d + 1, target.deformers?.length ?? 1));
-          row[d] = w[k] ?? w[w.length - 1] ?? 0;
-          if (norm) { let rest = 0; for (let j = 0; j < row.length; j++) if (j !== d) rest += row[j]; const left = Math.max(0, 1 - row[d]); if (rest > 0) for (let j = 0; j < row.length; j++) if (j !== d) row[j] = row[j] / rest * left; }
-          target.weights[i] = row;
-        }), () => idx.forEach((i, k) => { if (before[k]) target.weights[i] = before[k]; }));
-      } else throw new Error(`${C}: ${target.name ?? target} is not a weight map or an envelope`);
-      app2.events.emit('scene');
-      return target;
-    } });
+  // PaintWeights: row CMD-B16e (src/commands/b16eActioncoreOptasksGap.ts, gap.dll contract).
 
   // inferred: "Swaps two elements of an array": an array-valued parameter (or an array) gets elements IndexA and IndexB swapped.
   reg({ name: 'SISwapArrayElements', label: 'SwapArrayElements', category: 'Rendering', description: 'Swaps two elements of an array.',

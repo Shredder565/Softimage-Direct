@@ -25,13 +25,13 @@ if (!CHROME) { console.error('No Chromium; set PW_CHROME'); process.exit(2); }
 const INFERRED = [
   'Add Surface Point Tool', 'BoneCreateTool', 'CopyPartition', 'CopyPaste', 'CreateEnvironmentCache', 'CrowdCreateDirectionalEmitterTool', 'CrowdCreateWallTool',
   'CursorTransformTool', 'Delete Selected Branch', 'DeleteCurrentLayer', 'Dice Object/Polygons', 'DoNothing', 'Freeze Selected', 'Mesh Filter', 'MoveComponent Tool',
-  'PaintWeights', 'Pick Session Tool', 'RegenerateMaps', 'SIAppendBone', 'SISwapArrayElements', 'ToggleProjectionTool', 'Transform Set New ',
+  'Pick Session Tool', 'RegenerateMaps', 'SIAppendBone', 'SISwapArrayElements', 'ToggleProjectionTool', 'Transform Set New ',
   'Turn OFF Interactive SRT', 'Turn ON Interactive SRT', 'XYZ Transform ',
 ];
 const SHELLS = ['MarkObjectDirty', 'AddShaderAttachedComment', 'GetSkeleton', 'CreateShaderFromCLSID', 'CreateShaderFromProgID', 'CreateShadersFromMaterialPreset'];
 const LITERAL = ['MakeBiped', 'MakeBipedDogLeg', 'MakeQuadruped', 'MakeArm', 'MakeLeg', 'MakeFoot', 'MakeHand', 'MakeHead', 'MakeSpine', 'MakeShadowChain', 'MakeShadowSpine', 'MakeBicepRoll', 'MakeForearmRoll', 'Make2PointSlide', 'MakeJointCompression', 'MakeDogLeg', 'MakeBipedCharacterKeySet', 'MakeQuadrupedCharacterKeySet', 'SetKeyableRig', 'syCachePaint1', 'syCachePaint2', 'SyGetMassMap', 'SyGetSpringMap', 'CreateInspectParticleTypeBillboard', 'CreateInspectParticleTypeBlob', 'CreateInspectParticleTypeSphere'];
 const NAMES = [...INFERRED, ...SHELLS];
-const DEFAULT_FAILS = new Set(['CopyPaste', 'CreateEnvironmentCache', 'SIAppendBone', 'PaintWeights', 'DeleteCurrentLayer', 'CreateShaderFromCLSID', 'CreateShaderFromProgID', 'CreateShadersFromMaterialPreset']);
+const DEFAULT_FAILS = new Set(['CopyPaste', 'CreateEnvironmentCache', 'SIAppendBone', 'DeleteCurrentLayer', 'CreateShaderFromCLSID', 'CreateShaderFromProgID', 'CreateShadersFromMaterialPreset']);
 const full = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'commands_full.json'), 'utf8'));
 const registry = Object.fromEntries(NAMES.map(n => {
   const f = full.find(x => (x.scripting_name || x.name) === n);
@@ -120,16 +120,7 @@ const got = await page.evaluate(async ({ NAMES, LITERAL, DEFAULT_FAILS: DF }) =>
     topo = trace('ApplyTopoOp', () => run('Mesh Filter'));
     ok('Mesh Filter (inferred): edge selection -> "Filter Edges"', topo[0]?.PresetObj === 'Filter Edges');
     reset();
-    // PaintWeights
-    const PropCls = cube.property('visibility').constructor; const map = new PropCls('WeightMapB15f', 'weightmap', []); map.values = new Map(); cube.addProperty(map); reset();
-    const u1 = A.undoStack.length;
-    r = run('PaintWeights', { InputObj: map, Indices: [0, 1], Weights: [0.25, 0.5] });
-    ok('PaintWeights (inferred): weights written at the indices of the weight map; returns it', map?.values?.get(0) === 0.25 && map.values.get(1) === 0.5 && r.v === map, [r.err, map?.type]);
-    while (A.undoStack.length > u1) A.undo();
-    ok('PaintWeights (inferred): undo restores', !map.values.has(0));
-    r = run('PaintWeights', { InputObj: cube, Indices: [2], Weights: [0.75] });
-    ok('PaintWeights (inferred): an object -> its first weight map', map.values.get(2) === 0.75, r.err);
-    cube.removeProperty(map);
+    // PaintWeights: moved to row CMD-B16e (tools/compare_b16e_commands.mjs)
     // SISwapArrayElements
     const arr = [1, 2, 3]; run('SISwapArrayElements', { Object: arr, IndexA: 0, IndexB: 2 });
     ok('SISwapArrayElements (inferred): elements swapped', JSON.stringify(arr) === '[3,2,1]');

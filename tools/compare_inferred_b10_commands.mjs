@@ -49,7 +49,10 @@ const NAMES = [
 // with an empty FileName open a file browser (treated as cancelled here) instead of failing.
 const DEFAULT_FAILS = new Set(['RemoveFromFolder', 'RemoveFolder', 'SetCurrentEnvironment', 'SetViewCamera',
   'CreateFolder', 'NavigateNode', 'GetSize', 'Tag', 'Untag', 'PinUVComponents', 'UnPinUVComponents', 'PinAllUVComponents', 'UnPinAllUVComponents', 'ConnectMap', 'AddCustomOp',
-  'AddScriptedOpFromFile', 'ConvertScriptedOp', 'MoveToLibrary', 'SetCurrentMaterialLibrary', 'ReconnectModel', 'InstallCustomPreferences']);
+  'AddScriptedOpFromFile', 'ConvertScriptedOp', 'MoveToLibrary', 'SetCurrentMaterialLibrary', 'ReconnectModel', 'InstallCustomPreferences',
+  'AddShotClip']);   // CMD-B16e: Frame is required
+/** Names now registered by row CMD-B16e (src/commands/b16eActioncoreOptasksGap.ts), not by this batch. */
+const MOVED_B16E = ['AddShotClip', 'GetShotClip'];
 
 const reg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'command_registry.json'), 'utf8')).commands;
 const full = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'commands_full.json'), 'utf8'));
@@ -242,7 +245,7 @@ for (const n of NAMES) {
   report(`${n}: registry argument list`, JSON.stringify(got.reg[n]) === JSON.stringify(registry[n] ?? (n === 'Tag' ? [['InputObjs', null], ['Level', ':siTagAll:siTags'], ['SubType', 3]] : null)), `${JSON.stringify(got.reg[n])} vs ${JSON.stringify(registry[n])}`);
   report(`${n}: default run`, got.defaults[n] === 'ok' || got.defaults[n] === 'expected-failure', got.defaults[n]);
 }
-report('batch registered every name itself', got.batch.skipped.length === 0 && NAMES.every(n => got.batch.registered.includes(n)), JSON.stringify(got.batch.skipped));
+report('batch registered every name itself', got.batch.skipped.length === 0 && NAMES.filter(n => !MOVED_B16E.includes(n)).every(n => got.batch.registered.includes(n)), JSON.stringify(got.batch.skipped));
 for (const [name, cond, detail] of got.checks) report(name, cond, detail);
 report('no page errors', pageErrors.length === 0, pageErrors.join(' | '));
 console.log(`compare_inferred_b10_commands: ${pass} ok, ${fail} failed (${NAMES.length} commands)`);
