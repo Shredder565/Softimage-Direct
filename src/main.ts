@@ -78,6 +78,7 @@ import { registerRigScriptsB15eCommands } from './commands/rigScriptsB15e';
 import { registerMiscScriptsB15fCommands } from './commands/miscScriptsB15f';
 import { registerInferredB15Commands } from './commands/inferredB15';
 import { registerToolsB16aCommands } from './commands/toolsB16a';
+import { registerToolsB17iCommands } from './commands/toolsB17i';
 import { registerTasksB16cCommands } from './commands/tasksB16c';
 import { registerB16eCommands } from './commands/b16eActioncoreOptasksGap';
 import { registerShellsB15ElseCommands } from './commands/shellsB15Else';
@@ -239,6 +240,7 @@ registerShadertasksB16bCommands(app);   // CMD-B16b bbbbee29 shader creation, sh
 registerTasksB16cCommands(app);   // CMD-B16c (tasks.dll Add3DObjectToScene / SetReference2; the other tasks.dll commands are fixed in place)
 registerFilterMapB16dCommands(app);   // CMD-B16d scnmgr filter-map commands (Delete Selected, Duplicate/Extrude, Subdivide ...), CopyPartition, RegenerateMaps
 registerToolsB16aCommands(app);   // CMD-B16a (toolmanager.dll tool activation; last: earlier registrations of these names become the tool class bodies)
+registerToolsB17iCommands(app);   // CMD-B17i (Escape Pick Session x2, Show Next / Previous Manipulator, Toggle Manipulator mode)
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);

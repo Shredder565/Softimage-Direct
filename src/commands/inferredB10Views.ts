@@ -276,9 +276,8 @@ export function registerInferredB10Views(app: App) {
       for (const k of which) { camChange(app, k, 'Frame'); frameView(all[k], objs); }
     },
   });
-  regB10(app, 'ResetAllViews', { // B11h §ResetAllViews: every view (AllViews) or one goes to its home camera; undoable (saved cameras)
-    label: 'Reset (All 3D Views)',
-    execute(app, a) {
+  /** B11h §ResetAllViews / CMD-B17i `Reset Camera`: every view (AllViews) or one goes to its home camera; undoable. */
+  const resetViews = (app: App, a: Record<string, any>) => {
       const all = viewports(); const which = boolA(a.AllViews) ? all.map((_, k) => k) : [viewAt(a.View)].filter(k => k >= 0);
       if (!which.length) return;
       const saved = which.map(k => ({ cam: camState(all[k]), attached: all[k].x?.viewCamera ?? null, label: (all[k] as any).viewCamera }));
@@ -288,6 +287,56 @@ export function registerInferredB10Views(app: App) {
       }, () => {
         which.forEach((k, j) => { const vp = all[k]; camApply(vp, saved[j].cam); if (saved[j].attached) { (vp.x ??= {}).viewCamera = saved[j].attached; (vp as any).viewCamera = saved[j].label; } });
       });
+  };
+  regB10(app, 'ResetAllViews', { label: 'Reset (All 3D Views)', execute: resetViews });
+  // CMD-B17i correction 9: `Reset Camera` (CameraReset) is the same vm.dll handler 0461b2b4 with AllViews false.
+  app.register({
+    name: 'CameraReset', label: 'Reset Camera', category: 'Viewing', description: 'Reset the camera',
+    args: [{ name: 'View', default: -1 }, { name: 'AllViews', default: false }], execute: resetViews,
+  });
+
+  // ================================================================ CMD-B17i vm.dll 0461b2b6: Frame Selection / Frame All
+  // One handler, four commands that differ only by defaults (AllObjects, AllViews, View). AllViews false: the target
+  // view (-1 = active) is framed inside a camera-change bracket labelled "Frame" (per-view camera undo history);
+  // AllViews true: every 3D view is framed with the label "Frame" and no bracket; View is then ignored. Missing view:
+  // nothing, no error. No command undo, no log line, no return value.
+  const frameObjects = (allObjects: boolean): X3DObject[] => allObjects
+    ? [...app.scene.allObjects()].filter(o => o.visible) // inferred: hidden objects are not framed
+    : (app.selectedObjects.length ? app.selectedObjects : app.compSel ? [app.compSel.obj] : []);
+  const redraw = () => { vm()?.redraw?.(); };
+  const frameCmd = (_app: App, a: Record<string, any>) => {
+    const all = viewports(); const objs = frameObjects(boolA(a.AllObjects));
+    if (boolA(a.AllViews)) {
+      all.forEach((vp, k) => { st.camLabels.push({ view: k, label: 'Frame' }); frameView(vp, objs); });
+    } else {
+      const i = viewAt(a.View); if (i < 0) return undefined;
+      camChange(app, i, 'Frame'); frameView(all[i], objs);
+    }
+    redraw();
+    return undefined;
+  };
+  const FRAME: [name: string, label: string, desc: string, allObjects: boolean, allViews: boolean][] = [
+    ['Frame Selection', 'Frame Selection', 'Frame current selection', false, false],
+    ['FrameSelection', 'Frame Selection (All 3D Views)', 'Frame selection in all views', false, true],
+    ['Frame All', 'Frame All', '', true, false],
+    ['FrameAll', 'Frame All (All 3D Views)', 'Frame all in all views', true, true],
+  ];
+  for (const [name, label, description, ao, av] of FRAME) {
+    app.register({
+      name, label, category: 'Viewing', description, undoable: false, noLog: true,
+      args: [{ name: 'AllObjects', default: ao }, { name: 'AllViews', default: av }, { name: 'View', default: -1 }],
+      execute: frameCmd,
+    });
+  }
+  // ================================================================ CMD-B17i vm.dll 0461b2c2: Show/Hide Grid
+  // The active 3D view's grid visibility is inverted and that view redrawn; no active view = nothing. Not undoable.
+  app.register({
+    name: 'Show/Hide Grid', label: 'Show/Hide Grid', category: 'Viewing', description: '', args: [], undoable: false,
+    execute() {
+      const i = viewAt(-1); const vp = viewports()[i]; if (!vp) return undefined;
+      vp.flags['Grid'] = !vp.flags['Grid'];
+      redraw();
+      return undefined;
     },
   });
   regB10(app, 'GetViewIndex', { // B11h §GetViewIndex: 0-based index of the active 3D view; no active view = error
@@ -395,7 +444,24 @@ export function registerInferredB10Views(app: App) {
   regB10(app, 'RunPerformanceTest', {
     undoable: false,
     execute(app, a) {
-      const r = runPerformanceTest(app, a, () => { app.events.emit('scene'); for (const v of viewports() as any[]) v?.render?.(); });
+      const r = runPerformanceTest(app, a, {
+        draw: () => { app.events.emit('scene'); vm()?.redraw?.(); for (const v of viewports() as any[]) v?.render?.(); },
+        setTime: (f) => { app.anim.frame = f; for (const o of app.scene.allObjects()) o.primitive?.geom(); },
+        views: () => {
+          if (!vm()) return null;
+          const DISP: Record<string, string> = { wireframe: 'WIREFRAME', shaded: 'SHADE', 'shaded with wireframe': 'SURFACE_LINES', textured: 'TEXTURE', 'texture decal': 'TEXTURE DECAL', 'bounding box': 'BBOX', 'hidden line': 'HIDDEN_LINE', constant: 'CONSTANT', realtime: 'REALTIME SHADERS' };
+          return viewports().map((vp: any, k) => ({
+            letter: 'ABCD'[k] ?? '?', index: k, width: vp.el?.clientWidth ?? 0, height: vp.el?.clientHeight ?? 0,
+            cameraKind: vp.x?.viewCamera || vp.name === 'Camera' ? 'SCENE' : 'VIEWPOINT', cameraName: vp.name, // inferred mapping
+            display: DISP[String(vp.display ?? '').toLowerCase()] ?? 'AUTO', quality: 'FULL',
+            frustumCull: 0, xray: vp.flags?.['XRay Surfaces'] ? 1 : 0, transp: 0,
+          }));
+        },
+        gl: () => {
+          const c = document.querySelector('canvas'); const g = (c?.getContext('webgl2') ?? c?.getContext('webgl')) as WebGLRenderingContext | null;
+          return g ? { version: String(g.getParameter(g.VERSION)), vendor: String(g.getParameter(g.VENDOR)), renderer: String(g.getParameter(g.RENDERER)) } : null;
+        },
+      });
       if (r) { st.perf = { type: r.type, frames: r.frames, seconds: r.seconds, fps: r.fps }; app.logMsg('info', `RunPerformanceTest: ${r.frames} frames, ${r.seconds.toFixed(3)} s`); }
     },
   });
@@ -480,9 +546,6 @@ export function registerInferredB10Views(app: App) {
     undoable: false,
     execute() { const S = (viewTool as any).snap ?? ((viewTool as any).snap = {}); S.on = !S.on; app.events.emit('selection'); return !!S.on; },
   });
-  regB10(app, 'Toggle Manipulator mode', { // inferred: shows / hides the SRT manipulators set by the current transform mode
-    undoable: false,
-    execute(app) { const A = app as any; A.hideManip = !A.hideManip; app.events.emit('selection'); return !A.hideManip; },
-  });
+  // `Toggle Manipulator mode`: CMD-B17i, src/commands/toolsB17i.ts (manipulator manager setting).
   void objsOf;
 }
