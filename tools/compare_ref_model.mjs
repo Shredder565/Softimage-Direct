@@ -71,7 +71,7 @@ check('MakeModelLocal', !String(local).startsWith('ERR'), local);
 const cleared = await page.evaluate(() => !window.Application.scene.find('BallModel')?.ref);
 check('ref cleared', cleared);
 
-const empty = await run('CreateEmptyRefModel', { Name: 'EmptyRef' });
+const empty = await run('CreateEmptyRefModel', { ModelName: 'EmptyRef' });
 check('CreateEmptyRefModel', !String(empty).startsWith('ERR'), empty);
 
 const emptyRef = await page.evaluate(() => {
