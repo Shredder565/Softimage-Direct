@@ -70,6 +70,7 @@ export function animationPanel(app: App, host: HTMLElement) {
   };
   const GROUP: Record<string, string> = { 'from Marked Parameters': 'Marked', 'to Marked Parameters': 'Marked', 'from Transforms': 'Transforms', 'from Scaling': 'Scaling', 'from Rotation': 'Rotation', 'from Translation': 'Translation', 'from All Parameters, Any Animation Type': 'All', 'to All Parameters': 'All', 'from All Parameters, Expressions': 'All', 'from All Parameters, Fcurves': 'All', 'from All Parameters, Layer Animation': 'All', 'from All Parameters, Static Fcurves': 'All', 'from All Parameters, Scripted Operators': 'All', 'from Objects, Constraints': 'All' };
   const onPick = (l: string, path: string[]) => {
+    if (l === 'Add to Marking Set') { app.run('CreateMarkingSet', { Reset: false }); return; }   // registry: CreateMarkingSet, Reset False (CMD-B17e)
     if (path.includes('Save Key Command Mapping')) { app.run('SetKeyMappingMode', { Mode: l }); return; }
     if (path.includes('Copy Animation')) { app.run('CopyAnimation' + (GROUP[l] ?? 'All')); return; }
     if (path.includes('Paste Animation')) { app.run(l.includes('Marked') ? 'PasteAnimationMarked' : 'PasteAnimationAll'); return; }

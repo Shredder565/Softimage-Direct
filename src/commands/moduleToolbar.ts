@@ -561,18 +561,7 @@ export function registerModuleToolbarCommands(app: App) {
       return n;
     },
   });
-  app.register({
-    name: 'ApplySoftBody', label: 'Apply SoftBody', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }],
-    execute: (app, a) => addNamedProp(app, app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects, 'Soft Body', 'softbody', [num('stiffness', 0.5, 'Stiffness')]),
-  });
-  // Softimage ApplyCloth (PE 41015): C3DClothProp + C3DClothOp PPG chrome from SPDL dumps (no invent Syflex GDI).
-  app.register({
-    name: 'ApplyCloth', label: 'Apply Cloth', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }],
-    execute(app, a) {
-      const objs = app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects;
-      return applyClothToObjects(app, objs);
-    },
-  });
+  // ApplySoftBody / ApplyCloth: row CMD-B17f (animPrimsB17ef.ts, particle.vbs contract)
   app.register({
     name: 'AddClothClusters', label: 'Add Cloth Clusters', category: 'Simulation', args: [{ name: 'InputObj', default: '' }],
     execute(app) {
@@ -595,11 +584,7 @@ export function registerModuleToolbarCommands(app: App) {
       }
     },
   });
-  app.register({
-    name: 'ApplyParticleShader', label: 'Apply Particle Shader', category: 'Simulation',
-    args: [{ name: 'PresetObj', default: '' }, { name: 'InputObjs', default: '' }],
-    execute: (app, a) => app.run('SIApplyShader', { PresetObj: a.PresetObj || 'Phong', InputObjs: a.InputObjs }),
-  });
+  // ApplyParticleShader: row CMD-B17f (animPrimsB17ef.ts, particle.vbs contract)
   app.register({
     name: 'CreateObstacle', label: 'Set Obstacle', category: 'Simulation', args: [{ name: 'InputObjs', default: '' }],
     execute: (app, a) => addNamedProp(app, app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects, 'Obstacle', 'obstacle'),
@@ -617,13 +602,7 @@ export function registerModuleToolbarCommands(app: App) {
     },
   });
 
-  // CreateForce menu maps use Name=; accept either Name or PresetObj
-  const cf = app.commands.get('CreateForce');
-  if (cf) {
-    cf.args = [{ name: 'PresetObj', default: 'Gravity' }, { name: 'Name', default: '' }, { name: 'InputObjs', default: '' }];
-    const prev = cf.execute;
-    cf.execute = (app, a) => prev(app, { ...a, PresetObj: a.PresetObj || a.Name || 'Gravity' });
-  }
+  // CreateForce: row CMD-B17f (animPrimsB17ef.ts); its registry arguments are Name, InputObjs
 
   // ——— Hair ———
   const hairOn = (app: App, preset: string) => {

@@ -233,7 +233,7 @@ const got = await page.evaluate(({ NAMES }) => {
   {
     const r = {};
     fresh(); const e = mk('Cube', 'em'); const cloud = A.run('CreateParticleCloud', { InputObjs: [e] })[0];
-    const f1 = A.run('CreateForce', { PresetObj: 'Gravity' }), f2 = A.run('CreateForce', { PresetObj: 'Wind' });
+    const f1 = A.run('CreateForce', { Name: 'Gravity' }), f2 = A.run('CreateForce', { Name: 'Wind' });
     A.select([f1]); const none = run('AddParticleForce'); r.none = [none.cancelled, noNya(none.log)];
     // a force found in Target counts as a force; duplicates removed
     const res = run('AddParticleForce', { Target: [cloud, f1], InputObj: [f2, f1] });

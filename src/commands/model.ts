@@ -62,18 +62,7 @@ export function registerModelCommands(app: App) {
     if (a.PresetObj === 'Lattice') return app.run('GetPrimLattice', a);
     return baseGetExec(app, a);
   };
-  app.register({ name: 'GetPrimLattice', label: 'Get Lattice', category: 'Primitive', description: 'Creates a lattice; with objects selected it is fitted around them and a Deform by Lattice is applied.', args: [{ name: 'PresetObj', default: 'Lattice' }, { name: 'InputObjs', default: '' }, { name: 'Name', default: '' }], execute(app, a) {
-    const targets = app.targets(a.InputObjs).filter(o => o.primitive?.mesh());
-    const lat = S2.makeLatticeObject(app.scene.uniqueName(a.Name || 'lattice'));
-    if (targets.length) { // fit bounding box
-      const bb = new THREE.Box3(); for (const o of targets) { const m = o.primitive!.mesh()!; const M = o.globalMatrix(); for (let i = 0; i < m.positions.length; i += 3) bb.expandByPoint(new THREE.Vector3(m.positions[i], m.positions[i + 1], m.positions[i + 2]).applyMatrix4(M)); }
-      const c = bb.getCenter(new THREE.Vector3()), s = bb.getSize(new THREE.Vector3()).multiplyScalar(1.05); const g = lat.primitive!.operators[0];
-      g.set('sizex', Math.max(0.1, s.x)); g.set('sizey', Math.max(0.1, s.y)); g.set('sizez', Math.max(0.1, s.z)); lat.kinematics.local.set('posx', c.x); lat.kinematics.local.set('posy', c.y); lat.kinematics.local.set('posz', c.z);
-    }
-    addObject(app, lat);
-    for (const o of targets) { const op = S2.makeRefDeformOperator('by Lattice', [lat], () => o, null)!; const prim = o.primitive!; app.record('Deform by Lattice', () => prim.addOperator(op), () => prim.removeOperator(op)); }
-    app.select([lat]); return lat;
-  } });
+  // GetPrimLattice: row CMD-B17f (animPrimsB17ef.ts, primitives.vbs contract)
   app.commands.get('GetPrimCamera')!.execute = (app, a) => { const preset = String(a.PresetObj).replace('.Preset', '').replace('_', ' '); const cam = new Camera(app.scene.uniqueName(a.Name || 'Camera')); cam.primitive!.set('fov', S2.CAMERA_PRESETS[preset] ?? 53.6); cam.primitive!.add(bool('ortho', preset === 'Orthographic', 'Orthographic')); cam.kinematics.local.set('posx', 10); cam.kinematics.local.set('posy', 8); cam.kinematics.local.set('posz', 12); cam.kinematics.local.set('roty', 40); cam.kinematics.local.set('rotx', -25); addObject(app, cam); app.select([cam]); return cam; };
   app.commands.get('GetPrimCamera')!.canRun = () => true;
   app.commands.get('GetPrimLight')!.execute = (app, a) => { const preset = String(a.PresetObj).replace('.Preset', '').replace('_', ' '); const kind = S2.LIGHT_PRESETS[preset]; if (!kind) throw new Error(`Light ${preset} not available`); if (kind === 'spot') { const rig = makeAimRig(app, 'Spot', a.Name || 'Spot'); app.select([rig.obj]); return rig.root; } const l = new Light(app.scene.uniqueName(a.Name || preset.toLowerCase().replace(' ', '_')), kind === 'area' ? 'point' : kind); if (kind === 'area') { l.primitive!.name = preset; l.primitive!.add(num('width', 4, 'Width', { min: 0.1 })); } l.kinematics.local.set('posx', 6); l.kinematics.local.set('posy', 10); l.kinematics.local.set('posz', 6); addObject(app, l); app.select([l]); return l; };
@@ -867,9 +856,7 @@ export function registerModelAliases(app: App) {
   prop.canRun = (a) => pc(a) || typeof a.PresetObj === 'string';
   prop.execute = (app, a) => { if (pc(a)) return pe(app, a); for (const o of app.targets(a.InputObjs)) { const p = new Property(String(a.PresetObj), String(a.PresetObj).toLowerCase().replace(/[^a-z]+/g, ''), [bool('enabled', true, 'Enabled')]); app.record('Add property', () => o.addProperty(p), () => o.removeProperty(p)); app.select([p]); } return null; };
   // control objects
-  app.register({ name: 'GetPrimWave', label: 'Wave Control Object', category: 'Primitive', description: 'Creates a wave control null and applies a Wave deformer driven by it to the selected meshes.', args: [{ name: 'PresetObj', default: 'Wave' }, { name: 'InputObjs', default: '' }], execute(app, a) { const n = new Null(app.scene.uniqueName('wave')); n.add(num('amplitude', 1, 'Amplitude', { keyable: true })); n.add(num('wavelength', 4, 'Wavelength')); n.add(num('phase', 0, 'Phase', { keyable: true })); addObject(app, n); for (const o of app.targets(a.InputObjs)) if (o.primitive?.mesh()) { const op = S2.makeMeshDeformOperator2('Wave')!; const prim = o.primitive; app.record('Wave', () => prim.addOperator(op), () => prim.removeOperator(op)); } app.select([n]); return n; } });
-  app.register({ name: 'GetPrimVolumeDeform', label: 'Volume Deform Control Object', category: 'Primitive', args: [{ name: 'PresetObj', default: 'VolumeDeform' }], execute: (app) => app.run('ApplyPropVolumeOp') });
-  app.register({ name: 'CreateForce', label: 'Create Force', category: 'Simulation', description: 'Creates a force control object (used by simulations, which are outside the Model/Animate scope).', args: [{ name: 'PresetObj', default: 'Gravity' }], execute(app, a) { const n = new Null(app.scene.uniqueName(String(a.PresetObj).toLowerCase())); n.add(str('forcetype', String(a.PresetObj), 'Force Type', { readOnly: true })); n.add(num('amplitude', 1, 'Amplitude', { keyable: true })); addObject(app, n); app.select([n]); return n; } });
+  // GetPrimWave / GetPrimVolumeDeform / CreateForce: row CMD-B17f (animPrimsB17ef.ts, primitives.vbs / particle.vbs contracts)
   app.register({ name: 'CreateLightRigFromImage', label: 'Light Rig from Image', category: 'Primitive', args: [], canRun: () => false, execute() { throw new Error('Needs an HDR image loader (not in this build)'); } });
   // static-pose actions (Store/Apply Skeleton Pose use these)
   // Softimage StoreAction defaults from PC si_anim_commands.json: Mode=1, Name=StoredAction.

@@ -83,6 +83,7 @@ import { registerB16eCommands } from './commands/b16eActioncoreOptasksGap';
 import { registerShellsB15ElseCommands } from './commands/shellsB15Else';
 import { registerShadertasksB16bCommands } from './commands/shadertasksB16b';
 import { registerFilterMapB16dCommands } from './commands/filterMapB16d';
+import { registerAnimPrimsB17efCommands } from './commands/animPrimsB17ef';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -238,6 +239,7 @@ registerShellsB15ElseCommands(app);   // CMD-B15-ELSE MarkObjectDirty / GetSkele
 registerShadertasksB16bCommands(app);   // CMD-B16b bbbbee29 shader creation, shader array elements, SIAppendBone
 registerTasksB16cCommands(app);   // CMD-B16c (tasks.dll Add3DObjectToScene / SetReference2; the other tasks.dll commands are fixed in place)
 registerFilterMapB16dCommands(app);   // CMD-B16d scnmgr filter-map commands (Delete Selected, Duplicate/Extrude, Subdivide ...), CopyPartition, RegenerateMaps
+registerAnimPrimsB17efCommands(app);   // CMD-B17e / CMD-B17f (animation.vbs marking sets / external constraints; primitives.vbs, particle.vbs)
 registerToolsB16aCommands(app);   // CMD-B16a (toolmanager.dll tool activation; last: earlier registrations of these names become the tool class bodies)
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).

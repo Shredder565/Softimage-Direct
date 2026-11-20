@@ -152,6 +152,9 @@ export function paramsOfList(app: App, arg: any): { found: Parameter[]; missing:
     }
     const o = findObject(app, x);
     if (o && add(localOf(o))) continue;
+    // a property path (relative to the selection or "<object>.<property>") marks that property's parameters
+    // (CMD-B17e: ActivateMarkingSet runs SetMarking "MarkingSet")
+    if (rel.length === 1 && add(owners.flatMap(w => w.properties.filter(p => p.name === rel[0]).flatMap(p => p.params.filter(q => q.animatable))))) continue;
     missing.push(x);
   }
   return { found, missing };
