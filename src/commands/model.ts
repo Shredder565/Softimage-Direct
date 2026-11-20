@@ -347,7 +347,8 @@ export function registerModelCommands(app: App) {
   app.register({ name: 'StoreSkeletonPose', label: 'Store Skeleton Pose', category: 'Animation', args: [], execute(app) { const r = rootOf(app); if (!r) throw new Error('Select a chain'); const pose = r.bones.map(b => ['x', 'y', 'z'].map(ax => b.kinematics.local.val('rot' + ax))); if (!r.get('storedpose')) r.add(str('storedpose', '', 'Stored Pose', { readOnly: true })); app.setParam(r.get('storedpose')!, JSON.stringify(pose)); } });
   app.register({ name: 'ApplySkeletonPose', label: 'Apply Skeleton Pose', category: 'Animation', args: [], execute(app) { const r = rootOf(app); const s = r?.val('storedpose'); if (!r || !s) throw new Error('No stored pose on this chain'); const pose = JSON.parse(s) as number[][]; r.bones.forEach((b, i) => { if (pose[i]) ['x', 'y', 'z'].forEach((ax, k) => app.setParam(b.kinematics.local.get('rot' + ax)!, pose[i][k])); }); } });
   // GetPresetModel is registered by registerPresetModels (presets.ts) — do not stub it here.
-  for (const [name, label] of [['CreateSpine', 'Create Spine'], ['MakeTail', 'Create Tail'], ['MakeControlSplines', 'Create Control Splines']]) app.register({ name, label, category: 'Character Rigging', args: [], canRun: () => false, execute() { throw new Error(`${label} needs Softimage's rig preset files (not shipped)`); } });
+  // CreateSpine: CMD-B17h contract (rigsCharacB17h.ts)
+  for (const [name, label] of [['MakeTail', 'Create Tail'], ['MakeControlSplines', 'Create Control Splines']]) app.register({ name, label, category: 'Character Rigging', args: [], canRun: () => false, execute() { throw new Error(`${label} needs Softimage's rig preset files (not shipped)`); } });
 
   // ------------------------------------------------------------ materials
   // Dump-backed stock illumination (materials_beyond_phong summary.ok).
@@ -545,7 +546,6 @@ export function registerModelCommands(app: App) {
   });
   const paintTools: [string, string, string][] = [
     ['PaintTool', 'Paint Tool', '{BABE02C7-A8B6-11D1-9306-0060970A2BC8}'],
-    ['PaintPushTool', 'Paint Push Tool', ''],
     ['PaintVertexColorTool', 'Paint Vertex Color Tool', '{D9066020-ADD5-11D4-B91C-0800690C8BD0}'],
   ];
   for (const [name, label, clsid] of paintTools) {
@@ -591,8 +591,7 @@ export function registerModelCommands(app: App) {
     canRun: () => false,
     execute() { throw new Error('GATOR: Softimage Commands entry absent (behavioral tour FAIL)'); },
   });
-  app.register({ name: 'CreateUserDataMapAndPickTemplate', label: 'Create Templated User Data', category: 'Property', args: [], execute: (app) => app.run('AddProp', { PresetObj: 'New Custom Data Map Template' }) });
-  app.register({ name: 'InspectUserData', label: 'Inspect User Data', category: 'Property', args: [], execute(app) { const p = app.selectedObjects[0]?.property('userdatamap'); if (p) app.select([p]); else throw new Error('No user data map on the selection'); } });
+  // CreateUserDataMapAndPickTemplate / InspectUserData: replaced by the CMD-B17g contract (paramsToolsB17g.ts)
   app.register({ name: 'StoreInOverride', label: 'Store in Override', category: 'Property', args: [{ name: 'What', default: 'Materials' }], execute: (app) => app.run('AddProp', { PresetObj: 'Override' }) });
   app.register({ name: 'DeleteOverride', label: 'Delete Override', category: 'Property', args: [], execute(app) { for (const o of app.selectedObjects) { const p = o.property('override'); if (p) app.record('Delete override', () => o.removeProperty(p), () => o.addProperty(p)); } } });
 
