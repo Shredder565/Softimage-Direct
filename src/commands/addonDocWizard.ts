@@ -27,6 +27,7 @@ import { hostFs, HOSTFS_SEP } from '../core/sdkHelpersHostFs';
 import { sdkModal, renderSdkLayout, type SdkDlgItem } from '../ui/sdkHelpersModal';
 import { sdkHelpersState } from './sdkHelpers';
 import { NotYetAttested } from './fbx';
+import { installWizardGenerators } from './miscScriptsB15fGen';
 
 const NOTE = 'docs/ghidra/cmd-01-addondoc-wizardhelper.md';
 export const ADDON_DOC_PREFIX = 'netview_';
@@ -150,9 +151,10 @@ const EXT_LANG: Record<string, string> = {
 };
 const TEMPLATE_EXT: Record<string, string> = { Python: '.py.template', JScript: '.js.template', Cpp: '.cpp.template', VBScript: '.vbs.template' };
 /** Members the note lists without a specification (Q3). */
-const WIZARD_UNSPECIFIED = ['GetSelectedRows', 'DeleteSelectedRows', 'DeleteRow', 'ClearGrid', 'GetNullOrValue', 'CreateMenuIDArray', 'StandardIncludes',
-  'GeneratePluginFile', 'GenerateRTShaderCode', 'GenerateRTShaderFile', 'WriteAndLoadScriptPlugin', 'GetCppCompilerInfo', 'GetDefaultVCCompiler',
-  'GetSupportedVCCompilerArray', 'GenerateCppProject', 'GenerateCppProjectFromArray', 'GenerateCSProject', 'BuildCSVarType'];
+// CMD-B15f closed Q3 for CreateMenuIDArray, StandardIncludes, GeneratePluginFile, WriteAndLoadScriptPlugin, GetCppCompilerInfo,
+// GetDefaultVCCompiler, GetSupportedVCCompilerArray, GenerateCppProject and GenerateCSProject (miscScriptsB15fGen.ts).
+const WIZARD_UNSPECIFIED = ['GetSelectedRows', 'DeleteSelectedRows', 'DeleteRow', 'ClearGrid', 'GetNullOrValue',
+  'GenerateRTShaderCode', 'GenerateRTShaderFile', 'GenerateCppProjectFromArray', 'BuildCSVarType'];
 
 /** One shared stand-in for the file-system object: the virtual host file system behind a few of its documented method names. */
 let sharedFso: any = null;
@@ -178,6 +180,7 @@ export class WizardHelperObj {
   [member: string]: any;
   constructor(private app: App) {
     for (const n of WIZARD_UNSPECIFIED) this[n] = () => { throw notYetAttested('WizardHelper', `helper method ${n} (used by the SDK wizards only)`, 'Q3'); };
+    installWizardGenerators(this, app);
   }
 
   // ---- text files
