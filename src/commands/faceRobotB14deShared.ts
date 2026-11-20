@@ -105,12 +105,20 @@ export function setKeywords(app: App, o: X3DObject, text: string) {
   if (app.commands.has('SetUserKeyword')) { try { app.run('SetUserKeyword', { InputObjs: [o], Keywords: text }); return; } catch { /* fall through */ } }
   writeAttribute(app, 'SetUserKeyword', 'userKeywords', [o], () => text);
 }
-/** fr_GetKeyed_safe stand-in (inferred): the objects of the scene whose user keywords contain every word. */
-export function getKeyed(app: App, words: string[]): X3DObject[] {
-  const want = words.map(w => w.toLowerCase());
-  const out: X3DObject[] = [];
-  for (const o of app.scene.allObjects()) { const k = keywordsOf(o).map(s => s.toLowerCase()); if (want.every(w => k.includes(w))) out.push(o); }
-  return out;
+/** The `FilterKeyed` match rule of Utilities.js (cmd-b18d §3, WIRE_CORRECTIONS_B18 item 9): an object matches when it has
+ *  at least one user keyword and every requested key is found in its keyword collection (the collection's item lookup,
+ *  which in this build compares without case). An empty key list matches every object that has a keyword. Input order. */
+export function keyedMatch(o: object, keys: string[]): boolean {
+  const k = String(attribute(o, 'userKeywords') ?? '').split(',').filter(s => s !== '').map(s => s.toLowerCase());
+  return k.length > 0 && keys.every(w => k.includes(String(w).toLowerCase()));
+}
+export function filterKeyed<T extends object>(objs: T[], keys: string[]): T[] { return objs.filter(o => keyedMatch(o, keys)); }
+/** fr_GetKeyed_safe / GetKeyed stand-in (cmd-b18d §3): FilterKeyed over the descendants of `model` (default: the face
+ *  model; this lookup does not create the fallback `Face` model the command makes). */
+export function getKeyed(app: App, words: string[], model?: X3DObject | null): X3DObject[] {
+  const m = model ?? faceModel(app) ?? app.scene.root.children.find(c => c.type === '#model' && c.name === 'Face') ?? null;
+  if (!m) return [];
+  return filterKeyed([...m.descendants()], words);
 }
 
 // ------------------------------------------------------------------ controls
