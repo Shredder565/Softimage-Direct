@@ -104,7 +104,7 @@ export function registerInferredB10Views(app: App) {
       onCancel() { if (app.activeTool === it) app.activeTool = null; },
     };
     app.setTool(it);
-    st.tool.current = name; st.tool.lastAux = { name, args: { ...a } };
+    st.tool.current = name; // the last auxiliary tool is the tool manager's (CMD-B16a, src/core/toolManager.ts)
     (app as any).armedTool = { label: t.name, clsid: a.Clsid ?? null };
     return it;
   };
@@ -113,7 +113,7 @@ export function registerInferredB10Views(app: App) {
     label: 'Manipulate Tool', undoable: false,
     execute(app, a) {
       (app as any).hideManip = false; (window as any).__mcp?.('manip', true);
-      st.tool.current = 'ManipulateTool'; st.tool.lastAux = { name: 'ManipulateTool', args: { ...a } };
+      st.tool.current = 'ManipulateTool'; void a; // Manipulate is excluded from the last auxiliary tool (WIRE_CORRECTIONS_B16 item 4)
       app.events.emit('selection');
       return true;
     },
@@ -225,14 +225,7 @@ export function registerInferredB10Views(app: App) {
       });
     },
   });
-  regB10(app, 'LastTool', { // inferred: re-activates the last auxiliary tool this session used
-    label: 'Last Auxiliary Tool', undoable: false,
-    execute(app) {
-      const last = st.tool.lastAux;
-      if (!last) { app.logMsg('info', 'LastTool: no auxiliary tool has been used yet'); return null; }
-      return app.run(last.name, last.args);
-    },
-  });
+  // LastTool: toolmanager.dll activation command with Clsid GUID_NULL (CMD-B16a, toolsB16a.ts).
 
   // ================================================================ standard views
   for (const [name, view] of [['Front View', 'Front'], ['Back View', 'Back'], ['Right View', 'Right']] as const) {

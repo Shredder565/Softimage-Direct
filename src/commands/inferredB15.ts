@@ -3,9 +3,9 @@
 // of this build behave. No Softimage code or golden backs them. Branches that inference cannot settle log
 // "<command>: not yet attested: <what> (inferred, CMD-B15f worker)" and change nothing.
 //
-//   tools / modes:  "Add Surface Point Tool" BoneCreateTool CrowdCreateDirectionalEmitterTool CrowdCreateWallTool
-//                   CursorTransformTool "MoveComponent Tool" "Pick Session Tool" ToggleProjectionTool
-//                   "Turn ON Interactive SRT" "Turn OFF Interactive SRT" "Transform Set New " "XYZ Transform " DoNothing
+//   tools / modes:  BoneCreateTool CrowdCreateDirectionalEmitterTool CrowdCreateWallTool
+//                   "Turn ON Interactive SRT" "Turn OFF Interactive SRT" "Transform Set New " (inert, CMD-B16a §7)
+//   (the toolmanager.dll tool commands that were here are wired by CMD-B16a in toolsB16a.ts)
 //   edits:          CopyPaste CopyPartition "Delete Selected Branch" DeleteCurrentLayer "Freeze Selected"
 //                   "Dice Object/Polygons" "Mesh Filter" PaintWeights SISwapArrayElements SIAppendBone
 //   rendering/sim:  RegenerateMaps CreateEnvironmentCache
@@ -48,12 +48,6 @@ const toolState = (app: App) => ((app as any).inferredB15 ??= { tools: [] as str
 export function registerInferredB15Commands(app: App) {
   const reg = (def: CommandDef) => app.register(def);
   const st = toolState(app);
-  const missingTool = (name: string, what: string) => (app2: App) => { st.tools.push(name); logInferredNya(app2, name, what); return undefined; };
-
-  // inferred: a viewport tool that adds points on NURBS surfaces (catalogue: disabled). No such tool in this build.
-  reg({ name: 'Add Surface Point Tool', label: 'Add Surface Point Tool', category: 'Modeling', description: 'Add Surface Point Tool', undoable: false,
-    args: [{ name: 'Clsid', default: '{DCCB8091-B82C-11D1-A900-00A024190119}' }, { name: 'CmdID', default: '{DCCB8090-B82C-11D1-A900-00A024190119}' }],
-    execute: missingTool('Add Surface Point Tool', 'the surface point tool (no NURBS surface point insertion tool in this build)') });
 
   // inferred: starts the bone drawing tool of the BoneCreateTool plug-in (CMD-B13e keeps its live instance and undo
   // record); the drawing itself is this build's chain tool (Create2DSkeleton with no points installs it).
@@ -74,45 +68,16 @@ export function registerInferredB15Commands(app: App) {
   reg({ name: 'CrowdCreateWallTool', label: 'CrowdCreateWallTool', category: '', args: [],
     execute: app2 => delegate(app2, 'CrowdCreateWallTool', 'CreateWall', {}).result });
 
-  // inferred: "Activate the Cursor transform tool". No cursor transform tool in this build.
-  reg({ name: 'CursorTransformTool', label: 'Cursor Transform Tool', category: 'Modeling|Deformation', description: 'Activate the Cursor transform tool', undoable: false,
-    args: [{ name: 'Clsid', default: '{BAAA041A-D204-45DF-8D4F-E2C524678315}' }],
-    execute: missingTool('CursorTransformTool', 'the cursor transform tool') });
-
-  // inferred: "MoveComponent Tool Active" = the component tweak tool of this build.
-  reg({ name: 'MoveComponent Tool', label: 'MoveComponent Tool', category: 'Modeling|Deformation', description: 'MoveComponent Tool Active', undoable: false,
-    args: [{ name: 'Clsid', default: '{DA55A810-5F86-11D2-B11C-00A0C906811E}' }],
-    execute: app2 => delegate(app2, 'MoveComponent Tool', 'TweakTool', {}).result });
-
-  // inferred: the tool a pick session installs; on its own (no session) it does nothing.
-  reg({ name: 'Pick Session Tool', label: 'Pick Session Tool', category: '', undoable: false,
-    args: [{ name: 'Clsid', default: '{CF80CBC3-984E-11D1-96E7-00A024191BAC}' }],
-    execute(app2) {
-      const s = (app2 as any).miscDsScripts?.session;
-      if (!s?.active) logInferredNya(app2, 'Pick Session Tool', 'the pick tool outside a pick session');
-      return undefined;
-    } });
-
-  // inferred: "Modify Projection" = the texture projection manipulation tool. This build's EditUVProjectionTool is a
-  // Softimage-absent entry, so there is no tool to stand for it.
-  reg({ name: 'ToggleProjectionTool', label: 'Modify Projection', category: 'Rendering', undoable: false,
-    args: [{ name: 'Clsid', default: '{0BF11154-359A-11D4-B4C4-00D0B7142C4C}' }],
-    execute: missingTool('ToggleProjectionTool', 'the texture projection manipulation tool') });
-
   // inferred: switch the interactive SRT (live transform update while dragging) flag.
   for (const [name, on] of [['Turn ON Interactive SRT', true], ['Turn OFF Interactive SRT', false]] as const)
     reg({ name, label: name, category: '', description: name, undoable: false, args: [],
       execute(app2) { toolState(app2).interactiveSRT = on; app2.events.emit('selection'); return undefined; } });
 
-  // inferred: no description; nothing attested.
-  reg({ name: 'Transform Set New ', label: 'Transform Set New ', category: '', undoable: false, args: [],
-    execute: missingTool('Transform Set New ', 'what "Transform Set New" creates') });
-  // inferred: catalogue description is "Todo: XYZ transform" — an unfinished entry; it does nothing.
-  reg({ name: 'XYZ Transform ', label: 'XYZ Transform ', category: '', description: 'Todo: XYZ transform', undoable: false,
-    args: [{ name: 'Property', default: 'SI3D_COMMAND_EXECUTED' }], execute: () => undefined });
-  // inferred: by its name.
-  reg({ name: 'DoNothing', label: 'DoNothing', category: '', description: 'DoNothing', undoable: false,
-    args: [{ name: 'Clsid', default: '{2B2FFB2E-5987-11D2-8411-00A0C961747D}' }], execute: () => undefined });
+  // CMD-B16a §7 / WIRE_CORRECTIONS_B16 item 9: the registry handler CLSID is GUID_NULL and no DLL serves it; an inert
+  // entry that creates nothing (no log).
+  reg({ name: 'Transform Set New ', label: 'Transform Set New ', category: '', undoable: false, args: [], execute: () => undefined });
+  // `XYZ Transform `, DoNothing, `Add Surface Point Tool`, CursorTransformTool, `MoveComponent Tool`, `Pick Session Tool`,
+  // ToggleProjectionTool: toolmanager.dll commands (CMD-B16a, toolsB16a.ts).
 
   // inferred: "This task copy and paste something ... does not affect the current copied items": Source is duplicated
   // (the clipboard is left alone) and the copies go under Target when one is given. Mode 0 only.

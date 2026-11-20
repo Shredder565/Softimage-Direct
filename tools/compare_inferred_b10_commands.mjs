@@ -96,13 +96,15 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
   const nt = window.__navTool; const vm = window.__vm; const vps = vm.viewports();
   // navigation tools: activate (twice stays on), the matching view-manager tool
   for (const [n, label] of [['CamOrbitTool', 'Orbit Tool'], ['CamDollyTool', 'Dolly Tool'], ['CamPanZoomTool', 'Pan & Zoom Tool'], ['CamRectZoomTool', 'Rectangular Zoom Tool'], ['CamWalkTool', 'Walk Tool'], ['CamMayaZoomTool', 'Zoom Tool']]) {
-    run(n); run(n); ok(`${n} activates ${label} (no toggle)`, nt.get() === label, nt.get());
+    run(n); const first = nt.get(); run(n); // CMD-B16a: re-invoking the current tool toggles it off (Interaction.stickytoggle, SPDL default on)
+    ok(`${n} activates ${label}; a second call toggles it off (CMD-B16a stickytoggle)`, first === label && nt.get() === null, [first, nt.get()]);
   }
   ok('Cam3dsMaxNavigTool logs its unattested mouse mapping', nya(run('Cam3dsMaxNavigTool')) === 1);
   // auxiliary tools + LastTool
   reset(); run('VirtualSliderTool'); ok('VirtualSliderTool arms a tool', A.activeTool?.name === 'Virtual Slider Tool'); ok('auxiliary tool clears the navigation tool', nt.get() === null);
   run('CamOrbitTool'); ok('navigation tool leaves the modal tool', A.activeTool === null);
-  run('LastTool'); ok('LastTool re-activates the last auxiliary tool', A.activeTool?.name === 'Virtual Slider Tool', A.activeTool?.name);
+  run('TranslateTool'); run('LastTool'); ok('LastTool re-activates the last auxiliary tool (CMD-B16a: the camera tool was recorded last)', nt.get() === 'Orbit Tool', nt.get());
+  reset(); run('VirtualSliderTool'); run('TranslateTool'); run('LastTool'); ok('LastTool re-activates the last auxiliary tool (Translate excluded)', A.activeTool?.name === 'Virtual Slider Tool', A.activeTool?.name); reset();
   {
     const p = cube.kinematics.local.get('posx'); A.anim.marked.clear(); A.anim.marked.add(p); const v0 = p.value;
     run('VirtualSliderTool'); const t = A.activeTool; t.onClick([0, 0, 0], null, { shift: false, ctrl: false }); t.onMove([10, 0, 0]); t.onFinish();
@@ -242,7 +244,8 @@ for (const n of NAMES) {
   report(`${n}: registry argument list`, JSON.stringify(got.reg[n]) === JSON.stringify(registry[n] ?? (n === 'Tag' ? [['InputObjs', null], ['Level', ':siTagAll:siTags'], ['SubType', 3]] : null)), `${JSON.stringify(got.reg[n])} vs ${JSON.stringify(registry[n])}`);
   report(`${n}: default run`, got.defaults[n] === 'ok' || got.defaults[n] === 'expected-failure', got.defaults[n]);
 }
-report('batch registered every name itself', got.batch.skipped.length === 0 && NAMES.every(n => got.batch.registered.includes(n)), JSON.stringify(got.batch.skipped));
+const B16A = new Set(['LastTool']); // CMD-B16a (toolsB16a.ts) owns it now
+report('batch registered every name itself', got.batch.skipped.length === 0 && NAMES.filter(n => !B16A.has(n)).every(n => got.batch.registered.includes(n)), JSON.stringify(got.batch.skipped));
 for (const [name, cond, detail] of got.checks) report(name, cond, detail);
 report('no page errors', pageErrors.length === 0, pageErrors.join(' | '));
 console.log(`compare_inferred_b10_commands: ${pass} ok, ${fail} failed (${NAMES.length} commands)`);

@@ -79,7 +79,8 @@ const got = await page.evaluate(async ({ NAMES, LITERAL, DEFAULT_FAILS: DF }) =>
   // ================= INFERRED commands
   try {
     reset();
-    for (const n of ['Add Surface Point Tool', 'CursorTransformTool', 'ToggleProjectionTool', 'Transform Set New ']) { const r = run(n); ok(`${n} (inferred): no such tool here -> not yet attested, no change`, nya(r) && !r.err); }
+    for (const n of ['Add Surface Point Tool', 'CursorTransformTool', 'ToggleProjectionTool']) { const r = run(n); ok(`${n} (CMD-B16a): no such tool here -> not yet attested, no change`, nya(r) && !r.err); }
+    { const r = run('Transform Set New '); ok('Transform Set New  (CMD-B16a §7): inert, no log', !r.err && r.v === undefined && !(r.log ?? []).length, r.log); }
     for (const n of ['DoNothing', 'XYZ Transform ']) { const u0 = A.undoStack.length, c0 = objCount(); const r = run(n); ok(`${n} (inferred): does nothing`, r.v === undefined && !r.err && A.undoStack.length === u0 && objCount() === c0); }
     let r = run('BoneCreateTool');
     ok('BoneCreateTool (inferred): live tool instance (CMD-B13e state) and the chain drawing tool active', A.pluginsB13e?.boneTool && A.activeTool?.name === 'Draw 2D Chain', A.activeTool?.name);
@@ -89,8 +90,7 @@ const got = await page.evaluate(async ({ NAMES, LITERAL, DEFAULT_FAILS: DF }) =>
     ok('CrowdCreateDirectionalEmitterTool (inferred): runs CreateCrowdEmitter', viaEmitter.length === 1 && !r.err, r.err);
     const viaWall = trace('CreateWall', () => run('CrowdCreateWallTool'));
     ok('CrowdCreateWallTool (inferred): runs CreateWall', viaWall.length === 1);
-    reset(); const tw = trace('TweakTool', () => run('MoveComponent Tool'));
-    ok('MoveComponent Tool (inferred): runs the component tweak tool (TweakTool)', tw.length === 1);
+    reset(); { const r = run('MoveComponent Tool'); ok('MoveComponent Tool (CMD-B16a): activates class da55a810 (Tweak body as a logged stand-in)', A.toolManager.current() === 'da55a810-5f86-11d2-b11c-00a0c906811e' && nya(r), [A.toolManager.current(), r.log]); }
     A.selMode = 'object'; reset();
     r = run('Pick Session Tool'); ok('Pick Session Tool (inferred): outside a pick session -> logged, no change', nya(r));
     run('Turn OFF Interactive SRT'); const off = A.inferredB15.interactiveSRT; run('Turn ON Interactive SRT');

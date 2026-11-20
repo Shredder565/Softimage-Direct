@@ -7,9 +7,7 @@ const ev = (name: string, detail?: any) => window.dispatchEvent(new CustomEvent(
 
 export function registerUICommands(app: App) {
   const reg = (name: string, label: string, execute: (app: App, a: Record<string, any>) => any, args: { name: string; default: any }[] = []) => app.register({ name, label, category: 'UI', args, undoable: false, execute });
-  reg('TranslateTool', 'Translate Tool', () => tool.setMode('translate'));
-  reg('RotationTool', 'Rotation Tool', () => tool.setMode('rotate'));
-  reg('ScalingTool', 'Scaling Tool', () => tool.setMode('scale'));
+  // TranslateTool / RotationTool / ScalingTool: toolmanager.dll activation commands (CMD-B16a, toolsB16a.ts).
   reg('ActivateSelectTool', 'Select Tool', () => tool.setMode('select'));
   reg('ActivateObjectSelTool', 'Object Select Tool', (app) => { tool.setMode('select'); app.setSelMode('object'); });
   reg('ActivateVertexSelTool', 'Point Select Tool', (app) => app.setSelMode('point'));
