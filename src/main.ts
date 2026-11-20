@@ -77,6 +77,7 @@ import { registerClipsSourcesB15dCommands } from './commands/clipsSourcesB15d';
 import { registerRigScriptsB15eCommands } from './commands/rigScriptsB15e';
 import { registerMiscScriptsB15fCommands } from './commands/miscScriptsB15f';
 import { registerInferredB15Commands } from './commands/inferredB15';
+import { registerTasksB16cCommands } from './commands/tasksB16c';
 import { registerShellsB15ElseCommands } from './commands/shellsB15Else';
 import { registerShaderCreationB15Commands } from './commands/particlesB15cShaders';
 import iceViewChrome from './data/si/ice_view_chrome.json';
@@ -231,6 +232,7 @@ registerInferredB10Scene(app);
 registerInferredB15Commands(app);   // CMD-B15-ELSE tool / misc commands without an analyst note (inferred)
 registerShellsB15ElseCommands(app);   // CMD-B15-ELSE MarkObjectDirty / AddShaderAttachedComment / GetSkeleton (inferred)
 registerShaderCreationB15Commands(app);   // CMD-B15-ELSE bbbbee29 shader creation family (inferred)
+registerTasksB16cCommands(app);   // CMD-B16c (tasks.dll Add3DObjectToScene / SetReference2; the other tasks.dll commands are fixed in place)
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);

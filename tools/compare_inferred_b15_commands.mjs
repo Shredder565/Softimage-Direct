@@ -23,15 +23,15 @@ const CHROME = [
 if (!CHROME) { console.error('No Chromium; set PW_CHROME'); process.exit(2); }
 
 const INFERRED = [
-  'Add Surface Point Tool', 'BoneCreateTool', 'CopyPartition', 'CopyPaste', 'CreateEnvironmentCache', 'CrowdCreateDirectionalEmitterTool', 'CrowdCreateWallTool',
-  'CursorTransformTool', 'Delete Selected Branch', 'DeleteCurrentLayer', 'Dice Object/Polygons', 'DoNothing', 'Freeze Selected', 'Mesh Filter', 'MoveComponent Tool',
+  'Add Surface Point Tool', 'BoneCreateTool', 'CopyPartition', 'CreateEnvironmentCache', 'CrowdCreateDirectionalEmitterTool', 'CrowdCreateWallTool',
+  'CursorTransformTool', 'Delete Selected Branch', 'Dice Object/Polygons', 'DoNothing', 'Freeze Selected', 'Mesh Filter', 'MoveComponent Tool',
   'PaintWeights', 'Pick Session Tool', 'RegenerateMaps', 'SIAppendBone', 'SISwapArrayElements', 'ToggleProjectionTool', 'Transform Set New ',
   'Turn OFF Interactive SRT', 'Turn ON Interactive SRT', 'XYZ Transform ',
 ];
 const SHELLS = ['MarkObjectDirty', 'AddShaderAttachedComment', 'GetSkeleton', 'CreateShaderFromCLSID', 'CreateShaderFromProgID', 'CreateShadersFromMaterialPreset'];
 const LITERAL = ['MakeBiped', 'MakeBipedDogLeg', 'MakeQuadruped', 'MakeArm', 'MakeLeg', 'MakeFoot', 'MakeHand', 'MakeHead', 'MakeSpine', 'MakeShadowChain', 'MakeShadowSpine', 'MakeBicepRoll', 'MakeForearmRoll', 'Make2PointSlide', 'MakeJointCompression', 'MakeDogLeg', 'MakeBipedCharacterKeySet', 'MakeQuadrupedCharacterKeySet', 'SetKeyableRig', 'syCachePaint1', 'syCachePaint2', 'SyGetMassMap', 'SyGetSpringMap', 'CreateInspectParticleTypeBillboard', 'CreateInspectParticleTypeBlob', 'CreateInspectParticleTypeSphere'];
 const NAMES = [...INFERRED, ...SHELLS];
-const DEFAULT_FAILS = new Set(['CopyPaste', 'CreateEnvironmentCache', 'SIAppendBone', 'PaintWeights', 'DeleteCurrentLayer', 'CreateShaderFromCLSID', 'CreateShaderFromProgID', 'CreateShadersFromMaterialPreset']);
+const DEFAULT_FAILS = new Set(['CreateEnvironmentCache', 'SIAppendBone', 'PaintWeights', 'CreateShaderFromCLSID', 'CreateShaderFromProgID', 'CreateShadersFromMaterialPreset']);
 const full = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'commands_full.json'), 'utf8'));
 const registry = Object.fromEntries(NAMES.map(n => {
   const f = full.find(x => (x.scripting_name || x.name) === n);
@@ -95,20 +95,14 @@ const got = await page.evaluate(async ({ NAMES, LITERAL, DEFAULT_FAILS: DF }) =>
     r = run('Pick Session Tool'); ok('Pick Session Tool (inferred): outside a pick session -> logged, no change', nya(r));
     run('Turn OFF Interactive SRT'); const off = A.inferredB15.interactiveSRT; run('Turn ON Interactive SRT');
     ok('Turn OFF / ON Interactive SRT (inferred): flag false then true', off === false && A.inferredB15.interactiveSRT === true);
-    // CopyPaste
-    reset(); const clip = A.clipboard; const nul = A.run('GetPrim', { PresetObj: 'Null', Name: 'tgtB15f' }); reset();
+    // CopyPaste / DeleteCurrentLayer: now CMD-B16c contracts, checked by tools/compare_tasks_b16c.mjs
+    reset(); const nul = A.run('GetPrim', { PresetObj: 'Null', Name: 'tgtB15f' }); reset();
     const u0 = A.undoStack.length;
-    r = run('CopyPaste', { Source: cube, Target: nul });
-    ok('CopyPaste (inferred): Source duplicated under Target, clipboard untouched', Array.isArray(r.v) && r.v.length === 1 && r.v[0] !== cube && r.v[0].parentObj === nul && A.clipboard === clip, r.err);
     // Delete Selected Branch
     A.select([nul]); r = run('Delete Selected Branch');
     ok('Delete Selected Branch (inferred): the selected object and its branch are removed', !A.scene.find('tgtB15f') && !!r && !r.err);
     while (A.undoStack.length > u0) A.undo();
     A.scene.root.removeChild(nul);
-    // DeleteCurrentLayer
-    const lay = A.run('CreateLayer', { Name: 'layB15f' }); A.run('SetCurrentLayer', { Name: lay.name });
-    r = run('DeleteCurrentLayer');
-    ok('DeleteCurrentLayer (inferred): DeleteLayer of the current layer', !A.scene.layers.includes(lay), r.err);
     // Freeze Selected / Dice / Mesh Filter
     reset(); let fz = trace('FreezeObj', () => run('Freeze Selected'));
     ok('Freeze Selected (inferred): FreezeObj on the selection', fz.length === 1 && fz[0].InputObjs?.[0] === cube);
