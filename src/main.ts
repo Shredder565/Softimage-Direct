@@ -75,6 +75,7 @@ import { registerFaceRobotB14eCommands } from './commands/faceRobotB14e';
 import { registerModelTasksB15aCommands } from './commands/modelTasksB15a';
 import { registerClipsSourcesB15dCommands } from './commands/clipsSourcesB15d';
 import { registerRigScriptsB15eCommands } from './commands/rigScriptsB15e';
+import { registerMiscScriptsB15fCommands } from './commands/miscScriptsB15f';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -221,6 +222,7 @@ registerPropertyTasksB15bCommands(app);   // CMD-B15b (propertytasks.dll contrac
 registerParticlesB15cCommands(app);   // CMD-B15c (sparks.dll / forces.dll particle commands; replaces the CMD-03b CreateInspectParticleType* entries)
 registerClipsSourcesB15dCommands(app);   // CMD-B15d (image / model / file-cache sources and clips, audio)
 registerRigScriptsB15eCommands(app);   // CMD-B15e (Character Rigging script commands)
+registerMiscScriptsB15fCommands(app);   // CMD-B15f (sdkui wizards, lip-sync, UpgradeShaders, default camera, OBJ menu entry)
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);

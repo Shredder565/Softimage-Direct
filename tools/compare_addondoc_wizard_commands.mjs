@@ -23,9 +23,9 @@ const NAMES = ['GetAddonDocHelper', 'GetAddonDocPath', 'GetAddonUpdateArray', 'G
 const DETAIL_KEYS = ['Categories', 'PlatForms', 'Title', 'AuthorName', 'AuthorEMail', 'Company', 'URL', 'Language', 'Summary', 'Usage'];
 const DOC_Q2 = ['GetTemplateInfo', 'GetContentItemInfo', 'GetTemplateShortName', 'GetTemplateImage', 'SortAddons', 'GetAddonDocTableAsHTML',
   'GetTemplateTableAsHTML', 'GetContentItemTableAsHTML', 'ExecuteContentItem', 'GenerateTemplateWizard'];
-const WIZ_Q3 = ['GetSelectedRows', 'DeleteSelectedRows', 'DeleteRow', 'ClearGrid', 'GetNullOrValue', 'CreateMenuIDArray', 'StandardIncludes',
-  'GeneratePluginFile', 'GenerateRTShaderCode', 'GenerateRTShaderFile', 'WriteAndLoadScriptPlugin', 'GetCppCompilerInfo', 'GetDefaultVCCompiler',
-  'GetSupportedVCCompilerArray', 'GenerateCppProject', 'GenerateCppProjectFromArray', 'GenerateCSProject', 'BuildCSVarType'];
+// CMD-B15f closed Q3 for nine of these (miscScriptsB15fGen.ts); the rest stay "not yet attested".
+const WIZ_Q3 = ['GetSelectedRows', 'DeleteSelectedRows', 'DeleteRow', 'ClearGrid', 'GetNullOrValue',
+  'GenerateRTShaderCode', 'GenerateRTShaderFile', 'GenerateCppProjectFromArray', 'BuildCSVarType'];
 
 const raw = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'commands_full.json'), 'utf8'));
 const list = Array.isArray(raw) ? raw : (raw.commands ?? Object.values(raw));
@@ -512,4 +512,4 @@ if (diffs.length) {
 }
 console.log(`OK CMD-01-ADDONDOC add-on doc / wizard helper commands: ${checks} checks, ${NAMES.length} commands exercised (contract tables + registry dump; no XSIBATCH golden yet)`);
 console.log('   fully wired: GetAddonDocPath, GetAddonUpdateArray (no request made: warning + null), GetNbUpdatesPending, CreateXMLDoc (file system = the session\'s virtual host FS)');
-console.log('   partly wired: GetAddonDocHelper (Netview HTML builders Q2 raise "not yet attested"), WizardHelper (code-generation / grid methods Q3 raise "not yet attested")');
+console.log('   partly wired: GetAddonDocHelper (Netview HTML builders Q2 raise "not yet attested"), WizardHelper (grid / RT-shader / array-project methods Q3 raise "not yet attested"; the nine code generators were wired by CMD-B15f)');
