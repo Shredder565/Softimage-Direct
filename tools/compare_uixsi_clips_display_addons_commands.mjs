@@ -433,10 +433,10 @@ eq('DisplayPortValues default: no value', D.DisplayPortValues.r, NONE); ok('Disp
 const I = got.image;
 eq('CreateImageClip2: one clip, on the root, selection kept', I.clip, [['node:imageclip:woodClip'], 'Pictures/wood.pic', true, 1, true]);
 ok('CreateImageClip2: clip auto-inspected', I.clipInspected); eq('CreateImageClip2: FileName out', I.clipOut, { FileName: 'Pictures/wood.pic' });
-eq('CreateImageClip2: low-level call recorded (stand-in)', I.clipCall, 'SICreateImageClip2:false'); ok('CreateImageClip2: stand-in logged', I.clipLog >= 1);
+eq('CreateImageClip2: low-level call recorded (B15d: SICreateImageClip2 is on the bus)', I.clipCall, 'SICreateImageClip2:true'); ok('CreateImageClip2: B15d low-level logged (parser branch not attested)', I.clipLog >= 1);
 eq('AddImageSource: source returned, selected, inspected', I.source, ['node:imagesource:stone', 'Pictures/stone.pic', true, true, true]);
 eq('AddImageSource: no source, nothing more happens', I.sourceEmpty, ['<none>', true]);
-eq('AddWritableImageSource: source', I.writable, ['node:imagesource:bake', 256, 256, 'siRenderChannelColorType', true, true]);
+eq('AddWritableImageSource: source (B15d: Type is the numeric channel type, Color = 2)', I.writable, ['node:imagesource:bake', 256, 256, 2, true, true]);
 ok('AddWritableImageSource: UseExisting hands back the existing source', I.useExisting); eq('AddWritableImageSource: new source otherwise', I.notExisting, [true, 512]);
 eq('AddWritableImageSource: undo', I.undo, -1);
 // model
