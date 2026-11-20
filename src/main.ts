@@ -81,6 +81,7 @@ import { registerMiscScriptsB15fCommands } from './commands/miscScriptsB15f';
 import { registerInferredB15Commands } from './commands/inferredB15';
 import { registerToolsB16aCommands } from './commands/toolsB16a';
 import { registerToolsB17iCommands } from './commands/toolsB17i';
+import { registerFaceRobotB18bcCommands } from './commands/faceRobotB18bc';
 import { registerTasksB16cCommands } from './commands/tasksB16c';
 import { registerB16eCommands } from './commands/b16eActioncoreOptasksGap';
 import { registerShellsB15ElseCommands } from './commands/shellsB15Else';
@@ -251,6 +252,7 @@ registerParamsToolsB17gCommands(app);   // CMD-B17g (parameters.vbs / tools.vbs 
 registerRigsCharacB17hCommands(app);   // CMD-B17h (command.js / rigs.vbs / Charac_Tools.js / Charac_LoadBipedGuide.vbs)
 registerToolsB16aCommands(app);   // CMD-B16a (toolmanager.dll tool activation; last: earlier registrations of these names become the tool class bodies)
 registerToolsB17iCommands(app);   // CMD-B17i (Escape Pick Session x2, Show Next / Previous Manipulator, Toggle Manipulator mode)
+registerFaceRobotB18bcCommands(app);   // CMD-B18b / CMD-B18c
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);
