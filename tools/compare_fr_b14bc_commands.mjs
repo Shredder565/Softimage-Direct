@@ -215,8 +215,9 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     ok('fr_MirrorMouthSculpt: partner = X-mirrored offset, SelectGeometryComponents + Translate, DeselectAll', near(pm2[11 * 3], rest[11 * 3] - 0.1) && near(pm2[11 * 3 + 1], rest[11 * 3 + 1] + 0.2) && has(r, /SelectGeometryComponents\(".*SculptMouth\.pnt\[11\]"\)/) && A.selection.length === 0, [pm2[33], rest[33], r.log]);
     r = run('fr_AdjustMetaMouth');
     ok('fr_AdjustMetaMouth: Property Panel view MouthAdjust targeting MouthAdjustProperties', /MouthAdjustProperties$/.test(D.views.get('MouthAdjust')?.attrs.targetcontent ?? ''));
-    r = run('fr_SculptMouthEnd', { mesh, cancel: false });
+    r = run('fr_SculptMouthEnd', { mesh, cancel: true });
     ok('fr_SculptMouthEnd: SculptMouth deleted, mesh selected', !model.children.some(c => c.name === 'SculptMouth') && A.selection[0] === mesh, r.err);
+    ok('fr_SculptMouthEnd: cancel = true is the apply (bake) path: moved vertex 13 stored as a correction record in the mouth blob', blob.corrections?.length === 1 && blob.corrections[0].some(e => e.v === 13), blob.corrections);
     mesh.addProperty(new Prop('SculptLinkReader', 'customparamset', []));
     r = run('fr_SculptMouthBegin', { mesh });
     ok('fr_SculptMouthBegin: active sculpt -> message, status 1', has(r, /^FaceMesh has already a sculpt activated!$/) && lastStatus().status === 1 && !model.children.some(c => c.name === 'SculptMouth'), r);
@@ -227,7 +228,9 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     ok('fr_ProxyMouth: returns true, ExtractedMouth duplicate, progress pbar_init_mouth_proxy', r.v === true && !!A.scene.find('ExtractedMouth') && S.progress.includes('pbar_init_mouth_proxy') && nya(r), r);
     r = run('fr_VectorMouth', { mode: 1 });
     ok('fr_VectorMouth: not yet attested worker', !r.err && nya(r));
+    model.addProperty(new Prop('ZeroPoseO', 'UserDataBlob', [])); model.addProperty(new Prop('ZeroPose', 'UserDataBlob', []));
     r = run('fr_ResetControllerDB');
+    ok('fr_ResetControllerDB: deletes the blobs ZeroPoseO and ZeroPose from the face model', !model.properties.some(p => p.name === 'ZeroPoseO' || p.name === 'ZeroPose'));
     ok('fr_ResetControllerDB: re-registers the controllers found under FaceModel in "controls"', store.raw('controls', 'JawEnd_Control') === jaw && S.rows.resetControllerDB.join() === 'JawEnd_Control' && nya(r));
     r = run('fr_StickLips');
     ok('fr_StickLips: no LipStiction -> message', has(r, /^To enable Stiction in this Scene, the Mouth has to be Regenerated$/));
@@ -242,7 +245,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     const c = r.v; const off = c?.parentObj;
     const gp = c ? (() => { const e = c.globalMatrix().elements; return [e[12], e[13], e[14]]; })() : null;
     ok('AddFaceControl: returns the control null under the offset parent under the model', c?.name === 'TestCtl' && off?.name === 'TestCtl_Parent' && off.parentObj === model, r);
-    ok('AddFaceControl: global position, size Scale (offset Scale*0.2, display 0x232), colour', arrNear(gp, [1, 2, 3]) && c.nullSize === 2 && near(off.nullSize, 0.4) && off.displayValue === 0x232 && c.wireColor === 5);
+    ok('AddFaceControl: global position, size Scale (offset Scale*0.2, wirecol 0x232), colour', arrNear(gp, [1, 2, 3]) && c.nullSize === 2 && near(off.nullSize, 0.4) && off.wireColor === 0x232 && c.wireColor === 5);
     ok('AddFaceControl: groups Controls / ControlParents, keywords "Control,Lip", FaceControl', A.scene.groupList.find(g => g.name === 'Controls')?.members.includes(c) && A.scene.groupList.find(g => g.name === 'ControlParents')?.members.includes(off) && c.userKeywords === 'Control,Lip' && c.properties.some(p => p.name === 'FaceControl'));
     r = run('AddFaceControl', { Nom: 'Plain', Model: mesh });
     ok('AddFaceControl: Model not a model -> its owning model; no offset parent', r.v?.parentObj === model && r.v.name === 'Plain');

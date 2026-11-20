@@ -111,15 +111,18 @@ export function registerFaceRobotB14eTongueCommands(app: App) {
           wrap(app, 'B14e', 'SetValue', { Target: 'Views.ViewB.UserCamera.camvis.objnulls', Value: true });
           nyaE(app, C, 'display constant 0x15e of the controls, the parameter tagging and the envelope / bind helpers 0x1801a7d20, 0x1800961e0, 0x180096f80');
         }
-      } else nyaE(app, C, 'solver without a registered tongue mesh (it stops; no failure flag is set)');
+      }   // no registered tongue mesh: the solver stops early, no failure flag is set (cmd-b15 Q1)
       // step 3: delete the Tongue*Marker nulls under Fit
       if (fit && isInScene(app, fit)) for (const o of [...fit.descendants()]) if (/^Tongue.*Marker$/.test(o.name) && isInScene(app, o)) deleteNode(app, o);
       if (failed && refs.length <= 3) { setStatus(app, 'B14e', C, S_FALSE); return false; }
       const g = frGroup(app, 'Tongue'); const tm = entryObject(app, 'meshes', 'Tongue');
-      if (g && tm) addToGroup(app, g, tm);
-      const fcV = frStore(app).raw('psets', 'FaceConnections'); const fc = fcV instanceof Property ? fcV : faceConnections(faceModel(app));
-      const q = fc?.get('Tongue');
-      if (q) app.setParam(q, q.def.type === 'string' ? (tm?.name ?? 'true') : true);   // value inferred: true (the mesh name on a string parameter)
+      // without meshes/Tongue (or the group) the group and FaceConnections step is skipped: nothing is written (cmd-b15 Q1)
+      if (g && tm) {
+        addToGroup(app, g, tm);
+        const fcV = frStore(app).raw('psets', 'FaceConnections'); const fc = fcV instanceof Property ? fcV : faceConnections(faceModel(app));
+        const q = fc?.get('Tongue');
+        if (q) app.setParam(q, q.def.type === 'string' ? tm.name : true);   // value inferred: the mesh reference
+      }
       stageRefresh(app, C);
       setStatus(app, 'B14e', C, S_OK);
       return true;
@@ -146,8 +149,8 @@ export function registerFaceRobotB14eTongueCommands(app: App) {
         for (const p of SRT6) setLocal(app, c, p, 0);
       }
       const m = faceModel(app);
-      nyaE(app, C, 'names of the two deleted mouth-sculpt blobs (Q5; CDKMetaMouthSculpt / CDKMetaMouthSymMap used)');
-      if (m) for (const n of ['CDKMetaMouthSculpt', 'CDKMetaMouthSymMap']) { const p = propNamed(m, n); if (p) deleteNode(app, p); }
+      // the deleted blobs are `ZeroPoseO` and `ZeroPose` (cmd-b15 Q2)
+      if (m) for (const n of ['ZeroPoseO', 'ZeroPose']) { const p = propNamed(m, n); if (p) deleteNode(app, p); }
       nyaE(app, C, 'mouth re-fit 0x1800e34e0 (Fit / HeadNull / JawStart and the lip, corner and jaw markers)');
       buildMetaMouth(app, C);
       nyaE(app, C, 'calibration pass 0x18015da60 (flags 0 and 1)');

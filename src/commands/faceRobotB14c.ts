@@ -59,9 +59,9 @@ function addFaceControl(app: App, a: Record<string, any>) {
   let parent: X3DObject = model;
   if (boolArg(a.bHasOffsetParent, false)) {
     const g = ensureGroup(app, 'ControlParents');
-    NYA(app, C, 'the offset-parent name suffix and the meaning of display value 0x232 (Q2); the suffix `_Parent` is used');
+    // offset parent = Nom + `_Parent`; 0x232 (562) is its wireframe colour (cmd-b15 Q11)
     const off = newNullAt(app, nom + '_Parent', model, pos);
-    Object.assign(off as any, { nullSize: scale * 0.2, displayValue: 0x232 });
+    Object.assign(off as any, { nullSize: scale * 0.2, wireColor: 0x232 });
     addToGroup(app, g, off); parent = off;
   }
   const g2 = ensureGroup(app, 'Controls');
