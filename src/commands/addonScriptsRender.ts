@@ -12,7 +12,7 @@
 //    documented on `RtGraphObject`.
 //  * Shader definitions. `GetShaderDef` is not on the bus; the definitions live in `state.shaderDefs`, filled
 //    from the build's own SPDL shader list on first use.
-//  * Overrides. `SIAddEntryToOverride` is not on the bus; the entries are kept on the override property.
+//  * Overrides. `SIAddEntryToOverride` is on the bus since CMD-B15b (propertyTasksB15b*.ts); the paths are also kept on the override property.
 import { App } from '../core/commands';
 import { Node, Property, Material, Shader, Pass, Light, Camera } from '../core/scene';
 import { SI_SHADERS } from '../core/shaders';
@@ -53,10 +53,13 @@ function overrideMarkedPassParameters(app: App): void {
     (override as any).entries = [];
     (pass as any).passOverride = override;
   }
+  const params = new Map<string, any>((own.length ? own : marked).map(p => [p.name, p]));
   for (const e of entries) {
     const path = `${fullNameOf(sel)}.${e}`;
-    const r = delegate(app, 'OverrideMarkedPassParameters', 'SIAddEntryToOverride', { Override: override, Parameter: path }, [fullNameOf(override), path]);
-    if (!r.done) { const list: string[] = ((override as any).entries ??= []); if (!list.includes(path)) list.push(path); }
+    // CMD-B15b: SIAddEntryToOverride is on the bus now (InputObj = the override, InputObjs = the parameter; Type 2 = a parameter-value
+    // entry, inferred for "override marked parameters"). The path list below is kept as before.
+    delegate(app, 'OverrideMarkedPassParameters', 'SIAddEntryToOverride', { InputObj: override, InputObjs: [params.get(e) ?? path], Type: 2 }, [fullNameOf(override), path]);
+    const list: string[] = ((override as any).entries ??= []); if (!list.includes(path)) list.push(path);
   }
   inspect(app, override);
 }

@@ -95,22 +95,7 @@ function registerProperty(app: App) {
     args: [{ name: 'Objects', default: null }],
     execute(app, a) { for (const o of objs(app, a.Objects)) if (o !== app.scene.root) assign(o, null, 'Unassign'); },
   });
-  // inferred: PresetObj unset = the default Phong surface, as SIApplyShader on this bus
-  reg(app, {
-    name: 'SICreateMaterial', label: 'CreateMaterial', category: 'Property', description: 'Creates a material and optionnally assigns to a list of objects',
-    args: [{ name: 'PresetObj', default: null }, { name: 'Name', default: 'Material' }, { name: 'Library', default: null }, { name: 'Objects', default: null }, { name: 'AssignToList', default: true }, { name: 'Initialize', default: true }],
-    execute(app, a) {
-      const key = unset(a.PresetObj) ? 'Phong' : String(a.PresetObj).replace(/\.Preset$/i, '').split(/[\\/]/).pop()!;
-      const shader = makeSiShader(key); if (!shader) throw new Error(`SICreateMaterial: shader preset ${a.PresetObj} is not available`);
-      const m = new Material(app.scene.uniqueName(String(a.Name || 'Material'))); m.setSurface(shader);
-      const mats = app.scene.materials;
-      app.record('Create material', () => { mats.push(m); }, () => { const i = mats.indexOf(m); if (i >= 0) mats.splice(i, 1); });
-      if (!unset(a.Library)) logNya(app, 'SICreateMaterial', 'the Library argument (the scene has one material list)');
-      if (!boolArg(a.Initialize)) logNya(app, 'SICreateMaterial', 'Initialize=False');
-      if (boolArg(a.AssignToList)) for (const o of objs(app, a.Objects)) assign(o, m, 'Assign');
-      return m;
-    },
-  });
+  // SICreateMaterial: replaced by the CMD-B15b contract (propertyTasksB15b.ts)
 
   // ---- make local
   const makeLocal = (cmd: string, a: Record<string, any>): Node[] => {
