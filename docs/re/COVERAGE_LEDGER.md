@@ -34,51 +34,51 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 <!-- BEGIN GENERATED: commands -->
 | Row | Area (command category) | Softimage commands | Named in `src/` | Not yet named | Status |
 |-----|-------------------------|-------------------:|----------------:|--------------:|--------|
-| CMD-01 | File | 110 | 81 | 29 | TODO |
-| CMD-02 | Simulation | 118 | 90 | 28 | TODO |
-| CMD-03 | Character Rigging | 31 | 4 | 27 | TODO |
-| CMD-04 | Property | 125 | 105 | 20 | TODO |
-| CMD-05 | (uncategorised) | 448 | 431 | 17 | TODO |
-| CMD-06 | Custom | 413 | 400 | 13 | TODO |
-| CMD-07 | Rendering | 175 | 166 | 9 | TODO |
-| CMD-08 | Viewing | 191 | 185 | 6 | TODO |
-| CMD-09 | Edit | 117 | 112 | 5 | TODO |
-| CMD-10 | Modeling | 274 | 269 | 5 | TODO |
-| CMD-11 | Animation | 186 | 183 | 3 | TODO |
-| CMD-12 | Action | 1 | 1 | 0 | AUDIT |
-| CMD-13 | Animation Mixer | 113 | 113 | 0 | AUDIT |
-| CMD-14 | Animation mixer | 5 | 5 | 0 | AUDIT |
-| CMD-15 | Cache | 2 | 2 | 0 | AUDIT |
-| CMD-16 | Camera | 1 | 1 | 0 | AUDIT |
-| CMD-17 | Camera Sequencer | 7 | 7 | 0 | AUDIT |
-| CMD-18 | Cluster | 16 | 16 | 0 | AUDIT |
-| CMD-19 | Constraint | 27 | 27 | 0 | AUDIT |
-| CMD-20 | Customization | 2 | 2 | 0 | AUDIT |
-| CMD-21 | Deformation | 55 | 55 | 0 | AUDIT |
-| CMD-22 | Devices | 5 | 5 | 0 | AUDIT |
-| CMD-23 | Drawing | 14 | 14 | 0 | AUDIT |
-| CMD-24 | General | 10 | 10 | 0 | AUDIT |
-| CMD-25 | Generator | 1 | 1 | 0 | AUDIT |
-| CMD-26 | Group | 16 | 16 | 0 | AUDIT |
-| CMD-27 | ICE | 5 | 5 | 0 | AUDIT |
-| CMD-28 | Layer | 20 | 20 | 0 | AUDIT |
-| CMD-29 | Manipulation | 51 | 51 | 0 | AUDIT |
-| CMD-30 | Navigation | 22 | 22 | 0 | AUDIT |
-| CMD-31 | Operator | 11 | 11 | 0 | AUDIT |
-| CMD-32 | Paint | 7 | 7 | 0 | AUDIT |
-| CMD-33 | Preferences | 2 | 2 | 0 | AUDIT |
-| CMD-34 | Primitive | 131 | 131 | 0 | AUDIT |
-| CMD-35 | Scripting | 4 | 4 | 0 | AUDIT |
-| CMD-36 | Selection | 108 | 108 | 0 | AUDIT |
-| CMD-37 | Source | 6 | 6 | 0 | AUDIT |
-| CMD-38 | Texturing | 75 | 75 | 0 | AUDIT |
-| CMD-39 | Toolbar | 6 | 6 | 0 | AUDIT |
-| CMD-40 | Transform | 5 | 5 | 0 | AUDIT |
-| CMD-41 | Transport Control | 23 | 23 | 0 | AUDIT |
-| CMD-42 | VertexColor | 1 | 1 | 0 | AUDIT |
+| CMD-01 | (uncategorised) | 448 | 448 | 0 | AUDIT |
+| CMD-02 | Action | 1 | 1 | 0 | AUDIT |
+| CMD-03 | Animation | 186 | 186 | 0 | AUDIT |
+| CMD-04 | Animation Mixer | 113 | 113 | 0 | AUDIT |
+| CMD-05 | Animation mixer | 5 | 5 | 0 | AUDIT |
+| CMD-06 | Cache | 2 | 2 | 0 | AUDIT |
+| CMD-07 | Camera | 1 | 1 | 0 | AUDIT |
+| CMD-08 | Camera Sequencer | 7 | 7 | 0 | AUDIT |
+| CMD-09 | Character Rigging | 31 | 31 | 0 | AUDIT |
+| CMD-10 | Cluster | 16 | 16 | 0 | AUDIT |
+| CMD-11 | Constraint | 27 | 27 | 0 | AUDIT |
+| CMD-12 | Custom | 413 | 413 | 0 | AUDIT |
+| CMD-13 | Customization | 2 | 2 | 0 | AUDIT |
+| CMD-14 | Deformation | 55 | 55 | 0 | AUDIT |
+| CMD-15 | Devices | 5 | 5 | 0 | AUDIT |
+| CMD-16 | Drawing | 14 | 14 | 0 | AUDIT |
+| CMD-17 | Edit | 117 | 117 | 0 | AUDIT |
+| CMD-18 | File | 110 | 110 | 0 | AUDIT |
+| CMD-19 | General | 10 | 10 | 0 | AUDIT |
+| CMD-20 | Generator | 1 | 1 | 0 | AUDIT |
+| CMD-21 | Group | 16 | 16 | 0 | AUDIT |
+| CMD-22 | ICE | 5 | 5 | 0 | AUDIT |
+| CMD-23 | Layer | 20 | 20 | 0 | AUDIT |
+| CMD-24 | Manipulation | 51 | 51 | 0 | AUDIT |
+| CMD-25 | Modeling | 274 | 274 | 0 | AUDIT |
+| CMD-26 | Navigation | 22 | 22 | 0 | AUDIT |
+| CMD-27 | Operator | 11 | 11 | 0 | AUDIT |
+| CMD-28 | Paint | 7 | 7 | 0 | AUDIT |
+| CMD-29 | Preferences | 2 | 2 | 0 | AUDIT |
+| CMD-30 | Primitive | 131 | 131 | 0 | AUDIT |
+| CMD-31 | Property | 125 | 125 | 0 | AUDIT |
+| CMD-32 | Rendering | 175 | 175 | 0 | AUDIT |
+| CMD-33 | Scripting | 4 | 4 | 0 | AUDIT |
+| CMD-34 | Selection | 108 | 108 | 0 | AUDIT |
+| CMD-35 | Simulation | 118 | 118 | 0 | AUDIT |
+| CMD-36 | Source | 6 | 6 | 0 | AUDIT |
+| CMD-37 | Texturing | 75 | 75 | 0 | AUDIT |
+| CMD-38 | Toolbar | 6 | 6 | 0 | AUDIT |
+| CMD-39 | Transform | 5 | 5 | 0 | AUDIT |
+| CMD-40 | Transport Control | 23 | 23 | 0 | AUDIT |
+| CMD-41 | VertexColor | 1 | 1 | 0 | AUDIT |
+| CMD-42 | Viewing | 191 | 191 | 0 | AUDIT |
 | CMD-43 | Views | 5 | 5 | 0 | AUDIT |
 | CMD-44 | file | 5 | 5 | 0 | AUDIT |
-| | **Total** | **2950** | **2788** | **162** | |
+| | **Total** | **2950** | **2950** | **0** | |
 <!-- END GENERATED: commands -->
 
 ### P1 sub-rows (hand-maintained; survive regeneration)
@@ -198,12 +198,12 @@ to diff `data/spdl/spdl.json` against `src/data/opdefs.json` and the operator cl
 | GOLD-B14 | (new) | XSIBATCH goldens for cheap batch-14 cases: `fr_GetCurrentStage` codes, `fr_SwitchFaceLayout` on a scene without the Face Robot layout, `fr_s*` store round trip, `fr_FileRead` / `fr_FileWrite` | - | TODO | no process-launch tool this run |
 | CMD-B13-SCRIPTS | (new) | Script-implemented missing commands (CharacterRigging `make*.js` (CMD-B11-RIG), `Charac_RigFrom*.vbs`, sdkui wizards `CommandWizard.js` / `PluginWizard.js` / `ToolbarWizard.js` / `ShaderWizard.js` / `TemplateWizard.js`, `GPUSurfaceFX.js`, `EvolverLipSync.js`, Syflex `cache.vbs` / `cloth.vbs`, `particle.vbs`, `UpgradeShaders.vbs`): need the install folder connected (device_list_dir / stage) to read the files | ~50 | SPEC-PARTIAL | blocked 2026-11-19: no connected folder, no `device_bash`; 2026-11-20: done in CMD-B15e / CMD-B15f; left: files over 64 KB (`ShaderWizard.js`, `uixsiscripts.vbs`, `Charac_RigFromBiped.vbs`) and `GPUSurfaceFX.js` (not shipped) |
 | GOLD-B13 | (new) | XSIBATCH goldens for cheap batch-13 cases (`CrosswalkVersion` = "2015.0", `poMDD*` on a small MDD file, `UnfoldApply` created objects, `RetargetExtractStartFrame` on an animated rig) | - | TODO | needs `device_bash` or a process tool on the PC |
-| CMD-B15-FR | CMD-B13-FR | Answers to wire PR #189 (Face Robot) from `FR.dll`: 17 of 34 questions answered, 5 partly | 5 | SPEC | [cmd-b15-fr-pr189-answers.md](../ghidra/cmd-b15-fr-pr189-answers.md). 2026-11-20: promoted SPEC-PARTIAL → SPEC: `fr_NeighborIndex`, `fr_MuteSources`, `fr_AddObjectInPlace`, `fr_RepairNan`, `fr_CrawlToVertex`. Smaller gaps remain on `fr_GetFaceModel`, `MakeFaceStructure`, `AddFaceControl`, `fr_SculptMouthEnd`, `fr_ResetControllerDB`, `fr_RegenerateMouth`, `fr_SolveTongue`, `fr_WriteC3D`, `fr_EnvelopeAliasing`, `fr_sfeatures`. Open: B14a Q4; B14b Q1–Q3, Q5, Q6; B14c Q3–Q7; B14d Q1–Q4; B14e Q3, Q4. Corrections: `WIRE_CORRECTIONS_B15.md` 1–15 |
-| CMD-B15a | CMD-B12-ELSE | `modeltasks.dll` (REA + Ghidra): `SICreateModel`, `SIMergeScene`, `SIImportModel`, `SIGetModel`, `SIImportIges`, `SIExportIges`, `MergeMixer`, `SIImportMatLib`, `SIImportReferencedMatLib`, `ExportMaterialLibrary`, `GetLightListOnModelClip`, `SetLightListOnModelClip`, `SISetResolutionOfRefModels`, `RemoveRefModelResolution`, `SICreateRefModel`, `ApplyDelta`, `ImportReferencedDelta` (+ same-task `ImportMixer`, `AddRefModelResolution`, `CreateEmptyRefModel`, `ImportDelta`) | 17 | SPEC-PARTIAL | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md). 2026-11-20: 15 SPEC; SPEC-PARTIAL: `SIMergeScene` (per-section merge rules, ShareOptions), `ImportReferencedDelta` / `ImportDelta` (Yes/No meaning in the replace prompt inferred). IGES parser / writer not read (command contract stated). `Add3DObjectToScene` not in this DLL (→ CMD-B15-ELSE). No XSIBATCH golden |
-| CMD-B15b | CMD-B12-ELSE | `propertytasks.dll` (REA + Ghidra): custom params, material DD, user normals, overrides, retarget mapping, `Add property extended`, `SetClusterPropertyValues` | 18 | SPEC-PARTIAL | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md). 2026-11-20: 6 SPEC (`SIAddCustomParam`, `SIGetOverriddenParameters`, `Add property extended`, `siWriteRetargetMapping`, `siWriteRetargetComponentData`, `SetClusterPropertyValues`); 12 SPEC-PARTIAL (`SICreateMaterialDD`, five user-normal commands, three override-entry commands, `SIRemoveEntryFromOverride`, `SIGetOriginalValueOfOverridden`, `siCreateRetargetMapping`; gaps per command in the note). Also served here, already named in `src`: `SIAddProp`, `SIAssignMaterial`, `SIUnAssignMaterial`, `SetEnvelopeRefPoses`, `SIAddPropEx`, `SIMakeLocal`, `RemoveCustomParam`, `EditParameterDefinition`, `AddProxyParam`, `Create2DMap(WithProjection)`, Reset/Average/Invert/Normalize/Copy/Paste UserNormals (not specified) |
-| CMD-B15c | CMD-B12-ELSE | Particles: `sparks.dll` (16 incl. `SIAddParticleEvent`, `SetEventObstacle`, `UpdateParticleTypeConnections`), `forces.dll` (`SIAddParticleForce`); `activedb.dll` serves none of them | 17 | SPEC-PARTIAL | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md). 2026-11-20: 7 SPEC (`ConnectParticleInitState`, `DisconnectParticleInitState`, `AddParticleEmitter`, `CreateParticleType`, `AddUserParameter`, `RemoveUserParameter`, `SIAddParticleForce`); 10 SPEC-PARTIAL (`ConnectWeightMapToComponent`, `SetParticleInitState`, `UpdateParticleTypeConnections`, `AddParticleObstacle`, `AddParticles`, `SetParticleType`, `SIAddParticleGoal`, `CreateEventSource`, `SIAddParticleEvent`, `SetEventObstacle`) |
-| CMD-B15d | CMD-B12-ELSE | Clips / sources: `imageclip.dll` (13 incl. `SIAddImageSource`, `SIAddImageClip`), `moaudio.dll` (`AddAudioClip`, `ImportAudio`) | 15 | SPEC-PARTIAL | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md). 2026-11-20: 9 SPEC (`SIAddImageSourceOp`, `SetImageSource`, `SIAddModelSource`, `SICreateModelClip`, `SIAddModelClip`, `SIAddImageSource`, `SIAddImageClip`, `AddAudioClip`, `ImportAudio`); 6 SPEC-PARTIAL (`SIAddImageOp`, `SIAddWritableImageSource`, `SICreateImageClip2`, `SICreateDefaultImageClip`, `AddFileCacheSource`, `AddFileCacheSource2`). Mode-3 GUID `381d22f4-0961-46de-b9fa-e239189ccb51` not in the registry |
-| CMD-B15e | CMD-B11-RIG | Character Rigging script commands (`Application\DSScripts\CharacterRigging\*.js`, `Charac_RigFromQuadruped.vbs`), read through REA (file opened as a headerless image) | 24 | SPEC | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md). 2026-11-20: all 24 names SPEC (21 `make*.js` builders + `MakeBipedCharacterKeySet`, `MakeQuadrupedCharacterKeySet`, `SetKeyableRig`). The VBScript second registrations of `MakeBiped` / `MakeBipedDogLeg` (`Charac_RigFromBiped.vbs`, 220 070 bytes) are SPEC-PARTIAL: the file exceeds the 64 KB headerless-load limit |
-| CMD-B15f | CMD-B13-SCRIPTS | Remaining script commands: `particle.vbs` (3), sdkui wizards (8 + `CreateMRShaderWizard`), `EvolverLipSync.js`, `UpgradeShaders.vbs`, Syflex `cache.vbs` / `cloth.vbs` (4), `primitives.vbs`, `importexport.vbs`, `uixsiscripts.vbs`, `GPUSurfaceFX.js` | 24 | SPEC-PARTIAL | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md). 2026-11-20: 20 SPEC; SPEC-PARTIAL: `CreateMRShaderWizard` (`ShaderWizard.js` 75 743 B > 64 KB), `Save Zero Key Hot Key` (`uixsiscripts.vbs` 462 005 B, inferred), `GenNormalMap` / `GenDiffuseMap` (`GPUSurfaceFX.js` not shipped). Also closes CMD-01-ADDONDOC Q2 (`.xsitemplate` schema) and Q3 (generator methods) and specifies `GetPrimCamera` |
-| CMD-B15-ELSE | CMD-B12-ELSE | Missing built-in commands whose handler is still unlocated or unread after batch 15: `Add3DObjectToScene` (not modeltasks; candidates tasks.dll, _3dobject2.dll, scnmgr.dll, sicoresdk.dll), CLSID `bbbbee29…` (`CreateShaderFromCLSID`, `CreateShaderFromProgID`, `CreateShadersFromMaterialPreset`, `AddShaderAttachedComment`; not in shadertasks / propertytasks / sparks; candidates molight, shaderhelper, xgs, props, si3dobjectmodel, sicoresdk), `MarkObjectDirty` (registry CLSID all zeros), `Mesh Filter` / `Dice Object/Polygons` (scnmgr.dll), `CopyPartition` / `RegenerateMaps` (rendercore.dll), `CreateEnvironmentCache` (corehelper.dll), `SIAppendBone` (sicoresdk.dll), `GetSkeleton` (kinechain.dll), `SISwapArrayElements`, `CopyPaste`, `PaintWeights`, tools (`DoNothing`, `MoveComponent Tool`, `CursorTransformTool`, `ToggleProjectionTool`, `Pick Session Tool` siuitasks; `XYZ Transform `, `Add Surface Point Tool` toolmanager; `BoneCreateTool`, `Crowd*Tool`, `Freeze Selected`, `Delete Selected Branch`, `Transform Set New `, `Turn ON/OFF Interactive SRT`, `DeleteCurrentLayer`) | ~35 | TODO | next native batch |
+| CMD-B15-FR | CMD-B13-FR | Answers to wire PR #189 (Face Robot) from `FR.dll`: 17 of 34 questions answered, 5 partly | 5 | WIRE-PARTIAL | [cmd-b15-fr-pr189-answers.md](../ghidra/cmd-b15-fr-pr189-answers.md). 2026-11-20: promoted SPEC-PARTIAL → SPEC: `fr_NeighborIndex`, `fr_MuteSources`, `fr_AddObjectInPlace`, `fr_RepairNan`, `fr_CrawlToVertex`. Smaller gaps remain on `fr_GetFaceModel`, `MakeFaceStructure`, `AddFaceControl`, `fr_SculptMouthEnd`, `fr_ResetControllerDB`, `fr_RegenerateMouth`, `fr_SolveTongue`, `fr_WriteC3D`, `fr_EnvelopeAliasing`, `fr_sfeatures`. Open: B14a Q4; B14b Q1–Q3, Q5, Q6; B14c Q3–Q7; B14d Q1–Q4; B14e Q3, Q4. Corrections: `WIRE_CORRECTIONS_B15.md` 1–15. 2026-11-20 wire (PR batch 15): corrections 1–15 applied to `faceRobotB14*.ts`; the five promoted commands finished; `fr_SculptMouthEnd` bake uses stand-in blob name `CDKMetaMouthBake` (second blob unread). Check `compare_modeltasks_b15a_commands` (FR part) + `compare_fr_b14*` green |
+| CMD-B15a | CMD-B12-ELSE | `modeltasks.dll` (REA + Ghidra): `SICreateModel`, `SIMergeScene`, `SIImportModel`, `SIGetModel`, `SIImportIges`, `SIExportIges`, `MergeMixer`, `SIImportMatLib`, `SIImportReferencedMatLib`, `ExportMaterialLibrary`, `GetLightListOnModelClip`, `SetLightListOnModelClip`, `SISetResolutionOfRefModels`, `RemoveRefModelResolution`, `SICreateRefModel`, `ApplyDelta`, `ImportReferencedDelta` (+ same-task `ImportMixer`, `AddRefModelResolution`, `CreateEmptyRefModel`, `ImportDelta`) | 17 | WIRE-PARTIAL | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md). 2026-11-20: 15 SPEC; SPEC-PARTIAL: `SIMergeScene` (per-section merge rules, ShareOptions), `ImportReferencedDelta` / `ImportDelta` (Yes/No meaning in the replace prompt inferred). IGES parser / writer not read (command contract stated). `Add3DObjectToScene` not in this DLL (→ CMD-B15-ELSE). No XSIBATCH golden. 2026-11-20 wire: all 17 + `Add3DObjectToScene` (inferred) on the bus (`src/commands/modelTasksB15a.ts`); partly: `SIMergeScene` (creates the model, no merge), IGES import / export, `MergeMixer` stream reader, binary `.emdl` reader (log "not yet attested"). `ImportMixer` / `ImportDelta` / `AddRefModelResolution` / `CreateEmptyRefModel` left on their older registrations. Check `compare_modeltasks_b15a_commands` 152/152 |
+| CMD-B15b | CMD-B12-ELSE | `propertytasks.dll` (REA + Ghidra): custom params, material DD, user normals, overrides, retarget mapping, `Add property extended`, `SetClusterPropertyValues` | 18 | WIRE-PARTIAL | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md). 2026-11-20: 6 SPEC (`SIAddCustomParam`, `SIGetOverriddenParameters`, `Add property extended`, `siWriteRetargetMapping`, `siWriteRetargetComponentData`, `SetClusterPropertyValues`); 12 SPEC-PARTIAL (`SICreateMaterialDD`, five user-normal commands, three override-entry commands, `SIRemoveEntryFromOverride`, `SIGetOriginalValueOfOverridden`, `siCreateRetargetMapping`; gaps per command in the note). Also served here, already named in `src`: `SIAddProp`, `SIAssignMaterial`, `SIUnAssignMaterial`, `SetEnvelopeRefPoses`, `SIAddPropEx`, `SIMakeLocal`, `RemoveCustomParam`, `EditParameterDefinition`, `AddProxyParam`, `Create2DMap(WithProjection)`, Reset/Average/Invert/Normalize/Copy/Paste UserNormals (not specified). 2026-11-20 wire: all 18 + `AddShaderAttachedComment` / `MarkObjectDirty` (log-only stand-ins) on the bus (`src/commands/propertyTasksB15b*.ts`); user tab / keyword commands now literal names in `uiGroupViewTasks.ts` (item 26). Inferred: `User Normal Property` type `normal`, normal formulas, override entry storage, `SIGetOriginalValueOfOverridden` E_FAIL. Not done: `SIAddCustomParameter` still on its `anim.ts` handler; `SIAddEntryToOverride` / `SIStoreProp` not rewired. Check `compare_propertytasks_b15b_commands` 195/195 |
+| CMD-B15c | CMD-B12-ELSE | Particles: `sparks.dll` (16 incl. `SIAddParticleEvent`, `SetEventObstacle`, `UpdateParticleTypeConnections`), `forces.dll` (`SIAddParticleForce`); `activedb.dll` serves none of them | 17 | WIRE-PARTIAL | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md). 2026-11-20: 7 SPEC (`ConnectParticleInitState`, `DisconnectParticleInitState`, `AddParticleEmitter`, `CreateParticleType`, `AddUserParameter`, `RemoveUserParameter`, `SIAddParticleForce`); 10 SPEC-PARTIAL (`ConnectWeightMapToComponent`, `SetParticleInitState`, `UpdateParticleTypeConnections`, `AddParticleObstacle`, `AddParticles`, `SetParticleType`, `SIAddParticleGoal`, `CreateEventSource`, `SIAddParticleEvent`, `SetEventObstacle`). 2026-11-20 wire: all 17 on the bus (`src/commands/particlesB15c.ts`), item 28 one handler per doubly-registered name; partial branches log "not yet attested". `CreateShaderFromProgID` / `CreateShadersFromMaterialPreset` inferred; `CreateShaderFromCLSID` registered but fails "not yet attested" (no CLSID table). CMD-03b script commands not rerouted. Check `compare_particles_b15c_commands` 178/178 |
+| CMD-B15d | CMD-B12-ELSE | Clips / sources: `imageclip.dll` (13 incl. `SIAddImageSource`, `SIAddImageClip`), `moaudio.dll` (`AddAudioClip`, `ImportAudio`) | 15 | WIRE-PARTIAL | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md). 2026-11-20: 9 SPEC (`SIAddImageSourceOp`, `SetImageSource`, `SIAddModelSource`, `SICreateModelClip`, `SIAddModelClip`, `SIAddImageSource`, `SIAddImageClip`, `AddAudioClip`, `ImportAudio`); 6 SPEC-PARTIAL (`SIAddImageOp`, `SIAddWritableImageSource`, `SICreateImageClip2`, `SICreateDefaultImageClip`, `AddFileCacheSource`, `AddFileCacheSource2`). Mode-3 GUID `381d22f4-0961-46de-b9fa-e239189ccb51` not in the registry. 2026-11-20 wire: all 15 + `SICreateImageClip` on one shared handler (`src/commands/clipsSourcesB15d.ts`). Inferred: lock error 0x80070005, missing-object 0x80070057, default image `noIcon.pic`, sub-image count from `NumberOfTracks`, resolution → path parameter, 44.1 kHz audio. `compare_uixsi_clips_display_addons_commands` adjusted (wrappers now reach the real commands). Check `compare_clips_b15d_commands` 125/125 |
+| CMD-B15e | CMD-B11-RIG | Character Rigging script commands (`Application\DSScripts\CharacterRigging\*.js`, `Charac_RigFromQuadruped.vbs`), read through REA (file opened as a headerless image) | 24 | WIRE-PARTIAL | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md). 2026-11-20: all 24 names SPEC (21 `make*.js` builders + `MakeBipedCharacterKeySet`, `MakeQuadrupedCharacterKeySet`, `SetKeyableRig`). The VBScript second registrations of `MakeBiped` / `MakeBipedDogLeg` (`Charac_RigFromBiped.vbs`, 220 070 bytes) are SPEC-PARTIAL: the file exceeds the 64 KB headerless-load limit. 2026-11-20 wire: all 24 + `GetSkeleton` (inferred) on the bus (`src/commands/rigScriptsB15e*.ts`); 13 fully, 10 builders partly (control placement, roll formula, symmetry, scripted operators recorded not evaluated, `MakeTail` not built). One bus registration per doubly-registered name (JScript argument list). Check `compare_rigging_b15e_commands` 25 + 25 + 159 checks |
+| CMD-B15f | CMD-B13-SCRIPTS | Remaining script commands: `particle.vbs` (3), sdkui wizards (8 + `CreateMRShaderWizard`), `EvolverLipSync.js`, `UpgradeShaders.vbs`, Syflex `cache.vbs` / `cloth.vbs` (4), `primitives.vbs`, `importexport.vbs`, `uixsiscripts.vbs`, `GPUSurfaceFX.js` | 24 | WIRE-PARTIAL | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md). 2026-11-20: 20 SPEC; SPEC-PARTIAL: `CreateMRShaderWizard` (`ShaderWizard.js` 75 743 B > 64 KB), `Save Zero Key Hot Key` (`uixsiscripts.vbs` 462 005 B, inferred), `GenNormalMap` / `GenDiffuseMap` (`GPUSurfaceFX.js` not shipped). Also closes CMD-01-ADDONDOC Q2 (`.xsitemplate` schema) and Q3 (generator methods) and specifies `GetPrimCamera`. 2026-11-20 wire: all 24 on the bus (`src/commands/miscScriptsB15f*.ts`; seven already registered made literal); partly: `CreateMRShaderWizard`, `Save Zero Key Hot Key` (log), `GenNormalMap` / `GenDiffuseMap` (fail: script not shipped). Check `compare_scripts_b15f_commands` 267/267 (with the B15-ELSE inferred names) |
+| CMD-B15-ELSE | CMD-B12-ELSE | Missing built-in commands whose handler is still unlocated or unread after batch 15: `Add3DObjectToScene` (not modeltasks; candidates tasks.dll, _3dobject2.dll, scnmgr.dll, sicoresdk.dll), CLSID `bbbbee29…` (`CreateShaderFromCLSID`, `CreateShaderFromProgID`, `CreateShadersFromMaterialPreset`, `AddShaderAttachedComment`; not in shadertasks / propertytasks / sparks; candidates molight, shaderhelper, xgs, props, si3dobjectmodel, sicoresdk), `MarkObjectDirty` (registry CLSID all zeros), `Mesh Filter` / `Dice Object/Polygons` (scnmgr.dll), `CopyPartition` / `RegenerateMaps` (rendercore.dll), `CreateEnvironmentCache` (corehelper.dll), `SIAppendBone` (sicoresdk.dll), `GetSkeleton` (kinechain.dll), `SISwapArrayElements`, `CopyPaste`, `PaintWeights`, tools (`DoNothing`, `MoveComponent Tool`, `CursorTransformTool`, `ToggleProjectionTool`, `Pick Session Tool` siuitasks; `XYZ Transform `, `Add Surface Point Tool` toolmanager; `BoneCreateTool`, `Crowd*Tool`, `Freeze Selected`, `Delete Selected Branch`, `Transform Set New `, `Turn ON/OFF Interactive SRT`, `DeleteCurrentLayer`) | ~35 | WIRE-PARTIAL | next native batch. 2026-11-20 wire (inferred, relaxed rules): every name here now on the bus: `Add3DObjectToScene` (B15a file), bbbbee29 family (B15c / B15b files), `MarkObjectDirty` (log), and 25 tool / misc names in `src/commands/inferredB15.ts`, all marked `// inferred` (several only log "not yet attested": `Add Surface Point Tool`, `CursorTransformTool`, `ToggleProjectionTool`, `Transform Set New `, `RegenerateMaps`). Needs analyst confirmation |
 | GOLD-B15 | (new) | XSIBATCH goldens for cheap batch-15 cases: `SIGetModel` on an empty list, `SIAddModelClip` failure text, `SIAddCustomParam` with an empty name, `CreateParticleType` default names | - | TODO | no process-launch tool this run |
