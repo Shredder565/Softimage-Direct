@@ -246,19 +246,25 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
   // ================= fr_MuteSources
   try {
     const jaw = A.run('GetPrim', { PresetObj: 'Null', Name: 'JawEnd_ControlOffset' }); face.addChild(jaw);
+    // fr_ResetRetarget is a real command since CMD-B18a (no longer a shell that logs its name): spy on its calls
+    const rrDef = A.commands.get('fr_ResetRetarget'); const rrCalls = []; const rrExec = rrDef.execute;
+    rrDef.execute = (app, args) => { rrCalls.push(args.mute); return rrExec(app, args); };
+    const rrHas = (want) => { const c = rrCalls.splice(0); return want === undefined ? c.length === 0 : c.length === 1 && c[0] === want; };
+    const nyaMS = (r) => r.log.some(l => /^fr_MuteSources: not yet attested/.test(l));
     cube.kinematics.local.get('posx').value = 3;
     let r = run('fr_MuteSources', { Objects: [cube], b_Mute: true, b_IncludeRetargeting: true });
     ok('fr_MuteSources: b_Mute -> ResetTransform on Objects', !r.err && cube.kinematics.local.val('posx') === 0, r);
-    ok('fr_MuteSources: retargeting -> fr_ResetRetarget(true) after the reset; b_ResetTransforms is not used (nothing logged)', has(r, /fr_ResetRetarget/) && !nya(r));
+    ok('fr_MuteSources: retargeting -> fr_ResetRetarget(true) after the reset; b_ResetTransforms is not used (nothing logged)', rrHas(true) && !nyaMS(r));
     cube.kinematics.local.get('posx').value = 3;
     r = run('fr_MuteSources', { Objects: [cube], b_Mute: true, b_IncludeRetargeting: false, b_ResetTransforms: false });
-    ok('fr_MuteSources: the reset is gated by b_Mute, not b_ResetTransforms', cube.kinematics.local.val('posx') === 0 && !has(r, /fr_ResetRetarget/));
+    ok('fr_MuteSources: the reset is gated by b_Mute, not b_ResetTransforms', cube.kinematics.local.val('posx') === 0 && rrHas(undefined));
     cube.kinematics.local.get('posx').value = 3;
     r = run('fr_MuteSources', { Objects: [cube], b_Mute: false, b_IncludeRetargeting: true });
-    ok('fr_MuteSources: not muting + retargeting -> fr_ResetRetarget(false) only', has(r, /fr_ResetRetarget/) && cube.kinematics.local.val('posx') === 3);
+    ok('fr_MuteSources: not muting + retargeting -> fr_ResetRetarget(false) only', rrHas(false) && cube.kinematics.local.val('posx') === 3);
     face.removeChild(jaw);
     r = run('fr_MuteSources', { Objects: [cube], b_Mute: false, b_IncludeRetargeting: true });
-    ok('fr_MuteSources: no JawEnd_ControlOffset -> no retargeting', !has(r, /fr_ResetRetarget/) && !r.err);
+    ok('fr_MuteSources: no JawEnd_ControlOffset -> no retargeting', rrHas(undefined) && !r.err);
+    rrDef.execute = rrExec;
     cube.kinematics.local.get('posx').value = 0;
     r = run('fr_MuteSources', { Objects: '' });
     ok('fr_MuteSources: empty collection -> 0x80020003', status(r, '80020003'));
