@@ -96,12 +96,17 @@ export function registerFaceRobotB14eTongueCommands(app: App) {
       if (mesh) {
         const parent = controlNamed(app, 'JawEnd_Control') ?? getKeyed(app, ['Jaw', 'Bone'])[0] ?? faceModel(app);
         if (parent && parent !== mesh) reparent(app, mesh, parent);
-        wrap(app, 'B14e', 'fr_IsHeadMesh', {});
+        wrap(app, 'B14e', 'fr_IsHeadMesh', { Mesh: mesh });   // WIRE_CORRECTIONS_B18 item 8: the tongue mesh
         const markers = fit ? [...fit.descendants()].filter(o => /^Tongue.*Marker$/.test(o.name)) : [];
         if (markers.length < 4) { app.logMsg('info', 'Tongue markers are missing'); failed = true; }
         else {
           const cls = classify(markers, '_Marker');
-          if (boolArg(a.Rescale, false)) { wrap(app, 'B14e', 'fr_ScaleTongueMesh', {}); nyaE(app, C, 'scale passed to fr_ScaleTongueMesh'); }
+          // WIRE_CORRECTIONS_B18 item 8: the tongue mesh and the marker vectors (base first; cmd-b18c fr_ScaleTongueMesh)
+          if (boolArg(a.Rescale, false)) {
+            const vecs = TONGUE_PARTS.map(p => cls[p]).filter((m): m is X3DObject => !!m).map(m => { const v = globalPos(m); return [v.x, v.y, v.z]; });
+            wrap(app, 'B14e', 'fr_ScaleTongueMesh', { Mesh: mesh, Markers: vecs });
+            nyaE(app, C, 'scale passed to fr_ScaleTongueMesh');
+          }
           for (const part of TONGUE_PARTS) {
             const n = newNull(app, `${part}_Control`, parent ?? null);
             const mk = cls[part]; if (mk) setGlobalPos(app, n, globalPos(mk));   // inferred: the control starts at its marker

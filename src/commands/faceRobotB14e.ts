@@ -223,8 +223,11 @@ export function registerFaceRobotB14eCommands(app: App) {
       const C = 'fr_CrawlToVertex';
       let text: any = app.commands.has('fr_GetPointsAsText') ? wrap(app, 'B14e', 'fr_GetPointsAsText', {}) : undefined;
       if (typeof text !== 'string') {
-        // inferred stand-in for the fr_GetPointsAsText script command: the selected points as "<object>.pnt[i,j,...]"
-        const cs = app.compSel; text = cs && cs.kind === 'point' && cs.points.size ? `${cs.obj.fullName}.pnt[${[...cs.points].join(',')}]` : '';
+        // stand-in for the fr_GetPointsAsText script command (CMD-B18a, WIRE_CORRECTIONS_B18 item 7): the selected points as
+        // "<object>.pnt[i,j,...]"; a polygon selection is first replaced by its adjacent points; anything else gives ""
+        let cs = app.compSel;
+        if (cs && cs.kind === 'polygon' && cs.polygons.size && app.commands.has('SelectAdjacent')) { wrap(app, 'B14e', 'SelectAdjacent', { InputObjs: null, SelFilter: 'Point', ExtendSelection: false }); cs = app.compSel; }
+        text = cs && cs.kind === 'point' && cs.points.size ? `${cs.obj.fullName}.pnt[${[...cs.points].join(',')}]` : '';
       }
       const [head, rest = ''] = String(text).split('[');
       const toks = head.split('.'); const objName = toks.slice(0, -1).join('.');

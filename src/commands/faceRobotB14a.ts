@@ -70,13 +70,14 @@ export function loadLocalization(app: App, force = false) {
   if (rs.locTried && !force) return;
   rs.locTried = true;
   if (!st.interactive) return;   // batch: nothing is loaded
+  // fr_GetFile (GeneralHelper.js, CMD-B18a / WIRE_CORRECTIONS_B18 item 6) gives <FACEROBOTROOT>\Application\<file>
   let path = '';
   if (app.commands.has('fr_GetFile')) {
     const r = app.run('fr_GetFile', { inFileName: 'views\\FR.en-us.txt' });
     path = typeof r === 'string' ? r : r instanceof Node ? '' : r ? String(r) : '';
   }
   rs.locPath = path;
-  if (!path) { logNya(app, 'fr_sstring', 'the localization path fr_GetFile gives for views\\FR.en-us.txt (its JScript body is not wired here); table left empty'); return; }
+  if (!path) { logNya(app, 'fr_sstring', 'fr_GetFile is not on the bus or gave no path for views\\FR.en-us.txt; table left empty'); return; }
   if (!isFile(path)) { app.logMsg('error', `Unable to read localization file '${path}'`); return; }
   // bytes widened one per character (Latin-1)
   const b = readBytes(path); let s = ''; for (let i = 0; i < b.length; i++) s += String.fromCharCode(b[i]);
@@ -221,7 +222,7 @@ function frMuteSources(app: App, a: Record<string, any>) {
   const retarget = !!jaw && boolArg(a.b_IncludeRetargeting, false);
   const mute = boolArg(a.b_Mute, false);
   const resetRetarget = (v: boolean) => {
-    if (app.commands.has('fr_ResetRetarget')) app.run('fr_ResetRetarget', { inValue: v });
+    if (app.commands.has('fr_ResetRetarget')) app.run('fr_ResetRetarget', { mute: v });   // its argument is `mute` (CMD-B18a)
     else logNya(app, C, `fr_ResetRetarget(${v}) (not on the bus)`);
   };
   if (!mute && retarget) resetRetarget(false);

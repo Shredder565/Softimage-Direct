@@ -147,7 +147,7 @@ export function registerIceModuleCommands(app: App) {
     });
   }
 
-  // GD-05 — iceflow.dll Execute: ICEFlowSendBack + OneClick* (commands_full ACTIVE; Mudbox bridge = Softimage surface only).
+  // GD-05 — iceflow.dll Execute: ICEFlowSendBack (the OneClick* commands are CMD-B18e, src/commands/oneClickB18e.ts).
   if (!app.commands.has('ICEFlowSendBack')) {
     app.register({
       name: 'ICEFlowSendBack',
@@ -164,60 +164,6 @@ export function registerIceModuleCommands(app: App) {
       },
     });
   }
-  const oneClick = (name: string, args: { name: string; default: unknown }[] = []) => {
-    if (app.commands.has(name)) return;
-    app.register({
-      name,
-      label: name,
-      category: 'Custom',
-      args,
-      undoable: false,
-      execute(app, a) {
-        const st = ((app as any).__iceFlowOneClick ??= { remote: null as string | null, state: 'idle', status: '' });
-        if (name === 'OneClickSetup') {
-          st.state = 'setup';
-          st.status = 'OneClick ready';
-        } else if (name === 'OneClickGetState') {
-          return st.state;
-        } else if (name === 'OneClickGetStatusText') {
-          return st.status || st.state;
-        } else if (name === 'OneClickGetRemoteAppName') {
-          return st.remote || '';
-        } else if (name === 'OneClickSendTo') {
-          st.remote = a.RemoteApp != null ? String(a.RemoteApp) : st.remote;
-          st.state = 'send';
-          st.status = `SendTo ${st.remote || '(unset)'}`;
-        } else if (name.startsWith('OneClickSendTo')) {
-          // Softimage OneClickSendTo* surface — log remote app; do not invent Mudbox/Maya/Max bridge I/O.
-          const appName = name.includes('Mudbox') ? 'Mudbox' : name.includes('Maya') ? 'Maya' : name.includes('Max') || name.includes('3dsMax') ? '3dsMax' : 'Remote';
-          st.remote = appName;
-          st.state = name.includes('Update') ? 'update' : name.includes('AddTo') ? 'add' : name.includes('SelectPrevious') ? 'select_prev' : 'send_new';
-          st.status = `${name} (${appName})`;
-        } else if (name === 'OneClickSelectObjects') {
-          st.state = 'select';
-          return app.selectedObjects.map(o => o.name);
-        }
-        (app as any).__iceFlowOneClick = st;
-        app.logMsg('info', `${name} — iceflow.dll OneClick (GD-05) state=${st.state}`);
-        return st;
-      },
-    });
-  };
-  oneClick('OneClickSetup');
-  oneClick('OneClickGetState');
-  oneClick('OneClickGetStatusText');
-  oneClick('OneClickGetRemoteAppName');
-  oneClick('OneClickSelectObjects');
-  oneClick('OneClickSendTo', [{ name: 'RemoteApp', default: null }]);
-  for (const n of [
-    'OneClickSendToMax',
-    'OneClickSendTo3dsMaxSendAsNewScene', 'OneClickSendTo3dsMaxUpdateCurrentScene',
-    'OneClickSendTo3dsMaxAddToCurrentScene', 'OneClickSendTo3dsMaxSelectPreviousObjects',
-    'OneClickSendToMayaSendAsNewScene', 'OneClickSendToMayaUpdateCurrentScene',
-    'OneClickSendToMayaAddToCurrentScene', 'OneClickSendToMayaSelectPreviousObjects',
-    'OneClickSendToMudboxSendAsNewScene', 'OneClickSendToMudboxUpdateCurrentScene',
-    'OneClickSendToMudboxAddToCurrentScene', 'OneClickSendToMudboxSelectPreviousObjects',
-  ] as const) oneClick(n);
 
   // Softimage Anchor-to-Delete factory RegisterMenu Name (ICEFlow / CrowdFX / MOTOR) — dump-attested only.
   app.register({

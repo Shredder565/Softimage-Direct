@@ -165,9 +165,9 @@ export function faceRobotStage1View(app: App, host: HTMLElement) {
   };
   scan.onclick = () => {
     if (scan.disabled) return;
-    // Softimage PreparationTools Scan UI path: fr_Diagnose then fr_CleanMeshModel(1) (true-95pct unlock dump).
+    // Softimage PreparationTools Scan UI path: fr_Diagnose then fr_CleanMeshModel(Del = 1) (true-95pct unlock dump; cmd-b18b).
     if (app.commands.has('fr_Diagnose')) app.run('fr_Diagnose');
-    if (app.commands.has('fr_CleanMeshModel')) app.run('fr_CleanMeshModel', { Mode: 1 });
+    if (app.commands.has('fr_CleanMeshModel')) app.run('fr_CleanMeshModel', { Del: 1 });   // WIRE_CORRECTIONS_B18 item 2: the argument is Del
     else app.logMsg('info', 'Face Robot: Scan (fr_CleanMeshModel missing)');
   };
   exec.append(pick, scan);
