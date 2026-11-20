@@ -388,7 +388,10 @@ const NOTHING = '1', OKS = '0', CANCELLED = '562e80c7', POINTER = '80004003', FA
 void POINTER;
 
 // 1. registration
-for (const n of NAMES) { ok(`${n}: in the registry dump`, registry[n] !== null); eq(`${n}: registered with the contract's arguments and defaults`, got.reg[n], registry[n]); }
+// CMD-B18d (WIRE_CORRECTIONS_B18 item 10): AddUserKeyword is one registration shared with the Face Robot plug-in command
+// (Obj, Key); the built-in's arguments stay first and the plug-in's two follow.
+const B18D_EXTRA = { AddUserKeyword: [['Obj', null], ['Key', null]] };
+for (const n of NAMES) { ok(`${n}: in the registry dump`, registry[n] !== null); eq(`${n}: registered with the contract's arguments and defaults`, got.reg[n], registry[n] && B18D_EXTRA[n] ? [...registry[n], ...B18D_EXTRA[n]] : registry[n]); }
 
 // 2. defaults (batch, nothing selected)
 const D = got.defaults;

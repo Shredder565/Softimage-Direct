@@ -24,7 +24,8 @@ export function registerUICommands(app: App) {
   reg('ToggleOptionalPanel', 'Toggle Optional Panel', (_, a) => ev('togglepanel', { name: a.Name }), [{ name: 'Name', default: '' }]);
   reg('ShowOptionalPanel', 'Show Optional Panel', (_, a) => ev('togglepanel', { name: a.Name, show: true }), [{ name: 'Name', default: '' }]);
   reg('IsolateSelected', 'Isolate Selected', (app, a) => { const sel = new Set(app.selectedObjects); const all = [...app.scene.allObjects()]; const vis = (o: any, v: boolean) => { const p = o.property('visibility')?.get('viewvis'); if (p) app.setParam(p, v, 'Isolate'); }; const hidden = all.filter(o => !sel.has(o) && !o.visible); if (hidden.length && !a.Force) { for (const o of all) vis(o, true); } else for (const o of all) if (!sel.has(o)) vis(o, false); }, [{ name: 'Force', default: false }, { name: 'View', default: -1 }]);
-  reg('GetPrimStereoCamera', 'Get Stereo Camera', (app) => app.run('GetPrim', { PresetObj: 'Camera' }));
+  // GetPrimStereoCamera: the StereoCamera.js rig (three cameras, Stereo property, constraint operators), CMD-B18d
+  // (src/commands/faceRobotB18d.ts, WIRE_CORRECTIONS_B18 item 12); it was a plain GetPrim Camera here.
   reg('SetViewManagerLayout', 'View Manager Layout', (_, a) => ev('vmlayout', { layout: a.Layout }), [{ name: 'Layout', default: 'standard' }]);
   reg('MaximizeViewport', 'Maximize/Restore Viewport', () => ev('maximizeview'));
   reg('OpenPreferences', 'Preferences', (_, a) => ev('openprefs', { page: a.Page }), [{ name: 'Page', default: '' }]);

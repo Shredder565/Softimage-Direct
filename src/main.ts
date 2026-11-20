@@ -83,6 +83,7 @@ import { registerToolsB16aCommands } from './commands/toolsB16a';
 import { registerToolsB17iCommands } from './commands/toolsB17i';
 import { registerFaceRobotB18aCommands } from './commands/faceRobotB18a';
 import { registerFaceRobotB18bcCommands } from './commands/faceRobotB18bc';
+import { registerFaceRobotB18dCommands } from './commands/faceRobotB18d';
 import { registerTasksB16cCommands } from './commands/tasksB16c';
 import { registerB16eCommands } from './commands/b16eActioncoreOptasksGap';
 import { registerShellsB15ElseCommands } from './commands/shellsB15Else';
@@ -255,6 +256,7 @@ registerToolsB16aCommands(app);   // CMD-B16a (toolmanager.dll tool activation; 
 registerToolsB17iCommands(app);   // CMD-B17i (Escape Pick Session x2, Show Next / Previous Manipulator, Toggle Manipulator mode)
 registerFaceRobotB18aCommands(app);   // CMD-B18a
 registerFaceRobotB18bcCommands(app);   // CMD-B18b / CMD-B18c
+registerFaceRobotB18dCommands(app);   // CMD-B18d
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);
