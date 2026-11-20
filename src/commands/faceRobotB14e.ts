@@ -94,18 +94,34 @@ function adjacency(polys: number[][], n: number): Set<number>[] {
   for (const f of polys) for (let i = 0; i < f.length; i++) { const a = f[i], b = f[(i + 1) % f.length]; adj[a].add(b); adj[b].add(a); }
   return adj;
 }
+/** Walker 0x180196fe0 / step 0x180197210 (WIRE_CORRECTIONS_B15 item 8). The first listed vertex is not in the output;
+ *  for each consecutive pair (a, b) the walk starts at a and appends each vertex it moves to, ending with b. Step rule:
+ *  b a neighbour of the current vertex -> b. Otherwise the candidates are the current vertex's neighbours (other than
+ *  itself) that have more than one neighbour; the first candidate that has b as a neighbour is taken at once; else the
+ *  candidate whose neighbour direction (inferred: the normalised edge direction) has the largest dot product with the
+ *  normalised pos(b) - pos(current), recomputed every step (ties keep the first). No candidate: the pair stops. At most
+ *  1024 vertices are appended per pair. */
 export function crawl(pos: Float32Array, polys: number[][], ids: number[]): number[] {
   const n = pos.length / 3; const adj = adjacency(polys, n); const P = (i: number) => new THREE.Vector3(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]);
-  const out: number[] = []; if (!ids.length) return out;
-  if (ids[0] >= 0 && ids[0] < n) out.push(ids[0]);                     // inferred: the first vertex is part of the path (Q6)
+  const out: number[] = [];
   for (let k = 0; k + 1 < ids.length; k++) {
     const a = ids[k], b = ids[k + 1]; if (a < 0 || a >= n || b < 0 || b >= n) break;
     let cur = a;
-    for (let s = 0; s < 1023 && cur !== b; s++) {
-      const dir = P(b).sub(P(cur)).normalize(); let best = -1, bestDot = 0;
-      for (const nb of adj[cur]) { const d = P(nb).sub(P(cur)).normalize().dot(dir); if (nb === b) { best = b; break; } if (d > bestDot) { bestDot = d; best = nb; } }
-      if (best < 0) break;                                               // the step failed
-      cur = best; out.push(cur);
+    for (let s = 0; s < 1024 && cur !== b; s++) {
+      let next = -1;
+      if (adj[cur].has(b)) next = b;
+      else {
+        const cands = [...adj[cur]].filter(c => c !== cur && adj[c].size > 1);
+        next = cands.find(c => adj[c].has(b)) ?? -1;
+        if (next < 0 && cands.length) {
+          const dir = P(b).sub(P(cur)).normalize();
+          let best = cands[0], bestDot = P(cands[0]).sub(P(cur)).normalize().dot(dir);
+          for (const c of cands.slice(1)) { const d = P(c).sub(P(cur)).normalize().dot(dir); if (d > bestDot) { bestDot = d; best = c; } }
+          next = best;
+        }
+      }
+      if (next < 0) break;   // no candidate: this pair's walk stops
+      cur = next; out.push(cur);
     }
   }
   return out;
@@ -147,7 +163,7 @@ export function registerFaceRobotB14eCommands(app: App) {
       // connector 0x18016ffd0
       const mats: Material[] = target.material ? [target.material] : [];
       progress(app, 'Applying Realtime Shader...'); de(app, 'B14e').shaderSteps = 7 * mats.length;
-      const mat = mats.find(m => m.name === 'Constant' || m.surface?.name === 'Constant');   // a name lookup (Q7); inferred: the material or its surface shader
+      const mat = mats.find(m => m.name === 'Constant');   // GetMaterials().GetItem("Constant"): a lookup by material name (WIRE_CORRECTIONS_B15 item 13)
       if (!mat) throw fail(E_FAIL, `${C}: no material item named "Constant"`);
       wrap(app, 'B14e', 'SetViewDisplayMode', { DisplayMode: mode === 0 ? 'OpenGL' : 'DirectX9' });
       progress(app, 'Constructing Shader UI');
@@ -216,7 +232,6 @@ export function registerFaceRobotB14eCommands(app: App) {
       const ids = rest.replace(/\].*$/, '').split(',').filter(s => s !== '').map(s => Math.trunc(Number.parseInt(s, 10)));
       const obj = objName ? findByName(app, objName) : null;
       const m = obj?.primitive?.mesh();
-      nyaE(app, C, 'step rule 0x180197210 (the neighbour closest to the direction of the next listed vertex is used)');
       const path = m ? crawl(m.positions, m.polygons, ids) : [];
       const result = `${objName}.pnt[${path.join(',')}]`;
       if (boolArg(a.Select, false)) wrap(app, 'B14e', 'SelectGeometryComponents', { SelectionList: result });

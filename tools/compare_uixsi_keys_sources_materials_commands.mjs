@@ -440,7 +440,9 @@ eq('OffsetValueMap defaults: native OffsetValueMap', [D.OffsetValueMap.r, D.Offs
 eq('SaveOffsetKeys defaults: native SaveOffsetKeys', [D.SaveOffsetKeys.r, D.SaveOffsetKeys.calls[0]], [NONE, 'native SaveOffsetKeys']);
 ok('DeleteUnusedMaterials defaults: empty selection is not a material library', /not a material library/.test(D.DeleteUnusedMaterials.r.err ?? ''), D.DeleteUnusedMaterials);
 eq('DeleteAllUnusedMaterials defaults: Nothing to delete', [D.DeleteAllUnusedMaterials.r, D.DeleteAllUnusedMaterials.log], [NONE, ['info:Nothing to delete']]);
-ok('MergeScene defaults: SIMergeScene / file browser flagged not yet attested', D.MergeScene.r.v === '<none>' && D.MergeScene.log.some(l => /not yet attested: SIMergeScene and its file browser/.test(l)), D.MergeScene);
+// CMD-B15a wired SIMergeScene: without FileName (no file browser in batch) it refuses with 0x80070057
+if (got.merge[3]) ok('MergeScene defaults: delegated to SIMergeScene (CMD-B15a), no FileName -> 0x80070057', /SIMergeScene.*0x80070057/.test(D.MergeScene.r.err ?? '') && D.MergeScene.calls.includes('SIMergeScene'), D.MergeScene);
+else ok('MergeScene defaults: SIMergeScene / file browser flagged not yet attested', D.MergeScene.r.v === '<none>' && D.MergeScene.log.some(l => /not yet attested: SIMergeScene and its file browser/.test(l)), D.MergeScene);
 // CMD-B8f put SICreateCurve / SISetCurvePoints on the bus: the wrapper now runs them, and SISetCurvePoints rejects the empty default Points (0x80070057).
 eq('CreateCurve defaults: SICreateCurve then SISetCurvePoints, which fails on the empty Points string; nothing is left behind', [/80070057/.test(D.CreateCurve.r.err ?? ''), D.CreateCurve.made, D.CreateCurve.calls], [true, [], ['SICreateCurve', 'SISetCurvePoints']]);
 ok('AssembleNurbsMesh defaults: no surface mesh, SIAssembleNurbsMesh creates nothing (CMD-B8e contract)', D.AssembleNurbsMesh.r.v === '<none>' && !D.AssembleNurbsMesh.r.err && D.AssembleNurbsMesh.made.length === 0, D.AssembleNurbsMesh);
@@ -523,7 +525,8 @@ eq('DeleteAllUnusedMaterials: every library', ma.all, [NONE, ['Scene_Material', 
 eq('Delete(All)UnusedMaterials: Nothing to delete; only the first input item is used', [ma.nothing, ma.nothing2], [['info:Nothing to delete'], ['info:Nothing to delete']]);
 
 // ---- MergeScene
-eq('MergeScene: SIMergeScene is not on the bus; nothing merged, flagged', got.merge, [NONE, 0, true, false]);
+if (got.merge[3]) ok('MergeScene: delegated to SIMergeScene (CMD-B15a); a missing file -> 0x80070057 / XSIMODELTASKS 0x33, nothing merged', /SIMergeScene: XSIMODELTASKS 0x33 .*0x80070057/.test(got.merge[0]?.err ?? '') && got.merge[1] === 0, got.merge);
+else eq('MergeScene: SIMergeScene is not on the bus; nothing merged, flagged', got.merge, [NONE, 0, true, false]);
 
 // ---- Align
 const al = got.align;

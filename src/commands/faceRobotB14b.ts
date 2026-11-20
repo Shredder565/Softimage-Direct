@@ -52,8 +52,13 @@ function mouthSculptChild(mesh: X3DObject | null): X3DObject | null {
   const m = mesh?.model; if (!m) return null;
   return m.children.find(c => c.name === 'SculptMouth') ?? null;
 }
-const MOUTH_BLOB = 'CDKMetaMouthSculpt';          // Q3: the likely value of the runtime global
-const MIRROR_BLOB = 'CDKMetaMouthMirrorMap';       // Q3: stand-in name (the global was not read)
+const MOUTH_BLOB = 'CDKMetaMouthOp';              // global 0x1802d1e38 (WIRE_CORRECTIONS_B15 item 1)
+const MIRROR_BLOB = 'CDKMetaMouthSymMap';          // global 0x1802d1dc8 (WIRE_CORRECTIONS_B15 item 1)
+/** Second blob read and rewritten by the mouth bake 0x1800aded0 (global 0x1802d1e58; its value was not read). */
+const MOUTH_BAKE_BLOB = 'CDKMetaMouthBake';        // stand-in name
+/** The 17 mouth controllers the bake resolves (cmd-b15-fr-pr189-answers B14b Q4). */
+const BAKE_CONTROLLERS = ['LMouthCorner', 'RMouthCorner', 'LLipUpperBend', 'LipUpper', 'RLipUpperBend', 'LLipLowerBend', 'LipLower', 'RLipLowerBend',
+  'JawEnd', 'LPuffer', 'RPuffer', 'mpChin', 'LNostrilBase', 'LNostrilBulge', 'NoseTip', 'RNostrilBase', 'RNostrilBulge'].map(n => n + '_Control');
 const mouthBlob = (mesh: X3DObject | null) => (mesh ? propNamed(mesh, MOUTH_BLOB) ?? null : null);
 
 // ------------------------------------------------------------------ significance / symmetry (§2.4)
@@ -257,11 +262,40 @@ function sculptMouthBegin(app: App, a: Record<string, any>) {
   setStatus(app, C, 0);
   return undefined;
 }
+/** Mouth bake `0x1800aded0` (B14b Q4 answer). Returns 1 when both mouth blobs exist, else 0. The two child-name
+ *  suffixes were not read: the sculpt mesh is the SculptMouth child and the transform record is the face mesh's own. */
+function mouthBake(app: App, C: string, mesh: X3DObject, sculpt: X3DObject): number {
+  const blob: any = mouthBlob(mesh), bake: any = propNamed(mesh, MOUTH_BAKE_BLOB) ?? (mesh.model ? propNamed(mesh.model, MOUTH_BAKE_BLOB) : undefined);
+  NYA(app, C, `the two child-name suffixes and the name of the second mouth blob (global 0x1802d1e58; stand-in ${MOUTH_BAKE_BLOB})`);
+  if (!blob || !bake) return 0;
+  const fm = faceModel(app);
+  const pose = BAKE_CONTROLLERS.map(n => { const c = fm ? childNamed(fm, n) : null; if (!c) return null; const L = c.kinematics.local; return ['posx', 'posy', 'posz', 'rotx', 'roty', 'rotz'].map(k => Number(L.val(k)) || 0); });
+  const data = (bake.bake ??= { version: 1.0, a: 0, count: 0, entries: 0, records: [] as any[] });
+  const samePose = (p: any) => JSON.stringify(p) === JSON.stringify(pose);
+  if (Math.abs(Number(data.version) - 1.0) <= 0.001) {
+    const hit = (data.records as any[]).find(r => samePose(r.pose));
+    if (hit) { NYA(app, C, 'the record re-apply 0x1800b6b10 (the matching record is kept, nothing new is stored)'); return 1; }
+  }
+  const sp = sculpt.primitive?.mesh()?.positions, fp = mesh.primitive?.mesh()?.positions;
+  const tracked: number[] = Array.isArray(blob.mouth?.vertices) ? blob.mouth.vertices : [];
+  const corr: { index: number; rotation: [number, number, number, number]; translation: [number, number, number] }[] = [];
+  if (sp && fp) for (const v of tracked) {
+    const d = [sp[v * 3] - fp[v * 3], sp[v * 3 + 1] - fp[v * 3 + 1], sp[v * 3 + 2] - fp[v * 3 + 2]];
+    if (d[0] * d[0] + d[1] * d[1] + d[2] * d[2] > 0.0001) corr.push({ index: v, rotation: [0, 0, 0, 1], translation: [d[0], d[1], d[2]] });   // inferred: identity rotation
+  }
+  if (corr.length) {
+    const old = JSON.stringify(data);
+    app.record('Mouth bake', () => { data.version = 1.0; data.records.push({ pose, vertices: corr }); data.count = data.records.length; data.entries = corr.length; },
+      () => { Object.assign(data, JSON.parse(old)); });
+  }
+  return 1;
+}
 function sculptMouthEnd(app: App, a: Record<string, any>) {
   const C = 'fr_SculptMouthEnd';
   const mesh = objOrName(app, a.mesh); const child = mouthSculptChild(mesh);
   if (!mesh || !child) return undefined;
-  if (boolArg(a.cancel, false)) NYA(app, C, 'the mouth bake helper 0x1800aded0 run when the second argument is true (Q4)');
+  // WIRE_CORRECTIONS_B15 item 9: the second argument true runs the bake 0x1800aded0, which stores the corrections
+  if (boolArg(a.cancel, false)) mouthBake(app, C, mesh, child);
   const from = child.material?.surface ?? null, to = materialOf(mesh)?.surface ?? null;
   if (from && to) for (const n of ['diffuse', 'ambient']) { const c = shaderColor(from, n); if (c) setShaderColor(app, to, n, c); }
   deleteObj(app, child);
@@ -442,7 +476,9 @@ function resetControllerDB(app: App) {
     visited.push(name);
   }
   (frState(app).rows as any).resetControllerDB = visited;
-  NYA(app, C, 'what 0x1800ca2f0 resets on each controller\'s FaceControl property (ID) and the names of the two FaceModel blobs deleted afterwards (Q5)');
+  NYA(app, C, 'what 0x1800ca2f0 resets on each controller\'s FaceControl property (ID)');
+  // the FaceModel blobs ZeroPoseO and ZeroPose are deleted afterwards (WIRE_CORRECTIONS_B15 item 2)
+  if (fm) for (const n of ['ZeroPoseO', 'ZeroPose']) { const p = propNamed(fm, n); if (p) removeProp(app, fm, p); }
   return undefined;
 }
 function stickLips(app: App) {

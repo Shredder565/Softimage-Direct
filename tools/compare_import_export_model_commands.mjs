@@ -222,7 +222,10 @@ const got = await page.evaluate(async ({ NAMES }) => {
   // ================= ImportIges
   {
     const r = {}; let m = mark();
-    r.noWorker = plain(run('ImportIges', { FileName: 'C:\\cad\\part.igs', Parent: 'cube' }).v); r.noWorkerLog = logFrom(m).filter(l => l.includes('not yet attested')).length;
+    const ni = run('ImportIges', { FileName: 'C:\\cad\\part.igs', Parent: 'cube' });
+    r.noWorker = plain(ni.v); r.noWorkerLog = logFrom(m).filter(l => l.includes('not yet attested')).length;
+    // CMD-B15a: SIImportIges is on the bus; a missing .igs file is refused with 0x80070057 / XSIMODELTASKS 0x33
+    r.workerOnBus = app.commands.has('SIImportIges'); r.noWorkerErr = !!ni.err && /SIImportIges.*0x80070057/.test(ni.err);
     const inspected = []; const off = app.events.on('inspect', n => inspected.push(n?.name));
     S.workers.SIImportIges = (f) => { calls.push(['SIImportIges', f]); return obj('sphere1'); };
     app.autoInspect = true; app.select([]);
@@ -246,7 +249,12 @@ const got = await page.evaluate(async ({ NAMES }) => {
     r.existing = [c === a, take(), app.selection[0] === a];
     S.workers.SICreateRefModel = () => undefined; app.select([]); r.failed = [plain(run('CreateRefModel', { FileName: 'C:\\models\\rig.emdl' }).v), app.selection.length];
     delete S.workers.SICreateRefModel;
-    const m = mark(); r.noWorker = [plain(run('CreateRefModel', { FileName: 'C:\\models\\rig.emdl' }).v), logFrom(m).filter(l => l.includes('not yet attested')).length];
+    // CMD-B15a wired SICreateRefModel on the bus: without a recording worker the real one runs and makes the model (its
+    // result is removed again so later checks see the same scene); before that row the unwired worker was only logged.
+    r.workerOnBus = app.commands.has('SICreateRefModel');
+    const m = mark(); const nw = run('CreateRefModel', { FileName: 'C:\\models\\rig.emdl' }).v;
+    r.noWorker = r.workerOnBus ? [nw?.name, !!nw?.ref] : [plain(nw), logFrom(m).filter(l => l.includes('not yet attested')).length];
+    if (r.workerOnBus && nw?.parentObj) nw.parentObj.removeChild(nw);
     out.createRef = r;
   }
 
@@ -424,7 +432,8 @@ eq('ExportDotXSI OK with models; Cancel does nothing', [X.exportTwo, X.exportCan
 
 // ---- ImportIges
 const G = got.iges;
-eq('ImportIges: worker not wired -> nothing back, "not yet attested" logged', [G.noWorker, G.noWorkerLog], [NONE, 1]);
+if (G.workerOnBus) eq('ImportIges: SIImportIges on the bus (CMD-B15a), missing file -> nothing back, 0x80070057', [G.noWorker, G.noWorkerErr], [NONE, true]);
+else eq('ImportIges: worker not wired -> nothing back, "not yet attested" logged', [G.noWorker, G.noWorkerLog], [NONE, 1]);
 eq('ImportIges: SIImportIges(FileName) only (Parent unused); the object is selected, auto-inspected and handed back', [G.calls, G.withWorker, G.sel, G.inspected], [[['SIImportIges', 'C:\\cad\\part.igs']], 'node:sphere1', ['sphere1'], ['sphere1']]);
 eq('ImportIges: no inspection with auto-inspect off; nothing back -> nothing selected', [G.noAutoInspect, G.nothingBack], [0, [NONE, 0]]);
 
@@ -433,7 +442,7 @@ const R = got.createRef;
 eq('CreateRefModel: empty FileName -> empty referenced model, selected, returned', R.empty, ['model', true, '', true]);
 eq('CreateRefModel: missing file -> empty creator; file name recorded on the resolution; name, parent, options kept', R.missing, ['Hero', 'C:\\models\\nofile.emdl', ['C:\\models\\nofile.emdl'], ['hi'], 'root_null', 3, true]);
 eq('CreateRefModel: existing file -> SICreateRefModel with all eight arguments in order; result selected', R.existing, [true, [['SICreateRefModel', 'C:\\models\\rig.emdl', 'Rig', 'res1', 'cube', true, true, 'map', 65535]], true]);
-eq('CreateRefModel: creation failed -> nothing returned, nothing selected; unwired worker is logged', [R.failed, R.noWorker], [[NONE, 0], [NONE, 1]]);
+eq('CreateRefModel: creation failed -> nothing returned, nothing selected; unwired worker is logged (CMD-B15a: the wired SICreateRefModel makes the model)', [R.failed, R.noWorker], [[NONE, 0], R.workerOnBus ? ['rig', true] : [NONE, 1]]);
 
 // ---- model commands
 const M = got.models;
@@ -468,7 +477,12 @@ eq('SearchAndReplacePath dialog OK: calls itself in direct form (second logged l
 eq('SearchAndReplacePath dialog Cancel: nothing happens, property deleted', Q.dlgCancel, [0, false]);
 
 // ---- defaults in batch mode
-for (const n of NAMES) eq(`${n}: runs with default arguments (batch) without throwing`, got.defaults[n].err, null);
+// CMD-B15a: SIImportIges is on the bus and refuses an empty FileName (0x80070057 / XSIMODELTASKS 0x33), so ImportIges
+// with its default (empty) FileName now fails with that status instead of logging the unwired worker.
+for (const n of NAMES) {
+  if (n === 'ImportIges' && got.defaults[n].err && /SIImportIges.*0x80070057/.test(got.defaults[n].err)) { eq(`${n}: default (empty FileName) -> SIImportIges 0x80070057`, true, true); continue; }
+  eq(`${n}: runs with default arguments (batch) without throwing`, got.defaults[n].err, null);
+}
 const DF = got.defaults;
 ok('defaults: ObjExport batch = worker form on the whole selection', DF.ObjExport.log.includes('info:Model.cube'), DF.ObjExport.log);
 ok('defaults: the five dialog forms end like a cancel in batch (Q4, logged as not yet attested)', ['SI_InspectWavefrontImportOptions', 'BiovisionImport', 'AcclaimImport', 'SearchAndReplacePath'].every(n => DF[n].log.some(l => /not yet attested: batch mode/.test(l))) && got.defaultsLeft.length === 0, [DF.BiovisionImport.log, got.defaultsLeft]);

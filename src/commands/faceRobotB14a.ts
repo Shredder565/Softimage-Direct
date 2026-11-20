@@ -25,6 +25,7 @@ import {
   boolArg, resolve, objArg, nodesArg, Node, X3DObject, Property, hostFs, frGroup, addProperty, cuCompare,
   S_OK, S_FALSE, E_FAIL, E_INVALIDARG, DISP_E_MEMBERNOTFOUND, buildSampleFace,
 } from './faceRobotB14Shared';
+import { keywordsOf } from './faceRobotB14deShared';
 
 const ROW = 'CMD-B14a';
 const CAT = 'Face Robot';
@@ -168,9 +169,13 @@ function frGetFilesForBrowser(app: App, a: Record<string, any>) {
   if (!path.endsWith('\\')) path += '\\';
   let names: string[] = [];
   try { names = hostFs.listFiles(path); } catch { names = []; }
-  const lext = '.' + ext.toLowerCase();
+  // `<path>\*.<extension>` through FindFirstFileW / FindNextFileW; the names are not re-checked (correction 12), so the
+  // Win32 matching applies, including the 8.3 short-name quirk: a 3-character extension also matches longer extensions
+  // starting with it (the short name keeps the first three characters).
+  const lext = ext.toLowerCase();
+  const matches = (n: string) => { const i = n.lastIndexOf('.'); if (i < 0) return false; const e = n.slice(i + 1).toLowerCase(); return e === lext || (lext.length === 3 && e.length > 3 && e.startsWith(lext)); };
   // FindFirstFile order on NTFS: by upper-cased name (inferred for the virtual file system)
-  names = names.filter(n => n.toLowerCase().endsWith(lext)).sort((x, y) => cuCompare(x.toUpperCase(), y.toUpperCase()));
+  names = names.filter(matches).sort((x, y) => cuCompare(x.toUpperCase(), y.toUpperCase()));
   const exists = (p: string) => isFile(ascii(p));
   const keepUnderscores = valueText(frStore(app).raw('mem', 'show_')) !== '';
   for (const n of names) {
@@ -215,18 +220,20 @@ function frMuteSources(app: App, a: Record<string, any>) {
   const jaw = model ? [...model.descendants()].find(o => o.name === 'JawEnd_ControlOffset') ?? null : null;
   const retarget = !!jaw && boolArg(a.b_IncludeRetargeting, false);
   const mute = boolArg(a.b_Mute, false);
+  // WIRE_CORRECTIONS_B15 item 4: b_ResetTransforms is never used (the helper takes Objects, b_Mute, b_IncludeRetargeting);
+  // the reset is gated by b_Mute and b_Mute is the value passed to fr_ResetRetarget.
+  void a.b_ResetTransforms;
   const resetRetarget = (v: boolean) => {
+    // fr_ResetRetarget is run by name; FR.dll does not register it (correction 15)
     if (app.commands.has('fr_ResetRetarget')) app.run('fr_ResetRetarget', { inValue: v });
     else logNya(app, C, `fr_ResetRetarget(${v}) (not on the bus)`);
   };
-  if (!mute && retarget) resetRetarget(false);
   if (mute) {
-    logNya(app, C, 'whether b_ResetTransforms gates the ResetTransform (run regardless)');
     // ResetTransform(<Objects as text>, 0, 0x40, 7): object reference mode, SRT, XYZ (inferred)
     app.run('ResetTransform', { InputObj: objs.map(o => o.fullName).join(',') });
     if (retarget) resetRetarget(true);
-  }
-  return undefined;
+  } else if (retarget) resetRetarget(false);
+  return true;
 }
 
 // ------------------------------------------------------------------ face model / clusters
@@ -283,8 +290,10 @@ function getFaceWeightMap(app: App, a: Record<string, any>) {
   }
   const cl = faceClusterOf(app, obj, C);
   const name = text(a.MapName);
-  // the name is split on "_" for the match (inferred: the property's first "_" part equals MapName)
-  const hits = cl.properties.filter(p => p.name === name || p.name.split('_')[0] === name);
+  // WIRE_CORRECTIONS_B15 item 5: MapName is split on "_"; a property matches when every piece equals one of its user
+  // keywords (case-insensitive). The candidates keep their order.
+  const pieces = name.split('_').map(t => t.toLowerCase());
+  const hits = cl.properties.filter(p => { const kw = keywordsOf(p).map(k => k.toLowerCase()); return pieces.every(t => kw.includes(t)); });
   if (hits.length > 1) app.logMsg('info', ` MORE THAN ONE WeightMap FOUND! using <<${siName(hits[0])}>>`);
   if (hits.length) return hits[0];
   const p = new Property(name || 'Weight_Map', 'weightmap', [
@@ -294,6 +303,7 @@ function getFaceWeightMap(app: App, a: Record<string, any>) {
   (p as any).values = new Map<number, number>();
   app.record('AddProp Weight Map Property', () => cl.addProperty(p), () => cl.removeProperty(p));
   app.setParam(p.get('red')!, intArg(a.R, 255)); app.setParam(p.get('green')!, intArg(a.G, 255)); app.setParam(p.get('blue')!, intArg(a.B, 255));
+  logNya(app, C, 'whether the new weight map receives user keywords (none are set, so the keyword match does not find it)');
   return p;
 }
 
@@ -372,13 +382,13 @@ function frNeighborIndex(app: App, a: Record<string, any>) {
   if (!m || !P || vi < 0 || vi * 3 >= P.length) throw fail(DISP_E_MEMBERNOTFOUND, `${C}: no vertex ${vi}`);
   const nb = neighbours(m.polygons, vi);
   if (!nb.length) return -1;   // inferred: no neighbour
-  if (intArg(a.inMode, 0) === 0) return nb[0];   // inferred: the first neighbour
-  logNya(app, C, 'which neighbour index is returned in a non-zero inMode (the most upward neighbour is returned)');
-  let best = nb[0], by = -Infinity;
-  for (const w of nb) {
-    const d = new THREE.Vector3(P[w * 3] - P[vi * 3], P[w * 3 + 1] - P[vi * 3 + 1], P[w * 3 + 2] - P[vi * 3 + 2]).normalize();
-    if (d.y > by) { by = d.y; best = w; }
-  }
+  // WIRE_CORRECTIONS_B15 item 6: mode 0 -> the first neighbour the host lists; any other mode -> the neighbour whose
+  // normalised local-space direction has the largest Y (the first seeds the best, later ones replace it only when
+  // strictly greater, so ties keep the earlier one).
+  if (intArg(a.inMode, 0) === 0) return nb[0];
+  const dirY = (w: number) => new THREE.Vector3(P[w * 3] - P[vi * 3], P[w * 3 + 1] - P[vi * 3 + 1], P[w * 3 + 2] - P[vi * 3 + 2]).normalize().y;
+  let best = nb[0], by = dirY(nb[0]);
+  for (const w of nb.slice(1)) { const y = dirY(w); if (y > by) { by = y; best = w; } }
   return best;
 }
 
@@ -451,6 +461,14 @@ function visObjects(app: App, v: any): (Node | null)[] {
   for (const n of app.selection) { if (!out.includes(n)) out.push(n); if ((n as any).branchSelected && n instanceof X3DObject) for (const d of n.descendants()) if (!out.includes(d)) out.push(d); }
   return out;
 }
+/** Filter `frf_visgroup` (WIRE_CORRECTIONS_B15 item 14): a group whose parent is a `#model`; its `viewvis` is not 2, or is
+ *  2 and the group has a property named `visibility`. */
+function frfVisgroup(g: Group): boolean {
+  if (!(g.parent instanceof Model)) return false;
+  const vv = g.get('viewvis')?.value;
+  if (Number(vv) !== 2) return true;
+  return ((g as any).properties ?? []).some((p: Node) => p.name === 'visibility');
+}
 function frVisible(app: App, a: Record<string, any>) {
   const C = 'fr_Visible';
   const objs = visObjects(app, a.inObjs);
@@ -460,7 +478,6 @@ function frVisible(app: App, a: Record<string, any>) {
   if (!(first instanceof X3DObject)) { app.run('ToggleVisibility', { InputObjs: app.selectedObjects }); return undefined; }
   const value = intArg(a.Value, 0);
   const on: any[] = [], off: any[] = [], groupParams: any[] = [];
-  let groupsSeen = false;
   for (const o of objs) {
     if (!(o instanceof X3DObject) || notInspectable(o)) continue;
     const vis = o.properties.find(p => p.type === 'visibility');
@@ -469,12 +486,10 @@ function frVisible(app: App, a: Record<string, any>) {
       const src = (p as any).drivenBy?.inputs?.[0] ?? p;   // a parameter driven by an operator: its input port 0
       (src.value ? on : off).push(src);
     }
-    for (const g of app.scene.groupList) if (g.members.includes(o)) {
-      groupsSeen = true;
+    for (const g of app.scene.groupList) if (g.members.includes(o) && frfVisgroup(g)) {
       for (const pn of ['viewvis', 'rendvis']) { const p = g.get(pn); if (p && !groupParams.includes(p)) groupParams.push(p); }
     }
   }
-  if (groupsSeen) logNya(app, C, 'the frf_visgroup filter (FaceRobot filter callback unread); owner groups carrying viewvis / rendvis are used');
   const setAll = (ps: any[], v: any) => { for (const p of ps) app.setParam(p, v, 'SetValue'); };
   if (value === 0) { setAll(on, false); setAll(off, true); }
   else if (value > 0) setAll(off, true);
@@ -524,15 +539,18 @@ function frAddObjectInPlace(app: App, a: Record<string, any>) {
     const p = findParamOn(obj, pn);
     if (p) app.setParam(p, size); else logNya(app, C, `the ${pn} size parameter of preset ${preset} (not present on this build's ${preset})`);
   }
-  logNya(app, C, 'the capability flag set true on the new object (constant not recovered)');
+  // WIRE_CORRECTIONS_B15 item 3: PutCapabilityFlag(siNotInspectable = 8, false): the object is made inspectable
+  if (notInspectable(obj)) app.record('SetCapabilityFlag', () => { delete (obj as any).siNotInspectable; }, () => { (obj as any).siNotInspectable = true; });
   // global translation = inVector, rotation and scale kept
   const [x, y, z] = vec3(a.inVector);
   const local = new THREE.Vector3(x, y, z).applyMatrix4(parent.globalMatrix().invert());
   const L = obj.kinematics.local;
   app.setParam(L.get('posx')!, local.x); app.setParam(L.get('posy')!, local.y); app.setParam(L.get('posz')!, local.z);
+  // each comma-separated name in inParamTags: PutTags(1) (siTag1) on that parameter (correction 3)
   for (const pn of listOf(text(a.inParamTags))) {
-    if (findParamOn(obj, pn)) logNya(app, C, `the tag value put on parameter ${pn}`);
-    else logNya(app, C, `parameter ${pn} for tags (not found)`);
+    const p: any = findParamOn(obj, pn);
+    if (!p) { logNya(app, C, `parameter ${pn} for tags (not found on this build's ${preset})`); continue; }
+    const old = p.tags; app.record('PutTags', () => { p.tags = 1; }, () => { if (old === undefined) delete p.tags; else p.tags = old; });
   }
   return obj;
 }
@@ -563,11 +581,10 @@ function frRepairNan(app: App, a: Record<string, any>) {
   let objs = nodesArg(app, a.BrokenCurves);
   if (!objs.length) objs = nodesArg(app, app.selection.map(n => n.fullName).join(','));
   if (!objs.length) throw fail(DISP_E_MEMBERNOTFOUND, `${C}: no BrokenCurves and nothing selected`);
-  let logged = false;
   for (const o of objs) {
     if (!(o instanceof X3DObject) || o.primitive?.type !== 'crvlist') continue;
     const g = o.primitive.geom() as (CurveData & { subcurves?: CurveData[] }) | null; if (!g?.cvs) continue;
-    if (!logged) { logged = true; logNya(app, C, 'the NURBS data format constant passed to Get/Set (control points are taken as x, y, z, w)'); }
+    // NurbsCurveList.Get / Set with format 0 (siSINurbs, correction 14): control points x, y, z, w
     const curves = [g, ...(g.subcurves ?? [])];
     let changed = false;
     const fixed = curves.map(c => { const r = repairCvs(c.cvs); if (r) changed = true; return { ...c, cvs: r ?? c.cvs.map(p => [...p]) } as CurveData; });

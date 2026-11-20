@@ -173,13 +173,13 @@ export function userDataBlob(app: App, owner: X3DObject, name: string, data: any
 }
 
 // ------------------------------------------------------------------ retarget blob (cmd-b14d fr_WriteC3D, cmd-b14e §2 retarget mute)
-/** The face-model UserDataBlob named by global 0x1802d2600 holds the retarget data. Its name was not recovered (B14d Q3,
- *  B14e Q5); this build recognises it by its payload (a `retarget` record) and names the one it creates `RETARGET_BLOB`. */
-export const RETARGET_BLOB = 'FaceRetargetData';
+/** The face-model UserDataBlob named by global 0x1802d2600 holds the retarget data: `CDKFaceRetargetOp`
+ *  (WIRE_CORRECTIONS_B15 item 1). Its byte layout is not attested; this build keeps a `retarget` record as its payload. */
+export const RETARGET_BLOB = 'CDKFaceRetargetOp';
 export interface RetargetData { start: number; count: number; muted: boolean; c3dfile: string; fmap: string }
 export function retargetBlob(app: App, model: X3DObject | null = faceModel(app)): Property | null {
   if (!model) return null;
-  return model.properties.find(p => p.type === 'UserDataBlob' && (p as any).data?.retarget) ?? null;
+  return model.properties.find(p => p.type === 'UserDataBlob' && p.name === RETARGET_BLOB) ?? model.properties.find(p => p.type === 'UserDataBlob' && (p as any).data?.retarget) ?? null;
 }
 export const retargetData = (p: Property | null): RetargetData | null => (p ? (p as any).data?.retarget ?? null : null);
 

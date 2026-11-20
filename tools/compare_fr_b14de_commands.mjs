@@ -1,6 +1,6 @@
 // CMD-B14d / CMD-B14e (Face Robot FR.dll): the 36 commands of src/commands/faceRobotB14d*.ts and faceRobotB14e*.ts.
 // There is no XSIBATCH golden for these rows: this is a contract check against docs/ghidra/cmd-b14d-fr-retarget-mocap.md,
-// docs/ghidra/cmd-b14e-fr-export-weights.md and docs/re/WIRE_CORRECTIONS_B14.md items 1-7.
+// docs/ghidra/cmd-b14e-fr-export-weights.md and docs/re/WIRE_CORRECTIONS_B14.md items 1-7, updated for docs/re/WIRE_CORRECTIONS_B15.md items 2 and 8 (ZeroPoseO / ZeroPose, crawl output).
 //   1. every name is registered with the catalogue argument list (data/commands_full.json; names, order, defaults).
 //      One catalogue default is replaced as the correction states: fr_FitTongue TongueMarkers "" -> empty array;
 //   2. every command runs with its default arguments on the ?demo scene plus the sample face (buildSampleFace) without
@@ -406,11 +406,11 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
   {
     A.selectComponents(mesh, 'point', [0, 4]);
     let r = run('fr_CrawlToVertex', { Select: false });
-    ok('fr_CrawlToVertex: walks mesh edges between the listed vertices, returns "<object>.pnt[...]"', r.v === `${mesh.fullName}.pnt[0,1,2,3,4]`, r);
+    ok('fr_CrawlToVertex: walks mesh edges between the listed vertices, returns "<object>.pnt[...]"; the first selected vertex is not in the output (B15 item 8)', r.v === `${mesh.fullName}.pnt[1,2,3,4]`, r);
     A.selectComponents(mesh, 'point', [0, 12, 24]);
     r = run('fr_CrawlToVertex', { Select: true });
     const ids = /\[(.*)\]/.exec(r.v)?.[1].split(',').map(Number) ?? [];
-    ok('fr_CrawlToVertex: multi-pair path ends at the last vertex, consecutive vertices share an edge; Select runs SelectGeometryComponents', ids[0] === 0 && ids.includes(12) && ids[ids.length - 1] === 24 && E().calls.some(c => c.name === 'SelectGeometryComponents' && c.args.SelectionList === r.v), r);
+    ok('fr_CrawlToVertex: multi-pair path ends at the last vertex, consecutive vertices share an edge; Select runs SelectGeometryComponents', ids[0] !== 0 && ids.includes(12) && ids[ids.length - 1] === 24 && E().calls.some(c => c.name === 'SelectGeometryComponents' && c.args.SelectionList === r.v), r);
     A.compSel = null;
     ok('fr_CrawlToVertex: nothing selected -> ".pnt[]"', run('fr_CrawlToVertex').v === '.pnt[]');
   }
@@ -506,11 +506,11 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     ok('fr_RegenerateMouth: Yes without the retarget blob -> S_FALSE, controls untouched', E().lastStatus.fr_RegenerateMouth === 1 && kv(lc, 'posx') === 1);
     face.addProperty(rb);
     mesh.addProperty(new H.Property('blob1', 'UserDataBlob', [])); mesh.addProperty(new H.Property('blob2', 'UserDataBlob', []));
-    face.addProperty(new H.Property('CDKMetaMouthSculpt', 'UserDataBlob', []));
+    face.addProperty(new H.Property('ZeroPoseO', 'UserDataBlob', [])); face.addProperty(new H.Property('ZeroPose', 'UserDataBlob', []));
     const k = E().calls.length;
     r = run('fr_RegenerateMouth');
     const op = mesh.primitive.operators.find(o => o.name === 'MetaMouthOperator');
-    ok('fr_RegenerateMouth: Yes -> controls zeroed, fcurves deactivated then reactivated, MetaMouthOperator (fro_MetaMouthOp2, UpdateInnerMouth) rebuilt, mouth blob deleted', E().lastStatus.fr_RegenerateMouth === 0 && kv(lc, 'posx') === 0 && op?.type === 'fro_MetaMouthOp2' && op.val('UpdateInnerMouth') === true && !face.properties.some(p => p.name === 'CDKMetaMouthSculpt') && E().calls.slice(k).some(c => c.name === 'ActivateFCurve' && c.args.Activate === false) && E().calls.slice(k).some(c => c.name === 'ActivateFCurve' && c.args.Activate === true) && E().calls.slice(k)[0].name === 'ActivateObjectSelTool', [r.err, op?.type]);
+    ok('fr_RegenerateMouth: Yes -> controls zeroed, fcurves deactivated then reactivated, MetaMouthOperator (fro_MetaMouthOp2, UpdateInnerMouth) rebuilt, mouth blob deleted', E().lastStatus.fr_RegenerateMouth === 0 && kv(lc, 'posx') === 0 && op?.type === 'fro_MetaMouthOp2' && op.val('UpdateInnerMouth') === true && !face.properties.some(p => p.name === 'ZeroPoseO' || p.name === 'ZeroPose') /* B15 item 2 */ && E().calls.slice(k).some(c => c.name === 'ActivateFCurve' && c.args.Activate === false) && E().calls.slice(k).some(c => c.name === 'ActivateFCurve' && c.args.Activate === true) && E().calls.slice(k)[0].name === 'ActivateObjectSelTool', [r.err, op?.type]);
     r = run('fr_RegenerateMouth');
     ok('fr_RegenerateMouth: rebuilt, not duplicated; LipStiction present', mesh.primitive.operators.filter(o => o.name === 'MetaMouthOperator').length === 1 && !!mesh.properties.find(p => p.name === 'LipStiction'));
     ST().hooks.msgBox = undefined;

@@ -323,7 +323,7 @@ export function registerFaceRobotB14dC3DCommands(app: App) {
       const C = 'fr_WriteC3D'; const input = sArg(a.inputfile), output = sArg(a.outputfile);
       const rd = retargetData(retargetBlob(app));
       if (!rd) { setStatus(app, 'B14d', C, 0); return; }                   // no retarget blob: nothing happens
-      nyaD(app, C, `name of the retarget UserDataBlob (Q3; this build: payload "retarget", created as ${RETARGET_BLOB})`);
+      // the retarget UserDataBlob is CDKFaceRetargetOp (RETARGET_BLOB) (WIRE_CORRECTIONS_B15 item 1); its layout is not attested
       if (!isFile(input)) { app.logMsg('error', 'Cannot open C3D file for reading.'); return; }
       nyaD(app, C, 'source of the byte copy written to outputfile (inputfile is copied)');
       try { writeBytes(output, readBytes(input)); } catch { app.logMsg('error', 'Cannot open C3D file for reading.'); return; }

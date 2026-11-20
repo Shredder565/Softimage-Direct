@@ -74,7 +74,7 @@ const POSE_NODES = ['Head_Control', 'Tongue', 'Nose', 'ComboMarker'];
 export function registerFaceRobotB14dCommands(app: App) {
   registerFaceRobotB14dC3DCommands(app);
   // helpers for tools/compare_fr_b14de_commands.mjs (the sample face and stand-in objects)
-  (app as any).frB14de = { buildSampleFace, stageCode, readC3D, meshObject, newNull, ensureGroup, makeConstant, EnvelopeOperator, Property, Operator };
+  (app as any).frB14de = { buildSampleFace, stageCode, readC3D, meshObject, newNull, ensureGroup, makeConstant, EnvelopeOperator, Property, Operator, retargetBlob };
 
   // ---------------------------------------------------------------- calibration
   app.register({
@@ -83,7 +83,7 @@ export function registerFaceRobotB14dCommands(app: App) {
     execute(app, a) {
       const m = faceModel(app); if (!m) return;
       const p = findOrAddProp(app, m, 'FaceCalibrateProperties', faceCalibrateDefs);
-      for (const [arg, pn] of CALIBRATE_ARGS) { const q = p.get(pn); if (q) app.setParam(q, numArg(a[arg], 0)); }   // an empty value converts to 0 (inferred)
+      for (const [arg, pn] of CALIBRATE_ARGS) { const q = p.get(pn); if (q) app.setParam(q, numArg(a[arg], 0)); }   // every argument converted to double; an empty one writes 0.0 (WIRE_CORRECTIONS_B15 item 14)
     },
   });
   app.register({

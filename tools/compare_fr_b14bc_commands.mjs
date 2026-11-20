@@ -1,6 +1,7 @@
 // CMD-B14b / CMD-B14c (Face Robot FR.dll: sculpt, mouth, eyes, jaw, regions): the 50 commands of
 // src/commands/faceRobotB14b.ts, faceRobotB14c.ts and faceRobotB14cMaps.ts. There is no XSIBATCH golden for these rows:
-// this is a contract check against docs/ghidra/cmd-b14b-fr-sculpt-mouth.md and docs/ghidra/cmd-b14c-fr-eyes-jaw-regions.md.
+// this is a contract check against docs/ghidra/cmd-b14b-fr-sculpt-mouth.md and docs/ghidra/cmd-b14c-fr-eyes-jaw-regions.md
+// (AddFaceControl offset colour updated for docs/re/WIRE_CORRECTIONS_B15.md item 11).
 //   1. every name is registered with the catalogue argument list (data/commands_full.json; AddFaceControl Position is a
 //      Python ISIVector3 repr in the catalogue -> the zero vector, as the note's §4 states);
 //   2. every command runs with its default arguments on the `?demo` scene plus the sample face (cube selected) without an
@@ -242,7 +243,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     const c = r.v; const off = c?.parentObj;
     const gp = c ? (() => { const e = c.globalMatrix().elements; return [e[12], e[13], e[14]]; })() : null;
     ok('AddFaceControl: returns the control null under the offset parent under the model', c?.name === 'TestCtl' && off?.name === 'TestCtl_Parent' && off.parentObj === model, r);
-    ok('AddFaceControl: global position, size Scale (offset Scale*0.2, display 0x232), colour', arrNear(gp, [1, 2, 3]) && c.nullSize === 2 && near(off.nullSize, 0.4) && off.displayValue === 0x232 && c.wireColor === 5);
+    ok('AddFaceControl: global position, size Scale (offset Scale*0.2, wireframe colour 0x232: WIRE_CORRECTIONS_B15 item 11), colour', arrNear(gp, [1, 2, 3]) && c.nullSize === 2 && near(off.nullSize, 0.4) && off.wireColor === 0x232 && c.wireColor === 5);
     ok('AddFaceControl: groups Controls / ControlParents, keywords "Control,Lip", FaceControl', A.scene.groupList.find(g => g.name === 'Controls')?.members.includes(c) && A.scene.groupList.find(g => g.name === 'ControlParents')?.members.includes(off) && c.userKeywords === 'Control,Lip' && c.properties.some(p => p.name === 'FaceControl'));
     r = run('AddFaceControl', { Nom: 'Plain', Model: mesh });
     ok('AddFaceControl: Model not a model -> its owning model; no offset parent', r.v?.parentObj === model && r.v.name === 'Plain');

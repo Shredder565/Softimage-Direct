@@ -59,9 +59,9 @@ function addFaceControl(app: App, a: Record<string, any>) {
   let parent: X3DObject = model;
   if (boolArg(a.bHasOffsetParent, false)) {
     const g = ensureGroup(app, 'ControlParents');
-    NYA(app, C, 'the offset-parent name suffix and the meaning of display value 0x232 (Q2); the suffix `_Parent` is used');
+    // offset parent `<Nom>_Parent`, size Scale x 0.2, wireframe colour 0x232 (WIRE_CORRECTIONS_B15 item 11)
     const off = newNullAt(app, nom + '_Parent', model, pos);
-    Object.assign(off as any, { nullSize: scale * 0.2, displayValue: 0x232 });
+    Object.assign(off as any, { nullSize: scale * 0.2, wireColor: 0x232 });
     addToGroup(app, g, off); parent = off;
   }
   const g2 = ensureGroup(app, 'Controls');
@@ -76,6 +76,7 @@ function addFaceControl(app: App, a: Record<string, any>) {
 }
 
 // ------------------------------------------------------------------ MakeFaceStructure
+export const MESH_NAMES = ['Mesh', 'LEye', 'REye', 'UpperTeeth', 'LowerTeeth', 'Tongue'] as const;
 export function activeFaceRobot(app: App): Property {
   const st = frStore(app);
   let p = activeFaceRobotProp(app);
@@ -86,8 +87,8 @@ export function activeFaceRobot(app: App): Property {
 }
 function makeFaceStructure(app: App) {
   const C = 'MakeFaceStructure'; const st = frStore(app);
-  NYA(app, C, 'the six names of the meshnames table (0x1802d0040); six empty names are stored');
-  const oldNames = st.raw('_', 'meshnames'); const names = ['', '', '', '', '', ''];
+  // the six meshnames (global 0x1802d0040, WIRE_CORRECTIONS_B15 item 1)
+  const oldNames = st.raw('_', 'meshnames'); const names = [...MESH_NAMES];
   app.record('fr_sput meshnames', () => { let m = st.main.get('_'); if (!m) st.main.set('_', (m = new Map())); m.set('meshnames', names); }, () => { if (oldNames === undefined) st.delete('_', 'meshnames'); else st.main.get('_')!.set('meshnames', oldNames); });
   const afr = activeFaceRobot(app);
   const nm = String(afr.val('FaceModel') ?? '');
