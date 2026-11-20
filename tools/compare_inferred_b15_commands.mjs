@@ -23,15 +23,17 @@ const CHROME = [
 if (!CHROME) { console.error('No Chromium; set PW_CHROME'); process.exit(2); }
 
 const INFERRED = [
-  'Add Surface Point Tool', 'BoneCreateTool', 'CopyPartition', 'CopyPaste', 'CreateEnvironmentCache', 'CrowdCreateDirectionalEmitterTool', 'CrowdCreateWallTool',
-  'CursorTransformTool', 'Delete Selected Branch', 'DeleteCurrentLayer', 'Dice Object/Polygons', 'DoNothing', 'Freeze Selected', 'Mesh Filter', 'MoveComponent Tool',
-  'PaintWeights', 'Pick Session Tool', 'RegenerateMaps', 'SIAppendBone', 'SISwapArrayElements', 'ToggleProjectionTool', 'Transform Set New ',
+  // CMD-B16d moved CopyPartition, CreateEnvironmentCache (output Source), Dice Object/Polygons, Mesh Filter, RegenerateMaps,
+  // MarkObjectDirty and GetSkeleton to their contract: tools/compare_filtermap_b16d.mjs checks them.
+  'Add Surface Point Tool', 'BoneCreateTool', 'CopyPaste', 'CrowdCreateDirectionalEmitterTool', 'CrowdCreateWallTool',
+  'CursorTransformTool', 'Delete Selected Branch', 'DeleteCurrentLayer', 'DoNothing', 'Freeze Selected', 'MoveComponent Tool',
+  'PaintWeights', 'Pick Session Tool', 'SIAppendBone', 'SISwapArrayElements', 'ToggleProjectionTool', 'Transform Set New ',
   'Turn OFF Interactive SRT', 'Turn ON Interactive SRT', 'XYZ Transform ',
 ];
-const SHELLS = ['MarkObjectDirty', 'AddShaderAttachedComment', 'GetSkeleton', 'CreateShaderFromCLSID', 'CreateShaderFromProgID', 'CreateShadersFromMaterialPreset'];
+const SHELLS = ['AddShaderAttachedComment', 'CreateShaderFromCLSID', 'CreateShaderFromProgID', 'CreateShadersFromMaterialPreset'];
 const LITERAL = ['MakeBiped', 'MakeBipedDogLeg', 'MakeQuadruped', 'MakeArm', 'MakeLeg', 'MakeFoot', 'MakeHand', 'MakeHead', 'MakeSpine', 'MakeShadowChain', 'MakeShadowSpine', 'MakeBicepRoll', 'MakeForearmRoll', 'Make2PointSlide', 'MakeJointCompression', 'MakeDogLeg', 'MakeBipedCharacterKeySet', 'MakeQuadrupedCharacterKeySet', 'SetKeyableRig', 'syCachePaint1', 'syCachePaint2', 'SyGetMassMap', 'SyGetSpringMap', 'CreateInspectParticleTypeBillboard', 'CreateInspectParticleTypeBlob', 'CreateInspectParticleTypeSphere'];
 const NAMES = [...INFERRED, ...SHELLS];
-const DEFAULT_FAILS = new Set(['CopyPaste', 'CreateEnvironmentCache', 'SIAppendBone', 'PaintWeights', 'DeleteCurrentLayer', 'CreateShaderFromCLSID', 'CreateShaderFromProgID', 'CreateShadersFromMaterialPreset']);
+const DEFAULT_FAILS = new Set(['CopyPaste', 'SIAppendBone', 'PaintWeights', 'DeleteCurrentLayer', 'CreateShaderFromCLSID', 'CreateShaderFromProgID', 'CreateShadersFromMaterialPreset']);
 const full = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'commands_full.json'), 'utf8'));
 const registry = Object.fromEntries(NAMES.map(n => {
   const f = full.find(x => (x.scripting_name || x.name) === n);
@@ -112,13 +114,6 @@ const got = await page.evaluate(async ({ NAMES, LITERAL, DEFAULT_FAILS: DF }) =>
     // Freeze Selected / Dice / Mesh Filter
     reset(); let fz = trace('FreezeObj', () => run('Freeze Selected'));
     ok('Freeze Selected (inferred): FreezeObj on the selection', fz.length === 1 && fz[0].InputObjs?.[0] === cube);
-    let topo = trace('ApplyTopoOp', () => run('Dice Object/Polygons'));
-    ok('Dice Object/Polygons (inferred): ApplyTopoOp "Dice Polygons"', topo.length === 1 && topo[0].PresetObj === 'Dice Polygons');
-    topo = trace('ApplyTopoOp', () => run('Mesh Filter'));
-    ok('Mesh Filter (inferred): ApplyTopoOp "Filter Polygons" (no edge selection)', topo.length === 1 && topo[0].PresetObj === 'Filter Polygons');
-    A.compSel = { obj: cube, kind: 'edge', points: new Set(), edges: new Set(['0-1']), polygons: new Set() };
-    topo = trace('ApplyTopoOp', () => run('Mesh Filter'));
-    ok('Mesh Filter (inferred): edge selection -> "Filter Edges"', topo[0]?.PresetObj === 'Filter Edges');
     reset();
     // PaintWeights
     const PropCls = cube.property('visibility').constructor; const map = new PropCls('WeightMapB15f', 'weightmap', []); map.values = new Map(); cube.addProperty(map); reset();
@@ -141,21 +136,6 @@ const got = await page.evaluate(async ({ NAMES, LITERAL, DEFAULT_FAILS: DF }) =>
     const r3 = run('AppendBone', { InputObjs: [chain.effector], Ex: 6, Ey: 1, Ez: 0 });
     ok('AppendBone now reaches SIAppendBone (no stand-in log)', chain.bones.length === nb + 2 && !has(r3, /the new bone is the C\+\+ append command/), r3.log);
     A.scene.root.removeChild(chain);
-    // RegenerateMaps
-    reset(); r = run('RegenerateMaps');
-    ok('RegenerateMaps (inferred): no Render Map selected -> error', (r.kinds ?? []).includes('error'));
-    const rmp = new (cube.property('visibility').constructor)('RenderMap', 'rendermap', []); cube.addProperty(rmp);
-    r = run('RegenerateMaps', { Properties: [rmp] });
-    ok('RegenerateMaps (inferred): a Render Map -> rendering logged as not yet attested (no renderer)', nya(r), [r.err, rmp?.type]);
-    cube.removeProperty(rmp);
-    // CreateEnvironmentCache
-    const env = A.run('CreateEnvironment', {}); const envNode = Array.isArray(env) ? env[0] : env;
-    r = run('CreateEnvironmentCache', { Model: cube, Environment: envNode });
-    ok('CreateEnvironmentCache (inferred): a cache record for the model in the environment', r.v?.model === cube && envNode.simulationEnvironment?.caches?.includes(r.v), r.err);
-    // CopyPartition
-    const pass2 = A.run('CreatePass', { Name: 'passB15f' }); const cur = A.scene.passes[0];
-    r = run('CopyPartition', { Target: [pass2], InputObjs: cur.partitions });
-    ok('CopyPartition (inferred): the partitions are copied (same names, same members) into the target pass', cur.partitions.every(q => pass2.partitions.some(z => z.name === q.name && z !== q && [...q.members].every(m => z.members.has(m)))), [r.err, pass2.partitions.map(z => z.name)]);
   } catch (e) { ok('inferred block threw', false, String(e?.stack ?? e).slice(0, 300)); }
   const fresh = () => { A.setTool?.(null); A.select([]); };
   const mk = (prim, name) => { const o = A.run('CreatePrim', { PresetObj: prim, Name: name }); return Array.isArray(o) ? o[0] : o; };
@@ -186,16 +166,8 @@ const got = await page.evaluate(async ({ NAMES, LITERAL, DEFAULT_FAILS: DF }) =>
   // ================= CMD-B15-ELSE shells
   try {
     reset();
-    let r = run('MarkObjectDirty', { Object: 'cube' });
-    ok('MarkObjectDirty (inferred): logged not yet attested, no change', nya(r) && !r.err && r.v === undefined);
-    r = run('AddShaderAttachedComment', { Container: 'cube' });
+    let r = run('AddShaderAttachedComment', { Container: 'cube' });
     ok('AddShaderAttachedComment (inferred): logged not yet attested, returns null', nya(r) && !r.err && r.v === null);
-    r = run('GetSkeleton', { InputObj: 'cube' });
-    ok('GetSkeleton (inferred): not a chain element -> empty collection, Index -1', Array.isArray(r.v) && r.v.length === 0 && A.shellsB15Else.lastGetSkeleton.Index === -1);
-    const chainRoot = A.run('Create2DSkeleton', { Points: [[0, 0, 0], [2, 0, 0], [3, 1, 0]] });
-    const bone = chainRoot?.bones?.[0]; // index 1: root is 0
-    r = run('GetSkeleton', { InputObj: [bone] });
-    ok('GetSkeleton (inferred): root, bones, effector; Index of the input', Array.isArray(r.v) && r.v[0] === chainRoot && r.v[r.v.length - 1] === chainRoot.effector && A.shellsB15Else.lastGetSkeleton.Index === 1, [r.err, r.v?.map?.(x => x.name)]);
   } catch (e) { ok('shells block threw', false, String(e?.stack ?? e).slice(0, 300)); }
 
   // ================= literalised table names still registered

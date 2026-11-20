@@ -253,7 +253,7 @@ export function menubar(app: App, host: HTMLElement) {
       case 'Copy': clipboard.objs = app.selectedObjects.slice(); clipboard.cut = false; return;
       case 'Cut': clipboard.objs = app.selectedObjects.slice(); clipboard.cut = true; app.run('DeleteObj'); return;
       case 'Paste': if (clipboard.objs.length) { if (clipboard.cut) { app.logMsg('info', 'Paste after Cut: restoring via undo is not available; duplicating last copy'); } app.run('Duplicate', { InputObjs: clipboard.objs.filter(o => [...app.scene.allObjects()].includes(o)) }); } return;
-      case 'Delete Selected': app.run('DeleteObj'); return; case 'Select All': app.run('SelectAll'); return;
+      case 'Delete Selected': app.run('Delete Selected'); return;   // CMD-B16d filter-map command (row 70a823e0) case 'Select All': app.run('SelectAll'); return;
       case 'Minimize All': minimizeAll(); return; case 'Restore All': restoreAll(); return; case 'Close All': closeAll(); return;
       default: if (it.id === -12) { const w = floatingWindows()[Number(l.split(' ')[0]) - 1]; w?.focus(); return; }
       case 'Restore Default': ev('togglepanel', { name: '*restore' }); return; case 'Show All': ev('togglepanel', { name: '*all', show: true }); return; case 'Hide All': ev('togglepanel', { name: '*all', show: false }); return;

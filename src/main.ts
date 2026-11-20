@@ -78,6 +78,7 @@ import { registerRigScriptsB15eCommands } from './commands/rigScriptsB15e';
 import { registerMiscScriptsB15fCommands } from './commands/miscScriptsB15f';
 import { registerInferredB15Commands } from './commands/inferredB15';
 import { registerShellsB15ElseCommands } from './commands/shellsB15Else';
+import { registerFilterMapB16dCommands } from './commands/filterMapB16d';
 import { registerShaderCreationB15Commands } from './commands/particlesB15cShaders';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
@@ -229,7 +230,8 @@ registerMiscScriptsB15fCommands(app);   // CMD-B15f (sdkui wizards, lip-sync, Up
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
 registerInferredB15Commands(app);   // CMD-B15-ELSE tool / misc commands without an analyst note (inferred)
-registerShellsB15ElseCommands(app);   // CMD-B15-ELSE MarkObjectDirty / AddShaderAttachedComment / GetSkeleton (inferred)
+registerShellsB15ElseCommands(app);   // CMD-B15-ELSE AddShaderAttachedComment (inferred); MarkObjectDirty / GetSkeleton per CMD-B16d
+registerFilterMapB16dCommands(app);   // CMD-B16d scnmgr filter-map commands (Delete Selected, Duplicate/Extrude, Subdivide ...), CopyPartition, RegenerateMaps
 registerShaderCreationB15Commands(app);   // CMD-B15-ELSE bbbbee29 shader creation family (inferred)
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).

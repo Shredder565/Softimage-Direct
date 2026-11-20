@@ -6,11 +6,12 @@
 //   tools / modes:  "Add Surface Point Tool" BoneCreateTool CrowdCreateDirectionalEmitterTool CrowdCreateWallTool
 //                   CursorTransformTool "MoveComponent Tool" "Pick Session Tool" ToggleProjectionTool
 //                   "Turn ON Interactive SRT" "Turn OFF Interactive SRT" "Transform Set New " "XYZ Transform " DoNothing
-//   edits:          CopyPaste CopyPartition "Delete Selected Branch" DeleteCurrentLayer "Freeze Selected"
-//                   "Dice Object/Polygons" "Mesh Filter" PaintWeights SISwapArrayElements SIAppendBone
-//   rendering/sim:  RegenerateMaps CreateEnvironmentCache
+//   edits:          CopyPaste "Delete Selected Branch" DeleteCurrentLayer "Freeze Selected"
+//                   PaintWeights SISwapArrayElements SIAppendBone
+//   rendering/sim:  CreateEnvironmentCache
+// CMD-B16d moved CopyPartition, RegenerateMaps, "Dice Object/Polygons" and "Mesh Filter" to filterMapB16d.ts (contract).
 import { App, type CommandDef } from '../core/commands';
-import { Node, X3DObject, Property, Partition, Pass, Model } from '../core/scene';
+import { Node, X3DObject, Property, Pass, Model } from '../core/scene';
 import { Parameter } from '../core/params';
 import { Effector, ChainRoot } from '../core/scene2';
 import * as THREE from 'three';
@@ -132,31 +133,6 @@ export function registerInferredB15Commands(app: App) {
       return made;
     } });
 
-  // inferred: "Copy partitions to the passes": each input partition (default: the current pass's partitions) is copied,
-  // with its members, into each target pass (default: every other pass). A same-named partition receives the members.
-  reg({ name: 'CopyPartition', label: 'Copy Partition', category: 'Rendering', description: 'Copy partitions to the passes',
-    args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }],
-    execute(app2, a) {
-      const sc = app2.scene; const cur: Pass | undefined = (sc as any).currentPass ?? sc.passes[0];
-      let parts = nodesOf(app2, a.InputObjs).filter((x): x is Partition => x instanceof Partition);
-      if (!parts.length) parts = [...(cur?.partitions ?? [])];
-      let passes = nodesOf(app2, a.Target).filter((x): x is Pass => x instanceof Pass);
-      if (!passes.length) passes = sc.passes.filter(p => !p.partitions.some(q => parts.includes(q)));
-      let n = 0;
-      for (const pass of passes) for (const part of parts) {
-        if (pass.partitions.includes(part)) continue;
-        const same = pass.partitions.find(q => q.name === part.name);
-        if (same) { const add = [...part.members].filter(m => !same.members.has(m)); app2.record('CopyPartition', () => add.forEach(m => same.members.add(m)), () => add.forEach(m => same.members.delete(m))); n++; continue; }
-        const copy = new Partition(part.name);
-        for (const p of part.params) { const q = copy.get(p.def.name); if (q && !p.def.readOnly) q.value = p.value; }
-        part.members.forEach(m => copy.members.add(m));
-        app2.record('CopyPartition', () => { pass.partitions.push(copy); copy.parent = pass; }, () => { const i = pass.partitions.indexOf(copy); if (i >= 0) pass.partitions.splice(i, 1); });
-        n++;
-      }
-      app2.events.emit('scene');
-      return n;
-    } });
-
   // inferred: delete each selected object together with its branch (DeleteObj removes the whole sub-tree here).
   reg({ name: 'Delete Selected Branch', label: 'Delete Selected Branch', category: '', description: 'Delete Selected Branch', args: [],
     execute(app2) { const sel = app2.selectedObjects; if (!sel.length) return undefined; return delegate(app2, 'Delete Selected Branch', 'DeleteObj', { InputObj: sel }).result; } });
@@ -173,24 +149,6 @@ export function registerInferredB15Commands(app: App) {
   // inferred: freeze the operator stack of the selected objects (FreezeObj on the selection).
   reg({ name: 'Freeze Selected', label: 'Freeze Selected', category: '', args: [],
     execute(app2) { const sel = app2.selectedObjects; if (!sel.length) return undefined; return app2.run('FreezeObj', { InputObjs: sel }); } });
-
-  // inferred: the "Dice Object or Polygons" entry carries two filter blocks (polygon, then object): it applies the Dice
-  // Polygons topology operator to the selected polygons, or to the whole selected mesh.
-  reg({ name: 'Dice Object/Polygons', label: 'Dice Object/Polygons', category: 'Modeling|Topology', description: 'Dice Object or Polygons',
-    args: [{ name: 'InputObjs', default: null }, { name: 'SelFilter', default: 'polygon' }, { name: 'OnFilterCmdMapClient', default: '{50830560-31B5-11D0-82E7-00A0243E268D}' },
-      { name: 'OnFilterCmdID', default: '{86B4DB7E-3569-4FD0-B8D3-05C11AA054D5}' }, { name: 'InputObjsArgName', default: 'ConnectionSet' }, { name: 'SelFilter', default: 'object' },
-      { name: 'OnFilterCmdMapClient', default: '{50830560-31B5-11D0-82E7-00A0243E268D}' }, { name: 'OnFilterCmdID', default: '{6AF65230-4EDA-42EB-9AC5-192F4F3916BA}' }, { name: 'InputObjsArgName', default: 'ConnectionSet' }],
-    execute(app2, a) { const o = nodesOf(app2, a.InputObjs).filter(x => x instanceof X3DObject); if (o.length && !app2.compSel) app2.select(o); return app2.run('ApplyTopoOp', { PresetObj: 'Dice Polygons' }); } });
-
-  // inferred: "Filter Mesh Components" with three filter blocks (polygon, edge, polygon mesh): Filter Edges on an edge
-  // selection, otherwise Filter Polygons (selected polygons or the whole mesh).
-  const mf = (filter: string, id: string) => [{ name: 'SelFilter', default: filter }, { name: 'OnFilterCmdMapClient', default: '{50830560-31B5-11D0-82E7-00A0243E268D}' }, { name: 'OnFilterCmdID', default: id }, { name: 'InputObjsArgName', default: 'ConnectionSet' }];
-  reg({ name: 'Mesh Filter', label: 'Mesh Filter', category: 'Modeling|Topology', description: 'Filter Mesh Components',
-    args: [{ name: 'InputObjs', default: null }, ...mf('polygon', '{1067D621-96FC-4DED-983F-E83C4D121372}'), ...mf('edge', '{053894C2-8E7C-4F76-B1BB-283C34E3C420}'), ...mf('polygon_mesh', '{1067D621-96FC-4DED-983F-E83C4D121372}')],
-    execute(app2, a) {
-      const o = nodesOf(app2, a.InputObjs).filter(x => x instanceof X3DObject); if (o.length && !app2.compSel) app2.select(o);
-      return app2.run('ApplyTopoOp', { PresetObj: app2.compSel?.kind === 'edge' ? 'Filter Edges' : 'Filter Polygons' });
-    } });
 
   // inferred: "Paint Weights": writes Weights at Indices into a weight map (InputObj = the map, or an object whose first
   // weight map is used) or into an envelope (Deformer = deformer index; Normalize renormalises each point). Flags 0 =
@@ -260,22 +218,13 @@ export function registerInferredB15Commands(app: App) {
       return made;
     } });
 
-  // inferred: "Regenerates the selected Render Maps": needs the renderer, which this build does not have.
-  reg({ name: 'RegenerateMaps', label: 'RegenerateMaps', category: 'Rendering', description: 'Regenerates the selected Render Maps.', undoable: false,
-    args: [{ name: 'Properties', default: null }, { name: 'TileSize', default: 32 }],
-    execute(app2, a) {
-      const C = 'RegenerateMaps';
-      let props = nodesOf(app2, a.Properties).filter(p => p instanceof Property && p.type === 'rendermap');
-      if (unset(a.Properties)) props = app2.selection.filter(p => p instanceof Property && p.type === 'rendermap');
-      if (!props.length) { app2.logMsg('error', `${C}: no Render Map property selected`); return undefined; }
-      for (const p of props) logInferredNya(app2, C, `rendering ${p.name} (tile size ${Number(a.TileSize) || 32}); no renderer in this build`);
-      return undefined;
-    } });
-
   // inferred: the C++ worker other simulation scripts call: a cache record for Model in the environment's cache list
   // (the record shape of duplicateRenderingSimulationScriptsSimulation.ts), returned to the caller.
+  // CMD-B16d (correction 35): the cache is the output argument `Source` (registry flags 513); it is written back into
+  // the argument record and kept in `app.inferredB15.out.CreateEnvironmentCache`, and also returned. The serving DLL
+  // (environments.dll / simulationop.dll) is still unlocated, so the record shape stays inferred.
   reg({ name: 'CreateEnvironmentCache', label: 'CreateEnvironmentCache', category: 'Simulation',
-    args: [{ name: 'Model', default: null }, { name: 'Environment', default: null }],
+    args: [{ name: 'Model', default: null }, { name: 'Environment', default: null }, { name: 'Source', default: null }],
     execute(app2, a) {
       const C = 'CreateEnvironmentCache';
       const model = (nodesOf(app2, a.Model)[0] ?? null) as Model | null;
@@ -286,6 +235,7 @@ export function registerInferredB15Commands(app: App) {
       const cache = new Property(`${model.name}_Cache`, 'EnvironmentCache', []);   // inferred name
       (cache as any).model = model; (cache as any).environment = env; cache.parent = env;
       app2.record(C, () => data.caches.push(cache), () => { const i = data.caches.indexOf(cache); if (i >= 0) data.caches.splice(i, 1); });
+      a.Source = cache; (toolState(app2) as any).out = { ...((toolState(app2) as any).out ?? {}), [C]: { Source: cache } };
       return cache;
     } });
 }

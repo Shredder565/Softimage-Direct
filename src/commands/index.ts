@@ -79,7 +79,9 @@ export function registerBuiltins(app: App) {
   app.register({
     name: 'DeleteObj', label: 'Delete', category: 'Edit', args: [{ name: 'InputObj', default: '' }],
     execute(app, a) {
-      for (const n of app.selection) if (n instanceof Cluster && !a.InputObj) { const o = n.obj; if (o) app.record('Delete ' + n.name, () => o.removeCluster(n), () => o.addCluster(n)); }
+      // CMD-B16d: Delete Selected's UserCluster group passes clusters in InputObj (filter map): delete those too
+      const clusters = !a.InputObj ? app.selection : (Array.isArray(a.InputObj) ? a.InputObj : [a.InputObj]);
+      for (const n of clusters) if (n instanceof Cluster) { const o = n.obj; if (o) app.record('Delete ' + n.name, () => o.removeCluster(n), () => o.addCluster(n)); }
       for (const o of app.targets(a.InputObj)) { if (o === app.scene.root) continue; const p = o.parentObj!; const idx = p.children.indexOf(o); app.record('Delete ' + o.name, () => p.removeChild(o), () => { p.addChild(o); p.children.splice(p.children.indexOf(o), 1); p.children.splice(idx, 0, o); }); }
       app.select([]);
     },
@@ -205,6 +207,8 @@ export function registerBuiltins(app: App) {
     'Duplicate Polygons Along Curve': 'Duplicate Polygons', 'Duplicate Polygons': 'Duplicate Polygons', 'Subdivide Polygon': 'Subdivide Polygons',
     'Collapse': 'Collapse Components', 'Weld Points': 'Weld Points', 'Weld Edges': 'Weld Boundary', WeldEdges: 'Weld Boundary',
     'Invert Polygons': 'Invert Polygons', 'Triangulate': 'Triangulate',
+    // CMD-B16d: "Invert Selected Polygons" (preset InvertPolygon, registry: "Invert normals of selected polygons"), the polygon target of Invert Polygons
+    'Invert Selected Polygons': 'Invert Polygons', InvertPolygon: 'Invert Polygons',
     'Filter Points': 'Filter Points', FilterEdge: 'Filter Points', 'Filter Edges': 'Filter Points', 'Filter Polygons': 'Filter Points',
     'Symmetrize Polygons': 'Symmetrize Polygons', 'Apply Thickness': 'Apply Thickness', 'Split Edge': 'Split Edges',
   };
