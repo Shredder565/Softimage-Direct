@@ -264,8 +264,11 @@ const got = await page.evaluate(async ({ NAMES }) => {
 
   // ================= MergeScene
   {
+    // CMD-B15a: SIMergeScene is now on the bus (modeltasks.dll contract): the delegate merges into a new model named Merged
+    app.hostFs.ensureFolder('C:\\b6'); app.hostFs.writeFile('C:\\b6\\other.scn', 'x');
     const m = mark(); const before = names().length;
-    out.merge = [pub(run('MergeScene', { FileName: 'other.scn', Name: 'Merged' })), names().length - before, logFrom(m).some(l => /MergeScene: not yet attested: SIMergeScene is not on the bus; "other\.scn" not merged/.test(l)), app.commands.has('SIMergeScene')];
+    const r = run('MergeScene', { FileName: 'C:\\b6\\other.scn', Name: 'Merged' });
+    out.merge = [r.err ?? null, pub(r.v)?.name ?? null, names().length - before, app.commands.has('SIMergeScene')];
   }
 
   // ================= Align
@@ -440,7 +443,7 @@ eq('OffsetValueMap defaults: native OffsetValueMap', [D.OffsetValueMap.r, D.Offs
 eq('SaveOffsetKeys defaults: native SaveOffsetKeys', [D.SaveOffsetKeys.r, D.SaveOffsetKeys.calls[0]], [NONE, 'native SaveOffsetKeys']);
 ok('DeleteUnusedMaterials defaults: empty selection is not a material library', /not a material library/.test(D.DeleteUnusedMaterials.r.err ?? ''), D.DeleteUnusedMaterials);
 eq('DeleteAllUnusedMaterials defaults: Nothing to delete', [D.DeleteAllUnusedMaterials.r, D.DeleteAllUnusedMaterials.log], [NONE, ['info:Nothing to delete']]);
-ok('MergeScene defaults: SIMergeScene / file browser flagged not yet attested', D.MergeScene.r.v === '<none>' && D.MergeScene.log.some(l => /not yet attested: SIMergeScene and its file browser/.test(l)), D.MergeScene);
+ok('MergeScene defaults: SIMergeScene is on the bus (CMD-B15a); the empty FileName fails naming SIMergeScene (0x80070057)', /SIMergeScene: FileName is required/.test(D.MergeScene.r.err ?? ''), D.MergeScene);
 // CMD-B8f put SICreateCurve / SISetCurvePoints on the bus: the wrapper now runs them, and SISetCurvePoints rejects the empty default Points (0x80070057).
 eq('CreateCurve defaults: SICreateCurve then SISetCurvePoints, which fails on the empty Points string; nothing is left behind', [/80070057/.test(D.CreateCurve.r.err ?? ''), D.CreateCurve.made, D.CreateCurve.calls], [true, [], ['SICreateCurve', 'SISetCurvePoints']]);
 ok('AssembleNurbsMesh defaults: no surface mesh, SIAssembleNurbsMesh creates nothing (CMD-B8e contract)', D.AssembleNurbsMesh.r.v === '<none>' && !D.AssembleNurbsMesh.r.err && D.AssembleNurbsMesh.made.length === 0, D.AssembleNurbsMesh);
@@ -523,7 +526,7 @@ eq('DeleteAllUnusedMaterials: every library', ma.all, [NONE, ['Scene_Material', 
 eq('Delete(All)UnusedMaterials: Nothing to delete; only the first input item is used', [ma.nothing, ma.nothing2], [['info:Nothing to delete'], ['info:Nothing to delete']]);
 
 // ---- MergeScene
-eq('MergeScene: SIMergeScene is not on the bus; nothing merged, flagged', got.merge, [NONE, 0, true, false]);
+eq('MergeScene: delegates to the registered SIMergeScene (CMD-B15a): one model named Merged', [got.merge[0], got.merge[2], got.merge[3]], [null, 1, true]);
 
 // ---- Align
 const al = got.align;
@@ -607,4 +610,4 @@ if (diffs.length) {
 console.log(`OK CMD-B6a uixsi keys / sources / materials commands: ${checks} checks, ${NAMES.length} commands exercised (contract tables + registry dump; no XSIBATCH golden yet)`);
 console.log('   fully wired: AddToContainer / RemoveFromContainer (group targets), SaveActionKey, SaveKeyOnMarkedKeyable (Q1 inferred), DeleteUnusedImageClips, DeleteUnusedImageSources, DeleteUnusedAnimationSources, DeleteUnusedMaterials, DeleteAllUnusedMaterials, Align (scripted + UI entry), ApplyPath (scripted + UI entry)');
 console.log('   partly wired: InspectMaterial (SIGetMaterialShader stand-in), Store...Properties x3 (SIStoreProp stand-in, Q9), SaveShapeKey (solo-index fix: combiner not modelled), OffsetValueMap / SaveOffsetKeys (native twins are placeholders), DeleteUnusedCacheSources / DeleteUnusedAudioSources (source kinds not modelled), CreateCurve (interpolated type: SICreateCurve Q6 of CMD-B8f), AssembleNurbsMesh (SIAssembleNurbsMesh of CMD-B8e: assembly itself not attested; dialog layout Q7), AddComponentTool (AddPointOnCurveTool not on the bus), ToggleContinuousDraw (Views object stand-in)');
-console.log('   stand-in / not yet attested: MergeScene (SIMergeScene not on the bus), (folder targets of Add/RemoveFromContainer now reach the CMD-B10 MoveToFolder / RemoveFromFolder)');
+console.log('   stand-in / not yet attested: MergeScene (delegates to SIMergeScene, CMD-B15a; content merge not attested), (folder targets of Add/RemoveFromContainer now reach the CMD-B10 MoveToFolder / RemoveFromFolder)');

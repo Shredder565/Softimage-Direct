@@ -424,7 +424,8 @@ eq('ExportDotXSI OK with models; Cancel does nothing', [X.exportTwo, X.exportCan
 
 // ---- ImportIges
 const G = got.iges;
-eq('ImportIges: worker not wired -> nothing back, "not yet attested" logged', [G.noWorker, G.noWorkerLog], [NONE, 1]);
+// CMD-B15a: SIImportIges is now a registered command (modeltasks.dll contract); the file C:\\cad\\part.igs does not exist, so it fails (0x80070057) and nothing comes back
+eq('ImportIges: no worker override -> the registered SIImportIges fails on the missing file, nothing back', [G.noWorker, G.noWorkerLog], [NONE, 0]);
 eq('ImportIges: SIImportIges(FileName) only (Parent unused); the object is selected, auto-inspected and handed back', [G.calls, G.withWorker, G.sel, G.inspected], [[['SIImportIges', 'C:\\cad\\part.igs']], 'node:sphere1', ['sphere1'], ['sphere1']]);
 eq('ImportIges: no inspection with auto-inspect off; nothing back -> nothing selected', [G.noAutoInspect, G.nothingBack], [0, [NONE, 0]]);
 
@@ -433,7 +434,8 @@ const R = got.createRef;
 eq('CreateRefModel: empty FileName -> empty referenced model, selected, returned', R.empty, ['model', true, '', true]);
 eq('CreateRefModel: missing file -> empty creator; file name recorded on the resolution; name, parent, options kept', R.missing, ['Hero', 'C:\\models\\nofile.emdl', ['C:\\models\\nofile.emdl'], ['hi'], 'root_null', 3, true]);
 eq('CreateRefModel: existing file -> SICreateRefModel with all eight arguments in order; result selected', R.existing, [true, [['SICreateRefModel', 'C:\\models\\rig.emdl', 'Rig', 'res1', 'cube', true, true, 'map', 65535]], true]);
-eq('CreateRefModel: creation failed -> nothing returned, nothing selected; unwired worker is logged', [R.failed, R.noWorker], [[NONE, 0], [NONE, 1]]);
+// CMD-B15a: SICreateRefModel is now a registered command, so without an override it creates the model (loading the resolution is "not yet attested")
+eq('CreateRefModel: creation failed -> nothing returned, nothing selected; without an override the registered SICreateRefModel creates the model', [R.failed, R.noWorker], [[NONE, 0], ['node:rig', 1]]);
 
 // ---- model commands
 const M = got.models;
@@ -453,7 +455,7 @@ eq('RemoveUnusedDeltas: undoable', M.deltaUndo, true);
 
 // ---- SearchAndReplacePath
 const Q = got.search;
-eq('SearchAndReplacePath: project list (image sources and clips, referenced-model files, extra entries)', Q.before, ['Pictures:C:\\pics\\bump.pic', 'Pictures:C:\\pics\\bump.pic', 'Pictures:C:\\pics\\bump.pic', 'Pictures:C:\\pics\\bump.pic', 'Pictures:D:\\x\\rock.tga', 'Pictures:D:\\x\\rock.tga', 'Models:C:\\models\\nofile.emdl', 'Models:cubeRef', 'Models:sphRef', 'Audio:C:\\pics\\snd\\Voice.wav']);
+eq('SearchAndReplacePath: project list (image sources and clips, referenced-model files, extra entries)', Q.before, ['Pictures:C:\\pics\\bump.pic', 'Pictures:C:\\pics\\bump.pic', 'Pictures:C:\\pics\\bump.pic', 'Pictures:C:\\pics\\bump.pic', 'Pictures:D:\\x\\rock.tga', 'Pictures:D:\\x\\rock.tga', 'Models:C:\\models\\nofile.emdl', 'Models:C:\\models\\rig.emdl', 'Models:cubeRef', 'Models:sphRef', 'Audio:C:\\pics\\snd\\Voice.wav']);
 ok('SearchAndReplacePath direct: text compare by default; every changed path logged "Changing <old> To <new>"; no return value',
   Q.direct === NONE && Q.directLog.filter(l => l === 'info:Changing C:\\pics\\bump.pic To D:\\tex\\bump.pic').length === 4 && Q.directLog.includes('info:Changing C:\\pics\\snd\\Voice.wav To D:\\tex\\snd\\Voice.wav') && Q.directLog.filter(l => l.startsWith('info:')).length === 5, Q.directLog);
 eq('SearchAndReplacePath direct: Category = file type touches only that type', Q.audioOnly, [['Audio:E:\\snd\\Voice.wav'], ['info:Changing D:\\tex\\snd\\Voice.wav To E:\\snd\\Voice.wav']]);
@@ -468,7 +470,8 @@ eq('SearchAndReplacePath dialog OK: calls itself in direct form (second logged l
 eq('SearchAndReplacePath dialog Cancel: nothing happens, property deleted', Q.dlgCancel, [0, false]);
 
 // ---- defaults in batch mode
-for (const n of NAMES) eq(`${n}: runs with default arguments (batch) without throwing`, got.defaults[n].err, null);
+// CMD-B15a: ImportIges's worker SIImportIges has a required FileName, so its default run fails with a message naming the command
+for (const n of NAMES) n === 'ImportIges' ? ok(`${n}: default arguments (batch) fail naming SIImportIges (FileName required)`, /SIImportIges/.test(got.defaults[n].err ?? '')) : eq(`${n}: runs with default arguments (batch) without throwing`, got.defaults[n].err, null);
 const DF = got.defaults;
 ok('defaults: ObjExport batch = worker form on the whole selection', DF.ObjExport.log.includes('info:Model.cube'), DF.ObjExport.log);
 ok('defaults: the five dialog forms end like a cancel in batch (Q4, logged as not yet attested)', ['SI_InspectWavefrontImportOptions', 'BiovisionImport', 'AcclaimImport', 'SearchAndReplacePath'].every(n => DF[n].log.some(l => /not yet attested: batch mode/.test(l))) && got.defaultsLeft.length === 0, [DF.BiovisionImport.log, got.defaultsLeft]);

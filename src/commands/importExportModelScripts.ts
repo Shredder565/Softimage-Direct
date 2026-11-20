@@ -260,7 +260,7 @@ function createRefModel(app: App, a: Record<string, any>): any {
     return finish(callWorker(app, CMD, W.createRefModel, all), false);
   }
   // empty name or missing file: the empty creator, same arguments without CreateFile
-  const m = app.run('CreateEmptyRefModel', { Name: a.ModelName || undefined }) as Model | undefined;
+  const m = app.run('CreateEmptyRefModel', { ModelName: a.ModelName || undefined }) as Model | undefined;
   if (!(m instanceof Model)) return undefined;
   const r: any = (m as any).ref ?? ((m as any).ref = { file: '', resolution: 0, resolutions: [] });
   // the file name is still recorded on the resolution, so the model can be resolved later
