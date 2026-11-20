@@ -340,7 +340,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     ok('ImportReferencedDelta: missing Model -> 0x80070057', status(run('ImportReferencedDelta', { FileName: 'C:\\b15a\\d1.delta' }), '80070057'));
     inner.kinematics.local.get('posx').value = 0;
     r = run('ApplyDelta', { Deltas: [d] });
-    ok('ApplyDelta: re-applies the delta to its model; the applying flag is cleared afterwards', near(inner.kinematics.local.val('posx'), 7) && ((m.ref.applying ?? 0) & 2) === 0 && r.v >= 1, r);
+    ok('ApplyDelta: re-applies the delta to its model; the applying flag is cleared afterwards', near(inner.kinematics.local.val('posx'), 7) && ((m.ref.applying ?? 0) & 2) === 0 && r.v === undefined && MT().applied >= 1 && MT().status.ApplyDelta === 0, r);
     while (A.undoStack.length > u0) A.undo();
     reset();
   });

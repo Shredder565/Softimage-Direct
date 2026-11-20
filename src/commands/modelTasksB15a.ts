@@ -591,7 +591,8 @@ function applyDelta(app: App, a: Record<string, any>) {
     try { n += applyDeltaTo(app, m, d); } finally { r.applying &= ~2; }
   }
   mtState(app).status[C] = S_OK;
-  return n;
+  (mtState(app) as any).applied = n;   // items applied (the command itself returns nothing)
+  return undefined;
 }
 function makeDelta(app: App, m: Model, name: string): Property {
   const d = new Property(app.scene.uniqueName(name), 'delta', [str('target', m.name, 'Model', { readOnly: true }), int('changes', 0, 'Changes', { readOnly: true }),
