@@ -217,6 +217,9 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     ok('fr_GetFilesForBrowser: (mem, show_) non-empty keeps "_"', r2.includes('my_face'));
     run('fr_sdelete', { key1: 'mem', key2: 'show_' });
     ok('fr_GetFilesForBrowser: empty path or extension -> [0]', J(v('fr_GetFilesForBrowser', { path: '', extension: 'fr' })) === '[0]' && J(v('fr_GetFilesForBrowser', { path: B, extension: '' })) === '[0]');
+    const B2 = 'C:\\b14a\\br83'; FS.ensureFolder(B2); for (const f of ['one.fro', 'two.froz', 'three.xyz', 'four.fr']) FS.writeFile(B2 + '\\' + f, '');
+    const r83 = v('fr_GetFilesForBrowser', { path: B2, extension: 'fro' });
+    ok('fr_GetFilesForBrowser: 8.3 quirk (extension never re-checked): a 3-character pattern also lists a longer extension starting with it', r83[0] === 6 && r83.some(x => typeof x === 'string' && x.endsWith('two.froz')) && !r83.some(x => typeof x === 'string' && x.endsWith('three.xyz')), r83);
     ok('fr_GetFilesForBrowser: missing folder -> [0]', J(v('fr_GetFilesForBrowser', { path: 'C:\\nofolder_b14a', extension: 'fr' })) === '[0]');
   } catch (e) { ok('block threw', false, String(e?.stack ?? e).slice(0, 300)); }
   // ================= constant queries, fr_GetCommand (WIRE_CORRECTIONS_B14 8-9)
@@ -246,7 +249,10 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     cube.kinematics.local.get('posx').value = 3;
     let r = run('fr_MuteSources', { Objects: [cube], b_Mute: true, b_IncludeRetargeting: true });
     ok('fr_MuteSources: b_Mute -> ResetTransform on Objects', !r.err && cube.kinematics.local.val('posx') === 0, r);
-    ok('fr_MuteSources: retargeting -> fr_ResetRetarget(true) after the reset; b_ResetTransforms use logged', has(r, /fr_ResetRetarget/) && nya(r));
+    ok('fr_MuteSources: retargeting -> fr_ResetRetarget(true) after the reset; b_ResetTransforms is not used (nothing logged)', has(r, /fr_ResetRetarget/) && !nya(r));
+    cube.kinematics.local.get('posx').value = 3;
+    r = run('fr_MuteSources', { Objects: [cube], b_Mute: true, b_IncludeRetargeting: false, b_ResetTransforms: false });
+    ok('fr_MuteSources: the reset is gated by b_Mute, not b_ResetTransforms', cube.kinematics.local.val('posx') === 0 && !has(r, /fr_ResetRetarget/));
     cube.kinematics.local.get('posx').value = 3;
     r = run('fr_MuteSources', { Objects: [cube], b_Mute: false, b_IncludeRetargeting: true });
     ok('fr_MuteSources: not muting + retargeting -> fr_ResetRetarget(false) only', has(r, /fr_ResetRetarget/) && cube.kinematics.local.val('posx') === 3);
@@ -301,9 +307,12 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     const wm = r.v;
     ok('GetFaceWeightMap: adds a Weight Map Property named MapName on the face cluster, red/green/blue = R/G/B', wm?.name === 'Brow' && wm.type === 'weightmap' && c.properties.includes(wm) && wm.val('red') === 10 && wm.val('green') === 20 && wm.val('blue') === 255, r.err);
     ok('GetFaceWeightMap: one -> returns it', v('GetFaceWeightMap', { MapName: 'Brow', Object: cube }) === wm);
-    c.addProperty(new X.Property('Lip_L', 'weightmap', [])); c.addProperty(new X.Property('Lip_R', 'weightmap', []));
+    const lipL = new X.Property('Lip_L', 'weightmap', []), lipR = new X.Property('Lip_R', 'weightmap', []); lipL.userKeywords = 'Lip,L'; lipR.userKeywords = 'Lip,R'; c.addProperty(lipL); c.addProperty(lipR);
     r = run('GetFaceWeightMap', { MapName: 'Lip', Object: cube });
-    ok('GetFaceWeightMap: several (name split on "_") -> the first, " MORE THAN ONE WeightMap FOUND! using <<"', r.v?.name === 'Lip_L' && has(r, /^ MORE THAN ONE WeightMap FOUND! using <</));
+    ok('GetFaceWeightMap: several (every "_" piece is one of the user keywords) -> the first, " MORE THAN ONE WeightMap FOUND! using <<"', r.v?.name === 'Lip_L' && has(r, /^ MORE THAN ONE WeightMap FOUND! using <</));
+    ok('GetFaceWeightMap: pieces match case-insensitively and all must match', v('GetFaceWeightMap', { MapName: 'lip_R', Object: cube }) === lipR);
+    const nb0 = c.properties.length; const lm = v('GetFaceWeightMap', { MapName: 'Li', Object: cube });
+    ok('GetFaceWeightMap: not a prefix match -> a new map is added', lm && lm !== lipL && lm.name === 'Li' && c.properties.length === nb0 + 1);
     r = run('GetFaceWeightMap', { MapName: 'Brow', Object: nul });
     ok('GetFaceWeightMap: Object not a polymsh -> "Specified Object<<...>>" then the selected polymsh', r.v === wm && has(r, /^Specified Object<<nullB14a>>/));
     A.select([nul]);
@@ -340,7 +349,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     r = run('fr_NeighborIndex', { inObj: cube, inVertex: 1, inMode: 1 });
     const up = Math.max(...[...nbr].map(w => { const d = [P[w * 3] - P[3], P[w * 3 + 1] - P[4], P[w * 3 + 2] - P[5]]; return d[1] / Math.hypot(...d); }));
     const d = [P[r.v * 3] - P[3], P[r.v * 3 + 1] - P[4], P[r.v * 3 + 2] - P[5]];
-    ok('fr_NeighborIndex: mode non-zero -> the most upward neighbour (logged)', nbr.has(r.v) && near(d[1] / Math.hypot(...d), up) && nya(r));
+    ok('fr_NeighborIndex: mode non-zero -> the most upward neighbour (logged)', nbr.has(r.v) && near(d[1] / Math.hypot(...d), up) && !nya(r));
     ok('fr_NeighborIndex: inVertex 0 rejected -> 0x80020003', status(run('fr_NeighborIndex', { inObj: cube, inVertex: 0 }), '80020003'));
     ok('fr_NeighborIndex: invalid inObj -> 0x80020003 (Q3)', status(run('fr_NeighborIndex', { inVertex: 1 }), '80020003'));
   } catch (e) { ok('block threw', false, String(e?.stack ?? e).slice(0, 300)); }
@@ -419,7 +428,10 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     delete cube.siNotInspectable;
     G.add({ name: 'viewvis', type: 'int', value: 1 }); G.add({ name: 'rendvis', type: 'int', value: 1 });
     r = run('fr_Visible', { inObjs: [sp], Value: 0 });
-    ok('fr_Visible: owner groups\' viewvis / rendvis set to 2 (frf_visgroup logged)', G.val('viewvis') === 2 && G.val('rendvis') === 2 && nya(r));
+    ok('fr_Visible: frf_visgroup: owner group with viewvis != 2 has viewvis / rendvis set to 2', G.val('viewvis') === 2 && G.val('rendvis') === 2 && !nya(r));
+    G.get('viewvis').value = 2; G.get('rendvis').value = 1;
+    run('fr_Visible', { inObjs: [sp], Value: 0 });
+    ok('fr_Visible: frf_visgroup: viewvis == 2 and no visibility property on the group -> not a match, untouched', G.val('rendvis') === 1);
     A.select([]);
     r = run('fr_Visible', {});
     ok('fr_Visible: empty selection -> status False (1)', !r.err && A.faceRobotB14.rows.B14a.status.fr_Visible === 1);
@@ -446,7 +458,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     ok('fr_AddObjectInPlace: under inParent, global translation = inVector', b?.parentObj === par && near(gp[12], 1) && near(gp[13], 2) && near(gp[14], 3) && near(b.kinematics.local.val('posx'), -4), r.err);
     ok('fr_AddObjectInPlace: inScale clamped up to 0.01; wirecol = inColor', near(Number(b.primitive.operators[0].val('length')), 0.01) && b.properties.find(p => p.type === 'display').val('wirecol') === true /* this build models wirecol as a bool */, [b.primitive.operators.map(o => o.params.map(q => q.def.name + '=' + q.value).join(' ')), b.properties.map(p => p.type + ':' + p.val('wirecol'))]);
     r = run('fr_AddObjectInPlace', { inPreset: 'Sphere', inType: 1, inName: 'ballB14a', inScale: 2, inParamTags: 'radius' });
-    ok('fr_AddObjectInPlace: inType 1 -> AddGeometry MeshSurface; other presets -> radius; tags logged', r.v?.name === 'ballB14a' && near(Number(r.v.primitive.operators[0].val('radius')), 2) && r.log.some(l => /tag value put on parameter radius/.test(l)), r.err);
+    ok('fr_AddObjectInPlace: inType 1 -> AddGeometry MeshSurface; other presets -> radius; inParamTags -> tag 1; siNotInspectable false', r.v?.name === 'ballB14a' && near(Number(r.v.primitive.operators[0].val('radius')), 2) && r.log.some(l => /tag value put on parameter radius/.test(l)) === false && r.v.primitive.operators[0].get('radius').tags === 1 && !r.v.siNotInspectable, r.err);
     r = run('fr_AddObjectInPlace', { inPreset: 'Circle', inType: 3, inName: 'crvB14a', inScale: 3 });
     ok('fr_AddObjectInPlace: inType 3 -> AddGeometry NurbsCurve', r.v?.type === 'crvlist', r.err);
     while (A.undoStack.length > u0) A.undo();

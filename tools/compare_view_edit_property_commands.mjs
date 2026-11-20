@@ -31,7 +31,7 @@ const COMMANDS = [
   'DuplicateModelFromObj', 'DeleteModelFromObj', 'DeleteAll', 'DeleteObjPermanent', 'ToggleParameterValue',
   'MoveOperatorAfter', 'MoveOperatorBefore', 'SwapOperators', 'DeactivateAbove', 'CreateTransformGroup', 'RemoveTransformGroup',
   // Property
-  'SIAddProp', 'SIAddPropEx', 'RemoveProperties', 'RemoveAllProperties', 'SIAssignMaterial', 'SIUnAssignMaterial', 'SICreateMaterial',
+  'SIAddProp', 'SIAddPropEx', 'RemoveProperties', 'RemoveAllProperties', 'SIAssignMaterial', 'SIUnAssignMaterial',
   'MakeLocal', 'SIMakeLocal', 'SelectMaterialsUsedBy', 'SelectObjectsUsingMaterial', 'IncreaseSubdivision', 'DecreaseSubdivision',
   'AutoInspectEnabled', 'ToggleBooleanUserPref', 'InspectLastOperator',
   // Constraint
@@ -334,12 +334,8 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
   {
     const { cube, sph } = S(); const mats = () => A.scene.materials.map(m => m.name); A.select([sph]);
     let r = run('SIAssignMaterial'); ck('SIAssignMaterial', 'default args: error, no material', /no such material/.test(r.err ?? ''), r);
-    const m0 = mats(); r = run('SICreateMaterial', { Name: 'VMat', Objects: [cube] }); const m = r.v;
-    ck('SICreateMaterial', 'creates a material with a surface shader and assigns it to Objects; selection untouched', ok(r) && m.kind === 'material' && m.name === 'VMat' && !!m.surface && A.scene.materials.includes(m) && cube.material === m && sph.material === null && eq(names(A.selection), ['vsphere']), [r, mats()]);
-    A.undo(); ck('SICreateMaterial', 'undo removes the material and the assignment', eq(mats(), m0) && cube.material === null); A.redo();
-    A.select([]); r = run('SICreateMaterial'); ck('SICreateMaterial', 'default args: a material named Material, nothing assigned', ok(r) && r.v.name === 'Material' && A.scene.materials.includes(r.v) && sph.material === null, [r, mats()]);
-    A.select([sph]); r = run('SICreateMaterial', { Name: 'NoAssign', AssignToList: false }); ck('SICreateMaterial', 'AssignToList=False: the selection keeps its material', ok(r) && sph.material === null && mats().includes('NoAssign'), r);
-    r = run('SICreateMaterial', { PresetObj: 'NoSuchShaderPreset' }); ck('SICreateMaterial', 'unknown preset: error', /is not available/.test(r.err ?? ''), r);
+    // SICreateMaterial moved to the CMD-B15b contract (compare_propertytasks_b15b_commands.mjs); here it only supplies the material
+    const m = run('SICreateMaterial', { PresetObj: 'Phong', Name: 'VMat', Objects: [cube] }).v;
     r = run('SIAssignMaterial', { Objects: [sph], Material: 'VMat' }); ck('SIAssignMaterial', 'assigns the named material', ok(r) && sph.material === m, r);
     A.undo(); ck('SIAssignMaterial', 'undo', sph.material === null); A.redo();
     r = run('SelectMaterialsUsedBy', { InputObjs: [sph] }); ck('SelectMaterialsUsedBy', 'selects the object\'s material', ok(r) && eq(names(A.selection), ['VMat']) && r.v[0] === m, names(A.selection));

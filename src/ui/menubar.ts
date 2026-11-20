@@ -160,10 +160,15 @@ const HELP_URLS: Record<string, string> = {
   'Syflex Help': 'https://help.autodesk.com/view/SI/2015/ENU/',
 };
 
+// Delta... opens the file picker of the pre-B15a handler (the modeltasks.dll ImportDelta needs a FileName and a Model, CMD-B15a)
+function importPick(app: App, l: string) {
+  if (l.startsWith('Model')) app.run('ImportModel'); else if (l.startsWith('Referenced')) app.run('ImportRefModels');
+  else { const f = (app as any).modelTasksB15a?.legacy?.ImportDelta; if (f) f(app, {}); else app.run('ImportDelta'); }
+}
 function pickImportExport(app: App, path: string[], l: string): boolean {
   if (path.includes('Import')) {
     if (l === 'Model...' || l === 'Referenced Model...' || l === 'Delta...') {
-      app.run(l.startsWith('Model') ? 'ImportModel' : l.startsWith('Referenced') ? 'ImportRefModels' : 'ImportDelta'); return true;
+      importPick(app, l); return true;
     }
     if (l === 'Obj File...') { app.run('ImportObjFile'); return true; }
     if (l === 'dotXSI...' || l === 'IGES File...' || l === 'EPS File...' || l === 'Biovision File...' || l === 'Acclaim File...') {
@@ -207,7 +212,7 @@ export function menubar(app: App, host: HTMLElement) {
       case -6: ev('openvisibility'); return;
       case -7: ev('openscene', { name: l }); return;
       case -8: ev('layoutmenu', { label: l, path: [...path, 'New Layout From'] }); return;
-      case -13: app.run(l.startsWith('Model') ? 'ImportModel' : l.startsWith('Referenced') ? 'ImportRefModels' : 'ImportDelta'); return;
+      case -13: importPick(app, l); return;
       case -14: app.run(l.startsWith('Model') ? 'ExportModel' : 'ExportDelta'); return;
     }
     if (isOutOfScopeMenubarPath(path)) {

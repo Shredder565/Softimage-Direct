@@ -66,10 +66,16 @@ import { registerCrosswalkB13cCommands } from './commands/crosswalkB13c';
 import { registerMotorB13dCommands } from './commands/motorB13d';
 import { registerPluginsB13eCommands } from './commands/pluginsB13e';
 import { registerFaceRobotB14aCommands } from './commands/faceRobotB14a';
+import { registerPropertyTasksB15bCommands } from './commands/propertyTasksB15b';
+import { registerParticlesB15cCommands } from './commands/particlesB15c';
 import { registerFaceRobotB14bCommands } from './commands/faceRobotB14b';
 import { registerFaceRobotB14cCommands } from './commands/faceRobotB14c';
 import { registerFaceRobotB14dCommands } from './commands/faceRobotB14d';
 import { registerFaceRobotB14eCommands } from './commands/faceRobotB14e';
+import { registerModelTasksB15aCommands } from './commands/modelTasksB15a';
+import { registerClipsSourcesB15dCommands } from './commands/clipsSourcesB15d';
+import { registerRigScriptsB15eCommands } from './commands/rigScriptsB15e';
+import { registerMiscScriptsB15fCommands } from './commands/miscScriptsB15f';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -211,6 +217,12 @@ registerFaceRobotB14bCommands(app); // CMD-B14b (FR sculpt / mouth)
 registerFaceRobotB14cCommands(app); // CMD-B14c (FR eyes / jaw / regions)
 registerFaceRobotB14dCommands(app);   // CMD-B14d (Face Robot retarget / mocap / stage)
 registerFaceRobotB14eCommands(app);   // CMD-B14e (Face Robot export / weights / tongue)
+registerModelTasksB15aCommands(app);   // CMD-B15a (modeltasks.dll: model / import-export / ref-model / delta contracts)
+registerPropertyTasksB15bCommands(app);   // CMD-B15b (propertytasks.dll contracts; replaces inferred SIAddCustomParam / SICreateMaterial / SIStoreProp)
+registerParticlesB15cCommands(app);   // CMD-B15c (sparks.dll / forces.dll particle commands; replaces the CMD-03b CreateInspectParticleType* entries)
+registerClipsSourcesB15dCommands(app);   // CMD-B15d (image / model / file-cache sources and clips, audio)
+registerRigScriptsB15eCommands(app);   // CMD-B15e (Character Rigging script commands)
+registerMiscScriptsB15fCommands(app);   // CMD-B15f (sdkui wizards, lip-sync, UpgradeShaders, default camera, OBJ menu entry)
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);

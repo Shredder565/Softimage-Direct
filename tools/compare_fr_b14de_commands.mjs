@@ -292,6 +292,8 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     ok('FaceCalibrateProperties: 20 doubles + OldFormat true; Scale default 1 range 0.., Pitch -180..180', cp.params.length === 21 && cp.get('OldFormat').def.value === true && cp.get('DownLLipScale').def.value === 1 && cp.get('DownLLipPitch').def.min === -180 && cp.get('DownLLipPitch').def.uimax === 30 && cp.get('DownLLipScale').def.uimax === 1.5);
     r = run('fr_LogFaceCalibration');
     ok('fr_LogFaceCalibration: one line CalibrateFace(<20 values>)', has(r, /^CalibrateFace\(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20\)$/), r.log);
+    r = run('fr_CalibrateFace', { ...Object.fromEntries(A.commands.get('fr_CalibrateFace').args.map((a, k) => [a.name, k + 1])), [A.commands.get('fr_CalibrateFace').args[0].name]: '' });
+    ok('fr_CalibrateFace: an empty argument writes 0.0 (all 20 written, none skipped)', cp.val('UpULipScale') === 0 && cp.params.slice(0, 20).filter(q => Number(q.value) === 0).length === 1, r.err);
     r = run('fr_CalibrateRetargetedFace');
     const v = D().views.find(x => x.name === 'FaceCalibrate');
     ok('fr_CalibrateRetargetedFace: Property Panel FaceCalibrate at (15, 15), width 400, targetcontent = property', v && v.type === 'Property Panel' && v.x === 15 && v.y === 15 && v.width === 400 && v.targetcontent === cp.fullName && D().calibrateModel === face.fullName, v);
@@ -406,11 +408,11 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
   {
     A.selectComponents(mesh, 'point', [0, 4]);
     let r = run('fr_CrawlToVertex', { Select: false });
-    ok('fr_CrawlToVertex: walks mesh edges between the listed vertices, returns "<object>.pnt[...]"', r.v === `${mesh.fullName}.pnt[0,1,2,3,4]`, r);
+    ok('fr_CrawlToVertex: walks mesh edges between the listed vertices (the first vertex is not in the output), returns "<object>.pnt[...]"', r.v === `${mesh.fullName}.pnt[1,2,3,4]`, r);
     A.selectComponents(mesh, 'point', [0, 12, 24]);
     r = run('fr_CrawlToVertex', { Select: true });
     const ids = /\[(.*)\]/.exec(r.v)?.[1].split(',').map(Number) ?? [];
-    ok('fr_CrawlToVertex: multi-pair path ends at the last vertex, consecutive vertices share an edge; Select runs SelectGeometryComponents', ids[0] === 0 && ids.includes(12) && ids[ids.length - 1] === 24 && E().calls.some(c => c.name === 'SelectGeometryComponents' && c.args.SelectionList === r.v), r);
+    ok('fr_CrawlToVertex: multi-pair path ends at the last vertex, consecutive vertices share an edge; Select runs SelectGeometryComponents', ids[0] !== 0 && ids.includes(12) && ids[ids.length - 1] === 24 && E().calls.some(c => c.name === 'SelectGeometryComponents' && c.args.SelectionList === r.v), r);
     A.compSel = null;
     ok('fr_CrawlToVertex: nothing selected -> ".pnt[]"', run('fr_CrawlToVertex').v === '.pnt[]');
   }
@@ -492,6 +494,13 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     const n0 = A.scene.allObjects ? [...A.scene.allObjects()].length : 0;
     r = run('fr_SolveTongue');
     ok('fr_SolveTongue: a control keyed "Tongue,Base" exists -> true at once, nothing built', r.v === true && [...A.scene.allObjects()].length === n0);
+    // no meshes/Tongue (cmd-b15 Q1): true / S_OK, FaceConnections.Tongue not written, the Tongue*Marker children of Fit deleted
+    for (const c of ctl) c.parentObj.removeChild(c);
+    ST().store.delete('meshes', 'Tongue');
+    const fcp = face.properties.find(p => p.name === 'FaceConnections'); fcp.get('Tongue').value = 'sentinel';
+    H.newNull(A, 'TongueBase_Marker', fit);
+    r = run('fr_SolveTongue');
+    ok('fr_SolveTongue: no meshes/Tongue -> true, S_OK, FaceConnections.Tongue untouched, Tongue*Marker children of Fit deleted', r.v === true && E().lastStatus.fr_SolveTongue === 0 && fcp.val('Tongue') === 'sentinel' && fit.children.length === 0, r);
   }
 
   // ================= fr_RegenerateMouth (correction 6)
@@ -506,11 +515,11 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     ok('fr_RegenerateMouth: Yes without the retarget blob -> S_FALSE, controls untouched', E().lastStatus.fr_RegenerateMouth === 1 && kv(lc, 'posx') === 1);
     face.addProperty(rb);
     mesh.addProperty(new H.Property('blob1', 'UserDataBlob', [])); mesh.addProperty(new H.Property('blob2', 'UserDataBlob', []));
-    face.addProperty(new H.Property('CDKMetaMouthSculpt', 'UserDataBlob', []));
+    face.addProperty(new H.Property('ZeroPoseO', 'UserDataBlob', [])); face.addProperty(new H.Property('ZeroPose', 'UserDataBlob', []));
     const k = E().calls.length;
     r = run('fr_RegenerateMouth');
     const op = mesh.primitive.operators.find(o => o.name === 'MetaMouthOperator');
-    ok('fr_RegenerateMouth: Yes -> controls zeroed, fcurves deactivated then reactivated, MetaMouthOperator (fro_MetaMouthOp2, UpdateInnerMouth) rebuilt, mouth blob deleted', E().lastStatus.fr_RegenerateMouth === 0 && kv(lc, 'posx') === 0 && op?.type === 'fro_MetaMouthOp2' && op.val('UpdateInnerMouth') === true && !face.properties.some(p => p.name === 'CDKMetaMouthSculpt') && E().calls.slice(k).some(c => c.name === 'ActivateFCurve' && c.args.Activate === false) && E().calls.slice(k).some(c => c.name === 'ActivateFCurve' && c.args.Activate === true) && E().calls.slice(k)[0].name === 'ActivateObjectSelTool', [r.err, op?.type]);
+    ok('fr_RegenerateMouth: Yes -> controls zeroed, fcurves deactivated then reactivated, MetaMouthOperator (fro_MetaMouthOp2, UpdateInnerMouth) rebuilt, ZeroPoseO / ZeroPose blobs deleted', E().lastStatus.fr_RegenerateMouth === 0 && kv(lc, 'posx') === 0 && op?.type === 'fro_MetaMouthOp2' && op.val('UpdateInnerMouth') === true && !face.properties.some(p => p.name === 'ZeroPoseO' || p.name === 'ZeroPose') && E().calls.slice(k).some(c => c.name === 'ActivateFCurve' && c.args.Activate === false) && E().calls.slice(k).some(c => c.name === 'ActivateFCurve' && c.args.Activate === true) && E().calls.slice(k)[0].name === 'ActivateObjectSelTool', [r.err, op?.type]);
     r = run('fr_RegenerateMouth');
     ok('fr_RegenerateMouth: rebuilt, not duplicated; LipStiction present', mesh.primitive.operators.filter(o => o.name === 'MetaMouthOperator').length === 1 && !!mesh.properties.find(p => p.name === 'LipStiction'));
     ST().hooks.msgBox = undefined;

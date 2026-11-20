@@ -858,7 +858,7 @@ export function registerModelAliases(app: App) {
   } });
   void mirrorComponent;
   alias('CreateWeightMap', 'AddProp', a => ({ ...a, PresetObj: 'Weight Map' }));
-  alias('SIStoreProp', 'AddProp', a => ({ ...a, PresetObj: 'Override' }));
+  // SIStoreProp: replaced by the CMD-B15b contract (propertyTasksB15b.ts)
   alias('AddSmoothEdgeLoopTool', 'AddEdgeTool');
   app.commands.get('OpenMaterialLibrary')!.canRun = () => true;
   // generic properties: anything AddProp does not know becomes a plain property named after the preset

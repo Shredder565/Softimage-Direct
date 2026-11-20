@@ -83,7 +83,7 @@ export function registerFaceRobotB14dCommands(app: App) {
     execute(app, a) {
       const m = faceModel(app); if (!m) return;
       const p = findOrAddProp(app, m, 'FaceCalibrateProperties', faceCalibrateDefs);
-      for (const [arg, pn] of CALIBRATE_ARGS) { const q = p.get(pn); if (q) app.setParam(q, numArg(a[arg], 0)); }   // an empty value converts to 0 (inferred)
+      for (const [arg, pn] of CALIBRATE_ARGS) { const q = p.get(pn); if (q) app.setParam(q, numArg(a[arg], 0)); }   // all 20 values are written unconditionally; an empty argument writes 0.0 (cmd-b15 Q5)
     },
   });
   app.register({

@@ -563,7 +563,7 @@ const rows = await page.evaluate(async (siCounts) => {
     const deltaText = localStorage.getItem('si.delta.BallRefOps.delta');
     A.setParam(l.get('posx'), 0);
     A.setParam(l.get('posy'), 0);
-    const n = A.run('ImportDelta', { Data: payload });
+    const n = A.run('ImportDelta', { FileName: 'BallRefOps.delta', Model: 'BallModel', Interactive: false });
     const ok = Math.abs(Number(l.val('posx')) - 2.5) < 1e-6 && Math.abs(Number(l.val('posy')) - 1.25) < 1e-6 && (payload?.delta?.length ?? 0) >= 1
       && payload?.format === 'softimage-direct-delta-json' && !!deltaText && deltaText.includes('softimage-direct-delta-json');
     out.push({

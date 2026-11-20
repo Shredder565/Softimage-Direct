@@ -80,6 +80,10 @@ export class ParamSet {
     this.byName.set(def.name, p);
     return p;
   }
+  /** Remove a parameter (custom-parameter undo); returns its former index or -1. */
+  removeParam(p: Parameter): number { const i = this.params.indexOf(p); if (i >= 0) { this.params.splice(i, 1); if (this.byName.get(p.def.name) === p) this.byName.delete(p.def.name); } return i; }
+  /** Re-insert a parameter removed with removeParam at its former index. */
+  insertParam(p: Parameter, index: number) { this.params.splice(Math.min(Math.max(index, 0), this.params.length), 0, p); this.byName.set(p.def.name, p); }
   get(name: string): Parameter | undefined { return this.byName.get(name); }
   val(name: string): any { return this.byName.get(name)?.value; }
   set(name: string, v: any) { const p = this.byName.get(name); if (p) p.value = v; }

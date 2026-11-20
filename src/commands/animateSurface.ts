@@ -750,13 +750,7 @@ const HANDLERS: Record<string, Handler> = {
     }
     return contract(app, 'ToggleBooleanUserPrefProc', a);
   },
-  SIAddCustomParam(app, a) {
-    if (a.InputObj) app.run('SelectObj', { InputObjs: a.InputObj });
-    return app.run('AddCustomParameter', {
-      Name: a.ScriptName || 'ParamName',
-      Default: a.DefaultValue, Min: a.MinValue, Max: a.MaxValue,
-    });
-  },
+  // SIAddCustomParam: replaced by the CMD-B15b contract (propertyTasksB15b.ts)
 };
 
 function resetClipCurves(app: App, spec: unknown) {

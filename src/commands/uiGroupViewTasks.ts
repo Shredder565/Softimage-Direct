@@ -460,30 +460,40 @@ export function registerUiGroupViewTaskCommands(app: App) {
   const reg = (def: CommandDef) => app.register(def);
   const IN = { name: 'InputObjs', default: null };
 
-  for (const [W, k, noun] of [['Keyword', 'userKeywords', 'user keyword'], ['Tab', 'userTabs', 'User Tab']] as const) {
-    reg({
-      name: `SetUser${W}`, label: `Set User ${W}`, category: 'Viewing|Property', description: `Sets the ${noun}(s) on the input object(s)`,
+  // The ten names are spelled out (CMD-B15b item 26: a static scan must see them; before they were built at run time).
+  const USER_ATTR = [
+    { name: 'SetUserKeyword', op: 'set', W: 'Keyword', k: 'userKeywords', noun: 'user keyword' },
+    { name: 'GetUserKeyword', op: 'get', W: 'Keyword', k: 'userKeywords', noun: 'user keyword' },
+    { name: 'ClearUserKeyword', op: 'clear', W: 'Keyword', k: 'userKeywords', noun: 'user keyword' },
+    { name: 'RemoveUserKeyword', op: 'remove', W: 'Keyword', k: 'userKeywords', noun: 'user keyword' },
+    { name: 'AddUserKeyword', op: 'add', W: 'Keyword', k: 'userKeywords', noun: 'user keyword' },
+    { name: 'SetUserTab', op: 'set', W: 'Tab', k: 'userTabs', noun: 'User Tab' },
+    { name: 'GetUserTab', op: 'get', W: 'Tab', k: 'userTabs', noun: 'User Tab' },
+    { name: 'ClearUserTab', op: 'clear', W: 'Tab', k: 'userTabs', noun: 'User Tab' },
+    { name: 'RemoveUserTab', op: 'remove', W: 'Tab', k: 'userTabs', noun: 'User Tab' },
+    { name: 'AddUserTab', op: 'add', W: 'Tab', k: 'userTabs', noun: 'User Tab' },
+  ] as const;
+  for (const { name, op, W, k, noun } of USER_ATTR) {
+    if (op === 'set') reg({
+      name, label: `Set User ${W}`, category: 'Viewing|Property', description: `Sets the ${noun}(s) on the input object(s)`,
       args: [IN, { name: 'Keywords', default: '' }],
-      execute: (app, a) => setKeywords(app, `SetUser${W}`, k, a),
+      execute: (app, a) => setKeywords(app, name, k, a),
     });
-    reg({
-      name: `GetUser${W}`, label: `Get User ${W}`, category: 'Viewing|Property', description: `Gets the ${noun.toLowerCase()}(s) on the input object(s)`, undoable: false,
+    else if (op === 'get') reg({
+      name, label: `Get User ${W}`, category: 'Viewing|Property', description: `Gets the ${noun.toLowerCase()}(s) on the input object(s)`, undoable: false,
       args: [IN, { name: 'Keywords', default: null }],
-      execute: (app, a) => getKeywords(app, `GetUser${W}`, k, a),
+      execute: (app, a) => getKeywords(app, name, k, a),
     });
-    reg({
-      name: `ClearUser${W}`, label: `Clear User ${W}`, category: 'Viewing|Property', description: `Clears the ${noun.toLowerCase()}(s) on given object(s)`,
+    else if (op === 'clear') reg({
+      name, label: `Clear User ${W}`, category: 'Viewing|Property', description: `Clears the ${noun.toLowerCase()}(s) on given object(s)`,
       args: [IN],
-      execute: (app, a) => clearAttribute(app, `ClearUser${W}`, k, nodeList(app, a.InputObjs, true)),
+      execute: (app, a) => clearAttribute(app, name, k, nodeList(app, a.InputObjs, true)),
     });
-    for (const mode of ['remove', 'add'] as const) {
-      const name = `${mode === 'add' ? 'Add' : 'Remove'}User${W}`;
-      reg({
-        name, label: `${mode === 'add' ? 'Add' : 'Remove'} User ${W}`, category: 'Viewing|Property', description: '',
-        args: [IN, { name: 'Keywords', default: '' }],
-        execute: (app, a) => modifyKeywords(app, name, k, mode, a),
-      });
-    }
+    else reg({
+      name, label: `${op === 'add' ? 'Add' : 'Remove'} User ${W}`, category: 'Viewing|Property', description: '',
+      args: [IN, { name: 'Keywords', default: '' }],
+      execute: (app, a) => modifyKeywords(app, name, k, op, a),
+    });
   }
 
   reg({

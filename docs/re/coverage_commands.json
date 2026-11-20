@@ -1,10 +1,8 @@
 {
  "(uncategorised)": {
   "total": 448,
-  "registered": 431,
+  "registered": 434,
   "missing": [
-   "Add property extended",
-   "Add3DObjectToScene",
    "BoneCreateTool",
    "CrowdCreateDirectionalEmitterTool",
    "CrowdCreateWallTool",
@@ -12,7 +10,6 @@
    "DeleteCurrentLayer",
    "DoNothing",
    "Freeze Selected",
-   "Get default camera",
    "GetSkeleton",
    "MarkObjectDirty",
    "Pick Session Tool",
@@ -29,11 +26,9 @@
  },
  "Animation": {
   "total": 186,
-  "registered": 183,
+  "registered": 185,
   "missing": [
-   "GenerateLipSync",
-   "SIAppendBone",
-   "Save Zero Key Hot Key"
+   "SIAppendBone"
   ]
  },
  "Animation Mixer": {
@@ -63,11 +58,10 @@
  },
  "Character Rigging": {
   "total": 31,
-  "registered": 4,
+  "registered": 9,
   "missing": [
    "Make2PointSlide",
    "MakeArm",
-   "MakeBelly",
    "MakeBicepRoll",
    "MakeBiped",
    "MakeBiped",
@@ -79,18 +73,14 @@
    "MakeForearmRoll",
    "MakeHand",
    "MakeHead",
-   "MakeHip",
    "MakeJointCompression",
    "MakeLeg",
    "MakeQuadruped",
    "MakeQuadruped",
    "MakeQuadrupedCharacterKeySet",
-   "MakeRigIcon",
    "MakeShadowChain",
    "MakeShadowSpine",
    "MakeSpine",
-   "MakeThighSlide",
-   "MakeTorso",
    "SetKeyableRig"
   ]
  },
@@ -106,17 +96,8 @@
  },
  "Custom": {
   "total": 413,
-  "registered": 400,
+  "registered": 409,
   "missing": [
-   "AddCommandToPlugin",
-   "CreateCommandWizard",
-   "CreateMRShaderWizard",
-   "CreatePluginWizard",
-   "CreateTemplateWizard",
-   "CreateToolbarWizard",
-   "GenerateCommandPlugin",
-   "SIGeneratePlugin",
-   "SIGenerateToolbar",
    "SyGetMassMap",
    "SyGetSpringMap",
    "syCachePaint1",
@@ -145,49 +126,15 @@
  },
  "Edit": {
   "total": 117,
-  "registered": 112,
+  "registered": 116,
   "missing": [
-   "AddFileCacheSource",
-   "AddFileCacheSource2",
-   "CopyPaste",
-   "GetLightListOnModelClip",
-   "SetLightListOnModelClip"
+   "CopyPaste"
   ]
  },
  "File": {
   "total": 110,
-  "registered": 81,
-  "missing": [
-   "AddAudioClip",
-   "ApplyDelta",
-   "ExportMaterialLibrary",
-   "ImportAudio",
-   "ImportReferencedDelta",
-   "MergeMixer",
-   "OBJ Import...",
-   "RemoveRefModelResolution",
-   "SIAddImageClip",
-   "SIAddImageOp",
-   "SIAddImageSource",
-   "SIAddImageSourceOp",
-   "SIAddModelClip",
-   "SIAddModelSource",
-   "SIAddWritableImageSource",
-   "SICreateDefaultImageClip",
-   "SICreateImageClip2",
-   "SICreateModel",
-   "SICreateModelClip",
-   "SICreateRefModel",
-   "SIExportIges",
-   "SIGetModel",
-   "SIImportIges",
-   "SIImportMatLib",
-   "SIImportModel",
-   "SIImportReferencedMatLib",
-   "SIMergeScene",
-   "SISetResolutionOfRefModels",
-   "SetImageSource"
-  ]
+  "registered": 110,
+  "missing": []
  },
  "General": {
   "total": 10,
@@ -257,33 +204,14 @@
  },
  "Property": {
   "total": 125,
-  "registered": 105,
+  "registered": 124,
   "missing": [
-   "CreateUserNormals",
-   "GenDiffuseMap",
-   "GenNormalMap",
-   "PaintWeights",
-   "RemoveUserNormals",
-   "SIAddConnectionEntryToOverride",
-   "SIAddCustomParam",
-   "SIAddParameterEntryToOverride",
-   "SIAddShaderEntryToOverride",
-   "SICreateMaterialDD",
-   "SIGetOriginalValueOfOverridden",
-   "SIGetOverriddenParameters",
-   "SIRemoveEntryFromOverride",
-   "SetClusterPropertyValues",
-   "SetPolygonUserNormals",
-   "SetUserNormalValues",
-   "SetVertexUserNormals",
-   "siCreateRetargetMapping",
-   "siWriteRetargetComponentData",
-   "siWriteRetargetMapping"
+   "PaintWeights"
   ]
  },
  "Rendering": {
   "total": 175,
-  "registered": 166,
+  "registered": 167,
   "missing": [
    "AddShaderAttachedComment",
    "CopyPartition",
@@ -292,8 +220,7 @@
    "CreateShadersFromMaterialPreset",
    "RegenerateMaps",
    "SISwapArrayElements",
-   "ToggleProjectionTool",
-   "UpgradeShaders"
+   "ToggleProjectionTool"
   ]
  },
  "Scripting": {
@@ -308,36 +235,12 @@
  },
  "Simulation": {
   "total": 118,
-  "registered": 90,
+  "registered": 114,
   "missing": [
-   "AddParticleEmitter",
-   "AddParticleEmitter",
-   "AddParticleObstacle",
-   "AddParticleObstacle",
-   "AddParticles",
-   "AddUserParameter",
-   "ConnectParticleInitState",
-   "ConnectWeightMapToComponent",
-   "ConnectWeightMapToComponent",
    "CreateEnvironmentCache",
-   "CreateEventSource",
-   "CreateEventSource",
    "CreateInspectParticleTypeBillboard",
    "CreateInspectParticleTypeBlob",
-   "CreateInspectParticleTypeSphere",
-   "CreateParticleType",
-   "CreateParticleType",
-   "DisconnectParticleInitState",
-   "RemoveUserParameter",
-   "SIAddParticleEvent",
-   "SIAddParticleForce",
-   "SIAddParticleGoal",
-   "SetEventObstacle",
-   "SetEventObstacle",
-   "SetParticleInitState",
-   "SetParticleType",
-   "SetParticleType",
-   "UpdateParticleTypeConnections"
+   "CreateInspectParticleTypeSphere"
   ]
  },
  "Source": {
@@ -372,15 +275,8 @@
  },
  "Viewing": {
   "total": 191,
-  "registered": 185,
-  "missing": [
-   "ClearUserTab",
-   "GetUserKeyword",
-   "GetUserTab",
-   "RemoveUserKeyword",
-   "RemoveUserTab",
-   "SetUserTab"
-  ]
+  "registered": 191,
+  "missing": []
  },
  "Views": {
   "total": 5,

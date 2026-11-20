@@ -52,8 +52,8 @@ function mouthSculptChild(mesh: X3DObject | null): X3DObject | null {
   const m = mesh?.model; if (!m) return null;
   return m.children.find(c => c.name === 'SculptMouth') ?? null;
 }
-const MOUTH_BLOB = 'CDKMetaMouthSculpt';          // Q3: the likely value of the runtime global
-const MIRROR_BLOB = 'CDKMetaMouthMirrorMap';       // Q3: stand-in name (the global was not read)
+const MOUTH_BLOB = 'CDKMetaMouthOp';              // cmd-b15 §1: the mouth data blob
+const MIRROR_BLOB = 'CDKMetaMouthSymMap';          // cmd-b15 §1: the mouth mirror-map blob
 const mouthBlob = (mesh: X3DObject | null) => (mesh ? propNamed(mesh, MOUTH_BLOB) ?? null : null);
 
 // ------------------------------------------------------------------ significance / symmetry (§2.4)
@@ -257,11 +257,32 @@ function sculptMouthBegin(app: App, a: Record<string, any>) {
   setStatus(app, C, 0);
   return undefined;
 }
+/** The mouth bake run by fr_SculptMouthEnd(cancel = true): vertices whose sculpt and face positions differ by more than
+ *  0.01 (squared distance 0.0001) are appended as a correction record of the stand-in blob field `corrections`
+ *  (the 0x58-byte record layout and the second blob are not attested). */
+function bakeMouthCorrections(app: App, C: string, mesh: X3DObject, child: X3DObject) {
+  const blob: any = mouthBlob(mesh);
+  if (!blob) return 0;
+  const a = meshOf(mesh)?.positions, b = meshOf(child)?.positions;
+  if (!a || !b) return 0;
+  const verts: number[] = blob.mouth?.vertices ?? Array.from({ length: Math.min(a.length, b.length) / 3 }, (_, i) => i);
+  const rec: { v: number; d: number[] }[] = [];
+  for (const v of verts) {
+    const d = [b[v * 3] - a[v * 3], b[v * 3 + 1] - a[v * 3 + 1], b[v * 3 + 2] - a[v * 3 + 2]];
+    if (d[0] * d[0] + d[1] * d[1] + d[2] * d[2] > 0.0001) rec.push({ v, d });
+  }
+  NYA(app, C, 'the byte layout of the correction record (rotation + translation per vertex) and the second mouth blob; stand-in field `corrections`');
+  if (!rec.length) return 0;
+  const old = blob.corrections;
+  app.record('MouthBake', () => { blob.corrections = [...(old ?? []), rec]; }, () => { blob.corrections = old; });
+  return rec.length;
+}
 function sculptMouthEnd(app: App, a: Record<string, any>) {
   const C = 'fr_SculptMouthEnd';
   const mesh = objOrName(app, a.mesh); const child = mouthSculptChild(mesh);
   if (!mesh || !child) return undefined;
-  if (boolArg(a.cancel, false)) NYA(app, C, 'the mouth bake helper 0x1800aded0 run when the second argument is true (Q4)');
+  // `cancel` = true is the APPLY path (cmd-b15 Q4/Q9): the bake stores the sculpt's corrections into the mouth blob.
+  if (boolArg(a.cancel, false)) bakeMouthCorrections(app, C, mesh, child);
   const from = child.material?.surface ?? null, to = materialOf(mesh)?.surface ?? null;
   if (from && to) for (const n of ['diffuse', 'ambient']) { const c = shaderColor(from, n); if (c) setShaderColor(app, to, n, c); }
   deleteObj(app, child);
@@ -442,7 +463,9 @@ function resetControllerDB(app: App) {
     visited.push(name);
   }
   (frState(app).rows as any).resetControllerDB = visited;
-  NYA(app, C, 'what 0x1800ca2f0 resets on each controller\'s FaceControl property (ID) and the names of the two FaceModel blobs deleted afterwards (Q5)');
+  // the two FaceModel blobs `ZeroPoseO` and `ZeroPose` are deleted afterwards (cmd-b15 Q2)
+  if (fm) for (const n of ['ZeroPoseO', 'ZeroPose']) { const p = propNamed(fm, n); if (p) removeProp(app, fm, p); }
+  NYA(app, C, 'what the per-controller reset helper does to each controller\'s FaceControl property (ID)');
   return undefined;
 }
 function stickLips(app: App) {
