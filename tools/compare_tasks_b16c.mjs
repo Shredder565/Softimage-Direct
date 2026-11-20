@@ -260,7 +260,7 @@ const got = await page.evaluate(async ({ NAMES, DEFAULT_FAILS }) => {
   try {
     reset();
     A.run('SIApplyShader', { PresetObj: 'Phong', InputObjs: [cube] });
-    const ph = cube.material.surface; const chk = A.run('CreateShaderFromPreset', { Preset: 'Checkerboard' });
+    const ph = cube.material.surface; const chk = A.run('CreateShaderFromPreset', { PresetObj: 'Checkerboard', Container: [cube.material] });
     const T = A.textureLayers; const port = { owner: ph, name: 'diffuse' }; const before = T.getSource(port);
     const u0 = A.undoStack.length;
     let r = run('SetReference2', { Target: port, Value: chk, Time: 12 });
