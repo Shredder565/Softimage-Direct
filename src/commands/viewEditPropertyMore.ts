@@ -7,6 +7,7 @@
 import { App, UndoEntry } from '../core/commands';
 import { X3DObject, Node, Property, Material, Constraint, makeSiShader } from '../core/scene';
 import { addConstraint, CNS_PRESETS } from './constraints';
+import { tasksB16c, NO_NAME_OPERATION } from './tasksB16c';
 import {
   reg, nya, logNya, unset, siConst, boolArg, objs, nodes, findNode, findObject, findMaterial,
   materialOf, copyProperty, ensureLocal, removeProp,
@@ -315,24 +316,29 @@ function registerTransport(app: App) {
 function registerGeneral(app: App) {
   interface Group { name: string; top: UndoEntry | null; len: number }
   const open = (): Group[] => ((app as any)._vepUndoGroups ??= []);
-  // inferred: the commands run until the matching EndUndo become one entry of the undo stack
+  // CMD-B16c (tasks.dll, b5097d5a rows 6 / 7): BeginUndo opens a named group, EndUndo closes the innermost one. While
+  // Undo / Redo steps run the undo manager refuses groups (state query non-zero; inferred) and both do nothing.
+  // inferred: the commands run until the matching EndUndo become one entry of the undo stack; an empty group adds nothing.
   reg(app, {
     name: 'BeginUndo', label: 'begin undo', category: 'General', description: 'Starts an undo group', undoable: false,
     args: [{ name: 'Name', default: '' }],
-    execute(app, a) { open().push({ name: String(a.Name ?? ''), top: app.undoStack[app.undoStack.length - 1] ?? null, len: app.undoStack.length }); },
+    execute(app, a) {
+      const name = a.Name === undefined || a.Name === null || String(a.Name) === '' ? NO_NAME_OPERATION : String(a.Name);
+      if (tasksB16c(app).undoing) return;
+      open().push({ name, top: app.undoStack[app.undoStack.length - 1] ?? null, len: app.undoStack.length });
+    },
   });
-  // inferred
   reg(app, {
     name: 'EndUndo', label: 'end undo', category: 'General', description: 'Ends the undo group started by BeginUndo', undoable: false, args: [],
     execute(app) {
-      const g = open().pop(); if (!g) throw new Error('EndUndo: no undo group is open (BeginUndo was not called)');
-      if (open().length) return 0; // nested group: the outermost one collects everything
+      if (tasksB16c(app).undoing) return;
+      const g = open().pop(); if (!g) return; // no group open: silent no-op
+      if (open().length) return; // inferred: nested group, the outermost one collects everything
       const at = g.top ? app.undoStack.lastIndexOf(g.top) : -1;
       const from = at >= 0 ? at + 1 : Math.min(g.len, app.undoStack.length);
-      const entries = app.undoStack.splice(from); if (!entries.length) return 0;
-      app.undoStack.push({ label: g.name || entries[entries.length - 1].label, undo: () => { for (const u of [...entries].reverse()) u.undo(); }, redo: () => { for (const u of entries) u.redo(); } });
+      const entries = app.undoStack.splice(from); if (!entries.length) return;
+      app.undoStack.push({ label: g.name, undo: () => { for (const u of [...entries].reverse()) u.undo(); }, redo: () => { for (const u of entries) u.redo(); } });
       app.events.emit('undo');
-      return entries.length;
     },
   });
 }

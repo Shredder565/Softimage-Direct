@@ -1,7 +1,8 @@
 // CMD-B15-ELSE (inferred, relaxed rules): the batch-15 commands still missing from the bus after PR #191, plus the
 // registration tables made literal for the coverage scan. No analyst note or XSIBATCH golden backs the inferred commands:
-// this checks the behaviour their registration comments state (src/commands/inferredB15.ts, shellsB15Else.ts,
-// particlesB15cShaders.ts).
+// this checks the behaviour their registration comments state (src/commands/inferredB15.ts, shellsB15Else.ts).
+// SISwapArrayElements, SIAppendBone, AddShaderAttachedComment and the bbbbee29 shader-creation family moved to
+// src/commands/shadertasksB16b.ts (row CMD-B16b, analyst contract) and are checked by tools/compare_shaders_b16b.mjs.
 //   1. every name is registered with the catalogue argument list (data/commands_full.json);
 //   2. every command runs with its default arguments on the ?demo scene (cube selected) without an unexpected error;
 //   3. the stated results; 4. the literalised table names (rig builders, Syflex pickers, CreateInspectParticleType*)
@@ -23,15 +24,17 @@ const CHROME = [
 if (!CHROME) { console.error('No Chromium; set PW_CHROME'); process.exit(2); }
 
 const INFERRED = [
-  'Add Surface Point Tool', 'BoneCreateTool', 'CopyPartition', 'CopyPaste', 'CreateEnvironmentCache', 'CrowdCreateDirectionalEmitterTool', 'CrowdCreateWallTool',
-  'CursorTransformTool', 'Delete Selected Branch', 'DeleteCurrentLayer', 'Dice Object/Polygons', 'DoNothing', 'Freeze Selected', 'Mesh Filter', 'MoveComponent Tool',
-  'PaintWeights', 'Pick Session Tool', 'RegenerateMaps', 'SIAppendBone', 'SISwapArrayElements', 'ToggleProjectionTool', 'Transform Set New ',
+  // CMD-B16d moved CopyPartition, CreateEnvironmentCache (output Source), Dice Object/Polygons, Mesh Filter, RegenerateMaps,
+  // MarkObjectDirty and GetSkeleton to their contract: tools/compare_filtermap_b16d.mjs checks them.
+  'Add Surface Point Tool', 'BoneCreateTool', 'CrowdCreateDirectionalEmitterTool', 'CrowdCreateWallTool',
+  'CursorTransformTool', 'Delete Selected Branch', 'DoNothing', 'Freeze Selected', 'MoveComponent Tool',
+  'Pick Session Tool', 'ToggleProjectionTool', 'Transform Set New ',
   'Turn OFF Interactive SRT', 'Turn ON Interactive SRT', 'XYZ Transform ',
 ];
-const SHELLS = ['MarkObjectDirty', 'AddShaderAttachedComment', 'GetSkeleton', 'CreateShaderFromCLSID', 'CreateShaderFromProgID', 'CreateShadersFromMaterialPreset'];
+const SHELLS = [];
 const LITERAL = ['MakeBiped', 'MakeBipedDogLeg', 'MakeQuadruped', 'MakeArm', 'MakeLeg', 'MakeFoot', 'MakeHand', 'MakeHead', 'MakeSpine', 'MakeShadowChain', 'MakeShadowSpine', 'MakeBicepRoll', 'MakeForearmRoll', 'Make2PointSlide', 'MakeJointCompression', 'MakeDogLeg', 'MakeBipedCharacterKeySet', 'MakeQuadrupedCharacterKeySet', 'SetKeyableRig', 'syCachePaint1', 'syCachePaint2', 'SyGetMassMap', 'SyGetSpringMap', 'CreateInspectParticleTypeBillboard', 'CreateInspectParticleTypeBlob', 'CreateInspectParticleTypeSphere'];
 const NAMES = [...INFERRED, ...SHELLS];
-const DEFAULT_FAILS = new Set(['CopyPaste', 'CreateEnvironmentCache', 'SIAppendBone', 'PaintWeights', 'DeleteCurrentLayer', 'CreateShaderFromCLSID', 'CreateShaderFromProgID', 'CreateShadersFromMaterialPreset']);
+const DEFAULT_FAILS = new Set([]);
 const full = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'commands_full.json'), 'utf8'));
 const registry = Object.fromEntries(NAMES.map(n => {
   const f = full.find(x => (x.scripting_name || x.name) === n);
@@ -79,7 +82,8 @@ const got = await page.evaluate(async ({ NAMES, LITERAL, DEFAULT_FAILS: DF }) =>
   // ================= INFERRED commands
   try {
     reset();
-    for (const n of ['Add Surface Point Tool', 'CursorTransformTool', 'ToggleProjectionTool', 'Transform Set New ']) { const r = run(n); ok(`${n} (inferred): no such tool here -> not yet attested, no change`, nya(r) && !r.err); }
+    for (const n of ['Add Surface Point Tool', 'CursorTransformTool', 'ToggleProjectionTool']) { const r = run(n); ok(`${n} (CMD-B16a): no such tool here -> not yet attested, no change`, nya(r) && !r.err); }
+    { const r = run('Transform Set New '); ok('Transform Set New  (CMD-B16a §7): inert, no log', !r.err && r.v === undefined && !(r.log ?? []).length, r.log); }
     for (const n of ['DoNothing', 'XYZ Transform ']) { const u0 = A.undoStack.length, c0 = objCount(); const r = run(n); ok(`${n} (inferred): does nothing`, r.v === undefined && !r.err && A.undoStack.length === u0 && objCount() === c0); }
     let r = run('BoneCreateTool');
     ok('BoneCreateTool (inferred): live tool instance (CMD-B13e state) and the chain drawing tool active', A.pluginsB13e?.boneTool && A.activeTool?.name === 'Draw 2D Chain', A.activeTool?.name);
@@ -89,113 +93,30 @@ const got = await page.evaluate(async ({ NAMES, LITERAL, DEFAULT_FAILS: DF }) =>
     ok('CrowdCreateDirectionalEmitterTool (inferred): runs CreateCrowdEmitter', viaEmitter.length === 1 && !r.err, r.err);
     const viaWall = trace('CreateWall', () => run('CrowdCreateWallTool'));
     ok('CrowdCreateWallTool (inferred): runs CreateWall', viaWall.length === 1);
-    reset(); const tw = trace('TweakTool', () => run('MoveComponent Tool'));
-    ok('MoveComponent Tool (inferred): runs the component tweak tool (TweakTool)', tw.length === 1);
+    reset(); { const r = run('MoveComponent Tool'); ok('MoveComponent Tool (CMD-B16a): activates class da55a810 (Tweak body as a logged stand-in)', A.toolManager.current() === 'da55a810-5f86-11d2-b11c-00a0c906811e' && nya(r), [A.toolManager.current(), r.log]); }
     A.selMode = 'object'; reset();
     r = run('Pick Session Tool'); ok('Pick Session Tool (inferred): outside a pick session -> logged, no change', nya(r));
     run('Turn OFF Interactive SRT'); const off = A.inferredB15.interactiveSRT; run('Turn ON Interactive SRT');
     ok('Turn OFF / ON Interactive SRT (inferred): flag false then true', off === false && A.inferredB15.interactiveSRT === true);
-    // CopyPaste
-    reset(); const clip = A.clipboard; const nul = A.run('GetPrim', { PresetObj: 'Null', Name: 'tgtB15f' }); reset();
+    // CopyPaste / DeleteCurrentLayer: now CMD-B16c contracts, checked by tools/compare_tasks_b16c.mjs
+    reset(); const nul = A.run('GetPrim', { PresetObj: 'Null', Name: 'tgtB15f' }); reset();
     const u0 = A.undoStack.length;
-    r = run('CopyPaste', { Source: cube, Target: nul });
-    ok('CopyPaste (inferred): Source duplicated under Target, clipboard untouched', Array.isArray(r.v) && r.v.length === 1 && r.v[0] !== cube && r.v[0].parentObj === nul && A.clipboard === clip, r.err);
     // Delete Selected Branch
     A.select([nul]); r = run('Delete Selected Branch');
     ok('Delete Selected Branch (inferred): the selected object and its branch are removed', !A.scene.find('tgtB15f') && !!r && !r.err);
     while (A.undoStack.length > u0) A.undo();
     A.scene.root.removeChild(nul);
-    // DeleteCurrentLayer
-    const lay = A.run('CreateLayer', { Name: 'layB15f' }); A.run('SetCurrentLayer', { Name: lay.name });
-    r = run('DeleteCurrentLayer');
-    ok('DeleteCurrentLayer (inferred): DeleteLayer of the current layer', !A.scene.layers.includes(lay), r.err);
     // Freeze Selected / Dice / Mesh Filter
     reset(); let fz = trace('FreezeObj', () => run('Freeze Selected'));
     ok('Freeze Selected (inferred): FreezeObj on the selection', fz.length === 1 && fz[0].InputObjs?.[0] === cube);
-    let topo = trace('ApplyTopoOp', () => run('Dice Object/Polygons'));
-    ok('Dice Object/Polygons (inferred): ApplyTopoOp "Dice Polygons"', topo.length === 1 && topo[0].PresetObj === 'Dice Polygons');
-    topo = trace('ApplyTopoOp', () => run('Mesh Filter'));
-    ok('Mesh Filter (inferred): ApplyTopoOp "Filter Polygons" (no edge selection)', topo.length === 1 && topo[0].PresetObj === 'Filter Polygons');
-    A.compSel = { obj: cube, kind: 'edge', points: new Set(), edges: new Set(['0-1']), polygons: new Set() };
-    topo = trace('ApplyTopoOp', () => run('Mesh Filter'));
-    ok('Mesh Filter (inferred): edge selection -> "Filter Edges"', topo[0]?.PresetObj === 'Filter Edges');
     reset();
-    // PaintWeights
-    const PropCls = cube.property('visibility').constructor; const map = new PropCls('WeightMapB15f', 'weightmap', []); map.values = new Map(); cube.addProperty(map); reset();
-    const u1 = A.undoStack.length;
-    r = run('PaintWeights', { InputObj: map, Indices: [0, 1], Weights: [0.25, 0.5] });
-    ok('PaintWeights (inferred): weights written at the indices of the weight map; returns it', map?.values?.get(0) === 0.25 && map.values.get(1) === 0.5 && r.v === map, [r.err, map?.type]);
-    while (A.undoStack.length > u1) A.undo();
-    ok('PaintWeights (inferred): undo restores', !map.values.has(0));
-    r = run('PaintWeights', { InputObj: cube, Indices: [2], Weights: [0.75] });
-    ok('PaintWeights (inferred): an object -> its first weight map', map.values.get(2) === 0.75, r.err);
-    cube.removeProperty(map);
-    // SISwapArrayElements
-    const arr = [1, 2, 3]; run('SISwapArrayElements', { Object: arr, IndexA: 0, IndexB: 2 });
-    ok('SISwapArrayElements (inferred): elements swapped', JSON.stringify(arr) === '[3,2,1]');
-    ok('SISwapArrayElements (inferred): index out of range raises', !!run('SISwapArrayElements', { Object: arr, IndexA: 0, IndexB: 9 }).err);
-    // SIAppendBone (and AppendBone now delegating to it)
-    const chain = A.run('Create2DSkeleton', { Points: [[0, 0, 0], [2, 0, 0]] }); const eff = chain.effector; const nb = chain.bones.length;
-    r = run('SIAppendBone', { InputObjs: [eff], Ex: 4, Ey: 1, Ez: 0, AlignRootToFirstBone: true });
-    ok('SIAppendBone (inferred): one bone appended to the chain end', chain.bones.length === nb + 1 && !r.err, r.err);
-    const r3 = run('AppendBone', { InputObjs: [chain.effector], Ex: 6, Ey: 1, Ez: 0 });
-    ok('AppendBone now reaches SIAppendBone (no stand-in log)', chain.bones.length === nb + 2 && !has(r3, /the new bone is the C\+\+ append command/), r3.log);
-    A.scene.root.removeChild(chain);
-    // RegenerateMaps
-    reset(); r = run('RegenerateMaps');
-    ok('RegenerateMaps (inferred): no Render Map selected -> error', (r.kinds ?? []).includes('error'));
-    const rmp = new (cube.property('visibility').constructor)('RenderMap', 'rendermap', []); cube.addProperty(rmp);
-    r = run('RegenerateMaps', { Properties: [rmp] });
-    ok('RegenerateMaps (inferred): a Render Map -> rendering logged as not yet attested (no renderer)', nya(r), [r.err, rmp?.type]);
-    cube.removeProperty(rmp);
-    // CreateEnvironmentCache
-    const env = A.run('CreateEnvironment', {}); const envNode = Array.isArray(env) ? env[0] : env;
-    r = run('CreateEnvironmentCache', { Model: cube, Environment: envNode });
-    ok('CreateEnvironmentCache (inferred): a cache record for the model in the environment', r.v?.model === cube && envNode.simulationEnvironment?.caches?.includes(r.v), r.err);
-    // CopyPartition
-    const pass2 = A.run('CreatePass', { Name: 'passB15f' }); const cur = A.scene.passes[0];
-    r = run('CopyPartition', { Target: [pass2], InputObjs: cur.partitions });
-    ok('CopyPartition (inferred): the partitions are copied (same names, same members) into the target pass', cur.partitions.every(q => pass2.partitions.some(z => z.name === q.name && z !== q && [...q.members].every(m => z.members.has(m)))), [r.err, pass2.partitions.map(z => z.name)]);
   } catch (e) { ok('inferred block threw', false, String(e?.stack ?? e).slice(0, 300)); }
   const fresh = () => { A.setTool?.(null); A.select([]); };
   const mk = (prim, name) => { const o = A.run('CreatePrim', { PresetObj: prim, Name: name }); return Array.isArray(o) ? o[0] : o; };
   const status = (r, hex) => !!r.err && r.err.includes(`status 0x${hex}`);
-  // ================= shader creation (inferred)
-  try {
-    fresh(); const o = mk('Sphere', 'shd'); A.run('SIApplyShader', { PresetObj: 'Phong', InputObjs: [o] }); A.select([]);
-    const mat = o.material; const SC = A.shaderCreationB15;
-    let r = run('CreateShaderFromProgID', { ProgID: 'Softimage.txt2d-image-explicit.1', Container: [mat], Name: 'MyImage' });
-    ok('CreateShaderFromProgID: shader from the ProgID, nested in the container, named Name, returned', !r.err && r.v?.name === 'MyImage' && r.v?.progId === 'Softimage.txt2d-image-explicit.1' && SC.lastMethod === 2, r.err);
-    const r2 = run('CreateShaderFromProgID', { ProgID: 'Softimage.txt2d-image-explicit.1', Container: [mat], Name: 'MyImage' });
-    ok('CreateShaderFromProgID: name kept unique in the container', !r2.err && r2.v?.name === 'MyImage1', r2.v?.name);
-    ok('CreateShaderFromProgID: unknown ProgID -> 0x80004005', status(run('CreateShaderFromProgID', { ProgID: 'Nobody.nothing.1', Container: [mat] }), '80004005'));
-    ok('CreateShaderFromProgID: no container -> 0x80070057', status(run('CreateShaderFromProgID', { ProgID: 'Softimage.txt2d-image-explicit.1' }), '80070057'));
-    A.undo();
-    ok('CreateShaderFromProgID: undo un-nests', !run('CreateShaderFromProgID', { ProgID: 'Softimage.material-phong.1', Container: [mat] }).err);
-    r = run('CreateShadersFromMaterialPreset', { PresetObj: 'Materials\\Lambert.Preset', Container: [mat] });
-    ok('CreateShadersFromMaterialPreset: the preset\'s shader nested in the container, returned', !r.err && r.v?.type && /lambert/i.test(r.v.type + r.v.name) && SC.lastMethod === 4, [r.err, r.v?.type]);
-    ok('CreateShadersFromMaterialPreset: unknown preset -> 0x80004005', status(run('CreateShadersFromMaterialPreset', { PresetObj: 'NoSuchPreset', Container: [mat] }), '80004005'));
-    r = run('CreateShaderFromCLSID', { Clsid: '{12345678-1234-1234-1234-123456789abc}', Container: [mat] });
-    ok('CreateShaderFromCLSID: no CLSID table in this build -> logged, 0x80004005', status(r, '80004005') && r.log.some(l => /not yet attested/.test(l)) && SC.lastMethod === 1);
-    SC.clsids['12345678-1234-1234-1234-123456789abc'] = 'Softimage.txt2d-image-explicit.1';
-    r = run('CreateShaderFromCLSID', { Clsid: '{12345678-1234-1234-1234-123456789ABC}', Container: [mat], Name: 'ByClsid' });
-    ok('CreateShaderFromCLSID: a known CLSID -> shader of its definition', !r.err && r.v?.name === 'ByClsid', r.err);
-    ok('CreateShaderFromCLSID: null GUID -> 0x80070057', status(run('CreateShaderFromCLSID', { Container: [mat] }), '80070057'));
-  } catch (e) { ok('shader block threw', false, String(e?.stack ?? e).slice(0, 300)); }
-
   // ================= CMD-B15-ELSE shells
   try {
     reset();
-    let r = run('MarkObjectDirty', { Object: 'cube' });
-    ok('MarkObjectDirty (inferred): logged not yet attested, no change', nya(r) && !r.err && r.v === undefined);
-    r = run('AddShaderAttachedComment', { Container: 'cube' });
-    ok('AddShaderAttachedComment (inferred): logged not yet attested, returns null', nya(r) && !r.err && r.v === null);
-    r = run('GetSkeleton', { InputObj: 'cube' });
-    ok('GetSkeleton (inferred): not a chain element -> empty collection, Index -1', Array.isArray(r.v) && r.v.length === 0 && A.shellsB15Else.lastGetSkeleton.Index === -1);
-    const chainRoot = A.run('Create2DSkeleton', { Points: [[0, 0, 0], [2, 0, 0], [3, 1, 0]] });
-    const bone = chainRoot?.bones?.[0]; // index 1: root is 0
-    r = run('GetSkeleton', { InputObj: [bone] });
-    ok('GetSkeleton (inferred): root, bones, effector; Index of the input', Array.isArray(r.v) && r.v[0] === chainRoot && r.v[r.v.length - 1] === chainRoot.effector && A.shellsB15Else.lastGetSkeleton.Index === 1, [r.err, r.v?.map?.(x => x.name)]);
   } catch (e) { ok('shells block threw', false, String(e?.stack ?? e).slice(0, 300)); }
 
   // ================= literalised table names still registered
@@ -212,6 +133,6 @@ for (const n of NAMES) {
 }
 for (const [name, cond, detail] of got.checks) report(name, cond, detail);
 report('no page errors', pageErrors.length === 0, pageErrors.join(' | '));
-console.log(`compare_inferred_b15_commands: ${pass}/${pass + fail} ok (${INFERRED.length} inferred tool / misc + ${SHELLS.length} shells / shader creation + ${LITERAL.length} literalised names)`);
+console.log(`compare_inferred_b15_commands: ${pass}/${pass + fail} ok (${INFERRED.length} inferred tool / misc + ${SHELLS.length} shells + ${LITERAL.length} literalised names)`);
 await browser.close();
 process.exit(fail ? 1 : 0);

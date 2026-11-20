@@ -1,0 +1,1578 @@
+{
+ "source": "data/command_registry.json (handler 48becc30, CMD-B16d); built by tools/build_filter_maps.mjs",
+ "commands": [
+  {
+   "name": "Delete Selected",
+   "guid": "70a823e0-5997-11cf-ba0b-00aa004a7916",
+   "category": "Edit",
+   "description": "",
+   "tooltip": "",
+   "flags": 9699464,
+   "inputArg": "InputObj",
+   "wellFormed": true,
+   "groups": [
+    {
+     "filter": "UserCluster",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:UserCluster",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "6561fca0-b66d-11d4-8c49-009027bc3a0e",
+     "inputArgName": "InputObj"
+    },
+    {
+     "filter": "Polygon",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:Polygon",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "c163c9a8-484c-11d4-a8b6-00c04f8edf15",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "MeshComponent",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:MeshComponent",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "1d09de94-79ba-4add-8f8a-ed34588877aa",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "NurbsCurveCV",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:NurbsCurveCV",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "2861bc85-f6b6-11d2-ac7e-00a02485cecb",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "NurbsCurvePoint",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:NurbsCurvePoint",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "90ff723c-badb-4fcf-8756-aa3d21dad819",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "UKnotCurve",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:UKnotCurve",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "9b22a592-cf8c-11d3-b496-009027bc38d5",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "VKnotCurve",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:VKnotCurve",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "9b22a592-cf8c-11d3-b496-009027bc38d5",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "ParticlePoint",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:ParticlePoint",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "e8cd3e2b-b1cf-4b77-9623-1b9dd98a6363",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "",
+     "filterRef": "",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "6561fca0-b66d-11d4-8c49-009027bc3a0e",
+     "inputArgName": "InputObj"
+    }
+   ],
+   "args": [
+    [
+     "InputObj",
+     null
+    ],
+    [
+     "SelFilter",
+     "UserCluster"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{6561FCA0-B66D-11D4-8C49-009027BC3A0E}"
+    ],
+    [
+     "InputObjsArgName",
+     "InputObj"
+    ],
+    [
+     "SelFilter",
+     "Polygon"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{C163C9A8-484C-11D4-A8B6-00C04F8EDF15}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     "MeshComponent"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{1D09DE94-79BA-4ADD-8F8A-ED34588877AA}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     "NurbsCurveCV"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{2861BC85-F6B6-11D2-AC7E-00A02485CECB}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     "NurbsCurvePoint"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{90FF723C-BADB-4FCF-8756-AA3D21DAD819}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     "UKnotCurve"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{9B22A592-CF8C-11D3-B496-009027BC38D5}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     "VKnotCurve"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{9B22A592-CF8C-11D3-B496-009027BC38D5}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     "ParticlePoint"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{E8CD3E2B-B1CF-4B77-9623-1B9DD98A6363}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     null
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{6561FCA0-B66D-11D4-8C49-009027BC3A0E}"
+    ],
+    [
+     "InputObjsArgName",
+     "InputObj"
+    ]
+   ]
+  },
+  {
+   "name": "Duplicate/Extrude Single",
+   "guid": "88e96af0-5db9-11d4-8c2c-009027bc3a0e",
+   "category": "Edit",
+   "description": "",
+   "tooltip": "",
+   "flags": 8388744,
+   "inputArg": "InputObjs",
+   "wellFormed": true,
+   "groups": [
+    {
+     "filter": "MeshComponent",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:MeshComponent",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "af4edb50-5e63-11d4-8c2c-009027bc3a0e",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "",
+     "filterRef": "",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "c718c4e0-7700-11d1-9988-00a0243f0e60",
+     "inputArgName": "InputObjs"
+    }
+   ],
+   "args": [
+    [
+     "InputObjs",
+     null
+    ],
+    [
+     "SelFilter",
+     "MeshComponent"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{AF4EDB50-5E63-11D4-8C2C-009027BC3A0E}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     null
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{C718C4E0-7700-11D1-9988-00A0243F0E60}"
+    ],
+    [
+     "InputObjsArgName",
+     "InputObjs"
+    ]
+   ]
+  },
+  {
+   "name": "Duplicate/Extrude Multiple",
+   "guid": "a1be9730-5e48-11d4-8c2c-009027bc3a0e",
+   "category": "Edit",
+   "description": "",
+   "tooltip": "",
+   "flags": 8388744,
+   "inputArg": "InputObjs",
+   "wellFormed": true,
+   "groups": [
+    {
+     "filter": "MeshComponent",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:MeshComponent",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "6f74fac0-5e7a-11d4-8c2c-009027bc3a0e",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "",
+     "filterRef": "",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "c718c4e2-7700-11d1-9988-00a0243f0e60",
+     "inputArgName": "InputObjs"
+    }
+   ],
+   "args": [
+    [
+     "InputObjs",
+     null
+    ],
+    [
+     "SelFilter",
+     "MeshComponent"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{6F74FAC0-5E7A-11D4-8C2C-009027BC3A0E}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     null
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{C718C4E2-7700-11D1-9988-00A0243F0E60}"
+    ],
+    [
+     "InputObjsArgName",
+     "InputObjs"
+    ]
+   ]
+  },
+  {
+   "name": "Mesh Filter",
+   "guid": "e99b9783-e852-4b70-b596-67aa27f87b96",
+   "category": "Modeling|Topology",
+   "description": "Filter Mesh Components",
+   "tooltip": "",
+   "flags": 8388736,
+   "inputArg": "InputObjs",
+   "wellFormed": true,
+   "groups": [
+    {
+     "filter": "polygon",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:polygon",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "1067d621-96fc-4ded-983f-e83c4d121372",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "edge",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:edge",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "053894c2-8e7c-4f76-b1bb-283c34e3c420",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "polygon_mesh",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:polygon_mesh",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "1067d621-96fc-4ded-983f-e83c4d121372",
+     "inputArgName": "ConnectionSet"
+    }
+   ],
+   "args": [
+    [
+     "InputObjs",
+     null
+    ],
+    [
+     "SelFilter",
+     "polygon"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{1067D621-96FC-4DED-983F-E83C4D121372}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     "edge"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{053894C2-8E7C-4F76-B1BB-283C34E3C420}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     "polygon_mesh"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{1067D621-96FC-4DED-983F-E83C4D121372}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ]
+   ]
+  },
+  {
+   "name": "Dice Object/Polygons",
+   "guid": "f1342afb-aca4-4373-ac94-d31a24350796",
+   "category": "Modeling|Topology",
+   "description": "Dice Object or Polygons",
+   "tooltip": "",
+   "flags": 8388744,
+   "inputArg": "InputObjs",
+   "wellFormed": true,
+   "groups": [
+    {
+     "filter": "polygon",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:polygon",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "86b4db7e-3569-4fd0-b8d3-05c11aa054d5",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "object",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:object",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "6af65230-4eda-42eb-9ac5-192f4f3916ba",
+     "inputArgName": "ConnectionSet"
+    }
+   ],
+   "args": [
+    [
+     "InputObjs",
+     null
+    ],
+    [
+     "SelFilter",
+     "polygon"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{86B4DB7E-3569-4FD0-B8D3-05C11AA054D5}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     "object"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{6AF65230-4EDA-42EB-9AC5-192F4F3916BA}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ]
+   ]
+  },
+  {
+   "name": "Invert Polygons",
+   "guid": "8de9e423-b5f0-11d4-87b1-00a0c9ed6ce2",
+   "category": "Modeling|Topology",
+   "description": "Invert normals of selected polygons, if any, or of all polygons if the object is selected.",
+   "tooltip": "",
+   "flags": 8388744,
+   "inputArg": "InputObjs",
+   "wellFormed": true,
+   "groups": [
+    {
+     "filter": "polygon",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:polygon",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "11beb110-85b1-11d4-8c31-009027bc3a0e",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "",
+     "filterRef": "",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "2861bc71-f6b6-11d2-ac7e-00a02485cecb",
+     "inputArgName": "ConnectionSet"
+    }
+   ],
+   "args": [
+    [
+     "InputObjs",
+     null
+    ],
+    [
+     "SelFilter",
+     "polygon"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{11BEB110-85B1-11D4-8C31-009027BC3A0E}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     null
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{2861BC71-F6B6-11D2-AC7E-00A02485CECB}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ]
+   ]
+  },
+  {
+   "name": "Subdivide",
+   "guid": "60d7df7e-b5b0-11d4-814f-00a0c9ac19a9",
+   "category": "Modeling|Topology",
+   "description": "Subdivides selected mesh components (edges and polygons)",
+   "tooltip": "",
+   "flags": 8388744,
+   "inputArg": "InputObjs",
+   "wellFormed": true,
+   "groups": [
+    {
+     "filter": "polygon",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:polygon",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "bc8cceef-370f-11d4-a8b0-00c04f8edf15",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "edge",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:edge",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "8f1fa2af-3635-11d4-a8af-00c04f8edf15",
+     "inputArgName": "ConnectionSet"
+    },
+    {
+     "filter": "polygon_mesh",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:polygon_mesh",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "bc8cceef-370f-11d4-a8b0-00c04f8edf15",
+     "inputArgName": "ConnectionSet"
+    }
+   ],
+   "args": [
+    [
+     "InputObjs",
+     null
+    ],
+    [
+     "SelFilter",
+     "polygon"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{BC8CCEEF-370F-11D4-A8B0-00C04F8EDF15}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     "edge"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{8F1FA2AF-3635-11D4-A8AF-00C04F8EDF15}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ],
+    [
+     "SelFilter",
+     "polygon_mesh"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{BC8CCEEF-370F-11D4-A8B0-00C04F8EDF15}"
+    ],
+    [
+     "InputObjsArgName",
+     "ConnectionSet"
+    ]
+   ]
+  },
+  {
+   "name": "Move Component Tool",
+   "guid": "56aa96f2-7ae3-11d1-8036-00a0243e2717",
+   "category": "Modeling|Deformation",
+   "description": "Activate the Move Component tool",
+   "tooltip": "Move Component Tool",
+   "flags": 648,
+   "inputArg": "InputObj",
+   "wellFormed": true,
+   "groups": [
+    {
+     "filter": "CurveOrAnytingOnACurve",
+     "filterRef": "{1128E000-DBE2-11d2-8BCF-00AA006130EF}:CurveOrAnytingOnACurve",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "5c960195-d24c-4855-80a4-6b15b6369bfb",
+     "inputArgName": ""
+    },
+    {
+     "filter": "",
+     "filterRef": "",
+     "mapClient": "50830560-31b5-11d0-82e7-00a0243e268d",
+     "cmdId": "0d41ff0c-8af4-4e18-9c1b-83277acf12ef",
+     "inputArgName": ""
+    }
+   ],
+   "args": [
+    [
+     "InputObj",
+     null
+    ],
+    [
+     "SelFilter",
+     "CurveOrAnytingOnACurve"
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{5C960195-D24C-4855-80A4-6B15B6369BFB}"
+    ],
+    [
+     "InputObjsArgName",
+     null
+    ],
+    [
+     "SelFilter",
+     null
+    ],
+    [
+     "OnFilterCmdMapClient",
+     "{50830560-31B5-11D0-82E7-00A0243E268D}"
+    ],
+    [
+     "OnFilterCmdID",
+     "{0D41FF0C-8AF4-4E18-9C1B-83277ACF12EF}"
+    ],
+    [
+     "InputObjsArgName",
+     null
+    ]
+   ]
+  }
+ ],
+ "targets": {
+  "6561fca0-b66d-11d4-8c49-009027bc3a0e": {
+   "name": "Delete Selected",
+   "scripting": "DeleteObj",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "InputObj",
+     null
+    ]
+   ],
+   "script": "uixsiscripts.vbs:DeleteObjProc"
+  },
+  "c163c9a8-484c-11d4-a8b6-00c04f8edf15": {
+   "name": "Delete Component",
+   "scripting": "ApplyTopoOp",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "PresetObj",
+     "DeleteComponent"
+    ],
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ConnectType",
+     3
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "OutputObjs",
+     null
+    ],
+    [
+     "_validatorCmd",
+     null
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "operators.vbs:ApplyTopoOpProc"
+  },
+  "1d09de94-79ba-4add-8f8a-ed34588877aa": {
+   "name": "Dissolve & Clean Adjacent Vertices",
+   "scripting": "ApplyTopoOp",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "PresetObj",
+     "DissolveClean"
+    ],
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ConnectType",
+     3
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "OutputObjs",
+     null
+    ],
+    [
+     "_validatorCmd",
+     null
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "operators.vbs:ApplyTopoOpProc"
+  },
+  "2861bc85-f6b6-11d2-ac7e-00a02485cecb": {
+   "name": "Nurbs Curve Delete Point",
+   "scripting": "ApplyTopoOp",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "PresetObj",
+     "NurbsCrvDeletePoint"
+    ],
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ConnectType",
+     3
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "OutputObjs",
+     null
+    ],
+    [
+     "_validatorCmd",
+     null
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "operators.vbs:ApplyTopoOpProc"
+  },
+  "90ff723c-badb-4fcf-8756-aa3d21dad819": {
+   "name": "Set Curve Knot Multiplicity",
+   "scripting": "SetCurveKnotMultiplicity",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "Multiplicity",
+     0
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "operators.vbs:ApplySetCurveKnotMultiplicityOpProc"
+  },
+  "9b22a592-cf8c-11d3-b496-009027bc38d5": {
+   "name": "Remove Surface Knot",
+   "scripting": "ApplyTopoOp",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "PresetObj",
+     "RemoveSrfKnot"
+    ],
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ConnectType",
+     3
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "OutputObjs",
+     null
+    ],
+    [
+     "_validatorCmd",
+     null
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "operators.vbs:ApplyTopoOpProc"
+  },
+  "e8cd3e2b-b1cf-4b77-9623-1b9dd98a6363": {
+   "name": "Delete Particle",
+   "scripting": "ApplyTopoOp",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "PresetObj",
+     "DeleteParticleOp"
+    ],
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ConnectType",
+     3
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "OutputObjs",
+     null
+    ],
+    [
+     "_validatorCmd",
+     null
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "operators.vbs:ApplyTopoOpProc"
+  },
+  "af4edb50-5e63-11d4-8c2c-009027bc3a0e": {
+   "name": "Duplicate Single Mesh Component",
+   "scripting": "DuplicateMeshComponent",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "Length",
+     0
+    ],
+    [
+     "NbSubdivs",
+     0
+    ],
+    [
+     "Merge",
+     true
+    ],
+    [
+     "Tx",
+     0
+    ],
+    [
+     "Ty",
+     0
+    ],
+    [
+     "Tz",
+     0
+    ],
+    [
+     "Rx",
+     0
+    ],
+    [
+     "Ry",
+     0
+    ],
+    [
+     "Rz",
+     0
+    ],
+    [
+     "Sx",
+     1
+    ],
+    [
+     "Sy",
+     1
+    ],
+    [
+     "Sz",
+     1
+    ],
+    [
+     "DuplicatePolygons",
+     false
+    ]
+   ],
+   "script": "operators.vbs:DuplicateComponentNoAutoInspectProc"
+  },
+  "c718c4e0-7700-11d1-9988-00a0243f0e60": {
+   "name": "Duplicate Single",
+   "scripting": "Duplicate",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "InputObjs",
+     null
+    ],
+    [
+     "NbItems",
+     1
+    ],
+    [
+     "History",
+     -1
+    ],
+    [
+     "Hierarchy",
+     -1
+    ],
+    [
+     "Grouping",
+     -1
+    ],
+    [
+     "Properties",
+     -1
+    ],
+    [
+     "Animation",
+     -1
+    ],
+    [
+     "Constraints",
+     -1
+    ],
+    [
+     "Selection",
+     -1
+    ],
+    [
+     "Xfrom",
+     -1
+    ],
+    [
+     "Sx",
+     ""
+    ],
+    [
+     "Sy",
+     ""
+    ],
+    [
+     "Sz",
+     ""
+    ],
+    [
+     "Rx",
+     ""
+    ],
+    [
+     "Ry",
+     ""
+    ],
+    [
+     "Rz",
+     ""
+    ],
+    [
+     "Tx",
+     ""
+    ],
+    [
+     "Ty",
+     ""
+    ],
+    [
+     "Tz",
+     ""
+    ],
+    [
+     "TrackXform",
+     ""
+    ],
+    [
+     "TextureSupports",
+     -1
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "duplicate.vbs:DuplicateProc"
+  },
+  "6f74fac0-5e7a-11d4-8c2c-009027bc3a0e": {
+   "name": "Duplicate Multiple Mesh Component",
+   "scripting": "DuplicateMeshComponent",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "Length",
+     1
+    ],
+    [
+     "NbSubdivs",
+     5
+    ],
+    [
+     "Merge",
+     true
+    ],
+    [
+     "Tx",
+     0
+    ],
+    [
+     "Ty",
+     0
+    ],
+    [
+     "Tz",
+     0
+    ],
+    [
+     "Rx",
+     0
+    ],
+    [
+     "Ry",
+     0
+    ],
+    [
+     "Rz",
+     0
+    ],
+    [
+     "Sx",
+     0
+    ],
+    [
+     "Sy",
+     0
+    ],
+    [
+     "Sz",
+     0
+    ],
+    [
+     "DuplicatePolygons",
+     false
+    ]
+   ],
+   "script": "operators.vbs:DuplicateComponentProc"
+  },
+  "c718c4e2-7700-11d1-9988-00a0243f0e60": {
+   "name": "Duplicate Multiple",
+   "scripting": "Duplicate",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "InputObjs",
+     null
+    ],
+    [
+     "NbItems",
+     null
+    ],
+    [
+     "History",
+     -1
+    ],
+    [
+     "Hierarchy",
+     -1
+    ],
+    [
+     "Grouping",
+     -1
+    ],
+    [
+     "Properties",
+     -1
+    ],
+    [
+     "Animation",
+     -1
+    ],
+    [
+     "Constraints",
+     -1
+    ],
+    [
+     "Selection",
+     -1
+    ],
+    [
+     "Xfrom",
+     -1
+    ],
+    [
+     "Sx",
+     ""
+    ],
+    [
+     "Sy",
+     ""
+    ],
+    [
+     "Sz",
+     ""
+    ],
+    [
+     "Rx",
+     ""
+    ],
+    [
+     "Ry",
+     ""
+    ],
+    [
+     "Rz",
+     ""
+    ],
+    [
+     "Tx",
+     ""
+    ],
+    [
+     "Ty",
+     ""
+    ],
+    [
+     "Tz",
+     ""
+    ],
+    [
+     "TrackXform",
+     ""
+    ],
+    [
+     "TextureSupports",
+     -1
+    ]
+   ],
+   "script": "duplicate.vbs:DuplicateWizardProc"
+  },
+  "1067d621-96fc-4ded-983f-e83c4d121372": {
+   "name": "Filter Polygons",
+   "scripting": "ApplyTopoOp",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "PresetObj",
+     "FilterPolygon"
+    ],
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ConnectType",
+     3
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "OutputObjs",
+     null
+    ],
+    [
+     "_validatorCmd",
+     null
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "operators.vbs:ApplyTopoOpProc"
+  },
+  "053894c2-8e7c-4f76-b1bb-283c34e3c420": {
+   "name": "Filter Edges",
+   "scripting": "ApplyTopoOp",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "PresetObj",
+     "FilterEdge"
+    ],
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ConnectType",
+     3
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "OutputObjs",
+     null
+    ],
+    [
+     "_validatorCmd",
+     null
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "operators.vbs:ApplyTopoOpProc"
+  },
+  "86b4db7e-3569-4fd0-b8d3-05c11aa054d5": {
+   "name": "Dice Polygons",
+   "scripting": "ApplyTopoOp",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "PresetObj",
+     "DicePolygons"
+    ],
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ConnectType",
+     3
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "OutputObjs",
+     null
+    ],
+    [
+     "_validatorCmd",
+     null
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "operators.vbs:ApplyTopoOpProc"
+  },
+  "6af65230-4eda-42eb-9ac5-192f4f3916ba": {
+   "name": "Dice Object",
+   "scripting": "ApplyTopoOp",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "PresetObj",
+     "DiceObject"
+    ],
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ConnectType",
+     3
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "OutputObjs",
+     null
+    ],
+    [
+     "_validatorCmd",
+     null
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "operators.vbs:ApplyTopoOpProc"
+  },
+  "11beb110-85b1-11d4-8c31-009027bc3a0e": {
+   "name": "Invert Selected Polygons",
+   "scripting": "ApplyTopoOp",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "PresetObj",
+     "InvertPolygon"
+    ],
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ConnectType",
+     3
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "OutputObjs",
+     null
+    ],
+    [
+     "_validatorCmd",
+     null
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "operators.vbs:ApplyTopoOpProc"
+  },
+  "2861bc71-f6b6-11d2-ac7e-00a02485cecb": {
+   "name": "Invert All Normals",
+   "scripting": "ApplyTopoOp",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "PresetObj",
+     "Inverse"
+    ],
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ConnectType",
+     3
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "OutputObjs",
+     null
+    ],
+    [
+     "_validatorCmd",
+     null
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "operators.vbs:ApplyTopoOpProc"
+  },
+  "bc8cceef-370f-11d4-a8b0-00c04f8edf15": {
+   "name": "Subdivide Polygon",
+   "scripting": "ApplyTopoOp",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "PresetObj",
+     "SubdividePolygon"
+    ],
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ConnectType",
+     3
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "OutputObjs",
+     null
+    ],
+    [
+     "_validatorCmd",
+     null
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "operators.vbs:ApplyTopoOpProc"
+  },
+  "8f1fa2af-3635-11d4-a8af-00c04f8edf15": {
+   "name": "Subdivide Edge",
+   "scripting": "ApplyTopoOp",
+   "handler": "5c0cf8b6-c81e-11d2-80c3-00a0c9ac19a9",
+   "args": [
+    [
+     "PresetObj",
+     "SubdivideEdge"
+    ],
+    [
+     "ConnectionSet",
+     ""
+    ],
+    [
+     "ConnectType",
+     3
+    ],
+    [
+     "ImmediateMode",
+     ":siPersistentOperation:siOperationMode"
+    ],
+    [
+     "OutputObjs",
+     null
+    ],
+    [
+     "_validatorCmd",
+     null
+    ],
+    [
+     "Value",
+     null
+    ]
+   ],
+   "script": "operators.vbs:ApplyTopoOpProc"
+  },
+  "5c960195-d24c-4855-80a4-6b15b6369bfb": {
+   "name": "Direct Manip Tool",
+   "scripting": "DirectManipTool",
+   "handler": "0461b2c6-0ae3-11d2-8065-00a0c955b335",
+   "args": [
+    [
+     "Clsid",
+     null
+    ]
+   ],
+   "script": ""
+  },
+  "0d41ff0c-8af4-4e18-9c1b-83277acf12ef": {
+   "name": "Tweak Tool",
+   "scripting": "TweakTool",
+   "handler": "0461b2c6-0ae3-11d2-8065-00a0c955b335",
+   "args": [
+    [
+     "Clsid",
+     null
+    ]
+   ],
+   "script": ""
+  }
+ }
+}

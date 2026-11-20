@@ -49,8 +49,8 @@ const groupOfLayer = (l: Layer): LayerGroup | null => (l as any).layerGroup ?? n
 
 // ------------------------------------------------------------------ argument resolution
 
-interface CompRef { obj: X3DObject; kind: CompKind; items: CompItem[]; }
-interface Resolved { nodes: Node[]; comps: CompRef[]; }
+export interface CompRef { obj: X3DObject; kind: CompKind; items: CompItem[]; }
+export interface Resolved { nodes: Node[]; comps: CompRef[]; }
 
 const KIND_TOKEN: Record<string, CompKind> = { pnt: 'point', edge: 'edge', poly: 'polygon' };
 const TOKEN_OF: Record<CompKind, string> = { point: 'pnt', edge: 'edge', polygon: 'poly' };
@@ -88,7 +88,7 @@ function parseIndices(text: string, count: number): number[] {
 }
 
 /** Resolve a SelectionList / InputObjs argument: nodes, node names, wildcards and "obj.pnt[..]" component strings. */
-function resolve(app: App, arg: any): Resolved {
+export function resolve(app: App, arg: any): Resolved {
   const res: Resolved = { nodes: [], comps: [] };
   if (empty(arg)) return res;
   const tokens: any[] = Array.isArray(arg) ? arg.flatMap(x => typeof x === 'string' ? splitList(x) : [x]) : typeof arg === 'string' ? splitList(arg) : [arg];
@@ -157,13 +157,13 @@ function setComponents(app: App, obj: X3DObject, kind: CompKind, items: Iterable
   app.selectComponents(obj, kind, [...items], 'replace');
 }
 /** "obj.poly[0,2,5]" - the string form of a component set (edges by meshEdges index). */
-function compString(obj: X3DObject, adj: T.Adjacency, kind: CompKind, items: Iterable<CompItem>): string {
+export function compString(obj: X3DObject, adj: T.Adjacency, kind: CompKind, items: Iterable<CompItem>): string {
   const idx = [...items].map(it => kind === 'edge' ? adj.edgeIndex.get(it as string) ?? -1 : it as number).filter(i => i >= 0).sort((a, b) => a - b);
   return `${obj.name}.${TOKEN_OF[kind]}[${idx.join(',')}]`;
 }
 
 /** Normalise a selection-filter name to a component kind, 'object', 'sample', or null for other filters. */
-function filterKind(f: any): CompKind | 'object' | 'sample' | null {
+export function filterKind(f: any): CompKind | 'object' | 'sample' | null {
   const s = String(f ?? '').trim().toLowerCase().replace(/[\s_]/g, '');
   if (s === 'object' || s === 'objects') return 'object';
   if (['point', 'points', 'vertex', 'vertices', 'pnt'].includes(s)) return 'point';
@@ -174,7 +174,7 @@ function filterKind(f: any): CompKind | 'object' | 'sample' | null {
 }
 const TYPE_ALIAS: Record<string, string> = { polygonmesh: 'polymsh', curve: 'crvlist', surfacemesh: 'surfmsh', effector: 'eff', chainroot: 'root', chainbone: 'bone', model: '#model' };
 /** Object predicate for a non-component filter name, or null when the filter is not known here. */
-function objectFilter(app: App, f: any): ((o: X3DObject) => boolean) | null {
+export function objectFilter(app: App, f: any): ((o: X3DObject) => boolean) | null {
   const k = filterKind(f); if (k === 'object') return () => true; if (k) return null;
   const s = String(f).trim().toLowerCase().replace(/[\s_]/g, ''); const type = TYPE_ALIAS[s] ?? s;
   const known = ['polymsh', 'null', 'light', 'camera', 'crvlist', 'surfmsh', 'eff', 'root', 'bone', '#model', 'pointcloud'];

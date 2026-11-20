@@ -512,7 +512,7 @@ export function registerModelCommands2(app: App) {
       for (let i = 0; i < P.length / 3; i++) { const d = Math.hypot(P[i * 3] - lx, P[i * 3 + 1] - ly, P[i * 3 + 2] - lz); if (d > r) continue; const f = (1 - d / r) * op; n++;
         if (kind === 'weight') { const cur = envOp ? envGet(i) : Number(values!.get(i) ?? 0); const nv = Math.max(0, Math.min(1, mode === 1 ? cur - f : mode === 2 ? cur + (0.5 - cur) * f : cur + (Number(b.val('weight')) - cur) * f)); if (envOp) { if (!envOp.locked.has(i)) envSet(i, nv); } else values!.set(i, nv); }
         else if (kind === 'color') { const cur = (values!.get(i) as V3) ?? [0.5, 0.5, 0.5]; const c = b.val('color') as V3; values!.set(i, mode === 1 ? [cur[0] + (0.5 - cur[0]) * f, cur[1] + (0.5 - cur[1]) * f, cur[2] + (0.5 - cur[2]) * f] : [cur[0] + (c[0] - cur[0]) * f, cur[1] + (c[1] - cur[1]) * f, cur[2] + (c[2] - cur[2]) * f]); }
-        else { if (!moveOp) { moveOp = app.run('MovePointTool', { InputObjs: [o], Create: true }); } const nrm = comp![i]; const amt = Number(b.val('push')) * f * (mode === 1 ? -1 : 1); const cur = moveOp.deltas.get(i) ?? [0, 0, 0]; moveOp.deltas.set(i, [cur[0] + nrm[0] * amt, cur[1] + nrm[1] * amt, cur[2] + nrm[2] * amt]); prim.dirty = true; } }
+        else { if (!moveOp) { moveOp = pushMoveComponentOp(app, o); } const nrm = comp![i]; const amt = Number(b.val('push')) * f * (mode === 1 ? -1 : 1); const cur = moveOp.deltas.get(i) ?? [0, 0, 0]; moveOp.deltas.set(i, [cur[0] + nrm[0] * amt, cur[1] + nrm[1] * amt, cur[2] + nrm[2] * amt]); prim.dirty = true; } }
       if (n) { if (envOp) o.primitive!.dirty = true; app.events.emit('scene'); } };
     const t: InteractiveTool & { onPaint?: any } = { name: kind === 'weight' ? 'Paint Tool' : kind === 'color' ? 'Paint Vertex Color Tool' : 'Paint Push Tool', prompt: `${kind === 'weight' ? 'Paint weights' : kind === 'color' ? 'Paint vertex colours' : 'Push points'} on ${o.name}: drag over the surface (R = brush radius, Enter/right-click to finish)`, pickKind: 'polygon', onClick: (p, pick) => { if (pick) stroke(pick.worldPoint); else stroke(p); }, onFinish() { app.setTool(null); if (prop) app.select([prop]); }, onCancel() { } };
     t.onPaint = (w: V3) => stroke(w); (t as any).paintObj = o; return t;
@@ -576,7 +576,9 @@ export function registerModelCommands2(app: App) {
   });
   (app as any).inspectBrushProperties = () => { const b = brush(); app.events.emit('inspect', b); return b; };
   // Move Point tool op factory used by Paint Push (creates/returns the top MoveComponent op)
-  app.register({ name: 'MovePointTool', label: 'Move Point', category: 'Modeling', args: [{ name: 'InputObjs', default: '' }, { name: 'Create', default: false }], undoable: false, execute(app, a) { const o = app.targets(a.InputObjs)[0] ?? meshObj(app); const prim = o.primitive!; const top: any = prim.operators[prim.operators.length - 1]; if (top && top.deltas) return top; const op = new MoveComponentOperator(); app.record('Move Component', () => prim.addOperator(op), () => prim.removeOperator(op)); return op; } });
+  // (The Move Component operator helper used to sit on the bus as "MovePointTool"; that scripting name is the Move Point
+  // tool activation command of toolmanager.dll (CMD-B16a, toolsB16a.ts), so the helper is a plain function now.)
+  function pushMoveComponentOp(app: App, o: X3DObject): any { const prim = o.primitive!; const top: any = prim.operators[prim.operators.length - 1]; if (top && top.deltas) return top; const op = new MoveComponentOperator(); app.record('Move Component', () => prim.addOperator(op), () => prim.removeOperator(op)); return op; }
   // ---- GetPrim: Stand-in and Geometry Shader primitives
   wrap(app, 'GetPrim', (def) => {
     const prevCan = def.canRun, prevExec = def.execute;

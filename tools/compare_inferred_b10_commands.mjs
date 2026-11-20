@@ -49,7 +49,10 @@ const NAMES = [
 // with an empty FileName open a file browser (treated as cancelled here) instead of failing.
 const DEFAULT_FAILS = new Set(['RemoveFromFolder', 'RemoveFolder', 'SetCurrentEnvironment', 'SetViewCamera',
   'CreateFolder', 'NavigateNode', 'GetSize', 'Tag', 'Untag', 'PinUVComponents', 'UnPinUVComponents', 'PinAllUVComponents', 'UnPinAllUVComponents', 'ConnectMap', 'AddCustomOp',
-  'AddScriptedOpFromFile', 'ConvertScriptedOp', 'MoveToLibrary', 'SetCurrentMaterialLibrary', 'ReconnectModel', 'InstallCustomPreferences']);
+  'AddScriptedOpFromFile', 'ConvertScriptedOp', 'MoveToLibrary', 'SetCurrentMaterialLibrary', 'ReconnectModel', 'InstallCustomPreferences',
+  'AddShotClip']);   // CMD-B16e: Frame is required
+/** Names now registered by row CMD-B16e (src/commands/b16eActioncoreOptasksGap.ts), not by this batch. */
+const MOVED_B16E = ['AddShotClip', 'GetShotClip'];
 
 const reg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'command_registry.json'), 'utf8')).commands;
 const full = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'commands_full.json'), 'utf8'));
@@ -96,13 +99,15 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
   const nt = window.__navTool; const vm = window.__vm; const vps = vm.viewports();
   // navigation tools: activate (twice stays on), the matching view-manager tool
   for (const [n, label] of [['CamOrbitTool', 'Orbit Tool'], ['CamDollyTool', 'Dolly Tool'], ['CamPanZoomTool', 'Pan & Zoom Tool'], ['CamRectZoomTool', 'Rectangular Zoom Tool'], ['CamWalkTool', 'Walk Tool'], ['CamMayaZoomTool', 'Zoom Tool']]) {
-    run(n); run(n); ok(`${n} activates ${label} (no toggle)`, nt.get() === label, nt.get());
+    run(n); const first = nt.get(); run(n); // CMD-B16a: re-invoking the current tool toggles it off (Interaction.stickytoggle, SPDL default on)
+    ok(`${n} activates ${label}; a second call toggles it off (CMD-B16a stickytoggle)`, first === label && nt.get() === null, [first, nt.get()]);
   }
   ok('Cam3dsMaxNavigTool logs its unattested mouse mapping', nya(run('Cam3dsMaxNavigTool')) === 1);
   // auxiliary tools + LastTool
   reset(); run('VirtualSliderTool'); ok('VirtualSliderTool arms a tool', A.activeTool?.name === 'Virtual Slider Tool'); ok('auxiliary tool clears the navigation tool', nt.get() === null);
   run('CamOrbitTool'); ok('navigation tool leaves the modal tool', A.activeTool === null);
-  run('LastTool'); ok('LastTool re-activates the last auxiliary tool', A.activeTool?.name === 'Virtual Slider Tool', A.activeTool?.name);
+  run('TranslateTool'); run('LastTool'); ok('LastTool re-activates the last auxiliary tool (CMD-B16a: the camera tool was recorded last)', nt.get() === 'Orbit Tool', nt.get());
+  reset(); run('VirtualSliderTool'); run('TranslateTool'); run('LastTool'); ok('LastTool re-activates the last auxiliary tool (Translate excluded)', A.activeTool?.name === 'Virtual Slider Tool', A.activeTool?.name); reset();
   {
     const p = cube.kinematics.local.get('posx'); A.anim.marked.clear(); A.anim.marked.add(p); const v0 = p.value;
     run('VirtualSliderTool'); const t = A.activeTool; t.onClick([0, 0, 0], null, { shift: false, ctrl: false }); t.onMove([10, 0, 0]); t.onFinish();
@@ -137,7 +142,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
   { reset(); const p = cube.kinematics.local; const x0 = [p.val('posx'), p.val('posy'), p.val('posz')]; const r = run('ViewNudgeRight');
     const moved = Math.hypot(p.val('posx') - x0[0], p.val('posy') - x0[1], p.val('posz') - x0[2]);
     ok('ViewNudgeRight moves the selection a fraction of a unit (B11: one pixel, through Translate)', !r.err && moved > 0 && moved < 1, [r.err, moved]); A.undo(); ok('ViewNudgeRight undo', Math.abs(p.val('posx') - x0[0]) + Math.abs(p.val('posy') - x0[1]) + Math.abs(p.val('posz') - x0[2]) < 1e-9); }
-  { const r = run('RunPerformanceTest', { Duration: 0.05 }); ok('RunPerformanceTest reports frames per second', r.v > 0 && A.inferredB10.perf.frames > 0, r); }
+  { A.tasksB16c.fs.ensureFolder('C:\\PerfB10'); const r = run('RunPerformanceTest', { FileName: 'C:\\PerfB10\\perf.txt', Duration: 0.05 }); ok('RunPerformanceTest measures frames (CMD-B16c: report appended to FileName, no return value)', r.v === undefined && A.inferredB10.perf.frames > 0, r); }
   { const r = run('StartTimedPlayback'); ok('StartTimedPlayback logs the elapsed milliseconds (B11: no return value)', r.v === undefined && r.log.some(l => /^StartTimedPlayback: \d+ ms$/.test(l)), r.log); }
   { const f = 'C:\\Users\\Public\\b10_cache.json'; let r = run('SaveFastPlaybackCache', { FileName: f }); const n = A.anim.endFrame - A.anim.startFrame + 1;
     ok('SaveFastPlaybackCache saves the frame list (B11: S_FALSE, no return value)', !r.err && A.inferredB10.status.SaveFastPlaybackCache === 1 && A.inferredB10.playbackCaches.get(act())?.frames.length === n, r); A.inferredB10.playbackCaches.clear();
@@ -230,7 +235,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
   ok('DeleteMotionDerivator without a derivator removes nothing', run('DeleteMotionDerivator', { InputObj: 'cube' }).v === 0);
   // custom preferences
   { const p = cube.properties[0]; ok('InstallCustomPreferences', run('InstallCustomPreferences', { InputObjs: p, Name: 'MyPrefs' }).v === 'MyPrefs' && A.customPreferencesB10.get('MyPrefs') === p);
-    ok('RefreshCustomPreferences counts them', run('RefreshCustomPreferences').v === 1); }
+    { const r = run('RefreshCustomPreferences'); ok('RefreshCustomPreferences re-reads them (CMD-B16c: no return value)', !r.err && r.v === undefined); } }
   reset();
   return out;
 }, { NAMES, DEFAULT_FAILS: [...DEFAULT_FAILS] });
@@ -242,7 +247,8 @@ for (const n of NAMES) {
   report(`${n}: registry argument list`, JSON.stringify(got.reg[n]) === JSON.stringify(registry[n] ?? (n === 'Tag' ? [['InputObjs', null], ['Level', ':siTagAll:siTags'], ['SubType', 3]] : null)), `${JSON.stringify(got.reg[n])} vs ${JSON.stringify(registry[n])}`);
   report(`${n}: default run`, got.defaults[n] === 'ok' || got.defaults[n] === 'expected-failure', got.defaults[n]);
 }
-report('batch registered every name itself', got.batch.skipped.length === 0 && NAMES.every(n => got.batch.registered.includes(n)), JSON.stringify(got.batch.skipped));
+const B16A = new Set(['LastTool']); // CMD-B16a (toolsB16a.ts) owns it now
+report('batch registered every name itself', got.batch.skipped.length === 0 && NAMES.filter(n => !B16A.has(n) && !MOVED_B16E.includes(n)).every(n => got.batch.registered.includes(n)), JSON.stringify(got.batch.skipped));
 for (const [name, cond, detail] of got.checks) report(name, cond, detail);
 report('no page errors', pageErrors.length === 0, pageErrors.join(' | '));
 console.log(`compare_inferred_b10_commands: ${pass} ok, ${fail} failed (${NAMES.length} commands)`);

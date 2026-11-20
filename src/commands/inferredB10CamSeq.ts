@@ -1,8 +1,8 @@
 // Row CMD-B10 (inferred batch) Camera Sequencer commands, split out of inferredB10Scene.ts on 2026-11-19, and AddToTOC.
 // GetSceneFrameSetFromCamSeq, PlotCamSeqToActions and PlotCamSeqShape follow the wire contracts of row CMD-B11g
 // (docs/ghidra/cmd-b11g-action-camseq-b10-confirmations-binary.md, action.dll); AddToTOC follows row CMD-B11c
-// (docs/ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md, tasks.dll). AddShotClip / GetShotClip and the
-// sequencer frame mapping (F3DGetGlobalFrameSetFromSequencerRange, not read) stay `// inferred`.
+// (docs/ghidra/cmd-b11c-tasks-scene-preset-curve-inspect-binary.md, tasks.dll). The sequencer frame mapping
+// (F3DGetGlobalFrameSetFromSequencerRange, not read) stays `// inferred`; AddShotClip / GetShotClip moved to row CMD-B16e.
 import { App } from '../core/commands';
 import { Node, X3DObject, Model, Property, Camera } from '../core/scene';
 import type { Parameter } from '../core/params';
@@ -71,32 +71,7 @@ function animatedUnderRoot(app: App): Parameter[] {
 }
 
 export function registerInferredB10CamSeq(app: App) {
-  regB10(app, 'AddShotClip', { // inferred: Parent names the shot camera; Frame is the sequence position, StartFrame..EndFrame the scene frames (Q10 open)
-    execute(app, a) {
-      const tracks = shotTracks(app); const tname = unset(a.Track) ? 'Shot_Track' : String(listOf(a.Track)[0]).split('.').pop()!;
-      let track = tracks.find(t => t.name === tname); const made = !track;
-      if (!track) track = { name: tname, clips: [] };
-      const cam = unset(a.Parent) ? [...app.scene.allObjects()].find(o => o instanceof Camera || o.type === 'camera') : findObj(app, String(a.Parent));
-      const start = unset(a.StartFrame) ? app.anim.startFrame : num(a.StartFrame); const end = num(a.EndFrame, 100);
-      if (end < start) throw new Error('AddShotClip: EndFrame is before StartFrame');
-      const at = unset(a.Frame) ? (track.clips.length ? Math.max(...track.clips.map(seqOut)) : start) : num(a.Frame);
-      const base = String(a.Name || 'Shot'); let name = base, i = 1; while (track.clips.some(c => c.name === name)) name = `${base}${i++}`;
-      const clip: ShotClip = { name, source: cam?.name ?? '', start: at, duration: end - start + 1, type: 'camerashotclip', timectrl: { clipin: start, clipout: end } };
-      const t = track;
-      app.record('AddShotClip', () => { if (made && !tracks.includes(t)) tracks.push(t); t.clips.push(clip); }, () => { t.clips.splice(t.clips.indexOf(clip), 1); if (made) tracks.splice(tracks.indexOf(t), 1); });
-      return clip;
-    },
-  });
-  regB10(app, 'GetShotClip', { // inferred: GlobalFrame >= 0 is used instead of Frame; between clips the previous clip, not directly over (open, actioncore.dll)
-    undoable: false,
-    execute(app, a) {
-      const f = num(a.GlobalFrame, -1) >= 0 ? num(a.GlobalFrame) : num(a.Frame);
-      let clip = clipAt(app, f); const over = !!clip;
-      if (!clip) { let best: ShotClip | null = null; for (const t of shotTracks(app)) for (const c of t.clips) if ((c.type ?? 'camerashotclip') === 'camerashotclip' && seqOut(c) <= f && (!best || seqOut(c) > seqOut(best))) best = c; clip = best; }
-      const cam = clip ? findObj(app, String(clip.source)) ?? null : null;
-      return outputs({ Clip: clip, DirectlyOver: over, ActiveCamera: cam });
-    },
-  });
+  // AddShotClip / GetShotClip: row CMD-B16e (src/commands/b16eActioncoreOptasksGap.ts, actioncore.dll contracts).
   regB10(app, 'GetSceneFrameSetFromCamSeq', { // B11g §GetSceneFrameSetFromCamSeq: the import's frame list as a 1-D array (empty = [], no message); not undoable
     undoable: false,
     execute(app, a) { return frameSet(app, num(a.StartFrame, 1), num(a.EndFrame, 100), boolA(a.PlotWithoutGaps)).map(x => x.scene); },

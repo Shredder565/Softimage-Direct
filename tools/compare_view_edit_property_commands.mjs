@@ -430,15 +430,15 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
   // ------------------------------------------------------------------------------------------------ General
   {
     const { cube } = S();
-    let r = run('EndUndo'); ck('EndUndo', 'default args without BeginUndo: error', /no undo group is open/.test(r.err ?? ''), r);
-    const u0 = A.undoStack.length; r = run('BeginUndo'); const r2 = run('EndUndo'); ck('BeginUndo', 'default args: an empty group adds nothing to the undo stack', ok(r) && ok(r2) && r2.v === 0 && A.undoStack.length === u0, [r, r2]);
+    let r = run('EndUndo'); ck('EndUndo', 'default args without BeginUndo: silent no-op (CMD-B16c)', ok(r) && r.v === undefined, r);
+    const u0 = A.undoStack.length; r = run('BeginUndo'); const r2 = run('EndUndo'); ck('BeginUndo', 'default args: an empty group adds nothing to the undo stack', ok(r) && ok(r2) && r2.v === undefined && A.undoStack.length === u0, [r, r2]);
     run('BeginUndo', { Name: 'VEP group' }); A.run('Translate', { InputObj: [cube], X: 1, Y: 0, Z: 0 }); A.run('Translate', { InputObj: [cube], X: 2, Y: 0, Z: 0 });
     ck('BeginUndo', 'commands inside the group still run', posx(cube) === 3 && A.undoStack.length === u0 + 2);
-    r = run('EndUndo'); ck('EndUndo', 'folds the group into one named undo entry', ok(r) && r.v === 2 && A.undoStack.length === u0 + 1 && A.undoStack[A.undoStack.length - 1].label === 'VEP group', [r, A.undoStack.length - u0]);
+    r = run('EndUndo'); ck('EndUndo', 'folds the group into one named undo entry', ok(r) && r.v === undefined && A.undoStack.length === u0 + 1 && A.undoStack[A.undoStack.length - 1].label === 'VEP group', [r, A.undoStack.length - u0]);
     A.undo(); ck('EndUndo', 'one undo reverts the whole group', posx(cube) === 0 && A.undoStack.length === u0, posx(cube));
     A.redo(); ck('EndUndo', 'one redo replays it', posx(cube) === 3);
     run('BeginUndo', { Name: 'outer' }); A.run('Translate', { InputObj: [cube], X: 1, Y: 0, Z: 0 }); run('BeginUndo', { Name: 'inner' }); A.run('Translate', { InputObj: [cube], X: 1, Y: 0, Z: 0 }); const inner = run('EndUndo'); const outer = run('EndUndo');
-    ck('BeginUndo', 'nested groups: the outermost collects everything', inner.v === 0 && outer.v === 2 && A.undoStack[A.undoStack.length - 1].label === 'outer' && A.undoStack.length === u0 + 2, [inner, outer]);
+    ck('BeginUndo', 'nested groups: the outermost collects everything', inner.v === undefined && outer.v === undefined && A.undoStack[A.undoStack.length - 1].label === 'outer' && A.undoStack.length === u0 + 2, [inner, outer]);
   }
   A.run('NewScene');
   return { registration, info, R, unused: COMMANDS.filter(n => !used.has(n)) };

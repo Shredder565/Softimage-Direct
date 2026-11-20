@@ -7,8 +7,9 @@
 //  * Failure HRESULTs are thrown as SiStatusError (message starts with the command name, ends "(status 0x...)").
 //    Statuses that are not failures (0, 1 = S_FALSE, 0x562e80c7) are kept in `app.shadertasksB12.lastStatus`.
 //  * Errors raised with an XSISHADERTASKS message id are logged as error lines carrying the id (texts not in the repo).
-//  * Sub-tasks the note names (SIAddArrayElement, SIRemoveArrayElement, SetReference2, SetValue) live in other DLLs and
-//    are not on this build's bus; they are small internal steps here, each recorded for undo like the note says.
+//  * Sub-tasks the note names (SIAddArrayElement, SIRemoveArrayElement, SetReference2, SetValue) are small internal steps
+//    here, each recorded for undo like the note says. SetReference2 is served by tasks.dll, not shadertasks.dll
+//    (CMD-B16c; its bus command is in tasksB16c.ts).
 //  * Shader "object arrays", per-object instance values and the shader-compound library are stand-ins kept under
 //    `app.shadertasksB12`. Shader compounds are modelled in src/core/shaderCompound.ts.
 import { App } from '../core/commands';

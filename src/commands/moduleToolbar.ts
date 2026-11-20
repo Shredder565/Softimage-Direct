@@ -7,6 +7,7 @@ import { bool, num, str } from '../core/params';
 import { getSiRenderRegion } from './renderToolbarOm';
 import { applyClothToObjects } from './clothPpg';
 import { executeRenderCurrentFrame, executeRenderPass, renderScenePasses } from '../core/sceneRender';
+import { deleteObjList, PASSES_CURRENT } from './tasksB16c';
 import {
   exportObjectRenderArchive,
   exportRenderArchive,
@@ -286,16 +287,10 @@ export function registerModuleToolbarCommands(app: App) {
       return app.run('CreatePass', { Name: cur.name + '_Copy', PresetObj: 'Pass' });
     },
   });
+  // CMD-B16c: the tasks.dll DeleteObj handler (dd531990) on InputObj, default the current pass.
   app.register({
-    name: 'DeleteCurrentPass', label: 'Delete Current Pass', category: 'Rendering', args: [],
-    execute(app) {
-      const passes = app.scene.passes;
-      if (passes.length <= 1) throw new Error('Cannot delete the last pass');
-      const p = passes.pop()!;
-      app.record('Delete pass', () => { /* already popped */ }, () => { passes.push(p); });
-      app.events.emit('scene');
-      return p;
-    },
+    name: 'DeleteCurrentPass', label: 'Delete Current Pass', category: 'Rendering', args: [{ name: 'InputObj', default: PASSES_CURRENT }],
+    execute(app, a) { deleteObjList(app, 'DeleteCurrentPass', a.InputObj); },
   });
   // WR-05 — Softimage SICreatePartition / AddToPartition / RemoveFromPartition on Pass.partitions.
   const resolvePartitionTarget = (app: App, target: unknown): Partition | null => {

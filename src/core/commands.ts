@@ -49,8 +49,9 @@ export interface CommandDef {
 
 export interface UndoEntry { label: string; undo(): void; redo(): void; }
 
-// Softimage.XSIOM OnBeginRenderPass / OnEndRenderPass (WR-01); genppg PPGEvent bus (WR-06).
-type EventName = 'scene' | 'selection' | 'log' | 'undo' | 'module' | 'frame' | 'params' | 'inspect' | 'newscene' | 'fr-stage' | 'OnBeginRenderPass' | 'OnEndRenderPass' | 'ppg';
+// Softimage.XSIOM OnBeginRenderPass / OnEndRenderPass (WR-01); genppg PPGEvent bus (WR-06); command-state notifications
+// of the toolmanager.dll relay (`XYZ Transform `, CMD-B16a) as 'commandstate'.
+type EventName = 'scene' | 'selection' | 'log' | 'undo' | 'module' | 'frame' | 'params' | 'inspect' | 'newscene' | 'fr-stage' | 'OnBeginRenderPass' | 'OnEndRenderPass' | 'ppg' | 'commandstate';
 
 export class EventBus {
   private m = new Map<EventName, Set<(d?: any) => void>>();
@@ -71,7 +72,9 @@ export class App {
   compSel: ComponentSelection | null = null;
   activeTool: InteractiveTool | null = null;
   proportional = { on: false, radius: 3 };
-  setTool(t: InteractiveTool | null) { if (this.activeTool && t !== this.activeTool) this.activeTool.onCancel(); this.activeTool = t; this.events.emit('selection'); if (t) this.logMsg('info', t.prompt); }
+  private cancellingTool = false;
+  /** Several tools' onCancel call setTool(null) themselves; the guard keeps that from re-entering onCancel forever. */
+  setTool(t: InteractiveTool | null) { if (this.activeTool && t !== this.activeTool && !this.cancellingTool) { this.cancellingTool = true; try { this.activeTool.onCancel(); } finally { this.cancellingTool = false; } } this.activeTool = t; this.events.emit('selection'); if (t) this.logMsg('info', t.prompt); }
   log: { kind: 'cmd' | 'info' | 'error'; text: string }[] = [];
   undoStack: UndoEntry[] = [];
   redoStack: UndoEntry[] = [];
@@ -193,7 +196,7 @@ export class App {
 }
 
 /** Log a command the way the chosen scripting language would (Preferences > Scripting > Language). */
-function fmtCall(name: string, vals: any[], lang = 'VBScript'): string {
+export function fmtCall(name: string, vals: any[], lang = 'VBScript'): string {
   const args = vals.map(fmtArg);
   if (lang === 'Python') return `Application.${name}(${args.map(a => a === '' ? 'None' : a === 'True' || a === 'true' ? 'True' : a === 'False' || a === 'false' ? 'False' : a).join(', ')})`;
   if (lang === 'JScript') return `${name}(${args.map(a => a === '' ? 'null' : a).join(', ')});`;

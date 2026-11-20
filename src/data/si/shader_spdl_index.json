@@ -1,0 +1,241 @@
+{
+ "light-exponent": {
+  "clsid": "153b8310-05e9-11d2-8063-00a0c906835d",
+  "name": "light-exponent",
+  "arrays": {}
+ },
+ "material-blinn": {
+  "clsid": "8fac63ac-e392-11d1-804c-00a0c906835d",
+  "name": "Blinn",
+  "arrays": {
+   "lights": {
+    "item": "lights",
+    "itemType": "light",
+    "title": "Light List"
+   }
+  }
+ },
+ "material-constant": {
+  "clsid": "5b003a9d-868a-11d4-9330-00e0293d48c6",
+  "name": "Constant",
+  "arrays": {
+   "lights": {
+    "item": "lights",
+    "itemType": "light",
+    "title": "Light List"
+   }
+  }
+ },
+ "material-cooktorr": {
+  "clsid": "8fac63ab-e392-11d1-804c-00a0c906835d",
+  "name": "Cook-Torrance",
+  "arrays": {
+   "lights": {
+    "item": "lights",
+    "itemType": "light",
+    "title": "Light List"
+   }
+  }
+ },
+ "material-lambert": {
+  "clsid": "8fac63aa-e392-11d1-804c-00a0c906835d",
+  "name": "Lambert",
+  "arrays": {
+   "lights": {
+    "item": "lights",
+    "itemType": "light",
+    "title": "Light List"
+   }
+  }
+ },
+ "material-phong": {
+  "clsid": "67120bbe-c98c-11d1-9723-00a0243e3672",
+  "name": "Phong",
+  "arrays": {
+   "lights": {
+    "item": "lights",
+    "itemType": "light",
+    "title": "Light List"
+   }
+  }
+ },
+ "material-strauss": {
+  "clsid": "8fac63a9-e392-11d1-804c-00a0c906835d",
+  "name": "Strauss",
+  "arrays": {
+   "lights": {
+    "item": "lights",
+    "itemType": "light",
+    "title": "Light List"
+   }
+  }
+ },
+ "material-ward": {
+  "clsid": "3156b433-fddd-11d2-8b06-00a0c9892542",
+  "name": "Anisotropic",
+  "arrays": {
+   "lights": {
+    "item": "lights",
+    "itemType": "light",
+    "title": "Light List"
+   }
+  }
+ },
+ "sib_atten_linear": {
+  "clsid": "858e1db7-bcfa-11d1-90e9-0000f804eb21",
+  "name": "Attenuation Linear",
+  "arrays": {}
+ },
+ "sib_bumpmap_gen": {
+  "clsid": "b6b3ee80-faae-11d3-ae5d-00a0c96e63e1",
+  "name": "Bump Generator",
+  "arrays": {}
+ },
+ "sib_color_2mix": {
+  "clsid": "c99d3610-9d58-11d3-ae50-00a0c96e63e1",
+  "name": "Color 2 Channel Mixer",
+  "arrays": {}
+ },
+ "sib_color_gradient": {
+  "clsid": "b3745fe2-3947-455a-b6be-18cd5ff94639",
+  "name": "Color Gradient",
+  "arrays": {}
+ },
+ "sib_color_hls_adjust": {
+  "clsid": "fc81738b-0ef2-4002-96dc-92cf633c633d",
+  "name": "Color HLS Adjust",
+  "arrays": {}
+ },
+ "sib_color_invert": {
+  "clsid": "87aee70c-bcfa-11d1-90e9-0000f804eb21",
+  "name": "sib_color_invert",
+  "arrays": {}
+ },
+ "sib_color_math_basic": {
+  "clsid": "6ee27300-a1e2-11d3-ae51-00a0c96e63e1",
+  "name": "Color Basic Math",
+  "arrays": {}
+ },
+ "sib_color_to_scalar": {
+  "clsid": "660e17fd-6b35-4b4d-81a6-c7b11b23ea33",
+  "name": null,
+  "arrays": {}
+ },
+ "sib_environment": {
+  "clsid": "ad97c8b1-e1ae-4e3b-abf5-1754616a6b63",
+  "name": "Environment",
+  "arrays": {}
+ },
+ "sib_illum_phong": {
+  "clsid": "89c75826-bcfa-11d1-90e9-0000f804eb21",
+  "name": "Phong",
+  "arrays": {}
+ },
+ "sib_incidence_v3": {
+  "clsid": "ab202601-fe3f-4269-af90-a7dee5e50f53",
+  "name": "Incidence2",
+  "arrays": {
+   "lights": {
+    "item": "lights",
+    "itemType": "light",
+    "title": "global light list"
+   },
+   "customlights": {
+    "item": "customlights",
+    "itemType": "light",
+    "title": "custom light list"
+   }
+  }
+ },
+ "sib_light": {
+  "clsid": "8853694e-bcfa-11d1-90e9-0000f804eb21",
+  "name": "Light",
+  "arrays": {}
+ },
+ "sib_scalar_math_basic": {
+  "clsid": "3843da00-a1f4-11d3-ae51-00a0c96e63e1",
+  "name": "Scalar Basic Math",
+  "arrays": {}
+ },
+ "sib_scalar_to_color": {
+  "clsid": "8677c42b-bcfa-11d1-90e9-0000f804eb21",
+  "name": "Scalar To Color",
+  "arrays": {}
+ },
+ "sib_texproj_lookup": {
+  "clsid": "4f13c237-8ab2-11d4-9335-00e0293d48c6",
+  "name": "Projection Lookup",
+  "arrays": {}
+ },
+ "sib_texture_lookup": {
+  "clsid": "580cce23-e834-402a-a793-4b9c1cbdb963",
+  "name": "Image Lookup",
+  "arrays": {}
+ },
+ "sib_uvwgen": {
+  "clsid": "c7a2cd40-4478-11d4-ae64-00a0c96e63e1",
+  "name": "UVW Generator",
+  "arrays": {}
+ },
+ "sib_vertex_color_alpha": {
+  "clsid": "4e74da6b-54dc-11d4-a26d-00e0293d48c6",
+  "name": "Vertex Color",
+  "arrays": {}
+ },
+ "simple_phong": {
+  "clsid": "139cf1c1-274a-11d4-ae61-00a0c96e63e1",
+  "name": "Simple Phong",
+  "arrays": {
+   "lights": {
+    "item": "lights",
+    "itemType": "light",
+    "title": "Light List"
+   }
+  }
+ },
+ "txt2d-gradient_v2": {
+  "clsid": "e4b7bfc4-832c-4f7c-bf1e-996aadaf9593",
+  "name": "Gradient",
+  "arrays": {}
+ },
+ "txt2d-grid": {
+  "clsid": "de6e9bd4-df7a-11d1-804b-00a0c906835d",
+  "name": "Grid",
+  "arrays": {}
+ },
+ "txt2d-image-explicit": {
+  "clsid": "1c500b61-023c-11d3-8c03-00a0243e3672",
+  "name": "Image",
+  "arrays": {}
+ },
+ "txt2d-image": {
+  "clsid": "a85cbe61-ddd7-11d1-804a-00a0c906835d",
+  "name": "Image",
+  "arrays": {}
+ },
+ "txt3d-checkerboard": {
+  "clsid": "2d66a8d7-ed68-11d2-843e-00e08100004e",
+  "name": "Checkerboard",
+  "arrays": {}
+ },
+ "txt3d-cloud": {
+  "clsid": "a85cbe5f-ddd7-11d1-804a-00a0c906835d",
+  "name": "Cloud",
+  "arrays": {}
+ },
+ "txt3d-fractal_v3": {
+  "clsid": "a5b2c100-9288-11d4-933f-00e0293d48c6",
+  "name": "Fractal",
+  "arrays": {}
+ },
+ "txt3d-marble": {
+  "clsid": "a85cbe5a-ddd7-11d1-804a-00a0c906835d",
+  "name": "Marble",
+  "arrays": {}
+ },
+ "txt3d-wood": {
+  "clsid": "a85cbe56-ddd7-11d1-804a-00a0c906835d",
+  "name": "Wood",
+  "arrays": {}
+ }
+}
