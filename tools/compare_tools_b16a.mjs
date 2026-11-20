@@ -7,6 +7,9 @@
 //      rules (Interaction.stickytoggle, restart bit), last-auxiliary exclusions, SRT memory, key-down / key-up paths,
 //      Pick Session exemption, DoNothing ending the current tool, MoveComponent class, uncreatable class = no effect,
 //      the 0461b2bd session dispatcher and the `XYZ Transform ` relay (E_INVALIDARG).
+// CMD-B17i (docs/ghidra/cmd-b17i-toolmanager-view-commands.md, WIRE_CORRECTIONS_B17 cmd-b17i items 1-5) changed
+// expected results: per-tool modes (Q2), refusal / key-up rules, fallback = selection tool, history -> fallback -> nil
+// tool on deactivate (Q4), sticky / supra / queued dispatcher sessions (Q5, a script call starts a sticky session).
 // Needs `vite preview` (SI_URL, default :4173). Usage: node tools/compare_tools_b16a.mjs
 import { chromium } from 'playwright';
 import fs from 'fs';
@@ -61,7 +64,7 @@ const got = await page.evaluate(async ({ ROWS }) => {
   const cur = () => tm.current();
   const setPref = (k, v) => { A.prefValues ??= {}; if (v === undefined) delete A.prefValues[`preferences.Interaction.${k}`]; else A.prefValues[`preferences.Interaction.${k}`] = v; };
   const cube = A.scene.find('cube');
-  const reset = () => { A.setTool(null); nav?.set(null); T.setMode('select'); A.selMode = 'object'; A.compSel = null; A.select([cube]); tm.stateOverride.clear(); tm.eligibleOverride.clear(); tm.prevSrt = '00000000-0000-0000-0000-000000000000'; setPref('stickytoggle'); setPref('stickykeys'); A.toolExecContext = undefined; };
+  const reset = () => { A.setTool(null); nav?.set(null); T.setMode('select'); A.selMode = 'object'; A.compSel = null; A.select([cube]); tm.stateOverride.clear(); tm.eligibleOverride.clear(); tm.setFallback('00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000'); tm.supra = null; tm.sticky = null; tm.queue.length = 0; tm.channelOf(NULLG).history.length = 0; setPref('stickytoggle'); setPref('stickykeys'); setPref('stickytime'); A.toolExecContext = undefined; };
   const objCount = () => [...A.scene.allObjects()].length;
 
   // 0. LastTool on a fresh session: nothing recorded -> class stays GUID_NULL, nothing happens
@@ -107,28 +110,33 @@ const got = await page.evaluate(async ({ ROWS }) => {
     ok('any tool command with Clsid GUID_NULL activates the last auxiliary tool', cur() === G.vslider, cur());
     // ---- SRT memory and deactivation fallback
     reset(); run('TranslateTool'); run('CamOrbitTool');
-    ok('SRT memory: activating a tool while Translate is current stores it as previous SRT tool', tm.prevSrt === G.translate && nav.get() === 'Orbit Tool', [tm.prevSrt, nav.get()]);
+    ok('SRT memory: activating a tool while Translate is current stores it as the fallback (+0x90)', tm.fallback() === G.translate && nav.get() === 'Orbit Tool', [tm.fallback(), nav.get()]);
     run('CamOrbitTool');
-    ok('toggling the camera tool off returns to the stored SRT tool (inferred fallback)', cur() === G.translate && T.mode === 'translate' && nav.get() === null, [cur(), T.mode, nav.get()]);
+    ok('toggling the camera tool off returns to the previous tool (Translate, from the history; B17i Q4)', cur() === G.translate && T.mode === 'translate' && nav.get() === null, [cur(), T.mode, nav.get()]);
     reset(); run('Activate Current Select Tool using Filter'); run('CamDollyTool');
-    ok('SRT memory: GUID_NULL when the current tool is not Translate / Rotate / Scale', tm.prevSrt === NULLG, tm.prevSrt);
+    ok('SRT memory: the selection tool when the current tool is not Translate / Rotate / Scale (B17i correction 1)', tm.fallback() === G.select, tm.fallback());
     // ---- tool-state refusal and the Pick Session exemption
     reset(); tm.stateOverride.set(G.tweak, 0); { const c0 = cur(); run('TweakTool'); ok('tool state 0: the activation helper refuses (S_FALSE), nothing activated', cur() === c0 && tm.trace.at(-1)?.op === 'refused', [cur(), tm.trace.at(-1)]); }
-    reset(); tm.eligibleOverride.set(G.tweak, false); { const c0 = cur(); run('TweakTool'); ok('eligibility query fails: refused', cur() === c0, cur()); }
+    reset(); tm.eligibleOverride.set(G.tweak, true); { const c0 = cur(); run('TweakTool'); ok('eligibility S_OK (class current and held): refused (B17i correction 3)', cur() === c0 && tm.trace.at(-1)?.op === 'refused', cur()); }
+    reset(); tm.eligibleOverride.set(G.tweak, false); { run('TweakTool'); ok('eligibility S_FALSE with a sticky current tool: activated (B17i correction 3)', cur() === G.tweak, cur()); }
     reset(); tm.stateOverride.set(G.pick, 0); tm.eligibleOverride.set(G.pick, false); { const r = run('Pick Session Tool'); ok('Pick Session Tool: exempt from the refusal, current outside a pick session (logged)', cur() === G.pick && nya(r), [cur(), r.log]); }
     // ---- key-down (supra) / key-up
     reset(); run('TranslateTool'); tm.mode = 1; run('CamOrbitTool', {}, { A: 6, B: 0 });
-    ok('key-down, stickykeys on: activated, supra filter stops (mode not set)', cur() === G.orbit && tm.mode === 1, [cur(), tm.mode]);
+    ok('key-down, stickykeys on: activated, supra filter stops (mode not set: the new tool keeps mode 0, B17i Q2)', cur() === G.orbit && tm.mode === 0, [cur(), tm.mode]);
     reset(); run('Activate Current Select Tool using Filter'); run('CamMayaZoomTool', {}, { A: 6, B: 0 });
     ok('key-down, stickykeys on: Maya Zoom is the exception (mode 2 = supra)', cur() === G.mayaZoom && tm.mode === 2, [cur(), tm.mode]);
-    { const a0 = tm.getLastAux(); run('CamMayaZoomTool', {}, { A: 4, B: 0 });
-      ok('key-up after a tap (state 0, eligible): tool made sticky, recorded, mode 1', cur() === G.mayaZoom && tm.mode === 1 && tm.getLastAux() === G.mayaZoom, [cur(), tm.mode, a0, tm.getLastAux()]); }
+    run('CamMayaZoomTool', {}, { A: 4, B: 0 });
+    ok('key-up of a supra tool (mode 2): end of the supra activation, selection tool stored, tool deactivated (B17i correction 2)', cur() !== G.mayaZoom && tm.fallback() === G.select, [cur(), tm.fallback()]);
+    reset(); run('Activate Current Select Tool using Filter'); run('CamOrbitTool', {}, { A: 6, B: 0 }); run('CamOrbitTool', {}, { A: 4, B: 0 });
+    ok('key-up before Interaction.stickytime (mode 0, eligibility S_FALSE): tool made sticky, recorded, mode 1 (B17i correction 2)', cur() === G.orbit && tm.mode === 1 && tm.getLastAux() === G.orbit, [cur(), tm.mode, tm.getLastAux()]);
+    reset(); setPref('stickytime', 0); run('CamOrbitTool', {}, { A: 6, B: 0 }); run('CamOrbitTool', {}, { A: 4, B: 0 });
+    ok('key-up after Interaction.stickytime (held): mode 0 promoted to 2, tool deactivated, back to the selection tool', cur() === G.select && nav.get() === null, [cur(), nav.get()]);
     reset(); setPref('stickykeys', false); run('Activate Current Select Tool using Filter'); tm.mode = 1; run('TranslateTool', {}, { A: 6, B: 0 });
-    ok('key-down, stickykeys off: Translate activated, mode not set', cur() === G.translate && tm.mode === 1, [cur(), tm.mode]);
+    ok('key-down, stickykeys off: Translate activated, mode not set (0)', cur() === G.translate && tm.mode === 0, [cur(), tm.mode]);
     reset(); setPref('stickykeys', false); run('Activate Current Select Tool using Filter'); run('CamOrbitTool', {}, { A: 6, B: 0 });
     ok('key-down, stickykeys off: other tools enter supra mode 2', cur() === G.orbit && tm.mode === 2, [cur(), tm.mode]);
     tm.stateOverride.set(G.orbit, 2); run('CamOrbitTool', {}, { A: 4, B: 0 });
-    ok('key-up after use (state != 0, != 1): previous SRT cleared, tool deactivated', cur() !== G.orbit && tm.prevSrt === NULLG && nav.get() === null, [cur(), tm.prevSrt, nav.get()]);
+    ok('key-up after use (state != 0, != 1): selection tool stored as fallback (B17i correction 1), tool deactivated', cur() !== G.orbit && tm.fallback() === G.select && nav.get() === null, [cur(), tm.fallback(), nav.get()]);
     reset(); setPref('stickykeys', false); run('CamOrbitTool', {}, { A: 6, B: 0 }); tm.stateOverride.set(G.orbit, 5); run('CamOrbitTool', {}, { A: 4, B: 0 });
     ok('key-up with state 5: mode 6, tool stays', cur() === G.orbit && tm.mode === 6, [cur(), tm.mode]);
     reset(); setPref('stickytoggle', false); run('CamOrbitTool'); tm.stateOverride.set(G.orbit, 1); run('CamOrbitTool', {}, { A: 4, B: 0 });
@@ -153,18 +161,26 @@ const got = await page.evaluate(async ({ ROWS }) => {
     reset(); { const u0 = A.undoStack.length; const r = run('TweakTool'); ok('tool command: no command log line, no undo, returns nothing', r.cmd === 0 && A.undoStack.length === u0 && r.v === undefined, [r.cmd, r.v]); }
 
     // ---- 0461b2bd session dispatcher
-    reset(); { const r = run('Add Surface Point Tool'); ok('Add Surface Point Tool, plain call (A = 0): ends the session; none running -> logged, nothing', !r.err && tm.session === null && nya(r), [r.err, tm.session, r.log]); }
-    reset(); { run('Add Surface Point Tool', { CmdID: '{11111111-1111-1111-1111-111111111111}' }, { A: 2, B: 0 });
-      ok('Add Surface Point Tool, key-down: session for the command GUID (CmdID argument ignored), class dccb8091 current', tm.session?.cmdId === 'dccb8090-b82c-11d1-a900-00a024190119' && tm.session?.clsid === G.surfPt && cur() === G.surfPt, [tm.session, cur()]);
-      run('Delete Components', {}, { A: 2, B: 0 });
-      ok('starting another session ends the running one', tm.session?.cmdId === '56aa96f5-7ae3-11d1-8036-00a0243e2717' && tm.trace.some(t => t.op === 'session-end' && t.detail === 'dccb8090-b82c-11d1-a900-00a024190119'), tm.session);
+    const ASP = 'dccb8090-b82c-11d1-a900-00a024190119', DC = '56aa96f5-7ae3-11d1-8036-00a0243e2717', PT = 'cf80cbc2-984e-11d1-96e7-00a024191bac';
+    reset(); { const r = run('Add Surface Point Tool');
+      ok('Add Surface Point Tool, plain call (A = 0): starts a sticky session for the command GUID (B17i correction 5), class dccb8091 current', !r.err && tm.sticky?.cmdId === ASP && tm.sticky?.clsid === G.surfPt && cur() === G.surfPt && tm.mode === 4, [r.err, tm.sticky, cur(), tm.mode]);
+      const n0 = tm.trace.length; run('Add Surface Point Tool');
+      ok('plain call of the command that already is the sticky session: no-op', tm.sticky?.cmdId === ASP && tm.trace.slice(n0).map(t => t.op).join() === 'session-already-sticky', tm.trace.slice(n0));
       run('Delete Components');
-      ok('plain call ends the running session of that command', tm.session === null && cur() !== G.delTool, [tm.session, cur()]);
+      ok('a plain call of another command ends the old sticky session and starts its own', tm.sticky?.cmdId === DC && tm.trace.some(t => t.op === 'sticky-end' && t.detail === ASP), tm.sticky); }
+    reset(); { run('Add Surface Point Tool', { CmdID: '{11111111-1111-1111-1111-111111111111}' }, { A: 6, B: 0 });
+      ok('Add Surface Point Tool, key-down: supra session for the command GUID (CmdID argument ignored), mode 7', tm.supra?.cmdId === ASP && tm.supra?.clsid === G.surfPt && cur() === G.surfPt && tm.mode === 7, [tm.supra, cur(), tm.mode]);
+      run('Delete Components', {}, { A: 6, B: 0 });
+      ok('key-down of another command while a supra session is held: queued (B17i Q5)', tm.supra?.cmdId === ASP && tm.queue.some(q => q.cmdId === DC), [tm.supra, tm.queue]);
+      run('Delete Components', {}, { A: 4, B: 0 });
+      ok('key-up of the queued command: removed from the queue', tm.queue.length === 0 && tm.supra?.cmdId === ASP, tm.queue);
+      run('Add Surface Point Tool', {}, { A: 4, B: 0 });
+      ok('key-up of the held supra command: supra session ended, tool released', tm.supra === null && tm.sticky === null && cur() !== G.surfPt, [tm.supra, cur()]);
       const n0 = tm.trace.length; run('{CF80CBC2-984E-11D1-96E7-00A024191BAC}', {}, { A: 1, B: 0 });
-      ok('Paint Tool {CF80CBC2}: A bit 0x1 only -> S_OK, nothing', tm.session === null && tm.trace.length === n0, tm.trace.slice(n0));
-      run('{CF80CBC2-984E-11D1-96E7-00A024191BAC}', {}, { A: 2, B: 0 });
-      ok('Paint Tool {CF80CBC2}: key-down starts the pick-session tool cf80cbc3', tm.session?.clsid === G.pick && cur() === G.pick, [tm.session, cur()]);
-      run('{CF80CBC2-984E-11D1-96E7-00A024191BAC}'); }
+      ok('Paint Tool {CF80CBC2}: A bit 0x1 only -> S_OK, nothing', tm.supra === null && tm.sticky === null && tm.trace.length === n0, tm.trace.slice(n0));
+      run('{CF80CBC2-984E-11D1-96E7-00A024191BAC}', {}, { A: 6, B: 0 });
+      ok('Paint Tool {CF80CBC2}: key-down starts the pick-session tool cf80cbc3', tm.supra?.cmdId === PT && tm.supra?.clsid === G.pick && cur() === G.pick, [tm.supra, cur()]);
+      run('{CF80CBC2-984E-11D1-96E7-00A024191BAC}', {}, { A: 4, B: 0 }); }
 
     // ---- XYZ Transform relay
     reset();

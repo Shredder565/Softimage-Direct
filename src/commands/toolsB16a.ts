@@ -5,7 +5,12 @@
 //     (src/core/toolManager.ts): GUID_NULL = the last auxiliary tool; already current = nothing unless
 //     Interaction.stickytoggle (toggle off) or the restart modifier; key-down / key-up paths; last-auxiliary recorder.
 //   handler 0461b2bd (`Delete Components`, `Paint Tool` {CF80CBC2-…}, `Add Surface Point Tool`): command-tool session
-//     dispatcher, start on key-down, end otherwise; the `CmdID` argument is ignored (the command's own GUID is used).
+//     dispatcher (CMD-B17i Q5): key-down starts a supra session (queued while one is held); a script / menu call (A = 0)
+//     starts a sticky session (correction 5 of WIRE_CORRECTIONS_B17); the `CmdID` argument is ignored (the command's
+//     own GUID is used).
+// CMD-B17i (docs/ghidra/cmd-b17i-toolmanager-view-commands.md) corrected the tool manager model in src/core/toolManager.ts:
+//   per-tool modes and the stickytime eligibility (Q2), the refusal rule, the SRT-memory / key-up fallback = selection
+//   tool, and the deactivate chain history -> fallback -> nil tool (Q4).
 //   handler 0461b2c7 (`XYZ Transform `): command-state notification relay; unknown `Property` = E_INVALIDARG.
 // All 72: not undoable, no log line, no return value, no error for an uncreatable class (correction 11); not disabled by
 // the registry flags (correction 12). Argument names / defaults: data/commands_full.json (registry `handler_clsid` of a
@@ -162,15 +167,21 @@ const SRT_MODE: Record<string, 'select' | 'translate' | 'rotate' | 'scale'> = {
 export function b16aNya(app: App, command: string, what: string) { app.logMsg('info', `${command}: not yet attested: ${what} (${NOTE})`); }
 const unset = (v: any) => v === undefined || v === null || v === '';
 
-/** Interaction.<name> preference: `app.prefValues` (SetValue path), else the Preferences page, else the SPDL default (true). */
-function interactionPref(app: App, name: string): boolean {
+/** Interaction.<name> preference: `app.prefValues` (SetValue path), else the Preferences page, else the SPDL default
+ *  (C3DPrefsInteraction.spdl: stickytoggle / stickykeys true, niltool 0 = "Selection/SRT Tool", stickytime 0.25 s). */
+const PREF_DEFAULT: Record<string, any> = { stickytoggle: true, stickykeys: true, niltool: false, stickytime: 0.25 };
+function interactionValue(app: App, name: string): any {
   const bag = (app as any).prefValues ?? {};
   const key = Object.keys(bag).find(k => k.toLowerCase() === `preferences.interaction.${name}`);
   let v: any = key !== undefined ? bag[key] : undefined;
   if (v === undefined) v = (window as any).__prefSets?.get?.('C3DPrefsInteraction')?.val?.(name);
-  if (v === undefined || v === null) return true; // C3DPrefsInteraction.spdl: stickytoggle / stickykeys default true
+  return v === undefined || v === null ? PREF_DEFAULT[name] : v;
+}
+function interactionPref(app: App, name: string): boolean {
+  const v = interactionValue(app, name);
   return typeof v === 'string' ? /^(true|1|-1|yes)$/i.test(v.trim()) : !!v;
 }
+function interactionNumber(app: App, name: string): number { const n = Number(interactionValue(app, name)); return Number.isFinite(n) ? n : PREF_DEFAULT[name]; }
 
 export function toolManagerOf(app: App): ToolManager {
   const A = app as any;
@@ -179,8 +190,13 @@ export function toolManagerOf(app: App): ToolManager {
     pref: (n) => interactionPref(app, n),
     // inferred: with no live tool the channel shows the UI's base tool (the transform mode of the MCP)
     idle: () => { const m = (window as any).__tool?.mode; return m === 'translate' ? CLS.translate : m === 'rotate' ? CLS.rotate : m === 'scale' ? CLS.scale : m === 'select' ? CLS.select : null; },
+    stickyTime: () => interactionNumber(app, 'stickytime'),
     notify: (event, args) => app.events.emit('commandstate', { event, args }),
     nya: (what) => b16aNya(app, A.toolCommand ?? 'tool manager', what),
+    // CMD-B17i Q5: the dispatcher's default sticky command class ba315211 is `Object Select Tool` (ActivateObjectSelTool)
+    restartDefaultSticky: () => { if (app.commands.get('ActivateObjectSelTool')) app.run('ActivateObjectSelTool'); },
+    clearStatus: () => { (window as any).__setStatusText?.(''); },
+    restoreNormalTool: () => b16aNya(app, A.toolCommand ?? 'Escape Pick Session', 'what the dispatcher host does when no command-tool session remains (host object +0x120; the default channel keeps its current tool)'),
   });
   A.toolManager = tm;
   return tm;
@@ -212,7 +228,7 @@ export function registerToolsB16aCommands(app: App) {
   // ---- the selection and SRT tools: the MCP transform mode
   for (const [c, m] of Object.entries(SRT_MODE)) {
     tm.addClass({
-      clsid: c, label: m, restorable: true,
+      clsid: c, label: m,
       on() { if (app.activeTool) app.setTool(null); nav()?.set(null); vt()?.setMode(m); },
       off() { if (vt()?.mode === m && m !== 'select') vt()?.setMode('select'); }, // inferred: the channel falls back to selection
       live: () => !vt() || vt()!.mode === m,
@@ -221,7 +237,7 @@ export function registerToolsB16aCommands(app: App) {
   // ---- camera tools: the view manager's navigation tool of the same name
   for (const [c, [body, label]] of Object.entries(NAV_LABEL)) {
     tm.addClass({
-      clsid: c, label, restorable: true,
+      clsid: c, label,
       on(ctx) { runBody(body, ctx); },
       off() { if (nav()?.get() === label) nav()!.set(null); },
       live: () => !nav() || nav()!.get() === label,
@@ -229,7 +245,7 @@ export function registerToolsB16aCommands(app: App) {
   }
   // ---- viewport tools of this build
   for (const [c, body] of Object.entries(BODY)) {
-    if (c === CLS.manipulate) { tm.addClass({ clsid: c, label: 'Manipulate Tool', restorable: true, on: (ctx) => runBody(body, ctx), off() { /* manipulators stay as the MCP set them */ } }); continue; }
+    if (c === CLS.manipulate) { tm.addClass({ clsid: c, label: 'Manipulate Tool', on: (ctx) => runBody(body, ctx), off() { /* manipulators stay as the MCP set them */ } }); continue; }
     tm.addClass(viewportClass(c, body, (ctx) => runBody(body, ctx)));
   }
   for (const [c, what] of Object.entries(NO_TOOL)) {
@@ -254,6 +270,17 @@ export function registerToolsB16aCommands(app: App) {
   });
   // DoNothing (2b2ffb2e): the inert tool; activating it ends the current tool (correction 5)
   tm.addClass({ clsid: CLS.doNothing, label: 'DoNothing', on() { if (app.activeTool) app.setTool(null); nav()?.set(null); }, off() { /* inert */ } });
+  // nil tool (d97e3888, toolmanager.dll's own class, CMD-B17i): the default channel's tool when no fallback is stored or
+  // Interaction.niltool is on. It ends the interactive / navigation tool and leaves the transform mode as it is.
+  {
+    let mode0: string | null = null;
+    tm.addClass({
+      clsid: CLS.toolmanagerTool, label: 'Nil Tool',
+      on() { if (app.activeTool) app.setTool(null); nav()?.set(null); mode0 = vt()?.mode ?? null; },
+      off() { mode0 = null; },
+      live: () => !app.activeTool && !nav()?.get() && (vt()?.mode ?? null) === mode0, // inferred: until the UI picks another tool
+    });
+  }
   // Pick Session tool (cf80cbc3): exempt from the tool-state refusal; current even outside a pick session (correction 7)
   tm.addClass({
     clsid: CLS.pickSession, label: 'Pick Session Tool',

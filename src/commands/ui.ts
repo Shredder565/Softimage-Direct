@@ -16,10 +16,8 @@ export function registerUICommands(app: App) {
   reg('ActivateRaycastEdgeSelTool', 'Raycast Edge Select Tool', (app) => app.setSelMode('edge'));
   reg('ActivateRaycastPolySelTool', 'Raycast Polygon Select Tool', (app) => app.setSelMode('polygon'));
   reg('ActivateRaycastSelTool', 'Raycast Select Tool', (app) => { tool.setMode('select'); app.setSelMode('object'); });
-  reg('FrameSelection', 'Frame Selection', () => ev('framesel'), [{ name: 'Toggle', default: false }, { name: 'AllViews', default: false }, { name: 'View', default: -1 }]);
-  reg('FrameAll', 'Frame All', () => ev('frameall'), [{ name: 'Toggle', default: false }, { name: 'AllViews', default: false }, { name: 'View', default: -1 }]);
+  // FrameSelection / FrameAll / CameraReset: vm.dll commands of CMD-B17i (src/commands/inferredB10Views.ts).
   reg('ResetCamera', 'Reset Camera', () => ev('frameall'), [{ name: 'View', default: -1 }]);
-  reg('CameraReset', 'Reset Camera', () => ev('frameall'), [{ name: 'View', default: -1 }]);
   reg('SetDisplayMode', 'Set Display Mode', (_, a) => ev('setdisplaymode', { mode: String(a.Mode ?? a.Camera ?? '').toLowerCase() }), [{ name: 'Camera', default: '' }, { name: 'Mode', default: 'shaded' }]);
   reg('GetViewCamera', 'Get View Camera', (_, a) => `Views.View${['A', 'B', 'C', 'D'][a.View] ?? 'B'}.Camera`, [{ name: 'View', default: -1 }]);
   reg('GetFocusedViewport', 'Get Focused Viewport', () => 'B');

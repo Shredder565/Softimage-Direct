@@ -14,6 +14,7 @@ import { X3DObject, Node, Model, Null, Operator, Primitive } from '../core/scene
 import { registerViewEditPropertyMore } from './viewEditPropertyMore';
 import { subComponentsOf, owningModelsOf, branchList, msgBoxB17b, localiseMaterialsOfCopy } from './chainsModelB17b';
 import { siString } from '../ui/si';
+import { deleteObjList } from './tasksB16c';
 import {
   reg, nya, logNya, unset, siConst, numArg, boolArg, objs, nodes, findNode, findOperator, paramOf, paramsOf,
   ensureLocal, reparent, setLocalMatrix, isDescendant, copyNode, buildInstance, attach, hasGeometry, masterOfInstance,
@@ -415,7 +416,8 @@ function registerEdit(app: App) {
     execute(app, a) {
       const all = [...app.scene.root.children]; if (!all.length) return false;
       if (boolArg(a.Confirm) && !window.confirm('Delete all objects in the scene?')) return false;
-      app.run('DeleteObj', { InputObj: all });
+      // CMD-B17j Q17: the tasks.dll worker's "delete all" mode bit 0x8 (internal callers) skips the camera guard (inferred caller)
+      deleteObjList(app, 'DeleteAll', all, 0x8);
       return true;
     },
   });
