@@ -552,6 +552,9 @@ export function applyConstraints(o: X3DObject, g: THREE.Matrix4): THREE.Matrix4 
         const tq = new THREE.Quaternion(); tg[0].decompose(new THREE.Vector3(), tq, new THREE.Vector3()); const off = new THREE.Euler(Number(c.val('offsetx') ?? 0) * Math.PI / 180, Number(c.val('offsety') ?? 0) * Math.PI / 180, Number(c.val('offsetz') ?? 0) * Math.PI / 180, 'ZYX'); tq.multiply(new THREE.Quaternion().setFromEuler(off)); g = new THREE.Matrix4().compose(p, blend < 1 ? q.clone().slerp(tq, blend) : tq, s);
       } else if (c.type === 'posecns') {
         const tq = new THREE.Quaternion(), ts = new THREE.Vector3(); tg[0].decompose(new THREE.Vector3(), tq, ts); g = new THREE.Matrix4().compose(blend < 1 ? p.clone().lerp(tc, blend) : tc, blend < 1 ? q.clone().slerp(tq, blend) : tq, c.val('cnsscl') === false ? s : ts);
+        // Compensated Pose constraint (CMD-B15e rig builders): the constrained object's pose relative to the target at
+        // constraint time, kept as a matrix and applied after the target's pose.
+        const poseOffset = (c as any)._poseOffset as THREE.Matrix4 | undefined; if (poseOffset && blend >= 1) g = tg[0].clone().multiply(poseOffset);
       } else if (c.type === 'sclcns') {
         const ts = new THREE.Vector3(); tg[0].decompose(new THREE.Vector3(), new THREE.Quaternion(), ts); g = new THREE.Matrix4().compose(p, q, ts);
       } else if (c.type === 'dstcns') {
