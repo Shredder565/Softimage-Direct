@@ -17,6 +17,7 @@
 //  * Files. "Exists on disk" is asked of the session's virtual host file system (app.hostFs, CMD-01b) and, for
 //    referenced models, of the app's own referenced-model store (inferred).
 //  * Log severities: the script log knows info and error; warnings are info lines prefixed "WARNING : " (as in CMD-01b).
+import { makeOwnMaterialCopy } from './chainsModelB17b';
 import { App } from '../core/commands';
 import { Property, Node, Model, X3DObject, Shader, Material } from '../core/scene';
 import { str, int, bool, num } from '../core/params';
@@ -200,7 +201,7 @@ function setupDisplacement(app: App, a: Record<string, any>): void {
     for (const o of objs) {
       // 1. the object's material is made local
       if (!o.material) { try { app.run('MakeLocal', { InputObjs: `${o.fullName}.material` }); } catch { /* the app's MakeLocal does not know this path form */ } }
-      if (!o.material && app.commands.has('MakeLocalMaterialsForHierarchy')) app.run('MakeLocalMaterialsForHierarchy', { InputObj: [o] });
+      if (!o.material) makeOwnMaterialCopy(app, o);   // the app's own-copy helper (MakeLocalMaterialsForHierarchy is the CMD-B17b contract)
       const mat: Material | null = o.material ?? currentMaterial(app.scene, o);
       if (!mat) throw new Error(`${siName(app, o)} has no material`);
       // 2. displacement <- linear interpolation <- explicit 2D image
@@ -248,14 +249,18 @@ const fileOnDisk = (file: string): boolean => { try { return hostFs.isFile(file)
 function createRefModel(app: App, a: Record<string, any>): any {
   const CMD = 'CreateRefModel'; const file = String(a.FileName ?? '');
   const finish = (m: any, emit: boolean) => { if (!(m instanceof X3DObject)) return undefined; app.select([m]); if (emit) autoInspectGeneral(app, m); return m; };   // branch selection is a plain selection here
-  if (file !== '' && (fileOnDisk(file) || refStoreHas(file))) {
+  const svc = (app as any).modelFiles as { known(f: string): boolean; loadRef(f: string, p: X3DObject | null): Promise<any> } | undefined;
+  const inStore = (f: string) => refStoreHas(f) || !!svc?.known(f);   // the app's referenced-model store or a bundled preset model
+  if (file !== '' && (fileOnDisk(file) || inStore(file))) {
     const all = [file, a.ModelName, a.ResolutionName, a.Parent, a.Activate, a.CreateFile, a.ExternalCnxMappingTemplate, a.ShareOptions];
     if (state.workers[W.createRefModel] || app.commands.has(W.createRefModel)) return finish(callWorker(app, CMD, W.createRefModel, all), false);
     // inferred: until the file-backed creator has its own row, a file in the app's referenced-model store goes through the app's own loader
-    if (refStoreHas(file) && app.commands.has('ImportRefModels')) {
+    if (inStore(file) && svc) {
       state.calls.push({ worker: W.createRefModel, by: CMD, args: all, ran: false });
       logNya(app, CMD, `the worker ${W.createRefModel} is not wired yet; the app's referenced-model loader is used for "${file}"`, 'Q6');
-      return Promise.resolve(app.run('ImportRefModels', { FileName: file, Parent: a.Parent })).then(m => finish(m, true));
+      // CMD-B17b: ImportRefModels now calls CreateRefModel, so the loader is the app's file layer (app.modelFiles), not that command
+      const parent = unset(a.Parent) ? null : findObj(app, a.Parent);
+      return svc.loadRef(file, parent ?? null).then(m => finish(m, true));
     }
     return finish(callWorker(app, CMD, W.createRefModel, all), false);
   }

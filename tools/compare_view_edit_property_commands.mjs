@@ -243,8 +243,11 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
     A.undo(); A.undo(); ck('SIDuplicate', 'undo removes the copies', allObjs().length === n0);
     A.select([]); r = run('SIDuplicate'); ck('SIDuplicate', 'nothing given: error', /no object given/.test(r.err ?? ''), r);
 
-    A.select([cube]); r = run('DuplicateModelFromObj'); ck('DuplicateModelFromObj', 'default args, object directly under the scene root: error', /not in a model/.test(r.err ?? ''), r);
-    r = run('DeleteModelFromObj'); ck('DeleteModelFromObj', 'default args, object directly under the scene root: error', /not in a model/.test(r.err ?? '') && allObjs().includes(cube), r);
+    // CMD-B17b contract (Model.vbs): an object whose model is the scene root is itself duplicated / deleted (was an error here)
+    A.select([cube]); const nd = allObjs().length; r = run('DuplicateModelFromObj'); ck('DuplicateModelFromObj', 'default args, object directly under the scene root: the object itself is duplicated (CMD-B17b)', ok(r) && r.v && r.v !== cube && r.v.type === cube.type && allObjs().length === nd + 1, r);
+    A.undo(); A.select([cube]);
+    r = run('DeleteModelFromObj'); ck('DeleteModelFromObj', 'default args, object directly under the scene root: the object itself is deleted (CMD-B17b)', ok(r) && !allObjs().includes(cube), r);
+    A.undo(); A.select([cube]);
     const model = A.run('CreateModel', { InputObj: [cube, sph], Name: 'vmodel' }); A.run('ParentObj', { Parent: 'vcube', Children: [nul] });
     const n1 = allObjs().length; A.select([nul]); r = run('DuplicateModelFromObj'); const copy = r.v;
     ck('DuplicateModelFromObj', 'duplicates the owning model with its hierarchy and selects the copy', ok(r) && copy.kind === 'model' && copy !== model && copy.children.length === 2 && [...copy.descendants()].length === 3 && allObjs().length === n1 + 4 && eq(names(A.selection), [copy.name]), [r, copy && names([...copy.descendants()])]);

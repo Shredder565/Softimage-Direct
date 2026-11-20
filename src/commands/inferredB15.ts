@@ -52,14 +52,14 @@ export function registerInferredB15Commands(app: App) {
   const st = toolState(app);
 
   // inferred: starts the bone drawing tool of the BoneCreateTool plug-in (CMD-B13e keeps its live instance and undo
-  // record); the drawing itself is this build's chain tool (Create2DSkeleton with no points installs it).
+  // record); the drawing itself is this build's chain tool ("2D Chain Tool", which builds through Create2DSkeleton).
   reg({ name: 'BoneCreateTool', label: 'BoneCreateTool', category: '', undoable: false, args: [],
     execute(app2) {
       const p = pluginsB13eState(app2);
       p.boneTool = { currentBone: null, rootBone: null, rootPos: [0, 0, 0] };
       st.tools.push('BoneCreateTool');
       app2.setTool(null);
-      delegate(app2, 'BoneCreateTool', 'Create2DSkeleton', {});
+      delegate(app2, 'BoneCreateTool', '2D Chain Tool', {});   // CMD-B17b: Create2DSkeleton with default arguments creates a chain, it no longer arms the tool
       return undefined;
     } });
 

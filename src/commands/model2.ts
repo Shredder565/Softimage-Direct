@@ -37,6 +37,27 @@ class NurbsOp extends Operator {
 }
 const wrap = (app: App, name: string, patch: (def: any) => void) => { const d = app.commands.get(name); if (!d) return; patch(d); };
 
+/** This build's model file layer (localStorage store, bundled presets, .emdl bytes, file picker): `app.modelFiles`. */
+export interface ModelFileService {
+  /** The file is in the referenced-model store or is a bundled preset model. */
+  known(file: string): boolean;
+  load(file: string): Promise<any>;
+  importData(data: any): Model;
+  importBytes(bytes: any, fileName: string): Promise<Model | undefined>;
+  importUrl(url: string): Promise<Model | undefined>;
+  importFile(file: string): Promise<Model | undefined>;
+  browse(): Promise<Model | null | undefined>;
+  /** Load a store / preset file as a referenced model (ref record: file, resolution 1). */
+  loadRef(file: string, parent: X3DObject | null): Promise<Model | undefined>;
+  /** Ask for a referenced-model file (preset list, store, or the file picker). */
+  chooseRefFile(): Promise<string | null>;
+  /** Reload a referenced model from its file; null when it has none. */
+  reload(m: Model): Promise<void> | null;
+  /** Write the model to the store under `file`. */
+  commit(m: Model, file: string): void;
+}
+export const modelFiles = (app: App): ModelFileService | null => (app as any).modelFiles ?? null;
+
 export function registerModelCommands2(app: App) {
   // ---- ApplyTopoOp: Surf. Mesh presets + Make Bezier-Knots Corners
   wrap(app, 'ApplyTopoOp', (def) => {
@@ -256,60 +277,62 @@ export function registerModelCommands2(app: App) {
   };
   const download = (name: string, text: string) => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' })); a.download = name; a.click(); };
   app.register({ name: 'ExportModel', label: 'Export Model', category: 'Model', args: [{ name: 'InputObj', default: '' }, { name: 'FileName', default: '' }, { name: 'IncludeChildren', default: true }, { name: 'Data', default: false }], undoable: false, execute(app, a) { const m = (a.InputObj ? app.targets(a.InputObj)[0] : undefined) ?? modelOf(app) ?? app.selectedObjects[0]; if (!m) throw new Error('Select a model'); const data = exportModel(m); const text = emdlBytes(data); const name = (a.FileName || m.name) + '.emdl'; localStorage.setItem('si.refmodel.' + (a.FileName || m.name), text); if (!a.Data) download(name, text); app.logMsg('info', `Exported ${m.name} (${data.nodes.length} nodes) to ${name} [${EMDL_FORMAT} v${EMDL_VERSION}]`); return a.Data ? data : name; } });
-  app.register({
-    name: 'ImportModel', label: 'Import Model', category: 'Model',
-    args: [{ name: 'FileName', default: '' }, { name: 'Parent', default: '' }, { name: 'Data', default: null }, { name: 'Bytes', default: null }],
-    undoable: false,
-    execute(app, a) {
-      const go = (data: any) => {
-        const m = app.run('ImportPresetModelData', { Data: data, Name: data.model || data.preset });
-        const bin = data?.softimage_compat?.binary_emdl;
-        const stats = data?.mesh_stats ? ` mesh_stats=${JSON.stringify(data.mesh_stats)}` : '';
-        app.logMsg('info', `Imported model ${data.model || data.preset} (${data.nodes?.length ?? 0} nodes)${bin ? ' [Softimage OLE .emdl]' : ''}${stats}`);
-        app.events.emit('scene');
-        return m;
-      };
-      if (a.Data && typeof a.Data === 'object') return go(a.Data);
-      if (a.Bytes) {
-        const buf = a.Bytes instanceof ArrayBuffer ? a.Bytes : (a.Bytes.buffer ?? a.Bytes);
-        return parseEmdlBytes(buf, a.FileName || 'model.emdl').then(go).catch(e => app.logMsg('error', `ImportModel: ${e?.message ?? e}`));
-      }
-      if (a.FileName) {
-        // Absolute/relative URL or object URL for binary .emdl, else preset / localStorage JSON OM name.
-        if (/^(blob:|https?:|\/|\.\/)/i.test(a.FileName) || /\.emdl$/i.test(a.FileName)) {
-          return fetch(a.FileName).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.arrayBuffer(); })
-            .then(buf => parseEmdlBytes(buf, a.FileName.split(/[/\\]/).pop() || 'model.emdl'))
-            .then(data => { try { localStorage.setItem('si.refmodel.' + (data.model || 'model'), JSON.stringify({ ...data, nodes: data.nodes?.map((n: any) => n.mesh ? { ...n, mesh: { points: `[${n.mesh.points?.length ?? 0} floats]`, polys: n.mesh.polys?.length } } : n) })); } catch { /* quota */ } return go(data); })
-            .catch(e => app.logMsg('error', `ImportModel: ${e?.message ?? e}`));
-        }
-        return loadData(a.FileName).then(go).catch(e => app.logMsg('error', `ImportModel: ${e?.message ?? e}`));
-      }
-      return pickFile('.emdl,.json').then(async f => {
-        if (!f) return null;
-        const data = await omFromPicked(f);
-        try { localStorage.setItem('si.refmodel.' + f.name, JSON.stringify(data)); } catch { /* large mesh may exceed quota — ignore */ }
-        return go(data);
-      }).catch(e => app.logMsg('error', `ImportModel: ${e?.message ?? e}`));
+  // CMD-B17b: ImportModel / ImportRefModels / UpdateReferencedModel / SetResolutionOfRefModels / CommitToReference /
+  // AddDelta are the Model.vbs contracts in src/commands/chainsModelB17b.ts. What stays here is this build's file layer
+  // (the browser has no file system): the referenced-model store in localStorage, the bundled preset models, binary
+  // .emdl bytes and the file picker. The commands reach it as `app.modelFiles` (see ModelFileService).
+  const importData = (data: any): Model => {
+    const m = app.run('ImportPresetModelData', { Data: data, Name: data.model || data.preset });
+    const bin = data?.softimage_compat?.binary_emdl;
+    const stats = data?.mesh_stats ? ` mesh_stats=${JSON.stringify(data.mesh_stats)}` : '';
+    app.logMsg('info', `Imported model ${data.model || data.preset} (${data.nodes?.length ?? 0} nodes)${bin ? ' [Softimage OLE .emdl]' : ''}${stats}`);
+    app.events.emit('scene');
+    return m;
+  };
+  const errLog = (cmd: string) => (e: any) => { app.logMsg('error', `${cmd}: ${e?.message ?? e}`); return undefined; };
+  const isPreset = (file: string) => Object.values(PRESET_MODELS).includes(file) || Object.keys(PRESET_MODELS).includes(file);
+  const inStore = (file: string) => { try { return localStorage.getItem('si.refmodel.' + file) !== null; } catch { return false; } };
+  const svc: ModelFileService = {
+    known: (file) => !!file && (inStore(file) || isPreset(file)),
+    load: (file) => loadData(file),
+    importData,
+    importBytes: (bytes, fileName) => {
+      const buf = bytes instanceof ArrayBuffer ? bytes : (bytes.buffer ?? bytes);
+      return parseEmdlBytes(buf, fileName || 'model.emdl').then(importData).catch(errLog('ImportModel'));
     },
-  });
+    importUrl: (url) => fetch(url).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.arrayBuffer(); })
+      .then(buf => parseEmdlBytes(buf, url.split(/[/\\]/).pop() || 'model.emdl'))
+      .then(data => { try { localStorage.setItem('si.refmodel.' + (data.model || 'model'), JSON.stringify({ ...data, nodes: data.nodes?.map((n: any) => n.mesh ? { ...n, mesh: { points: `[${n.mesh.points?.length ?? 0} floats]`, polys: n.mesh.polys?.length } } : n) })); } catch { /* quota */ } return importData(data); })
+      .catch(errLog('ImportModel')),
+    importFile: (file) => loadData(file).then(importData).catch(errLog('ImportModel')),
+    browse: () => pickFile('.emdl,.json').then(async f => {
+      if (!f) return null;
+      const data = await omFromPicked(f);
+      try { localStorage.setItem('si.refmodel.' + f.name, JSON.stringify(data)); } catch { /* large mesh may exceed quota — ignore */ }
+      return importData(data);
+    }).catch(errLog('ImportModel')),
+    loadRef: (file, parent) => loadData(file).then(data => {
+      const m = app.run('ImportPresetModelData', { Data: data, Name: data.model }) as Model;
+      (m as any).ref = { file, resolution: 1, resolutions: [file] };
+      if (parent && m.parentObj !== parent) { const old = m.parentObj!; app.record('Parent', () => parent.addChild(m), () => old.addChild(m)); }
+      app.events.emit('scene'); return m;
+    }).catch(errLog('CreateRefModel')),
+    chooseRefFile: () => {
+      const names = [...Object.values(PRESET_MODELS), ...Object.keys(localStorage).filter(k => k.startsWith('si.refmodel.')).map(k => k.slice(12))];
+      let file = prompt('Referenced model file (number, name, or "browse" to pick a .emdl file):\n' + names.map((n, i) => `${i + 1}. ${n}`).join('\n'), '1') ?? '';
+      if (/^\d+$/.test(file)) file = names[Number(file) - 1] ?? '';
+      if (/^b(rowse)?$/i.test(file)) return pickFile('.emdl,.json').then(async f => { if (!f) return null; try { const data = await omFromPicked(f); localStorage.setItem('si.refmodel.' + f.name, JSON.stringify(data)); } catch { /* */ } return f.name; });
+      return Promise.resolve(file || null);
+    },
+    reload: (m) => { const r = refOf(m); if (!r?.file) return null; return loadData(r.file).then(d => { app.run('ReloadRefModelData', { Model: m.fullName, Data: d }); }).catch(e => { app.logMsg('error', String(e?.message ?? e)); }); },
+    commit: (m, file) => { localStorage.setItem('si.refmodel.' + file, JSON.stringify(exportModel(m))); app.logMsg('info', `Committed ${m.name} to ${file}`); },
+  };
+  (app as any).modelFiles = svc;
   app.register({ name: 'AddRefModelResolution', label: 'Add Resolution', category: 'Model', args: [{ name: 'InputObjs', default: '' }, { name: 'FileName', default: '' }], undoable: false, execute(app, a) { const m = modelOf(app); const r = refOf(m); if (!m || !r) throw new Error('Select a referenced model'); const add = (file: string) => { if (!r.resolutions.includes(file)) r.resolutions.push(file); app.logMsg('info', `${m.name}: resolution ${r.resolutions.length} = ${file}`); app.events.emit('scene'); }; if (a.FileName) { add(a.FileName); return null; } return pickFile('.emdl,.json').then(async f => { if (!f) return null; try { const data = await omFromPicked(f); localStorage.setItem('si.refmodel.' + f.name, JSON.stringify(data)); } catch { /* */ } add(f.name); return null; }); } });
-  app.register({ name: 'ImportRefModels', label: 'New Referenced Model', category: 'Model', args: [{ name: 'FileName', default: '' }, { name: 'Parent', default: '' }], undoable: false, execute(app, a) {
-    let file = a.FileName; if (!file) { const names = [...Object.values(PRESET_MODELS), ...Object.keys(localStorage).filter(k => k.startsWith('si.refmodel.')).map(k => k.slice(12))]; file = prompt('Referenced model file (number, name, or "browse" to pick a .emdl file):\n' + names.map((n, i) => `${i + 1}. ${n}`).join('\n'), '1') ?? ''; if (/^\d+$/.test(file)) file = names[Number(file) - 1]; if (/^b(rowse)?$/i.test(file)) return pickFile('.emdl,.json').then(async f => { if (!f) return null; try { const data = await omFromPicked(f); localStorage.setItem('si.refmodel.' + f.name, JSON.stringify(data)); } catch { /* */ } return app.run('ImportRefModels', { FileName: f.name, Parent: a.Parent }); }); } if (!file) return null;
-    return loadData(file).then(data => { const m = app.run('ImportPresetModelData', { Data: data, Name: data.model }); (m as any).ref = { file, resolution: 1, resolutions: [file] }; app.events.emit('scene'); return m; }).catch(e => app.logMsg('error', `ImportRefModels: ${e?.message ?? e}`));
-  } });
   app.register({ name: 'CreateEmptyRefModel', label: 'New Empty Referenced Model', category: 'Model', args: [{ name: 'Name', default: 'RefModel' }], execute(app, a) { const m = new Model(app.scene.uniqueName(a.Name || 'RefModel')); (m as any).ref = { file: '', resolution: 0, resolutions: [] }; addObject(app, m); app.select([m]); return m; } });
   app.register({ name: 'ConvertToRefModel', label: 'Convert To Reference', category: 'Model', args: [{ name: 'Model', default: '' }, { name: 'FileName', default: '' }], execute(app, a) { const m = a.Model ? app.scene.find(a.Model) : modelOf(app); if (!(m instanceof Model)) throw new Error('Convert To Reference: select a model'); const file = a.FileName || prompt('Reference file name', m.name) || m.name; localStorage.setItem('si.refmodel.' + file, JSON.stringify(exportModel(m))); (m as any).ref = { file, resolution: 1, resolutions: [file] }; app.logMsg('info', `${m.name} is now a referenced model (${file})`); app.events.emit('scene'); return m; } });
-  app.register({ name: 'UpdateReferencedModel', label: 'Update Referenced Model', category: 'Model', args: [{ name: 'InputObjs', default: '' }], undoable: false, execute(app) { const m = modelOf(app); const r = refOf(m); if (!m || !r) throw new Error('Select a referenced model'); if (!r.file) return null; return loadData(r.file).then(d => { app.run('ReloadRefModelData', { Model: m.fullName, Data: d }); }).catch(e => app.logMsg('error', String(e?.message ?? e))); } });
   app.register({ name: 'ReloadRefModelData', label: 'Reload Referenced Model', category: 'Model', args: [{ name: 'Model', default: '' }, { name: 'Data', default: null }], execute(app, a) { const m = app.scene.find(a.Model); if (!m) throw new Error('No model'); replaceChildren(app, m, a.Data); app.select([m]); return m; } });
-  app.register({ name: 'SetResolutionOfRefModels', label: 'Set Resolution', category: 'Model', args: [{ name: 'InputObjs', default: '' }, { name: 'resolution', default: 1 }], undoable: false, execute(app, a) {
-    const m = modelOf(app); const r = refOf(m); if (!m || !r) throw new Error('Select a referenced model'); const res = Number(a.resolution);
-    if (res === 0) { r.resolution = 0; app.run('ReloadRefModelData', { Model: m.fullName, Data: null }); app.logMsg('info', `${m.name}: OffLoaded`); return null; }
-    const file = r.resolutions[Math.min(res, r.resolutions.length) - 1] ?? r.file; if (!file) throw new Error('This referenced model has no file for that resolution');
-    r.resolution = res; return loadData(file).then(d => { app.run('ReloadRefModelData', { Model: m.fullName, Data: d }); app.logMsg('info', `${m.name}: resolution ${res} (${file})`); }).catch(e => app.logMsg('error', String(e?.message ?? e)));
-  } });
   app.register({ name: 'MakeModelLocal', label: 'Make Referenced Model Local', category: 'Model', args: [{ name: 'InputObjs', default: '' }], execute(app) { const m = modelOf(app); if (!m || !refOf(m)) throw new Error('Select a referenced model'); const r = (m as any).ref; app.record('Make local', () => { delete (m as any).ref; }, () => { (m as any).ref = r; }); app.logMsg('info', `${m.name} is now a local model`); return m; } });
-  app.register({ name: 'CommitToReference', label: 'Commit To Reference', category: 'Model', args: [{ name: 'IncludeNestedRefModels', default: false }, { name: 'Confirm', default: true }], execute(app) { const m = modelOf(app); const r = refOf(m); if (!m || !r?.file) throw new Error('Select a referenced model with a file'); localStorage.setItem('si.refmodel.' + r.file, JSON.stringify(exportModel(m))); app.logMsg('info', `Committed ${m.name} to ${r.file}`); return m; } });
-  app.register({ name: 'AddDelta', label: 'Add Empty Delta', category: 'Model', args: [], execute(app) { const m = modelOf(app); if (!m) throw new Error('Select a model'); const d = new Property(app.scene.uniqueName('Delta'), 'delta', [str('target', m.name, 'Model', { readOnly: true }), int('changes', 0, 'Changes', { readOnly: true }), bool('active', true, 'Active')]); (d as any).changes = new Map<string, any>(); app.record('Add Delta', () => m.addProperty(d), () => m.removeProperty(d)); app.select([d]); return d; } });
   // every parameter change inside a referenced model with a Delta is recorded in it (relative path → value), like Softimage's delta modifications
   const relPath = (p: any, m: X3DObject): string | null => { const chain: string[] = []; let n: any = p; while (n && n !== m) { chain.unshift(n.name); n = n.owner ?? n.parent ?? n.parentObj; } return n === m ? chain.join('.') : null; };
   app.events.on('params', (p: any) => { if (!p || !p.name) return; let n: any = p; while (n && !(n instanceof Model)) n = n.owner ?? n.parent ?? n.parentObj; const m = n as Model | undefined; if (!m || !refOf(m)) return; const d = m.properties.find(x => x.type === 'delta' && x.val('active') !== false) as any; if (!d) return; const path = relPath(p, m); if (!path) return; d.changes.set(path, p.value); d.set('changes', d.changes.size); });

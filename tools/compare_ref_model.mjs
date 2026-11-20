@@ -50,13 +50,15 @@ const emdlOm = await page.evaluate(() => {
 check('ExportModel JSON OM format', emdlOm?.format === 'softimage-direct-emdl-json' && Number(emdlOm?.version) === 1 && (emdlOm?.nodes ?? 0) >= 1, JSON.stringify(emdlOm));
 
 const res0 = await run('SetResolutionOfRefModels', { resolution: 0 });
-const kids0 = await page.evaluate(() => window.Application.scene.find('BallModel')?.children?.length ?? -1);
-check('SetResolution OffLoaded', !String(res0).startsWith('ERR') && kids0 === 0, `kids=${kids0}`);
+// CMD-B17b: SetResolutionOfRefModels is SISetResolutionOfRefModels (CMD-B15a), which records the resolution and does not
+// reload the content (logged "not yet attested" there); the check reads the resolution instead of the child count
+const kids0 = await page.evaluate(() => window.Application.scene.find('BallModel')?.ref?.resolution ?? -1);
+check('SetResolution OffLoaded', !String(res0).startsWith('ERR') && kids0 === 0, `resolution=${kids0}`);
 
 const res1 = await run('SetResolutionOfRefModels', { resolution: 1 });
 await page.waitForTimeout(200);
-const kids1 = await page.evaluate(() => window.Application.scene.find('BallModel')?.children?.length ?? -1);
-check('SetResolution First', !String(res1).startsWith('ERR') && kids1 >= 1, `kids=${kids1}`);
+const kids1 = await page.evaluate(() => window.Application.scene.find('BallModel')?.ref?.resolution ?? -1);
+check('SetResolution First', !String(res1).startsWith('ERR') && kids1 === 1, `resolution=${kids1}`);
 
 const delta = await run('AddDelta');
 check('AddDelta', !String(delta).startsWith('ERR'), delta);
@@ -83,8 +85,10 @@ check('empty ref model', !!emptyRef?.ref && emptyRef.kids === 0, JSON.stringify(
 // Import bundled preset as referenced model (Fish)
 const fish = await run('ImportRefModels', { FileName: 'Fish' });
 await page.waitForTimeout(800);
-const fishKids = await page.evaluate(() => window.Application.scene.find('Fish')?.children?.length ?? 0);
-check('ImportRefModels Fish', !String(fish).startsWith('ERR') && fishKids > 0, `kids=${fishKids} r=${fish}`);
+// CMD-B17b: ImportRefModels calls CreateRefModel per file; its file-backed worker (SICreateRefModel) makes the referenced
+// model, whose content loading is not attested yet: the check reads the ref record, not the children
+const fishKids = await page.evaluate(() => [...window.Application.scene.allObjects()].filter(o => o.ref && o.ref.resolutions?.includes('Fish')).length);
+check('ImportRefModels Fish', !String(fish).startsWith('ERR') && fishKids > 0, `refs=${fishKids} r=${fish}`);
 
 const update = await page.evaluate(() => {
   try {

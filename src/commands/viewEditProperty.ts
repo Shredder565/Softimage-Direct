@@ -12,6 +12,8 @@ import * as THREE from 'three';
 import { App } from '../core/commands';
 import { X3DObject, Node, Model, Null, Operator, Primitive } from '../core/scene';
 import { registerViewEditPropertyMore } from './viewEditPropertyMore';
+import { subComponentsOf, owningModelsOf, branchList, msgBoxB17b, localiseMaterialsOfCopy } from './chainsModelB17b';
+import { siString } from '../ui/si';
 import {
   reg, nya, logNya, unset, siConst, numArg, boolArg, objs, nodes, findNode, findOperator, paramOf, paramsOf,
   ensureLocal, reparent, setLocalMatrix, isDescendant, copyNode, buildInstance, attach, hasGeometry, masterOfInstance,
@@ -406,12 +408,6 @@ function registerEdit(app: App) {
   });
 
   // ---- models from objects
-  const owningModel = (cmd: string, arg: any): Model => {
-    const o = objs(app, arg)[0]; if (!o) throw new Error(`${cmd}: no object given`);
-    const m = o instanceof Model ? o : o.parentObj?.model ?? null;
-    if (!m || m === app.scene.root) throw new Error(`${cmd}: ${o.name} is not in a model (the scene root cannot be used)`);
-    return m;
-  };
   const duplicateModel = (m: Model, parent: X3DObject): Model => {
     const copy = copyNode(app, m, { clone: false, asModel: true }) as Model;
     attach(app, copy, parent, 'Duplicate');
@@ -422,17 +418,53 @@ function registerEdit(app: App) {
     }
     return copy;
   };
-  // inferred
+  // CMD-B17b (Model.vbs DuplicateModelFromObjectProc): sub-components -> message box 1082 and stop; the owning model of
+  // each 3D object in branch (the object itself under the scene root) is duplicated with TextureSupports 1, then each
+  // copy gets material localisation (no selection filter) and clip duplication.
   reg(app, {
     name: 'DuplicateModelFromObj', label: 'Duplicate Model from Object', category: 'Edit', description: 'Duplicates the model that contains the input object',
     args: [{ name: 'InputObj', default: null }],
-    execute(app, a) { const m = owningModel('DuplicateModelFromObj', a.InputObj); const copy = duplicateModel(m, m.parentObj ?? app.scene.root); app.select([copy]); return copy; },
+    execute(app, a) {
+      if (subComponentsOf(app, a.InputObj).length) { msgBoxB17b(app, siString('XSISCRIPTS', 1082) ?? 'Invalid selection, Please select objects'); return undefined; }
+      const list = owningModelsOf(app, a.InputObj);
+      if (!list) { app.logMsg('info', 'invalid selection, please select an object'); return undefined; }
+      if (!list.length) return undefined;
+      // Duplicate "B:<names>" with TextureSupports 1: this build's Duplicate has no option arguments; a model is copied
+      // with its hierarchy, any other object through Duplicate (which copies its children)
+      logNya(app, 'DuplicateModelFromObj', `Duplicate "${branchList(list)}" option arguments (only TextureSupports = 1 is set by the script; the others are the defaults)`);
+      const copies: X3DObject[] = [];
+      for (const o of list) {
+        if (o instanceof Model) copies.push(duplicateModel(o, o.parentObj ?? app.scene.root));
+        else { const c = (app.run('Duplicate', { InputObjs: [o] }) as X3DObject[] | undefined)?.[0]; if (c) copies.push(c); }
+      }
+      if (copies.length) app.select(copies);
+      for (const c of copies) localiseMaterialsOfCopy(app, c);
+      return copies.length === 1 ? copies[0] : copies;
+    },
   });
-  // inferred
+  // CMD-B17b (Model.vbs DeleteModelFromObjectProc): sub-components -> polygons DeleteComponent, else DissolveComponent;
+  // otherwise every item must be a 3D object, and the owning models (objects under the scene root) are deleted in branch.
   reg(app, {
     name: 'DeleteModelFromObj', label: 'Delete Model from Object', category: 'Edit', description: 'Deletes the model that contains the input object',
     args: [{ name: 'InputObj', default: null }],
-    execute(app, a) { const m = owningModel('DeleteModelFromObj', a.InputObj); app.run('DeleteObj', { InputObj: [m] }); },
+    execute(app, a) {
+      const subs = subComponentsOf(app, a.InputObj);
+      if (subs.length) {
+        const polys = subs.some(x => x.polygons);
+        const preset = polys ? 'DeleteComponent' : 'DissolveComponent';
+        const use = polys ? subs.filter(x => x.polygons) : subs;
+        if (!unset(a.InputObj)) app.selectComponents(use[0].obj, use[0].kind, use[0].indices);   // this build's ApplyTopoOp reads the component selection
+        const topo: any = app.commands.get('ApplyTopoOp'); const alias = polys ? 'Delete Component' : 'Dissolve Component';
+        const name = topo?.supported?.({ PresetObj: preset }) ? preset : topo?.supported?.({ PresetObj: alias }) ? alias : null;
+        if (!name) { logNya(app, 'DeleteModelFromObj', `ApplyTopoOp "${preset}", "${use.map(x => x.text).join(',')}" (no ${preset} topology operator in this build)`); return undefined; }
+        return app.run('ApplyTopoOp', { PresetObj: name, ConnectionSet: use.map(x => x.text).join(',') });
+      }
+      const list = owningModelsOf(app, a.InputObj);
+      if (!list) { app.logMsg('info', 'Invalid selection, Please select polygons or an object'); return undefined; }
+      if (!list.length) return undefined;
+      app.run('DeleteObj', { InputObj: branchList(list) });
+      return undefined;
+    },
   });
   // inferred: Confirm asks first (the wording of Softimage's own dialog is not attested)
   reg(app, {

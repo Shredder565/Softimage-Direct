@@ -96,7 +96,9 @@ export function undoSteps(app: App, cmd: 'Undo' | 'Redo', repetitions: any): num
 /** The current layer (Layers.Current). */
 export const currentLayer = (app: App): Layer | undefined => ((app as any).currentLayer as Layer | undefined) ?? app.scene.layers[0];
 /** Strip the `{class guid}:` prefix of a registry default list string. */
-const stripGuid = (s: string) => s.replace(/^\{[0-9a-f-]{36}\}:/i, '').trim();
+// a list entry may carry a GUID prefix and a selection-scope prefix (B: branch, N: node; the delete of an object always
+// takes its branch here), CMD-B17b DeleteModelFromObj passes "B:<name>"
+const stripGuid = (s: string) => s.replace(/^\{[0-9a-f-]{36}\}:/i, '').trim().replace(/^[BN]:/, '');
 
 /** Resolve a DeleteObj InputObj into the list of items (objects, clusters, layers, passes, other nodes). */
 export function deleteList(app: App, v: any): any[] {
