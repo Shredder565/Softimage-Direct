@@ -1,7 +1,7 @@
 // CMD-B15-ELSE: built-in commands whose handler the analyst has not located yet. INFERRED registrations so the names
 // are on the bus; each logs "not yet attested" for the part no note covers.
 //   MarkObjectDirty           registry CLSID all zeros (no handler DLL named)            -> logs, returns nothing
-//   AddShaderAttachedComment  shader-creation task bbbbee29 (handler DLL not located)    -> logs, creates nothing
+//   (AddShaderAttachedComment moved to shadertasksB16b.ts, row CMD-B16b)
 //   GetSkeleton               kinechain.dll (cmd-b5f mentions it; no contract)           -> chain root, bones, effector
 import { App } from '../core/commands';
 import { X3DObject } from '../core/scene';
@@ -37,15 +37,6 @@ export function registerShellsB15ElseCommands(app: App) {
       const o = objOf(app, a.Object) ?? app.selectedObjects[0] ?? null;
       nya(app, 'MarkObjectDirty', `what marking ${o?.fullName ?? 'the object'} dirty does (registry CLSID names no handler DLL)`);
       return undefined;
-    } });
-
-  // inferred
-  app.register({ name: 'AddShaderAttachedComment', label: 'Add Shader Attached Comment', category: 'Rendering', undoable: false,
-    args: [{ name: 'Container', default: null }],
-    execute(app, a) {
-      const c = objOf(app, a.Container);
-      nya(app, 'AddShaderAttachedComment', `the attached comment of the shader-creation task bbbbee29 on ${c?.fullName ?? 'the container'}; nothing is created`);
-      return null;
     } });
 
   // inferred

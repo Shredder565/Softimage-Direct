@@ -7,7 +7,7 @@
 //                   CursorTransformTool "MoveComponent Tool" "Pick Session Tool" ToggleProjectionTool
 //                   "Turn ON Interactive SRT" "Turn OFF Interactive SRT" "Transform Set New " "XYZ Transform " DoNothing
 //   edits:          CopyPaste CopyPartition "Delete Selected Branch" DeleteCurrentLayer "Freeze Selected"
-//                   "Dice Object/Polygons" "Mesh Filter" PaintWeights SISwapArrayElements SIAppendBone
+//                   "Dice Object/Polygons" "Mesh Filter" PaintWeights (SISwapArrayElements, SIAppendBone: shadertasksB16b.ts)
 //   rendering/sim:  RegenerateMaps CreateEnvironmentCache
 import { App, type CommandDef } from '../core/commands';
 import { Node, X3DObject, Property, Partition, Pass, Model } from '../core/scene';
@@ -223,42 +223,7 @@ export function registerInferredB15Commands(app: App) {
       return target;
     } });
 
-  // inferred: "Swaps two elements of an array": an array-valued parameter (or an array) gets elements IndexA and IndexB swapped.
-  reg({ name: 'SISwapArrayElements', label: 'SwapArrayElements', category: 'Rendering', description: 'Swaps two elements of an array.',
-    args: [{ name: 'Object', default: null }, { name: 'IndexA', default: 0 }, { name: 'IndexB', default: 0 }],
-    execute(app2, a) {
-      const C = 'SISwapArrayElements';
-      let obj: any = a.Object;
-      if (typeof obj === 'string') obj = findNode(app2, obj) ?? (app2 as any).__findParam?.(obj);
-      const ia = Number(a.IndexA) | 0, ib = Number(a.IndexB) | 0;
-      const arr: any[] | null = obj instanceof Parameter ? (Array.isArray(obj.value) ? obj.value : null) : Array.isArray(obj) ? obj : Array.isArray(obj?.items) ? obj.items : null;
-      if (!arr) { logInferredNya(app2, C, 'array parameters of shaders (this build has no shader array ports); nothing swapped'); return undefined; }
-      if (ia < 0 || ib < 0 || ia >= arr.length || ib >= arr.length) throw new Error(`${C}: index out of range`);
-      if (ia === ib) return undefined;
-      const swap = () => { const t = arr[ia]; arr[ia] = arr[ib]; arr[ib] = t; if (obj instanceof Parameter) obj.value = [...arr]; };
-      app2.record(C, swap, swap);
-      return undefined;
-    } });
-
-  // inferred: the C++ append-bone task behind AppendBone (miscDsScripts delegates to it): one bone from the chain end to
-  // (Ex, Ey, Ez); AlignRootToFirstBone true then runs the align command. Pin is not applied (logged).
-  reg({ name: 'SIAppendBone', label: 'Append Bone', category: 'Animation',
-    args: [{ name: 'InputObjs', default: null }, { name: 'Ex', default: 0 }, { name: 'Ey', default: 0 }, { name: 'Ez', default: 0 }, { name: 'Pin', default: true }, { name: 'AlignRootToFirstBone', default: false }],
-    execute(app2, a) {
-      const C = 'SIAppendBone';
-      const items = [...nodesOf(app2, a.InputObjs), ...(unset(a.InputObjs) ? app2.selection : [])];
-      const eff = items.find(o => o instanceof Effector) as Effector | undefined
-        ?? (items.find(o => o instanceof ChainRoot) as any)?.effector as Effector | undefined;
-      if (!eff) throw new Error(`${C}: InputObjs must contain a skeleton effector`);
-      const made = appendBoneStandIn(app2, eff, new THREE.Vector3(Number(a.Ex) || 0, Number(a.Ey) || 0, Number(a.Ez) || 0));
-      logInferredNya(app2, C, 'the C++ append task itself; one bone from the chain end to (Ex, Ey, Ez) is added by this build\'s stand-in');
-      if (a.Pin === false) logInferredNya(app2, C, 'Pin false (the effector is not left pinned)');
-      if (a.AlignRootToFirstBone === true) {
-        let r: any = eff; while (r && !(r instanceof ChainRoot)) r = r.parentObj;
-        if (r) { const sel = app2.selection.slice(); app2.select([r]); try { app2.run('AlignRootToFirstBone', {}); } finally { app2.select(sel); } }
-      }
-      return made;
-    } });
+  // SISwapArrayElements and SIAppendBone: wired from their contracts in shadertasksB16b.ts (row CMD-B16b).
 
   // inferred: "Regenerates the selected Render Maps": needs the renderer, which this build does not have.
   reg({ name: 'RegenerateMaps', label: 'RegenerateMaps', category: 'Rendering', description: 'Regenerates the selected Render Maps.', undoable: false,

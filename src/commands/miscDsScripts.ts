@@ -481,7 +481,7 @@ export function registerMiscDsScriptCommands(app: App) {
       const elems = objs(app, a.InputObjs).filter(isChainElement);
       const eff = elems.find(o => o instanceof Effector && chainRootOf(o)?.effector === o) as Effector | undefined;
       if (!eff) { app.logMsg('error', 'AppendBone: parameter 0 must contain a skeleton effector'); return undefined; }
-      const d = delegate(app, SI_APPEND_BONE, { InputObjs: elems, Ex: a.Ex, Ey: a.Ey, Ez: a.Ez, Pin: a.Pin });
+      const d = delegate(app, SI_APPEND_BONE, { InputObjs: [eff], Ex: a.Ex, Ey: a.Ey, Ez: a.Ez, Pin: a.Pin });   // SIAppendBone takes exactly one chain element (CMD-B16b)
       let result: any = d.result;
       if (!d.done) {
         result = appendBoneStandIn(app, eff, new THREE.Vector3(Number(a.Ex) || 0, Number(a.Ey) || 0, Number(a.Ez) || 0));

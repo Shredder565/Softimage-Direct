@@ -180,14 +180,14 @@ const got = await page.evaluate(async ({ NAMES }) => {
     app.select([eff]); m = mark();
     const r = run('AppendBone', { Ex: 4, Ey: 0, Ez: 0 });
     const nb = chain.bones[1];
-    d.result = [Array.isArray(r.raw) ? r.raw.length : r.v, chain.bones.length, nb ? Math.round(nb.val('length') * 1e4) / 1e4 : null, eff.parentObj === nb, pos(eff), nb ? pos(nb) : null];
+    d.result = [Array.isArray(r.raw) ? r.raw.length : r.raw ? 1 : 0, chain.bones.length, nb ? Math.round(nb.val('length') * 1e4) / 1e4 : null, eff.parentObj === nb, pos(eff), nb ? pos(nb) : null];
     d.selection = [app.selection.includes(eff), app.selection.includes(nb)];
     d.errors = logFrom(m, ['error']);
-    // SIAppendBone (inferred, batch 15) now takes the call; it flags the C++ step itself
+    // SIAppendBone (CMD-B16b) takes the call; it flags the undecoded placement helper itself
     d.standInNote = logFrom(m, ['info']).some(l => /^info:(SI)?AppendBone: not yet attested/.test(l));
     app.select([eff]); m = mark();
     d.degenerate = [pub(run('AppendBone', { Ex: 4, Ey: 0, Ez: 0 })), logFrom(m, ['error']), chain.bones.length];
-    m = mark(); d.byName = [Array.isArray(run('AppendBone', { InputObjs: eff.name, Ex: 4, Ey: 3, Ez: 0 }).raw), chain.bones.length, pos(eff), chain.bones[2] ? Math.round(chain.bones[2].val('length') * 1e4) / 1e4 : null];
+    m = mark(); d.byName = [!!run('AppendBone', { InputObjs: eff.name, Ex: 4, Ey: 3, Ez: 0 }).raw, chain.bones.length, pos(eff), chain.bones[2] ? Math.round(chain.bones[2].val('length') * 1e4) / 1e4 : null];
     out.bone = d; app.select([]);
   }
 
@@ -561,7 +561,7 @@ eq('AppendBone: no effector in the input = error', bo.noEffector, [NONE, ['error
 eq('AppendBone: one bone appended, effector at (Ex, Ey, Ez)', bo.result, [1, 2, 2, true, [4, 0, 0], [2, 0, 0]]);
 eq('AppendBone: result added to the selection (NODE)', [bo.selection, bo.errors], [[true, true], []]);
 ok('AppendBone: the C++ append step is flagged not yet attested', bo.standInNote, bo);
-eq('AppendBone: empty result = "an error occured while adding the bone"', bo.degenerate, [{ v: [] }, ['error:AppendBone: an error occured while adding the bone'], 2]);
+eq('AppendBone: empty result = "an error occured while adding the bone"', bo.degenerate, [NONE, ['error:AppendBone: an error occured while adding the bone'], 2]);
 eq('AppendBone: InputObjs by name', bo.byName, [true, 3, [4, 3, 0], 3]);
 
 // ---- SymEnvWeight

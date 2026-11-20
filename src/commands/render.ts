@@ -9,10 +9,10 @@ const shaderOf = (app: App, s: any): Shader => { if (s instanceof Shader) return
 export function findShader(app: App, name: string): Shader | undefined { for (const m of app.scene.materials) { const walk = (s: Shader): Shader | undefined => { if (s.name === name || s.fullName === name) return s; for (const i of s.inputs.values()) { const r = walk(i); if (r) return r; } return undefined; }; if (m.surface) { const r = walk(m.surface); if (r) return r; } } return undefined; }
 
 export function registerRenderCommands(app: App) {
-  app.register({ name: 'CreateShaderFromPreset', label: 'Create Shader', category: 'Rendering', args: [{ name: 'Preset', default: 'Image' }, { name: 'Name', default: '' }], execute(app, a) { const s = makeSiShader(String(a.Preset).replace(/^Shaders\\(Texture|Mixers|Image)\\/, ''), a.Name || undefined); if (!s) throw new Error(`Shader preset "${a.Preset}" is not bundled`); return s; } });
+  // CreateShaderFromPreset: the bbbbee29 task, wired in shadertasksB16b.ts (row CMD-B16b).
   app.register({ name: 'ConnectShaderNode', label: 'Connect Shader', category: 'Rendering', args: [{ name: 'Shader', default: null }, { name: 'Port', default: 'diffuse' }, { name: 'Preset', default: 'Image' }, { name: 'Node', default: null }], execute(app, a) {
     const sh = shaderOf(app, a.Shader); const port = a.Port; if (!sh.ports().includes(port) && !sh.get(port)) throw new Error(`${sh.name} has no texturable port "${port}"`);
-    const node: Shader = a.Node instanceof Shader ? a.Node : app.run('CreateShaderFromPreset', { Preset: a.Preset });
+    const node: Shader | null = a.Node instanceof Shader ? a.Node : makeSiShader(String(a.Preset).replace(/^Shaders\\(Texture|Mixers|Image)\\/, '')); if (!node) throw new Error(`Shader preset "${a.Preset}" is not bundled`);
     const old = sh.inputs.get(port) ?? null; app.record('Connect ' + node.name, () => sh.connect(port, node), () => sh.connect(port, old)); app.events.emit('scene'); return node;
   } });
   app.register({ name: 'DisconnectShader', label: 'Disconnect Shader', category: 'Rendering', args: [{ name: 'Shader', default: null }, { name: 'Port', default: 'diffuse' }], execute(app, a) { const sh = shaderOf(app, a.Shader); const old = sh.inputs.get(a.Port) ?? null; if (!old) return null; app.record('Disconnect', () => sh.connect(a.Port, null), () => sh.connect(a.Port, old)); app.events.emit('scene'); return old; } });
