@@ -74,9 +74,9 @@ const nameOf = (x: any): string => String(x?.fullName ?? x?.name ?? x ?? '');
 
 /** Run a low-level command of another row, or this row's stand-in when it is not on the bus (or the bus only has a
  *  placeholder that returns { command, args }). */
-function lowLevel<T>(app: App, by: string, name: string, args: Record<string, any>, standIn: () => T): T {
+function lowLevel<T>(app: App, by: string, name: string, args: Record<string, any>, standIn: () => T, use = true): T {
   const st = stateOf(app);
-  if (app.commands.has(name)) {
+  if (use && app.commands.has(name)) {
     const r = app.run(name, args);
     if (!(r && typeof r === 'object' && (r as any).command === name && 'args' in r)) { st.calls.push({ command: name, by, args, ran: true }); return r as T; }
   }
@@ -301,7 +301,7 @@ export function registerUixsiClipsDisplayAddonsCommands(app: App) {
     args: [{ name: 'FileName', default: '' }, { name: 'Name', default: '' }],
     execute(app, a) {
       const file = String(a.FileName ?? ''), name = String(a.Name ?? '');
-      const clips = lowLevel<any>(app, 'CreateImageClip2', SI_CREATE_IMAGE_CLIP2, { FileName: file, Name: name }, () => imageClipStandIn(app, 'CreateImageClip2', file, name));
+      const clips = lowLevel<any>(app, 'CreateImageClip2', SI_CREATE_IMAGE_CLIP2, { FileName: file, Name: name }, () => imageClipStandIn(app, 'CreateImageClip2', file, name), !!file);
       const list: any[] = Array.isArray(clips) ? clips : clips ? [clips] : [];
       out('CreateImageClip2', { FileName: file });
       for (const c of list) autoInspect(app, c);   // no selection change
@@ -310,8 +310,8 @@ export function registerUixsiClipsDisplayAddonsCommands(app: App) {
   });
   const addSource = (app: App, command: string, lowName: string, a: Record<string, any>, extra: Record<string, any> | null) => {
     const file = String(a.FileName ?? ''), name = String(a.Name ?? '');
-    const r = lowLevel<any>(app, command, lowName, { FileName: file, Name: name, ...(extra ?? {}) }, () => ({ Source: imageSourceStandIn(app, command, file, name, extra) }));
-    const source = r?.Source ?? null;
+    const r = lowLevel<any>(app, command, lowName, { FileName: file, Name: name, ...(extra ?? {}) }, () => ({ Source: imageSourceStandIn(app, command, file, name, extra) }), !!file);   // B15d: an empty file name keeps this row's stand-in (the file browser is not modelled)
+    const source = r instanceof Property ? r : r?.Source ?? null;   // B15d: the low-level commands return the source itself
     out(command, { FileName: file });
     if (source) { selectObj(app, source); autoInspect(app, source); }
     return source ?? undefined;
@@ -333,15 +333,15 @@ export function registerUixsiClipsDisplayAddonsCommands(app: App) {
     args: [{ name: 'FileName', default: '' }, { name: 'Name', default: '' }, { name: 'Resolution', default: 2 }],
     execute(app, a) {
       const file = String(a.FileName ?? ''), name = String(a.Name ?? '');
-      const r = lowLevel<any>(app, 'AddModelSource', SI_ADD_MODEL_SOURCE, { FileName: file, Name: name, Resolution: a.Resolution }, () => ({ Source: modelSourceStandIn(app, 'AddModelSource', file, name, a.Resolution) }));
-      const source = r?.Source ?? null;
+      const r = lowLevel<any>(app, 'AddModelSource', SI_ADD_MODEL_SOURCE, { FileName: file, Name: name, Resolution: a.Resolution }, () => ({ Source: modelSourceStandIn(app, 'AddModelSource', file, name, a.Resolution) }), !!file);
+      const source = r instanceof Property ? r : r?.Source ?? null;
       if (source) { selectObj(app, source); autoInspect(app, source); }
       return source ?? undefined;
     },
   });
   /** Steps 2 to 4 of the two model clip commands: the output list is the return value; the clip's model is selected in branch. */
   const finishModelClip = (app: App, command: string, list: any) => {
-    const model = referenceModel(app, command, list?.Clip);
+    const model = referenceModel(app, command, list instanceof Property ? list : list?.Clip);
     if (model) { selectObj(app, model, true); autoInspect(app, model); }
     return list;
   };
@@ -350,11 +350,12 @@ export function registerUixsiClipsDisplayAddonsCommands(app: App) {
     args: [{ name: 'FileName', default: '' }, { name: 'Name', default: '' }],
     execute(app, a) {
       const file = String(a.FileName ?? ''), name = String(a.Name ?? '');
-      const list = lowLevel<any>(app, 'CreateModelClip', SI_CREATE_MODEL_CLIP, { FileName: file, Name: name }, () => {
+      const list0 = lowLevel<any>(app, 'CreateModelClip', SI_CREATE_MODEL_CLIP, { FileName: file, Name: name }, () => {
         if (!file) { logNya(app, 'CreateModelClip', 'an empty file name (file browsing belongs to the low-level command); no clip was produced', 'Q7'); return { Clip: null }; }
         const source = state.modelSources.find(s => s.val('FileName') === file) ?? modelSourceStandIn(app, 'CreateModelClip', file, '', 1);
         return modelClipStandIn(app, 'CreateModelClip', source, name);
-      });
+      }, !!file);
+      const list = list0 instanceof Property ? { Clip: list0 } : list0;   // B15d: the low-level command returns the clip itself
       out('CreateModelClip', { FileName: file });
       return finishModelClip(app, 'CreateModelClip', list);
     },
@@ -367,7 +368,7 @@ export function registerUixsiClipsDisplayAddonsCommands(app: App) {
         const source = findIn(state.modelSources, a.Source);
         if (!source) logNya(app, 'AddModelClip', `"${nameOf(a.Source)}" is not a model source of this build's store; no clip was produced`, 'Q7');
         return modelClipStandIn(app, 'AddModelClip', source, String(a.Name ?? ''));
-      });
+      }, false);   // B15d: SIAddModelClip is obsolete (always E_FAIL), so this row keeps its stand-in (Q7, open question for the analyst)
       return finishModelClip(app, 'AddModelClip', list);
     },
   });
