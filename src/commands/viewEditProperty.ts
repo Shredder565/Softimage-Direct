@@ -27,8 +27,6 @@ const VIEW_MODES: Record<string, string> = {
   wireframe: 'Wireframe', bbox: 'Bounding Box', hiddenline: 'Hidden Line', constant: 'Constant', shaded: 'Shaded',
   textured: 'Textured', texturedecal: 'Texture Decal', depthcue: 'Wireframe',
 };
-/** ShadeObject ShadeModeId (registry overload names "Set Object Display to …") → existing palette command. */
-const SHADE_IDS: Record<number, string> = { 0: 'Wireframe', 1: 'Shaded', 4: 'Textured', 5: 'BoundingBox', 6: 'HiddenLine', 7: 'Constant', 8: 'Default' };
 
 export function registerViewEditPropertyCommands(app: App) {
   registerViewing(app);
@@ -95,34 +93,7 @@ function registerViewing(app: App) {
     args: [{ name: 'View', default: false }],
     execute(_app, a) { isolateEdit('IsolateToggleSelected', a.View, (set, sel) => sel.forEach(o => { if (set.has(o)) set.delete(o); else set.add(o); })); },
   });
-
-  // inferred: registry overloads are the palette's "Set Wire Color to <name>" buttons; 0,0,0 is "Set Wire Color to Default"
-  reg(app, {
-    name: 'ColorizeObject', label: 'Wire Color Tool', category: 'Viewing', description: 'Sets the wireframe colour of the selected objects',
-    args: [{ name: 'Red', default: 0.0 }, { name: 'Green', default: 0.0 }, { name: 'Blue', default: 0.0 }],
-    execute(app, a) {
-      const rgb: [number, number, number] = [Number(a.Red) || 0, Number(a.Green) || 0, Number(a.Blue) || 0];
-      const list = app.selectedObjects;
-      if (!list.length) { logNya(app, 'ColorizeObject', 'the pick session of the Wire Color Tool when nothing is selected'); return; }
-      for (const o of list) {
-        if (!rgb[0] && !rgb[1] && !rgb[2]) { const d = o.properties.find(p => p.type === 'display'); if (d?.get('wirecol') && !d.shared) app.setParam(d.get('wirecol')!, false, 'Wire Color'); continue; }
-        const d = ensureLocal(app, o, 'display');
-        app.setParam(d.get('wirecol')!, true, 'Wire Color'); app.setParam(d.get('wirecolorrgb')!, rgb, 'Wire Color');
-      }
-    },
-  });
-  // inferred: delegates to the existing SetObjectDisplay<Mode> palette commands
-  reg(app, {
-    name: 'ShadeObject', label: 'Shade Object Tool', category: 'Viewing', description: 'Sets the object display mode of the selected objects',
-    args: [{ name: 'ShadeModeId', default: 8 }],
-    execute(app, a) {
-      const mode = SHADE_IDS[Number(a.ShadeModeId)];
-      if (!mode) throw nya('ShadeObject', `ShadeModeId ${a.ShadeModeId}`, 'which display mode this id stands for');
-      const list = app.selectedObjects;
-      if (!list.length) { logNya(app, 'ShadeObject', 'the pick session of the Shade Object Tool when nothing is selected'); return; }
-      app.run('SetObjectDisplay' + mode, { InputObjs: list });
-    },
-  });
+  // ColorizeObject / ShadeObject: replaced by the CMD-B17g contract (tools.vbs pick loops, paramsToolsB17g.ts)
 
   const displayKey = (): string => {
     const m = vm(); const cur = String(m?.displayOf() ?? '');

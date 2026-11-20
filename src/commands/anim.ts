@@ -271,25 +271,7 @@ export function registerAnimCommands(app: App) {
     app.events.emit('scene'); return names ? made : made[0];
   } });
   app.register({ name: 'RemoveProxyParam', label: 'Remove Proxy Param', category: 'Animation', args: [{ name: 'InputObjs', default: '' }], execute(app, a) { let n = 0; for (const o of app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects) { const cs = o.properties.find(p => p.type === 'customparamset'); if (!cs) continue; for (const p of [...cs.params]) if ((p as any).proxied || A.expression(p)) { const i = cs.params.indexOf(p); cs.params.splice(i, 1); A.removeAnimation(p); n++; } } app.events.emit('scene'); return n; } });
-  app.register({ name: 'CreateDisplayInfo', label: 'Create DisplayInfo from Marked Parameters', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'PsetName', default: 'DisplayInfoMarkedParams' }, { name: 'ShowDisplayInfo', default: true }], execute(app, a) {
-    const o = app.targets(a.InputObj)[0] ?? app.selectedObjects[0]; if (!o) throw new Error('Select an object'); const marked = [...A.marked]; if (!marked.length) throw new Error('Mark parameters first');
-    const defs = marked.map(p => num(p.def.name, Number(p.value), p.label, { keyable: true, animatable: true }));
-    const info = new Property(app.scene.uniqueName(a.PsetName || 'DisplayInfo'), 'displayinfo', [str('source', marked.map(p => p.fullName).join(','), 'Sources', { readOnly: true }), ...defs]);
-    app.record('DisplayInfo', () => o.addProperty(info), () => o.removeProperty(info)); app.select([info]); app.events.emit('scene'); return info;
-  } });
-  app.register({ name: 'RandomizeParameters', label: 'Randomize Marked Parameters', category: 'Animation', args: [{ name: 'params', default: null }, { name: 'percentage', default: 0.1 }, { name: 'relative', default: true }, { name: 'seed', default: 0 }], execute(app, a) {
-    const ps = resolve(app, a.params).length ? resolve(app, a.params) : [...A.marked]; if (!ps.length) throw new Error('Mark parameters to randomize');
-    let pct = Number(a.percentage); if (!Number.isFinite(pct) || pct === 0.5) pct = 0.1; // Softimage menu map often leaves default 0.5; walk still exercises relative jitter
-    const rel = a.relative !== false && a.relative !== 0; let seed = Number(a.seed) || 1; const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
-    for (const p of ps) { if (typeof p.value !== 'number') continue; const span = rel ? Math.abs(p.value) * pct : pct; const v = p.value + (rnd() * 2 - 1) * (span || pct); app.setParam(p, v); }
-    emit(); return ps.length;
-  } });
-  app.register({ name: 'SampleParameterValues', label: 'Sample Parameter Values', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'NbSamples', default: 3 }, { name: 'Percentage', default: 0.25 }], execute(app, a) {
-    const ps = resolve(app, a.InputObj).length ? resolve(app, a.InputObj) : [...A.marked]; if (!ps.length) throw new Error('Mark parameters to sample');
-    const n = Math.max(1, Number(a.NbSamples) || 3); const pct = Number(a.Percentage) || 0.25; const t0 = A.frame;
-    for (let i = 0; i < n; i++) { const f = t0 + i; for (const p of ps) { if (typeof p.value !== 'number') continue; const v = p.value * (1 + (i / Math.max(1, n - 1) - 0.5) * 2 * pct); A.setKey(p, f, v); } }
-    emit(); return n;
-  } });
+  // CreateDisplayInfo / RandomizeParameters / SampleParameterValues: replaced by the CMD-B17g contract (paramsToolsB17g.ts)
 
   // ---- plot (Tools > Plot): bake evaluated values onto fcurves over the play range
   const plotRange = (a: any) => { const s = Number(a.StartFrame ?? A.startFrame); const e = Number(a.EndFrame ?? A.endFrame); const st = Math.max(1, Number(a.StepFrame ?? 1)); return { s, e, st }; };
@@ -721,8 +703,7 @@ export function registerAnimCommands(app: App) {
   app.register({ name: 'CaptureViewport', label: 'Capture Viewport', category: 'Devices', args: [{ name: 'Target', default: -1 }, { name: 'Interactive', default: false }], undoable: false, execute(app) { app.logMsg('info', 'CaptureViewport: frame capture recorded (flipbook UI optional)'); return null; } });
 
   // ---- character tags / biped helpers (Create > Character)
-  app.register({ name: 'TagObject', label: 'Tag Object', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'TagStr', default: '' }], execute(app, a) { const o = app.targets(a.InputObj)[0] ?? app.selectedObjects[0]; if (!o) throw new Error('Select an object to tag'); if (!o.get('chartag')) o.add({ name: 'chartag', label: 'Character Tag', type: 'string', value: '' }); app.setParam(o.get('chartag')!, a.TagStr || 'Tag'); return o; } });
-  app.register({ name: 'TagStepMarks', label: 'Tag Step Marks', category: 'Animation', args: [], execute(app) { for (const o of app.selectedObjects) app.run('TagObject', { InputObj: o.name, TagStr: 'StepMark' }); return app.selectedObjects.length; } });
+  // TagObject / TagStepMarks: replaced by the CMD-B17h contract (rigsCharacB17h.ts)
   app.register({ name: 'DeformMotion', label: 'Deform Motion', category: 'Animation', args: [], execute(app) {
     // Softimage MOTOR deform-motion: plot envelope/shape-driven motion onto local transforms of selection.
     return app.run('PlotConstrainedTransforms');

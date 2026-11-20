@@ -218,12 +218,7 @@ export function registerModelCommands2(app: App) {
   app.register({ name: 'CreateICETree', label: 'Create ICE Tree', category: 'ICE', args: [{ name: 'InputObjs', default: '' }], execute: (app, a) => app.run('ApplyICEOp', { File: '', Target: a.InputObjs }) });
   app.register({ name: 'ApplyICECompound', label: 'Apply ICE Compound', category: 'ICE', args: [{ name: 'Compound', default: 'Turbulize Mesh' }, { name: 'InputObjs', default: '' }], execute: (app, a) => app.run('ApplyICEOp', { File: a.Compound, Target: a.InputObjs }) });
   // ---- Skeleton: Create Spine / Tail / Control Splines
-  app.register({ name: 'CreateSpine', label: 'Create Spine', category: 'Character Rigging', args: [{ name: 'Hip', default: '' }, { name: 'Chest', default: '' }, { name: 'NumVertebrae', default: 3 }], execute(app, a) {
-    const hip = a.Hip ? app.scene.find(a.Hip) : app.selectedObjects[0], chest = a.Chest ? app.scene.find(a.Chest) : app.selectedObjects[1]; if (!hip || !chest) throw new Error('Create Spine: select the hip object, then the chest object');
-    const P = (o: X3DObject): V3 => { const m = o.globalMatrix(); return [m.elements[12], m.elements[13], m.elements[14]]; }; const h = P(hip), c = P(chest); const n = Math.max(1, Number(a.NumVertebrae)); const pts: V3[] = []; for (let i = 0; i <= n; i++) pts.push([h[0] + (c[0] - h[0]) * i / n, h[1] + (c[1] - h[1]) * i / n, h[2] + (c[2] - h[2]) * i / n]);
-    const root = makeChain(app.scene.uniqueName('Spine'), pts, false); addObject(app, root); const vert: X3DObject[] = []; for (let i = 0; i < n; i++) { const v = new Null(`Vertebra${i + 1}`); const l = v.kinematics.local; l.set('posx', pts[i][0]); l.set('posy', pts[i][1]); l.set('posz', pts[i][2]); addObject(app, v); vert.push(v); }
-    app.select([root]); return root;
-  } });
+  // CreateSpine: CMD-B17h contract (rigsCharacB17h.ts)
   app.register({ name: 'MakeTail', label: 'Create Tail', category: 'Character Rigging', args: [{ name: 'Parent', default: '' }, { name: 'NbTailBones', default: 4 }, { name: 'Length', default: 4 }], execute(app, a) {
     const parent = a.Parent ? app.scene.find(a.Parent) : app.selectedObjects[0]; if (!parent) throw new Error('Create Tail: select the object to attach the tail to');
     const m = parent.globalMatrix(); const base: V3 = [m.elements[12], m.elements[13], m.elements[14]]; const n = Math.max(1, Number(a.NbTailBones) || 4), L = Number(a.Length) || 4; const pts: V3[] = []; for (let i = 0; i <= n; i++) pts.push([base[0], base[1] - 0.15 * L * i / n, base[2] - L * i / n]);
@@ -561,10 +556,8 @@ export function registerModelCommands2(app: App) {
     undoable: false, description: 'Activate the paint tool',
     execute: (app) => armPaint(app, 'weight'),
   });
-  app.register({
-    name: 'PaintPushTool', label: 'Paint Push Tool', category: 'Modeling|Paint',
-    args: [], undoable: false, execute: (app) => armPaint(app, 'push'),
-  });
+  // PaintPushTool: CMD-B17g contract (paramsToolsB17g.ts); the brush push mode stays reachable as `app.armPushPaint()`
+  (app as any).armPushPaint = () => armPaint(app, 'push');
   app.register({
     name: 'PaintVertexColorTool', label: 'Paint Vertex Color Tool', category: 'Paint',
     args: [

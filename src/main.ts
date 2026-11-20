@@ -86,6 +86,8 @@ import { registerShellsB15ElseCommands } from './commands/shellsB15Else';
 import { registerShadertasksB16bCommands } from './commands/shadertasksB16b';
 import { registerFilterMapB16dCommands } from './commands/filterMapB16d';
 import { registerAnimPrimsB17efCommands } from './commands/animPrimsB17ef';
+import { registerParamsToolsB17gCommands } from './commands/paramsToolsB17g';
+import { registerRigsCharacB17hCommands } from './commands/rigsCharacB17h';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -244,6 +246,8 @@ registerFilterMapB16dCommands(app);   // CMD-B16d scnmgr filter-map commands (De
 registerSelectionLayersB17aCommands(app);   // CMD-B17a (selection.vbs / layers.vbs script commands; replaces the inferred registrations)
 registerChainsModelB17bCommands(app);   // CMD-B17b (chains.vbs / Model.vbs script commands; replaces the inferred model.ts / model2.ts bodies)
 registerAnimPrimsB17efCommands(app);   // CMD-B17e / CMD-B17f (animation.vbs marking sets / external constraints; primitives.vbs, particle.vbs)
+registerParamsToolsB17gCommands(app);   // CMD-B17g (parameters.vbs / tools.vbs / enveloping.vbs / UserDataScripts.vbs)
+registerRigsCharacB17hCommands(app);   // CMD-B17h (command.js / rigs.vbs / Charac_Tools.js / Charac_LoadBipedGuide.vbs)
 registerToolsB16aCommands(app);   // CMD-B16a (toolmanager.dll tool activation; last: earlier registrations of these names become the tool class bodies)
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).

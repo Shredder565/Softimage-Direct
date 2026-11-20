@@ -470,19 +470,7 @@ export function registerInferredB10Scene(app: App) {
   });
 
   // ---------------------------------------------------------------- customization
-  regB10(app, 'EditCommand', { // inferred: opens the command editor on CommandName
-    undoable: false,
-    execute(app, a) {
-      const n = String(a.CommandName ?? ''); const def = app.commands.get(n);
-      if (!def) { app.logMsg('error', `EditCommand: no command named ${n || '(empty)'}`); return false; }
-      logNyaB10(app, 'EditCommand', 'the command editor dialog');
-      return true;
-    },
-  });
-  regB10(app, 'CreateAndEditCommand', { // inferred: opens the command editor on a new, empty command
-    undoable: false,
-    execute(app) { logNyaB10(app, 'CreateAndEditCommand', 'the command editor dialog'); return false; },
-  });
+  // EditCommand / CreateAndEditCommand: CMD-B17h contract (command.js, rigsCharacB17h.ts)
 
   // ---------------------------------------------------------------- general
   regB10(app, 'ReconnectModel', { // inferred
