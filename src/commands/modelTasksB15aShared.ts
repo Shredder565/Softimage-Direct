@@ -121,7 +121,8 @@ export function modelOfNode(app: App, n: any): Model | null {
 /** Model owning a model (the next one up); the scene root has none. */
 export function ownerModel(m: Model): Model | null { return m.parentObj ? (m.parentObj.model ?? null) : null; }
 export function isDescendant(o: X3DObject, anc: X3DObject): boolean { for (let x = o.parentObj; x; x = x.parentObj) if (x === anc) return true; return false; }
-/** Undoable addition of an object under a parent (Add3DObjectToScene stand-in: the task is not in this DLL). */
+/** Undoable addition of an object under a parent: the Add3DObjectToScene sub-task (served by tasks.dll, CMD-B16c; the bus
+ *  command is in tasksB16c.ts, this keeps the modeltasks sub-task record). */
 export function add3DObjectToScene(app: App, obj: X3DObject, parent: X3DObject | null) {
   const p = parent ?? app.scene.root;
   subtask(app, 'Add3DObjectToScene', `${obj.name} under ${p.name}`);

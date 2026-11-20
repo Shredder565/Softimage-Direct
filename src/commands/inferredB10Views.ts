@@ -11,6 +11,7 @@ import { tool as viewTool } from '../ui/viewManager';
 import { iemsState } from '../core/importExportModelScripts';
 import { looksLikeImageFile, isImageClip, imageClips } from '../core/textureLayers';
 import { B10_ARGS } from './inferredB10Args';
+import { tasksB16c, runPerformanceTest } from './tasksB16c';
 import {
   b10, regB10, logNyaB10, unset, num, boolA, objsOf, findObj, moveComponents, vm, viewports, withView, orbitTarget,
   fail, setStatus, camState, camApply, camChange, setViewLabel, E_FAIL, E_INVALIDARG, S_FALSE, type VP,
@@ -367,36 +368,35 @@ export function registerInferredB10Views(app: App) {
     },
   });
   for (const n of ['ViewNudgeDown', 'ViewNudgeLeft', 'ViewNudgeRight', 'ViewNudgeUp', 'ViewTranslate']) nudge(n);
-  regB10(app, 'DelayedRefresh', { // inferred: the views refresh after the running script returns
+  // CMD-B16c (tasks.dll c57f98e2): the viewer controller is set to Time (frames, in the scene time format) and a refresh
+  // of the views is queued; an unset Time keeps the current frame (inferred). No return value, not undoable.
+  regB10(app, 'DelayedRefresh', {
     undoable: false,
     execute(app, a) {
       const t = unset(a.Time) ? null : num(a.Time);
+      if (t !== null && !Number.isFinite(t)) throw new Error(`DelayedRefresh: Time ${a.Time} is not a frame`);
       st.delayedRefresh.push(t);
       setTimeout(() => { if (t !== null && t !== app.anim.frame) app.anim.frame = t; app.events.emit('scene'); app.events.emit('params'); }, 0);
-      return true;
     },
   });
-  regB10(app, 'ResetDirectX', { // inferred: WebGL has no DirectX device; the views are redrawn
+  // CMD-B16c (tasks.dll b5097d5a row 14): resets the display driver's device; this build draws with WebGL, so the
+  // equivalent is a redraw of the views. No args, not undoable.
+  regB10(app, 'ResetDirectX', {
     undoable: false,
-    execute(app) { app.events.emit('scene'); app.logMsg('info', 'ResetDirectX: this build draws with WebGL; the views were refreshed'); return true; },
+    execute(app) { app.events.emit('scene'); app.logMsg('info', 'ResetDirectX: this build draws with WebGL; the views were refreshed'); },
   });
-  regB10(app, 'SetDropMessage', { // inferred
+  // CMD-B16c (tasks.dll e0a73360): sets the text of the drag-and-drop service; a non-string Message is stored empty.
+  regB10(app, 'SetDropMessage', {
     undoable: false,
-    execute(app, a) { st.dropMessage = String(a.Message ?? ''); logNyaB10(app, 'SetDropMessage', 'where the message is shown while dragging onto a 3D view'); return st.dropMessage; },
+    execute(app, a) { const m = typeof a.Message === 'string' ? a.Message : ''; st.dropMessage = m; tasksB16c(app).dropMessage = m; },
   });
-  regB10(app, 'RunPerformanceTest', { // inferred: Type 0 evaluates the frame range for Duration seconds and reports the rate
+  // CMD-B16c (tasks.dll 0ed17cf6): the report header is appended to FileName, then a playback (Type 0 / 2) or drawing
+  // (1 / 3) test runs for at least Duration seconds; other Types write the header with "unknown" only; no file = no test.
+  regB10(app, 'RunPerformanceTest', {
     undoable: false,
     execute(app, a) {
-      const type = num(a.Type); const dur = Math.max(0.01, Math.min(num(a.Duration, 5), 30));
-      if (type !== 0) logNyaB10(app, 'RunPerformanceTest', `test Type ${type}; the scene evaluation test (Type 0) is run`);
-      const A = app.anim; const saved = A.frame; const t0 = performance.now(); let n = 0; let f = A.startFrame;
-      while ((performance.now() - t0) / 1000 < dur && n < 100000) { A.frame = f; for (const o of app.scene.allObjects()) o.primitive?.geom(); n++; f = f >= A.endFrame ? A.startFrame : f + 1; }
-      A.frame = saved;
-      const s = (performance.now() - t0) / 1000; st.perf = { type, frames: n, seconds: s, fps: n / s };
-      const text = `Performance test: ${n} frames, ${s.toFixed(3)} s, ${(n / s).toFixed(2)} fps`;
-      app.logMsg('info', text);
-      if (!unset(a.FileName)) try { hostFs.writeFile(String(a.FileName), text + '\n'); } catch (e: any) { app.logMsg('error', `RunPerformanceTest: ${e?.message ?? e}`); }
-      return st.perf.fps;
+      const r = runPerformanceTest(app, a, () => { app.events.emit('scene'); for (const v of viewports() as any[]) v?.render?.(); });
+      if (r) { st.perf = { type: r.type, frames: r.frames, seconds: r.seconds, fps: r.fps }; app.logMsg('info', `RunPerformanceTest: ${r.frames} frames, ${r.seconds.toFixed(3)} s`); }
     },
   });
   regB10(app, 'Show3DContextMenu', { // B11h §Show3DContextMenu: the viewer controller shows the 3D view context menu

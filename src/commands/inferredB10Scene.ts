@@ -564,8 +564,9 @@ export function registerInferredB10Scene(app: App) {
       return name;
     },
   });
-  regB10(app, 'RefreshCustomPreferences', { // inferred: re-reads the installed custom preferences
+  // CMD-B16c (tasks.dll b5097d5a row 10): the custom preference set is re-read (its pages refresh). No args, no return.
+  regB10(app, 'RefreshCustomPreferences', {
     undoable: false,
-    execute(app) { const M = customPrefs(); for (const p of M.values()) app.events.emit('params', p.params[0]); return M.size; },
+    execute(app) { const M = customPrefs(); for (const p of M.values()) app.events.emit('params', p.params[0]); },
   });
 }

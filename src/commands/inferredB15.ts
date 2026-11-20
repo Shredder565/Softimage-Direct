@@ -6,7 +6,7 @@
 //   tools / modes:  BoneCreateTool CrowdCreateDirectionalEmitterTool CrowdCreateWallTool
 //                   "Turn ON Interactive SRT" "Turn OFF Interactive SRT" "Transform Set New " (inert, CMD-B16a §7)
 //   (the toolmanager.dll tool commands that were here are wired by CMD-B16a in toolsB16a.ts)
-//   edits:          CopyPaste CopyPartition "Delete Selected Branch" DeleteCurrentLayer "Freeze Selected"
+//   edits:          CopyPartition "Delete Selected Branch" "Freeze Selected" (CopyPaste, DeleteCurrentLayer: CMD-B16c, tasksB16c.ts)
 //                   "Dice Object/Polygons" "Mesh Filter" PaintWeights (SISwapArrayElements, SIAppendBone: shadertasksB16b.ts)
 //   rendering/sim:  RegenerateMaps CreateEnvironmentCache
 import { App, type CommandDef } from '../core/commands';
@@ -17,6 +17,7 @@ import * as THREE from 'three';
 import { stateOf as pluginsB13eState } from './pluginsB13eShared';
 import { simEnvironment } from './duplicateRenderingSimulationScriptsSimulation';
 import { appendBoneStandIn } from './miscDsScripts';
+import { copyPaste, deleteObjList, LAYERS_CURRENT } from './tasksB16c';
 
 const TAG = 'inferred, CMD-B15f worker';
 export const logInferredNya = (app: App, command: string, what: string) => app.logMsg('info', `${command}: not yet attested: ${what} (${TAG})`);
@@ -79,23 +80,11 @@ export function registerInferredB15Commands(app: App) {
   // `XYZ Transform `, DoNothing, `Add Surface Point Tool`, CursorTransformTool, `MoveComponent Tool`, `Pick Session Tool`,
   // ToggleProjectionTool: toolmanager.dll commands (CMD-B16a, toolsB16a.ts).
 
-  // inferred: "This task copy and paste something ... does not affect the current copied items": Source is duplicated
-  // (the clipboard is left alone) and the copies go under Target when one is given. Mode 0 only.
+  // CMD-B16c (tasks.dll 2c8a5f31): Source (or _Source) xor FileName, Target (or _Target), Mode 0..3 -> paste operation
+  // 8 / 4 / 2 (0 = the service default); the user clipboard is not touched. Body: tasksB16c.ts copyPaste.
   reg({ name: 'CopyPaste', label: 'CopyPaste', category: 'Edit', description: 'This task copy and paste something.  This copy / paste in one command does not affect the current copied items.',
-    args: [{ name: 'Source', default: null }, { name: 'FileName', default: '' }, { name: 'Target', default: null }, { name: 'Mode', default: 0 }],
-    execute(app2, a) {
-      const C = 'CopyPaste';
-      if (!unset(a.FileName)) { logInferredNya(app2, C, 'copy / paste through a file'); return undefined; }
-      if (Number(a.Mode) || 0) logInferredNya(app2, C, `Mode ${a.Mode}; mode 0 is used`);
-      const src = nodesOf(app2, a.Source).filter((x): x is X3DObject => x instanceof X3DObject);
-      if (!src.length) throw new Error(`${C}: no source object`);
-      const clip = (app2 as any).clipboard;
-      const made: X3DObject[] = app2.run('Duplicate', { InputObjs: src }) ?? [];
-      (app2 as any).clipboard = clip;
-      const target = nodesOf(app2, a.Target).find(x => x instanceof X3DObject) as X3DObject | undefined;
-      if (target) for (const c of made) { const old = c.parentObj!; app2.record('Parent', () => target.addChild(c), () => old.addChild(c)); }
-      return made;
-    } });
+    args: [{ name: 'Source', default: null }, { name: 'FileName', default: '' }, { name: 'Target', default: null }, { name: 'Mode', default: 0 }, { name: '_Source', default: null }, { name: '_Target', default: null }],
+    execute(app2, a) { return copyPaste(app2, a); } });
 
   // inferred: "Copy partitions to the passes": each input partition (default: the current pass's partitions) is copied,
   // with its members, into each target pass (default: every other pass). A same-named partition receives the members.
@@ -126,14 +115,9 @@ export function registerInferredB15Commands(app: App) {
   reg({ name: 'Delete Selected Branch', label: 'Delete Selected Branch', category: '', description: 'Delete Selected Branch', args: [],
     execute(app2) { const sel = app2.selectedObjects; if (!sel.length) return undefined; return delegate(app2, 'Delete Selected Branch', 'DeleteObj', { InputObj: sel }).result; } });
 
-  // inferred: "Delete Current Layer": DeleteLayer of the layer InputObj names ("Layers.Current" = the current layer).
-  reg({ name: 'DeleteCurrentLayer', label: 'Delete Current Layer', category: '', args: [{ name: 'InputObj', default: 'Layers.Current' }],
-    execute(app2, a) {
-      const want = String(a.InputObj ?? 'Layers.Current');
-      const layer = want === 'Layers.Current' || want === '' ? ((app2 as any).currentLayer ?? app2.scene.layers[0]) : (nodesOf(app2, want)[0] ?? null);
-      if (!layer) throw new Error(`DeleteCurrentLayer: no layer ${want}`);
-      return app2.run('DeleteLayer', { Name: layer.name });
-    } });
+  // CMD-B16c: the tasks.dll DeleteObj handler (dd531990) on InputObj, default the current layer (not DeleteLayer).
+  reg({ name: 'DeleteCurrentLayer', label: 'Delete Current Layer', category: '', args: [{ name: 'InputObj', default: LAYERS_CURRENT }],
+    execute(app2, a) { deleteObjList(app2, 'DeleteCurrentLayer', a.InputObj); } });
 
   // inferred: freeze the operator stack of the selected objects (FreezeObj on the selection).
   reg({ name: 'Freeze Selected', label: 'Freeze Selected', category: '', args: [],

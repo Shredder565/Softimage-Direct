@@ -139,7 +139,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
   { reset(); const p = cube.kinematics.local; const x0 = [p.val('posx'), p.val('posy'), p.val('posz')]; const r = run('ViewNudgeRight');
     const moved = Math.hypot(p.val('posx') - x0[0], p.val('posy') - x0[1], p.val('posz') - x0[2]);
     ok('ViewNudgeRight moves the selection a fraction of a unit (B11: one pixel, through Translate)', !r.err && moved > 0 && moved < 1, [r.err, moved]); A.undo(); ok('ViewNudgeRight undo', Math.abs(p.val('posx') - x0[0]) + Math.abs(p.val('posy') - x0[1]) + Math.abs(p.val('posz') - x0[2]) < 1e-9); }
-  { const r = run('RunPerformanceTest', { Duration: 0.05 }); ok('RunPerformanceTest reports frames per second', r.v > 0 && A.inferredB10.perf.frames > 0, r); }
+  { A.tasksB16c.fs.ensureFolder('C:\\PerfB10'); const r = run('RunPerformanceTest', { FileName: 'C:\\PerfB10\\perf.txt', Duration: 0.05 }); ok('RunPerformanceTest measures frames (CMD-B16c: report appended to FileName, no return value)', r.v === undefined && A.inferredB10.perf.frames > 0, r); }
   { const r = run('StartTimedPlayback'); ok('StartTimedPlayback logs the elapsed milliseconds (B11: no return value)', r.v === undefined && r.log.some(l => /^StartTimedPlayback: \d+ ms$/.test(l)), r.log); }
   { const f = 'C:\\Users\\Public\\b10_cache.json'; let r = run('SaveFastPlaybackCache', { FileName: f }); const n = A.anim.endFrame - A.anim.startFrame + 1;
     ok('SaveFastPlaybackCache saves the frame list (B11: S_FALSE, no return value)', !r.err && A.inferredB10.status.SaveFastPlaybackCache === 1 && A.inferredB10.playbackCaches.get(act())?.frames.length === n, r); A.inferredB10.playbackCaches.clear();
@@ -232,7 +232,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
   ok('DeleteMotionDerivator without a derivator removes nothing', run('DeleteMotionDerivator', { InputObj: 'cube' }).v === 0);
   // custom preferences
   { const p = cube.properties[0]; ok('InstallCustomPreferences', run('InstallCustomPreferences', { InputObjs: p, Name: 'MyPrefs' }).v === 'MyPrefs' && A.customPreferencesB10.get('MyPrefs') === p);
-    ok('RefreshCustomPreferences counts them', run('RefreshCustomPreferences').v === 1); }
+    { const r = run('RefreshCustomPreferences'); ok('RefreshCustomPreferences re-reads them (CMD-B16c: no return value)', !r.err && r.v === undefined); } }
   reset();
   return out;
 }, { NAMES, DEFAULT_FAILS: [...DEFAULT_FAILS] });
