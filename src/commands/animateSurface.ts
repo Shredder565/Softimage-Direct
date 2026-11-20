@@ -12,6 +12,7 @@ import {
 import { mapSetCurveTypeToInterp } from '../core/mixer';
 import { findParam } from './index';
 import { keyMappingTargets, keyTargets } from './anim';
+import { B17EF_NAMES } from './animPrimsB17ef';
 
 type GapArg = { name: string; default: unknown };
 type GapCommand = {
@@ -251,17 +252,6 @@ function cloneShape(dst: X3DObject, sk: Property) {
   const copy = new Property(sk.name, sk.type, sk.params.map(x => ({ ...x.def, value: x.value })));
   dst.addProperty(copy);
   return copy;
-}
-
-function externalConstraints(app: App, input: unknown): { obj: X3DObject; cns: Constraint }[] {
-  const out: { obj: X3DObject; cns: Constraint }[] = [];
-  for (const o of app.targets(input)) {
-    for (const pr of o.properties) {
-      if (!(pr instanceof Constraint)) continue;
-      if (pr.targets.some(t => t.model !== o.model)) out.push({ obj: o, cns: pr });
-    }
-  }
-  return out;
 }
 
 function activateCurves(app: App, params: Parameter[], a: Args) {
@@ -701,31 +691,7 @@ const HANDLERS: Record<string, Handler> = {
     }
     return { path: pathObj.name, count: list.length };
   },
-  SelectExternalConstraints(app, a) {
-    const found = externalConstraints(app, a.InputObj);
-    app.select(found.map(x => x.cns));
-    return found.length;
-  },
-  ActivateExternalConstraints(app, a) {
-    let n = 0;
-    for (const { cns } of externalConstraints(app, a.InputObj)) {
-      const p = cns.get('active'); if (p) app.setParam(p, true); n++;
-    }
-    return n;
-  },
-  DeactivateExternalConstraints(app, a) {
-    let n = 0;
-    for (const { cns } of externalConstraints(app, a.InputObj)) {
-      const p = cns.get('active'); if (p) app.setParam(p, false); n++;
-    }
-    return n;
-  },
-  RemoveExternalConstraints(app, a) {
-    let n = 0;
-    for (const { obj, cns } of externalConstraints(app, a.InputObj)) { obj.removeProperty(cns); n++; }
-    app.events.emit('scene');
-    return n;
-  },
+  // Select/Activate/Deactivate/RemoveExternalConstraints: row CMD-B17e (animPrimsB17ef.ts)
 
   SceneRefresh(app) {
     app.setTool(null);
@@ -789,7 +755,7 @@ for (const name of PLOT_TO_STORE) {
 
 export function registerAnimateSurfaceCommands(app: App) {
   for (const spec of COMMANDS) {
-    if (app.commands.has(spec.scripting_name)) continue;
+    if (app.commands.has(spec.scripting_name) || B17EF_NAMES.includes(spec.scripting_name)) continue;   // CMD-B17e owns some
     const name = spec.scripting_name;
     const query = /^(Get|Is|Eval)/.test(name) || name === 'SceneRefresh';
     app.register({
