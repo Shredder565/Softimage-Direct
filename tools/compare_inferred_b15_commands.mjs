@@ -82,7 +82,7 @@ const got = await page.evaluate(async ({ NAMES, LITERAL, DEFAULT_FAILS: DF }) =>
   // ================= INFERRED commands
   try {
     reset();
-    for (const n of ['Add Surface Point Tool', 'CursorTransformTool', 'ToggleProjectionTool']) { const r = run(n); ok(`${n} (CMD-B16a): no such tool here -> not yet attested, no change`, nya(r) && !r.err); }
+    for (const n of ['Add Surface Point Tool', 'CursorTransformTool', 'ToggleProjectionTool']) { if (n === 'Add Surface Point Tool') A.run('{41EE76F1-99CD-11D1-8049-00A0243E2717}'); /* CMD-B17i: end the sticky session the default run started */ const r = run(n); ok(`${n} (CMD-B16a): no such tool here -> not yet attested, no change`, nya(r) && !r.err); }
     { const r = run('Transform Set New '); ok('Transform Set New  (CMD-B16a §7): inert, no log', !r.err && r.v === undefined && !(r.log ?? []).length, r.log); }
     for (const n of ['DoNothing', 'XYZ Transform ']) { const u0 = A.undoStack.length, c0 = objCount(); const r = run(n); ok(`${n} (inferred): does nothing`, r.v === undefined && !r.err && A.undoStack.length === u0 && objCount() === c0); }
     let r = run('BoneCreateTool');

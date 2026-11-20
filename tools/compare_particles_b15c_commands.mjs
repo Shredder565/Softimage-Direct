@@ -186,7 +186,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS, entries }) => {
     ok('item 29: SetEventObstacle 0x8000ffff with empty Target or Source', status(run('SetEventObstacle', { Source: [wall] }), '8000ffff') && status(run('Set Event Obstacle', { Target: [ev] }), '8000ffff'));
 
     // forces
-    const g = A.run('CreateForce', { PresetObj: 'Gravity' }); const w = A.run('CreateForce', { PresetObj: 'Wind' }); const notForce = mk('Cube', 'nf');
+    const g = A.run('CreateForce', { Name: 'Gravity' }); const w = A.run('CreateForce', { Name: 'Wind' }); const notForce = mk('Cube', 'nf');
     r = run('SIAddParticleForce', { Target: [cu], InputObj: [g, w, notForce] });
     ok('SIAddParticleForce: Sparks operator group 3 gets the force primitives (others skipped silently)', !r.err && cu.primitive.operators[0].portGroups[3].length === 2 && conn(cu).forces.length === 2, r);
     r = run('SIAddParticleForce', { Target: [cu], InputObj: [g] });

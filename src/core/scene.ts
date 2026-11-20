@@ -661,7 +661,9 @@ export class Light extends X3DObject {
 // ---------------------------------------------------------------- layers/passes
 export class Layer extends Node {
   readonly members = new Set<X3DObject>();
-  constructor(name: string) { super(name, 'layer', 'layer', [bool('viewvis', true, 'View Visibility'), bool('rendvis', true, 'Render Visibility'), bool('selectability', true, 'Selectable'), color('color', [0.6, 0.6, 0.6], 'Color')]); }
+  // CMD-B17a §2.3: layers are group-like, their visibility parameters are 3-state (0 = off for members, 1 = on, 2 = no
+  // effect on members). Defaults 1 (on) for view / render / selectability and 0 for ghosting are inferred.
+  constructor(name: string) { super(name, 'layer', 'layer', [int('viewvis', 1, 'View Visibility'), int('rendvis', 1, 'Render Visibility'), int('selectability', 1, 'Selectable'), int('ghosting', 0, 'Animation Ghosting'), color('color', [0.6, 0.6, 0.6], 'Color')]); }
 }
 /** A Softimage group: a named set of objects (Edit > Group in the MCP). */
 export class Group extends Node {

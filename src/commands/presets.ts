@@ -27,7 +27,7 @@ export async function fetchMaybeGzip(url: string): Promise<string> {
   if (buf[0] === 0x1f && buf[1] === 0x8b) { const ds = new DecompressionStream('gzip'); return await new Response(new Blob([buf]).stream().pipeThrough(ds)).text(); }
   return new TextDecoder().decode(buf);
 }
-async function loadPreset(file: string): Promise<PData> {
+export async function loadPreset(file: string): Promise<PData> {
   if (!cache.has(file)) cache.set(file, (async () => {
     return JSON.parse(await fetchMaybeGzip(`si/models/${file}.json.gz`)) as PData;
   })());
@@ -64,25 +64,16 @@ export function buildPresetModel(app: App, data: PData, nameOverride?: string): 
   app.select([root]); return root;
 }
 
+/** The exported hierarchy (public/si/models) that stands in for a factory sample model, or null when not bundled.
+ *  The *_Generated rig files are the same hierarchies as the exported rigs. */
+export function bundledPresetFile(modelName: string): string | null {
+  const k = String(modelName ?? '').replace(/\.emdl$/i, '');
+  const file = PRESET_MODELS[k] ?? k.replace(/_Generated$/, '');
+  return Object.values(PRESET_MODELS).includes(file) ? file : null;
+}
+
 export function registerPresetModels(app: App) {
   app.register({ name: 'ImportPresetModelData', label: 'Import Preset Model Data', category: 'Primitive', args: [{ name: 'Data', default: null }, { name: 'Name', default: '' }], execute: (app, a) => buildPresetModel(app, a.Data, a.Name || undefined) });
-  app.register({
-    name: 'GetPresetModel', label: 'Get Preset Model', category: 'Primitive', args: [{ name: 'ModelName', default: 'Bull' }, { name: 'Name', default: '' }, { name: 'Parent', default: '' }, { name: 'PsetName', default: '' }], undoable: false,
-    canRun: (a) => {
-      const k = String(a.ModelName ?? a.PresetObj ?? '');
-      if (/Quadruped_Guide|Biped_Guide|Proportional Guide/i.test(k)) return true;
-      return !!PRESET_MODELS[k] || Object.values(PRESET_MODELS).includes(k.replace(/\.emdl$/i, '').replace(/_Generated$/, ''));
-    },
-    execute(app, a) {
-      const k = String(a.ModelName ?? a.PresetObj ?? '');
-      // Animate > Create > Character > Quadruped Guide maps here; route to the procedural guide builder.
-      if (/Quadruped_Guide/i.test(k)) return app.run('GetQuadrupedGuide', { ModelName: k, GuideStyle: 0 });
-      if (/Biped_Guide/i.test(k)) return app.run('GetProportionalGuide', { ModelName: k, GuideStyle: 0 });
-      const file = PRESET_MODELS[k] ?? k.replace(/\.emdl$/i, '').replace(/_Generated$/, ''); // the menu loads the *_Generated rig files; the exported rigs are the same hierarchies
-      if (!Object.values(PRESET_MODELS).includes(file)) throw new Error(`Preset model "${k}" is not bundled`);
-      app.logMsg('info', `Loading preset model ${file}.emdl …`);
-      const p = loadPreset(file).then(data => { const m = app.run('ImportPresetModelData', { Data: data, Name: a.Name }); app.events.emit('scene'); return m; }).catch(e => app.logMsg('error', `GetPresetModel: ${e?.message ?? e}`));
-      (app as any).pending = p; return p;
-    },
-  });
+  // GetPresetModel: row CMD-B17f (src/commands/animPrimsB17ef.ts, primitives.vbs contract); it imports through
+  // ImportModel with the bundled data below.
 }

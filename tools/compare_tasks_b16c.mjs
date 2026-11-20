@@ -6,6 +6,8 @@
 //   2. every command runs with its default arguments on the ?demo scene (cube selected) without an error, or fails with
 //      the contract's error;
 //   3. the stated results.
+// CMD-B17j changed: CopyPaste Mode 1 (copy + delete source) / Mode 3 (the source itself), Add3DObjectToScene (only
+// unparented objects). See tools/compare_views_tasks_b17ij.mjs for the B17j contract checks.
 // Needs `vite preview` (SI_URL, default :4173). Usage: node tools/compare_tasks_b16c.mjs
 import { chromium } from 'playwright';
 import fs from 'fs';
@@ -223,10 +225,10 @@ const got = await page.evaluate(async ({ NAMES, DEFAULT_FAILS }) => {
     r = run('CopyPaste', { Source: src, Target: nul });
     ok('CopyPaste Mode 0: the service default (copy, inferred)', !r.err && S.lastPaste.operation === 4 && nul.children.length === 1); A.undo();
     r = run('CopyPaste', { Source: src, Target: nul, Mode: 1 });
-    ok('CopyPaste Mode 1 (operation 8, move): the source goes under Target', !r.err && src.parentObj === nul && S.lastPaste.operation === 8, r.err);
-    A.undo(); ok('CopyPaste move undo', src.parentObj === A.scene.root);
+    ok('CopyPaste Mode 1 (operation 8, move; CMD-B17j): a copy under Target, the source deleted', !r.err && r.v && r.v !== src && r.v.parentObj === nul && !src.parentObj && S.lastPaste.operation === 8, r.err);
+    A.undo(); ok('CopyPaste move undo', src.parentObj === A.scene.root && nul.children.length === 0);
     r = run('CopyPaste', { Source: src, Target: nul, Mode: 3 });
-    ok('CopyPaste Mode 3 (operation 2): logged not yet attested, no change', !r.err && nya(r) && nul.children.length === 0 && S.lastPaste.operation === 2, r);
+    ok('CopyPaste Mode 3 (operation 2; CMD-B17j): the source itself goes under Target', !r.err && r.v === src && src.parentObj === nul && S.lastPaste.operation === 2, r); A.undo();
     r = run('CopyPaste', { FileName: 'C:\\a.emdl', Target: nul });
     ok('CopyPaste FileName: loading from a file logged not yet attested', !r.err && nya(r), r);
     r = run('CopyPaste', { _Source: src, Source: 'cube', Target: nul, Mode: 2 });
@@ -241,10 +243,12 @@ const got = await page.evaluate(async ({ NAMES, DEFAULT_FAILS }) => {
     const par = A.run('GetPrim', { PresetObj: 'Null', Name: 'parB16c' }); const kid = A.run('GetPrim', { PresetObj: 'Null', Name: 'kidB16c' }); reset();
     const u0 = A.undoStack.length;
     let r = run('Add3DObjectToScene', { InputObjs: [kid], Parent: par });
-    ok('Add3DObjectToScene: the object is parented under Parent', !r.err && kid.parentObj === par && A.undoStack.length === u0 + 1, r);
-    ok('Add3DObjectToScene: container sub-tasks logged as not yet attested', nya(r));
-    A.undo(); ok('Add3DObjectToScene undo', kid.parentObj === A.scene.root);
+    ok('Add3DObjectToScene: an object that already has a parent is skipped, not moved (CMD-B17j)', !r.err && kid.parentObj === A.scene.root && A.undoStack.length === u0, r);
     A.scene.root.removeChild(kid);
+    r = run('Add3DObjectToScene', { InputObjs: [kid], Parent: par });
+    ok('Add3DObjectToScene: an unparented object is parented under Parent', !r.err && kid.parentObj === par && A.undoStack.length === u0 + 1, r);
+    ok('Add3DObjectToScene: the final kinematics sub-task logged as not yet attested', nya(r));
+    A.undo(); ok('Add3DObjectToScene undo removes it again', !kid.parentObj);
     r = run('Add3DObjectToScene', { InputObjs: [kid] });
     ok('Add3DObjectToScene without Parent: the scene model (root)', !r.err && kid.parentObj === A.scene.root);
     A.undo();

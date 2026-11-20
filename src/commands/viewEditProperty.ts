@@ -12,6 +12,9 @@ import * as THREE from 'three';
 import { App } from '../core/commands';
 import { X3DObject, Node, Model, Null, Operator, Primitive } from '../core/scene';
 import { registerViewEditPropertyMore } from './viewEditPropertyMore';
+import { subComponentsOf, owningModelsOf, branchList, msgBoxB17b, localiseMaterialsOfCopy } from './chainsModelB17b';
+import { siString } from '../ui/si';
+import { deleteObjList } from './tasksB16c';
 import {
   reg, nya, logNya, unset, siConst, numArg, boolArg, objs, nodes, findNode, findOperator, paramOf, paramsOf,
   ensureLocal, reparent, setLocalMatrix, isDescendant, copyNode, buildInstance, attach, hasGeometry, masterOfInstance,
@@ -25,8 +28,6 @@ const VIEW_MODES: Record<string, string> = {
   wireframe: 'Wireframe', bbox: 'Bounding Box', hiddenline: 'Hidden Line', constant: 'Constant', shaded: 'Shaded',
   textured: 'Textured', texturedecal: 'Texture Decal', depthcue: 'Wireframe',
 };
-/** ShadeObject ShadeModeId (registry overload names "Set Object Display to …") → existing palette command. */
-const SHADE_IDS: Record<number, string> = { 0: 'Wireframe', 1: 'Shaded', 4: 'Textured', 5: 'BoundingBox', 6: 'HiddenLine', 7: 'Constant', 8: 'Default' };
 
 export function registerViewEditPropertyCommands(app: App) {
   registerViewing(app);
@@ -42,16 +43,7 @@ function registerViewing(app: App) {
   };
   const setVis = (o: X3DObject, propName: any, v: boolean, label: string) => { const p = visParam(o, propName); if (p) app.setParam(p, v, label); };
 
-  // inferred
-  reg(app, {
-    name: 'HideUnselected', label: 'Hide Unselected Objects/Polygons', category: 'Viewing', description: 'Hides all unselected objects',
-    args: [{ name: 'Target', default: null }, { name: 'PropertyName', default: 'visibility' }],
-    execute(app, a) {
-      if (app.selMode !== 'object' && app.compSel && unset(a.Target)) { logNya(app, 'HideUnselected', 'hiding the unselected polygons of a component selection'); return; }
-      const keep = new Set(objs(app, a.Target));
-      for (const o of app.scene.allObjects()) if (!keep.has(o)) setVis(o, a.PropertyName, false, 'Hide');
-    },
-  });
+  // HideUnselected: CMD-B17a (selectionLayersB17a.ts)
   // inferred
   reg(app, {
     name: 'HideAndUnselect', label: 'Hide and Unselect', category: 'Viewing', description: 'Hides the selected objects and clears the selection',
@@ -63,23 +55,7 @@ function registerViewing(app: App) {
       app.record('Unselect', () => app.select(after), () => app.select(before));
     },
   });
-  // inferred (low-level: selection untouched)
-  reg(app, {
-    name: 'SIHideObjects', label: 'Hide Objects', category: 'Viewing', description: 'Make all objects invisible',
-    args: [{ name: 'Target', default: null }, { name: 'PropertyName', default: 'visibility' }],
-    execute(app, a) { for (const o of objs(app, a.Target)) setVis(o, a.PropertyName, false, 'Hide'); },
-  });
-  // inferred (the registry description repeats "invisible"; the label and the name say unhide)
-  reg(app, {
-    name: 'SIUnhideObjects', label: 'Unhide Objects', category: 'Viewing', description: 'Make all objects invisible',
-    args: [{ name: 'Target', default: null }, { name: 'PropertyName', default: 'visibility' }],
-    execute(app, a) { for (const o of objs(app, a.Target)) setVis(o, a.PropertyName, true, 'Unhide'); },
-  });
-  // inferred
-  reg(app, {
-    name: 'UnghostAll', label: 'Unghost All Objects', category: 'Viewing', description: 'Unghost all objects', args: [],
-    execute(app) { for (const o of app.scene.allObjects()) { const p = o.property('visibility')?.get('ghosting'); if (p) app.setParam(p, false, 'Unghost'); } },
-  });
+  // SIHideObjects / SIUnhideObjects / UnghostAll: CMD-B17a (selectionLayersB17a.ts)
 
   // ---- isolation: the per-viewport isolate set the camera menu's "Isolate Selection" already drives (view state, not undoable)
   const viewports = (view: any, all = false): any[] => {
@@ -118,34 +94,7 @@ function registerViewing(app: App) {
     args: [{ name: 'View', default: false }],
     execute(_app, a) { isolateEdit('IsolateToggleSelected', a.View, (set, sel) => sel.forEach(o => { if (set.has(o)) set.delete(o); else set.add(o); })); },
   });
-
-  // inferred: registry overloads are the palette's "Set Wire Color to <name>" buttons; 0,0,0 is "Set Wire Color to Default"
-  reg(app, {
-    name: 'ColorizeObject', label: 'Wire Color Tool', category: 'Viewing', description: 'Sets the wireframe colour of the selected objects',
-    args: [{ name: 'Red', default: 0.0 }, { name: 'Green', default: 0.0 }, { name: 'Blue', default: 0.0 }],
-    execute(app, a) {
-      const rgb: [number, number, number] = [Number(a.Red) || 0, Number(a.Green) || 0, Number(a.Blue) || 0];
-      const list = app.selectedObjects;
-      if (!list.length) { logNya(app, 'ColorizeObject', 'the pick session of the Wire Color Tool when nothing is selected'); return; }
-      for (const o of list) {
-        if (!rgb[0] && !rgb[1] && !rgb[2]) { const d = o.properties.find(p => p.type === 'display'); if (d?.get('wirecol') && !d.shared) app.setParam(d.get('wirecol')!, false, 'Wire Color'); continue; }
-        const d = ensureLocal(app, o, 'display');
-        app.setParam(d.get('wirecol')!, true, 'Wire Color'); app.setParam(d.get('wirecolorrgb')!, rgb, 'Wire Color');
-      }
-    },
-  });
-  // inferred: delegates to the existing SetObjectDisplay<Mode> palette commands
-  reg(app, {
-    name: 'ShadeObject', label: 'Shade Object Tool', category: 'Viewing', description: 'Sets the object display mode of the selected objects',
-    args: [{ name: 'ShadeModeId', default: 8 }],
-    execute(app, a) {
-      const mode = SHADE_IDS[Number(a.ShadeModeId)];
-      if (!mode) throw nya('ShadeObject', `ShadeModeId ${a.ShadeModeId}`, 'which display mode this id stands for');
-      const list = app.selectedObjects;
-      if (!list.length) { logNya(app, 'ShadeObject', 'the pick session of the Shade Object Tool when nothing is selected'); return; }
-      app.run('SetObjectDisplay' + mode, { InputObjs: list });
-    },
-  });
+  // ColorizeObject / ShadeObject: replaced by the CMD-B17g contract (tools.vbs pick loops, paramsToolsB17g.ts)
 
   const displayKey = (): string => {
     const m = vm(); const cur = String(m?.displayOf() ?? '');
@@ -266,11 +215,7 @@ function registerEdit(app: App) {
       for (const o of objs(app, a.InputObjects)) { const p = paramOf(o, String(a.Parameter || 'visibility.selectability')); if (!p) throw new Error(`${o.name} has no parameter ${a.Parameter}`); app.setParam(p, !p.value, 'Selectability'); }
     },
   });
-  // inferred: the registry label / description say "Make All Objects Selectable" / "Sets the selectability of all objects to ON"
-  reg(app, {
-    name: 'MakeAllUnselectable', label: 'Make All Objects Selectable', category: 'Edit|Property', description: 'Sets the selectability of all objects to ON', args: [],
-    execute(app) { for (const o of app.scene.allObjects()) { const p = o.property('visibility')?.get('selectability'); if (p) app.setParam(p, true, 'Selectability'); } },
-  });
+  // MakeAllUnselectable: CMD-B17a (selectionLayersB17a.ts)
   // inferred
   reg(app, {
     name: 'ParentObjects', label: 'Parent Objects', category: 'Edit', description: 'Parent objects under last object in the list',
@@ -406,12 +351,6 @@ function registerEdit(app: App) {
   });
 
   // ---- models from objects
-  const owningModel = (cmd: string, arg: any): Model => {
-    const o = objs(app, arg)[0]; if (!o) throw new Error(`${cmd}: no object given`);
-    const m = o instanceof Model ? o : o.parentObj?.model ?? null;
-    if (!m || m === app.scene.root) throw new Error(`${cmd}: ${o.name} is not in a model (the scene root cannot be used)`);
-    return m;
-  };
   const duplicateModel = (m: Model, parent: X3DObject): Model => {
     const copy = copyNode(app, m, { clone: false, asModel: true }) as Model;
     attach(app, copy, parent, 'Duplicate');
@@ -422,17 +361,53 @@ function registerEdit(app: App) {
     }
     return copy;
   };
-  // inferred
+  // CMD-B17b (Model.vbs DuplicateModelFromObjectProc): sub-components -> message box 1082 and stop; the owning model of
+  // each 3D object in branch (the object itself under the scene root) is duplicated with TextureSupports 1, then each
+  // copy gets material localisation (no selection filter) and clip duplication.
   reg(app, {
     name: 'DuplicateModelFromObj', label: 'Duplicate Model from Object', category: 'Edit', description: 'Duplicates the model that contains the input object',
     args: [{ name: 'InputObj', default: null }],
-    execute(app, a) { const m = owningModel('DuplicateModelFromObj', a.InputObj); const copy = duplicateModel(m, m.parentObj ?? app.scene.root); app.select([copy]); return copy; },
+    execute(app, a) {
+      if (subComponentsOf(app, a.InputObj).length) { msgBoxB17b(app, siString('XSISCRIPTS', 1082) ?? 'Invalid selection, Please select objects'); return undefined; }
+      const list = owningModelsOf(app, a.InputObj);
+      if (!list) { app.logMsg('info', 'invalid selection, please select an object'); return undefined; }
+      if (!list.length) return undefined;
+      // Duplicate "B:<names>" with TextureSupports 1: this build's Duplicate has no option arguments; a model is copied
+      // with its hierarchy, any other object through Duplicate (which copies its children)
+      logNya(app, 'DuplicateModelFromObj', `Duplicate "${branchList(list)}" option arguments (only TextureSupports = 1 is set by the script; the others are the defaults)`);
+      const copies: X3DObject[] = [];
+      for (const o of list) {
+        if (o instanceof Model) copies.push(duplicateModel(o, o.parentObj ?? app.scene.root));
+        else { const c = (app.run('Duplicate', { InputObjs: [o] }) as X3DObject[] | undefined)?.[0]; if (c) copies.push(c); }
+      }
+      if (copies.length) app.select(copies);
+      for (const c of copies) localiseMaterialsOfCopy(app, c);
+      return copies.length === 1 ? copies[0] : copies;
+    },
   });
-  // inferred
+  // CMD-B17b (Model.vbs DeleteModelFromObjectProc): sub-components -> polygons DeleteComponent, else DissolveComponent;
+  // otherwise every item must be a 3D object, and the owning models (objects under the scene root) are deleted in branch.
   reg(app, {
     name: 'DeleteModelFromObj', label: 'Delete Model from Object', category: 'Edit', description: 'Deletes the model that contains the input object',
     args: [{ name: 'InputObj', default: null }],
-    execute(app, a) { const m = owningModel('DeleteModelFromObj', a.InputObj); app.run('DeleteObj', { InputObj: [m] }); },
+    execute(app, a) {
+      const subs = subComponentsOf(app, a.InputObj);
+      if (subs.length) {
+        const polys = subs.some(x => x.polygons);
+        const preset = polys ? 'DeleteComponent' : 'DissolveComponent';
+        const use = polys ? subs.filter(x => x.polygons) : subs;
+        if (!unset(a.InputObj)) app.selectComponents(use[0].obj, use[0].kind, use[0].indices);   // this build's ApplyTopoOp reads the component selection
+        const topo: any = app.commands.get('ApplyTopoOp'); const alias = polys ? 'Delete Component' : 'Dissolve Component';
+        const name = topo?.supported?.({ PresetObj: preset }) ? preset : topo?.supported?.({ PresetObj: alias }) ? alias : null;
+        if (!name) { logNya(app, 'DeleteModelFromObj', `ApplyTopoOp "${preset}", "${use.map(x => x.text).join(',')}" (no ${preset} topology operator in this build)`); return undefined; }
+        return app.run('ApplyTopoOp', { PresetObj: name, ConnectionSet: use.map(x => x.text).join(',') });
+      }
+      const list = owningModelsOf(app, a.InputObj);
+      if (!list) { app.logMsg('info', 'Invalid selection, Please select polygons or an object'); return undefined; }
+      if (!list.length) return undefined;
+      app.run('DeleteObj', { InputObj: branchList(list) });
+      return undefined;
+    },
   });
   // inferred: Confirm asks first (the wording of Softimage's own dialog is not attested)
   reg(app, {
@@ -441,7 +416,8 @@ function registerEdit(app: App) {
     execute(app, a) {
       const all = [...app.scene.root.children]; if (!all.length) return false;
       if (boolArg(a.Confirm) && !window.confirm('Delete all objects in the scene?')) return false;
-      app.run('DeleteObj', { InputObj: all });
+      // CMD-B17j Q17: the tasks.dll worker's "delete all" mode bit 0x8 (internal callers) skips the camera guard (inferred caller)
+      deleteObjList(app, 'DeleteAll', all, 0x8);
       return true;
     },
   });

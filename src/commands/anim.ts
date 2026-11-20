@@ -45,8 +45,7 @@ export function registerAnimCommands(app: App) {
   // ---- marking
   app.register({ name: 'MarkParameters', label: 'Mark Parameters', category: 'Animation', args: [{ name: 'Params', default: '' }, { name: 'Add', default: false }], execute(app, a) { const ps = resolve(app, a.Params); if (!a.Add) A.marked.clear(); ps.forEach(p => A.marked.add(p)); emit(); return ps.length; } });
   app.register({ name: 'UnmarkAllParameters', label: 'Unmark All Parameters', category: 'Animation', args: [], execute() { A.marked.clear(); emit(); } });
-  app.register({ name: 'CreateMarkingSet', label: 'Create Marking Set', category: 'Animation', args: [{ name: 'Name', default: 'MarkingSet' }], execute(app, a) { const ps = [...A.marked]; if (!ps.length) throw new Error('Mark some parameters first'); const n = uniq(A.markingSets, a.Name || 'MarkingSet'); A.markingSets.set(n, ps); app.logMsg('info', `Marking set "${n}" (${ps.length} parameters)`); return n; } });
-  app.register({ name: 'ActivateMarkingSet', label: 'Activate Marking Set', category: 'Animation', args: [{ name: 'Name', default: '' }], execute(app, a) { const n = a.Name || pick(app, [...A.markingSets.keys()], 'Marking set'); const ps = A.markingSets.get(n); if (!ps) throw new Error('No marking set ' + n); A.marked.clear(); ps.forEach(p => A.marked.add(p)); emit(); } });
+  // CreateMarkingSet / ActivateMarkingSet / SetKeyUsingMarkingSet: row CMD-B17e (animPrimsB17ef.ts, animation.vbs contract)
   app.register({ name: 'DeleteMarkingSet', label: 'Delete Marking Set', category: 'Animation', args: [{ name: 'Name', default: '' }], execute(app, a) { const n = a.Name || pick(app, [...A.markingSets.keys()], 'Marking set'); A.markingSets.delete(n); } });
   app.register({ name: 'AddToMarkingSet', label: 'Add to Marking Set', category: 'Animation', args: [{ name: 'Name', default: '' }], execute(app, a) { const n = a.Name || pick(app, [...A.markingSets.keys()], 'Marking set'); const ps = A.markingSets.get(n); if (!ps) throw new Error('No marking set ' + n); for (const p of A.marked) if (!ps.includes(p)) ps.push(p); } });
   app.register({ name: 'RemoveFromMarkingSet', label: 'Remove from Marking Set', category: 'Animation', args: [{ name: 'Name', default: '' }], execute(app, a) { const n = a.Name || pick(app, [...A.markingSets.keys()], 'Marking set'); const ps = A.markingSets.get(n); if (ps) A.markingSets.set(n, ps.filter(p => !A.marked.has(p))); } });
@@ -55,7 +54,6 @@ export function registerAnimCommands(app: App) {
   app.register({ name: 'SaveKeyOnMarked', label: 'Key Marked Parameters', category: 'Animation', args: [{ name: 'Time', default: null }], execute: (app, a) => keyAt(keyTargets(app, 'Marked'), a.Time ?? A.frame) });
   app.register({ name: 'SetZeroKey', label: 'Set Zero Key', category: 'Animation', args: [{ name: 'Time', default: null }], execute: (app, a) => keyAt(keyMappingTargets(app), a.Time ?? A.frame, 0) });
   app.register({ name: 'SetKeyAtMultipleFrames', label: 'Set Key at Multiple Frames', category: 'Animation', args: [{ name: 'Frames', default: '' }], execute(app, a) { const txt = a.Frames || prompt('Frames (e.g. 1,10,20 or 1-100:10):', `${A.startFrame}-${A.endFrame}:10`) || ''; const frames = parseFrames(txt); let n = 0; for (const f of frames) n = keyAt(keyMappingTargets(app), f); return frames.length ? n : 0; } });
-  app.register({ name: 'SetKeyUsingMarkingSet', label: 'Set Key Using Marking Set', category: 'Animation', args: [{ name: 'Name', default: '' }], execute(app, a) { const n = a.Name || pick(app, [...A.markingSets.keys()], 'Marking set'); const ps = A.markingSets.get(n); if (!ps) throw new Error('No marking set ' + n); return keyAt(ps, A.frame); } });
   app.register({ name: 'SaveBranchKey', label: 'Set Branch Key', category: 'Animation', args: [{ name: 'Time', default: null }], execute(app, a) { const ps: Parameter[] = []; const walk = (o: X3DObject) => { ps.push(...o.kinematics.local.params.filter(p => p.keyable)); o.children.forEach(walk); }; app.selectedObjects.forEach(walk); return keyAt(ps, a.Time ?? A.frame); } });
   app.register({ name: 'SetKeyMappingMode', label: 'Save Key Command Mapping', category: 'Animation', args: [{ name: 'Mode', default: 'Key All Keyable' }], undoable: false, execute(app, a) { (app as any).keyMapping = a.Mode; app.logMsg('info', `Save Key maps to: ${a.Mode}`); } });
   app.register({ name: 'ToggleKeyModifiedOnly', label: 'Key Modified Parameters Only', category: 'Animation', args: [], undoable: false, execute(app) { (app as any).keyModifiedOnly = !(app as any).keyModifiedOnly; } });
@@ -237,7 +235,7 @@ export function registerAnimCommands(app: App) {
   app.register({ name: 'SetFrameRate', label: 'Frame Rate', category: 'Playback', args: [{ name: 'FPS', default: 30 }], undoable: false, execute(app, a) { A.fps = Number(a.FPS) || 30; app.events.emit('frame'); } });
   // ---- layers (Scene Layer Manager)
   app.register({ name: 'DeleteLayer', label: 'Delete Layer', category: 'Layer', args: [{ name: 'Name', default: '' }], execute(app, a) { const ls = app.scene.layers; const l = ls.find(x => x.name === a.Name) ?? (app as any).currentLayer; if (!l || ls.length < 2) throw new Error('Cannot delete the last layer'); const def = ls.find(x => x !== l)!; const idx = ls.indexOf(l); const members = [...l.members]; app.record('Delete Layer', () => { ls.splice(ls.indexOf(l), 1); for (const o of members) { o.layer = def; def.members.add(o); } if ((app as any).currentLayer === l) (app as any).currentLayer = def; }, () => { ls.splice(idx, 0, l); for (const o of members) { def.members.delete(o); o.layer = l; l.members.add(o); } }); app.events.emit('scene'); return def; } });
-  app.register({ name: 'MoveToLayer', label: 'Move to Layer', category: 'Layer', args: [{ name: 'Name', default: '' }, { name: 'InputObjs', default: '' }], execute(app, a) { const l = app.scene.layers.find(x => x.name === a.Name) ?? (app as any).currentLayer; if (!l) throw new Error('No layer ' + a.Name); const objs = app.targets(a.InputObjs); const prev = objs.map(o => o.layer); app.record('Move to Layer', () => { for (const o of objs) { o.layer?.members.delete(o); o.layer = l; l.members.add(o); } }, () => { objs.forEach((o, i) => { l.members.delete(o); o.layer = prev[i]; prev[i]?.members.add(o); }); }); app.events.emit('scene'); return objs.length; } });
+  // MoveToLayer: CMD-B17a (selectionLayersB17a.ts)
   app.register({ name: 'SetCurrentLayer', label: 'Set Current Layer', category: 'Layer', args: [{ name: 'Name', default: '' }], undoable: false, execute(app, a) { const l = app.scene.layers.find(x => x.name === a.Name); if (l) (app as any).currentLayer = l; app.events.emit('scene'); } });
   app.register({ name: 'AddCustomParameter', label: 'New Custom Parameter', category: 'Animation', args: [{ name: 'Name', default: '' }, { name: 'Min', default: 0 }, { name: 'Max', default: 1 }, { name: 'Default', default: 0 }], execute(app, a) { const o = app.selectedObjects[0]; if (!o) throw new Error('Select an object'); const name = a.Name || a.ScriptName || a.ParamName || prompt('Custom parameter name:', 'param') || ''; if (!name) return null; let ps = o.properties.find(p => p.type === 'customparamset'); if (!ps) { ps = app.run('AddProp', { PresetObj: 'Custom Parameter Set', InputObjs: o }); } ps!.add({ name, label: name, type: 'double', value: Number(a.Default ?? a.DefaultValue ?? 0), min: Number(a.Min ?? a.MinValue ?? 0), max: Number(a.Max ?? a.MaxValue ?? 1), animatable: true, keyable: true }); app.events.emit('scene'); return ps; } });
   // SIAddCustomParameter: replaced by the CMD-B15b contract (propertyTasksB15b.ts)
@@ -253,32 +251,27 @@ export function registerAnimCommands(app: App) {
   } });
   app.register({ name: 'EditExpr', label: 'Edit Expression', category: 'Animation', args: [{ name: 'InputObj', default: '' }], execute: (app, a) => app.run('SetExpr', { Target: a.InputObj }) });
   app.register({ name: 'AddProxyParam', label: 'Add Proxy Param', category: 'Animation', args: [{ name: 'InputObjs', default: '' }, { name: 'Proxied', default: '' }, { name: 'Prefix', default: '' }], execute(app, a) {
-    const host = app.targets(a.InputObjs)[0] ?? app.selectedObjects[0]; if (!host) throw new Error('Select a host object for the proxy');
-    const src = a.Proxied ? findParam(app, a.Proxied) : [...A.marked][0]; if (!src) throw new Error('Mark a parameter (or pass Proxied) to proxy');
-    let ps = host.properties.find(p => p.type === 'customparamset'); if (!ps) ps = app.run('AddProp', { PresetObj: 'Custom Parameter Set', InputObjs: host });
-    const name = (a.Prefix || '') + src.def.name; const proxy = ps!.add({ name, label: name, type: 'double', value: Number(src.value), animatable: true, keyable: true });
-    (proxy as any).proxied = src; A.setExpression(proxy, src.fullName, s => findParam(app, s)); app.events.emit('scene'); return proxy;
+    // A custom parameter set given directly (CreateMarkingSet passes its MarkingSet property) hosts the proxies;
+    // Proxied may be a comma-separated list (one proxy each, the list's result is the proxies).
+    const setArg = a.InputObjs instanceof Property ? a.InputObjs : Array.isArray(a.InputObjs) && a.InputObjs[0] instanceof Property ? a.InputObjs[0] : null;
+    const host = setArg ? null : app.targets(a.InputObjs)[0] ?? app.selectedObjects[0]; if (!setArg && !host) throw new Error('Select a host object for the proxy');
+    const names = typeof a.Proxied === 'string' && a.Proxied.includes(',') ? a.Proxied.split(',').map((x: string) => x.trim()).filter(Boolean) : null;
+    const srcs = names ? names.map((n: string) => findParam(app, n)).filter(Boolean) as Parameter[] : [a.Proxied ? (a.Proxied instanceof Parameter ? a.Proxied : findParam(app, a.Proxied)) : [...A.marked][0]].filter(Boolean) as Parameter[];
+    if (!srcs.length) throw new Error('Mark a parameter (or pass Proxied) to proxy');
+    let ps = setArg ?? host!.properties.find(p => p.type === 'customparamset'); if (!ps) ps = app.run('AddProp', { PresetObj: 'Custom Parameter Set', InputObjs: host });
+    const made: Parameter[] = [];
+    for (const src of srcs) {
+      if (ps!.params.some(p => (p as any).proxied === src)) continue;
+      let name = (a.Prefix || '') + src.def.name; for (let i = 1; ps!.get(name); i++) name = (a.Prefix || '') + src.def.name + i;
+      const set = ps!; const proxy = set.add({ name, label: name, type: 'double', value: Number(src.value), animatable: true, keyable: true });
+      (proxy as any).proxied = src; const at = set.params.indexOf(proxy);
+      app.record('AddProxyParam', () => { if (!set.params.includes(proxy)) set.insertParam(proxy, at); }, () => { set.removeParam(proxy); });
+      A.setExpression(proxy, src.fullName, s => findParam(app, s)); made.push(proxy);
+    }
+    app.events.emit('scene'); return names ? made : made[0];
   } });
   app.register({ name: 'RemoveProxyParam', label: 'Remove Proxy Param', category: 'Animation', args: [{ name: 'InputObjs', default: '' }], execute(app, a) { let n = 0; for (const o of app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects) { const cs = o.properties.find(p => p.type === 'customparamset'); if (!cs) continue; for (const p of [...cs.params]) if ((p as any).proxied || A.expression(p)) { const i = cs.params.indexOf(p); cs.params.splice(i, 1); A.removeAnimation(p); n++; } } app.events.emit('scene'); return n; } });
-  app.register({ name: 'CreateDisplayInfo', label: 'Create DisplayInfo from Marked Parameters', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'PsetName', default: 'DisplayInfoMarkedParams' }, { name: 'ShowDisplayInfo', default: true }], execute(app, a) {
-    const o = app.targets(a.InputObj)[0] ?? app.selectedObjects[0]; if (!o) throw new Error('Select an object'); const marked = [...A.marked]; if (!marked.length) throw new Error('Mark parameters first');
-    const defs = marked.map(p => num(p.def.name, Number(p.value), p.label, { keyable: true, animatable: true }));
-    const info = new Property(app.scene.uniqueName(a.PsetName || 'DisplayInfo'), 'displayinfo', [str('source', marked.map(p => p.fullName).join(','), 'Sources', { readOnly: true }), ...defs]);
-    app.record('DisplayInfo', () => o.addProperty(info), () => o.removeProperty(info)); app.select([info]); app.events.emit('scene'); return info;
-  } });
-  app.register({ name: 'RandomizeParameters', label: 'Randomize Marked Parameters', category: 'Animation', args: [{ name: 'params', default: null }, { name: 'percentage', default: 0.1 }, { name: 'relative', default: true }, { name: 'seed', default: 0 }], execute(app, a) {
-    const ps = resolve(app, a.params).length ? resolve(app, a.params) : [...A.marked]; if (!ps.length) throw new Error('Mark parameters to randomize');
-    let pct = Number(a.percentage); if (!Number.isFinite(pct) || pct === 0.5) pct = 0.1; // Softimage menu map often leaves default 0.5; walk still exercises relative jitter
-    const rel = a.relative !== false && a.relative !== 0; let seed = Number(a.seed) || 1; const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
-    for (const p of ps) { if (typeof p.value !== 'number') continue; const span = rel ? Math.abs(p.value) * pct : pct; const v = p.value + (rnd() * 2 - 1) * (span || pct); app.setParam(p, v); }
-    emit(); return ps.length;
-  } });
-  app.register({ name: 'SampleParameterValues', label: 'Sample Parameter Values', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'NbSamples', default: 3 }, { name: 'Percentage', default: 0.25 }], execute(app, a) {
-    const ps = resolve(app, a.InputObj).length ? resolve(app, a.InputObj) : [...A.marked]; if (!ps.length) throw new Error('Mark parameters to sample');
-    const n = Math.max(1, Number(a.NbSamples) || 3); const pct = Number(a.Percentage) || 0.25; const t0 = A.frame;
-    for (let i = 0; i < n; i++) { const f = t0 + i; for (const p of ps) { if (typeof p.value !== 'number') continue; const v = p.value * (1 + (i / Math.max(1, n - 1) - 0.5) * 2 * pct); A.setKey(p, f, v); } }
-    emit(); return n;
-  } });
+  // CreateDisplayInfo / RandomizeParameters / SampleParameterValues: replaced by the CMD-B17g contract (paramsToolsB17g.ts)
 
   // ---- plot (Tools > Plot): bake evaluated values onto fcurves over the play range
   const plotRange = (a: any) => { const s = Number(a.StartFrame ?? A.startFrame); const e = Number(a.EndFrame ?? A.endFrame); const st = Math.max(1, Number(a.StepFrame ?? 1)); return { s, e, st }; };
@@ -710,8 +703,7 @@ export function registerAnimCommands(app: App) {
   app.register({ name: 'CaptureViewport', label: 'Capture Viewport', category: 'Devices', args: [{ name: 'Target', default: -1 }, { name: 'Interactive', default: false }], undoable: false, execute(app) { app.logMsg('info', 'CaptureViewport: frame capture recorded (flipbook UI optional)'); return null; } });
 
   // ---- character tags / biped helpers (Create > Character)
-  app.register({ name: 'TagObject', label: 'Tag Object', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'TagStr', default: '' }], execute(app, a) { const o = app.targets(a.InputObj)[0] ?? app.selectedObjects[0]; if (!o) throw new Error('Select an object to tag'); if (!o.get('chartag')) o.add({ name: 'chartag', label: 'Character Tag', type: 'string', value: '' }); app.setParam(o.get('chartag')!, a.TagStr || 'Tag'); return o; } });
-  app.register({ name: 'TagStepMarks', label: 'Tag Step Marks', category: 'Animation', args: [], execute(app) { for (const o of app.selectedObjects) app.run('TagObject', { InputObj: o.name, TagStr: 'StepMark' }); return app.selectedObjects.length; } });
+  // TagObject / TagStepMarks: replaced by the CMD-B17h contract (rigsCharacB17h.ts)
   app.register({ name: 'DeformMotion', label: 'Deform Motion', category: 'Animation', args: [], execute(app) {
     // Softimage MOTOR deform-motion: plot envelope/shape-driven motion onto local transforms of selection.
     return app.run('PlotConstrainedTransforms');
@@ -911,14 +903,7 @@ export function registerAnimCommands(app: App) {
     (src as any)._template = 'value'; app.record('Value Template', () => model.addProperty(src), () => model.removeProperty(src)); app.select([src]); return src;
   } });
   app.register({ name: 'CreateEmptyCnxTemplate', label: 'Create Empty Connection Template', category: 'Animation Mixer', args: [{ name: 'Name', default: 'EmptyCnxTemplate' }], execute: (app, a) => app.run('CreateEmptyValueTemplate', { Name: a.Name || 'EmptyCnxTemplate' }) });
-  for (const n of ['SelectExternalConstraints', 'ActivateExternalConstraints', 'DeactivateExternalConstraints', 'RemoveExternalConstraints'] as const) {
-    app.register({ name: n, label: n.replace(/([A-Z])/g, ' $1').trim(), category: 'Constraints', args: [], execute(app) {
-      if (n === 'RemoveExternalConstraints') return app.run('RemoveAllConstraints');
-      if (n === 'SelectExternalConstraints') { const out: X3DObject[] = []; for (const o of app.scene.allObjects()) if (o.properties.some(p => p.type?.endsWith('cns') || String(p.type).includes('cns'))) out.push(o); app.select(out); return out; }
-      const active = n === 'ActivateExternalConstraints';
-      return app.run('ToggleConstraint', { Active: active });
-    } });
-  }
+  // Select/Activate/Deactivate/RemoveExternalConstraints: row CMD-B17e (animPrimsB17ef.ts, animation.vbs contract)
 
   app.register({ name: 'Flipbook', label: 'Flipbook', category: 'Playback', args: [], undoable: false, execute(app) { window.dispatchEvent(new CustomEvent('flipbook')); } });
 

@@ -6,6 +6,8 @@
 //  - how the related commands already on the bus behave (SelectObj, DeselectAll, SelectAll, SelectChildNodes,
 //    CreateGroup, CreateLayer, MoveToLayer, SetCurrentLayer, the Activate...SelTool family, the MCP filter box).
 // Every register call below therefore carries an `// inferred` comment. Original code only.
+// CMD-B17a replaced the inferred GrowSelection, ShrinkSelection, SelectAdjacent, ConvertSelection*, SelectNSidedPolygons,
+// GetNeighborSubcomponents, Select*EdgeLoop, SICreateLayerFromSelection* and ToggleGhosting (selectionLayersB17a.ts).
 //
 // Conventions taken from the existing code:
 //  - branch selection is represented as the node plus all of its descendants in app.selection (keymap `hier`,
@@ -443,46 +445,8 @@ export function registerSelectionGroupLayerCommands(app: App) {
     throw new Unattested(command, `SelFilter "${f}"`);
   };
 
-  // inferred: grows the component selection by one ring (same rule as the existing grow key: polygons and edges
-  // through shared points, points across edges)
-  sel('GrowSelection', 'Grow Selection', [{ name: 'InputObjs', default: null }], (app, a) => { const c = needComp(app, a); if (!c) return; setComponents(app, c.obj, c.kind, T.grow(c.adj, c.kind, c.sel)); });
-  // inferred: inverse of GrowSelection - a component stays only if all of its neighbours are selected
-  sel('ShrinkSelection', 'Shrink Selection', [], (app) => { const c = compCtx(app, null); if (!c) return; setComponents(app, c.obj, c.kind, T.shrink(c.adj, c.kind, c.sel)); });
-  // inferred: selects the components of kind SelFilter that touch the selection (SelFilter empty = same kind).
-  // For the same kind the original components are dropped unless ExtendSelection is true.
-  sel('SelectAdjacent', 'Select Adjacent', [{ name: 'InputObjs', default: null }, { name: 'SelFilter', default: null }, { name: 'ExtendSelection', default: false }], (app, a) => {
-    const c = needComp(app, a); if (!c) return;
-    const to = kindArg('SelectAdjacent', a.SelFilter, c.kind);
-    const out = T.adjacent(c.adj, c.kind, c.sel, to);
-    if (isTrue(a.ExtendSelection) && to === c.kind) for (const it of c.sel) out.add(it);
-    setComponents(app, c.obj, to, out);
-  });
-  const convertTo = (command: string) => (app: App, a: Record<string, any>) => {
-    const c = needComp(app, a); if (!c) return;
-    if (empty(a.SelFilter)) throw new Unattested(command, 'conversion without a target SelFilter');
-    const to = kindArg(command, a.SelFilter, c.kind);
-    setComponents(app, c.obj, to, T.convert(c.adj, c.kind, c.sel, to));
-  };
-  // inferred: converts the component selection to another kind: downwards (polygon > edge > point) every
-  // sub-component of the selection, upwards only the components whose sub-components are all selected
-  sel('ConvertSelection', 'Convert Selection', [{ name: 'InputObjs', default: null }, { name: 'SelFilter', default: null }], (app, a) => { if (empty(a.SelFilter)) return; return convertTo('ConvertSelection')(app, a); });
-  // inferred: ConvertSelection with SelFilter "Point"
-  sel('ConvertSelectionToPoints', 'Convert Selection To Points', [{ name: 'InputObjs', default: null }, { name: 'SelFilter', default: 'Point' }], convertTo('ConvertSelectionToPoints'));
-  // inferred: ConvertSelection with SelFilter "Edge"
-  sel('ConvertSelectionToEdges', 'Convert Selection To Edges', [{ name: 'InputObjs', default: null }, { name: 'SelFilter', default: 'Edge' }], convertTo('ConvertSelectionToEdges'));
-  // inferred: ConvertSelection with SelFilter "Polygon"
-  sel('ConvertSelectionToPolygons', 'Convert Selection To Polygons', [{ name: 'InputObjs', default: null }, { name: 'SelFilter', default: 'Polygon' }], convertTo('ConvertSelectionToPolygons'));
   // inferred: registry display name "Island From Selection": every component connected to the selection
   sel('SelectAllConnectedComponents', 'Island From Selection', [{ name: 'InputObjs', default: null }], (app, a) => { const c = needComp(app, a); if (!c) return; setComponents(app, c.obj, c.kind, T.island(c.adj, c.kind, c.sel)); });
-  // inferred: selects the polygons with Value edges (ExactEdgecount) or with Value or more edges (registry menu
-  // entries: 3 exact = triangles, 4 exact = quads, 5 not exact = "N-sided")
-  sel('SelectNSidedPolygons', 'Select N-Sided Polygons', [{ name: 'InputObjs', default: null }, { name: 'Value', default: 5 }, { name: 'ExactEdgecount', default: false }], (app, a) => {
-    const objs = empty(a.InputObjs) ? app.selectedObjects : objectsOf(resolve(app, a.InputObjs));
-    const o = objs.find(x => !!meshOf(x)); const m = meshOf(o); if (!o || !m) return;
-    const n = Number(a.Value); const exact = isTrue(a.ExactEdgecount);
-    const out: number[] = []; m.polygons.forEach((f, pi) => { if (exact ? f.length === n : f.length >= n) out.push(pi); });
-    setComponents(app, o, 'polygon', out);
-  }, 'Selects polygons that have the given numbers of edges');
   // inferred: selects the listed geometry components ("obj.pnt[..]", "obj.edge[..]", "obj.poly[..]") and sets the
   // matching filter. What it does for a bare object name is not attested.
   sel('SelectGeometryComponents', 'Select Geometry Components', [{ name: 'SelectionList', default: null }], (app, a) => {
@@ -493,31 +457,12 @@ export function registerSelectionGroupLayerCommands(app: App) {
     for (const c of r.comps) if (c.obj === first.obj && c.kind === first.kind) for (const it of c.items) items.add(it);
     setComponents(app, first.obj, first.kind, items);
   });
-  // inferred: returns (without selecting) the neighbours of the given components. Only NeighborType 0 is wired, as
-  // "the components of kind SelFilter touching the input" (SelFilter empty = same kind); other types are unknown.
-  reg({
-    name: 'GetNeighborSubcomponents', label: 'GetNeighborSubcomponents', category: 'Selection', undoable: false,
-    args: [{ name: 'InputObjs', default: null }, { name: 'NeighborType', default: 0 }, { name: 'SelFilter', default: '' }],
-    execute(app, a) {
-      if (Number(a.NeighborType) !== 0) throw new Unattested('GetNeighborSubcomponents', `NeighborType ${a.NeighborType}`);
-      const c = needComp(app, a); if (!c) return [];
-      const to = kindArg('GetNeighborSubcomponents', a.SelFilter, c.kind);
-      return [compString(c.obj, c.adj, to, T.adjacent(c.adj, c.kind, c.sel, to))];
-    },
-  });
 
   const edgesOnly = (command: string, f: (c: CompCtx, a: Record<string, any>) => Iterable<CompItem>) => (app: App, a: Record<string, any>) => {
     const c = needComp(app, a); if (!c) return;
     if (c.kind !== 'edge') throw new Unattested(command, `${c.kind} selections (only edge selections are wired)`);
     setComponents(app, c.obj, 'edge', f(c, a));
   };
-  const union = (c: CompCtx, f: (k: string) => Iterable<string>) => { const out = new Set<CompItem>(c.sel); for (const k of c.sel) for (const e of f(k as string)) out.add(e); return out; };
-  // inferred: public edge-loop definition (through four-edge points via the edge that shares no polygon; along borders)
-  sel('SelectEdgeLoop', 'Select Edge Loop', [{ name: 'InputObjs', default: null }], edgesOnly('SelectEdgeLoop', c => union(c, k => T.edgeLoop(c.adj, k))), 'Select edge loops on polygon meshes');
-  // inferred: the complete border loop through every selected border edge (non-border edges contribute nothing)
-  sel('SelectBoundaryEdgeLoop', 'Select Boundary Edge Loop', [{ name: 'InputObjs', default: null }], edgesOnly('SelectBoundaryEdgeLoop', c => union(c, k => T.edgeLoop(c.adj, k, { border: true }))), 'Select boundary edge loops on polygon meshes');
-  // inferred: edge ring - across each incident quad to the opposite edge
-  sel('SelectParallelEdgeLoop', 'Select Parallel Edge Loop', [{ name: 'InputObjs', default: null }], edgesOnly('SelectParallelEdgeLoop', c => union(c, k => T.parallelLoop(c.adj, k))), 'Select Parallel edge loops on polygon meshes');
   // inferred: registry display name "Loops From Selection": edge loops of the selected edges; point loops through
   // pairs of selected points joined by an edge; polygon loops through pairs of selected polygons sharing an edge.
   // AroundCorners is taken as "let a loop turn at a border corner point".
@@ -659,16 +604,6 @@ export function registerSelectionGroupLayerCommands(app: App) {
   lay('SICreateLayer', 'Create New Layer', [{ name: 'PresetObj', default: 'Default_New_Layer' }, { name: 'Name', default: '' }, { name: 'Value', default: null }], (app, a) => { noInspect(app); return createLayer(app, 'SICreateLayer', a.PresetObj, a.Name, null); });
   // inferred: SICreateLayer that returns the layer and can place it in an existing layer group
   lay('SICreateLayer2', 'Create New Layer 2', [{ name: 'PresetObj', default: 'Default_New_Layer' }, { name: 'Name', default: '' }, { name: 'LayerGroupName', default: '' }], (app, a) => { noInspect(app); return createLayer(app, 'SICreateLayer2', a.PresetObj, a.Name, a.LayerGroupName); });
-  const fromSelection = (command: string) => (app: App, a: Record<string, any>) => {
-    const objs = memberArg(app, a.InputObjs);
-    const l = createLayer(app, command, a.PresetObj, a.Name, a.LayerGroupName ?? null);
-    if (objs.length) moveToLayer(app, l, objs);
-    noInspect(app); return l;
-  };
-  // inferred: creates a layer and moves the objects (default: the selection) into it; returns the layer (Value)
-  lay('SICreateLayerFromSelection', 'New Layer From Selection', [{ name: 'PresetObj', default: '' }, { name: 'Name', default: '' }, { name: 'InputObjs', default: null }, { name: 'Value', default: null }], fromSelection('SICreateLayerFromSelection'));
-  // inferred: SICreateLayerFromSelection that returns the layer and can place it in an existing layer group
-  lay('SICreateLayerFromSelection2', 'New Layer From Selection 2', [{ name: 'PresetObj', default: '' }, { name: 'Name', default: '' }, { name: 'InputObjs', default: null }, { name: 'LayerGroupName', default: '' }], fromSelection('SICreateLayerFromSelection2'));
   // inferred: registry description "Move one object to the specified layer" (same job as MoveToLayer, Target = layer)
   lay('MoveObjectToLayer', 'Move Object To Layer', [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], (app, a) => {
     if (empty(a.Target)) throw new Unattested('MoveObjectToLayer', 'the pick session that asks for the Target layer when none is given');
@@ -700,9 +635,4 @@ export function registerSelectionGroupLayerCommands(app: App) {
     }
     return n;
   }, 'Disconnect a layer group from its parent');
-  // inferred: registry display name "Ghost/Unghost Selection": toggles the Ghosting flag of the visibility property of
-  // each Target object (default: the selection)
-  lay('ToggleGhosting', 'Ghost/Unghost Selection', [{ name: 'Target', default: null }], (app, a) => {
-    for (const o of memberArg(app, a.Target)) { const p = o.property('visibility')?.get('ghosting'); if (p) app.setParam(p, !p.value, 'Toggle Ghosting'); }
-  });
 }

@@ -134,6 +134,8 @@ function subComponentOwner(app: App, x: any): X3DObject | null {
 // ------------------------------------------------------------------ FindObjects
 // class ids the contracts name; other GUIDs are not in this build's class table
 const FIND_CLASSES: Record<string, (n: Node) => boolean> = {
+  // CMD-B17b SetResolutionOfRefModels: the model class {0496EAB0-0ECF-11d1-ABF1-00A02485CECB} (inferred: every Model node)
+  '0496eab0-0ecf-11d1-abf1-00a02485cecb': n => n instanceof Model,
   [CLS.pass]: n => n instanceof Pass, [CLS.layer]: n => n instanceof Layer, [CLS.parType]: n => isParType(n),
   [CLS.particleOpA]: n => n instanceof Operator && n.type === 'ParticlesOp', [CLS.particleOpB]: n => n instanceof Operator && n.type === 'FluidOp', [CLS.particleOpC]: n => n instanceof Operator && n.type === 'ExplosionOp',
 };

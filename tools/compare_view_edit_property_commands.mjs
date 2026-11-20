@@ -20,14 +20,16 @@ const CHROME = [
 if (!CHROME) { console.error('No Chromium; set PW_CHROME'); process.exit(2); }
 
 const COMMANDS = [
-  // Viewing
-  'HideUnselected', 'HideAndUnselect', 'SIHideObjects', 'SIUnhideObjects', 'UnghostAll',
+  // Viewing (HideUnselected, SIHideObjects, SIUnhideObjects, UnghostAll, MakeAllUnselectable: now CMD-B17a,
+  // checked by compare_selection_layers_b17a.mjs; the behaviour checks below still run against the new bodies)
+  'HideAndUnselect',
   'IsolateAll', 'IsolateAddSelected', 'IsolateRemoveSelected', 'IsolateToggleSelected',
-  'ColorizeObject', 'ShadeObject', 'SetViewDisplayMode', 'ToggleViewDisplayMode', 'ToggleWireOnShadedDisplay', 'ToggleHeadlightDisplayMode',
+  // ColorizeObject / ShadeObject: CMD-B17g contract (tools.vbs pick loops), checked by tools/compare_params_rigs_b17gh.mjs
+  'SetViewDisplayMode', 'ToggleViewDisplayMode', 'ToggleWireOnShadedDisplay', 'ToggleHeadlightDisplayMode',
   'CenterSelection', 'FrameContextual',
   'SetUserKeyword', 'GetUserKeyword', 'RemoveUserKeyword', 'ClearUserKeyword', 'SetUserTab', 'GetUserTab', 'AddUserTab', 'RemoveUserTab', 'ClearUserTab',
   // Edit
-  'ToggleSelectability', 'MakeAllUnselectable', 'ParentObjects', 'Clone', 'Instance', 'SIInstantiate', 'GetMaster', 'GetInstances', 'SIDuplicate',
+  'ToggleSelectability', 'ParentObjects', 'Clone', 'Instance', 'SIInstantiate', 'GetMaster', 'GetInstances', 'SIDuplicate',
   'DuplicateModelFromObj', 'DeleteModelFromObj', 'DeleteAll', 'DeleteObjPermanent', 'ToggleParameterValue',
   'MoveOperatorAfter', 'MoveOperatorBefore', 'SwapOperators', 'DeactivateAbove', 'CreateTransformGroup', 'RemoveTransformGroup',
   // Property
@@ -85,7 +87,8 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
     ck('HideUnselected', 'default args: only the selected object stays view-visible', ok(r) && vis(cube) && allObjs().every(o => o === cube || !vis(o)), r);
     A.undo(); ck('HideUnselected', 'undo restores every object', allObjs().every(vis));
     A.select([]); r = run('HideUnselected', { Target: [sph] });
-    ck('HideUnselected', 'explicit Target', ok(r) && vis(sph) && !vis(cube) && !vis(nul), r); A.undo();
+    // CMD-B17a contract: Target is only examined for polygons; the (empty) current selection is inverted -> all hidden
+    ck('HideUnselected', 'explicit Target (CMD-B17a: only examined for polygons)', ok(r) && !vis(sph) && !vis(cube) && !vis(nul), r); A.undo();
 
     A.select([cube, sph]); r = run('HideAndUnselect');
     ck('HideAndUnselect', 'default args: selection hidden and cleared', ok(r) && !vis(cube) && !vis(sph) && vis(nul) && A.selection.length === 0, r);
@@ -113,21 +116,7 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
     r = run('IsolateAll'); ck('IsolateAll', 'default args: every view leaves isolation', ok(r) && VM.viewports().every(vp => vp.x.isolate === null), r);
     A.select([cube]); VM.cameraMenu('Isolate Selection'); r = run('IsolateAll', { All: false, View: -1 }); ck('IsolateAll', 'All=False: the active view leaves isolation', ok(r) && iso() === null, r);
   }
-  {
-    const { cube } = S(); let i0 = A.log.length;
-    let r = run('ColorizeObject'); ck('ColorizeObject', 'default args, nothing selected: logs the unattested pick session', ok(r) && /ColorizeObject: not yet attested/.test(logSince(i0)), r);
-    A.select([cube]); const wasShared = cube.property('display').shared;
-    r = run('ColorizeObject', { Red: 0.878, Green: 0, Blue: 0.502 }); const d = cube.property('display');
-    ck('ColorizeObject', 'sets a local wire colour', ok(r) && d.shared === false && d.val('wirecol') === true && eq(d.val('wirecolorrgb'), [0.878, 0, 0.502]), [r, d.val('wirecolorrgb')]);
-    r = run('ColorizeObject'); ck('ColorizeObject', '0,0,0 = default colour (wirecol off)', ok(r) && cube.property('display').val('wirecol') === false, r);
-    A.undo(); A.undo(); ck('ColorizeObject', 'undo restores the shared display property', cube.property('display').shared === wasShared && cube.property('display').val('wirecol') === false);
-
-    i0 = A.log.length; A.select([]); r = run('ShadeObject'); ck('ShadeObject', 'default args, nothing selected: logs the unattested pick session', ok(r) && /ShadeObject: not yet attested/.test(logSince(i0)), r);
-    A.select([cube]); r = run('ShadeObject', { ShadeModeId: 0 }); ck('ShadeObject', 'id 0 = wireframe object display', ok(r) && cube.property('display').val('staticsel') === 1, [r, cube.property('display').val('staticsel')]);
-    r = run('ShadeObject', { ShadeModeId: 5 }); ck('ShadeObject', 'id 5 = bounding box', ok(r) && cube.property('display').val('staticsel') === 0, r);
-    r = run('ShadeObject'); ck('ShadeObject', 'default id 8 = default display', ok(r) && cube.property('display').val('staticsel') === 8, r);
-    r = run('ShadeObject', { ShadeModeId: 99 }); ck('ShadeObject', 'unknown id raises not yet attested', r.nya === true && /not yet attested/.test(r.err ?? ''), r);
-  }
+  // ColorizeObject / ShadeObject moved to the CMD-B17g contract (pick loops); see tools/compare_params_rigs_b17gh.mjs
   {
     S(); const flag = k => !!VM.flags()[k];
     let r = run('SetViewDisplayMode'); ck('SetViewDisplayMode', 'default args: shaded', ok(r) && VM.displayOf() === 'shaded', [r, VM.displayOf()]);
@@ -243,8 +232,11 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
     A.undo(); A.undo(); ck('SIDuplicate', 'undo removes the copies', allObjs().length === n0);
     A.select([]); r = run('SIDuplicate'); ck('SIDuplicate', 'nothing given: error', /no object given/.test(r.err ?? ''), r);
 
-    A.select([cube]); r = run('DuplicateModelFromObj'); ck('DuplicateModelFromObj', 'default args, object directly under the scene root: error', /not in a model/.test(r.err ?? ''), r);
-    r = run('DeleteModelFromObj'); ck('DeleteModelFromObj', 'default args, object directly under the scene root: error', /not in a model/.test(r.err ?? '') && allObjs().includes(cube), r);
+    // CMD-B17b contract (Model.vbs): an object whose model is the scene root is itself duplicated / deleted (was an error here)
+    A.select([cube]); const nd = allObjs().length; r = run('DuplicateModelFromObj'); ck('DuplicateModelFromObj', 'default args, object directly under the scene root: the object itself is duplicated (CMD-B17b)', ok(r) && r.v && r.v !== cube && r.v.type === cube.type && allObjs().length === nd + 1, r);
+    A.undo(); A.select([cube]);
+    r = run('DeleteModelFromObj'); ck('DeleteModelFromObj', 'default args, object directly under the scene root: the object itself is deleted (CMD-B17b)', ok(r) && !allObjs().includes(cube), r);
+    A.undo(); A.select([cube]);
     const model = A.run('CreateModel', { InputObj: [cube, sph], Name: 'vmodel' }); A.run('ParentObj', { Parent: 'vcube', Children: [nul] });
     const n1 = allObjs().length; A.select([nul]); r = run('DuplicateModelFromObj'); const copy = r.v;
     ck('DuplicateModelFromObj', 'duplicates the owning model with its hierarchy and selects the copy', ok(r) && copy.kind === 'model' && copy !== model && copy.children.length === 2 && [...copy.descendants()].length === 3 && allObjs().length === n1 + 4 && eq(names(A.selection), [copy.name]), [r, copy && names([...copy.descendants()])]);

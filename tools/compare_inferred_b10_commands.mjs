@@ -53,6 +53,8 @@ const DEFAULT_FAILS = new Set(['RemoveFromFolder', 'RemoveFolder', 'SetCurrentEn
   'AddShotClip']);   // CMD-B16e: Frame is required
 /** Names now registered by row CMD-B16e (src/commands/b16eActioncoreOptasksGap.ts), not by this batch. */
 const MOVED_B16E = ['AddShotClip', 'GetShotClip'];
+/** Names now registered by row CMD-B17h (src/commands/rigsCharacB17h.ts, command.js contract), not by this batch. */
+const MOVED_B17H = ['EditCommand', 'CreateAndEditCommand'];
 
 const reg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'command_registry.json'), 'utf8')).commands;
 const full = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'commands_full.json'), 'utf8'));
@@ -119,7 +121,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     ok('2D Chain Tool builds a chain through Create2DSkeleton', [...A.scene.allObjects()].length > before, [...A.scene.allObjects()].length - before); A.undo(); ok('2D Chain Tool undo', [...A.scene.allObjects()].length === before); reset(); }
   { run('PaintSelectTool'); const t = A.activeTool; t.onClick([0, 0, 0], { obj: cube, kind: 'point', item: 2, worldPoint: [0, 0, 0] }, { shift: false }); t.onClick([0, 0, 0], { obj: cube, kind: 'point', item: 5, worldPoint: [0, 0, 0] }, { shift: false });
     ok('PaintSelectTool adds components', A.compSel && [...A.compSel.points].join() === '2,5', A.compSel && [...A.compSel.points]); reset(); }
-  { run('ManipulateTool'); ok('ManipulateTool shows the manipulators', !A.hideManip); const a = run('Toggle Manipulator mode'); ok('Toggle Manipulator mode hides them', a.v === false && A.hideManip === true); run('Toggle Manipulator mode'); }
+  { run('ManipulateTool'); ok('ManipulateTool shows the manipulators', !A.hideManip); const a = run('Toggle Manipulator mode'); ok('Toggle Manipulator mode hides them (CMD-B17i: manipulator manager setting, no return value)', a.v === undefined && A.hideManip === true); run('Toggle Manipulator mode'); }
   { const s0 = !!window.__tool.snap?.on; const a = run('Toggle Snapping'); ok('Toggle Snapping flips snap', a.v === !s0 && !!window.__tool.snap.on === !s0); run('Toggle Snapping'); }
   { const prim = cube.primitive; const n0 = prim.operators.length; run('DirectManipTool'); const t = A.activeTool; t.onClick([0, 0, 0], { obj: cube, kind: 'point', item: 0, worldPoint: [1, 1, 1] }, {}); t.onClick([2, 1, 1], null, {});
     const op = prim.operators.find(o => o.type === 'movecomponent'); const d = op?.deltas.get(0);
@@ -247,8 +249,8 @@ for (const n of NAMES) {
   report(`${n}: registry argument list`, JSON.stringify(got.reg[n]) === JSON.stringify(registry[n] ?? (n === 'Tag' ? [['InputObjs', null], ['Level', ':siTagAll:siTags'], ['SubType', 3]] : null)), `${JSON.stringify(got.reg[n])} vs ${JSON.stringify(registry[n])}`);
   report(`${n}: default run`, got.defaults[n] === 'ok' || got.defaults[n] === 'expected-failure', got.defaults[n]);
 }
-const B16A = new Set(['LastTool']); // CMD-B16a (toolsB16a.ts) owns it now
-report('batch registered every name itself', got.batch.skipped.length === 0 && NAMES.filter(n => !B16A.has(n) && !MOVED_B16E.includes(n)).every(n => got.batch.registered.includes(n)), JSON.stringify(got.batch.skipped));
+const B16A = new Set(['LastTool', 'Toggle Manipulator mode']); // CMD-B16a (toolsB16a.ts) / CMD-B17i (toolsB17i.ts) own them now
+report('batch registered every name itself', got.batch.skipped.length === 0 && NAMES.filter(n => !B16A.has(n) && !MOVED_B16E.includes(n) && !MOVED_B17H.includes(n)).every(n => got.batch.registered.includes(n)), JSON.stringify(got.batch.skipped));
 for (const [name, cond, detail] of got.checks) report(name, cond, detail);
 report('no page errors', pageErrors.length === 0, pageErrors.join(' | '));
 console.log(`compare_inferred_b10_commands: ${pass} ok, ${fail} failed (${NAMES.length} commands)`);
