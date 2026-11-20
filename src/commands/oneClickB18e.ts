@@ -251,12 +251,16 @@ export function registerOneClickB18eCommands(app: App) {
   for (const n of ['OneClickSelectObjects', 'OneClickSendToMayaSelectPreviousObjects', 'OneClickSendTo3dsMaxSelectPreviousObjects', 'OneClickSendToMudboxSelectPreviousObjects'])
     reg(n, restoreSelection);
 
-  const FLAGS = { SendAsNewScene: [true, false], UpdateCurrentScene: [false, false], AddToCurrentScene: [false, true] } as const;
-  for (const [suffix, [ns, add]] of Object.entries(FLAGS)) {
-    reg(`OneClickSendToMaya${suffix}`, (app) => iceSend(app, `OneClickSendToMaya${suffix}`, MAYA, ns, add));
-    reg(`OneClickSendTo3dsMax${suffix}`, (app) => iceSend(app, `OneClickSendTo3dsMax${suffix}`, MAX, ns, add));
-    reg(`OneClickSendToMudbox${suffix}`, (app) => mudboxSend(app, `OneClickSendToMudbox${suffix}`, ns, add));
-  }
+  // (newScene, addToScene): SendAsNewScene (1, 0), UpdateCurrentScene (0, 0), AddToCurrentScene (0, 1); literal names for the coverage scan
+  reg('OneClickSendToMayaSendAsNewScene', (app) => iceSend(app, 'OneClickSendToMayaSendAsNewScene', MAYA, true, false));
+  reg('OneClickSendTo3dsMaxSendAsNewScene', (app) => iceSend(app, 'OneClickSendTo3dsMaxSendAsNewScene', MAX, true, false));
+  reg('OneClickSendToMudboxSendAsNewScene', (app) => mudboxSend(app, 'OneClickSendToMudboxSendAsNewScene', true, false));
+  reg('OneClickSendToMayaUpdateCurrentScene', (app) => iceSend(app, 'OneClickSendToMayaUpdateCurrentScene', MAYA, false, false));
+  reg('OneClickSendTo3dsMaxUpdateCurrentScene', (app) => iceSend(app, 'OneClickSendTo3dsMaxUpdateCurrentScene', MAX, false, false));
+  reg('OneClickSendToMudboxUpdateCurrentScene', (app) => mudboxSend(app, 'OneClickSendToMudboxUpdateCurrentScene', false, false));
+  reg('OneClickSendToMayaAddToCurrentScene', (app) => iceSend(app, 'OneClickSendToMayaAddToCurrentScene', MAYA, false, true));
+  reg('OneClickSendTo3dsMaxAddToCurrentScene', (app) => iceSend(app, 'OneClickSendTo3dsMaxAddToCurrentScene', MAX, false, true));
+  reg('OneClickSendToMudboxAddToCurrentScene', (app) => mudboxSend(app, 'OneClickSendToMudboxAddToCurrentScene', false, true));
   reg('OneClickSendToMax', (app) => sendBack(app, 'OneClickSendToMax'));
   reg('OneClickSendTo', (app, a) => {
     const name = a.RemoteApp == null ? '' : String(a.RemoteApp);
