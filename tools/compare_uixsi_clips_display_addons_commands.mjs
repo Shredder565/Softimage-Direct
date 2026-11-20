@@ -119,34 +119,36 @@ const got = await page.evaluate(async ({ NAMES }) => {
     d.clip = [r.v, r.raw?.[0]?.val('filename'), root.properties.includes(r.raw?.[0]), root.properties.length - propsBefore, app.selection.length === 1 && app.selection[0] === cube];
     d.clipInspected = inspected.includes('woodClip'); d.clipOut = S.outputs.CreateImageClip2; d.clipLog = logFrom(m).length;
     d.clipCall = S.calls.at(-1)?.command + ':' + S.calls.at(-1)?.ran;
+    d.clipSource = [r.raw?.[0]?.source?.type, root.properties.includes(r.raw?.[0]?.source)];   // SICreateImageClip2 (CMD-B15d) adds the image source too
     inspected.length = 0;
     const s = run('AddImageSource', { FileName: 'Pictures/stone.pic', Name: 'stone' }); await tick(10);
-    d.source = [s.v, s.raw?.val('FileName'), S.imageSources.includes(s.raw), app.selection.length === 1 && app.selection[0] === s.raw, inspected.includes('stone')];
+    d.source = [s.v, s.raw?.val('FileName'), root.properties.includes(s.raw), app.selection.length === 1 && app.selection[0] === s.raw, inspected.includes('stone')];
     app.select([cube]); const e = run('AddImageSource', {}); d.sourceEmpty = [e.v, app.selection[0] === cube];
     app.autoInspect = false;
     const w = run('AddWritableImageSource', { FileName: 'Pictures/bake.pic', Name: 'bake' });
-    d.writable = [w.v, w.raw?.val('Width'), w.raw?.val('Height'), w.raw?.val('Type'), w.raw?.val('Writable'), app.selection[0] === w.raw];
+    d.writable = [w.v, w.raw?.val('XRes'), w.raw?.val('YRes'), w.raw?.val('ChannelType'), root.properties.includes(w.raw), app.selection[0] === w.raw];
     const w2 = run('AddWritableImageSource', { FileName: 'Pictures/bake.pic', Name: 'other', UseExisting: true }); d.useExisting = w2.raw === w.raw;
-    const w3 = run('AddWritableImageSource', { FileName: 'Pictures/bake.pic', Name: 'other', Width: 512 }); d.notExisting = [w3.raw !== w.raw, w3.raw?.val('Width')];
+    const w3 = run('AddWritableImageSource', { FileName: 'Pictures/bake.pic', Name: 'other', Width: 512 }); d.notExisting = [w3.raw !== w.raw, w3.raw?.val('XRes')];
     // undo removes the source again
-    const n0 = S.imageSources.length; app.undo(); d.undo = S.imageSources.length - n0;
+    const wcount = () => root.properties.filter(p => p.type === 'writableimagesource').length;
+    const n0 = wcount(); app.undo(); d.undo = wcount() - n0;
     out.image = d;
   }
   // ================= model sources and clips
   {
     const d = {}; app.select([]);
     const s = run('AddModelSource', { FileName: 'Models/rig.emdl', Name: 'rigSrc' });
-    d.source = [s.v, s.raw?.val('FileName'), s.raw?.val('Resolution'), S.modelSources.includes(s.raw), app.selection[0] === s.raw];
+    d.source = [s.v, s.raw?.val('FileName'), s.raw?.val('Resolution'), root.properties.includes(s.raw), app.selection[0] === s.raw];
     const before = new Set([...app.scene.allObjects()].map(o => o.name));
     const c = run('CreateModelClip', { FileName: 'Models/hero.emdl', Name: 'heroClip' });
     const model = [...app.scene.allObjects()].find(o => !before.has(o.name));
-    d.clip = [c.v, c.raw?.Clip?.type, c.raw?.Clip?.name, S.modelClips.includes(c.raw?.Clip)];
+    d.clip = [!!c.raw?.Clip, c.raw?.Clip?.type, c.raw?.Clip?.name, root.properties.includes(c.raw?.Clip)];
     d.model = model ? [model.kind, model.parentObj === root, model.ref?.file, app.selection[0] === model] : null;
     const before2 = new Set([...app.scene.allObjects()].map(o => o.name));
     const a = run('AddModelClip', { Source: 'rigSrc', Name: 'rigClip' });
     const model2 = [...app.scene.allObjects()].find(o => !before2.has(o.name));
-    d.add = [a.v, a.raw?.Clip?.name, a.raw?.Clip?.val('Source'), model2?.ref?.file, app.selection[0] === model2];
-    const bad = run('AddModelClip', { Source: 'nope' }); d.bad = [bad.v, bad.raw?.Clip ?? null];
+    d.add = [a.err ?? a.v, model2 ?? null];   // SIAddModelClip (CMD-B15d) is obsolete: E_FAIL, nothing created
+    const bad = run('AddModelClip', { Source: 'nope' }); d.bad = bad.err ?? bad.v;
     out.model = d;
   }
   // ================= LoadPreset / add-ons
@@ -404,20 +406,24 @@ const eq = (what, a, b) => { checks++; const x = JSON.stringify(a), y = JSON.str
 const ok = (what, v) => { checks++; if (!v) fails.push(`${what}: false`); };
 const NONE = { v: '<none>' };
 
+const DEFAULT_FAILS = { CreateModelClip: 'SICreateModelClip: FileName is empty and no Source was given (status 0x80070057)', AddModelClip: 'status 0x80004005' };
 eq('registry entries under the 28 names', registryEntries, 45);
 for (const n of NAMES) {
   ok(`${n}: registry entry found`, !!registry[n]);
   eq(`${n}: arguments`, got.reg[n], registry[n]);
   eq(`${n}: label`, got.labels[n], LABELS[n]);
-  ok(`${n}: default run does not throw (${got.defaults[n]?.r?.err ?? ''})`, got.defaults[n] && got.defaults[n].r.err === undefined);
+  // the low-level model clip commands are on the bus since CMD-B15d: an empty FileName / the obsolete SIAddModelClip fail there
+  if (DEFAULT_FAILS[n]) ok(`${n}: default run fails with ${DEFAULT_FAILS[n]} (${got.defaults[n]?.r?.err ?? 'no error'})`, String(got.defaults[n]?.r?.err ?? '').includes(DEFAULT_FAILS[n]));
+  else ok(`${n}: default run does not throw (${got.defaults[n]?.r?.err ?? ''})`, got.defaults[n] && got.defaults[n].r.err === undefined);
 }
 eq('other registry entries exposed', got.entries.length, 2 + 4 + 10 + 2);
 
 // defaults
 const D = got.defaults; const nya = (n) => D[n].log.some(l => l.includes('not yet attested'));
 eq('CreateImageClip2 default: empty collection', D.CreateImageClip2.r, { v: [] }); ok('CreateImageClip2 default: logs not yet attested', nya('CreateImageClip2'));
-for (const n of ['AddImageSource', 'AddWritableImageSource', 'AddModelSource']) { eq(`${n} default: empty return`, D[n].r, NONE); ok(`${n} default: logs not yet attested`, nya(n)); }
-for (const n of ['CreateModelClip', 'AddModelClip']) { eq(`${n} default: the output list`, D[n].r, { v: '{Clip}' }); ok(`${n} default: logs not yet attested`, nya(n)); }
+for (const n of ['AddImageSource', 'AddWritableImageSource']) { eq(`${n} default: empty return`, D[n].r, NONE); ok(`${n} default: logs not yet attested`, nya(n)); }
+// SIAddModelSource (CMD-B15d) creates a source even with an empty FileName (its default name is logged as not attested)
+eq('AddModelSource default: a model source', D.AddModelSource.r, { v: 'node:modelsource:ModelSource' }); ok('AddModelSource default: logs not yet attested', nya('AddModelSource'));
 eq('LoadPreset default: nothing called', D.LoadPreset, { r: NONE, log: [] });
 for (const n of ['InstallAddon', 'UnInstallAddon', 'InspectSnapProperties']) { eq(`${n} default: no value`, D[n].r, NONE); ok(`${n} default: logs not yet attested`, nya(n)); }
 eq('CreateReferencePlane default: empty collection', D.CreateReferencePlane.r, { v: [] });
@@ -431,21 +437,21 @@ eq('DisplayPortValues default: no value', D.DisplayPortValues.r, NONE); ok('Disp
 
 // image
 const I = got.image;
-eq('CreateImageClip2: one clip, on the root, selection kept', I.clip, [['node:imageclip:woodClip'], 'Pictures/wood.pic', true, 1, true]);
+eq('CreateImageClip2: one clip, on the root (with its image source), selection kept', I.clip, [['node:imageclip:woodClip'], 'Pictures/wood.pic', true, 2, true]);
 ok('CreateImageClip2: clip auto-inspected', I.clipInspected); eq('CreateImageClip2: FileName out', I.clipOut, { FileName: 'Pictures/wood.pic' });
-eq('CreateImageClip2: low-level call recorded (stand-in)', I.clipCall, 'SICreateImageClip2:false'); ok('CreateImageClip2: stand-in logged', I.clipLog >= 1);
+eq('CreateImageClip2: low-level call recorded (SICreateImageClip2 on the bus, CMD-B15d)', I.clipCall, 'SICreateImageClip2:true'); eq('CreateImageClip2: clip source on the root', I.clipSource, ['imagesource', true]);
 eq('AddImageSource: source returned, selected, inspected', I.source, ['node:imagesource:stone', 'Pictures/stone.pic', true, true, true]);
 eq('AddImageSource: no source, nothing more happens', I.sourceEmpty, ['<none>', true]);
-eq('AddWritableImageSource: source', I.writable, ['node:imagesource:bake', 256, 256, 'siRenderChannelColorType', true, true]);
+eq('AddWritableImageSource: source', I.writable, ['node:writableimagesource:bake', 256, 256, 1, true, true]);
 ok('AddWritableImageSource: UseExisting hands back the existing source', I.useExisting); eq('AddWritableImageSource: new source otherwise', I.notExisting, [true, 512]);
 eq('AddWritableImageSource: undo', I.undo, -1);
 // model
 const Mo = got.model;
 eq('AddModelSource', Mo.source, ['node:modelsource:rigSrc', 'Models/rig.emdl', 2, true, true]);
-eq('CreateModelClip: returns the output list with Clip', Mo.clip, ['{Clip}', 'modelclip', 'heroClip', true]);
+eq('CreateModelClip: returns the output list with Clip', Mo.clip, [true, 'modelclip', 'heroClip', true]);
 eq('CreateModelClip: model instantiated and selected', Mo.model, ['model', true, 'Models/hero.emdl', true]);
-eq('AddModelClip', Mo.add, ['{Clip}', 'rigClip', 'rigSrc', 'Models/rig.emdl', true]);
-eq('AddModelClip: unknown source', Mo.bad, ['{Clip}', null]);
+eq('AddModelClip: SIAddModelClip is obsolete (E_FAIL), no clip, no model', Mo.add, ['SIAddModelClip: Obsolete command, to create a clip you have to change the model source resolution. (status 0x80004005)', null]);
+eq('AddModelClip: unknown source', Mo.bad, 'SIAddModelClip: Obsolete command, to create a clip you have to change the model source resolution. (status 0x80004005)');
 // misc
 const Mi = got.misc;
 eq('LoadPreset: one low-level call per object, in order', Mi.calls, ['SILoadPreset(Presets/x.Preset,cube):true', 'SILoadPreset(Presets/x.Preset,sphere):true']);

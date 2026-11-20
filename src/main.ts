@@ -70,6 +70,7 @@ import { registerFaceRobotB14bCommands } from './commands/faceRobotB14b';
 import { registerFaceRobotB14cCommands } from './commands/faceRobotB14c';
 import { registerFaceRobotB14dCommands } from './commands/faceRobotB14d';
 import { registerFaceRobotB14eCommands } from './commands/faceRobotB14e';
+import { registerClipsSourcesB15dCommands } from './commands/clipsSourcesB15d';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -211,6 +212,7 @@ registerFaceRobotB14bCommands(app); // CMD-B14b (FR sculpt / mouth)
 registerFaceRobotB14cCommands(app); // CMD-B14c (FR eyes / jaw / regions)
 registerFaceRobotB14dCommands(app);   // CMD-B14d (Face Robot retarget / mocap / stage)
 registerFaceRobotB14eCommands(app);   // CMD-B14e (Face Robot export / weights / tongue)
+registerClipsSourcesB15dCommands(app);   // CMD-B15d (image / model / file-cache sources and clips, audio import / clips)
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
