@@ -320,9 +320,9 @@ const COMMANDS: Record<string, [string, string, Run]> = {
   SyCreateCloth: ['Create Cloth', 'cloth.vbs', app => syCreateCloth(app)],
   SyCreateSkin: ['Create Skin', 'cloth.vbs', app => syCreateSkin(app)],
   SyCreateFlesh: ['Create Flesh', 'cloth.vbs', app => syCreateFlesh(app)],
-  SyGetSpringMap: ['Get Spring Map', 'cloth.vbs', app => selectClothMap(app, 'StiffMap')],
+  'SyGetSpringMap': ['Get Spring Map', 'cloth.vbs', app => selectClothMap(app, 'StiffMap')],
   SySetSpringMap: ['Set Spring Map', 'cloth.vbs', app => clothFlag(app, 'SySetSpringMap', 'ModifSpringMap', 1)],
-  SyGetMassMap: ['Get Mass Map', 'cloth.vbs', app => selectClothMap(app, 'MassMap')],
+  'SyGetMassMap': ['Get Mass Map', 'cloth.vbs', app => selectClothMap(app, 'MassMap')],
   SySetMassMap: ['Set Mass Map', 'cloth.vbs', app => clothFlag(app, 'SySetMassMap', 'ModifMassMap', 1)],
   SyClearAllCache: ['Clear All Cache', 'cloth.vbs', app => clothFlag(app, 'SyClearAllCache', 'ClearCache', 2)],
   SyClearCache: ['Clear Cache', 'cloth.vbs', app => clothFlag(app, 'SyClearCache', 'ClearCache', 1)],
@@ -363,8 +363,8 @@ const COMMANDS: Record<string, [string, string, Run]> = {
   SyPinGetMesh: ['Get Pin Mesh', 'getset.vbs', app => selectPortMesh(app, 'SyPinGetMesh', 'syPin', 1)],
   // cache.vbs
   syCreateCache: ['Create Cache', 'cache.vbs', app => syCreateCache(app)],
-  syCachePaint1: ['Paint Map1', 'cache.vbs', app => syCachePaint(app, 'Map1')],
-  syCachePaint2: ['Paint Map2', 'cache.vbs', app => syCachePaint(app, 'Map2')],
+  'syCachePaint1': ['Paint Map1', 'cache.vbs', app => syCachePaint(app, 'Map1')],
+  'syCachePaint2': ['Paint Map2', 'cache.vbs', app => syCachePaint(app, 'Map2')],
   // state.vbs
   syClearState: ['Reset State', 'state.vbs', app => syState(app, 'syClearState', -1)],
   sySetState: ['Set State', 'state.vbs', app => syState(app, 'sySetState', 1)],

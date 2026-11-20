@@ -183,7 +183,8 @@ const got = await page.evaluate(async ({ NAMES }) => {
     d.result = [Array.isArray(r.raw) ? r.raw.length : r.v, chain.bones.length, nb ? Math.round(nb.val('length') * 1e4) / 1e4 : null, eff.parentObj === nb, pos(eff), nb ? pos(nb) : null];
     d.selection = [app.selection.includes(eff), app.selection.includes(nb)];
     d.errors = logFrom(m, ['error']);
-    d.standInNote = logFrom(m, ['info']).some(l => /^info:AppendBone: not yet attested/.test(l));
+    // SIAppendBone (inferred, batch 15) now takes the call; it flags the C++ step itself
+    d.standInNote = logFrom(m, ['info']).some(l => /^info:(SI)?AppendBone: not yet attested/.test(l));
     app.select([eff]); m = mark();
     d.degenerate = [pub(run('AppendBone', { Ex: 4, Ey: 0, Ez: 0 })), logFrom(m, ['error']), chain.bones.length];
     m = mark(); d.byName = [Array.isArray(run('AppendBone', { InputObjs: eff.name, Ex: 4, Ey: 3, Ez: 0 }).raw), chain.bones.length, pos(eff), chain.bones[2] ? Math.round(chain.bones[2].val('length') * 1e4) / 1e4 : null];

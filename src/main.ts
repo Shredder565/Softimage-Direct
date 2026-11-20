@@ -66,6 +66,8 @@ import { registerCrosswalkB13cCommands } from './commands/crosswalkB13c';
 import { registerMotorB13dCommands } from './commands/motorB13d';
 import { registerPluginsB13eCommands } from './commands/pluginsB13e';
 import { registerFaceRobotB14aCommands } from './commands/faceRobotB14a';
+import { registerMiscScriptsB15fCommands } from './commands/miscScriptsB15f';
+import { registerInferredB15Commands } from './commands/inferredB15';
 import { registerFaceRobotB14bCommands } from './commands/faceRobotB14b';
 import { registerFaceRobotB14cCommands } from './commands/faceRobotB14c';
 import { registerFaceRobotB14dCommands } from './commands/faceRobotB14d';
@@ -213,6 +215,8 @@ registerFaceRobotB14dCommands(app);   // CMD-B14d (Face Robot retarget / mocap /
 registerFaceRobotB14eCommands(app);   // CMD-B14e (Face Robot export / weights / tongue)
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
+registerMiscScriptsB15fCommands(app);   // CMD-B15f (sdkui wizards, lip-sync, UpgradeShaders, default camera, OBJ import menu)
+registerInferredB15Commands(app);   // batch 15, commands without an analyst note (inferred)
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);

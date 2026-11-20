@@ -150,7 +150,7 @@ const chainRootOf = (o: X3DObject | null): ChainRoot | null => { let n = o; whil
 const isChainElement = (o: X3DObject) => o instanceof ChainRoot || o instanceof Bone || o instanceof Effector;
 
 /** inferred stand-in for the C++ bone-append command: one new bone from the chain end to the new effector position. */
-function appendBoneStandIn(app: App, eff: Effector, target: THREE.Vector3): X3DObject[] {
+export function appendBoneStandIn(app: App, eff: Effector, target: THREE.Vector3): X3DObject[] {
   const root = chainRootOf(eff); const last = root?.bones[root.bones.length - 1]; if (!root || !last) return [];
   const start = root.chainEnd(); const len = start.distanceTo(target); if (len < 1e-9) return [];
   const bone = new Bone(app.scene.uniqueName('bone'), len);
