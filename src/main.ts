@@ -1,4 +1,5 @@
 import './styles.css';
+import { registerChainsModelB17bCommands } from './commands/chainsModelB17b';
 import { App } from './core/commands';
 import { registerBuiltins } from './commands';
 import { registerModelCommands, registerModelAliases } from './commands/model';
@@ -240,6 +241,7 @@ registerShadertasksB16bCommands(app);   // CMD-B16b bbbbee29 shader creation, sh
 registerTasksB16cCommands(app);   // CMD-B16c (tasks.dll Add3DObjectToScene / SetReference2; the other tasks.dll commands are fixed in place)
 registerFilterMapB16dCommands(app);   // CMD-B16d scnmgr filter-map commands (Delete Selected, Duplicate/Extrude, Subdivide ...), CopyPartition, RegenerateMaps
 registerSelectionLayersB17aCommands(app);   // CMD-B17a (selection.vbs / layers.vbs script commands; replaces the inferred registrations)
+registerChainsModelB17bCommands(app);   // CMD-B17b (chains.vbs / Model.vbs script commands; replaces the inferred model.ts / model2.ts bodies)
 registerToolsB16aCommands(app);   // CMD-B16a (toolmanager.dll tool activation; last: earlier registrations of these names become the tool class bodies)
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).

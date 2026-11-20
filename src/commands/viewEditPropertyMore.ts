@@ -4,6 +4,7 @@
 // documented scripting conventions and the related commands on the bus (AddProp, AssignMaterial, UnAssignMaterial,
 // MakeLocalMaterialsForHierarchy, ApplyCns, RemoveCns, SelectObjectsConstrained, the Play… commands, SetUserPref).
 // Every register call is marked `// inferred`.
+import { makeOwnMaterialCopy } from './chainsModelB17b';
 import { App, UndoEntry } from '../core/commands';
 import { X3DObject, Node, Property, Material, Constraint, makeSiShader } from '../core/scene';
 import { addConstraint, CNS_PRESETS } from './constraints';
@@ -104,7 +105,7 @@ function registerProperty(app: App) {
     const localProp = (p: Property) => { if (p.shared) app.record('Make local', () => { p.shared = false; }, () => { p.shared = true; }); out.push(p); };
     const inherited = (o: X3DObject, key: string): Node | null => {
       const k = key.toLowerCase();
-      if (k === 'material') { if (!o.material) app.run('MakeLocalMaterialsForHierarchy', { InputObj: [o] }); return o.material; }
+      if (k === 'material') { if (!o.material) makeOwnMaterialCopy(app, o); return o.material; }   // the app's own-copy helper (MakeLocalMaterialsForHierarchy is the CMD-B17b contract)
       const type = k === 'display' ? 'display' : (k === 'geomapprox' || k === 'geometry approximation') ? 'geomapprox' : null;
       return type ? ensureLocal(app, o, type) : null;
     };

@@ -162,7 +162,9 @@ const HELP_URLS: Record<string, string> = {
 
 // Delta... opens the file picker of the pre-B15a handler (the modeltasks.dll ImportDelta needs a FileName and a Model, CMD-B15a)
 function importPick(app: App, l: string) {
-  if (l.startsWith('Model')) app.run('ImportModel'); else if (l.startsWith('Referenced')) app.run('ImportRefModels');
+  // ImportRefModels takes a comma-separated file list (CMD-B17b); the file is chosen first (this build's file layer)
+  if (l.startsWith('Model')) app.run('ImportModel');
+  else if (l.startsWith('Referenced')) { const svc = (app as any).modelFiles; if (svc) svc.chooseRefFile().then((f: string | null) => { if (f) app.run('ImportRefModels', { FileName: f }); }); }
   else { const f = (app as any).modelTasksB15a?.legacy?.ImportDelta; if (f) f(app, {}); else app.run('ImportDelta'); }
 }
 function pickImportExport(app: App, path: string[], l: string): boolean {
