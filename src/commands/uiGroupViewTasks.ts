@@ -460,24 +460,29 @@ export function registerUiGroupViewTaskCommands(app: App) {
   const reg = (def: CommandDef) => app.register(def);
   const IN = { name: 'InputObjs', default: null };
 
-  for (const [W, k, noun] of [['Keyword', 'userKeywords', 'user keyword'], ['Tab', 'userTabs', 'User Tab']] as const) {
+  // Scripting names written out literally (the ledger's static scan reads them; WIRE_CORRECTIONS_B15 item 26).
+  const KW_COMMANDS = [
+    { W: 'Keyword', k: 'userKeywords', noun: 'user keyword', set: 'SetUserKeyword', get: 'GetUserKeyword', clear: 'ClearUserKeyword', remove: 'RemoveUserKeyword', add: 'AddUserKeyword' },
+    { W: 'Tab', k: 'userTabs', noun: 'User Tab', set: 'SetUserTab', get: 'GetUserTab', clear: 'ClearUserTab', remove: 'RemoveUserTab', add: 'AddUserTab' },
+  ] as const;
+  for (const { W, k, noun, set, get, clear, remove, add } of KW_COMMANDS) {
     reg({
-      name: `SetUser${W}`, label: `Set User ${W}`, category: 'Viewing|Property', description: `Sets the ${noun}(s) on the input object(s)`,
+      name: set, label: `Set User ${W}`, category: 'Viewing|Property', description: `Sets the ${noun}(s) on the input object(s)`,
       args: [IN, { name: 'Keywords', default: '' }],
-      execute: (app, a) => setKeywords(app, `SetUser${W}`, k, a),
+      execute: (app, a) => setKeywords(app, set, k, a),
     });
     reg({
-      name: `GetUser${W}`, label: `Get User ${W}`, category: 'Viewing|Property', description: `Gets the ${noun.toLowerCase()}(s) on the input object(s)`, undoable: false,
+      name: get, label: `Get User ${W}`, category: 'Viewing|Property', description: `Gets the ${noun.toLowerCase()}(s) on the input object(s)`, undoable: false,
       args: [IN, { name: 'Keywords', default: null }],
-      execute: (app, a) => getKeywords(app, `GetUser${W}`, k, a),
+      execute: (app, a) => getKeywords(app, get, k, a),
     });
     reg({
-      name: `ClearUser${W}`, label: `Clear User ${W}`, category: 'Viewing|Property', description: `Clears the ${noun.toLowerCase()}(s) on given object(s)`,
+      name: clear, label: `Clear User ${W}`, category: 'Viewing|Property', description: `Clears the ${noun.toLowerCase()}(s) on given object(s)`,
       args: [IN],
-      execute: (app, a) => clearAttribute(app, `ClearUser${W}`, k, nodeList(app, a.InputObjs, true)),
+      execute: (app, a) => clearAttribute(app, clear, k, nodeList(app, a.InputObjs, true)),
     });
     for (const mode of ['remove', 'add'] as const) {
-      const name = `${mode === 'add' ? 'Add' : 'Remove'}User${W}`;
+      const name = mode === 'add' ? add : remove;
       reg({
         name, label: `${mode === 'add' ? 'Add' : 'Remove'} User ${W}`, category: 'Viewing|Property', description: '',
         args: [IN, { name: 'Keywords', default: '' }],
