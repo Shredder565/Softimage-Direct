@@ -1,23 +1,8 @@
 {
  "(uncategorised)": {
   "total": 448,
-  "registered": 434,
-  "missing": [
-   "BoneCreateTool",
-   "CrowdCreateDirectionalEmitterTool",
-   "CrowdCreateWallTool",
-   "Delete Selected Branch",
-   "DeleteCurrentLayer",
-   "DoNothing",
-   "Freeze Selected",
-   "GetSkeleton",
-   "MarkObjectDirty",
-   "Pick Session Tool",
-   "Transform Set New ",
-   "Turn OFF Interactive SRT",
-   "Turn ON Interactive SRT",
-   "XYZ Transform "
-  ]
+  "registered": 448,
+  "missing": []
  },
  "Action": {
   "total": 1,
@@ -26,10 +11,8 @@
  },
  "Animation": {
   "total": 186,
-  "registered": 185,
-  "missing": [
-   "SIAppendBone"
-  ]
+  "registered": 186,
+  "missing": []
  },
  "Animation Mixer": {
   "total": 113,
@@ -58,31 +41,8 @@
  },
  "Character Rigging": {
   "total": 31,
-  "registered": 9,
-  "missing": [
-   "Make2PointSlide",
-   "MakeArm",
-   "MakeBicepRoll",
-   "MakeBiped",
-   "MakeBiped",
-   "MakeBipedCharacterKeySet",
-   "MakeBipedDogLeg",
-   "MakeBipedDogLeg",
-   "MakeDogLeg",
-   "MakeFoot",
-   "MakeForearmRoll",
-   "MakeHand",
-   "MakeHead",
-   "MakeJointCompression",
-   "MakeLeg",
-   "MakeQuadruped",
-   "MakeQuadruped",
-   "MakeQuadrupedCharacterKeySet",
-   "MakeShadowChain",
-   "MakeShadowSpine",
-   "MakeSpine",
-   "SetKeyableRig"
-  ]
+  "registered": 31,
+  "missing": []
  },
  "Cluster": {
   "total": 16,
@@ -96,13 +56,8 @@
  },
  "Custom": {
   "total": 413,
-  "registered": 409,
-  "missing": [
-   "SyGetMassMap",
-   "SyGetSpringMap",
-   "syCachePaint1",
-   "syCachePaint2"
-  ]
+  "registered": 413,
+  "missing": []
  },
  "Customization": {
   "total": 2,
@@ -126,10 +81,8 @@
  },
  "Edit": {
   "total": 117,
-  "registered": 116,
-  "missing": [
-   "CopyPaste"
-  ]
+  "registered": 117,
+  "missing": []
  },
  "File": {
   "total": 110,
@@ -168,14 +121,8 @@
  },
  "Modeling": {
   "total": 274,
-  "registered": 269,
-  "missing": [
-   "Add Surface Point Tool",
-   "CursorTransformTool",
-   "Dice Object/Polygons",
-   "Mesh Filter",
-   "MoveComponent Tool"
-  ]
+  "registered": 274,
+  "missing": []
  },
  "Navigation": {
   "total": 22,
@@ -204,24 +151,13 @@
  },
  "Property": {
   "total": 125,
-  "registered": 124,
-  "missing": [
-   "PaintWeights"
-  ]
+  "registered": 125,
+  "missing": []
  },
  "Rendering": {
   "total": 175,
-  "registered": 167,
-  "missing": [
-   "AddShaderAttachedComment",
-   "CopyPartition",
-   "CreateShaderFromCLSID",
-   "CreateShaderFromProgID",
-   "CreateShadersFromMaterialPreset",
-   "RegenerateMaps",
-   "SISwapArrayElements",
-   "ToggleProjectionTool"
-  ]
+  "registered": 175,
+  "missing": []
  },
  "Scripting": {
   "total": 4,
@@ -235,13 +171,8 @@
  },
  "Simulation": {
   "total": 118,
-  "registered": 114,
-  "missing": [
-   "CreateEnvironmentCache",
-   "CreateInspectParticleTypeBillboard",
-   "CreateInspectParticleTypeBlob",
-   "CreateInspectParticleTypeSphere"
-  ]
+  "registered": 118,
+  "missing": []
  },
  "Source": {
   "total": 6,
