@@ -6,7 +6,7 @@
 //   tools / modes:  BoneCreateTool CrowdCreateDirectionalEmitterTool CrowdCreateWallTool
 //                   "Turn ON Interactive SRT" "Turn OFF Interactive SRT" "Transform Set New " (inert, CMD-B16a §7)
 //   (the toolmanager.dll tool commands that were here are wired by CMD-B16a in toolsB16a.ts)
-//   edits:          "Delete Selected Branch" "Freeze Selected" PaintWeights
+//   edits:          "Delete Selected Branch" "Freeze Selected" (PaintWeights: CMD-B16e)
 //                   (CopyPaste, DeleteCurrentLayer: CMD-B16c, tasksB16c.ts; SISwapArrayElements, SIAppendBone: shadertasksB16b.ts)
 //   rendering/sim:  CreateEnvironmentCache
 // CMD-B16d moved CopyPartition, RegenerateMaps, "Dice Object/Polygons" and "Mesh Filter" to filterMapB16d.ts (contract).
@@ -99,36 +99,7 @@ export function registerInferredB15Commands(app: App) {
   reg({ name: 'Freeze Selected', label: 'Freeze Selected', category: '', args: [],
     execute(app2) { const sel = app2.selectedObjects; if (!sel.length) return undefined; return app2.run('FreezeObj', { InputObjs: sel }); } });
 
-  // inferred: "Paint Weights": writes Weights at Indices into a weight map (InputObj = the map, or an object whose first
-  // weight map is used) or into an envelope (Deformer = deformer index; Normalize renormalises each point). Flags 0 =
-  // replace; other flags are not attested. OutputObj returns the painted property.
-  reg({ name: 'PaintWeights', label: 'Paint Weights', category: 'Property|Paint', description: 'Paint Weights',
-    args: [{ name: 'InputObj', default: null }, { name: 'Indices', default: null }, { name: 'Weights', default: null }, { name: 'Flags', default: 0 }, { name: 'Deformer', default: 0 },
-      { name: 'Normalize', default: true }, { name: 'OutputObj', default: null }],
-    execute(app2, a) {
-      const C = 'PaintWeights';
-      let target: any = nodesOf(app2, a.InputObj)[0] ?? app2.selection.find(n => n instanceof Property && n.type === 'weightmap');
-      if (target instanceof X3DObject) target = target.allProperties().find(p => p.type === 'weightmap') ?? (target as any).envelope ?? target.properties.find((p: any) => Array.isArray(p.weights));
-      if (!target) throw new Error(`${C}: no weight map or envelope to paint`);
-      const idx: number[] = Array.from((a.Indices ?? []) as ArrayLike<number>).map(Number);
-      const w: number[] = Array.from((a.Weights ?? []) as ArrayLike<number>).map(Number);
-      if (Number(a.Flags) || 0) logInferredNya(app2, C, `Flags ${a.Flags}; the weights replace the old values`);
-      if (target.values instanceof Map) {
-        const map: Map<number, number> = target.values; const before = idx.map(i => map.get(i));
-        app2.record(C, () => idx.forEach((i, k) => map.set(i, w[k] ?? w[w.length - 1] ?? 0)), () => idx.forEach((i, k) => { const b = before[k]; if (b === undefined) map.delete(i); else map.set(i, b); }));
-      } else if (Array.isArray(target.weights)) {
-        const d = Number(a.Deformer) || 0; const norm = a.Normalize !== false;
-        const before = idx.map(i => target.weights[i] ? Float32Array.from(target.weights[i]) : null);
-        app2.record(C, () => idx.forEach((i, k) => {
-          const row: Float32Array = target.weights[i] ?? new Float32Array(Math.max(d + 1, target.deformers?.length ?? 1));
-          row[d] = w[k] ?? w[w.length - 1] ?? 0;
-          if (norm) { let rest = 0; for (let j = 0; j < row.length; j++) if (j !== d) rest += row[j]; const left = Math.max(0, 1 - row[d]); if (rest > 0) for (let j = 0; j < row.length; j++) if (j !== d) row[j] = row[j] / rest * left; }
-          target.weights[i] = row;
-        }), () => idx.forEach((i, k) => { if (before[k]) target.weights[i] = before[k]; }));
-      } else throw new Error(`${C}: ${target.name ?? target} is not a weight map or an envelope`);
-      app2.events.emit('scene');
-      return target;
-    } });
+  // PaintWeights: row CMD-B16e (src/commands/b16eActioncoreOptasksGap.ts, gap.dll contract).
 
   // SISwapArrayElements and SIAppendBone: wired from their contracts in shadertasksB16b.ts (row CMD-B16b).
 

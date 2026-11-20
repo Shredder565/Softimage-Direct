@@ -79,6 +79,7 @@ import { registerMiscScriptsB15fCommands } from './commands/miscScriptsB15f';
 import { registerInferredB15Commands } from './commands/inferredB15';
 import { registerToolsB16aCommands } from './commands/toolsB16a';
 import { registerTasksB16cCommands } from './commands/tasksB16c';
+import { registerB16eCommands } from './commands/b16eActioncoreOptasksGap';
 import { registerShellsB15ElseCommands } from './commands/shellsB15Else';
 import { registerShadertasksB16bCommands } from './commands/shadertasksB16b';
 import { registerFilterMapB16dCommands } from './commands/filterMapB16d';
@@ -231,6 +232,7 @@ registerRigScriptsB15eCommands(app);   // CMD-B15e (Character Rigging script com
 registerMiscScriptsB15fCommands(app);   // CMD-B15f (sdkui wizards, lip-sync, UpgradeShaders, default camera, OBJ menu entry)
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
+registerB16eCommands(app);   // CMD-B16e (TransferAllPropertiesAcrossGenOp, AddShotClip, GetShotClip, PaintWeights)
 registerInferredB15Commands(app);   // CMD-B15-ELSE tool / misc commands without an analyst note (inferred)
 registerShellsB15ElseCommands(app);   // CMD-B15-ELSE MarkObjectDirty / GetSkeleton (inferred)
 registerShadertasksB16bCommands(app);   // CMD-B16b bbbbee29 shader creation, shader array elements, SIAppendBone

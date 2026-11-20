@@ -28,13 +28,13 @@ const INFERRED = [
   // MarkObjectDirty and GetSkeleton to their contract: tools/compare_filtermap_b16d.mjs checks them.
   'Add Surface Point Tool', 'BoneCreateTool', 'CrowdCreateDirectionalEmitterTool', 'CrowdCreateWallTool',
   'CursorTransformTool', 'Delete Selected Branch', 'DoNothing', 'Freeze Selected', 'MoveComponent Tool',
-  'PaintWeights', 'Pick Session Tool', 'ToggleProjectionTool', 'Transform Set New ',
+  'Pick Session Tool', 'ToggleProjectionTool', 'Transform Set New ',
   'Turn OFF Interactive SRT', 'Turn ON Interactive SRT', 'XYZ Transform ',
 ];
 const SHELLS = [];
 const LITERAL = ['MakeBiped', 'MakeBipedDogLeg', 'MakeQuadruped', 'MakeArm', 'MakeLeg', 'MakeFoot', 'MakeHand', 'MakeHead', 'MakeSpine', 'MakeShadowChain', 'MakeShadowSpine', 'MakeBicepRoll', 'MakeForearmRoll', 'Make2PointSlide', 'MakeJointCompression', 'MakeDogLeg', 'MakeBipedCharacterKeySet', 'MakeQuadrupedCharacterKeySet', 'SetKeyableRig', 'syCachePaint1', 'syCachePaint2', 'SyGetMassMap', 'SyGetSpringMap', 'CreateInspectParticleTypeBillboard', 'CreateInspectParticleTypeBlob', 'CreateInspectParticleTypeSphere'];
 const NAMES = [...INFERRED, ...SHELLS];
-const DEFAULT_FAILS = new Set(['PaintWeights']);
+const DEFAULT_FAILS = new Set([]);
 const full = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'commands_full.json'), 'utf8'));
 const registry = Object.fromEntries(NAMES.map(n => {
   const f = full.find(x => (x.scripting_name || x.name) === n);
@@ -110,16 +110,6 @@ const got = await page.evaluate(async ({ NAMES, LITERAL, DEFAULT_FAILS: DF }) =>
     reset(); let fz = trace('FreezeObj', () => run('Freeze Selected'));
     ok('Freeze Selected (inferred): FreezeObj on the selection', fz.length === 1 && fz[0].InputObjs?.[0] === cube);
     reset();
-    // PaintWeights
-    const PropCls = cube.property('visibility').constructor; const map = new PropCls('WeightMapB15f', 'weightmap', []); map.values = new Map(); cube.addProperty(map); reset();
-    const u1 = A.undoStack.length;
-    r = run('PaintWeights', { InputObj: map, Indices: [0, 1], Weights: [0.25, 0.5] });
-    ok('PaintWeights (inferred): weights written at the indices of the weight map; returns it', map?.values?.get(0) === 0.25 && map.values.get(1) === 0.5 && r.v === map, [r.err, map?.type]);
-    while (A.undoStack.length > u1) A.undo();
-    ok('PaintWeights (inferred): undo restores', !map.values.has(0));
-    r = run('PaintWeights', { InputObj: cube, Indices: [2], Weights: [0.75] });
-    ok('PaintWeights (inferred): an object -> its first weight map', map.values.get(2) === 0.75, r.err);
-    cube.removeProperty(map);
   } catch (e) { ok('inferred block threw', false, String(e?.stack ?? e).slice(0, 300)); }
   const fresh = () => { A.setTool?.(null); A.select([]); };
   const mk = (prim, name) => { const o = A.run('CreatePrim', { PresetObj: prim, Name: name }); return Array.isArray(o) ? o[0] : o; };
