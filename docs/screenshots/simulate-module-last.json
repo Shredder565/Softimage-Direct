@@ -2,7 +2,7 @@
   "ok": true,
   "diffs": [],
   "notes": [
-    "loaded tops /workspace/src/data/si/simulate_module_mcp_tops.json",
+    "loaded tops /home/claude/softimage-direct/src/data/si/simulate_module_mcp_tops.json",
     "softimage 13.2.163.0",
     "Simulate in modulesExtracted",
     "Simulate in module-select",
@@ -28,7 +28,8 @@
     "Simulate≠ICE (205 Rigid/Soft/Cloth vs 303 Particles/CrowdFX)",
     "SwitchToolbar Target=5 → Simulate",
     "SyCreateCloth + ApplyCloth present",
-    "SyCreateCloth → C3DClothProp via ApplyCloth",
+    "SyCreateCloth → syCloth operator (CMD-B7b contract)",
+    "ApplyCloth → C3DClothProp",
     "ApplyCloth → C3DClothOp on stack",
     "cloth prop Mass/Shear dump sns",
     "cloth op SimMute dump sn",

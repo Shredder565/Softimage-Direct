@@ -1,16 +1,19 @@
 {
-  "ok": true,
-  "diffs": [],
+  "ok": false,
+  "diffs": [
+    "host status=MATCH",
+    "host clientGdi=SOFTIMAGE_ABSENT_FLOAT"
+  ],
   "notes": [
-    "loaded tops /workspace/src/data/si/hair_module_mcp_tops.json",
-    "loaded chrome /workspace/src/data/si/hair_view_chrome.json",
+    "loaded tops /home/claude/softimage-direct/src/data/si/hair_module_mcp_tops.json",
+    "loaded chrome /home/claude/softimage-direct/src/data/si/hair_view_chrome.json",
     "softimage 13.2.163.0",
     "Hair in modulesExtracted",
     "Hair in module-select",
     "Hair tops OK: Create, Modify, Display",
     "Hair MCP buttons match dump",
-    "Hair Panel xsivw SHELL",
-    "Hair Panel client GDI LOCK",
+    "Hair Panel xsivw MATCH (Softimage-absent float)",
+    "Hair Panel float HWND Softimage-absent",
     "flyout pixels LOCK",
     "Hair Panel xsivw defaultsize 0,0,900,115",
     "ApplyHair* ops wired 20/20",
@@ -36,7 +39,7 @@
     "Display"
   ],
   "hair_panel": {
-    "status": "SHELL",
+    "status": "MATCH",
     "openview": "Hair Panel",
     "xsivw": "hairpanel.xsivw",
     "clsid": "{0E338020-8317-42C5-B48E-E8CABB3643E8}",
@@ -45,7 +48,8 @@
     "supportedtypes": "6",
     "maxinstances": "1",
     "private": "true",
-    "client_gdi": "LOCK",
-    "note": "OpenView failed under XSIBATCH -processing; hairpanel.xsivw attests shell. Desktop 22-hair-panel.png — do not invent client GDI widgets."
+    "client_gdi": "SOFTIMAGE_ABSENT_FLOAT",
+    "floating_titled_hwnd": "ABSENT",
+    "note": "hair-panel-hwnd dump: private=true docks; OpenView OK; EnumWindows Hair=0. MATCH xsivw + SwitchToolbar(7); Softimage-absent float — no invent."
   }
 }
