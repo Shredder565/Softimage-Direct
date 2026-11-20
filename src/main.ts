@@ -79,7 +79,7 @@ import { registerMiscScriptsB15fCommands } from './commands/miscScriptsB15f';
 import { registerInferredB15Commands } from './commands/inferredB15';
 import { registerToolsB16aCommands } from './commands/toolsB16a';
 import { registerShellsB15ElseCommands } from './commands/shellsB15Else';
-import { registerShaderCreationB15Commands } from './commands/particlesB15cShaders';
+import { registerShadertasksB16bCommands } from './commands/shadertasksB16b';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -230,8 +230,8 @@ registerMiscScriptsB15fCommands(app);   // CMD-B15f (sdkui wizards, lip-sync, Up
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
 registerInferredB15Commands(app);   // CMD-B15-ELSE tool / misc commands without an analyst note (inferred)
-registerShellsB15ElseCommands(app);   // CMD-B15-ELSE MarkObjectDirty / AddShaderAttachedComment / GetSkeleton (inferred)
-registerShaderCreationB15Commands(app);   // CMD-B15-ELSE bbbbee29 shader creation family (inferred)
+registerShellsB15ElseCommands(app);   // CMD-B15-ELSE MarkObjectDirty / GetSkeleton (inferred)
+registerShadertasksB16bCommands(app);   // CMD-B16b bbbbee29 shader creation, shader array elements, SIAppendBone
 registerToolsB16aCommands(app);   // CMD-B16a (toolmanager.dll tool activation; last: earlier registrations of these names become the tool class bodies)
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).

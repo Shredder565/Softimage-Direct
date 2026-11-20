@@ -164,7 +164,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_OK: DO }) => {
   {
     const { o, m, ph } = fresh();
     const img = apply('Image', { owner: ph, name: 'diffuse' });
-    const chk = A.run('CreateShaderFromPreset', { Preset: 'Checkerboard' }); chk.name = 'Chk';
+    const chk = A.run('CreateShaderFromPreset', { PresetObj: 'Checkerboard', Container: [m] }); chk.name = 'Chk';
     let r = run('ReplaceShader', { Source: img, Target: chk });
     ok('ReplaceShader: the users of Source now use Target; Source is gone', !r.err && src(ph, 'diffuse') === chk && !T.nestedShaders(m).includes(img) && T.nestedShaders(m).includes(chk), r);
     A.undo(); ok('ReplaceShader undo', src(ph, 'diffuse') === img && T.nestedShaders(m).includes(img));
@@ -303,7 +303,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_OK: DO }) => {
     ok('ExplodeShaderCompound: inner shaders back in the container, rewired, compound deleted', !r.err && r.v?.[0] === img3 && src(ph3, 'diffuse') === img3 && T.nestedShaders(m3).includes(img3) && !T.nestedShaders(m3).includes(c3), r);
     A.undo(); ok('ExplodeShaderCompound undo', src(ph3, 'diffuse') === c3 && c3.shaders().includes(img3));
     ok('ExplodeShaderCompound: not a compound -> 0x8000ffff', status(run('ExplodeShaderCompound', { InputObj: ph3 }), '8000ffff'));
-    const extra = A.run('CreateShaderFromPreset', { Preset: 'Checkerboard' }); A.run('SIConnectShaderToCnxPoint', { Source: extra, InputObjs: [{ owner: ph3, name: 'ambient' }] });
+    const extra = A.run('CreateShaderFromPreset', { PresetObj: 'Checkerboard', Container: [m3] }); A.run('SIConnectShaderToCnxPoint', { Source: extra, InputObjs: [{ owner: ph3, name: 'ambient' }] });
     r = run('NestShaders', { InputObjs: [extra], ShaderContainer: c3 });
     ok('NestShaders: the shader moves into the compound (connections left, worker not yet attested)', !r.err && c3.shaders().includes(extra) && nya(r) >= 1, r);
     r = run('UnnestShaders', { InputObjs: [extra] });
