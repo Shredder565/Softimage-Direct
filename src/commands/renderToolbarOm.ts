@@ -377,18 +377,7 @@ export function registerRenderToolbarOmCommands(app: App) {
     undoable: false,
     execute(app) { app.logMsg('info', 'RendertreeDeleteOrUnnestShaders'); },
   });
-  app.register({
-    name: 'ToggleCurrentLayerProperty',
-    label: 'Rendering Visibility of Current Layer',
-    category: 'Layer',
-    args: [{ name: 'PropName', default: 'rendvis' }],
-    undoable: false,
-    execute(app, a) {
-      const layer = app.scene.layers[app.scene.layers.length - 1];
-      const prop = String(a.PropName || 'rendvis');
-      app.logMsg('info', `Toggle layer ${layer?.name ?? '?'} .${prop}`);
-    },
-  });
+  // ToggleCurrentLayerProperty: CMD-B17a (selectionLayersB17a.ts)
 
   // Softimage empty-scripting-name leaf → OpenRenderingPreferences.
   if (!app.commands.has('InspectRenderingPreferences')) {

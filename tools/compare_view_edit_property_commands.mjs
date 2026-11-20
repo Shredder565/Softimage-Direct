@@ -20,14 +20,15 @@ const CHROME = [
 if (!CHROME) { console.error('No Chromium; set PW_CHROME'); process.exit(2); }
 
 const COMMANDS = [
-  // Viewing
-  'HideUnselected', 'HideAndUnselect', 'SIHideObjects', 'SIUnhideObjects', 'UnghostAll',
+  // Viewing (HideUnselected, SIHideObjects, SIUnhideObjects, UnghostAll, MakeAllUnselectable: now CMD-B17a,
+  // checked by compare_selection_layers_b17a.mjs; the behaviour checks below still run against the new bodies)
+  'HideAndUnselect',
   'IsolateAll', 'IsolateAddSelected', 'IsolateRemoveSelected', 'IsolateToggleSelected',
   'ColorizeObject', 'ShadeObject', 'SetViewDisplayMode', 'ToggleViewDisplayMode', 'ToggleWireOnShadedDisplay', 'ToggleHeadlightDisplayMode',
   'CenterSelection', 'FrameContextual',
   'SetUserKeyword', 'GetUserKeyword', 'RemoveUserKeyword', 'ClearUserKeyword', 'SetUserTab', 'GetUserTab', 'AddUserTab', 'RemoveUserTab', 'ClearUserTab',
   // Edit
-  'ToggleSelectability', 'MakeAllUnselectable', 'ParentObjects', 'Clone', 'Instance', 'SIInstantiate', 'GetMaster', 'GetInstances', 'SIDuplicate',
+  'ToggleSelectability', 'ParentObjects', 'Clone', 'Instance', 'SIInstantiate', 'GetMaster', 'GetInstances', 'SIDuplicate',
   'DuplicateModelFromObj', 'DeleteModelFromObj', 'DeleteAll', 'DeleteObjPermanent', 'ToggleParameterValue',
   'MoveOperatorAfter', 'MoveOperatorBefore', 'SwapOperators', 'DeactivateAbove', 'CreateTransformGroup', 'RemoveTransformGroup',
   // Property
@@ -85,7 +86,8 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
     ck('HideUnselected', 'default args: only the selected object stays view-visible', ok(r) && vis(cube) && allObjs().every(o => o === cube || !vis(o)), r);
     A.undo(); ck('HideUnselected', 'undo restores every object', allObjs().every(vis));
     A.select([]); r = run('HideUnselected', { Target: [sph] });
-    ck('HideUnselected', 'explicit Target', ok(r) && vis(sph) && !vis(cube) && !vis(nul), r); A.undo();
+    // CMD-B17a contract: Target is only examined for polygons; the (empty) current selection is inverted -> all hidden
+    ck('HideUnselected', 'explicit Target (CMD-B17a: only examined for polygons)', ok(r) && !vis(sph) && !vis(cube) && !vis(nul), r); A.undo();
 
     A.select([cube, sph]); r = run('HideAndUnselect');
     ck('HideAndUnselect', 'default args: selection hidden and cleared', ok(r) && !vis(cube) && !vis(sph) && vis(nul) && A.selection.length === 0, r);

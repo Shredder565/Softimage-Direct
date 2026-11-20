@@ -42,16 +42,7 @@ function registerViewing(app: App) {
   };
   const setVis = (o: X3DObject, propName: any, v: boolean, label: string) => { const p = visParam(o, propName); if (p) app.setParam(p, v, label); };
 
-  // inferred
-  reg(app, {
-    name: 'HideUnselected', label: 'Hide Unselected Objects/Polygons', category: 'Viewing', description: 'Hides all unselected objects',
-    args: [{ name: 'Target', default: null }, { name: 'PropertyName', default: 'visibility' }],
-    execute(app, a) {
-      if (app.selMode !== 'object' && app.compSel && unset(a.Target)) { logNya(app, 'HideUnselected', 'hiding the unselected polygons of a component selection'); return; }
-      const keep = new Set(objs(app, a.Target));
-      for (const o of app.scene.allObjects()) if (!keep.has(o)) setVis(o, a.PropertyName, false, 'Hide');
-    },
-  });
+  // HideUnselected: CMD-B17a (selectionLayersB17a.ts)
   // inferred
   reg(app, {
     name: 'HideAndUnselect', label: 'Hide and Unselect', category: 'Viewing', description: 'Hides the selected objects and clears the selection',
@@ -63,23 +54,7 @@ function registerViewing(app: App) {
       app.record('Unselect', () => app.select(after), () => app.select(before));
     },
   });
-  // inferred (low-level: selection untouched)
-  reg(app, {
-    name: 'SIHideObjects', label: 'Hide Objects', category: 'Viewing', description: 'Make all objects invisible',
-    args: [{ name: 'Target', default: null }, { name: 'PropertyName', default: 'visibility' }],
-    execute(app, a) { for (const o of objs(app, a.Target)) setVis(o, a.PropertyName, false, 'Hide'); },
-  });
-  // inferred (the registry description repeats "invisible"; the label and the name say unhide)
-  reg(app, {
-    name: 'SIUnhideObjects', label: 'Unhide Objects', category: 'Viewing', description: 'Make all objects invisible',
-    args: [{ name: 'Target', default: null }, { name: 'PropertyName', default: 'visibility' }],
-    execute(app, a) { for (const o of objs(app, a.Target)) setVis(o, a.PropertyName, true, 'Unhide'); },
-  });
-  // inferred
-  reg(app, {
-    name: 'UnghostAll', label: 'Unghost All Objects', category: 'Viewing', description: 'Unghost all objects', args: [],
-    execute(app) { for (const o of app.scene.allObjects()) { const p = o.property('visibility')?.get('ghosting'); if (p) app.setParam(p, false, 'Unghost'); } },
-  });
+  // SIHideObjects / SIUnhideObjects / UnghostAll: CMD-B17a (selectionLayersB17a.ts)
 
   // ---- isolation: the per-viewport isolate set the camera menu's "Isolate Selection" already drives (view state, not undoable)
   const viewports = (view: any, all = false): any[] => {
@@ -266,11 +241,7 @@ function registerEdit(app: App) {
       for (const o of objs(app, a.InputObjects)) { const p = paramOf(o, String(a.Parameter || 'visibility.selectability')); if (!p) throw new Error(`${o.name} has no parameter ${a.Parameter}`); app.setParam(p, !p.value, 'Selectability'); }
     },
   });
-  // inferred: the registry label / description say "Make All Objects Selectable" / "Sets the selectability of all objects to ON"
-  reg(app, {
-    name: 'MakeAllUnselectable', label: 'Make All Objects Selectable', category: 'Edit|Property', description: 'Sets the selectability of all objects to ON', args: [],
-    execute(app) { for (const o of app.scene.allObjects()) { const p = o.property('visibility')?.get('selectability'); if (p) app.setParam(p, true, 'Selectability'); } },
-  });
+  // MakeAllUnselectable: CMD-B17a (selectionLayersB17a.ts)
   // inferred
   reg(app, {
     name: 'ParentObjects', label: 'Parent Objects', category: 'Edit', description: 'Parent objects under last object in the list',

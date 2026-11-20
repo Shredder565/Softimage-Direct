@@ -94,7 +94,6 @@ export function registerBuiltins(app: App) {
   });
   app.register({ name: 'ToggleVisibility', label: 'Hide/Unhide', category: 'Viewing', args: [{ name: 'InputObjs', default: '' }], execute(app, a) { for (const o of app.targets(a.InputObjs)) { const p = o.property('visibility')!.get('viewvis')!; app.setParam(p, !p.value, 'Visibility'); } } });
   app.register({ name: 'HideSelection', label: 'Hide Selection', category: 'Viewing', args: [], execute(app) { for (const o of app.selectedObjects) app.setParam(o.property('visibility')!.get('viewvis')!, false, 'Hide'); } });
-  app.register({ name: 'UnhideAll', label: 'Unhide All', category: 'Viewing', args: [], execute(app) { for (const o of app.scene.allObjects()) app.setParam(o.property('visibility')!.get('viewvis')!, true, 'Unhide'); } });
   app.register({ name: 'SetValue', label: 'Set Value', category: 'Edit', args: [{ name: 'Target' }, { name: 'Value' }], execute(app, a) { const p = findParam(app, a.Target); if (!p) throw new Error('No such parameter ' + a.Target); app.setParam(p, a.Value); } });
   app.register({
     name: 'Translate', label: 'Translate', category: 'Manipulation', args: [{ name: 'InputObj', default: '' }, { name: 'X', default: 0 }, { name: 'Y', default: 0 }, { name: 'Z', default: 0 }, { name: 'Mode', default: 'siRelative' }],

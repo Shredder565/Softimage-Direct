@@ -32,9 +32,9 @@ const COMMANDS = [
   'ActivateObjectSelToolWithNoObjStateChange', 'ActivateVertexSelToolWithNoObjStateChange', 'ActivateEdgeSelToolWithNoObjStateChange',
   'ActivateRaycastEdgeSelToolWithNoObjStateChange', 'ActivateRaycastPolySelToolWithNoObjStateChange',
   // components
-  'GrowSelection', 'ShrinkSelection', 'SelectAdjacent', 'ConvertSelection', 'ConvertSelectionToPoints', 'ConvertSelectionToEdges',
-  'ConvertSelectionToPolygons', 'SelectAllConnectedComponents', 'SelectNSidedPolygons', 'SelectGeometryComponents',
-  'GetNeighborSubcomponents', 'SelectEdgeLoop', 'SelectBoundaryEdgeLoop', 'SelectParallelEdgeLoop', 'SelectAllComponentLoops',
+  // (GrowSelection, ShrinkSelection, SelectAdjacent, ConvertSelection*, SelectNSidedPolygons, GetNeighborSubcomponents,
+  //  Select*EdgeLoop, SICreateLayerFromSelection*, ToggleGhosting: CMD-B17a, compare_selection_layers_b17a.mjs)
+  'SelectAllConnectedComponents', 'SelectGeometryComponents', 'SelectAllComponentLoops',
   'GrowSelectedLoops', 'ShrinkSelectedLoops', 'SelectPolygonOutline',
   // info
   'InfoSelection', 'InfoScene',
@@ -42,8 +42,8 @@ const COMMANDS = [
   'AddToGroup', 'SIAddToGroup', 'SIAddToGroupLowLevel', 'RemoveFromGroup', 'SIRemoveFromGroup', 'SICreateGroup',
   'CreateGroupFromObjects', 'AddGroup', 'RemoveGroup', 'SetInstanceGroup', 'RemoveInstanceGroup',
   // layers
-  'SICreateLayer', 'SICreateLayer2', 'SICreateLayerFromSelection', 'SICreateLayerFromSelection2', 'MoveObjectToLayer',
-  'GetCurrentLayer', 'CreateLayerGroup', 'CutLayerParent', 'ToggleGhosting',
+  'SICreateLayer', 'SICreateLayer2', 'MoveObjectToLayer',
+  'GetCurrentLayer', 'CreateLayerGroup', 'CutLayerParent',
 ];
 // default-argument runs that are specified to fail, with the expected error text
 const DEFAULT_ERRORS = {
@@ -280,74 +280,16 @@ const got = await page.evaluate(({ COMMANDS }) => {
     eq('SelectGeometryComponents: bare object is not attested, nothing selected', [comp(), logFrom(l).some(t => /^SelectGeometryComponents: not yet attested/.test(t))], [null, true]); }
 
   const grow0 = sorted(polysTouching(cm, P0));
-  setPoly([0]); run('GrowSelection');
-  eq('GrowSelection: one polygon of a cube grows to the 5 polygons touching it', [items(), items().length], [grow0, 5]);
-  run('GrowSelection'); eq('GrowSelection: second step reaches all 6', items(), [0, 1, 2, 3, 4, 5]);
-  reset(); run('GrowSelection', { InputObjs: 'cube.pnt[0]' });
-  eq('GrowSelection: point grows across its edges (InputObjs string)', [comp()?.kind, items()], ['point', sorted([0, ...CF.edges.filter(k => k.split('-').includes('0')).map(k => k.split('-').map(Number).find(v => v !== 0))])]);
-  eq('GrowSelection: point on a cube -> 4 points', items().length, 4);
-  reset(); run('GrowSelection', { InputObjs: 'cube.edge[0]' });
-  eq('GrowSelection: edge grows through its end points', items(), sorted(edgesTouching(CF, new Set(CF.edges[0].split('-').map(Number)))));
-  eq('GrowSelection: edge on a cube -> 5 edges', items().length, 5);
-  setPoly(grow0); run('ShrinkSelection');
-  eq('ShrinkSelection: the 5 grown polygons shrink back to the one', items(), [0]);
-  setPoly([0, 1, 2, 3, 4, 5]); run('ShrinkSelection');
-  eq('ShrinkSelection: a closed full selection has no border, stays', items(), [0, 1, 2, 3, 4, 5]);
-  setPoly([0]); run('ShrinkSelection');
-  eq('ShrinkSelection: single polygon shrinks to nothing', items(), []);
-
-  setPoly([0]); run('SelectAdjacent');
-  eq('SelectAdjacent: same kind = the touching polygons without the original', items(), grow0.filter(i => i !== 0));
-  setPoly([0]); run('SelectAdjacent', { ExtendSelection: true });
-  eq('SelectAdjacent: ExtendSelection keeps the original', items(), grow0);
-  setPoly([0]); run('SelectAdjacent', { SelFilter: 'Point' });
-  eq('SelectAdjacent: Point = the points of the polygon', [comp()?.kind, items(), A.selMode], ['point', sorted([...P0]), 'point']);
-  reset(); run('SelectAdjacent', { InputObjs: 'cube.pnt[0]', SelFilter: 'Edge' });
-  eq('SelectAdjacent: Edge from a point = its 3 edges', [comp()?.kind, items()], ['edge', sorted(CF.edges.filter(k => k.split('-').includes('0')))]);
-  reset(); run('SelectAdjacent', { InputObjs: 'cube.pnt[0]', SelFilter: 'Polygon' });
-  eq('SelectAdjacent: Polygon from a point = its 3 polygons', [comp()?.kind, items()], ['polygon', sorted(polysTouching(cm, new Set([0])))]);
-  eq('SelectAdjacent: unknown SelFilter is not attested', /^not yet attested: SelFilter "Sample"/.test(run('SelectAdjacent', { InputObjs: 'cube.pnt[0]', SelFilter: 'Sample' }).err ?? ''), true);
-
   const p0edges = sorted(cm.polygons[0].map((a, i) => ek(a, cm.polygons[0][(i + 1) % 4])));
-  setPoly([0]); run('ConvertSelectionToPoints');
-  eq('ConvertSelectionToPoints: polygon -> its 4 points', [comp()?.kind, items()], ['point', sorted([...P0])]);
-  run('ConvertSelectionToPolygons');
-  eq('ConvertSelectionToPolygons: 4 points of a polygon -> that polygon only', [comp()?.kind, items()], ['polygon', [0]]);
-  run('ConvertSelectionToEdges');
-  eq('ConvertSelectionToEdges: polygon -> its 4 edges', [comp()?.kind, items()], ['edge', p0edges]);
-  run('ConvertSelectionToPolygons');
-  eq('ConvertSelectionToPolygons: 4 edges of a polygon -> that polygon', items(), [0]);
-  reset(); run('ConvertSelectionToPolygons', { InputObjs: `cube.pnt[${[...P0].slice(0, 3).join(',')}]` });
-  eq('ConvertSelectionToPolygons: 3 of 4 points describe no polygon', [comp()?.kind, items()], ['polygon', []]);
-  reset(); run('ConvertSelectionToEdges', { InputObjs: `cube.pnt[${[...P0].join(',')}]` });
-  eq('ConvertSelectionToEdges: points -> edges with both ends selected', items(), p0edges);
-  reset(); run('ConvertSelectionToPoints', { InputObjs: 'cube.edge[0]' });
-  eq('ConvertSelectionToPoints: edge -> its 2 points', items(), sorted(CF.edges[0].split('-').map(Number)));
-  setPoly([0]); run('ConvertSelection', { SelFilter: 'Edge' });
-  eq('ConvertSelection: SelFilter Edge', [comp()?.kind, items()], ['edge', p0edges]);
-  setPoly([0]); run('ConvertSelection');
-  eq('ConvertSelection: no SelFilter leaves the selection', [comp()?.kind, items()], ['polygon', [0]]);
-
+  // CMD-B17a moved these to compare_selection_layers_b17a.mjs (wire contract replaced the inferred behaviour)
   setPoly([0]); run('SelectAllConnectedComponents');
   eq('SelectAllConnectedComponents: island of a cube polygon = all 6', items(), [0, 1, 2, 3, 4, 5]);
   reset(); run('SelectAllConnectedComponents', { InputObjs: 'cube.pnt[3]' });
   eq('SelectAllConnectedComponents: points', items(), [0, 1, 2, 3, 4, 5, 6, 7]);
 
-  reset(); A.run('SelectObj', { InputObjs: 'cube' }); run('SelectNSidedPolygons');
-  eq('SelectNSidedPolygons: defaults (5 or more edges) find nothing on a cube', [comp()?.kind, items(), A.selMode], ['polygon', [], 'polygon']);
-  reset(); A.run('SelectObj', { InputObjs: 'cube' }); run('SelectNSidedPolygons', { Value: 4, ExactEdgecount: true });
-  eq('SelectNSidedPolygons: 4 exact = the 6 quads', items(), [0, 1, 2, 3, 4, 5]);
-  reset(); run('SelectNSidedPolygons', { InputObjs: 'cube', Value: 3, ExactEdgecount: true });
-  eq('SelectNSidedPolygons: 3 exact = no triangles', items(), []);
-  reset(); run('SelectNSidedPolygons', { InputObjs: 'cube', Value: 3, ExactEdgecount: false });
-  eq('SelectNSidedPolygons: 3 not exact = 3 or more edges', items(), [0, 1, 2, 3, 4, 5]);
+  // CMD-B17a moved these to compare_selection_layers_b17a.mjs (wire contract replaced the inferred behaviour)
 
-  setPoly([0]); r = run('GetNeighborSubcomponents');
-  eq('GetNeighborSubcomponents: type 0 returns the touching polygons, selection unchanged', [r.v, items()], [[`cube.poly[${grow0.filter(i => i !== 0).join(',')}]`], [0]]);
-  r = run('GetNeighborSubcomponents', { InputObjs: 'cube.poly[0]', SelFilter: 'Point' });
-  eq('GetNeighborSubcomponents: SelFilter Point', r.v, [`cube.pnt[${sorted([...P0]).join(',')}]`]);
-  r = run('GetNeighborSubcomponents', { InputObjs: 'cube.poly[0]', NeighborType: 1 });
-  eq('GetNeighborSubcomponents: other NeighborType is not attested', [/^not yet attested: NeighborType 1/.test(r.err ?? ''), r.nya], [true, true]);
+  // CMD-B17a moved these to compare_selection_layers_b17a.mjs (wire contract replaced the inferred behaviour)
 
   setPoly([0]); run('SelectPolygonOutline');
   eq('SelectPolygonOutline: one polygon -> its 4 edges, edge filter', [comp()?.kind, items(), A.selMode], ['edge', p0edges, 'edge']);
@@ -358,13 +300,7 @@ const got = await page.evaluate(({ COMMANDS }) => {
   reset(); r = run('SelectPolygonOutline', { InputObjs: 'cube.pnt[0]' });
   eq('SelectPolygonOutline: needs polygons', /^not yet attested: point selections/.test(r.err ?? ''), true);
 
-  // loops on the cube: every point has 3 edges, so an edge loop cannot continue; the ring has 4 edges
-  reset(); run('SelectEdgeLoop', { InputObjs: 'cube.edge[0]' });
-  eq('SelectEdgeLoop: stops at 3-edge points (cube)', items(), [CF.edges[0]]);
-  reset(); run('SelectParallelEdgeLoop', { InputObjs: 'cube.edge[0]' });
-  eq('SelectParallelEdgeLoop: ring of 4 on a cube', items().length, 4);
-  reset(); run('SelectBoundaryEdgeLoop', { InputObjs: 'cube.edge[0]' });
-  eq('SelectBoundaryEdgeLoop: closed mesh has no border, selection kept', items(), [CF.edges[0]]);
+  // CMD-B17a moved these to compare_selection_layers_b17a.mjs (wire contract replaced the inferred behaviour)
 
   // ================================================================ loops on the grid
   const gx = v => Math.round(GF.pos(v)[0] * 1e4), gz = v => Math.round(GF.pos(v)[2] * 1e4);
@@ -375,20 +311,10 @@ const got = await page.evaluate(({ COMMANDS }) => {
   const rowEdges = z => GF.edges.filter(k => ends(k).every(v => gz(v) === z));            // edges lying on the line z
   const border = GF.edges.filter(k => GF.edgePolys.get(k).length === 1);
   const zMid = zs[2], xA = xs[2], xB = xs[3];
+  const eBorder = GF.edges.find(k => { const [a, b2] = ends(k); return gz(a) === zs[0] && gz(b2) === zs[0] && Math.min(gx(a), gx(b2)) === xs[2]; });
   const eMid = GF.edges.find(k => { const [a, b2] = ends(k); return gz(a) === zMid && gz(b2) === zMid && Math.min(gx(a), gx(b2)) === xA && Math.max(gx(a), gx(b2)) === xB; });
   const gsel = (kind, list) => { reset(); run('SelectGeometryComponents', { SelectionList: `grid.${kind}[${list.join(',')}]` }); };
-  gsel('edge', [gIdx(eMid)]); run('SelectEdgeLoop');
-  eq('SelectEdgeLoop: interior edge -> the whole line of edges across the grid', [items(), items().length], [sorted(rowEdges(zMid)), xs.length - 1]);
-  const eBorder = GF.edges.find(k => { const [a, b2] = ends(k); return gz(a) === zs[0] && gz(b2) === zs[0] && Math.min(gx(a), gx(b2)) === xA; });
-  gsel('edge', [gIdx(eBorder)]); run('SelectEdgeLoop');
-  eq('SelectEdgeLoop: border edge -> that side of the grid, stops at the corners', items(), sorted(rowEdges(zs[0])));
-  gsel('edge', [gIdx(eBorder)]); run('SelectBoundaryEdgeLoop');
-  eq('SelectBoundaryEdgeLoop: border edge -> the complete border', [items(), items().length], [sorted(border), 2 * (xs.length - 1) + 2 * (zs.length - 1)]);
-  gsel('edge', [gIdx(eMid)]); run('SelectBoundaryEdgeLoop');
-  eq('SelectBoundaryEdgeLoop: interior edge contributes nothing', items(), [eMid]);
-  gsel('edge', [gIdx(eMid)]); run('SelectParallelEdgeLoop');
-  eq('SelectParallelEdgeLoop: ring = the parallel edges of that column of quads', [items(), items().length],
-    [sorted(GF.edges.filter(k => { const [a, b2] = ends(k); return gz(a) === gz(b2) && Math.min(gx(a), gx(b2)) === xA && Math.max(gx(a), gx(b2)) === xB; })), zs.length]);
+  // CMD-B17a moved these to compare_selection_layers_b17a.mjs (wire contract replaced the inferred behaviour)
   gsel('edge', [gIdx(eBorder)]); run('SelectAllComponentLoops', { AroundCorners: false });
   eq('SelectAllComponentLoops: edges, AroundCorners false = one side', items(), sorted(rowEdges(zs[0])));
   gsel('edge', [gIdx(eBorder)]); run('SelectAllComponentLoops');
@@ -408,8 +334,7 @@ const got = await page.evaluate(({ COMMANDS }) => {
   eq('GrowSelectedLoops: point selections are not attested', /^not yet attested: point selections/.test(r.err ?? ''), true);
   r = run('ShrinkSelectedLoops');
   eq('ShrinkSelectedLoops: point selections are not attested', /^not yet attested: point selections/.test(r.err ?? ''), true);
-  gsel('pnt', [0]); r = run('SelectEdgeLoop');
-  eq('SelectEdgeLoop: point selections are not attested', /^not yet attested: point selections/.test(r.err ?? ''), true);
+  // CMD-B17a moved these to compare_selection_layers_b17a.mjs (wire contract replaced the inferred behaviour)
 
   // ================================================================ info
   { reset(); A.run('SelectObj', { InputObjs: 'cube' }); const l = A.log.length; r = run('InfoSelection');
