@@ -72,6 +72,7 @@ import { registerFaceRobotB14dCommands } from './commands/faceRobotB14d';
 import { registerFaceRobotB14eCommands } from './commands/faceRobotB14e';
 import { registerModelTasksB15aCommands } from './commands/modelTasksB15a';
 import { registerPropertyTasksB15bCommands } from './commands/propertyTasksB15b';
+import { registerParticlesB15cCommands } from './commands/particlesB15c';
 import iceViewChrome from './data/si/ice_view_chrome.json';
 import iceModuleTops from './data/si/ice_module_mcp_tops.json';
 import hairModuleTops from './data/si/hair_module_mcp_tops.json';
@@ -214,6 +215,7 @@ registerFaceRobotB14cCommands(app); // CMD-B14c (FR eyes / jaw / regions)
 registerFaceRobotB14dCommands(app);   // CMD-B14d (Face Robot retarget / mocap / stage)
 registerFaceRobotB14eCommands(app);   // CMD-B14e (Face Robot export / weights / tongue)
 registerPropertyTasksB15bCommands(app);   // CMD-B15b (propertytasks.dll contracts)
+registerParticlesB15cCommands(app);   // CMD-B15c (sparks.dll / forces.dll particle commands + bbbbee29 shader creation, inferred)
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
 registerModelTasksB15aCommands(app);   // CMD-B15a (modeltasks.dll model / import / ref-model / delta contracts)
