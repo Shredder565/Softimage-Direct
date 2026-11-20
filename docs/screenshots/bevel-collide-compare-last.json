@@ -2,7 +2,7 @@
   "ok": true,
   "diffs": [],
   "notes": [
-    "loaded /home/claude/softimage-direct/data/dump/si_bevel_collide.json",
+    "loaded /workspace/data/dump/si_bevel_collide.json",
     "softimage 13.2.163.0",
     "script si_bevel_collide_dump.js",
     "purpose Bevel managecollisions on/off goldens (fixed lastOp)",
@@ -20,7 +20,7 @@
     "Direct managecollisions param present=true off=false on=true",
     "Direct false/true mesh_equal=true npts=66"
   ],
-  "dump": "/home/claude/softimage-direct/data/dump/si_bevel_collide.json",
+  "dump": "/workspace/data/dump/si_bevel_collide.json",
   "meta": {
     "softimage": "13.2.163.0",
     "script": "si_bevel_collide_dump.js",

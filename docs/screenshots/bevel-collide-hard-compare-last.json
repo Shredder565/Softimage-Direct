@@ -2,7 +2,7 @@
   "ok": true,
   "diffs": [],
   "notes": [
-    "loaded /home/claude/softimage-direct/data/dump/si_bevel_collide_hard.json",
+    "loaded /workspace/data/dump/si_bevel_collide_hard.json",
     "softimage 13.2.163.0",
     "script si_bevel_collide_hard_dump.js",
     "purpose Hard-mesh Bevel managecollisions ON vs OFF diverge hunt",
@@ -27,7 +27,7 @@
     "Direct cube_r10: npts 384/384 npolys 386/386 mesh_equal=true mc=false/true",
     "Direct grid_r08: npts 288/96 npolys 285/109 mesh_equal=false mc=false/true"
   ],
-  "dump": "/home/claude/softimage-direct/data/dump/si_bevel_collide_hard.json",
+  "dump": "/workspace/data/dump/si_bevel_collide_hard.json",
   "meta": {
     "softimage": "13.2.163.0",
     "script": "si_bevel_collide_hard_dump.js",
