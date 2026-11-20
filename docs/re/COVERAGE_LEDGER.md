@@ -34,41 +34,41 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 <!-- BEGIN GENERATED: commands -->
 | Row | Area (command category) | Softimage commands | Named in `src/` | Not yet named | Status |
 |-----|-------------------------|-------------------:|----------------:|--------------:|--------|
-| CMD-01 | Character Rigging | 31 | 9 | 22 | TODO |
-| CMD-02 | (uncategorised) | 448 | 434 | 14 | TODO |
-| CMD-03 | Rendering | 175 | 167 | 8 | TODO |
-| CMD-04 | Modeling | 274 | 269 | 5 | TODO |
-| CMD-05 | Custom | 413 | 409 | 4 | TODO |
-| CMD-06 | Simulation | 118 | 114 | 4 | TODO |
-| CMD-07 | Animation | 186 | 185 | 1 | TODO |
-| CMD-08 | Edit | 117 | 116 | 1 | TODO |
-| CMD-09 | Property | 125 | 124 | 1 | TODO |
-| CMD-10 | Action | 1 | 1 | 0 | AUDIT |
-| CMD-11 | Animation Mixer | 113 | 113 | 0 | AUDIT |
-| CMD-12 | Animation mixer | 5 | 5 | 0 | AUDIT |
-| CMD-13 | Cache | 2 | 2 | 0 | AUDIT |
-| CMD-14 | Camera | 1 | 1 | 0 | AUDIT |
-| CMD-15 | Camera Sequencer | 7 | 7 | 0 | AUDIT |
-| CMD-16 | Cluster | 16 | 16 | 0 | AUDIT |
-| CMD-17 | Constraint | 27 | 27 | 0 | AUDIT |
-| CMD-18 | Customization | 2 | 2 | 0 | AUDIT |
-| CMD-19 | Deformation | 55 | 55 | 0 | AUDIT |
-| CMD-20 | Devices | 5 | 5 | 0 | AUDIT |
-| CMD-21 | Drawing | 14 | 14 | 0 | AUDIT |
-| CMD-22 | File | 110 | 110 | 0 | AUDIT |
-| CMD-23 | General | 10 | 10 | 0 | AUDIT |
-| CMD-24 | Generator | 1 | 1 | 0 | AUDIT |
-| CMD-25 | Group | 16 | 16 | 0 | AUDIT |
-| CMD-26 | ICE | 5 | 5 | 0 | AUDIT |
-| CMD-27 | Layer | 20 | 20 | 0 | AUDIT |
-| CMD-28 | Manipulation | 51 | 51 | 0 | AUDIT |
-| CMD-29 | Navigation | 22 | 22 | 0 | AUDIT |
-| CMD-30 | Operator | 11 | 11 | 0 | AUDIT |
-| CMD-31 | Paint | 7 | 7 | 0 | AUDIT |
-| CMD-32 | Preferences | 2 | 2 | 0 | AUDIT |
-| CMD-33 | Primitive | 131 | 131 | 0 | AUDIT |
-| CMD-34 | Scripting | 4 | 4 | 0 | AUDIT |
-| CMD-35 | Selection | 108 | 108 | 0 | AUDIT |
+| CMD-01 | (uncategorised) | 448 | 448 | 0 | AUDIT |
+| CMD-02 | Action | 1 | 1 | 0 | AUDIT |
+| CMD-03 | Animation | 186 | 186 | 0 | AUDIT |
+| CMD-04 | Animation Mixer | 113 | 113 | 0 | AUDIT |
+| CMD-05 | Animation mixer | 5 | 5 | 0 | AUDIT |
+| CMD-06 | Cache | 2 | 2 | 0 | AUDIT |
+| CMD-07 | Camera | 1 | 1 | 0 | AUDIT |
+| CMD-08 | Camera Sequencer | 7 | 7 | 0 | AUDIT |
+| CMD-09 | Character Rigging | 31 | 31 | 0 | AUDIT |
+| CMD-10 | Cluster | 16 | 16 | 0 | AUDIT |
+| CMD-11 | Constraint | 27 | 27 | 0 | AUDIT |
+| CMD-12 | Custom | 413 | 413 | 0 | AUDIT |
+| CMD-13 | Customization | 2 | 2 | 0 | AUDIT |
+| CMD-14 | Deformation | 55 | 55 | 0 | AUDIT |
+| CMD-15 | Devices | 5 | 5 | 0 | AUDIT |
+| CMD-16 | Drawing | 14 | 14 | 0 | AUDIT |
+| CMD-17 | Edit | 117 | 117 | 0 | AUDIT |
+| CMD-18 | File | 110 | 110 | 0 | AUDIT |
+| CMD-19 | General | 10 | 10 | 0 | AUDIT |
+| CMD-20 | Generator | 1 | 1 | 0 | AUDIT |
+| CMD-21 | Group | 16 | 16 | 0 | AUDIT |
+| CMD-22 | ICE | 5 | 5 | 0 | AUDIT |
+| CMD-23 | Layer | 20 | 20 | 0 | AUDIT |
+| CMD-24 | Manipulation | 51 | 51 | 0 | AUDIT |
+| CMD-25 | Modeling | 274 | 274 | 0 | AUDIT |
+| CMD-26 | Navigation | 22 | 22 | 0 | AUDIT |
+| CMD-27 | Operator | 11 | 11 | 0 | AUDIT |
+| CMD-28 | Paint | 7 | 7 | 0 | AUDIT |
+| CMD-29 | Preferences | 2 | 2 | 0 | AUDIT |
+| CMD-30 | Primitive | 131 | 131 | 0 | AUDIT |
+| CMD-31 | Property | 125 | 125 | 0 | AUDIT |
+| CMD-32 | Rendering | 175 | 175 | 0 | AUDIT |
+| CMD-33 | Scripting | 4 | 4 | 0 | AUDIT |
+| CMD-34 | Selection | 108 | 108 | 0 | AUDIT |
+| CMD-35 | Simulation | 118 | 118 | 0 | AUDIT |
 | CMD-36 | Source | 6 | 6 | 0 | AUDIT |
 | CMD-37 | Texturing | 75 | 75 | 0 | AUDIT |
 | CMD-38 | Toolbar | 6 | 6 | 0 | AUDIT |
@@ -78,7 +78,7 @@ category are listed in [coverage_commands.json](./coverage_commands.json).
 | CMD-42 | Viewing | 191 | 191 | 0 | AUDIT |
 | CMD-43 | Views | 5 | 5 | 0 | AUDIT |
 | CMD-44 | file | 5 | 5 | 0 | AUDIT |
-| | **Total** | **2950** | **2890** | **60** | |
+| | **Total** | **2950** | **2950** | **0** | |
 <!-- END GENERATED: commands -->
 
 ### P1 sub-rows (hand-maintained; survive regeneration)
@@ -205,5 +205,5 @@ to diff `data/spdl/spdl.json` against `src/data/opdefs.json` and the operator cl
 | CMD-B15d | CMD-B12-ELSE | Clips / sources: `imageclip.dll` (13 incl. `SIAddImageSource`, `SIAddImageClip`), `moaudio.dll` (`AddAudioClip`, `ImportAudio`) | 15 | WIRE-PARTIAL | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md). 2026-11-20: 9 SPEC (`SIAddImageSourceOp`, `SetImageSource`, `SIAddModelSource`, `SICreateModelClip`, `SIAddModelClip`, `SIAddImageSource`, `SIAddImageClip`, `AddAudioClip`, `ImportAudio`); 6 SPEC-PARTIAL (`SIAddImageOp`, `SIAddWritableImageSource`, `SICreateImageClip2`, `SICreateDefaultImageClip`, `AddFileCacheSource`, `AddFileCacheSource2`). Mode-3 GUID `381d22f4-0961-46de-b9fa-e239189ccb51` not in the registry 2026-11-20 wire: 15 commands (`clipsSourcesB15d*.ts`); 9 fully, 6 partly; UIXSI clips row now delegates. `compare_clips_b15d_commands` 108/108. |
 | CMD-B15e | CMD-B11-RIG | Character Rigging script commands (`Application\DSScripts\CharacterRigging\*.js`, `Charac_RigFromQuadruped.vbs`), read through REA (file opened as a headerless image) | 24 | WIRE-PARTIAL | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md). 2026-11-20: all 24 names SPEC (21 `make*.js` builders + `MakeBipedCharacterKeySet`, `MakeQuadrupedCharacterKeySet`, `SetKeyableRig`). The VBScript second registrations of `MakeBiped` / `MakeBipedDogLeg` (`Charac_RigFromBiped.vbs`, 220 070 bytes) are SPEC-PARTIAL: the file exceeds the 64 KB headerless-load limit 2026-11-20 wire: 24 builders (`rigScriptsB15e*.ts`) create the named objects / hierarchy / parameter values on a stand-in rig model (no rig maths; `MakeTail` not built; VBScript duplicates of MakeBiped* not registered). `compare_rigscripts_b15e_commands` 168/168. |
 | CMD-B15f | CMD-B13-SCRIPTS | Remaining script commands: `particle.vbs` (3), sdkui wizards (8 + `CreateMRShaderWizard`), `EvolverLipSync.js`, `UpgradeShaders.vbs`, Syflex `cache.vbs` / `cloth.vbs` (4), `primitives.vbs`, `importexport.vbs`, `uixsiscripts.vbs`, `GPUSurfaceFX.js` | 24 | WIRE-PARTIAL | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md). 2026-11-20: 20 SPEC; SPEC-PARTIAL: `CreateMRShaderWizard` (`ShaderWizard.js` 75 743 B > 64 KB), `Save Zero Key Hot Key` (`uixsiscripts.vbs` 462 005 B, inferred), `GenNormalMap` / `GenDiffuseMap` (`GPUSurfaceFX.js` not shipped). Also closes CMD-01-ADDONDOC Q2 (`.xsitemplate` schema) and Q3 (generator methods) and specifies `GetPrimCamera` 2026-11-20 wire: 20 commands (`miscScriptsB15f*.ts`, `addonDocWizard.ts`): wizards, GenerateLipSync / UpgradeShaders on stand-in models, `CreateMRShaderWizard` / `Save Zero Key Hot Key` partly, `GenNormalMap` / `GenDiffuseMap` fail as the contract says; Syflex pickers already wired (CMD-B7b). `compare_miscscripts_b15f_commands` 190/190. |
-| CMD-B15-ELSE | CMD-B12-ELSE | Missing built-in commands whose handler is still unlocated or unread after batch 15: `Add3DObjectToScene` (not modeltasks; candidates tasks.dll, _3dobject2.dll, scnmgr.dll, sicoresdk.dll), CLSID `bbbbee29…` (`CreateShaderFromCLSID`, `CreateShaderFromProgID`, `CreateShadersFromMaterialPreset`, `AddShaderAttachedComment`; not in shadertasks / propertytasks / sparks; candidates molight, shaderhelper, xgs, props, si3dobjectmodel, sicoresdk), `MarkObjectDirty` (registry CLSID all zeros), `Mesh Filter` / `Dice Object/Polygons` (scnmgr.dll), `CopyPartition` / `RegenerateMaps` (rendercore.dll), `CreateEnvironmentCache` (corehelper.dll), `SIAppendBone` (sicoresdk.dll), `GetSkeleton` (kinechain.dll), `SISwapArrayElements`, `CopyPaste`, `PaintWeights`, tools (`DoNothing`, `MoveComponent Tool`, `CursorTransformTool`, `ToggleProjectionTool`, `Pick Session Tool` siuitasks; `XYZ Transform `, `Add Surface Point Tool` toolmanager; `BoneCreateTool`, `Crowd*Tool`, `Freeze Selected`, `Delete Selected Branch`, `Transform Set New `, `Turn ON/OFF Interactive SRT`, `DeleteCurrentLayer`) | ~35 | TODO | next native batch |
+| CMD-B15-ELSE | CMD-B12-ELSE | Missing built-in commands whose handler is still unlocated or unread after batch 15: `Add3DObjectToScene` (not modeltasks; candidates tasks.dll, _3dobject2.dll, scnmgr.dll, sicoresdk.dll), CLSID `bbbbee29…` (`CreateShaderFromCLSID`, `CreateShaderFromProgID`, `CreateShadersFromMaterialPreset`, `AddShaderAttachedComment`; not in shadertasks / propertytasks / sparks; candidates molight, shaderhelper, xgs, props, si3dobjectmodel, sicoresdk), `MarkObjectDirty` (registry CLSID all zeros), `Mesh Filter` / `Dice Object/Polygons` (scnmgr.dll), `CopyPartition` / `RegenerateMaps` (rendercore.dll), `CreateEnvironmentCache` (corehelper.dll), `SIAppendBone` (sicoresdk.dll), `GetSkeleton` (kinechain.dll), `SISwapArrayElements`, `CopyPaste`, `PaintWeights`, tools (`DoNothing`, `MoveComponent Tool`, `CursorTransformTool`, `ToggleProjectionTool`, `Pick Session Tool` siuitasks; `XYZ Transform `, `Add Surface Point Tool` toolmanager; `BoneCreateTool`, `Crowd*Tool`, `Freeze Selected`, `Delete Selected Branch`, `Transform Set New `, `Turn ON/OFF Interactive SRT`, `DeleteCurrentLayer`) | ~35 | WIRE-PARTIAL | next native batch. 2026-11-20 wire (inferred, relaxed rules, PR after #191): every name still missing after #191 is on the bus, all marked `// inferred`: 25 tool / misc names in `src/commands/inferredB15.ts` (log-only: `Add Surface Point Tool`, `CursorTransformTool`, `ToggleProjectionTool`, `Transform Set New `, `RegenerateMaps`, `Pick Session Tool` outside a session; delegating: `CrowdCreate*Tool` → CreateCrowdEmitter / CreateWall, `MoveComponent Tool` → TweakTool, `Freeze Selected` → FreezeObj, `Dice Object/Polygons` / `Mesh Filter` → ApplyTopoOp, `Delete Selected Branch` → DeleteObj, `DeleteCurrentLayer` → DeleteLayer, `SIAppendBone` one-bone stand-in), `MarkObjectDirty` / `AddShaderAttachedComment` (log only) and `GetSkeleton` (root, bones, effector) in `shellsB15Else.ts`, bbbbee29 family in `particlesB15cShaders.ts` (`CreateShaderFromCLSID` fails: no CLSID table). Check `compare_inferred_b15_commands` 164/164. Needs analyst confirmation |
 | GOLD-B15 | (new) | XSIBATCH goldens for cheap batch-15 cases: `SIGetModel` on an empty list, `SIAddModelClip` failure text, `SIAddCustomParam` with an empty name, `CreateParticleType` default names | - | TODO | no process-launch tool this run |

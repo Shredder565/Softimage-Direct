@@ -412,8 +412,7 @@ export function registerParticleScriptCommands(app: App) {
   });
 
   // ---- CreateInspectParticleType{Billboard,Sphere,Blob}: one procedure, three defaults
-  for (const [kind, def] of [['Billboard', 'siBillboardType'], ['Sphere', 'siSphereType'], ['Blob', 'siBlobType']] as const) {
-    const name = `CreateInspectParticleType${kind}`;
+  for (const [name, kind, def] of [['CreateInspectParticleTypeBillboard', 'Billboard', 'siBillboardType'], ['CreateInspectParticleTypeSphere', 'Sphere', 'siSphereType'], ['CreateInspectParticleTypeBlob', 'Blob', 'siBlobType']] as const) {
     app.register({
       name, label: `Create & Inspect Particle ${kind} Type`, category: CAT,
       args: [{ name: 'renderType', default: def }],
