@@ -196,7 +196,7 @@ export class App {
 }
 
 /** Log a command the way the chosen scripting language would (Preferences > Scripting > Language). */
-function fmtCall(name: string, vals: any[], lang = 'VBScript'): string {
+export function fmtCall(name: string, vals: any[], lang = 'VBScript'): string {
   const args = vals.map(fmtArg);
   if (lang === 'Python') return `Application.${name}(${args.map(a => a === '' ? 'None' : a === 'True' || a === 'true' ? 'True' : a === 'False' || a === 'false' ? 'False' : a).join(', ')})`;
   if (lang === 'JScript') return `${name}(${args.map(a => a === '' ? 'null' : a).join(', ')});`;
