@@ -894,7 +894,7 @@ of the command's contract (see the note). No code is recorded here.
 | `fr_Mute` | `FaceRobot\Application\Plugins\FR.dll` | `fr_Mute_Execute` `0x18011c050` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC |
 | `fr_sstring` | `FaceRobot\Application\Plugins\FR.dll` | `fr_sstring_Execute` `0x1800313d0` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC |
 | `fr_Callstack_IsDebugMode` | `FaceRobot\Application\Plugins\FR.dll` | `fr_Callstack_IsDebugMode_Execute` `0x18011d370` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC |
-| `fr_NeighborIndex` | `FaceRobot\Application\Plugins\FR.dll` | `fr_NeighborIndex_Execute` `0x18018af40` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC-PARTIAL |
+| `fr_NeighborIndex` | `FaceRobot\Application\Plugins\FR.dll` | `fr_NeighborIndex_Execute` `0x18018af40` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC (B15-FR, cmd-b15-fr-pr189-answers.md) |
 | `fr_GetFaceModel` | `FaceRobot\Application\Plugins\FR.dll` | `fr_GetFaceModel_Execute` `0x18000dcf0` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC-PARTIAL |
 | `GetFaceWeightMap` | `FaceRobot\Application\Plugins\FR.dll` | `GetFaceWeightMap_Execute` `0x18000d3a0` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC |
 | `fr_AddToGroup` | `FaceRobot\Application\Plugins\FR.dll` | `fr_AddToGroup_Execute` `0x180121ea0` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC |
@@ -905,10 +905,10 @@ of the command's contract (see the note). No code is recorded here.
 | `fr_sindices` | `FaceRobot\Application\Plugins\FR.dll` | `fr_sindices_Execute` `0x180030e80` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC |
 | `fr_FileWrite` | `FaceRobot\Application\Plugins\FR.dll` | `fr_FileWrite_Execute` `0x180124260` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC |
 | `fr_Visible` | `FaceRobot\Application\Plugins\FR.dll` | `fr_Visible_Execute` `0x180122ab0` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC |
-| `fr_RepairNan` | `FaceRobot\Application\Plugins\FR.dll` | `fr_RepairNan_Execute` `0x18011ea70` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC-PARTIAL |
-| `fr_MuteSources` | `FaceRobot\Application\Plugins\FR.dll` | `fr_MuteSources_Execute` `0x18000df70` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC-PARTIAL |
+| `fr_RepairNan` | `FaceRobot\Application\Plugins\FR.dll` | `fr_RepairNan_Execute` `0x18011ea70` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC (B15-FR, cmd-b15-fr-pr189-answers.md) |
+| `fr_MuteSources` | `FaceRobot\Application\Plugins\FR.dll` | `fr_MuteSources_Execute` `0x18000df70` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC (B15-FR, cmd-b15-fr-pr189-answers.md) |
 | `fr_sset` | `FaceRobot\Application\Plugins\FR.dll` | `fr_sset_Execute` `0x180031070` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC |
-| `fr_AddObjectInPlace` | `FaceRobot\Application\Plugins\FR.dll` | `fr_AddObjectInPlace_Execute` `0x1801217a0` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC-PARTIAL |
+| `fr_AddObjectInPlace` | `FaceRobot\Application\Plugins\FR.dll` | `fr_AddObjectInPlace_Execute` `0x1801217a0` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC (B15-FR, cmd-b15-fr-pr189-answers.md) |
 | `fr_GetNormalArray` | `FaceRobot\Application\Plugins\FR.dll` | `fr_GetNormalArray_Execute` `0x18018a280` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC |
 | `fr_FileRead` | `FaceRobot\Application\Plugins\FR.dll` | `fr_FileRead_Execute` `0x180123e10` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC |
 | `fr_GetPointArray` | `FaceRobot\Application\Plugins\FR.dll` | `fr_GetPointArray_Execute` `0x18018ac80` | CMD-B14a | [cmd-b14a-fr-utilities-storage.md](../ghidra/cmd-b14a-fr-utilities-storage.md) | SPEC |
@@ -992,7 +992,7 @@ of the command's contract (see the note). No code is recorded here.
 | `fr_ApplyFaceRobotGameShader` | `FaceRobot\Application\Plugins\FR.dll` | `fr_ApplyFaceRobotGameShader_Execute` `0x180170770` | CMD-B14e | [cmd-b14e-fr-export-weights.md](../ghidra/cmd-b14e-fr-export-weights.md) | SPEC |
 | `fr_ClipWeights` | `FaceRobot\Application\Plugins\FR.dll` | `fr_ClipWeights_Execute` `0x180174cb0` | CMD-B14e | [cmd-b14e-fr-export-weights.md](../ghidra/cmd-b14e-fr-export-weights.md) | SPEC |
 | `fr_ShakeFit` | `FaceRobot\Application\Plugins\FR.dll` | `fr_ShakeFit_Execute` `0x180199230` | CMD-B14e | [cmd-b14e-fr-export-weights.md](../ghidra/cmd-b14e-fr-export-weights.md) | SPEC |
-| `fr_CrawlToVertex` | `FaceRobot\Application\Plugins\FR.dll` | `fr_CrawlToVertex_Execute` `0x180197d30` | CMD-B14e | [cmd-b14e-fr-export-weights.md](../ghidra/cmd-b14e-fr-export-weights.md) | SPEC-PARTIAL |
+| `fr_CrawlToVertex` | `FaceRobot\Application\Plugins\FR.dll` | `fr_CrawlToVertex_Execute` `0x180197d30` | CMD-B14e | [cmd-b14e-fr-export-weights.md](../ghidra/cmd-b14e-fr-export-weights.md) | SPEC (B15-FR, cmd-b15-fr-pr189-answers.md) |
 | `fr_FitTongue` | `FaceRobot\Application\Plugins\FR.dll` | `fr_FitTongue_Execute` `0x180061e60` | CMD-B14e | [cmd-b14e-fr-export-weights.md](../ghidra/cmd-b14e-fr-export-weights.md) | SPEC-PARTIAL |
 | `fr_SolveTongue` | `FaceRobot\Application\Plugins\FR.dll` | `fr_SolveTongue_Execute` `0x180099950` | CMD-B14e | [cmd-b14e-fr-export-weights.md](../ghidra/cmd-b14e-fr-export-weights.md) | SPEC-PARTIAL |
 | `fr_RegenerateMouth` | `FaceRobot\Application\Plugins\FR.dll` | `fr_RegenerateMouth_Execute` `0x1800ef2c0` | CMD-B14e | [cmd-b14e-fr-export-weights.md](../ghidra/cmd-b14e-fr-export-weights.md) | SPEC-PARTIAL |
@@ -1001,6 +1001,127 @@ of the command's contract (see the note). No code is recorded here.
 | `fr_DeformerTransfer` | `FaceRobot\Application\Plugins\FR.dll` | `fr_DeformerTransfer_Execute` `0x18019f520` | CMD-B14e | [cmd-b14e-fr-export-weights.md](../ghidra/cmd-b14e-fr-export-weights.md) | SPEC-PARTIAL |
 | `fr_EnvelopeAliasing` | `FaceRobot\Application\Plugins\FR.dll` | `fr_EnvelopeAliasing_Execute` `0x18017bce0` | CMD-B14e | [cmd-b14e-fr-export-weights.md](../ghidra/cmd-b14e-fr-export-weights.md) | SPEC-PARTIAL |
 | `fr_ExportGameHierarchy` | `FaceRobot\Application\Plugins\FR.dll` | `fr_ExportGameHierarchy_Execute` `0x180187920` | CMD-B14e | [cmd-b14e-fr-export-weights.md](../ghidra/cmd-b14e-fr-export-weights.md) | SPEC-PARTIAL |
+| `SICreateModel` | `Application\bin\modeltasks.dll` | Do `0x18000a190`, worker `0x180009bd0` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `SIMergeScene` | `Application\bin\modeltasks.dll` | Do `0x180032320`, worker `0x18002df80` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC-PARTIAL |
+| `SIImportModel` | `Application\bin\modeltasks.dll` | Do `0x180023eb0`, worker `0x180023ab0` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `SIGetModel` | `Application\bin\modeltasks.dll` | Do stub `0x180016690`, worker `0x1800160c0` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `SIImportIges` | `Application\bin\modeltasks.dll` | Do `0x18001a2a0`, worker `0x180019c90` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `SIExportIges` | `Application\bin\modeltasks.dll` | Do `0x18000f030`, worker `0x18000e980` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `MergeMixer` | `Application\bin\modeltasks.dll` | Do `0x18001db00`, worker slot 10 `0x18001d850` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `ImportMixer` | `Application\bin\modeltasks.dll` | same task as MergeMixer | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `SIImportMatLib` | `Application\bin\modeltasks.dll` | Do `0x18001bae0`, worker `0x18001ad60` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `SIImportReferencedMatLib` | `Application\bin\modeltasks.dll` | same task, ShareOptions 1 | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `ExportMaterialLibrary` | `Application\bin\modeltasks.dll` | Do `0x180010760`, worker `0x1800103c0` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `GetLightListOnModelClip` | `Application\bin\modeltasks.dll` | worker `0x180015240` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `SetLightListOnModelClip` | `Application\bin\modeltasks.dll` | Do stub `0x18003a8e0`, worker `0x18003a7d0` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `SISetResolutionOfRefModels` | `Application\bin\modeltasks.dll` | Do stub `0x18003b580`, worker `0x18003add0` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `RemoveRefModelResolution` | `Application\bin\modeltasks.dll` | Do `0x1800015d0`, worker `0x1800012d0` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `AddRefModelResolution` | `Application\bin\modeltasks.dll` | same task as RemoveRefModelResolution | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `SICreateRefModel` | `Application\bin\modeltasks.dll` | Do `0x18000bbb0`, worker `0x18000b6a0` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `CreateEmptyRefModel` | `Application\bin\modeltasks.dll` | same task as SICreateRefModel | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `ApplyDelta` | `Application\bin\modeltasks.dll` | Do stub `0x180001d90`, worker `0x180001b60` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC |
+| `ImportReferencedDelta` | `Application\bin\modeltasks.dll` | Do `0x1800179d0`, worker `0x180017140` | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC-PARTIAL |
+| `ImportDelta` | `Application\bin\modeltasks.dll` | same task as ImportReferencedDelta | CMD-B15a | [cmd-b15a-modeltasks.md](../ghidra/cmd-b15a-modeltasks.md) | SPEC-PARTIAL |
+| `SIAddCustomParam` | `Application\bin\propertytasks.dll` | Do `0x180001ca0`, worker `0x180014380` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC |
+| `SICreateMaterialDD` | `Application\bin\propertytasks.dll` | Do `0x180023100`, worker `0x180022660` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC-PARTIAL |
+| `CreateUserNormals` | `Application\bin\propertytasks.dll` | Do stub `0x180037fb0` → `0x180033dc0` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC-PARTIAL |
+| `RemoveUserNormals` | `Application\bin\propertytasks.dll` | Do stub `0x180037fb0` → `0x18001a0c0` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC-PARTIAL |
+| `SetVertexUserNormals` | `Application\bin\propertytasks.dll` | Do stub `0x180037fb0` → `0x180036e70` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC-PARTIAL |
+| `SetPolygonUserNormals` | `Application\bin\propertytasks.dll` | Do stub `0x180037fb0` → `0x1800329c0` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC-PARTIAL |
+| `SetUserNormalValues` | `Application\bin\propertytasks.dll` | Do `0x180036740`, worker `0x180035610` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC-PARTIAL |
+| `SIAddShaderEntryToOverride` | `Application\bin\propertytasks.dll` | Do `0x180047aa0`, worker `0x180046dd0` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC-PARTIAL |
+| `SIAddParameterEntryToOverride` | `Application\bin\propertytasks.dll` | same task (51297d82) | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC-PARTIAL |
+| `SIAddConnectionEntryToOverride` | `Application\bin\propertytasks.dll` | same task (51297d82) | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC-PARTIAL |
+| `SIRemoveEntryFromOverride` | `Application\bin\propertytasks.dll` | Do `0x1800502f0`, worker `0x18004fae0` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC-PARTIAL |
+| `SIGetOriginalValueOfOverridden` | `Application\bin\propertytasks.dll` | Do `0x18004c6d0`, worker `0x18004b980` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC-PARTIAL |
+| `SIGetOverriddenParameters` | `Application\bin\propertytasks.dll` | Do `0x18004b2f0`, worker `0x18004abf0` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC |
+| `Add property extended` | `Application\bin\propertytasks.dll` | Do `0x180038d10` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC |
+| `siCreateRetargetMapping` | `Application\bin\propertytasks.dll` | Do `0x180024560`, worker `0x180023b60` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC-PARTIAL |
+| `siWriteRetargetMapping` | `Application\bin\propertytasks.dll` | Do `0x18003d0c0`, worker `0x18003ceb0` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC |
+| `siWriteRetargetComponentData` | `Application\bin\propertytasks.dll` | Do `0x18003c040`, worker `0x18003b980` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC |
+| `SetClusterPropertyValues` | `Application\bin\propertytasks.dll` | Do `0x18001be30`, worker `0x18001b4c0` | CMD-B15b | [cmd-b15b-propertytasks.md](../ghidra/cmd-b15b-propertytasks.md) | SPEC |
+| `ConnectWeightMapToComponent` | `Application\bin\sparks.dll` | Do `0x1801459f0`, worker `0x1801455a0` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC-PARTIAL |
+| `ConnectParticleInitState` | `Application\bin\sparks.dll` | Do `0x180144fd0`, worker `0x180144a00` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC |
+| `DisconnectParticleInitState` | `Application\bin\sparks.dll` | Do `0x1801472f0`, worker `0x180146f30` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC |
+| `SetParticleInitState` | `Application\bin\sparks.dll` | Do `0x1801497c0`, worker `0x180149660` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC-PARTIAL |
+| `UpdateParticleTypeConnections` | `Application\bin\sparks.dll` | Do `0x18014d690` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC-PARTIAL |
+| `AddParticleEmitter` | `Application\bin\sparks.dll` | Do stub `0x18013bd60`, worker `0x18013b260` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC |
+| `AddParticleObstacle` | `Application\bin\sparks.dll` | Do `0x180140410`, worker `0x180140250` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC-PARTIAL |
+| `AddParticles` | `Application\bin\sparks.dll` | Do `0x180142f50`, worker `0x180141a90` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC-PARTIAL |
+| `SetParticleType` | `Application\bin\sparks.dll` | Do `0x18014a780` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC-PARTIAL |
+| `CreateParticleType` | `Application\bin\sparks.dll` | Do stub `0x180146460`, worker `0x1801462c0` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC |
+| `SIAddParticleGoal` | `Application\bin\sparks.dll` | Do `0x18013e620`, worker `0x18013e450` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC-PARTIAL |
+| `CreateEventSource` | `Application\bin\sparks.dll` | Do stub `0x18013d180`, worker `0x18013c780` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC-PARTIAL |
+| `AddUserParameter` | `Application\bin\sparks.dll` | Do `0x1801440c0`, worker `0x180143d80` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC |
+| `RemoveUserParameter` | `Application\bin\sparks.dll` | Do `0x180147bb0`, worker `0x180147810` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC |
+| `SIAddParticleEvent` | `Application\bin\sparks.dll` | Do `0x180141340`, worker `0x1801411f0` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC-PARTIAL |
+| `SetEventObstacle` | `Application\bin\sparks.dll` | Do stub `0x180148eb0`, worker `0x1801485e0` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC-PARTIAL |
+| `SIAddParticleForce` | `Application\bin\forces.dll` | Do `0x180001d00`, worker `0x180001b40` | CMD-B15c | [cmd-b15c-particles.md](../ghidra/cmd-b15c-particles.md) | SPEC |
+| `SIAddImageSourceOp` | `Application\bin\imageclip.dll` | Do `0x180010bc0`, worker `0x180010590` | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC |
+| `SIAddImageOp` | `Application\bin\imageclip.dll` | Do `0x1800100b0`, worker `0x18000fa00` | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC-PARTIAL |
+| `SIAddWritableImageSource` | `Application\bin\imageclip.dll` | Do `0x1800140b0`, worker `0x180013a00` | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC-PARTIAL |
+| `SICreateImageClip2` | `Application\bin\imageclip.dll` | Do `0x180015e60`, worker `0x180015010` (mode 2) | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC-PARTIAL |
+| `SICreateDefaultImageClip` | `Application\bin\imageclip.dll` | same handler, mode 4 | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC-PARTIAL |
+| `SetImageSource` | `Application\bin\imageclip.dll` | Do stub `0x18001a7d0`, worker `0x18001a2d0` | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC |
+| `SIAddModelSource` | `Application\bin\imageclip.dll` | Do `0x180013050`, worker `0x180012af0` | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC |
+| `SICreateModelClip` | `Application\bin\imageclip.dll` | Do `0x1800178e0`, worker `0x180016730` | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC |
+| `SIAddModelClip` | `Application\bin\imageclip.dll` | Do `0x1800178b0` (always fails) | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC |
+| `AddFileCacheSource` | `Application\bin\imageclip.dll` | Do `0x18000e4f0`, worker `0x18000cd00` | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC-PARTIAL |
+| `AddFileCacheSource2` | `Application\bin\imageclip.dll` | same task as AddFileCacheSource | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC-PARTIAL |
+| `SIAddImageSource` | `Application\bin\imageclip.dll` | Do `0x1800121a0`, worker `0x180011460` | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC |
+| `SIAddImageClip` | `Application\bin\imageclip.dll` | Do `0x18000f310`, worker `0x18000ee50` | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC |
+| `AddAudioClip` | `Application\bin\moaudio.dll` | OnDo `0x18000f610` | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC |
+| `ImportAudio` | `Application\bin\moaudio.dll` | OnDo `0x180011010` | CMD-B15d | [cmd-b15d-clips-sources.md](../ghidra/cmd-b15d-clips-sources.md) | SPEC |
+| `MakeRigIcon` | `Application\DSScripts\CharacterRigging\makeRigIcon.js` | `makeRigIcon` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeBiped` | `Application\DSScripts\CharacterRigging\makeBiped.js` | `makeBiped` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeBipedDogLeg` | `Application\DSScripts\CharacterRigging\makeBipedDogLeg.js` | `makeBipedDogLeg` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeQuadruped` | `Application\DSScripts\CharacterRigging\makeQuadruped.js` | `makeQuadruped` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeTorso` | `Application\DSScripts\CharacterRigging\makeTorso.js` | `makeTorso` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeSpine` | `Application\DSScripts\CharacterRigging\makeSpine.js` | `makeSpine` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeArm` | `Application\DSScripts\CharacterRigging\makeArm.js` | `makeArm` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeHand` | `Application\DSScripts\CharacterRigging\makeHand.js` | `makeHand` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeLeg` | `Application\DSScripts\CharacterRigging\makeLeg.js` | `makeLeg` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeFoot` | `Application\DSScripts\CharacterRigging\makeFoot.js` | `makeFoot` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeDogLeg` | `Application\DSScripts\CharacterRigging\makeDogLeg.js` | `makeDogLeg` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeHead` | `Application\DSScripts\CharacterRigging\makeHead.js` | `makeHead` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeBelly` | `Application\DSScripts\CharacterRigging\makeBelly.js` | `makeBelly` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeBicepRoll` | `Application\DSScripts\CharacterRigging\makeBicepRoll.js` | `makeBicepRoll` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeForearmRoll` | `Application\DSScripts\CharacterRigging\makeForearmRoll.js` | `makeForearmRoll` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `Make2PointSlide` | `Application\DSScripts\CharacterRigging\make2PointSlide.js` | `make2PointSlide` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeThighSlide` | `Application\DSScripts\CharacterRigging\makeThighSlide.js` | `makeThighSlide` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeJointCompression` | `Application\DSScripts\CharacterRigging\makeJointCompression.js` | `makeJointCompression` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeHip` | `Application\DSScripts\CharacterRigging\makeHip.js` | `makeHip` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeShadowChain` | `Application\DSScripts\CharacterRigging\makeShadowChain.js` | `makeShadowChain` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeShadowSpine` | `Application\DSScripts\CharacterRigging\makeShadowSpine.js` | `makeShadowSpine` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeBipedCharacterKeySet` | `Application\DSScripts\CharacterRigging\makeCharacterKeySet.js` | `makeBipedCharacterKeySet` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeQuadrupedCharacterKeySet` | `Application\DSScripts\CharacterRigging\makeCharacterKeySet.js` | `makeQuadrupedCharacterKeySet` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `SetKeyableRig` | `Application\DSScripts\CharacterRigging\makeCharacterKeySet.js` | `setKeyableRig` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `MakeBiped (2nd registration)` | `Application\DSScripts\Charac_RigFromBiped.vbs` | `MakeBipedUI` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC-PARTIAL (file > 64 KB, unread) |
+| `MakeBipedDogLeg (2nd registration)` | `Application\DSScripts\Charac_RigFromBiped.vbs` | `MakeBipedDogLegUI` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC-PARTIAL (file > 64 KB, unread) |
+| `MakeQuadruped (2nd registration)` | `Application\DSScripts\Charac_RigFromQuadruped.vbs` | `MakeQuadrupedUI` | CMD-B15e | [cmd-b15e-character-rigging-scripts.md](../ghidra/cmd-b15e-character-rigging-scripts.md) | SPEC |
+| `CreateInspectParticleTypeSphere` | `Application\DSScripts\particle.vbs` | `CreatePTypeProc` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `CreateInspectParticleTypeBlob` | `Application\DSScripts\particle.vbs` | `CreatePTypeProc` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `CreateInspectParticleTypeBillboard` | `Application\DSScripts\particle.vbs` | `CreatePTypeProc` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `CreateCommandWizard` | `Addons\sdkui\Application\Plugins\CommandWizard.js` | `CreateCommandWizard_Execute` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `AddCommandToPlugin` | `Addons\sdkui\Application\Plugins\CommandWizard.js` | `AddCommandToPlugin_Execute` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `GenerateCommandPlugin` | `Addons\sdkui\Application\Plugins\CommandWizard.js` | `GenerateCommandPlugin_Execute` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `CreatePluginWizard` | `Addons\sdkui\Application\Plugins\PluginWizard.js` | `CreatePluginWizard_Execute` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `SIGeneratePlugin` | `Addons\sdkui\Application\Plugins\PluginWizard.js` | `SIGeneratePlugin_Execute` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `CreateToolbarWizard` | `Addons\sdkui\Application\Plugins\ToolbarWizard.js` | `CreateToolbarWizard_Execute` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `SIGenerateToolbar` | `Addons\sdkui\Application\Plugins\ToolbarWizard.js` | `SIGenerateToolbar_Execute` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `CreateTemplateWizard` | `Addons\sdkui\Application\Plugins\TemplateWizard.js` | `CreateTemplateWizard_Execute` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `CreateMRShaderWizard` | `Addons\sdkui\Application\Plugins\ShaderWizard.js` | `CreateMRShaderWizard_Execute` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC-PARTIAL (file > 64 KB, unread) |
+| `GenerateLipSync` | `Application\DSScripts\EvolverLipSync.js` | `GenerateLipSyncProc` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `UpgradeShaders` | `Application\DSScripts\UpgradeShaders.vbs` | `UpgradeShaders` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `syCachePaint1` | `Addons\Syflex30X50\Application\Plugins\cache.vbs` | `PaintMap1_Execute` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `syCachePaint2` | `Addons\Syflex30X50\Application\Plugins\cache.vbs` | `PaintMap2_Execute` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `SyGetMassMap` | `Addons\Syflex30X50\Application\Plugins\cloth.vbs` | `GetMassMap_Execute` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `SyGetSpringMap` | `Addons\Syflex30X50\Application\Plugins\cloth.vbs` | `GetSpringMap_Execute` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `Get default camera` | `Application\DSScripts\primitives.vbs` | `GetPrimCameraDefaultProc` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `OBJ Import...` | `Application\DSScripts\importexport.vbs` | `WavefrontImport` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC |
+| `Save Zero Key Hot Key` | `Application\DSScripts\uixsiscripts.vbs` | `SaveZeroKeyHotKeyProc` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC-PARTIAL (file > 64 KB, inferred) |
+| `GenNormalMap` | `GPUSurfaceFX.js (not shipped in the install)` | `XSI_GenerateNormalMap` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC-PARTIAL |
+| `GenDiffuseMap` | `GPUSurfaceFX.js (not shipped in the install)` | `XSI_GenerateDiffuseMap` | CMD-B15f | [cmd-b15f-misc-scripts.md](../ghidra/cmd-b15f-misc-scripts.md) | SPEC-PARTIAL |
 
 ## Earlier rows (not yet itemised per command)
 
