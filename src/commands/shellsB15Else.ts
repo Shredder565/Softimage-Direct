@@ -44,7 +44,6 @@ export function registerShellsB15ElseCommands(app: App) {
       return undefined;
     } });
 
-  // inferred
   // CMD-B16d (SPEC, correction 36): InputObj must be a 3D object in a skeleton, else E_INVALIDARG. Outputs (RePackArg):
   // Index (VT_I4, the object's index among the skeleton elements) and ChainElements (object collection, written only
   // when the list exists). They are written back into the argument record and kept in
