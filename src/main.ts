@@ -66,6 +66,7 @@ import { registerCrosswalkB13cCommands } from './commands/crosswalkB13c';
 import { registerMotorB13dCommands } from './commands/motorB13d';
 import { registerPluginsB13eCommands } from './commands/pluginsB13e';
 import { registerFaceRobotB14aCommands } from './commands/faceRobotB14a';
+import { registerPropertyTasksB15bCommands } from './commands/propertyTasksB15b';
 import { registerFaceRobotB14bCommands } from './commands/faceRobotB14b';
 import { registerFaceRobotB14cCommands } from './commands/faceRobotB14c';
 import { registerFaceRobotB14dCommands } from './commands/faceRobotB14d';
@@ -211,6 +212,7 @@ registerFaceRobotB14bCommands(app); // CMD-B14b (FR sculpt / mouth)
 registerFaceRobotB14cCommands(app); // CMD-B14c (FR eyes / jaw / regions)
 registerFaceRobotB14dCommands(app);   // CMD-B14d (Face Robot retarget / mocap / stage)
 registerFaceRobotB14eCommands(app);   // CMD-B14e (Face Robot export / weights / tongue)
+registerPropertyTasksB15bCommands(app);   // CMD-B15b (propertytasks.dll contracts; replaces inferred SIAddCustomParam / SICreateMaterial / SIStoreProp)
 registerInferredB10Views(app);   // CMD-B10, inferred batch
 registerInferredB10Scene(app);
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
