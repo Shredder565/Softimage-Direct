@@ -13,6 +13,9 @@ import { mapSetCurveTypeToInterp } from '../core/mixer';
 import { findParam } from './index';
 import { keyMappingTargets, keyTargets } from './anim';
 import { B17EF_NAMES } from './animPrimsB17ef';
+import { ARGS as B20A_ARGS } from './actionB20aModel';
+
+const B20A_NAMES = Object.keys(B20A_ARGS);   // registered by CMD-B20a (actionB20a.ts)
 
 type GapArg = { name: string; default: unknown };
 type GapCommand = {
@@ -579,17 +582,7 @@ const HANDLERS: Record<string, Handler> = {
     syncMixer(mix);
     return { name: row.name, type: row.type };
   },
-  AddMarker(app, a) {
-    const mix = mixerOf(mixHost(app, a.Model));
-    let list: { name: string; time: number; duration: number }[] = [];
-    try {
-      const parsed = JSON.parse(String(mix.val('markers') || '[]'));
-      if (Array.isArray(parsed)) list = parsed;
-    } catch { list = []; }
-    list.push({ name: String(a.Name ?? ''), time: a.Time == null ? app.anim.frame : Number(a.Time), duration: Number(a.Duration ?? 0) });
-    mix.set('markers', JSON.stringify(list));
-    return list.length;
-  },
+  // AddMarker: CMD-B20a (actionB20a.ts, actioncore.dll contract)
   TrimBefore(app, a) {
     const mix = mixerOf(mixHost(app, null));
     const clip = clipBySpec(clipsOf(mix), a.Clip);
@@ -642,20 +635,7 @@ const HANDLERS: Record<string, Handler> = {
   ResetAllEffectCurves(app, a) { return resetClipCurves(app, a.Clip); },
   ResetSelectedEffectCurves(app, a) { return resetClipCurves(app, a.Clip); },
   // GetStoreActionDefaults: contract version in actionB11eSources.ts (CMD-B11e)
-  CollapseLayers(app, a) {
-    const stored = app.run('StoreAction', storeOverlapping(a));
-    if (app.anim.layers.length > 1) {
-      withLayers(app, 'CollapseLayers', () => { app.anim.layers.splice(1); app.anim.currentLayer = app.anim.layers.length ? 0 : -1; });
-    }
-    return { stored: stored && stored.name, layers: app.anim.layers.length };
-  },
-  GetDrivingActions(app, a) {
-    const clips = clipsOf(mixerOf(mixHost(app, a.Model)));
-    const time = a.Time == null ? app.anim.frame : Number(a.Time);
-    const consider = a['Consider Time'] === true || a['Consider Time'] === 1;
-    const keepInactive = a['Keep Inactive Actions'] === true;
-    return clips.filter(c => (keepInactive || !c.mute) && (!consider || (time >= c.start && time < c.start + c.duration))).map(c => c.source);
-  },
+  // CollapseLayers / GetDrivingActions: CMD-B20a (actionB20a.ts; CollapseLayers runs collapseLayersBody below)
   // RemoveActionItem: contract version in actionB11eSources.ts (CMD-B11e)
 
   SaveShapeKey: (app, a) => app.run('StoreShapeKey', { InputObj: a.InputObj, Name: a.Name, Frame: a.Time }),
@@ -738,11 +718,21 @@ function transferShapes(app: App, a: Args) {
   return keys.length;
 }
 
+// PlotToAction / PlotToActions / PlotFrameSetToActions / SIStoreAction: CMD-B20a (actionB20a.ts, action.dll contract)
 const PLOT_TO_STORE = new Set([
-  'PlotToAction', 'PlotToActions', 'PlotAndApplyActions', 'PlotKeyableToActions',
-  'PlotConstrainedTransformsToActions', 'PlotFrameSetToActions',
-  'GetInputAndStoreAction', 'GetInputAndStoreAction2', 'SIStoreAction',
+  'PlotAndApplyActions', 'PlotKeyableToActions',
+  'PlotConstrainedTransformsToActions',
+  'GetInputAndStoreAction', 'GetInputAndStoreAction2',
 ]);
+
+/** The layer collapse of the earlier CollapseLayers handler (kept for the CMD-B20a CollapseLayers, actionB20a.ts). */
+export function collapseLayersBody(app: App, a: Args) {
+  const stored = app.run('StoreAction', storeOverlapping(a));
+  if (app.anim.layers.length > 1) {
+    withLayers(app, 'CollapseLayers', () => { app.anim.layers.splice(1); app.anim.currentLayer = app.anim.layers.length ? 0 : -1; });
+  }
+  return { stored: stored && stored.name, layers: app.anim.layers.length };
+}
 
 for (const name of PLOT_TO_STORE) {
   HANDLERS[name] = (app, a) => {
@@ -755,7 +745,7 @@ for (const name of PLOT_TO_STORE) {
 
 export function registerAnimateSurfaceCommands(app: App) {
   for (const spec of COMMANDS) {
-    if (app.commands.has(spec.scripting_name) || B17EF_NAMES.includes(spec.scripting_name)) continue;   // CMD-B17e owns some
+    if (app.commands.has(spec.scripting_name) || B17EF_NAMES.includes(spec.scripting_name) || B20A_NAMES.includes(spec.scripting_name)) continue;   // CMD-B17e / CMD-B20a own some
     const name = spec.scripting_name;
     const query = /^(Get|Is|Eval)/.test(name) || name === 'SceneRefresh';
     app.register({

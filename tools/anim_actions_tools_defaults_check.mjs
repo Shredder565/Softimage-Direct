@@ -14,6 +14,8 @@ const fix = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
 const modelTs = fs.readFileSync(path.resolve(__dirname, '../src/commands/model.ts'), 'utf8');
 const animTs = fs.readFileSync(path.resolve(__dirname, '../src/commands/anim.ts'), 'utf8');
 const src = modelTs + '\n' + animTs;
+// CMD-B20a commands (AddTransition, ...) are registered from the registry argument table of actionB20aModel.ts.
+const b20aTs = fs.readFileSync(path.resolve(__dirname, '../src/commands/actionB20aModel.ts'), 'utf8');
 
 const diffs = [];
 const expect = {
@@ -21,7 +23,7 @@ const expect = {
   AddTransition: { Name: 'Transition' },
 };
 for (const [cmd, args] of Object.entries(expect)) {
-  const block = src.match(new RegExp(`name:\\s*'${cmd}'[\\s\\S]*?execute`));
+  const block = src.match(new RegExp(`name:\\s*'${cmd}'[\\s\\S]*?execute`)) ?? b20aTs.match(new RegExp(`\\n\\s*${cmd}: \\[[^\\n]*\\],`));
   if (!block) { diffs.push(`${cmd}: registration missing`); continue; }
   for (const [arg, val] of Object.entries(args)) {
     const re = new RegExp(`name:\\s*'${arg}'\\s*,\\s*default:\\s*(${typeof val === 'string' ? `'${val}'` : val})`);

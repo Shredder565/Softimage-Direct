@@ -139,23 +139,7 @@ function createSkeleton(app: App, cmd: 'Create2DSkeleton' | 'Create3DSkeleton', 
   return root;
 }
 
-/** SICreateSkeleton stand-in: root at R, one bone to E, effector at E; N is the chain plane normal. */
-export function siCreateSkeleton(app: App, a: A): ChainRoot | undefined {
-  const R: V3 = [vec(a.Rx), vec(a.Ry), vec(a.Rz)], E: V3 = [vec(a.Ex, 1), vec(a.Ey), vec(a.Ez)];
-  if (Math.hypot(E[0] - R[0], E[1] - R[1], E[2] - R[2]) < 1e-9) { app.logMsg('error', 'SICreateSkeleton: the root and the effector are at the same position'); return undefined; }   // inferred
-  const type = Math.trunc(vec(a.SkeletonType, 2));
-  const root = makeChain(app.scene.uniqueName('root'), [R, E], type === 2);
-  (root as any).chainKind = type === 2 ? 2 : 3;   // read by SIAppendBone (2D vs 3D chain)
-  (root as any).chainNormal = [vec(a.Nx), vec(a.Ny), vec(a.Nz, 1)];
-  logNya(app, 'SICreateSkeleton', 'the use of the chain normal (Nx, Ny, Nz) and ViewType in the bone orientation; the bone points from R to E');
-  if (truthy(a.AlignRootToFirstBone)) {
-    const b = root.bones[0];
-    for (const ax of ['x', 'y', 'z']) { params(root).set('rot' + ax, params(b).val('rot' + ax)); params(b).set('rot' + ax, 0); }
-  }
-  app.record('Add ' + root.name, () => app.scene.root.addChild(root), () => app.scene.root.removeChild(root));
-  a.Bone = root.bones[0]; a.Effector = root.effector; a.Value = root;
-  return root;
-}
+// SICreateSkeleton: viewinteraction.dll 59c1e31b, CMD-B20b (src/commands/groupsB20b.ts)
 
 // ------------------------------------------------------------------ CreateChainfromCurve
 function curveObj(n: any): X3DObject | null { return n instanceof X3DObject && !!n.primitive?.curve?.() ? n : null; }

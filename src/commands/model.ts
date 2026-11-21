@@ -18,7 +18,7 @@ import * as C from '../core/curves';
 import { FCurve } from '../core/animation';
 import { edgeKey, fromPolys, toPolys, splitEdges, weldPoints, dissolvePolygons, disconnectPolygons, sliceAxis, dicePolygons } from '../core/topology';
 import { floatingWindows } from '../ui/floating';
-import { siCreateSkeleton, makeOwnMaterialCopy } from './chainsModelB17b';
+import { makeOwnMaterialCopy } from './chainsModelB17b';
 import { openAssembleNurbsDialog } from '../ui/assembleNurbsDialog';
 
 const CURVE_PRESETS = ['Arc', 'Circle', 'Spiral', 'Square'];
@@ -316,10 +316,12 @@ export function registerModelCommands(app: App) {
 
   // ------------------------------------------------------------ skeletons
   // CMD-B17b: Create2DSkeleton / Create3DSkeleton call SICreateSkeleton (src/commands/chainsModelB17b.ts); its body is the stand-in there
-  app.register({ name: 'SICreateSkeleton', label: 'Create skeleton', category: 'Animation', args: [{ name: 'Rx', default: 0 }, { name: 'Ry', default: 0 }, { name: 'Rz', default: 0 }, { name: 'Ex', default: 1 }, { name: 'Ey', default: 0 }, { name: 'Ez', default: 0 }, { name: 'Nx', default: 0 }, { name: 'Ny', default: 0 }, { name: 'Nz', default: 1 }, { name: 'ViewType', default: 3 }, { name: 'Bone', default: null }, { name: 'Effector', default: null }, { name: 'SkeletonType', default: 2 }, { name: 'AlignRootToFirstBone', default: false }], execute: (app, a) => siCreateSkeleton(app, a) });
+  // SICreateSkeleton: viewinteraction.dll 59c1e31b, CMD-B20b (src/commands/groupsB20b.ts)
   const rootOf = (app: App): S2.ChainRoot | null => { for (const n of app.selection) { let o: any = n; while (o && !(o instanceof S2.ChainRoot)) o = o.parentObj ?? o.parent; if (o) return o; } return null; };
   app.register({ name: 'AlignRootToFirstBone', label: 'Align Root to First Bone', category: 'Animation', args: [], execute(app) { const root = rootOf(app); if (!root?.bones[0]) throw new Error('Select a chain'); const b = root.bones[0]; for (const ax of ['x', 'y', 'z']) { const r = root.kinematics.local.get('rot' + ax)!, bl = b.kinematics.local.get('rot' + ax)!; app.setParam(r, r.value + bl.value); app.setParam(bl, 0); } } });
   app.register({ name: 'SetNeutralPose', label: 'Set Neutral Pose', category: 'Animation', args: [{ name: 'InputObjs', default: '' }, { name: 'Type', default: '' }, { name: 'Reset', default: false }], execute(app, a) { for (const o of app.selectedObjects) { const l = o.kinematics.local; for (const ax of ['x', 'y', 'z']) { const n = l.get('npos' + ax)!, p = l.get('pos' + ax)!; if (a.Reset) { app.setParam(p, p.value + n.value); app.setParam(n, 0); } else { app.setParam(n, n.value + p.value); app.setParam(p, 0); } } } } });
+  // The scripting name MoveJoint is the viewinteraction.dll task (CMD-B20b, groupsB20b.ts); this tool-arming body is kept
+  // because toolsB16a.ts captures it as the Move Joint Tool class body before groupsB20b.ts replaces the name.
   app.register({ name: 'MoveJoint', label: 'Move Joint', category: 'Animation', args: [{ name: 'InputObjs', default: '' }, { name: 'X', default: 0 }, { name: 'Y', default: 0 }, { name: 'Z', default: 0 }], execute(app) { app.setSelMode('object'); (window as any).__tool?.setMode?.('translate'); app.logMsg('info', 'Move Joint: drag the selected bone/effector with the translate tool (V)'); } });
   app.register({ name: 'DuplicateSymmetry', label: 'Duplicate Symmetry', category: 'Edit', args: [{ name: 'InputObjs', default: '' }], execute(app) { const made = app.run('Duplicate', { InputObjs: app.selectedObjects }) as X3DObject[]; for (const o of made) { const l = o.kinematics.local; app.setParam(l.get('posx')!, -l.val('posx')); app.setParam(l.get('sclx')!, -l.val('sclx')); } } });
   app.register({ name: 'StoreSkeletonPose', label: 'Store Skeleton Pose', category: 'Animation', args: [], execute(app) { const r = rootOf(app); if (!r) throw new Error('Select a chain'); const pose = r.bones.map(b => ['x', 'y', 'z'].map(ax => b.kinematics.local.val('rot' + ax))); if (!r.get('storedpose')) r.add(str('storedpose', '', 'Stored Pose', { readOnly: true })); app.setParam(r.get('storedpose')!, JSON.stringify(pose)); } });
@@ -516,11 +518,7 @@ export function registerModelCommands(app: App) {
     inp.click();
   } });
   // WR-12 — Softimage Paint* tools (commands_full Clsid). Brush stroke GDI LOCK — arm tool + weight/CAV path only.
-  app.register({
-    name: 'CreateVertexColorSupport', label: 'Color At Vertices Map', category: 'Texturing',
-    args: [{ name: 'InputObjs', default: '' }],
-    execute: (app, a) => app.run('AddProp', { PresetObj: 'Color At Vertices Map', InputObjs: a.InputObjs }),
-  });
+  // CreateVertexColorSupport: gap.dll ab483760, CMD-B20b (src/commands/groupsB20b.ts)
   const paintTools: [string, string, string][] = [
     ['PaintTool', 'Paint Tool', '{BABE02C7-A8B6-11D1-9306-0060970A2BC8}'],
     ['PaintVertexColorTool', 'Paint Vertex Color Tool', '{D9066020-ADD5-11D4-B91C-0800690C8BD0}'],
@@ -898,26 +896,7 @@ export function registerModelAliases(app: App) {
     }
     app.select([src]); return src;
   } });
-  app.register({ name: 'ApplyAction', label: 'Apply Action', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }, { name: 'Time', default: null }], execute(app, a) {
-    const byName = a.Source ? (app.selectedObjects[0]?.model ?? app.scene.root).properties.find(p => p.type === 'actionsource' && p.name === a.Source) : undefined;
-    const src = byName ?? (app.selection.find(n => n.type === 'actionsource') as Property | undefined) ?? (app.selectedObjects[0]?.model ?? app.scene.root).properties.filter(p => p.type === 'actionsource').pop();
-    if (!src) throw new Error('No action source to apply (store one first)');
-    const values = JSON.parse(src.val('data') || '{}') as Record<string, number>;
-    let fcurves: Record<string, { time: number; value: number; interp?: number }[]> = {}; try { fcurves = JSON.parse(src.val('fcurves') || '{}'); } catch { /* */ }
-    const t = a.Time != null ? Number(a.Time) : null;
-    for (const [path, v] of Object.entries(values)) { const p = findParamPath(app, path) ?? findParam(app, path); if (p && (t == null || !fcurves[path]?.length)) app.setParam(p, v as number); }
-    for (const [path, keys] of Object.entries(fcurves)) {
-      const p = findParamPath(app, path) ?? findParam(app, path); if (!p || !keys?.length) continue;
-      if (t != null) {
-        // Evaluate action fcurves at Time without installing keys (one-shot pose).
-        const fc = new FCurve(p); fc.keys = keys.map(k => ({ time: k.time, value: k.value, left: k.value, right: k.value, interp: k.interp ?? 3 }));
-        app.setParam(p, fc.eval(t));
-      } else {
-        const fc = app.anim.fcurve(p, true)!; fc.keys = keys.map(k => ({ time: k.time, value: k.value, left: k.value, right: k.value, interp: k.interp ?? fc.interp }));
-      }
-    }
-    app.events.emit('params'); app.events.emit('frame');
-  } });
+  // ApplyAction: CMD-B20a (actionB20a.ts; registry argument list Source, Target, Consider Time, StartFrame, EndFrame, Ripple, RemoveLayerAnimation)
   app.commands.get('StoreSkeletonPose')!.execute = (app) => app.run('StoreAction', { Name: 'StoredStaticPose' });
   app.commands.get('ApplySkeletonPose')!.execute = (app) => app.run('ApplyAction');
   // chain up-vector / preferred axis
@@ -944,7 +923,7 @@ export function registerModelAliases(app: App) {
   };
   topo.execute = (app, a) => { if (/Dissolve/.test(a.PresetObj) && /Clean/.test(a.PresetObj)) return te(app, { ...a, PresetObj: 'Dissolve Component', Preset: 'Dissolve Component' }); if (/Extrude Component Along Curve/.test(a.PresetObj)) { const cs = app.componentSel(); const curve = app.selectedObjects.find(o => o.primitive?.curve()); if (!cs || cs.sel.kind !== 'polygon') throw new Error('Select polygons (Y) and Shift-select a curve'); const len = curve ? C.curveLength(curve.primitive!.curve()!) : 2; const op = makeTopologyOperator('Extrude Along Normal', cs.sel)!; op.set('length', len); const prim = cs.obj.primitive!; app.record('Extrude Along Curve', () => prim.addOperator(op), () => prim.removeOperator(op)); app.compSel = null; app.select([op]); return op; } return te(app, a); };
 }
-function findParamPath(app: App, path: string) {
+export function findParamPath(app: App, path: string) {
   const obj = [...app.scene.allObjects()].find(o => path === o.fullName || path.startsWith(o.fullName + '.'));
   if (!obj) return undefined;
   const rest = path.slice(obj.fullName.length + 1); // e.g. kine.local.posx

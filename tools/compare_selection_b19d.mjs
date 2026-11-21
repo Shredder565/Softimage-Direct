@@ -190,9 +190,10 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS }) => {
     // ================= Activate...SelTool (3.6, correction 5)
     reset(); A.select([cube]); delete A.userPrefs.SI3D_RECTSEL_REGION_MODE;
     r = run('ActivateRaycastPolySelTool');
-    ok('ActivateRaycastPolySelTool: filter Polygon, SI3D_RECTSEL_REGION_MODE 2, selection tool current', !r.err && A.selMode === 'polygon' && A.userPrefs.SI3D_RECTSEL_REGION_MODE === 2 && tm.current() === SELECT && window.__tool?.mode === 'select', [r.err, A.selMode, A.userPrefs.SI3D_RECTSEL_REGION_MODE, tm.current()]);
+    // CMD-B20c Q36: a component filter activates the component select tool e9cdd760
+    ok('ActivateRaycastPolySelTool: filter Polygon, SI3D_RECTSEL_REGION_MODE 2, component select tool current', !r.err && A.selMode === 'polygon' && A.userPrefs.SI3D_RECTSEL_REGION_MODE === 2 && tm.current() === 'e9cdd760-d183-11d2-8bcf-00aa006130ef' && window.__tool?.mode === 'select', [r.err, A.selMode, A.userPrefs.SI3D_RECTSEL_REGION_MODE, tm.current()]);
     ok('ActivateRaycastPolySelTool: DeselectOnNewFilter removes the object', A.selection.length === 0 && A.activeElements.includes(cube));
-    ok('Activate...SelTool: the component-family test logs not yet attested', nya(r));
+    ok('Activate...SelTool: the component-family test is applied (no not-yet-attested log)', !nya(r));
     r = run('ActivatePolygonSelTool');
     ok('ActivatePolygonSelTool: SI3D_RECTSEL_REGION_MODE 1', A.userPrefs.SI3D_RECTSEL_REGION_MODE === 1);
     reset(); A.select([cube]);

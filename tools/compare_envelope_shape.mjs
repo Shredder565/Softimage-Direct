@@ -1,7 +1,7 @@
 // Envelope + shape-key smoke for Softimage Direct.
 // Prefers Softimage PC dump `si_anim_envelope_shape.json` when present; otherwise
 // validates Direct fixture schema + relative shape blend math.
-// Needs `vite preview` on :4173. Usage: node tools/compare_envelope_shape.mjs
+// Needs `vite preview` (SI_URL, default :4173/?demo). Usage: node tools/compare_envelope_shape.mjs
 import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
@@ -29,7 +29,7 @@ const FIXTURE = path.resolve(__dirname, '../data/dump/si_anim_envelope_shape_fix
 
 const b = await chromium.launch({ executablePath: CHROME, args: ['--headless=new', '--use-gl=swiftshader'] });
 const page = await b.newPage();
-await page.goto('http://localhost:4173/?demo'); await page.waitForTimeout(1000);
+await page.goto(process.env.SI_URL || 'http://localhost:4173/?demo'); await page.waitForTimeout(1000);
 await page.evaluate(() => { window.prompt = (_m, d) => d ?? '1'; window.confirm = () => true; });
 
 const r = await page.evaluate(() => {
@@ -62,7 +62,8 @@ const r = await page.evaluate(() => {
   target[1] = basePts[1] + 2;
   sk.set('data', JSON.stringify(target));
   A.select([sk]);
-  A.run('ApplyShapeKey', { Weight: 0.5 });
+  A.run('ApplyShapeKey', { InputObj: sk });   // CMD-B20a: registry arguments (no Weight); the key weight is then set to 0.5
+  A.setParam(sk.get('weight'), 0.5);
   const after = Array.from(mesh.primitive.mesh().positions);
   const y0 = after[1];
   const expectedY = basePts[1] + 1; // relative blend weight 0.5 * delta 2

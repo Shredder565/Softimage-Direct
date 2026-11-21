@@ -430,7 +430,8 @@ function plotSequencerCamera(app: App, a: Record<string, any>): any {
   let track: any = 0;
   if (app.commands.has(CMD.addTrack)) track = app.run(CMD.addTrack, { Model: root, Compound: root, Type: 0, Name: actionName });
   // inferred: without a track command in the build the clip goes on the mixer's first track.
-  const clip = app.run('AddClip', { Model: root, Source: src.name, Compound: root, Track: track, Time: seqIn, Name: actionName });
+  const added = app.run('AddClip', { Model: root, Source: src.name, Compound: root, Track: track, Time: seqIn, Name: actionName });
+  const clip = added?.clip ?? added;   // AddClip (CMD-B20a) returns the clip object (a ClipNode); this command hands back the clip record
   // 6.
   return [camera, clip];
 }

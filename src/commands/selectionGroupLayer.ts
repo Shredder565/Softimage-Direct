@@ -424,8 +424,7 @@ export function registerSelectionGroupLayerCommands(app: App) {
   grp('AddToGroup', 'Add to Group', [{ name: 'Target', default: '' }, { name: 'InputObjs', default: '' }], (app, a) => { addTo('AddToGroup')(app, a); });
   // inferred: low-level AddToGroup; the objects actually added are returned as the OutputObj output argument
   grp('SIAddToGroup', 'Group Add To', [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }, { name: 'OutputObj', default: null }], addTo('SIAddToGroup'), 'Add a member to a group');
-  // inferred: same contract as SIAddToGroup (registry: "Add an object to a group", same three arguments)
-  grp('SIAddToGroupLowLevel', 'Internal Add to Group', [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }, { name: 'OutputObj', default: null }], addTo('SIAddToGroupLowLevel'), 'Add an object to a group');
+  // SIAddToGroupLowLevel: grouptask.dll 0b9f8320, CMD-B20b (src/commands/groupsB20b.ts)
 
   const removeFrom = (command: string) => (app: App, a: Record<string, any>) => {
     const objs = memberArg(app, a.InputObjs);
@@ -437,16 +436,9 @@ export function registerSelectionGroupLayerCommands(app: App) {
   };
   // inferred: removes the objects (default: the selection) from the Target group
   grp('RemoveFromGroup', 'Remove from Group', [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], (app, a) => { removeFrom('RemoveFromGroup')(app, a); }, 'Remove the selected members from the group');
-  // inferred: low-level RemoveFromGroup (same arguments)
-  grp('SIRemoveFromGroup', 'Internal Remove from Group', [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], (app, a) => { removeFrom('SIRemoveFromGroup')(app, a); }, 'Remove the selected members from the group');
+  // SIRemoveFromGroup: grouptask.dll 0b9f8322, CMD-B20b (src/commands/groupsB20b.ts)
 
-  // inferred: low-level CreateGroup - an empty group under Parent (a model; default the scene root), returned,
-  // nothing selected or inspected
-  grp('SICreateGroup', 'Group Create', [{ name: 'Name', default: '' }, { name: 'Parent', default: null }], (app, a) => {
-    let parent: X3DObject = app.scene.root;
-    if (!empty(a.Parent)) { const p = objectsOf(resolve(app, a.Parent))[0]; if (!(p instanceof Model)) throw new Error(`Parent "${a.Parent?.name ?? a.Parent}" is not a model`); parent = p; }
-    noInspect(app); return createGroup(app, String(a.Name || ''), parent, []);
-  }, 'Create a group');
+  // SICreateGroup: grouptask.dll 03f2fdf0, CMD-B20b (src/commands/groupsB20b.ts)
   // inferred: registry description "Create a group under the common model of the selected objects and add the objects
   // into the group". The group is selected afterwards, as CreateGroup does.
   grp('CreateGroupFromObjects', 'Create Group from Objects', [{ name: 'Name', default: '' }, { name: 'InputObjs', default: null }], (app, a) => {
@@ -455,14 +447,7 @@ export function registerSelectionGroupLayerCommands(app: App) {
     const g = createGroup(app, String(a.Name || ''), models.length === 1 ? models[0] : app.scene.root, objs);
     noInspect(app); app.select([g]); return g;
   }, 'Create a group under the common model of the selected objects and add the objects into the group');
-  // inferred: registry description "Add a list of groups to a model": the groups become owned by the Target model
-  grp('AddGroup', 'Add groups', [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], (app, a) => {
-    if (empty(a.Target)) throw new Unattested('AddGroup', 'the pick session that asks for the Target model when none is given');
-    const model = objectsOf(resolve(app, a.Target))[0]; if (!(model instanceof Model)) throw new Error(`Target "${a.Target?.name ?? a.Target}" is not a model`);
-    const nodes = empty(a.InputObjs) ? [...app.selection] : resolve(app, a.InputObjs).nodes;
-    const groups = nodes.filter((n): n is Group => n instanceof Group); const prev = groups.map(g => g.parent);
-    if (groups.length) app.record('Add Groups', () => { for (const g of groups) g.parent = model; }, () => { groups.forEach((g, i) => { g.parent = prev[i]; }); });
-  }, 'Add a list of groups to a model');
+  // AddGroup: grouptask.dll 06af33ae, CMD-B20b (src/commands/groupsB20b.ts)
   // inferred: removes the groups (default: the selected groups) from the scene; their members are untouched
   grp('RemoveGroup', 'Remove Group', [{ name: 'InputObjs', default: null }], (app, a) => {
     const nodes = empty(a.InputObjs) ? [...app.selection] : resolve(app, a.InputObjs).nodes;
@@ -471,24 +456,8 @@ export function registerSelectionGroupLayerCommands(app: App) {
     app.record('Remove Group', () => { list.splice(0, list.length, ...before.filter(g => !groups.includes(g))); }, () => { list.splice(0, list.length, ...before); });
     app.selection = app.selection.filter(n => !groups.includes(n as Group)); app.events.emit('selection');
   });
-  const isHair = (o: X3DObject) => o.type === 'hair' || o.properties.some(p => p.type === 'hair') || /hair/i.test(o.name);
-  // inferred: registry description "Set the instance group on a hair object. The group contains models that will be
-  // instantiated on the individual strands". The relation is stored on the object; the strand instancing itself is
-  // not attested.
-  grp('SetInstanceGroup', 'SetInstanceGroup', [{ name: 'Object', default: null }, { name: 'Group', default: null }], (app, a) => {
-    const o = objectsOf(resolve(app, a.Object))[0]; if (!o) throw new Error('SetInstanceGroup needs a hair Object');
-    if (!isHair(o)) throw new Error(`${o.name} is not a hair object`);
-    const g = asGroup(app, a.Group); if (!g) throw new Error('SetInstanceGroup needs a Group');
-    const A = o as any; const prev = A.instanceGroup ?? null;
-    app.record('Set Instance Group', () => { A.instanceGroup = g; }, () => { A.instanceGroup = prev; });
-    app.logMsg('info', `SetInstanceGroup: ${o.name} instance group = ${g.name}; not yet attested: instantiation of the group's models on the strands`);
-  }, 'Set the instance group on a hair object. The group contains models that will be instantiated on the individual strands of the hair object.');
-  // inferred: registry description "Clear the instance group from the instantiating object"
-  grp('RemoveInstanceGroup', 'RemoveInstanceGroup', [{ name: 'Object', default: null }], (app, a) => {
-    const o = objectsOf(resolve(app, a.Object))[0]; if (!o) throw new Error('RemoveInstanceGroup needs an Object');
-    const A = o as any; const prev = A.instanceGroup ?? null; if (!prev) return;
-    app.record('Remove Instance Group', () => { A.instanceGroup = null; }, () => { A.instanceGroup = prev; });
-  }, 'Clear the instance group from the instantiating object.');
+  // SetInstanceGroup / RemoveInstanceGroup: grouptask.dll e0717f47 / d534de9f, CMD-B7a (src/commands/uiGroupViewTasks.ts, the only
+  // registration; CMD-B20b confirmed the contracts)
 
   // ================================================================ layers
 

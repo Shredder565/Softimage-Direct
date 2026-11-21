@@ -106,8 +106,9 @@ const results = await page.evaluate(async ({ NAMES, registry, registryUi }) => {
     ResetSelectedEffectCurves: (r, m) => r.v === undefined && !r.err && hasLog(m, 'Please select a clip first'),
     ResetEffectAtFrame: (r, m) => r.v === undefined && !r.err && hasLog(m, 'Please select a clip first'),
     ClipMatch: (r, m) => r.v === undefined && !r.err && hasLog(m, 'Pick Reference Clip'),
-    ImportActionAndAddClip: r => r.v === undefined && !r.err && mix.clips.length === 1,
-    ImportActionAndApply: r => r.v === undefined && !r.err,
+    // CMD-B20a: ImportAction tests the file extension (.Preset / .xsi / .eani), so no FileName fails with 0x80070057
+    ImportActionAndAddClip: r => /0x80070057/.test(r.err ?? '') && mix.clips.length === 0,
+    ImportActionAndApply: r => /0x80070057/.test(r.err ?? ''),
     ImportAudioAndAddClip: r => r.cancelled,
     OffloadAction: r => r.v === undefined && !r.err, PartialOffloadAction: r => r.v === undefined && !r.err, ReloadAction: r => r.v === undefined && !r.err,
     DeleteUnusedCamSeqTracks: r => r.v === undefined && !r.err,
@@ -466,11 +467,14 @@ const results = await page.evaluate(async ({ NAMES, registry, registryUi }) => {
   // ================= import and add / apply
   {
     reset(); app.select([sphere]);
-    const payload = JSON.stringify({ name: 'Imported', data: { [PX]: 3 }, fcurves: {} });
-    let r = run('ImportActionAndAddClip', { Model: 'Scene_Root', FileName: payload });
+    // CMD-B20a: ImportAction reads a .eani / .xsi / .Preset file; this build's file store (ExportAction) holds the content
+    const files = app.actionB20a.files;
+    files['C:\\act\\Imported.eani'] = JSON.stringify({ name: 'Imported', data: { [PX]: 3 }, fcurves: {} });
+    files['C:\\act\\Applied.eani'] = JSON.stringify({ name: 'Applied', data: { [PX]: 4 }, fcurves: {} });
+    let r = run('ImportActionAndAddClip', { Model: 'Scene_Root', FileName: 'C:\\act\\Imported.eani' });
     check('ImportActionAndAddClip: imports the action and adds a clip of it, hands nothing back', !r.err && r.v === undefined && srcs().includes('Imported') && mix.clips.length === 1 && mix.clips[0].source === 'Imported', { err: r.err, srcs: srcs(), clips: mix.clips });
     sphere.kinematics.local.set('posx', 0); app.select([sphere]);
-    r = run('ImportActionAndApply', { Model: 'Scene_Root', FileName: JSON.stringify({ name: 'Applied', data: { [PX]: 4 }, fcurves: {} }) });
+    r = run('ImportActionAndApply', { Model: 'Scene_Root', FileName: 'C:\\act\\Applied.eani' });
     check('ImportActionAndApply: imports the action and applies it, hands nothing back', !r.err && r.v === undefined && srcs().includes('Applied') && sphere.kinematics.local.val('posx') === 4 && mix.clips.length === 1, { err: r.err, x: sphere.kinematics.local.val('posx') });
     r = run('ImportAudioAndAddClip', { Model: 'Scene_Root', FileName: 'C:\\snd\\beep.wav' });
     const asrc = root.properties.find(p => p.type === 'audiosource');

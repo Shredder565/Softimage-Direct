@@ -305,9 +305,7 @@ export function registerAnimCommands(app: App) {
   } });
 
   // ---- path animation
-  app.register({ name: 'SaveKeyOnPath', label: 'Save Key on Path', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'Time', default: null }, { name: 'Locked', default: false }], execute(app, a) {
-    const o = app.targets(a.InputObj)[0] ?? app.selectedObjects[0]; if (!o) throw new Error('Select an object on a path'); const perc = o.properties.find(p => p.type === 'poscns')?.get('perc'); const t = a.Time ?? A.frame; if (perc) return keyAt([perc], t); return keyAt(kineParams([o], n => n.startsWith('pos')), t);
-  } });
+  // SaveKeyOnPath (both registry entries): pathanimtask.dll aef278f7, CMD-B20b (src/commands/groupsB20b.ts)
   app.register({ name: 'ConvertPosAnimToPath', label: 'Convert Position to Path', category: 'Animation', args: [{ name: 'InputObjs', default: '' }, { name: 'Name', default: 'Path' }, { name: 'StartTime', default: 0 }, { name: 'EndTime', default: 0 }, { name: 'StepFrame', default: 1 }], execute(app, a) {
     const o = app.targets(a.InputObjs)[0] ?? app.selectedObjects[0]; if (!o) throw new Error('Select an animated object'); const s = Number(a.StartTime) || A.startFrame; const e = Number(a.EndTime) || A.endFrame; const st = Math.max(1, Number(a.StepFrame) || 1);
     const pts: [number, number, number][] = []; const prev = A.frame; for (let f = s; f <= e; f += st) { A.frame = f; pts.push([o.kinematics.local.val('posx'), o.kinematics.local.val('posy'), o.kinematics.local.val('posz')]); } A.frame = prev;
@@ -321,45 +319,15 @@ export function registerAnimCommands(app: App) {
   } });
 
   // ---- shape keys (Deform > Shape)
-  app.register({ name: 'StoreShapeKey', label: 'Store Shape Key', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'Name', default: '' }, { name: 'Frame', default: null }], execute(app, a) {
-    const o = app.targets(a.InputObj)[0] ?? app.selectedObjects[0]; if (!o?.primitive?.mesh()) throw new Error('Select a polygon mesh'); const mesh = o.primitive.mesh()!; const name = a.Name || app.scene.uniqueName('ShapeKey');
-    ensureShapeBase(o, mesh.positions);
-    ensureShapeOperator(o);
-    const sk = new Property(name, 'shapekey', [str('data', JSON.stringify(Array.from(mesh.positions)), 'Positions', { readOnly: true }), int('points', mesh.positions.length / 3, 'Points', { readOnly: true }), num('weight', 0, 'Weight', { min: 0, max: 1, keyable: true })]);
-    app.record('Store Shape Key', () => o.addProperty(sk), () => o.removeProperty(sk)); app.select([sk]); return sk;
-  } });
-  app.register({ name: 'ApplyShapeKey', label: 'Apply Shape Key', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'Name', default: '' }, { name: 'Weight', default: 1 }], execute(app, a) {
-    const sk = (app.selection.find(n => (n as any).type === 'shapekey') as any)
-      ?? app.selectedObjects.flatMap(o => o.properties.filter(p => p.type === 'shapekey' && (!a.Name || p.name === a.Name)))[0]
-      ?? app.selectedObjects[0]?.properties.find(p => p.type === 'shapekey');
-    if (!sk) throw new Error('Select a shape key');
-    const o = (sk.parent as X3DObject | undefined) ?? app.selectedObjects.find(x => x.properties.some(p => p.type === 'shapekey')) ?? app.selectedObjects[0];
-    app.setParam(sk.get('weight')!, Number(a.Weight ?? 1));
-    if (o) evaluateShapes(o, true);
-    emit(); return sk;
-  } });
+  // StoreShapeKey: CMD-B20a (actionB20a.ts) registers the command with the registry argument list and runs storeShapeKeyBody (below)
+  // ApplyShapeKey: CMD-B20a (actionB20a.ts, action.dll / actioncore.dll contract)
   app.register({ name: 'EvaluateShapes', label: 'Evaluate Shapes', category: 'Animation', args: [{ name: 'InputObj', default: '' }], execute(app, a) {
     const objs = app.targets(a.InputObj).length ? app.targets(a.InputObj) : app.selectedObjects;
     let n = 0; for (const o of objs) n += evaluateShapes(o, true); emit(); return n;
   } });
-  app.register({ name: 'SelectShapeKey', label: 'Select Shape Key', category: 'Animation', args: [{ name: 'InputObj', default: '' }], execute(app) { const sk = app.selectedObjects.flatMap(o => o.properties.filter(p => p.type === 'shapekey')); if (sk.length) app.select(sk); return sk; } });
-  app.register({ name: 'ReplaceShapeKey', label: 'Replace Shape Key', category: 'Animation', args: [], execute(app) {
-    const sk = (app.selection.find(n => (n as any).type === 'shapekey') as any) ?? app.selectedObjects.flatMap(o => o.properties.filter(p => p.type === 'shapekey'))[0];
-    const o = (sk?.parent as X3DObject | undefined) ?? app.selectedObjects.find(x => x.primitive?.mesh());
-    if (!sk || !o?.primitive?.mesh()) throw new Error('Select a mesh and a shape key');
-    sk.set('data', JSON.stringify(Array.from(o.primitive.mesh()!.positions))); return sk;
-  } });
-  app.register({ name: 'ConvertShapeReferenceMode', label: 'Convert Shape Reference Mode', category: 'Animation', args: [], execute(app) {
-    let n = 0;
-    for (const o of app.selectedObjects) {
-      const op = o.primitive?.operators.find(x => x.type === 'shapblend');
-      if (!op) continue;
-      const rel = !!op.val('relative');
-      op.set('relative', !rel); o.primitive!.dirty = true; n++;
-      app.logMsg('info', `${o.name}: shape reference → ${!rel ? 'relative' : 'absolute'}`);
-    }
-    if (!n) throw new Error('Select a mesh with shape keys'); return n;
-  } });
+  // SelectShapeKey: CMD-B20a (actionB20a.ts, action.dll / actioncore.dll contract)
+  // ReplaceShapeKey: CMD-B20a (actionB20a.ts, action.dll / actioncore.dll contract)
+  // ConvertShapeReferenceMode: CMD-B20a (actionB20a.ts, action.dll / actioncore.dll contract)
   app.register({ name: 'OpenShapeEditor', label: 'Open Shape Manager', category: 'Animation', args: [], undoable: false, execute() { window.dispatchEvent(new CustomEvent('openview', { detail: { name: 'Animation Mixer' } })); } });
 
   // Softimage floating Anim editors — Command.Name open path (prefer ExecuteCommand([],) over broken OpenView).
@@ -400,7 +368,7 @@ export function registerAnimCommands(app: App) {
   app.register({ name: 'SaveDeformKey', label: 'Save Deform Key', category: 'Animation', args: [], execute: (app) => app.run('StoreShapeKey') });
   app.register({ name: 'ApplyDeformKey', label: 'Apply Deform Key', category: 'Animation', args: [], execute: (app) => app.run('ApplyShapeKey') });
   // SetCurrentLayer / PlotShape / LinkDeform: CMD-B19b (src/commands/tasksB19b.ts)
-  app.register({ name: 'LinkDeformWithOri', label: 'Link Deform with Orientation', category: 'Animation', args: [], execute: (app) => app.run('LinkDeform') });
+  // LinkDeformWithOri: CMD-B20a (actionB20a.ts, action.dll / actioncore.dll contract)
   app.register({ name: 'ResetActor', label: 'Reset Actor', category: 'Animation', args: [], execute(app) { for (const o of app.selectedObjects) for (const ax of ['x', 'y', 'z']) for (const k of ['pos', 'rot']) { const p = o.kinematics.local.get(k + ax); if (p) app.setParam(p, k === 'scl' ? 1 : 0); } for (const ax of ['x', 'y', 'z']) { const p = app.selectedObjects[0]?.kinematics.local.get('scl' + ax); if (p) app.setParam(p, 1); } return null; } });
   app.register({ name: 'LocalAssignFlexEnv', label: 'Assign Local Envelope', category: 'Deformation|Envelope', args: [], execute: (app) => app.run('ApplyFlexEnv') });
   // RemoveFlexEnvDeformer registered in rigging.ts (real deformer removal)
@@ -416,30 +384,12 @@ export function registerAnimCommands(app: App) {
     if (!s.relations) s.relations = [];
     return { model, mix, clips: s.clips as MixerClip[], transitions: s.transitions as MixerTransition[], compounds: s.compounds as MixerCompound[] };
   };
-  app.register({ name: 'AddClip', label: 'Add Clip', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }, { name: 'Time', default: null }, { name: 'Track', default: 0 }, { name: 'Name', default: '' }], execute(app, a) {
-    const { mix, clips, transitions } = mixState(app);
-    const src = (app.selection.find(n => (n as any).type === 'actionsource') as Property | undefined) ?? hostModel(app).properties.find(p => p.type === 'actionsource' && (!a.Source || p.name === a.Source));
-    if (!src) throw new Error('AddClip: select or name an action source');
-    const prev = clips.length ? clips[clips.length - 1] : null;
-    const clip: MixerClip = { name: a.Name || src.name, source: src.name, start: Number(a.Time ?? A.frame), duration: Math.max(1, A.endFrame - A.startFrame), track: Number(a.Track ?? 0), weight: 1, mute: false, additive: false };
-    // Softimage mixer Auto Transition: when flag is on, adding a clip after another inserts a standard transition (docs/ghidra/mixer-clip-transitions.md).
-    const autoTr: MixerTransition | null = (mix.val('autotransition') && prev && prev.track === clip.track)
-      ? { name: `${prev.name}_to_${clip.name}`, kind: 'standard', from: prev.name, to: clip.name, length: 10, weight: 1 }
-      : null;
-    app.record('Add Clip', () => {
-      clips.push(clip);
-      if (autoTr) transitions.push(autoTr);
-      syncMixer(mix);
-    }, () => {
-      if (autoTr) { const ti = transitions.indexOf(autoTr); if (ti >= 0) transitions.splice(ti, 1); }
-      const i = clips.indexOf(clip); if (i >= 0) clips.splice(i, 1);
-      syncMixer(mix);
-    });
-    app.events.emit('scene'); return clip;
-  } });
+  // AddClip: CMD-B20a (actionB20a.ts, action.dll / actioncore.dll contract)
   app.register({ name: 'AddLayerClip', label: 'Add Layer Clip', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }, { name: 'Time', default: null }], execute(app, a) {
-    const clip = app.run('AddClip', { ...a, Track: 1 }) as MixerClip | null;
-    if (clip) { clip.additive = true; clip.weight = clip.weight ?? 1; const { mix } = mixState(app); syncMixer(mix); }
+    // AddClip (CMD-B20a) returns the clip object (a ClipNode over the clip record)
+    const node = app.run('AddClip', { Source: a.Source, Time: a.Time, Track: 1 }) as { clip?: MixerClip; ref?: { mix: any } } | null;
+    const clip = node?.clip ?? null;
+    if (clip) { clip.additive = true; clip.weight = clip.weight ?? 1; syncMixer(node!.ref?.mix ?? mixState(app).mix); }
     return clip;
   } });
   app.register({ name: 'MuteClip', label: 'Mute Clip', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }, { name: 'Mute', default: true }], execute(app, a) {
@@ -514,15 +464,7 @@ export function registerAnimCommands(app: App) {
     for (let t = transitions.length - 1; t >= 0; t--) if (transitions[t].from === c.name || transitions[t].to === c.name) transitions.splice(t, 1);
     syncMixer(mix); app.events.emit('scene'); return c;
   } });
-  app.register({ name: 'AddTransition', label: 'Add Transition', category: 'Animation Mixer', args: [{ name: 'From', default: '' }, { name: 'To', default: '' }, { name: 'Length', default: 10 }, { name: 'Name', default: 'Transition' }], execute(app, a) {
-    const { mix, clips, transitions } = mixState(app);
-    const from = a.From || clips[clips.length - 2]?.name; const to = a.To || clips[clips.length - 1]?.name;
-    if (!from || !to) throw new Error('AddTransition: need two clips (From/To)');
-    const tr: MixerTransition = { name: a.Name || `${from}_to_${to}`, kind: 'standard', from, to, length: Number(a.Length ?? 10), weight: 1 };
-    app.record('Add Transition', () => { transitions.push(tr); syncMixer(mix); }, () => { const i = transitions.indexOf(tr); if (i >= 0) transitions.splice(i, 1); syncMixer(mix); });
-    if (mix.val('autotransition')) { /* Softimage Auto Transition flag already on mixer */ }
-    app.events.emit('scene'); return tr;
-  } });
+  // AddTransition: CMD-B20a (actionB20a.ts, action.dll / actioncore.dll contract)
   app.register({ name: 'AddBridgeTransition', label: 'Add Bridge Transition', category: 'Animation Mixer', args: [{ name: 'From', default: '' }, { name: 'To', default: '' }, { name: 'Length', default: 10 }], execute: (app, a) => {
     const { mix, clips, transitions } = mixState(app);
     const from = a.From || clips[clips.length - 2]?.name; const to = a.To || clips[clips.length - 1]?.name;
@@ -530,54 +472,15 @@ export function registerAnimCommands(app: App) {
     const tr: MixerTransition = { name: `bridge_${from}_${to}`, kind: 'bridge', from, to, length: Number(a.Length ?? 10) };
     transitions.push(tr); syncMixer(mix); app.events.emit('scene'); return tr;
   } });
-  app.register({ name: 'AddTWTransition', label: 'Add Time Warp Transition', category: 'Animation Mixer', args: [{ name: 'From', default: '' }, { name: 'To', default: '' }, { name: 'Length', default: 10 }], execute: (app, a) => {
-    const { mix, clips, transitions } = mixState(app);
-    const from = a.From || clips[clips.length - 2]?.name; const to = a.To || clips[clips.length - 1]?.name;
-    if (!from || !to) throw new Error('AddTWTransition: need two clips');
-    // Softimage Desktop pass3: AddTWTransition → Mixer.TW1 (classname Transition; type=2, weight=1, active=true)
-    const n = transitions.filter(t => t.kind === 'timewarp' || t.type === 2).length + 1;
-    const tr: MixerTransition = {
-      name: `TW${n}`,
-      kind: 'timewarp',
-      from,
-      to,
-      length: Number(a.Length ?? 10),
-      weight: 1,
-      type: 2,
-      active: true,
-    };
-    transitions.push(tr); syncMixer(mix); app.events.emit('scene'); return tr;
-  } });
-  app.register({ name: 'CreateCompound', label: 'Create Compound', category: 'Animation Mixer', args: [{ name: 'Name', default: 'Compound' }, { name: 'Clips', default: '' }], execute(app, a) {
-    const { mix, clips, compounds } = mixState(app);
-    const names = a.Clips ? String(a.Clips).split(',').map((s: string) => s.trim()).filter(Boolean) : clips.map(c => c.name);
-    if (!names.length) throw new Error('CreateCompound: no clips');
-    const members = clips.filter(c => names.includes(c.name));
-    const start = Math.min(...members.map(c => c.start));
-    const end = Math.max(...members.map(c => c.start + c.duration));
-    const cpd: MixerCompound = { name: app.scene.uniqueName(a.Name || 'Compound'), clips: members.map(c => c.name), start, duration: Math.max(1, end - start) };
-    app.record('Create Compound', () => { compounds.push(cpd); syncMixer(mix); }, () => { const i = compounds.indexOf(cpd); if (i >= 0) compounds.splice(i, 1); syncMixer(mix); });
-    app.events.emit('scene'); return cpd;
-  } });
-  app.register({ name: 'ExplodeCompound', label: 'Explode Compound', category: 'Animation Mixer', args: [{ name: 'Name', default: '' }], execute(app, a) {
-    const { mix, compounds } = mixState(app);
-    const i = compounds.findIndex(c => !a.Name || c.name === a.Name); if (i < 0) throw new Error('No compound to explode');
-    const [cpd] = compounds.splice(i, 1); syncMixer(mix); app.events.emit('scene'); return cpd;
-  } });
+  // AddTWTransition: CMD-B20a (actionB20a.ts, action.dll / actioncore.dll contract)
+  // CreateCompound / ExplodeCompound: CMD-B20a (actionB20a.ts, action.dll / actioncore.dll contract)
   app.register({ name: 'EqualizeClips', label: 'Equalize Clips', category: 'Animation Mixer', args: [], execute(app) {
     const { mix, clips } = mixState(app); if (clips.length < 2) return 0;
     let t = Math.min(...clips.map(c => c.start));
     for (const c of clips) { c.start = t; t += c.duration; }
     syncMixer(mix); app.events.emit('scene'); return clips.length;
   } });
-  app.register({ name: 'EqualizeAction', label: 'Equalize Action', category: 'Animation Mixer', args: [], execute: (app) => app.run('EqualizeClips') });
-  app.register({ name: 'MoveClipToTrack', label: 'Move Clip to Track', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }, { name: 'Track', default: 0 }], execute(app, a) {
-    const { mix, clips } = mixState(app); const c = clips.find(x => x.name === a.Clip) ?? clips[clips.length - 1]; if (!c) throw new Error('No clip'); c.track = Number(a.Track ?? 0); syncMixer(mix); app.events.emit('scene'); return c;
-  } });
-  app.register({ name: 'CopyClipToTrack', label: 'Copy Clip to Track', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }, { name: 'Track', default: 1 }], execute(app, a) {
-    const { mix, clips } = mixState(app); const c = clips.find(x => x.name === a.Clip) ?? clips[clips.length - 1]; if (!c) throw new Error('No clip');
-    const copy: MixerClip = { ...c, name: app.scene.uniqueName(c.name), track: Number(a.Track ?? 1) }; clips.push(copy); syncMixer(mix); app.events.emit('scene'); return copy;
-  } });
+  // EqualizeAction / MoveClipToTrack / CopyClipToTrack: CMD-B20a (actionB20a.ts, action.dll / actioncore.dll contract)
   app.register({ name: 'EditClip', label: 'Edit Clip', category: 'Animation Mixer', args: [{ name: 'Clip', default: '' }, { name: 'Start', default: null }, { name: 'Duration', default: null }], execute(app, a) {
     const { mix, clips } = mixState(app); const c = clips.find(x => x.name === a.Clip) ?? clips[clips.length - 1]; if (!c) throw new Error('No clip');
     if (a.Start != null) c.start = Number(a.Start); if (a.Duration != null) c.duration = Number(a.Duration); syncMixer(mix); app.events.emit('scene'); return c;
@@ -585,39 +488,9 @@ export function registerAnimCommands(app: App) {
   app.register({ name: 'DeleteUnusedMixerTracks', label: 'Delete Unused Mixer Tracks', category: 'Animation Mixer', args: [], execute(app) {
     const { mix, clips } = mixState(app); const used = new Set(clips.map(c => c.track ?? 0)); app.logMsg('info', `DeleteUnusedMixerTracks: ${used.size} track(s) in use`); syncMixer(mix); return used.size;
   } });
-  app.register({ name: 'AddClipRelation', label: 'Add Clip Relation', category: 'Animation Mixer', args: [{ name: 'Master', default: '' }, { name: 'Slave', default: '' }], execute(app, a) {
-    const { mix, clips } = mixState(app); const master = a.Master || clips[0]?.name; const slave = a.Slave || clips[1]?.name;
-    if (!master || !slave) throw new Error('AddClipRelation needs Master and Slave clips');
-    (mix as any).relations.push({ master, slave }); syncMixer(mix); app.events.emit('scene'); return { master, slave };
-  } });
-  app.register({ name: 'SwapRelationMasterAndSlaveClip', label: 'Swap Relation Master and Slave', category: 'Animation Mixer', args: [], execute(app) {
-    const { mix } = mixState(app); for (const r of (mix as any).relations as { master: string; slave: string }[]) { const t = r.master; r.master = r.slave; r.slave = t; } syncMixer(mix); return (mix as any).relations.length;
-  } });
+  // AddClipRelation / SwapRelationMasterAndSlaveClip: CMD-B20a (actionB20a.ts, action.dll / actioncore.dll contract)
   app.register({ name: 'PasteAction', label: 'Paste Action', category: 'Animation Mixer', args: [{ name: 'Source', default: null }, { name: 'Target', default: null }], execute: (app, a) => app.run('ApplyAction', a) });
-  app.register({ name: 'ReconnectMixer', label: 'Reconnect Animation Mixer', category: 'Animation Mixer', args: [{ name: 'Model', default: null }], execute(app, a) {
-    const { model, mix, clips } = mixState(app, a.Model); syncMixer(mix);
-    const n = model.properties.filter(p => p.type === 'actionsource').length;
-    app.logMsg('info', `ReconnectMixer: ${n} action source(s), ${clips.length} clip(s) on ${model.name}`); app.events.emit('scene'); return n;
-  } });
-  app.register({ name: 'ExportAction', label: 'Export Action', category: 'Animation Mixer', args: [{ name: 'Action', default: null }, { name: 'FileName', default: null }], execute(app, a) {
-    const src = (app.selection.find(n => (n as any).type === 'actionsource') as any) ?? app.selectedObjects[0]?.model?.properties.find(p => p.type === 'actionsource');
-    if (!src) throw new Error('Select an action source');
-    const payload = JSON.stringify({ name: src.name, data: src.val('data'), fcurves: src.val('fcurves') || '' });
-    try { localStorage.setItem('si.lastActionExport', payload); } catch { /* */ }
-    app.logMsg('info', `ExportAction: ${src.name} (${payload.length} bytes)`); return src;
-  } });
-  app.register({ name: 'ImportAction', label: 'Import Action', category: 'Animation Mixer', args: [{ name: 'Model', default: null }, { name: 'FileName', default: null }, { name: 'Name', default: '' }], execute(app, a) {
-    const raw = a.FileName || localStorage.getItem('si.lastActionImport') || localStorage.getItem('si.lastActionExport');
-    if (!raw) { app.logMsg('info', 'ImportAction: no JSON in FileName / si.lastActionImport — storing empty action'); return app.run('StoreAction', { Name: a.Name || 'ImportedAction' }); }
-    try {
-      const data = typeof raw === 'string' && raw.trim().startsWith('{') ? JSON.parse(raw) : { name: a.Name || 'ImportedAction', data: raw };
-      const src = app.run('StoreAction', { Name: data.name || a.Name || 'ImportedAction' });
-      if (src && data.data) src.set('data', typeof data.data === 'string' ? data.data : JSON.stringify(data.data));
-      if (src && data.fcurves) src.set('fcurves', typeof data.fcurves === 'string' ? data.fcurves : JSON.stringify(data.fcurves));
-      return src;
-    } catch (e: any) { throw new Error('ImportAction: ' + e.message); }
-  } });
-  app.register({ name: 'ImportRefAction', label: 'Import Referenced Action', category: 'Animation Mixer', args: [], execute: (app, a) => app.run('ImportAction', a) });
+  // ReconnectMixer / ExportAction / ImportAction / ImportRefAction: CMD-B20a (actionB20a.ts, action.dll / actioncore.dll contract)
   app.register({ name: 'ExportMixer', label: 'Export Mixer', category: 'Animation Mixer', args: [{ name: 'Model', default: null }, { name: 'FileName', default: null }], execute(app, a) {
     const model = a.Model ? app.scene.find(a.Model) : (app.selectedObjects[0]?.model ?? app.scene.root);
     const actions = (model?.properties ?? []).filter(p => p.type === 'actionsource').map(p => ({ name: p.name, data: p.val('data'), fcurves: p.val('fcurves') }));
@@ -918,3 +791,12 @@ function resolve(app: App, arg: any): Parameter[] {
 function uniq(m: Map<string, any>, n: string) { let k = n, i = 1; while (m.has(k)) k = `${n}${i++}`; return k; }
 function pick(app: App, names: string[], what: string) { if (!names.length) throw new Error(`No ${what.toLowerCase()} exists`); if (names.length === 1) return names[0]; const r = prompt(`${what}:\n` + names.map((n, i) => `${i + 1}. ${n}`).join('\n'), '1') ?? ''; return /^\d+$/.test(r) ? names[Number(r) - 1] : r; }
 function parseFrames(txt: string): number[] { const out: number[] = []; for (const part of txt.split(',')) { const m = part.trim().match(/^(-?\d+)\s*-\s*(-?\d+)(?::(\d+))?$/); if (m) { const s = Number(m[1]), e = Number(m[2]), st = Number(m[3] || 1); for (let f = s; f <= e; f += st) out.push(f); } else if (part.trim()) out.push(Number(part)); } return out.filter(Number.isFinite); }
+
+/** The store body of the earlier StoreShapeKey registration (kept for the CMD-B20a StoreShapeKey, actionB20a.ts). */
+export function storeShapeKeyBody(app: App, a: Record<string, any>) {
+    const o = app.targets(a.InputObj)[0] ?? app.selectedObjects[0]; if (!o?.primitive?.mesh()) throw new Error('Select a polygon mesh'); const mesh = o.primitive.mesh()!; const name = a.Name || app.scene.uniqueName('ShapeKey');
+    ensureShapeBase(o, mesh.positions);
+    ensureShapeOperator(o);
+    const sk = new Property(name, 'shapekey', [str('data', JSON.stringify(Array.from(mesh.positions)), 'Positions', { readOnly: true }), int('points', mesh.positions.length / 3, 'Points', { readOnly: true }), num('weight', 0, 'Weight', { min: 0, max: 1, keyable: true })]);
+    app.record('Store Shape Key', () => o.addProperty(sk), () => o.removeProperty(sk)); app.select([sk]); return sk;
+}

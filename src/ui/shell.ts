@@ -537,6 +537,10 @@ export function animationMixer(app: App, host: HTMLElement) {
     return [...hostModel.properties.filter(p => p.type === 'actionsource'), ...app.scene.root.properties.filter(p => p.type === 'actionsource')];
   };
   const mix = () => (app.selectedObjects[0]?.model ?? app.scene.root).property('mixer') ?? app.scene.root.property('mixer');
+  // AddTransition / CreateCompound take their clips as arguments (CMD-B20a): the last two clips / all clips of the mixer.
+  const lastTwo = () => { const c: any[] = (mix() as any)?.clips ?? []; return { From: c[c.length - 2]?.name ?? null, To: c[c.length - 1]?.name ?? null }; };
+  const allClips = () => ((mix() as any)?.clips ?? []).map((c: any) => c.name);
+  const tryRun = (name: string, args: Record<string, any> = {}) => { try { return app.run(name, args); } catch { return undefined; /* logged by app.run */ } };
   // Softimage Animation Mixer menubar — Desktop 50-anim-mixer.png: Edit View Track Clip Mix Effect
   const mm = mixerClientMenubar().length ? mixerClientMenubar() : mixerMenuLabels();
   const lockMenu = (label: string) => [{ label: `${label} leaves LOCK (no invent)` }];
@@ -557,9 +561,9 @@ export function animationMixer(app: App, host: HTMLElement) {
       }));
     } else if (label === 'Clip') {
       hd.appendChild(menuBtn('Clip', () => [{ label: 'Add Transition' }, { label: 'Add Bridge Transition' }, { label: 'Create Compound' }], (l) => {
-        if (l === 'Add Transition') app.run('AddTransition');
+        if (l === 'Add Transition') tryRun('AddTransition', lastTwo());
         else if (l === 'Add Bridge Transition') app.run('AddBridgeTransition');
-        else if (l === 'Create Compound') app.run('CreateCompound');
+        else if (l === 'Create Compound') tryRun('CreateCompound', { InputObj: allClips() });
         render();
       }));
     } else {
@@ -630,8 +634,8 @@ export function animationMixer(app: App, host: HTMLElement) {
     root.querySelector('.mixer-actions')?.remove();
     const actions = el('div', 'mixer-actions');
     actions.append(
-      btn('Add Transition', 'Bridge last two clips', () => { app.run('AddTransition'); render(); }),
-      btn('Create Compound', 'Compound all clips', () => { app.run('CreateCompound'); render(); }),
+      btn('Add Transition', 'Bridge last two clips', () => { tryRun('AddTransition', lastTwo()); render(); }),
+      btn('Create Compound', 'Compound all clips', () => { tryRun('CreateCompound', { InputObj: allClips() }); render(); }),
       btn('Equalize', 'Pack clips end-to-end', () => { app.run('EqualizeClips'); render(); }),
     );
     root.appendChild(actions);
