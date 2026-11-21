@@ -51,8 +51,8 @@ const COMMANDS = [
 const DEFAULT_ERRORS = {
   AddToGroup: /^not yet attested: the pick session that asks for the Target group/,
   SIAddToGroup: /^not yet attested: the pick session that asks for the Target group/,
-  SIAddToGroupLowLevel: /^not yet attested: the pick session that asks for the Target group/,
-  AddGroup: /^not yet attested: the pick session that asks for the Target model/,
+  // CMD-B20b (src/commands/groupsB20b.ts, grouptask.dll contract): SIAddToGroupLowLevel with no group found is not
+  // applicable (S_FALSE, no error) and AddGroup with no Target logs not yet attested; both run without an error now.
   // CMD-B7a (docs/ghidra/cmd-b7a-uitasks-group-view-binary.md) replaced the inferred registrations: an empty Object list is 0x8000ffff
   SetInstanceGroup: /^SetInstanceGroup: the Object list is empty \(status 0x8000ffff\)$/,
   RemoveInstanceGroup: /^RemoveInstanceGroup: the Object list is empty \(status 0x8000ffff\)$/,
@@ -318,7 +318,8 @@ const got = await page.evaluate(({ COMMANDS }) => {
   eq('SICreateGroup: unique name', r.v?.name, 'GA1'); A.undo();
   r = run('SICreateGroup', { Name: 'GInMdl', Parent: 'Mdl' });
   eq('SICreateGroup: Parent model', r.v?.parent === mdl, true); A.undo();
-  eq('SICreateGroup: Parent must be a model', run('SICreateGroup', { Parent: 'cube' }).err, 'Parent "cube" is not a model');
+  // CMD-B20b correction 5: a Parent that is not a group container falls back to the current scene model
+  r = run('SICreateGroup', { Parent: 'cube' }); eq('SICreateGroup: a non-container Parent falls back to the scene model', [r.err ?? null, r.v?.parent === A.scene.root], [null, true]); A.undo();
 
   reset(); A.run('SelectObj', { InputObjs: 'cube,sphere' }); r = run('AddToGroup', { Target: 'GA' });
   eq('AddToGroup: adds the selection, selection unchanged, no return value', [members(GA), selNames(), r.v === undefined], [['cube', 'sphere'], ['cube', 'sphere'], true]);
@@ -356,7 +357,7 @@ const got = await page.evaluate(({ COMMANDS }) => {
   reset(); run('AddGroup', { Target: 'Mdl', InputObjs: 'GA' });
   eq('AddGroup: the group becomes owned by the model', GA.parent === mdl, true);
   undoRedo('AddGroup', () => GA.parent === mdl, false, true);
-  eq('AddGroup: Target must be a model', run('AddGroup', { Target: 'cube', InputObjs: 'GA' }).err, 'Target "cube" is not a model');
+  eq('AddGroup: Target must be a group container (CMD-B20b)', run('AddGroup', { Target: 'cube', InputObjs: 'GA' }).err, 'AddGroup: Target "cube" is not a group container (status 0x80004002)');
 
   reset(); n0 = A.scene.groupList.length; A.select([GM]); run('RemoveGroup');
   eq('RemoveGroup: removes the selected group, members stay in the scene', [A.scene.groupList.includes(GM), A.scene.groupList.length - n0, !!find('m1'), selNames()], [false, -1, true, []]);

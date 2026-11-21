@@ -566,16 +566,7 @@ export function registerModelCommands2(app: App) {
     ],
     undoable: false, execute: (app) => armPaint(app, 'color'),
   });
-  // Softimage PaintVertexColors ACTIVE args×5 — arms vertex-color paint (stroke GDI LOCK).
-  app.register({
-    name: 'PaintVertexColors', label: 'Paint Vertex Color', category: 'Property|Paint',
-    args: [
-      { name: 'InputObj', default: null }, { name: 'Polynodes', default: null },
-      { name: 'Colors', default: null }, { name: 'Mode', default: 0 }, { name: 'OutputObj', default: null },
-    ],
-    undoable: false, description: 'Paint Vertex Color',
-    execute: (app) => armPaint(app, 'color'),
-  });
+  // PaintVertexColors: gap.dll 17007160, CMD-B20b (src/commands/groupsB20b.ts)
   (app as any).brushProps = brush;
   // Softimage 100pct-remaining tour: Brush Properties… → scene object type BrushProperties PPG
   // (C3DGAPBrushProp.spdl PropertySet C3DGAPBrushProperties + Layout Default). Commands tool Name ABSENT —

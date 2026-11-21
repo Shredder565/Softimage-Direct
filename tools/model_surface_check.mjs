@@ -111,7 +111,8 @@ const cluster = await p.evaluate(async () => {
   app.selectComponents(box, 'point', [0, 1, 2, 3]);
   const c = app.run('CreateCluster', { Name: 'Top' });
   const n0 = c.elements.size;
-  const copy = app.run('CopyCluster');
+  // CMD-B20b: CopyCluster(Cluster, Target) copies onto each target object (here the cluster's own object)
+  const copy = app.run('CopyCluster', { Cluster: c, Target: [box] })[0];
   const inv = app.run('InvertCluster', { Cluster: box.name + '.Top' });
   // Softimage: Weight Map hangs on the complete Point cluster
   app.select([box]);

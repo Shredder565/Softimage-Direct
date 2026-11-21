@@ -305,9 +305,7 @@ export function registerAnimCommands(app: App) {
   } });
 
   // ---- path animation
-  app.register({ name: 'SaveKeyOnPath', label: 'Save Key on Path', category: 'Animation', args: [{ name: 'InputObj', default: '' }, { name: 'Time', default: null }, { name: 'Locked', default: false }], execute(app, a) {
-    const o = app.targets(a.InputObj)[0] ?? app.selectedObjects[0]; if (!o) throw new Error('Select an object on a path'); const perc = o.properties.find(p => p.type === 'poscns')?.get('perc'); const t = a.Time ?? A.frame; if (perc) return keyAt([perc], t); return keyAt(kineParams([o], n => n.startsWith('pos')), t);
-  } });
+  // SaveKeyOnPath (both registry entries): pathanimtask.dll aef278f7, CMD-B20b (src/commands/groupsB20b.ts)
   app.register({ name: 'ConvertPosAnimToPath', label: 'Convert Position to Path', category: 'Animation', args: [{ name: 'InputObjs', default: '' }, { name: 'Name', default: 'Path' }, { name: 'StartTime', default: 0 }, { name: 'EndTime', default: 0 }, { name: 'StepFrame', default: 1 }], execute(app, a) {
     const o = app.targets(a.InputObjs)[0] ?? app.selectedObjects[0]; if (!o) throw new Error('Select an animated object'); const s = Number(a.StartTime) || A.startFrame; const e = Number(a.EndTime) || A.endFrame; const st = Math.max(1, Number(a.StepFrame) || 1);
     const pts: [number, number, number][] = []; const prev = A.frame; for (let f = s; f <= e; f += st) { A.frame = f; pts.push([o.kinematics.local.val('posx'), o.kinematics.local.val('posy'), o.kinematics.local.val('posz')]); } A.frame = prev;

@@ -71,16 +71,7 @@ export function registerClusterCommands(app: App) {
     execute(app, a) { const c = (a.Cluster && findCluster(app, a.Cluster)) || clusterOf(app); const o = c?.obj; if (!c || !o) throw new Error('Select a cluster'); app.record('Delete Cluster', () => o.removeCluster(c), () => o.addCluster(c)); app.select([o]); return null; },
   });
   app.register({ name: 'RemoveCluster', label: 'Remove Cluster', category: 'Edit', args: [{ name: 'Cluster', default: '' }], execute: (app, a) => app.run('DeleteCluster', a) });
-  app.register({
-    name: 'CopyCluster', label: 'Copy Cluster', category: 'Edit', args: [{ name: 'Cluster', default: '' }, { name: 'Name', default: '' }],
-    execute(app, a) {
-      const c = (a.Cluster && findCluster(app, a.Cluster)) || clusterOf(app); const o = c?.obj; if (!c || !o) throw new Error('Select a cluster');
-      const copy = new Cluster(uniqueClusterName(o, a.Name || c.name), c.compKind, new Set(c.elements));
-      if (c.val('alwayscomplete')) copy.set('alwayscomplete', true);
-      for (const p of c.properties) { const np = new Property(p.name, p.type, p.params.map((x: any) => ({ ...x.def, value: x.value }))); if ((p as any).values) (np as any).values = new Map((p as any).values); if ((p as any).normals) (np as any).normals = new Map((p as any).normals); if ((p as any).uvs) (np as any).uvs = (p as any).uvs; copy.addProperty(np); }
-      app.record('Copy Cluster', () => o.addCluster(copy), () => o.removeCluster(copy)); app.select([copy]); return copy;
-    },
-  });
+  // CopyCluster: siclustertasks.dll 88f1aa51, CMD-B20b (src/commands/groupsB20b.ts)
   /** Softimage workflow: invert the cluster's membership (components of the same kind that are not in the cluster). */
   app.register({
     name: 'InvertCluster', label: 'Invert Cluster', category: 'Edit', args: [{ name: 'Cluster', default: '' }],

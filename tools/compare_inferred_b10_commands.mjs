@@ -58,6 +58,9 @@ const MOVED_B17H = ['EditCommand', 'CreateAndEditCommand'];
 /** Names now registered by row CMD-B19b (src/commands/tasksB19b.ts, tasks.dll contract; checked by tools/compare_tasks_b19b.mjs).
  *  Their default runs no longer fail: a non-folder is ignored (S_FALSE), nothing to install is a warning. */
 const MOVED_B19B = ['RemoveFolder', 'InstallCustomPreferences'];
+/** Names now registered by row CMD-B20b (src/commands/groupsB20b.ts, environments.dll contract; checked by tools/compare_groups_b20b.mjs).
+ *  The default run still fails (the selection is not an environment). */
+const MOVED_B20B = ['SetCurrentEnvironment'];
 /* CMD-B19c (src/commands/optasksB19c.ts) now registers ConnectMap, AddScriptedOpFromFile, ConvertScriptedOp and
    DeleteMotionDerivator; they are left out of NAMES and checked by tools/compare_optasks_b19c.mjs. */
 
@@ -254,7 +257,7 @@ for (const n of NAMES) {
   report(`${n}: default run`, got.defaults[n] === 'ok' || got.defaults[n] === 'expected-failure', got.defaults[n]);
 }
 const B16A = new Set(['LastTool', 'Toggle Manipulator mode']); // CMD-B16a (toolsB16a.ts) / CMD-B17i (toolsB17i.ts) own them now
-report('batch registered every name itself', got.batch.skipped.length === 0 && NAMES.filter(n => !B16A.has(n) && !MOVED_B16E.includes(n) && !MOVED_B17H.includes(n) && !MOVED_B19B.includes(n)).every(n => got.batch.registered.includes(n)), JSON.stringify(got.batch.skipped));
+report('batch registered every name itself', got.batch.skipped.length === 0 && NAMES.filter(n => !B16A.has(n) && !MOVED_B16E.includes(n) && !MOVED_B17H.includes(n) && !MOVED_B19B.includes(n) && !MOVED_B20B.includes(n)).every(n => got.batch.registered.includes(n)), JSON.stringify(got.batch.skipped));
 for (const [name, cond, detail] of got.checks) report(name, cond, detail);
 report('no page errors', pageErrors.length === 0, pageErrors.join(' | '));
 console.log(`compare_inferred_b10_commands: ${pass} ok, ${fail} failed (${NAMES.length} commands)`);

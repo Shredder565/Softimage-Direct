@@ -427,6 +427,9 @@ const got = await page.evaluate(async ({ NAMES, registry, copyEntries, removeEnt
 
   // ================= StoreEnvironmentCacheToMixer / StoreEnvironmentCachesToMixer
   {
+    // CMD-B20b registers the worker (src/commands/groupsB20b.ts, checked by tools/compare_groups_b20b.mjs); the
+    // script layer is checked here with the worker off the bus, then once with it on the bus.
+    const WORKER = app.commands.get('SIStoreEnvironmentCacheToMixer'); app.commands.delete('SIStoreEnvironmentCacheToMixer');
     reset(); let m = mark();
     const r = run('StoreEnvironmentCacheToMixer', { EnvironmentCache: 'cube' });
     eq('StoreEnvironmentCacheToMixer: one SIStoreEnvironmentCacheToMixer <cache>, Name, AddClip; nothing returned; the worker is flagged not yet attested',
@@ -446,6 +449,11 @@ const got = await page.evaluate(async ({ NAMES, registry, copyEntries, removeEnt
       [2, [['SIStoreEnvironmentCacheToMixer', ['cacheA', 'R', true]], ['SIStoreEnvironmentCacheToMixer', ['cacheB', 'R', true]]]]);
     reset(); let title = null; S.dialog = (q) => { title = q.title; return false; }; const c2 = run('StoreEnvironmentCachesToMixer', { Environment: 'StoreEnv', Name: '(UIOnly)' });
     eq('StoreEnvironmentCachesToMixer (UIOnly) Cancel: empty collection, no call; title 1134 (text not decoded, Q2)', [c2.v, calls(), /1134/.test(title)], [[], [], true]);
+    app.commands.set('SIStoreEnvironmentCacheToMixer', WORKER);
+    reset(); const wcache = app.run('CreateEnvironmentCache', { Model: app.scene.root, Environment: env }); wcache.items = [{ name: 'cube', file: 'cube.#.icecache', start: 1, count: 5 }];
+    const wr = run('StoreEnvironmentCacheToMixer', { EnvironmentCache: wcache, Name: 'R3' });
+    eq('StoreEnvironmentCacheToMixer with the CMD-B20b worker on the bus: one bus call; the action source is stored (result discarded)',
+      [wr, calls().map(c => [c[0], c[2]]), app.scene.root.properties.some(p => p.type === 'actionsource' && p.name === 'R3')], [{}, [['SIStoreEnvironmentCacheToMixer', 'bus']], true]);
     app.run('DeleteObj', { InputObj: 'StoreEnv' });
   }
 
@@ -617,6 +625,9 @@ const EXPECT_ERR = {
   // CMD-B19a (WIRE_CORRECTIONS_B19 item 17): the default ParamName "" reaches SICreateEmptyPartition, which refuses an
   // empty Name with E_INVALIDARG (the old stand-in fell back to "Partition").
   CreatePassWithPartition: (d) => /SICreateEmptyPartition: empty Name \(status 0x80070057\)/.test(d.err ?? ''),
+  // CMD-B20b: SIStoreEnvironmentCacheToMixer is on the bus (environments.dll 8ffda6cb); an empty EnvironmentCache is
+  // refused by its UnPack (no environment-cache interface, E_NOINTERFACE)
+  StoreEnvironmentCacheToMixer: (d) => /SIStoreEnvironmentCacheToMixer: .* is not an environment cache \(status 0x80004002\)/.test(d.err ?? ''),
 };
 for (const n of NAMES) {
   const d = got.defaults[n];

@@ -226,15 +226,7 @@ export function registerInferredB10Scene(app: App) {
       return r ?? src; // nothing found: Source itself
     },
   });
-  regB10(app, 'SetCurrentEnvironment', { // inferred: the simulation environment new simulated objects join
-    execute(app, a) {
-      const env = objsOf(app, a.InputObj)[0];
-      if (!env || !env.get('simenv')) throw new Error('SetCurrentEnvironment: input is not a simulation environment');
-      const s = app.scene as any; const old = s.currentEnvironment ?? null;
-      app.record('SetCurrentEnvironment', () => { s.currentEnvironment = env; }, () => { s.currentEnvironment = old; });
-      return env;
-    },
-  });
+  // SetCurrentEnvironment: environments.dll 9b4cc51c, CMD-B20b (src/commands/groupsB20b.ts)
 
   // ---------------------------------------------------------------- UVW transforms
   type Item = { obj: X3DObject; samples: number[] | null };
