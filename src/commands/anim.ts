@@ -236,7 +236,6 @@ export function registerAnimCommands(app: App) {
   // ---- layers (Scene Layer Manager)
   app.register({ name: 'DeleteLayer', label: 'Delete Layer', category: 'Layer', args: [{ name: 'Name', default: '' }], execute(app, a) { const ls = app.scene.layers; const l = ls.find(x => x.name === a.Name) ?? (app as any).currentLayer; if (!l || ls.length < 2) throw new Error('Cannot delete the last layer'); const def = ls.find(x => x !== l)!; const idx = ls.indexOf(l); const members = [...l.members]; app.record('Delete Layer', () => { ls.splice(ls.indexOf(l), 1); for (const o of members) { o.layer = def; def.members.add(o); } if ((app as any).currentLayer === l) (app as any).currentLayer = def; }, () => { ls.splice(idx, 0, l); for (const o of members) { def.members.delete(o); o.layer = l; l.members.add(o); } }); app.events.emit('scene'); return def; } });
   // MoveToLayer: CMD-B17a (selectionLayersB17a.ts)
-  app.register({ name: 'SetCurrentLayer', label: 'Set Current Layer', category: 'Layer', args: [{ name: 'Name', default: '' }], undoable: false, execute(app, a) { const l = app.scene.layers.find(x => x.name === a.Name); if (l) (app as any).currentLayer = l; app.events.emit('scene'); } });
   app.register({ name: 'AddCustomParameter', label: 'New Custom Parameter', category: 'Animation', args: [{ name: 'Name', default: '' }, { name: 'Min', default: 0 }, { name: 'Max', default: 1 }, { name: 'Default', default: 0 }], execute(app, a) { const o = app.selectedObjects[0]; if (!o) throw new Error('Select an object'); const name = a.Name || a.ScriptName || a.ParamName || prompt('Custom parameter name:', 'param') || ''; if (!name) return null; let ps = o.properties.find(p => p.type === 'customparamset'); if (!ps) { ps = app.run('AddProp', { PresetObj: 'Custom Parameter Set', InputObjs: o }); } ps!.add({ name, label: name, type: 'double', value: Number(a.Default ?? a.DefaultValue ?? 0), min: Number(a.Min ?? a.MinValue ?? 0), max: Number(a.Max ?? a.MaxValue ?? 1), animatable: true, keyable: true }); app.events.emit('scene'); return ps; } });
   // SIAddCustomParameter: replaced by the CMD-B15b contract (propertyTasksB15b.ts)
   app.register({ name: 'RemoveCustomParam', label: 'Remove Custom Parameter', category: 'Animation', args: [{ name: 'InputObj', default: '' }], execute(app, a) { const ps = resolve(app, a.InputObj); const marked = ps.length ? ps : [...A.marked]; let n = 0; for (const p of marked) { const owner: any = p.owner; if (owner?.type === 'customparamset' && owner.remove) { const i = owner.params.indexOf(p); if (i >= 0) { owner.params.splice(i, 1); n++; } } else if (owner?.params) { const i = owner.params.indexOf(p); if (i >= 0 && p.def.name !== 'posx') { /* only remove custom-looking */ if (!/^(pos|rot|scl)/.test(p.def.name)) { owner.params.splice(i, 1); n++; } } } } if (!n) { for (const o of app.selectedObjects) { const cs = o.properties.find(p => p.type === 'customparamset'); if (cs?.params.length) { cs.params.pop(); n++; } } } emit(); app.events.emit('scene'); return n; } });
@@ -300,9 +299,6 @@ export function registerAnimCommands(app: App) {
   app.register({ name: 'PlotConstrainedTransforms', label: 'Plot Constrained Transforms', category: 'Animation Mixer', args: [{ name: 'InputObjs', default: '' }, { name: 'StartFrame', default: null }, { name: 'EndFrame', default: null }, { name: 'StepFrame', default: 1 }], execute(app, a) {
     const objs = (app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects).filter(o => o.properties.some(p => p.type?.endsWith('cns') || p.type === 'poscns' || p.type === 'dircns' || p.type === 'oricns' || p.type === 'posecns') || true);
     return plotParams(app, kineParams(objs, n => /^(pos|rot|scl)/.test(n)), a);
-  } });
-  app.register({ name: 'PlotShape', label: 'Plot Shape', category: 'Animation Mixer', args: [{ name: 'InputObj', default: '' }, { name: 'StartFrame', default: null }, { name: 'EndFrame', default: null }, { name: 'StepFrame', default: 1 }], execute(app, a) {
-    const objs = app.targets(a.InputObj).length ? app.targets(a.InputObj) : app.selectedObjects; const ps: Parameter[] = []; for (const o of objs) for (const pr of o.properties) if (pr.type === 'shapekey' || pr.type === 'shapecombo') for (const p of pr.params) if (p.animatable) ps.push(p); if (!ps.length) { app.logMsg('info', 'Plot Shape: no shape keys on selection — plotted local transforms instead'); return plotParams(app, kineParams(objs, n => n.startsWith('pos')), a); } return plotParams(app, ps, a);
   } });
   app.register({ name: 'PlotCurve', label: 'Plot Curve', category: 'Animation Mixer', args: [{ name: 'InputObjs', default: '' }, { name: 'StartFrame', default: null }, { name: 'EndFrame', default: null }, { name: 'StepFrame', default: 1 }], execute(app, a) {
     const objs = app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects; return plotParams(app, kineParams(objs, n => n.startsWith('pos')), a);
@@ -403,21 +399,7 @@ export function registerAnimCommands(app: App) {
   });
   app.register({ name: 'SaveDeformKey', label: 'Save Deform Key', category: 'Animation', args: [], execute: (app) => app.run('StoreShapeKey') });
   app.register({ name: 'ApplyDeformKey', label: 'Apply Deform Key', category: 'Animation', args: [], execute: (app) => app.run('ApplyShapeKey') });
-  app.register({ name: 'LinkDeform', label: 'Link Deform', category: 'Animation', args: [], execute(app) {
-    // Softimage Link Deform: drive target shape weight from source shape weight (or copy shape data once).
-    const sel = app.selectedObjects; if (sel.length < 2) throw new Error('LinkDeform: select source mesh then target mesh');
-    const src = sel[0], tgt = sel[sel.length - 1];
-    const skSrc = src.properties.find(p => p.type === 'shapekey'); const skTgt = tgt.properties.find(p => p.type === 'shapekey');
-    if (skSrc && skTgt) {
-      A.setExpression(skTgt.get('weight')!, skSrc.get('weight')!.fullName, s => findParam(app, s));
-      app.logMsg('info', `LinkDeform: ${skTgt.name}.weight ← ${skSrc.name}.weight`); return skTgt;
-    }
-    if (skSrc && tgt.primitive?.mesh()) {
-      const sk = app.run('StoreShapeKey', { InputObj: tgt.name, Name: skSrc.name + '_link' });
-      sk.set('data', skSrc.val('data')); ensureShapeOperator(tgt); return sk;
-    }
-    throw new Error('LinkDeform: need shape keys on source (and preferably target)');
-  } });
+  // SetCurrentLayer / PlotShape / LinkDeform: CMD-B19b (src/commands/tasksB19b.ts)
   app.register({ name: 'LinkDeformWithOri', label: 'Link Deform with Orientation', category: 'Animation', args: [], execute: (app) => app.run('LinkDeform') });
   app.register({ name: 'ResetActor', label: 'Reset Actor', category: 'Animation', args: [], execute(app) { for (const o of app.selectedObjects) for (const ax of ['x', 'y', 'z']) for (const k of ['pos', 'rot']) { const p = o.kinematics.local.get(k + ax); if (p) app.setParam(p, k === 'scl' ? 1 : 0); } for (const ax of ['x', 'y', 'z']) { const p = app.selectedObjects[0]?.kinematics.local.get('scl' + ax); if (p) app.setParam(p, 1); } return null; } });
   app.register({ name: 'LocalAssignFlexEnv', label: 'Assign Local Envelope', category: 'Deformation|Envelope', args: [], execute: (app) => app.run('ApplyFlexEnv') });

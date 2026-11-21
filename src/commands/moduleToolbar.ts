@@ -115,8 +115,6 @@ export function registerModuleToolbarCommands(app: App) {
     { name: 'MatchUVW', label: 'Match UVW', args: 3 },
     { name: 'CycleUVW', label: 'Cycle UVW', args: 3 },
     { name: 'FlipUVW', label: 'Flip UVW', args: 3 },
-    { name: 'CopyUVW', label: 'Copy UVW', args: 2 },
-    { name: 'PasteUVW', label: 'Paste UVW', args: 3 },
     { name: 'FreezeUVWTransformation', label: 'Freeze UVW transformation', args: 1 },
     { name: 'RelaxUVW', label: 'Relax UVW', args: 2 },
     { name: 'IslandHealUVW', label: 'Island Heal UVW', args: 5 },
@@ -550,17 +548,7 @@ export function registerModuleToolbarCommands(app: App) {
     undoable: false,
     execute: (app) => app.run('Toggle Simulation'),
   });
-  app.register({
-    name: 'CreateEnvironment', label: 'Create Environment', category: 'Simulation',
-    args: [{ name: 'Name', default: 'Environment' }],
-    execute(app, a) {
-      const n = new Null(app.scene.uniqueName(a.Name || 'Environment'));
-      n.add(str('simenv', '1', 'Simulation Environment', { readOnly: true }));
-      addObject(app, n);
-      app.select([n]);
-      return n;
-    },
-  });
+  // CreateEnvironment: environments.dll 98531be5, CMD-B19b (src/commands/tasksB19b.ts)
   // ApplySoftBody / ApplyCloth: row CMD-B17f (animPrimsB17ef.ts, particle.vbs contract)
   app.register({
     name: 'AddClothClusters', label: 'Add Cloth Clusters', category: 'Simulation', args: [{ name: 'InputObj', default: '' }],

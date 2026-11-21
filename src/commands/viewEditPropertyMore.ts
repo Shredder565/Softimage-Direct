@@ -200,12 +200,7 @@ function registerProperty(app: App) {
       bag[k] = !boolArg(bag[k]); return bag[k];
     },
   });
-  // inferred
-  reg(app, {
-    name: 'InspectLastOperator', label: 'Last Operator in Stack', category: 'Property|Edit', description: 'Inspect the last operator in the operator stack of each of the selected object(s)', undoable: false,
-    args: [{ name: 'InputObjs', default: null }],
-    execute(app, a) { for (const o of objs(app, a.InputObjs)) { const ops = o.primitive?.operators ?? []; const op = ops[ops.length - 1]; if (op) app.events.emit('inspect', op); } },
-  });
+  // InspectLastOperator: tasks.dll ee0d5df0, CMD-B19b (src/commands/tasksB19b.ts)
 }
 
 // =================================================================================================== Constraint

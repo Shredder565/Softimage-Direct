@@ -544,7 +544,7 @@ function createForce(app: App, a: Record<string, any>) {
     const data = simEnvironment(env); const en = siName(env as any);
     const addContainer = (type: string, name: string) => {
       trace(app, C, 'AddContainerToEnvironment', env, type, 1, name);
-      if (app.commands.has('AddContainerToEnvironment')) { app.run('AddContainerToEnvironment', { Environment: env, Type: type, Nb: 1, Name: name }); return; }
+      if (app.commands.has('AddContainerToEnvironment')) { app.run('AddContainerToEnvironment', { Environment: env, Type: type, Support3DObject: true, Name: name }); return; }
       const c: SimContainer = { name, type, members: [] };   // inferred: the environment record of CMD-B6e
       app.record('AddContainer ' + name, () => data.containers.push(c), () => { const i = data.containers.indexOf(c); if (i >= 0) data.containers.splice(i, 1); });
     };

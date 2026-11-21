@@ -472,8 +472,7 @@ export function registerModelCommands2(app: App) {
       app.events.emit('scene'); return p;
     },
   });
-  app.register({ name: 'Copy', label: 'Copy', category: 'Edit', args: [], undoable: false, execute(app) { if (app.compSel) return app.run('CopyUserNormals', {}); (app as any).clipboard = app.selectedObjects.slice(); return app.selectedObjects.length; } });
-  app.register({ name: 'Paste', label: 'Paste', category: 'Edit', args: [], execute(app) { if (app.compSel && normalClipboard.length) return app.run('PasteUserNormals', {}); const objs: X3DObject[] = (app as any).clipboard ?? []; if (objs.length) return app.run('Duplicate', { InputObjs: objs }); return null; } });
+  // Copy / Paste: tasks.dll clipboard tasks, CMD-B19b (src/commands/tasksB19b.ts; sub-component input uses CopyUserNormals / PasteUserNormals)
   // Softimage PE Settings… (40891) → Commands Name "Inspect User Normal Editing Preferences"
   // SN InspectObj args×5 (100pct-remaining tour / supplement). SetUserNormalsSettings Name ABSENT.
   app.register({

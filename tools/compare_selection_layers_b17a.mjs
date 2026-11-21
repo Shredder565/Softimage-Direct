@@ -237,7 +237,8 @@ const got = await page.evaluate(({ NAMES }) => {
     ok('SICreateLayerFromSelection with nothing to move: layer created, no MoveToLayer', r.v?.name === 'b17E' && !cmds(r).includes('MoveToLayer'), cmds(r));
     const lg = A.run('CreateLayerGroup', { Name: 'b17LG' });
     r = run('SICreateLayerFromSelection2', { Name: 'b17L2', InputObjs: 'root_null', LayerGroupName: 'b17LG' });
-    ok('SICreateLayerFromSelection2: SICreateLayer2 (layer group), MoveToLayer InputObjs, returns the layer', r.v?.name === 'b17L2' && rnull.layer === r.v && lg.layers.includes(r.v) && cmds(r)[0] === 'SICreateLayer2' && A.cmdB17a.out.SICreateLayerFromSelection2.Value === r.v, [r.err, cmds(r)]);
+    // CMD-B19b (WIRE_CORRECTIONS_B19 item 9): SICreateLayer2 reads LayerGroupName but does not use it (top-level layer)
+    ok('SICreateLayerFromSelection2: SICreateLayer2 (LayerGroupName passed, not used), MoveToLayer InputObjs, returns the layer', r.v?.name === 'b17L2' && rnull.layer === r.v && lg?.type === 'layer' && !r.v.parentLayer && cmds(r)[0] === 'SICreateLayer2' && A.cmdB17a.out.SICreateLayerFromSelection2.Value === r.v, [r.err, cmds(r)]);
     // MoveToLayer (script entry: current layer)
     A.currentLayer = nl; A.select([rnull]);
     r = run('MoveToLayer');

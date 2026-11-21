@@ -30,12 +30,14 @@ const COMMANDS = [
   'SetUserKeyword', 'GetUserKeyword', 'RemoveUserKeyword', 'ClearUserKeyword', 'SetUserTab', 'GetUserTab', 'AddUserTab', 'RemoveUserTab', 'ClearUserTab',
   // Edit
   'ToggleSelectability', 'ParentObjects', 'Clone', 'Instance', 'SIInstantiate', 'GetMaster', 'GetInstances', 'SIDuplicate',
-  'DuplicateModelFromObj', 'DeleteModelFromObj', 'DeleteAll', 'DeleteObjPermanent', 'ToggleParameterValue',
+  // DeleteAll / InspectLastOperator: tasks.dll contract of CMD-B19b (DeleteAll = the NewScene handler), checked by
+  // tools/compare_tasks_b19b.mjs
+  'DuplicateModelFromObj', 'DeleteModelFromObj', 'DeleteObjPermanent', 'ToggleParameterValue',
   'MoveOperatorAfter', 'MoveOperatorBefore', 'SwapOperators', 'DeactivateAbove', 'CreateTransformGroup', 'RemoveTransformGroup',
   // Property
   'SIAddProp', 'SIAddPropEx', 'RemoveProperties', 'RemoveAllProperties', 'SIAssignMaterial', 'SIUnAssignMaterial',
   'MakeLocal', 'SIMakeLocal', 'SelectMaterialsUsedBy', 'SelectObjectsUsingMaterial', 'IncreaseSubdivision', 'DecreaseSubdivision',
-  'AutoInspectEnabled', 'ToggleBooleanUserPref', 'InspectLastOperator',
+  'AutoInspectEnabled', 'ToggleBooleanUserPref',
   // Constraint
   'RemoveAllCns', 'RemoveCnsType', 'GetConstrainedObjects', 'SelectConstrainedObjects', 'SIApplyCns', 'SIApplyConstraint',
   // Transport Control
@@ -244,12 +246,7 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
     r = run('DeleteModelFromObj', { InputObj: 'vnull' }); ck('DeleteModelFromObj', 'deletes the owning model and its content', ok(r) && !allObjs().includes(model) && !allObjs().includes(cube) && !allObjs().includes(nul), r);
     A.undo(); ck('DeleteModelFromObj', 'undo restores the model', allObjs().includes(model) && allObjs().includes(nul) && cube.parentObj === model);
 
-    const realConfirm = window.confirm; const asked = []; let answer = false; window.confirm = m => { asked.push(m); return answer; };
-    const n2 = A.scene.root.children.length; r = run('DeleteAll'); ck('DeleteAll', 'default args (Confirm=True), declined: nothing deleted', ok(r) && r.v === false && asked.length === 1 && A.scene.root.children.length === n2, [r, asked]);
-    answer = true; r = run('DeleteAll'); ck('DeleteAll', 'confirmed: the scene root is empty', ok(r) && r.v === true && asked.length === 2 && A.scene.root.children.length === 0 && allObjs().length === 0, r);
-    A.undo(); ck('DeleteAll', 'undo restores every object', A.scene.root.children.length === n2 && allObjs().includes(cube));
-    r = run('DeleteAll', { Confirm: false }); ck('DeleteAll', 'Confirm=False: no question asked', ok(r) && asked.length === 2 && allObjs().length === 0, r);
-    A.undo(); window.confirm = realConfirm;
+    // DeleteAll (CMD-B19b): the NewScene handler, not a delete over all objects; see tools/compare_tasks_b19b.mjs
 
     const i0 = A.log.length; A.select([nul]); r = run('DeleteObjPermanent');
     ck('DeleteObjPermanent', 'default args: the selection is deleted; the "permanent" part is logged as not yet attested', ok(r) && !allObjs().includes(nul) && /DeleteObjPermanent: not yet attested/.test(logSince(i0)), r);

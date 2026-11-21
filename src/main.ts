@@ -86,6 +86,7 @@ import { registerFaceRobotB18bcCommands } from './commands/faceRobotB18bc';
 import { registerFaceRobotB18dCommands } from './commands/faceRobotB18d';
 import { registerOneClickB18eCommands } from './commands/oneClickB18e';
 import { registerTasksB16cCommands } from './commands/tasksB16c';
+import { registerTasksB19bCommands } from './commands/tasksB19b';
 import { registerB16eCommands } from './commands/b16eActioncoreOptasksGap';
 import { registerShellsB15ElseCommands } from './commands/shellsB15Else';
 import { registerShadertasksB16bCommands } from './commands/shadertasksB16b';
@@ -259,6 +260,7 @@ registerFaceRobotB18aCommands(app);   // CMD-B18a
 registerFaceRobotB18bcCommands(app);   // CMD-B18b / CMD-B18c
 registerFaceRobotB18dCommands(app);   // CMD-B18d
 registerOneClickB18eCommands(app);   // CMD-B18e
+registerTasksB19bCommands(app);   // CMD-B19b (tasks.dll scene / clipboard / layers / loops; environments.dll; selectionmgr.dll)
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);
@@ -752,7 +754,7 @@ window.addEventListener('savescene', (e: any) => {
   sceneName = name; updateTitle(); app.logMsg('info', `Saved scene "${name}" (${text.split('\n').filter(Boolean).length} commands)`);
 });
 const importEmdlFile = (f: File, { newScene = false } = {}) => {
-  if (newScene) app.run('NewScene');
+  if (newScene) app.run('NewScene', { Confirm: false });
   return f.arrayBuffer().then(buf => app.run('ImportModel', { Bytes: buf, FileName: f.name })).then((m: any) => {
     sceneName = f.name.replace(/\.emdl$/i, '') || sceneName;
     updateTitle();
@@ -762,7 +764,7 @@ const importEmdlFile = (f: File, { newScene = false } = {}) => {
 window.addEventListener('openscene', (e: any) => {
   let name = e.detail?.name; const rec: string[] = (() => { try { return JSON.parse(localStorage.getItem('si.recent') ?? '[]'); } catch { return []; } })();
   if (!name) { name = prompt('Open scene:\n' + rec.map((n, i) => `${i + 1}. ${n}`).join('\n') + '\n(number or name; leave empty to pick a file)', '') ?? ''; if (/^\d+$/.test(name)) name = rec[Number(name) - 1]; }
-  const load = (text: string, nm: string) => { app.run('NewScene'); sceneStart = app.log.length; app.autoInspect = false; for (const line of text.split(/\r?\n/)) { if (line.trim()) { try { runScriptLine(app, line); } catch { /* logged */ } } } app.autoInspect = true; app.select([]); sceneName = nm; updateTitle(); };
+  const load = (text: string, nm: string) => { app.run('NewScene', { Confirm: false }); sceneStart = app.log.length; app.autoInspect = false; for (const line of text.split(/\r?\n/)) { if (line.trim()) { try { runScriptLine(app, line); } catch { /* logged */ } } } app.autoInspect = true; app.select([]); sceneName = nm; updateTitle(); };
   if (name) { const t = localStorage.getItem('si.scene.' + name); if (t !== null) load(t, name); else app.logMsg('error', `Scene "${name}" not found`); return; }
   const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.txt,.scn.txt,.emdl,.json';
   inp.onchange = () => {

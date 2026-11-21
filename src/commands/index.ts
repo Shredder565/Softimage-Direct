@@ -11,7 +11,6 @@ import { extractPolygons, meshEdges } from '../core/topology';
 import { color, num, bool } from '../core/params';
 import { Operator, construction } from '../core/scene';
 import type { MeshData } from '../core/geometry';
-import { ensureSoftimageDefaultScene } from '../core/softimageDefaultScene';
 
 class FrozenOperator extends Operator {
   constructor(readonly mesh: MeshData | null) { super('Frozen Geometry', 'geom', []); }
@@ -354,16 +353,7 @@ export function registerBuiltins(app: App) {
   // CMD-B16c: up to Repetitions steps; the count done is returned and kept as the Repetitions output (app.tasksB16c.out)
   app.register({ name: 'Undo', label: 'Undo', category: 'Edit', args: [{ name: 'Repetitions', default: 1 }], undoable: false, execute(app, a) { return undoSteps(app, 'Undo', a.Repetitions); } });
   app.register({ name: 'Redo', label: 'Redo', category: 'Edit', args: [{ name: 'Repetitions', default: 1 }], undoable: false, execute(app, a) { return undoSteps(app, 'Redo', a.Repetitions); } });
-  app.register({ name: 'NewScene', label: 'New Scene', category: 'File', args: [{ name: 'Confirm', default: false }], undoable: false, execute(app) {
-    app.scene = new (app.scene.constructor as any)();
-    app.anim.stop(); app.anim.fcurves.clear(); app.anim.expressions.clear(); app.anim.marked.clear(); app.anim.markingSets.clear();
-    app.anim.frame = app.anim.startFrame = 1; app.anim.endFrame = 100;
-    delete (app as any).currentKeySet; delete (app as any).currentKeySetName; delete (app as any).keySets;
-    app.undoStack = []; app.redoStack = []; app.select([]); app.compSel = null; app.setTool?.(null);
-    app.events.emit('newscene');
-    // Softimage New Scene: Camera + light (+ sphere for recognizable still plates).
-    ensureSoftimageDefaultScene(app);
-  } });
+  // NewScene: tasks.dll handler 6e4d3de5, CMD-B19b (src/commands/tasksB19b.ts; the scene reset is resetScene there)
   app.register({ name: 'SetUserPref', label: 'Set User Preference', category: 'Preferences', args: [{ name: 'Name' }, { name: 'Value' }], undoable: false, execute(app, a) { if (a.Name === 'AutoInspect') app.autoInspect = !!a.Value; if (a.Name === 'AutoKey') app.autoKey = !!a.Value; } });
   app.register({ name: 'CreateLayer', label: 'Create Layer', category: 'Layer', args: [{ name: 'Name', default: 'Layer' }, { name: 'InputObjs', default: '' }], execute(app, a) { const l = app.scene.addLayer(a.Name || 'Layer'); for (const o of app.targets(a.InputObjs)) { o.layer = l; l.members.add(o); } return l; } });
   app.register({ name: 'CreatePass', label: 'Create Pass', category: 'Rendering', args: [{ name: 'Name', default: 'Pass' }], execute: (app, a) => app.scene.addPass(a.Name || 'Pass') });

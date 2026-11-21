@@ -186,7 +186,7 @@ const got = await page.evaluate(async ({ NAMES, DEFAULT_FAILS }) => {
     A.undo(); A.scene.root.removeChild(nul);
 
     // layers
-    const lay = A.run('CreateLayer', { Name: 'layB16c' }); A.run('SetCurrentLayer', { Name: lay.name });
+    const lay = A.run('CreateLayer', { Name: 'layB16c' }); A.run('SetCurrentLayer', { Value: lay.name });   // CMD-B19b: the argument is Value (WIRE_CORRECTIONS_B19 CMD-B19b item 6)
     const u1 = A.undoStack.length; const k2 = S.notifications.length;
     const dl = trace('DeleteLayer', () => { r = run('DeleteCurrentLayer'); });
     ok('DeleteCurrentLayer: the current layer is deleted through the DeleteObj path (not DeleteLayer)', !r.err && !A.scene.layers.includes(lay) && dl.length === 0 && S.notifications.slice(k2).join() === 'SI3D_SCENE_INVALID_BEGIN,SI3D_SCENE_INVALID_END', [r, dl.length]);

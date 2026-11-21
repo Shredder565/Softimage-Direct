@@ -29,8 +29,7 @@ export function registerUICommands(app: App) {
   reg('SetViewManagerLayout', 'View Manager Layout', (_, a) => ev('vmlayout', { layout: a.Layout }), [{ name: 'Layout', default: 'standard' }]);
   reg('MaximizeViewport', 'Maximize/Restore Viewport', () => ev('maximizeview'));
   reg('OpenPreferences', 'Preferences', (_, a) => ev('openprefs', { page: a.Page }), [{ name: 'Page', default: '' }]);
-  reg('SaveScene', 'Save Scene', () => ev('savescene'));
-  reg('OpenScene', 'Open Scene', () => ev('openscene'));
+  // SaveScene / OpenScene: tasks.dll scene tasks, CMD-B19b (src/commands/tasksB19b.ts)
 
   // Softimage ToggleValue (commands_full Viewing) — harvest Hair ACTIVE via ScriptingName ToggleValue.
   // ParamName e.g. objhair; toggles a boolean display flag bag (no invent camera bitmaps).

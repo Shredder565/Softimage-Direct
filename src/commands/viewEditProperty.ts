@@ -409,18 +409,7 @@ function registerEdit(app: App) {
       return undefined;
     },
   });
-  // inferred: Confirm asks first (the wording of Softimage's own dialog is not attested)
-  reg(app, {
-    name: 'DeleteAll', label: 'Delete All', category: 'Edit', description: 'Delete all objects in the scene',
-    args: [{ name: 'Confirm', default: true }],
-    execute(app, a) {
-      const all = [...app.scene.root.children]; if (!all.length) return false;
-      if (boolArg(a.Confirm) && !window.confirm('Delete all objects in the scene?')) return false;
-      // CMD-B17j Q17: the tasks.dll worker's "delete all" mode bit 0x8 (internal callers) skips the camera guard (inferred caller)
-      deleteObjList(app, 'DeleteAll', all, 0x8);
-      return true;
-    },
-  });
+  // DeleteAll: the NewScene handler 6e4d3de5 (CMD-B19b, src/commands/tasksB19b.ts)
   // inferred: deletes like DeleteObj; what "permanently" adds is not attested
   reg(app, {
     name: 'DeleteObjPermanent', label: 'Delete Selected Permanently', category: 'Edit', description: 'Deletes the input objects',

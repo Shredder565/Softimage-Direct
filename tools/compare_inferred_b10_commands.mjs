@@ -47,14 +47,17 @@ const NAMES = [
 // Required input without a default: the default run must fail with a message naming the command.
 // B11: CreateFolder / NavigateNode / GetSize / Tag / Untag require their object argument; Save / LoadFastPlaybackCache
 // with an empty FileName open a file browser (treated as cancelled here) instead of failing.
-const DEFAULT_FAILS = new Set(['RemoveFromFolder', 'RemoveFolder', 'SetCurrentEnvironment', 'SetViewCamera',
+const DEFAULT_FAILS = new Set(['RemoveFromFolder', 'SetCurrentEnvironment', 'SetViewCamera',
   'CreateFolder', 'NavigateNode', 'GetSize', 'Tag', 'Untag', 'PinUVComponents', 'UnPinUVComponents', 'PinAllUVComponents', 'UnPinAllUVComponents', 'ConnectMap', 'AddCustomOp',
-  'AddScriptedOpFromFile', 'ConvertScriptedOp', 'MoveToLibrary', 'SetCurrentMaterialLibrary', 'ReconnectModel', 'InstallCustomPreferences',
+  'AddScriptedOpFromFile', 'ConvertScriptedOp', 'MoveToLibrary', 'SetCurrentMaterialLibrary', 'ReconnectModel',
   'AddShotClip']);   // CMD-B16e: Frame is required
 /** Names now registered by row CMD-B16e (src/commands/b16eActioncoreOptasksGap.ts), not by this batch. */
 const MOVED_B16E = ['AddShotClip', 'GetShotClip'];
 /** Names now registered by row CMD-B17h (src/commands/rigsCharacB17h.ts, command.js contract), not by this batch. */
 const MOVED_B17H = ['EditCommand', 'CreateAndEditCommand'];
+/** Names now registered by row CMD-B19b (src/commands/tasksB19b.ts, tasks.dll contract; checked by tools/compare_tasks_b19b.mjs).
+ *  Their default runs no longer fail: a non-folder is ignored (S_FALSE), nothing to install is a warning. */
+const MOVED_B19B = ['RemoveFolder', 'InstallCustomPreferences'];
 
 const reg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'command_registry.json'), 'utf8')).commands;
 const full = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'commands_full.json'), 'utf8'));
@@ -236,7 +239,8 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     const r2 = run('MoveComponent', { InputObjs: 'cube.pnt[1]' }); ok('MoveComponent reuses the top one', r2.v.CreatedObjs[0] === r.v.CreatedObjs[0] && prim.operators.length === n0 + 1); A.undo(); A.undo(); ok('MoveComponent undo', prim.operators.length === n0); }
   ok('DeleteMotionDerivator without a derivator removes nothing', run('DeleteMotionDerivator', { InputObj: 'cube' }).v === 0);
   // custom preferences
-  { const p = cube.properties[0]; ok('InstallCustomPreferences', run('InstallCustomPreferences', { InputObjs: p, Name: 'MyPrefs' }).v === 'MyPrefs' && A.customPreferencesB10.get('MyPrefs') === p);
+  // CMD-B19b: only custom property sets are installed; a Visibility property -> warning 0x429, nothing installed
+  { const p = cube.properties[0]; const ri = run('InstallCustomPreferences', { InputObjs: p, Name: 'MyPrefs' }); ok('InstallCustomPreferences', ri.v === 0 && !A.customPreferencesB10?.get('MyPrefs') && (ri.log ?? []).some(l => /0x429/.test(l)), ri);
     { const r = run('RefreshCustomPreferences'); ok('RefreshCustomPreferences re-reads them (CMD-B16c: no return value)', !r.err && r.v === undefined); } }
   reset();
   return out;
@@ -250,7 +254,7 @@ for (const n of NAMES) {
   report(`${n}: default run`, got.defaults[n] === 'ok' || got.defaults[n] === 'expected-failure', got.defaults[n]);
 }
 const B16A = new Set(['LastTool', 'Toggle Manipulator mode']); // CMD-B16a (toolsB16a.ts) / CMD-B17i (toolsB17i.ts) own them now
-report('batch registered every name itself', got.batch.skipped.length === 0 && NAMES.filter(n => !B16A.has(n) && !MOVED_B16E.includes(n) && !MOVED_B17H.includes(n)).every(n => got.batch.registered.includes(n)), JSON.stringify(got.batch.skipped));
+report('batch registered every name itself', got.batch.skipped.length === 0 && NAMES.filter(n => !B16A.has(n) && !MOVED_B16E.includes(n) && !MOVED_B17H.includes(n) && !MOVED_B19B.includes(n)).every(n => got.batch.registered.includes(n)), JSON.stringify(got.batch.skipped));
 for (const [name, cond, detail] of got.checks) report(name, cond, detail);
 report('no page errors', pageErrors.length === 0, pageErrors.join(' | '));
 console.log(`compare_inferred_b10_commands: ${pass} ok, ${fail} failed (${NAMES.length} commands)`);
