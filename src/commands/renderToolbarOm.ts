@@ -3,8 +3,6 @@
 import { App } from '../core/commands';
 import inventory from '../data/si/render_toolbar_om_cmds.json';
 import regionSpdl from '../data/si/render_options_region.json';
-import { executeRenderPass } from '../core/sceneRender';
-import { exportRenderArchiveFrameSet } from '../core/renderArchive';
 
 type RrState = {
   visible: boolean;
@@ -69,96 +67,9 @@ export function getSiRenderRegion(): RrState {
 
 /** Softimage scripting-name leaves attested on the Render toolbar OM dump. */
 export function registerRenderToolbarOmCommands(app: App) {
-  const rr = getSiRenderRegion();
   const openView = (name: string) => window.dispatchEvent(new CustomEvent('openview', { detail: { name } }));
 
-  // ——— Region create / close (Softimage fractions; no HWND crop invent) ———
-  app.register({
-    name: 'RenderRegionCreate',
-    label: 'Create Render Region',
-    category: 'Rendering',
-    args: [
-      { name: 'Viewport', default: '' },
-      { name: 'Left', default: createDefaults.Left },
-      { name: 'Right', default: createDefaults.Right },
-      { name: 'Top', default: createDefaults.Top },
-      { name: 'Bottom', default: createDefaults.Bottom },
-    ],
-    undoable: false,
-    execute(app, a) {
-      rr.left = Number(a.Left ?? createDefaults.Left);
-      rr.right = Number(a.Right ?? createDefaults.Right);
-      rr.top = Number(a.Top ?? createDefaults.Top);
-      rr.bottom = Number(a.Bottom ?? createDefaults.Bottom);
-      rr.open = true;
-      rr.visible = true;
-      syncRegionMeta(app, rr);
-      app.logMsg('info', `Render region created LRTB=${rr.left},${rr.right},${rr.top},${rr.bottom} (OM fractions; HWND crop DUMP_READY)`);
-      app.events.emit('frame');
-      return rr;
-    },
-  });
-  app.register({
-    name: 'RenderRegionClose',
-    label: 'Close Render Region',
-    category: 'Rendering',
-    args: [{ name: 'Viewport', default: '' }],
-    undoable: false,
-    execute(app) {
-      rr.open = false;
-      rr.visible = false;
-      app.logMsg('info', 'Render region closed');
-      app.events.emit('frame');
-    },
-  });
-
-  app.register({
-    name: 'RenderRegionToggleAutoRefresh',
-    label: 'Toggle Auto-Refresh Mode for Render Region',
-    category: 'Rendering',
-    args: [{ name: 'Viewport', default: '' }],
-    undoable: false,
-    execute(app) {
-      rr.autoRefresh = !rr.autoRefresh;
-      app.logMsg('info', `Render region auto-refresh ${rr.autoRefresh ? 'ON' : 'OFF'}`);
-    },
-  });
-  app.register({
-    name: 'RenderRegionGetRefreshMode',
-    label: 'Get Refresh Mode for Render Region',
-    category: 'Rendering',
-    args: [{ name: 'Viewport', default: '' }],
-    undoable: false,
-    execute() { return rr.refresh; },
-  });
-  app.register({
-    name: 'RenderRegionGetDisplayType',
-    label: 'Get Render Region Display Type',
-    category: 'Rendering',
-    args: [{ name: 'Viewport', default: '' }],
-    undoable: false,
-    execute() { return rr.display; },
-  });
-  app.register({
-    name: 'RenderRegionSetRenderChannel',
-    label: 'Set Render Region Viewing Render Channel',
-    category: 'Rendering',
-    args: [{ name: 'Viewport', default: '' }, { name: 'RenderChannel', default: 'Main' }],
-    undoable: false,
-    execute(app, a) {
-      rr.channel = String(a.RenderChannel || 'Main');
-      app.logMsg('info', `Render region channel: ${rr.channel}`);
-      return rr.channel;
-    },
-  });
-  app.register({
-    name: 'RenderRegionGetRenderChannel',
-    label: 'Get Render Region Viewing Render Channel',
-    category: 'Rendering',
-    args: [{ name: 'Viewport', default: '' }],
-    undoable: false,
-    execute() { return rr.channel; },
-  });
+  // ——— Render region commands: CMD-B19a (src/commands/renderB19a.ts) ———
 
   // ——— Render channels ———
   const channels = (window as any).__siRenderChannels
@@ -179,23 +90,7 @@ export function registerRenderToolbarOmCommands(app: App) {
       return ch;
     },
   });
-  app.register({
-    name: 'RemoveRenderChannel',
-    label: 'Remove Render Channel',
-    category: 'Rendering',
-    args: [{ name: 'Name', default: '' }],
-    execute(app, a) {
-      const name = String(a.Name || '');
-      const i = channels.findIndex((c: { name: string }) => c.name === name);
-      if (i < 0) throw new Error(`Render channel not found: ${name || '(empty)'}`);
-      if (name === 'Main') throw new Error('Cannot remove Main render channel');
-      const [removed] = channels.splice(i, 1);
-      app.record('RemoveRenderChannel', () => { /* already removed */ }, () => { channels.splice(i, 0, removed); });
-      app.logMsg('info', `Render channel removed: ${name}`);
-      return removed;
-    },
-  });
-
+  // RemoveRenderChannel: CMD-B19a (renderB19a.ts)
   app.register({
     name: 'DisposeRenderingCache',
     label: 'Dispose Rendering Cache',
@@ -219,57 +114,7 @@ export function registerRenderToolbarOmCommands(app: App) {
       app.events.emit('params');
     },
   });
-  app.register({
-    name: 'RenderPassToggleShowRenderedImage',
-    label: 'Toggle Show Rendered Image for Pass Rendering',
-    category: 'Rendering',
-    args: [],
-    undoable: false,
-    execute(app) {
-      rr.showRenderedImage = !rr.showRenderedImage;
-      app.logMsg('info', `Show rendered image ${rr.showRenderedImage ? 'ON' : 'OFF'}`);
-      return rr.showRenderedImage;
-    },
-  });
-  app.register({
-    name: 'RenderPassesFrameSet',
-    label: 'Render Passes Using a Frame Set',
-    category: 'Rendering',
-    args: [{ name: 'Passes', default: 'Passes.Current' }, { name: 'FrameSet', default: '' }, { name: 'Verbose', default: '' }],
-    undoable: false,
-    execute: (app, a) => {
-      // Softimage FrameSet on pass; when empty use Pass FrameStart/End (dump-attested).
-      if (a.FrameSet) {
-        const pass = app.scene.passes[app.scene.passes.length - 1];
-        if (pass?.get('FrameSet')) app.setParam(pass.get('FrameSet')!, String(a.FrameSet));
-      }
-      return executeRenderPass(app, { Passes: a.Passes ?? 'Passes.Current' });
-    },
-  });
-  app.register({
-    name: 'ExportRenderArchiveFrameSet',
-    label: 'Export Passes to Render Archive',
-    category: 'Rendering',
-    args: [{ name: 'Passes', default: 'Passes.Current' }, { name: 'FrameSet', default: '' }, { name: 'Verbose', default: '' }],
-    undoable: false,
-    // WR-03 — Softimage ExportRenderArchiveFrameSet; Softimage .mi ABSENT → AfterImage JSON package.
-    execute: (app, a) => exportRenderArchiveFrameSet(app, a),
-  });
-  app.register({
-    name: 'SIRenderPass',
-    label: 'Render Pass',
-    category: 'Rendering',
-    args: [
-      { name: 'Passes', default: 'Passes.Current' },
-      { name: 'PresetObj', default: null },
-      { name: 'StartFrame', default: null },
-      { name: 'EndFrame', default: null },
-      { name: 'StepFrame', default: null },
-      { name: 'DisposeRendering', default: true },
-    ],
-    undoable: false,
-    execute: (app, a) => executeRenderPass(app, a),
-  });
+  // RenderPassToggleShowRenderedImage, RenderPassesFrameSet, ExportRenderArchiveFrameSet, SIRenderPass: CMD-B19a (renderB19a.ts)
   app.register({
     name: 'CopyRenderOptions',
     label: 'Copy Render Options ',
@@ -390,19 +235,6 @@ export function registerRenderToolbarOmCommands(app: App) {
       execute: () => app.run('OpenRenderingPreferences'),
     });
   }
-}
-
-function syncRegionMeta(app: App, rr: RrState) {
-  const prop = app.scene.renderOptionsRegion;
-  if (!prop) return;
-  // Softimage MetaData Region* are ReadOnly; store OM fractions as Width/Height when open.
-  // HWND crop chrome: see render_region_hwnd_crop.json (modules-gdi DUMP_READY).
-  const w = Math.max(0, rr.right - rr.left);
-  const h = Math.max(0, rr.bottom - rr.top);
-  if (prop.get('RegionOffsetX')) app.setParam(prop.get('RegionOffsetX')!, rr.left);
-  if (prop.get('RegionOffsetY')) app.setParam(prop.get('RegionOffsetY')!, rr.top);
-  if (prop.get('RegionWidth')) app.setParam(prop.get('RegionWidth')!, w);
-  if (prop.get('RegionHeight')) app.setParam(prop.get('RegionHeight')!, h);
 }
 
 /** Compact audit for __uiAudit / compare_render_fidelity — Softimage scripting names present. */

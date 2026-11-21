@@ -612,6 +612,9 @@ const EXPECT_ERR = {
   FindPeriods: (d) => d.cancelled,                                     // 1021, cancel
   CreateFX: (d) => !!d.err && !d.cancelled,                            // the file cannot be opened
   ExportAllPassesToMI2: (d) => /ExportAllPassesToMI2Proc not found/.test(d.err ?? ''),   // stale registration
+  // CMD-B19a (WIRE_CORRECTIONS_B19 item 17): the default ParamName "" reaches SICreateEmptyPartition, which refuses an
+  // empty Name with E_INVALIDARG (the old stand-in fell back to "Partition").
+  CreatePassWithPartition: (d) => /SICreateEmptyPartition: empty Name \(status 0x80070057\)/.test(d.err ?? ''),
 };
 for (const n of NAMES) {
   const d = got.defaults[n];

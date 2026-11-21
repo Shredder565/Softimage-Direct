@@ -226,7 +226,15 @@ export function installViewExtras(C: Ctx) {
   const pointerUp = (e: PointerEvent): boolean => {
     if (!nav) return false; const n = nav; nav = null; const vp = n.vp;
     if (n.mode === 'cube' && !n.moved) { const b = renderer.domElement.getBoundingClientRect(); const f = cubeFaceAt(vp, e.clientX - b.left, e.clientY - b.top); if (f) snapFace(vp, f); }
-    if (n.mode === 'region') { if (!n.moved || n.rr!.w < 4 || n.rr!.h < 4) X(vp).region = null; regionTool = false; app.events.emit('selection'); C.needs(); }
+    if (n.mode === 'region') {
+      if (!n.moved || n.rr!.w < 4 || n.rr!.h < 4) X(vp).region = null;
+      else if (app.commands.has('RenderRegionCreate') && n.r.w > 0 && n.r.h > 0) {
+        // the dragged rectangle becomes the viewport's region (CMD-B19a RenderRegionCreate, fractions of the viewport)
+        const q = n.rr!; const i = vps.indexOf(vp);
+        try { app.run('RenderRegionCreate', { Viewport: i, Left: q.x / n.r.w, Right: (q.x + q.w) / n.r.w, Top: q.y / n.r.h, Bottom: (q.y + q.h) / n.r.h }); } catch { /* keep the drawn rectangle */ }
+      }
+      regionTool = false; app.events.emit('selection'); C.needs();
+    }
     if (n.mode === 'Rectangular Zoom Tool' && n.moved) { const dx = e.clientX - n.sx, dy = e.clientY - n.sy; const f = Math.max(0.05, Math.max(Math.abs(dx) / n.r.w, Math.abs(dy) / n.r.h)); const cam = vp.camera as any; if (vp.kind === 'ortho') cam._zoom = (cam._zoom ?? 20) * f; else { const d = n.camPos.clone().sub(n.tgt); cam.position.copy(n.tgt).add(d.multiplyScalar(f)); } C.needs(); }
     return true;
   };
@@ -238,6 +246,20 @@ export function installViewExtras(C: Ctx) {
   window.addEventListener('displaytoggle', (e: any) => displayMenu(vps[C.active()], e.detail?.item ?? 'Headlight', []));
   window.addEventListener('renderregion-toggle', () => { for (const vp of vps) { const x = X(vp); if (x.region) { (x as any).hidden = !(x as any).hidden; } } C.needs(); });
   window.addEventListener('renderregion-refresh', () => { regionInvalidate(); C.needs(); });
+  // CMD-B19a per-viewport region state (src/commands/renderB19a.ts): bounds are fractions of the viewport rectangle
+  window.addEventListener('renderregion-sync', (e: any) => {
+    const regions: { viewport: number; visible: boolean; left: number; right: number; top: number; bottom: number }[] = e.detail?.regions ?? [];
+    vps.forEach((vp, i) => {
+      const x = X(vp); const g = regions.find(r => r.viewport === i);
+      if (!g) { x.region = null; x.regionImg = null; return; }
+      const r = C.rect(i);
+      const next = { x: g.left * r.w, y: g.top * r.h, w: Math.max(0, g.right - g.left) * r.w, h: Math.max(0, g.bottom - g.top) * r.h };
+      const same = x.region && Math.abs(x.region.x - next.x) < 0.5 && Math.abs(x.region.y - next.y) < 0.5 && Math.abs(x.region.w - next.w) < 0.5 && Math.abs(x.region.h - next.h) < 0.5;
+      if (!same) { x.region = next; x.regionImg = null; }
+      (x as any).hidden = !g.visible;
+    });
+    C.needs();
+  });
   window.addEventListener('stereomode', (e: any) => stereoMenu(vps[C.active()], e.detail?.mode ?? 'Active'));
   window.addEventListener('openvisibility', (e: any) => { const vp = vps.find(v => v.name === e.detail?.vp) ?? vps[C.active()]; inspect(X(vp).vis, `${vp.name} : Camera Visibility`); });
   window.addEventListener('opendisplayoptions', () => { const vp = vps[C.active()]; inspect(X(vp).disp, `${vp.name} : Camera Display`); });
