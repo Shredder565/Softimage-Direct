@@ -37,6 +37,9 @@ const registry = Object.fromEntries(NAMES.map(n => {
   const f = full.find(x => (x.scripting_name || x.name) === n);
   return [n, f ? f.args.map(a => [a.name, a.default ?? null]) : null];
 }));
+// CMD-B20c Q1: these three have a Current registry entry first (1890 / 1891 / 1893) and an "All" entry (1902-1904);
+// the scripting name gets the Current one (the catalogue lists the All one).
+for (const n of ['RenderRegionToggleVisibility', 'RenderRegionRefresh', 'RenderRegionToggleSelectionTracking']) registry[n] = [['Viewport', ':siViewportCurrent:siViewport']];
 
 const browser = await chromium.launch({ executablePath: CHROME, args: ['--no-sandbox', '--use-gl=swiftshader', '--enable-unsafe-swiftshader'] });
 const page = await browser.newPage({ viewport: { width: 1400, height: 900 } });
@@ -285,7 +288,7 @@ const got = await page.evaluate(({ NAMES }) => {
     passA.set('FrameRangeSource', 1); passA.set('FrameSet', '7,9');
     run('ExportRenderArchiveFrameSet', { Passes: passA });
     ok('Export own range source 1: the pass frame set', J(S.lastJobs.jobs[0].frames) === J([7, 9]));
-    passA.set('FrameSet', 'bad!');
+    passA.set('FrameSet', 'bad!!');   // CMD-B20c Q5: a second punctuation character invalidates the number
     r = run('ExportRenderArchiveFrameSet', { Passes: passA });
     ok('Export own range source 1 invalid: XSIRENDERCORE 0x37 + E_INVALIDARG', /0x80070057/.test(r.err ?? '') && r.log.some(l => /XSIRENDERCORE 0x37\]/.test(l)), r);
     passA.set('FrameRangeSource', 2); A.anim.startFrame = 3; A.anim.endFrame = 5;

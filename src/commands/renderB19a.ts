@@ -18,6 +18,11 @@
 //  * User preferences are the C3DPrefsRendering page of File > Preferences (`Preferences.rendering.*`).
 //  * XSIRENDERCORE / simsgcat dictionary texts were not read: messages carry the string id, e.g. "[XSIRENDERCORE 0x19]".
 //  * The parts the analyst could not read log "<command>: not yet attested: <what> (CMD-B19a)".
+//
+// CMD-B20c (docs/ghidra/cmd-b20c-pr201-answers.md Q1-Q9, WIRE_CORRECTIONS_B20 CMD-B20c items 1-8): Current / All
+// registry entries of the region toggles, the preference writes with Viewport All and no region, the frame-set parser,
+// SICreatePass timing / pass test / partition fill, the SICreateEmptyPartition lock test and Type rule, and the
+// RemoveRenderChannel lookup. Parts still open log "not yet attested ... (CMD-B20c)".
 import { App } from '../core/commands';
 import { Node, X3DObject, Pass, Partition, Framebuffer, Light, Camera } from '../core/scene';
 import { renderScenePasses, expandRenderTokens } from '../core/sceneRender';
@@ -27,6 +32,7 @@ import { getSiRenderRegion } from './renderToolbarOm';
 import { deleteObjList } from './tasksB16c';
 import { currentPass, nodeOf } from './duplicateRenderingSimulationScriptsShared';
 import { stateOf as modelTasksState } from './modelTasksB15aShared';
+import { isLocked as isLockedAt } from './inferredB10Scene';
 
 export const ROW = 'CMD-B19a';
 export const S_FALSE = 1, E_INVALIDARG = 0x80070057, E_POINTER = 0x80004003, E_FAIL = 0x80004005, E_UNEXPECTED = 0x8000ffff;
@@ -110,6 +116,7 @@ export function renderB19a(app: App): RenderB19aState {
 
 const fail = (cmd: string, status: number, what: string) => new SiStatusError(status, `${cmd}: ${what}`);
 const nya = (app: App, cmd: string, what: string) => app.logMsg('info', `${cmd}: not yet attested: ${what} (${ROW})`);
+const nya20 = (app: App, cmd: string, what: string) => app.logMsg('info', `${cmd}: not yet attested: ${what} (CMD-B20c)`);
 /** Severity 4 (warning) and severity 2 (error) messages; the dictionary texts were not read. */
 const warn = (app: App, cmd: string, id: number, arg: string) => app.logMsg('info', `WARNING : ${cmd}: [XSIRENDERCORE 0x${id.toString(16)}] ${arg}`);
 const error = (app: App, cmd: string, id: number, arg: string) => app.logMsg('error', `${cmd}: [XSIRENDERCORE 0x${id.toString(16)}] ${arg}`);
@@ -150,8 +157,11 @@ export function syncRegions(app: App) {
     rr.left = cur.left; rr.right = cur.right; rr.top = cur.top; rr.bottom = cur.bottom; rr.channel = cur.channel; rr.track = cur.trackSelection;
     rr.refresh = ['Interactive', 'Camera/Time/Region', 'Manual'][cur.refreshMode] ?? String(cur.refreshMode);
     rr.display = ['RGBA', 'RGB', 'Alpha', 'Red', 'Green', 'Blue'][cur.displayType] ?? String(cur.displayType);
-    rr.autoRefresh = cur.refreshMode === 0;
   }
+  // rendering.region_auto_refresh is its own boolean preference (default true) that no region command writes
+  // (CMD-B20c Q2: ToggleAutoRefresh flips the refresh mode Interactive 0 <-> CTRS 1)
+  const ar = renderPref(app, 'region_auto_refresh');
+  rr.autoRefresh = ar === undefined || ar === null ? true : !!ar;
   app.events.emit('frame');
 }
 
@@ -159,7 +169,7 @@ export function syncRegions(app: App) {
  * The region resolver (note 2.1). `code` is the Viewport argument; only RenderRegionCreate passes `create`.
  * Returns null when nothing is resolved (status S_FALSE: the command does nothing).
  */
-function resolveRegions(app: App, cmd: string, viewport: unknown, create = false): { all: boolean; regions: RenderRegion[] } | null {
+function resolveRegions(app: App, cmd: string, viewport: unknown, create = false, emptyAll = false): { all: boolean; regions: RenderRegion[] } | null {
   const st = renderB19a(app);
   const code = enumValue(viewport) ?? -2;
   if (code < -3) { warn(app, cmd, 2, String(code)); st.status[cmd] = S_FALSE; return null; }
@@ -186,7 +196,12 @@ function resolveRegions(app: App, cmd: string, viewport: unknown, create = false
     }
     if (r) regions.push(r);
   }
-  if (!regions.length) { st.status[cmd] = S_FALSE; return null; }
+  if (!regions.length) {
+    st.status[cmd] = S_FALSE;
+    // CMD-B20c Q3: the set / toggle workers ignore the resolver's S_FALSE; with Viewport All the region loop runs zero
+    // times and the preference branch still runs (`emptyAll`)
+    return emptyAll && code === -1 ? { all: true, regions } : null;
+  }
   st.status[cmd] = 0;
   return { all: code === -1, regions };
 }
@@ -221,23 +236,48 @@ function passListArg(app: App, cmd: string, arg: unknown): Pass[] {
   return out;
 }
 
+/** `_wtof` (C runtime): the value of the longest decimal prefix of the text, leading blanks skipped; 0 when none. */
+export function wtof(text: string): number {
+  const m = /^\s*[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?/.exec(text);
+  return m ? Number(m[0]) : 0;
+}
+const PUNCT = /[!-\/:-@\[-`{-~]/;   // iswpunct on ASCII
+/** Guard of this build only (a browser cannot hold an unbounded range); the parser itself has no limit. */
+const MAX_FRAMES = 1_000_000;
+/** Number check of the frame-set parser: one leading sign is skipped, then a second punctuation character fails. */
+function frameNumberOk(t: string): boolean {
+  let n = 0;
+  for (let i = /^[+-]/.test(t) ? 1 : 0; i < t.length; i++) if (!/[0-9]/.test(t[i]) && PUNCT.test(t[i]) && ++n > 1) return false;
+  return true;
+}
 /**
- * Frame-set parser (0x1800a77e0 was not read). Known part: comma-separated frames "N" and ranges "A-B" (inclusive);
- * an "AxS" / "A-BxS" step suffix is accepted (inferred). Anything else makes the set invalid.
+ * Frame-set parser 0x1800a77e0 (CMD-B20c Q5). Comma-separated tokens, each trimmed; an empty token invalidates the
+ * whole set. A token is a range "A-B" only when its first '-' is after the first character (so "-5" and "-5-3" are
+ * single frames); a range is step 1 from A while <= B, and B < A is invalid. There is no step syntax. Every number
+ * passes the punctuation check and is read with `_wtof` ("5abc" -> 5, "2.5" -> 2.5). The result is an ordered set:
+ * sorted ascending, duplicates dropped. Returns null for an invalid set (the parser's E_INVALIDARG).
  */
 export function parseFrameSet(app: App, cmd: string, text: string): number[] | null {
-  const s = String(text ?? '').trim(); if (!s) return null;
-  const frames: number[] = [];
+  const s = String(text ?? '');
+  if (!s) return null;
+  const set = new Set<number>();
   for (const tok of s.split(',')) {
-    const t = tok.trim(); if (!t) continue;
-    const m = /^(-?\d+)(?:\s*-\s*(-?\d+))?(?:\s*[xX]\s*(\d+))?$/.exec(t);
-    if (!m) { nya(app, cmd, `frame-set syntax "${t}" (frame-set parser 0x1800a77e0 not read)`); return null; }
-    const a = parseInt(m[1], 10), b = m[2] !== undefined ? parseInt(m[2], 10) : a, step = m[3] !== undefined ? Math.max(1, parseInt(m[3], 10)) : 1;
-    if (m[3] !== undefined) nya(app, cmd, 'step suffix in a frame set (inferred "x<step>")');
-    if (b < a) return null;
-    for (let f = a; f <= b; f += step) frames.push(f);
+    const t = tok.trim();
+    if (!t) return null;
+    const dash = t.indexOf('-');
+    if (dash > 0) {
+      const l = t.slice(0, dash).trim(), r = t.slice(dash + 1).trim();
+      if (!frameNumberOk(l) || !frameNumberOk(r)) return null;
+      const a = wtof(l), b = wtof(r);
+      if (b < a) return null;
+      if (b - a > MAX_FRAMES) { nya20(app, cmd, `a frame range of more than ${MAX_FRAMES} frames ("${t}"); this build refuses it as invalid`); return null; }
+      for (let f = a; f <= b; f += 1) set.add(f);
+    } else {
+      if (!frameNumberOk(t)) return null;
+      set.add(wtof(t));
+    }
   }
-  return frames.length ? frames : null;
+  return set.size ? [...set].sort((x, y) => x - y) : null;
 }
 
 interface FrameArgs { frameSet: number[] | null; frameSetText: string; start?: number; end?: number; step?: number; verbose: number }
@@ -355,42 +395,73 @@ function siblingName(pass: Pass, base: string): string {
   let i = 1; while (taken.has(`${base}${i}`)) i++;
   return `${base}${i}`;
 }
-const isLocked = (n: Node) => !!(n as any).locked || !!(n as any).lockLevel;   // inferred lock test (no lock model on passes)
+/** The pass's lock status asked IsLocked at level 1 (CMD-B20c Q9), on the shared lock-info records (inferredB10Scene). */
+const passLocked = (app: App, n: Node) => isLockedAt(app, n, 1);
 
-/** Preset object: is it a pass preset? (inferred: the pass presets of this build are the ones named "...Pass..."). */
 function presetName(preset: unknown): string {
-  const s = String((preset as any)?.name ?? preset ?? '').trim();
+  const s = String((preset as any)?.name ?? preset ?? '').trim().replace(/^\{[0-9A-Fa-f-]+\}:/, '');
   return s.split(/[\\/]/).pop()!.replace(/\.preset$/i, '');
 }
+/**
+ * SICreateObjectAndUpgradeFromPreset stand-in: does the object the preset creates answer the pass interface
+ * (d233acd7, CMD-B20c Q8)? This build has no preset loader, so the created object's class is decided from the preset:
+ * a Pass given as the preset, the default "Pass" preset, or a preset file under a "Passes" folder (inferred: the
+ * siPassFamily presets) create a pass; any other preset creates an object that is not a pass.
+ */
+function presetCreatesPass(preset: unknown): boolean {
+  if (preset instanceof Pass) return true;
+  const raw = String((preset as any)?.name ?? preset ?? '').trim().replace(/^\{[0-9A-Fa-f-]+\}:/, '');
+  if (/^pass$/i.test(presetName(preset))) return true;
+  return raw.split(/[\\/]/).slice(0, -1).some(seg => /^passes$/i.test(seg));   // inferred
+}
+/** Rounding of the pass frame parameters 0x1c / 0x1d: half away from zero. */
+const roundHalfAway = (v: number) => Math.sign(v) * Math.round(Math.abs(v));
 
 export function siCreatePass(app: App, a: Record<string, any>): Pass | undefined {
   const C = 'SICreatePass';
   if (a.PresetObj === undefined || a.PresetObj === null) throw fail(C, E_INVALIDARG, 'PresetObj is required');   // missing argument 0x80020008
   const pname = presetName(a.PresetObj);
-  if (!/pass/i.test(pname)) { error(app, C, 0x17, pname); return undefined; }
-  if (pname !== 'Pass') nya(app, C, `pass preset "${pname}" content (SICreateObjectAndUpgradeFromPreset); a default pass is made`);
+  // the pass test is a capability test on the created object, reported with the preset's name (CMD-B20c Q8)
+  if (!presetCreatesPass(a.PresetObj)) { error(app, C, 0x17, pname); return undefined; }
+  if (!/^pass$/i.test(pname)) nya(app, C, `pass preset "${pname}" content (SICreateObjectAndUpgradeFromPreset); a default pass is made`);
   const scene = app.scene;
-  const name = typeof a.Name === 'string' && a.Name !== '' ? a.Name : pname;   // inferred: no Name keeps the preset's name
+  // a non-empty Name renames the pass; an empty Name keeps the preset's own name
+  const name = typeof a.Name === 'string' && a.Name !== '' ? a.Name : pname;
   const pass = new Pass(scene.uniqueName(name));
-  // timing object (inferred PlayControl In / Out / step): FrameStart, FrameEnd, FrameStep, FrameSet "<In>-<Out>"
-  const tIn = Math.round(app.anim.startFrame), tOut = Math.round(app.anim.endFrame);
-  const tStep = Math.trunc(Number((app.anim as any).step ?? 1)) || 1;   // inferred third timing value
-  pass.set('FrameStart', tIn); pass.set('FrameEnd', tOut); pass.set('FrameStep', tStep); pass.set('FrameSet', `${tIn}-${tOut}`);
-  // default partitions: lights -> first (background lights), other non-camera objects -> second (background objects)
+  // Added to the pass container first. The handler does not make the pass current; this build reads the last pass
+  // as the current one, so the new pass goes in front of it.
+  const add = () => {
+    if (scene.passes.includes(pass)) return;
+    pass.parent = scene;
+    if (scene.passes.length) scene.passes.splice(scene.passes.length - 1, 0, pass); else scene.passes.push(pass);
+  };
+  add();
+  // Timing object read by index (inferred: PlayControl In 1, Out 2, step 6): 1 and 2 must be doubles, 6 an unsigned
+  // integer; a wrong type skips everything after it (no frame parameters, partitions, Value or undo record).
+  const tIn = Number(app.anim.startFrame), tOut = Number(app.anim.endFrame), tStep = Number(app.anim.frameStep ?? 1);
+  if (!Number.isFinite(tIn) || !Number.isFinite(tOut) || !Number.isInteger(tStep) || tStep < 0) {
+    app.events.emit('scene');
+    return undefined;
+  }
+  // 0x1c / 0x1d rounded half away from zero, 0x1e as int, 0x1f "%d-%d" of the values truncated toward zero
+  pass.set('FrameStart', roundHalfAway(tIn)); pass.set('FrameEnd', roundHalfAway(tOut)); pass.set('FrameStep', tStep | 0);
+  pass.set('FrameSet', `${Math.trunc(tIn)}-${Math.trunc(tOut)}`);
+  // Partition fill (0x18008c760): first members list (pass slot 0x38) <- lights, second list (0x30) <- every other
+  // object except cameras (inferred class identities). Objects with no owning model are skipped.
   const lightsPart = pass.partitions.find(p => p.name === 'Background_Lights_Partition') ?? pass.partitions[1];
   const objsPart = pass.partitions.find(p => p.name === 'Background_Objects_Partition') ?? pass.partitions[0];
+  const flagged = new Set<string>();
   for (const o of scene.allObjects()) {
-    if (o === scene.root) continue;   // inferred: the scene root is the object with flag bit 8
+    if (o === scene.root) continue;   // the scene root: no owning model below the root
+    const model = o.parentObj?.model ?? null;   // first owner that is a model (the object itself does not count)
+    if (!model) continue;
+    if (model !== scene.root && !flagged.has(model.name)) flagged.add(model.name);
     if (o instanceof Light) lightsPart?.members.add(o);
     else if (!(o instanceof Camera)) objsPart?.members.add(o);
   }
-  // Add to the pass container. The handler does not make the pass current; this build reads the last pass as the
-  // current one, so the new pass goes in front of it.
-  app.record('SICreatePass', () => {
-    pass.parent = scene;
-    if (scene.passes.length) scene.passes.splice(scene.passes.length - 1, 0, pass); else scene.passes.push(pass);
-  }, () => { const i = scene.passes.indexOf(pass); if (i >= 0) scene.passes.splice(i, 1); pass.parent = null; });
+  if (flagged.size) nya20(app, C, `the owning model's component-hierarchy flag 0x8 that skips its objects (models ${[...flagged].join(', ')}); their objects are kept`);
   renderB19a(app).out[C] = { Value: pass };
+  app.record('SICreatePass', add, () => { const i = scene.passes.indexOf(pass); if (i >= 0) scene.passes.splice(i, 1); pass.parent = null; });
   app.events.emit('scene');
   return pass;
 }
@@ -406,11 +477,18 @@ export function siCreateEmptyPartition(app: App, a: Record<string, any>): Partit
   };
   one(unset(a.Target) ? 'Passes.Current' : a.Target);   // inferred: an empty Target is the registry default
   if (typeof a.Name !== 'string') throw fail(C, E_INVALIDARG, 'Name must be a string');
-  const type = enumValue(a.Type);
+  // Type is taken only when it is an integer (VT_I4); anything else keeps the task's constructor value (CMD-B20c Q4).
+  // The registry default ":siObjectPartition:siPartitionType" is an enum string that the command layer converts
+  // (inferred); other strings are not integers.
+  let type: number;
+  const enumType = typeof a.Type === 'string' ? /^:?(siObjectPartition|siLightPartition)(?::siPartitionType)?$/.exec(a.Type.trim()) : null;
+  if (typeof a.Type === 'number' && Number.isInteger(a.Type)) type = a.Type;
+  else if (enumType) type = ENUMS[enumType[1]];
+  else { type = 1; nya20(app, C, `the task's constructor value of Type when Type ${JSON.stringify(a.Type)} is not an integer; 1 (object partition) is used`); }
   if (a.Name === '' || (type !== 1 && type !== 2)) throw fail(C, E_INVALIDARG, a.Name === '' ? 'empty Name' : `Type ${String(a.Type)} is not 1 (object) or 2 (light)`);
   const made: Partition[] = [];
   for (const pass of targets) {
-    if (isLocked(pass)) { app.logMsg('error', `${C}: ${pass.name} is locked`); continue; }
+    if (passLocked(app, pass)) { app.logMsg('error', `${C}: ${pass.name} is locked`); continue; }
     const p = new Partition(siblingName(pass, a.Name));
     (p as any).partitionType = type === 2 ? 'siLightPartition' : 'siObjectPartition';
     (p as any).partitionClass = type === 2 ? '7a1bb9d6-58a3-49d6-84ba-39429edad489' : '8b291ad2-aac2-4f09-a027-b47e6c11e4ac';
@@ -477,14 +555,17 @@ export function registerRenderB19aCommands(app: App) {
     syncRegions(app);
     return undefined;
   });
-  reg('RenderRegionToggleVisibility', 'Show/Hide All Render Regions', [{ name: 'Viewport', default: VP_ALL }], (app, a) => {
+  // RenderRegionToggleVisibility / Refresh / ToggleSelectionTracking: the registry has a Current entry first (1890 /
+  // 1891 / 1893, plain label) and an "All" entry (1903 / 1902 / 1904) served by the same handler. A call by scripting
+  // name gets the first one (inferred, CMD-B20c Q1); the "All" menu items and key bindings pass siViewportAll.
+  reg('RenderRegionToggleVisibility', 'Show/Hide Render Region', [{ name: 'Viewport', default: VP_CUR }], (app, a) => {
     const r = resolveRegions(app, 'RenderRegionToggleVisibility', a.Viewport); if (!r) return undefined;
     const v = !r.regions.some(g => g.visible);
     for (const g of r.regions) g.visible = v;
     syncRegions(app);
     return undefined;
   });
-  reg('RenderRegionRefresh', 'Refresh All Render Regions', [{ name: 'Viewport', default: VP_ALL }], (app, a) => {
+  reg('RenderRegionRefresh', 'Refresh Render Region', [{ name: 'Viewport', default: VP_CUR }], (app, a) => {
     const r = resolveRegions(app, 'RenderRegionRefresh', a.Viewport); if (!r) return undefined;
     for (const g of r.regions) if (g.visible) g.renders++;
     st().globalRefreshes++;   // one global render-service refresh, whatever the number of regions
@@ -493,23 +574,26 @@ export function registerRenderB19aCommands(app: App) {
     return undefined;
   });
   reg('RenderRegionToggleAutoRefresh', 'Toggle Auto-Refresh Mode for Render Region', [{ name: 'Viewport', default: VP_ALL }], (app, a) => {
-    const r = resolveRegions(app, 'RenderRegionToggleAutoRefresh', a.Viewport); if (!r) return undefined;
+    const r = resolveRegions(app, 'RenderRegionToggleAutoRefresh', a.Viewport, false, true); if (!r) return undefined;
+    // any region in Interactive (0) -> CTRS (1), otherwise Interactive; no region (Viewport All) -> 0
     const mode = r.regions.some(g => g.refreshMode === 0) ? 1 : 0;
     for (const g of r.regions) g.refreshMode = mode;
     if (r.all) { writePref(app, 'region_refresh_mode', mode); refreshViewports(); }
     syncRegions(app);
     return undefined;
   });
-  reg('RenderRegionToggleSelectionTracking', 'Toggle Selection Tracking for All Render Regions', [{ name: 'Viewport', default: VP_ALL }], (app, a) => {
-    const r = resolveRegions(app, 'RenderRegionToggleSelectionTracking', a.Viewport); if (!r) return undefined;
-    const v = !r.regions.some(g => g.trackSelection);
+  reg('RenderRegionToggleSelectionTracking', 'Toggle Selection Tracking for Render Region', [{ name: 'Viewport', default: VP_CUR }], (app, a) => {
+    const r = resolveRegions(app, 'RenderRegionToggleSelectionTracking', a.Viewport, false, true); if (!r) return undefined;
+    const v = !r.regions.some(g => g.trackSelection);   // no region (Viewport All) -> true
     for (const g of r.regions) g.trackSelection = v;
     if (r.all) { writePref(app, 'region_track_selection', v); refreshViewports(); }
     syncRegions(app);
     return undefined;
   });
+  // Set workers: with Viewport All the preference is written and the viewports refreshed even with no region
+  // (CMD-B20c Q3; SetDisplayType's worker was not re-read and is inferred to match SetRefreshMode).
   const setMode = (cmd: string, argName: string, field: 'displayType' | 'refreshMode', pref: string) => (app: App, a: Record<string, any>) => {
-    const r = resolveRegions(app, cmd, a.Viewport); if (!r) return undefined;
+    const r = resolveRegions(app, cmd, a.Viewport, false, true); if (!r) return undefined;
     const v = enumValue(a[argName]) ?? 0;   // passed unchanged, no range check
     for (const g of r.regions) g[field] = v;
     if (r.all) { writePref(app, pref, v); refreshViewports(); }
@@ -517,8 +601,10 @@ export function registerRenderB19aCommands(app: App) {
     return undefined;
   };
   const getMode = (cmd: string, field: 'displayType' | 'refreshMode', pref: string) => (app: App, a: Record<string, any>) => {
-    const r = resolveRegions(app, cmd, a.Viewport); if (!r) { if (enumValue(a.Viewport) !== -1) nya(app, cmd, 'Get on a viewport without a region (the handler reads an empty map unchecked)'); return undefined; }
-    const v = r.all ? Number(renderPref(app, pref) ?? 0) : r.regions[0][field];
+    // Viewport All reads the preference without resolving any region (CMD-B20c Q3)
+    if (enumValue(a.Viewport) === -1) { st().status[cmd] = 0; return out(cmd, Number(renderPref(app, pref) ?? 0)); }
+    const r = resolveRegions(app, cmd, a.Viewport); if (!r) { nya(app, cmd, 'Get on a viewport without a region (the handler reads an empty map unchecked: undefined)'); return undefined; }
+    const v = r.regions[0][field];
     return out(cmd, v);   // Value written as VT_INT
   };
   reg('RenderRegionSetDisplayType', 'Set Render Region Display Type', [{ name: 'Viewport', default: VP_CUR }, { name: 'Type', default: ':siRenderRegionDisplayRGBA:siRenderRegionDisplayType' }],
@@ -560,10 +646,14 @@ export function registerRenderB19aCommands(app: App) {
     const C = 'RemoveRenderChannel';
     if (typeof a.Name !== 'string' || a.Name === '') throw fail(C, E_INVALIDARG, 'Name must be a non-empty string');
     const list = renderChannels();
+    // The lookup (and any refusal) belongs to the render-channel manager; the handler compares nothing itself and has
+    // no Main guard (CMD-B20c Q7). The manager's case rule is unattested: this build's manager matches exactly.
     const i = list.findIndex(c => c.name === a.Name);
-    if (i < 0) throw fail(C, E_INVALIDARG, `render channel "${a.Name}" not found`);
+    if (i < 0) {
+      if (list.some(c => c.name.toLowerCase() === a.Name.toLowerCase())) nya20(app, C, `the render-channel manager's case rule for "${a.Name}"; this build matches names exactly`);
+      throw fail(C, E_INVALIDARG, `render channel "${a.Name}" not found`);
+    }
     const ch = list[i];   // with undo the channel (and its type) is kept
-    if (ch.name === 'Main') nya(app, C, 'whether the render-channel manager refuses removing Main; it is removed');
     // every pass's framebuffers on that channel are deleted first (DeleteObj, undo recorded)
     const fbs: Framebuffer[] = [];
     for (const p of app.scene.passes) for (const fb of p.framebuffers) if (String(fb.val('RenderChannel') ?? '') === ch.name) fbs.push(fb);

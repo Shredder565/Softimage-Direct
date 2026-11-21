@@ -9,7 +9,7 @@ export function registerUICommands(app: App) {
   const reg = (name: string, label: string, execute: (app: App, a: Record<string, any>) => any, args: { name: string; default: any }[] = []) => app.register({ name, label, category: 'UI', args, undoable: false, execute });
   // TranslateTool / RotationTool / ScalingTool: toolmanager.dll activation commands (CMD-B16a, toolsB16a.ts).
   // ActivateSelectTool, Activate{Vertex,Edge,Polygon,RaycastEdge,RaycastPoly}SelTool, IsolateSelected: CMD-B19d (selectionB19d.ts)
-  reg('ActivateObjectSelTool', 'Object Select Tool', (app) => { tool.setMode('select'); app.setSelMode('object'); });
+  // ActivateObjectSelTool: CMD-B20c item 14, the B19d activate-tool class (selectionB19d.ts)
   reg('ActivateRaycastSelTool', 'Raycast Select Tool', (app) => { tool.setMode('select'); app.setSelMode('object'); });
   // FrameSelection / FrameAll / CameraReset: vm.dll commands of CMD-B17i (src/commands/inferredB10Views.ts).
   reg('ResetCamera', 'Reset Camera', () => ev('frameall'), [{ name: 'View', default: -1 }]);
