@@ -470,18 +470,7 @@ function registerEdit(app: App) {
     args: [{ name: 'Object', default: null }, { name: 'OperatorToMove', default: null }, { name: 'OperatorReference', default: null }],
     execute(_app, a) { move('MoveOperatorBefore', a, false); },
   });
-  // inferred
-  reg(app, {
-    name: 'SwapOperators', label: 'SwapOperators', category: 'Edit', description: 'exchange order of operators',
-    args: [{ name: 'Object', default: null }, { name: 'Operator1', default: null }, { name: 'Operator2', default: null }],
-    execute(_app, a) {
-      const { prim, ops: [p, q] } = stackOf('SwapOperators', a.Object, a.Operator1, a.Operator2);
-      if (p === q) throw new Error('SwapOperators: the two operators are the same');
-      if (prim.operators[0] === p || prim.operators[0] === q) throw new Error('SwapOperators: the generator operator cannot be moved');
-      const next = [...prim.operators]; const i = next.indexOf(p), j = next.indexOf(q); next[i] = q; next[j] = p;
-      reorder('SwapOperators', prim, next, new Map([[p, q.region], [q, p.region]]));
-    },
-  });
+  // SwapOperators: CMD-B19c (optasksB19c.ts; F3DSwapPortConnections error mapping)
   // inferred: sets Mute on every operator evaluated after the given one
   reg(app, {
     name: 'DeactivateAbove', label: 'DeactivateAbove', category: 'Edit', description: 'Deactivate above operator',

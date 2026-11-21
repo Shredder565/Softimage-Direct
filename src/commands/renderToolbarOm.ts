@@ -206,14 +206,7 @@ export function registerRenderToolbarOmCommands(app: App) {
     },
   });
 
-  app.register({
-    name: 'DisconnectAndDeleteShaders',
-    label: 'RendertreeDeleteShaders',
-    category: 'Rendering',
-    args: [{ name: 'Shaders', default: null }],
-    undoable: false,
-    execute(app) { app.logMsg('info', 'RendertreeDeleteShaders'); },
-  });
+  // DisconnectAndDeleteShaders: CMD-B19c (optasksB19c.ts; shadertasks.dll contract)
   app.register({
     name: 'DisconnectAndDeleteOrUnnestShaders',
     label: 'RendertreeDeleteOrUnnestShaders',

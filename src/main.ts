@@ -86,6 +86,7 @@ import { registerFaceRobotB18bcCommands } from './commands/faceRobotB18bc';
 import { registerFaceRobotB18dCommands } from './commands/faceRobotB18d';
 import { registerOneClickB18eCommands } from './commands/oneClickB18e';
 import { registerRenderB19aCommands } from './commands/renderB19a';
+import { registerOptasksB19cCommands } from './commands/optasksB19c';
 import { registerTasksB16cCommands } from './commands/tasksB16c';
 import { registerTasksB19bCommands } from './commands/tasksB19b';
 import { registerB16eCommands } from './commands/b16eActioncoreOptasksGap';
@@ -263,6 +264,7 @@ registerFaceRobotB18dCommands(app);   // CMD-B18d
 registerOneClickB18eCommands(app);   // CMD-B18e
 registerRenderB19aCommands(app);   // CMD-B19a (rendercore.dll render region, channels, passes / partitions, pass render / archive export)
 registerTasksB19bCommands(app);   // CMD-B19b (tasks.dll scene / clipboard / layers / loops; environments.dll; selectionmgr.dll)
+registerOptasksB19cCommands(app);   // CMD-B19c (optasks ICE attributes / compounds / constraints / envelope locks, SwapOperators, ConnectMap, ...)
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);
