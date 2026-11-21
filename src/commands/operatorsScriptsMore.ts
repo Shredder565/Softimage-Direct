@@ -216,7 +216,7 @@ export function registerOperatorsScriptsMore(app: App, state: OperatorsScriptsSt
       let env = [...app.scene.allObjects()].find(o => !!o.get('simenv')) ?? null;
       if (!env) {
         env = keepSelection(app, () => firstObject(app.run('CreateEnvironment', { Name: 'Environment' })));
-        if (env && !delegate(app, 'AddContainerToEnvironment', { Environment: env, Family: 'Force', Type: 1, Name: 'Forces' }).done) logNya(app, cmd, 'the environment container command is not available; the new environment has no "Forces" container', 'Q9');
+        if (env && !delegate(app, 'AddContainerToEnvironment', { Environment: env, Type: 'Force', Support3DObject: true, Name: 'Forces' }).done) logNya(app, cmd, 'the environment container command is not available; the new environment has no "Forces" container', 'Q9');
       }
       if (!env) return 0;
       const environment = env;

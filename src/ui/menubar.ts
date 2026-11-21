@@ -201,7 +201,6 @@ export function menubar(app: App, host: HTMLElement) {
   const file = SI_MENUS.fileMenu?.[0]; const main = SI_MENUS.mainMenu ?? [];
   // Softimage Desktop module strip: ICE (MENU 303 / CrowdFX DUMP_READY) + Face Robot (MENU 300).
   const tops: SiMenuItem[] = [file ?? main[0], ...main.slice(1), ICE_MODULE_MENU, FACE_ROBOT_MENU];
-  const clipboard: { objs: any[]; cut: boolean } = { objs: [], cut: false };
 
   const pick = (it: SiMenuItem, path: string[]) => {
     const l = it.label ?? '';
@@ -232,7 +231,7 @@ export function menubar(app: App, host: HTMLElement) {
       }
     }
     switch (l) {
-      case 'New Scene': if (confirm('New scene? (unsaved work is lost)')) app.run('NewScene'); return;
+      case 'New Scene': if (confirm('New scene? (unsaved work is lost)')) app.run('NewScene', { Confirm: false }); return;
       case 'Open...': ev('openscene'); return; case 'Save': ev('savescene'); return; case 'Save As...': ev('savescene', { as: true }); return; case 'Save Backup': ev('savescene', { backup: true }); return;
       case 'Merge...': ev('mergescene'); return;
       case 'New Project...': {
@@ -252,9 +251,8 @@ export function menubar(app: App, host: HTMLElement) {
       case 'Exit': return;
       case 'Undo': app.undo(); return; case 'Redo': app.redo(); return;
       case 'Repeat': { const last = app.log.filter(x => x.kind === 'cmd').slice(-1)[0]; if (last) app.logMsg('info', 'Repeat: ' + last.text); return; }
-      case 'Copy': clipboard.objs = app.selectedObjects.slice(); clipboard.cut = false; return;
-      case 'Cut': clipboard.objs = app.selectedObjects.slice(); clipboard.cut = true; app.run('DeleteObj'); return;
-      case 'Paste': if (clipboard.objs.length) { if (clipboard.cut) { app.logMsg('info', 'Paste after Cut: restoring via undo is not available; duplicating last copy'); } app.run('Duplicate', { InputObjs: clipboard.objs.filter(o => [...app.scene.allObjects()].includes(o)) }); } return;
+      // CMD-B19b: the tasks.dll clipboard commands (Cut with nothing selected fails; the error is in the log)
+      case 'Copy': case 'Cut': case 'Paste': try { app.run(l); } catch { /* logged */ } return;
       case 'Delete Selected': app.run('Delete Selected'); return;   // CMD-B16d filter-map command (row 70a823e0) case 'Select All': app.run('SelectAll'); return;
       case 'Minimize All': minimizeAll(); return; case 'Restore All': restoreAll(); return; case 'Close All': closeAll(); return;
       default: if (it.id === -12) { const w = floatingWindows()[Number(l.split(' ')[0]) - 1]; w?.focus(); return; }

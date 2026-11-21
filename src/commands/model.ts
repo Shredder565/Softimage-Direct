@@ -927,7 +927,6 @@ export function registerModelAliases(app: App) {
   // misc
   app.commands.get('SetProportionalRadius')!.execute = (app, a) => { const r = a.Radius ?? Number(prompt('Proportional radius', String(app.proportional.radius)) ?? app.proportional.radius); app.proportional.radius = Number(r) || app.proportional.radius; app.proportional.on = true; app.events.emit('selection'); app.logMsg('info', `Proportional ON, radius ${app.proportional.radius}`); };
   app.register({ name: 'SetUserNormalsSettings', label: 'User Normals Settings', category: 'Modeling', args: [], canRun: () => false, execute() { throw new Error('User normals are not implemented yet'); } });
-  for (const n of ['Copy', 'Paste']) app.register({ name: n, label: n, category: 'Edit', args: [], canRun: () => false, execute() { throw new Error('Clipboard for user normals is not implemented yet'); } });
   app.register({ name: 'AutoInspect', label: 'Auto Inspect', category: 'Preferences', args: [], undoable: false, execute(app) { app.autoInspect = !app.autoInspect; app.logMsg('info', 'Auto inspect ' + (app.autoInspect ? 'ON' : 'OFF')); } });
   // dissolve & clean, extrude along curve
   const topo = app.commands.get('ApplyTopoOp')!; const tc = topo.canRun!, te = topo.execute;

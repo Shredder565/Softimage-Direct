@@ -8,6 +8,9 @@
 // Every register call below therefore carries an `// inferred` comment. Original code only.
 // CMD-B17a replaced the inferred GrowSelection, ShrinkSelection, SelectAdjacent, ConvertSelection*, SelectNSidedPolygons,
 // GetNeighborSubcomponents, Select*EdgeLoop, SICreateLayerFromSelection* and ToggleGhosting (selectionLayersB17a.ts).
+// CMD-B19b replaced the inferred SelectAllConnectedComponents, SelectAllComponentLoops, Grow/ShrinkSelectedLoops,
+// SelectPolygonOutline, DeselectAllUsingFilter, SICreateLayer[2], MoveObjectToLayer, CreateLayerGroup and CutLayerParent
+// (tasksB19b.ts). LayerGroup below is no longer created by any command (a layer group is a layer holding layers).
 //
 // Conventions taken from the existing code:
 //  - branch selection is represented as the node plus all of its descendants in app.selection (keymap `hier`,
@@ -47,7 +50,6 @@ export class LayerGroup extends Node {
   explorerChildren(): Node[] { return [...this.layers]; }
 }
 const layerGroups = (app: App): LayerGroup[] => ((app.scene as any).layerGroups ??= []);
-const groupOfLayer = (l: Layer): LayerGroup | null => (l as any).layerGroup ?? null;
 
 // ------------------------------------------------------------------ argument resolution
 
@@ -140,19 +142,9 @@ function treeTop(app: App, o: X3DObject): X3DObject { let t = o; while (t.parent
 
 // ------------------------------------------------------------------ component selection helpers
 
-interface CompCtx { obj: X3DObject; adj: T.Adjacency; kind: CompKind; sel: Set<CompItem>; }
 
 const currentSet = (app: App): Set<CompItem> => { const c = app.compSel!; return new Set<CompItem>(c.kind === 'point' ? c.points : c.kind === 'edge' ? c.edges : c.polygons); };
 
-/** The component selection a command works on: the InputObjs component string when given, else app.compSel. */
-function compCtx(app: App, inputObjs: any): CompCtx | null {
-  const r = resolve(app, inputObjs);
-  if (r.comps.length) { const c = r.comps[0]; return { obj: c.obj, adj: T.adjacencyOf(meshOf(c.obj)!), kind: c.kind, sel: new Set(c.items) }; }
-  const c = app.compSel; if (!c) return null;
-  const objs = objectsOf(r); if (objs.length && !objs.includes(c.obj)) return null;
-  const m = meshOf(c.obj); if (!m) return null;
-  return { obj: c.obj, adj: T.adjacencyOf(m), kind: c.kind, sel: currentSet(app) };
-}
 function setComponents(app: App, obj: X3DObject, kind: CompKind, items: Iterable<CompItem>) {
   (app as any).selFilter = FILTER_LABEL[kind];
   app.setSelMode(kind);
@@ -212,8 +204,6 @@ function noInspect(app: App) { if (!app.autoInspect) return; app.autoInspect = f
 // ------------------------------------------------------------------ group / layer helpers
 
 const asGroup = (app: App, v: any): Group | null => v instanceof Group ? v : typeof v === 'string' && v ? byName(app.scene.groupList, v) ?? null : null;
-const asLayer = (app: App, v: any): Layer | null => v instanceof Layer ? v : typeof v === 'string' && v ? byName(app.scene.layers, v) ?? null : null;
-const asLayerGroup = (app: App, v: any): LayerGroup | null => v instanceof LayerGroup ? v : typeof v === 'string' && v ? byName(layerGroups(app), v) ?? null : null;
 const currentLayer = (app: App): Layer => (app as any).currentLayer ?? app.scene.layers[0];
 
 function uniqueName(app: App, base: string): string {
@@ -236,21 +226,6 @@ function removeMembers(app: App, g: Group, objs: X3DObject[]): X3DObject[] {
   const before = [...g.members]; const gone = before.filter(o => objs.includes(o)); if (!gone.length) return gone;
   app.record('Remove from Group', () => { g.members.splice(0, g.members.length, ...before.filter(o => !gone.includes(o))); }, () => { g.members.splice(0, g.members.length, ...before); });
   return gone;
-}
-function moveToLayer(app: App, l: Layer, objs: X3DObject[]) {
-  const list = uniq(objs); const prev = list.map(o => o.layer);
-  app.record('Move to Layer', () => { for (const o of list) { o.layer?.members.delete(o); o.layer = l; l.members.add(o); } },
-    () => { list.forEach((o, i) => { l.members.delete(o); o.layer = prev[i]; prev[i]?.members.add(o); }); });
-}
-function createLayer(app: App, command: string, preset: any, name: any, groupName: any): Layer {
-  const g = empty(groupName) ? null : asLayerGroup(app, groupName);
-  if (!empty(groupName) && !g) throw new Error(`layer group "${groupName}" not found`);
-  if (!empty(preset) && String(preset) !== 'Default_New_Layer') app.logMsg('info', `${command}: not yet attested: layer preset "${preset}" (the default new-layer values are used)`);
-  const l = new Layer(uniqueName(app, String(name || 'Layer'))); l.parent = app.scene;
-  const A = app as any; const ls = app.scene.layers;
-  app.record('Create Layer', () => { ls.push(l); if (g) { g.layers.push(l); (l as any).layerGroup = g; } },
-    () => { const i = ls.indexOf(l); if (i >= 0) ls.splice(i, 1); if (g) { const j = g.layers.indexOf(l); if (j >= 0) g.layers.splice(j, 1); } if (A.currentLayer === l) A.currentLayer = ls[0]; });
-  return l;
 }
 
 // ------------------------------------------------------------------ registration
@@ -380,16 +355,7 @@ export function registerSelectionGroupLayerCommands(app: App) {
     if (affect) { app.compSel = null; app.select(out); }
     return out;
   });
-  // inferred: deselects everything the filter matches (objects of that type, or the selected components of that kind)
-  sel('DeselectAllUsingFilter', 'Deselect All Using Filter', [{ name: 'SelFilter', default: null }], (app, a) => {
-    const f = empty(a.SelFilter) ? app.selMode : a.SelFilter; const k = filterKind(f);
-    if (k === 'sample') throw new Unattested('DeselectAllUsingFilter', 'the SampledPoint filter (no sample component kind)');
-    if (k === 'point' || k === 'edge' || k === 'polygon') { const c = app.compSel; if (c && c.kind === k) app.selectComponents(c.obj, k, [], 'replace'); return; }
-    const pred = objectFilter(app, f); if (!pred) throw new Unattested('DeselectAllUsingFilter', `filter "${f}"`);
-    app.selection = app.selection.filter(n => !(n instanceof X3DObject && pred(n)));
-    if (app.compSel && !app.selection.includes(app.compSel.obj)) app.compSel = null;
-    app.events.emit('selection');
-  });
+  // DeselectAllUsingFilter: selectionmgr.dll 16532fa0, CMD-B19b (src/commands/tasksB19b.ts)
 
   // inferred: makes SelFilter the current selection filter (same state the MCP filter box writes: app.selFilter + app.selMode)
   sel('SelectFilter', 'Select Filter', [{ name: 'SelFilter', default: null }], (app, a) => { if (empty(a.SelFilter)) return (app as any).selFilter ?? FILTER_LABEL[app.selMode]; return setFilter(app, a.SelFilter, 'SelectFilter'); }, 'Select a filter as the current selection filter');
@@ -438,15 +404,8 @@ export function registerSelectionGroupLayerCommands(app: App) {
 
   // ================================================================ component selection
 
-  const needComp = (app: App, a: Record<string, any>): CompCtx | null => compCtx(app, a.InputObjs);
-  const kindArg = (command: string, f: any, fallback: CompKind): CompKind => {
-    if (empty(f)) return fallback; const k = filterKind(f);
-    if (k === 'point' || k === 'edge' || k === 'polygon') return k;
-    throw new Unattested(command, `SelFilter "${f}"`);
-  };
 
-  // inferred: registry display name "Island From Selection": every component connected to the selection
-  sel('SelectAllConnectedComponents', 'Island From Selection', [{ name: 'InputObjs', default: null }], (app, a) => { const c = needComp(app, a); if (!c) return; setComponents(app, c.obj, c.kind, T.island(c.adj, c.kind, c.sel)); });
+  // SelectAllConnectedComponents (Island From Selection): tasks.dll, CMD-B19b (src/commands/tasksB19b.ts)
   // inferred: selects the listed geometry components ("obj.pnt[..]", "obj.edge[..]", "obj.poly[..]") and sets the
   // matching filter. What it does for a bare object name is not attested.
   sel('SelectGeometryComponents', 'Select Geometry Components', [{ name: 'SelectionList', default: null }], (app, a) => {
@@ -458,28 +417,8 @@ export function registerSelectionGroupLayerCommands(app: App) {
     setComponents(app, first.obj, first.kind, items);
   });
 
-  const edgesOnly = (command: string, f: (c: CompCtx, a: Record<string, any>) => Iterable<CompItem>) => (app: App, a: Record<string, any>) => {
-    const c = needComp(app, a); if (!c) return;
-    if (c.kind !== 'edge') throw new Unattested(command, `${c.kind} selections (only edge selections are wired)`);
-    setComponents(app, c.obj, 'edge', f(c, a));
-  };
-  // inferred: registry display name "Loops From Selection": edge loops of the selected edges; point loops through
-  // pairs of selected points joined by an edge; polygon loops through pairs of selected polygons sharing an edge.
-  // AroundCorners is taken as "let a loop turn at a border corner point".
-  sel('SelectAllComponentLoops', 'Loops From Selection (around corners)', [{ name: 'InputObjs', default: null }, { name: 'AroundCorners', default: true }], (app, a) => {
-    const c = needComp(app, a); if (!c) return;
-    setComponents(app, c.obj, c.kind, T.componentLoops(c.adj, c.kind, c.sel, isTrue(a.AroundCorners)));
-  });
-  // inferred: each selected run of loop edges gets one edge longer at both ends (edge selections only)
-  sel('GrowSelectedLoops', 'Grow Loops', [{ name: 'InputObjs', default: null }, { name: 'AroundCorners', default: true }], edgesOnly('GrowSelectedLoops', (c, a) => T.growLoops(c.adj, c.sel, isTrue(a.AroundCorners))));
-  // inferred: each selected run of loop edges gets one edge shorter at both ends (edge selections only)
-  sel('ShrinkSelectedLoops', 'Shrink Loops', [{ name: 'InputObjs', default: null }, { name: 'AroundCorners', default: true }], edgesOnly('ShrinkSelectedLoops', (c, a) => T.shrinkLoops(c.adj, c.sel, isTrue(a.AroundCorners))));
-  // inferred: selects the outline of the selected polygons - the edges that belong to exactly one selected polygon
-  sel('SelectPolygonOutline', 'Select Polygon Outline', [{ name: 'InputObjs', default: null }], (app, a) => {
-    const c = needComp(app, a); if (!c) return;
-    if (c.kind !== 'polygon') throw new Unattested('SelectPolygonOutline', `${c.kind} selections (a polygon selection is expected)`);
-    setComponents(app, c.obj, 'edge', T.polygonOutline(c.adj, c.sel));
-  });
+  // SelectAllComponentLoops / GrowSelectedLoops / ShrinkSelectedLoops / SelectPolygonOutline: tasks.dll, CMD-B19b
+  // (src/commands/tasksB19b.ts)
 
   // ================================================================ info
 
@@ -599,40 +538,8 @@ export function registerSelectionGroupLayerCommands(app: App) {
   const lay = (name: string, label: string, args: CommandDef['args'], execute: CommandDef['execute'], description?: string, undoable = true) =>
     reg({ name, label, category: 'Layer', description, args, undoable, execute });
 
-  // inferred: low-level CreateLayer - creates a layer and returns it (Value is the output argument); the current layer
-  // and the selection are not changed
-  lay('SICreateLayer', 'Create New Layer', [{ name: 'PresetObj', default: 'Default_New_Layer' }, { name: 'Name', default: '' }, { name: 'Value', default: null }], (app, a) => { noInspect(app); return createLayer(app, 'SICreateLayer', a.PresetObj, a.Name, null); });
-  // inferred: SICreateLayer that returns the layer and can place it in an existing layer group
-  lay('SICreateLayer2', 'Create New Layer 2', [{ name: 'PresetObj', default: 'Default_New_Layer' }, { name: 'Name', default: '' }, { name: 'LayerGroupName', default: '' }], (app, a) => { noInspect(app); return createLayer(app, 'SICreateLayer2', a.PresetObj, a.Name, a.LayerGroupName); });
-  // inferred: registry description "Move one object to the specified layer" (same job as MoveToLayer, Target = layer)
-  lay('MoveObjectToLayer', 'Move Object To Layer', [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }], (app, a) => {
-    if (empty(a.Target)) throw new Unattested('MoveObjectToLayer', 'the pick session that asks for the Target layer when none is given');
-    const l = asLayer(app, a.Target); if (!l) throw new Error(`layer "${a.Target?.name ?? a.Target}" not found`);
-    const objs = memberArg(app, a.InputObjs); if (objs.length) moveToLayer(app, l, objs);
-  }, 'Move one object to the specified layer');
+  // SICreateLayer / SICreateLayer2 / MoveObjectToLayer / CreateLayerGroup / CutLayerParent: tasks.dll, CMD-B19b
+  // (src/commands/tasksB19b.ts)
   // inferred: returns the current layer (Value is the output argument); counterpart of SetCurrentLayer
   lay('GetCurrentLayer', 'Get current layer', [{ name: 'Value', default: null }], (app) => { noInspect(app); return currentLayer(app); }, 'Get the current layer', false);
-  // inferred: registry description "Creates one Layer group". InputObj is taken as the parent layer group when it names
-  // one; any other InputObj is not attested and ignored.
-  lay('CreateLayerGroup', 'Create Layer Group', [{ name: 'PresetObj', default: 'Default_New_Layer' }, { name: 'InputObj', default: null }, { name: 'Name', default: 'LayerGroup' }], (app, a) => {
-    const parent = empty(a.InputObj) ? null : asLayerGroup(app, a.InputObj);
-    if (!empty(a.InputObj) && !parent) app.logMsg('info', 'CreateLayerGroup: not yet attested: an InputObj that is not a layer group; ignored');
-    const g = new LayerGroup(uniqueName(app, String(a.Name || 'LayerGroup'))); g.parent = app.scene; g.parentGroup = parent;
-    const list = layerGroups(app);
-    app.record('Create Layer Group', () => { list.push(g); }, () => { const i = list.indexOf(g); if (i >= 0) list.splice(i, 1); });
-    noInspect(app); return g;
-  }, 'Creates one Layer group');
-  // inferred: registry description "Disconnect a layer group from its parent"; a layer is taken out of its layer group
-  lay('CutLayerParent', 'Cut Layer Parent Task', [{ name: 'InputObjs', default: null }], (app, a) => {
-    const nodes = empty(a.InputObjs) ? [...app.selection] : resolve(app, a.InputObjs).nodes;
-    let n = 0;
-    for (const x of nodes) {
-      if (x instanceof LayerGroup && x.parentGroup) { const p = x.parentGroup; app.record('Cut Layer Parent', () => { x.parentGroup = null; }, () => { x.parentGroup = p; }); n++; }
-      else if (x instanceof Layer && groupOfLayer(x)) {
-        const g = groupOfLayer(x)!; const i = g.layers.indexOf(x);
-        app.record('Cut Layer Parent', () => { const j = g.layers.indexOf(x); if (j >= 0) g.layers.splice(j, 1); (x as any).layerGroup = null; }, () => { g.layers.splice(i, 0, x); (x as any).layerGroup = g; }); n++;
-      }
-    }
-    return n;
-  }, 'Disconnect a layer group from its parent');
 }

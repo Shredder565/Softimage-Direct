@@ -174,15 +174,7 @@ export function registerInferredB10Scene(app: App) {
       for (const n of items) { const i = f.members.indexOf(n); app.record('RemoveFromFolder', () => f.members.splice(f.members.indexOf(n), 1), () => f.members.splice(i, 0, n)); }
     },
   });
-  regB10(app, 'RemoveFolder', { // inferred: deletes the folder; its members stay in the scene
-    execute(app, a) {
-      const f = nodeOf(app, a.InputObjs) ?? app.selection.find(n => n instanceof FolderNode);
-      if (!(f instanceof FolderNode) || !f.owner) throw new Error('RemoveFolder: input is not a folder');
-      const list = foldersOf(f.owner); const i = list.indexOf(f);
-      app.record('RemoveFolder', () => list.splice(list.indexOf(f), 1), () => list.splice(i, 0, f));
-      return true;
-    },
-  });
+  // RemoveFolder: tasks.dll de5fd1e2, CMD-B19b (src/commands/tasksB19b.ts)
 
   // ---------------------------------------------------------------- NavigateNode / environments
   // B11d §3.1: one navigation step from Source in its element hierarchy (here: the scene object tree, models included)
@@ -543,15 +535,7 @@ export function registerInferredB10Scene(app: App) {
 
   // ---------------------------------------------------------------- custom preferences
   const customPrefs = (): Map<string, Property> => ((app as any).customPreferencesB10 ??= new Map());
-  regB10(app, 'InstallCustomPreferences', { // inferred: a custom property becomes a preference category under Name
-    execute(app, a) {
-      const p = nodesOf(app, a.InputObjs).find((n): n is Property => n instanceof Property);
-      if (!p) throw new Error('InstallCustomPreferences: input is not a custom property');
-      const name = String(a.Name || p.name); const M = customPrefs(); const old = M.get(name);
-      app.record('InstallCustomPreferences', () => M.set(name, p), () => { if (old) M.set(name, old); else M.delete(name); });
-      return name;
-    },
-  });
+  // InstallCustomPreferences: tasks.dll 3d2d0215, CMD-B19b (src/commands/tasksB19b.ts; same customPreferencesB10 map)
   // CMD-B16c (tasks.dll b5097d5a row 10): the custom preference set is re-read (its pages refresh). No args, no return.
   regB10(app, 'RefreshCustomPreferences', {
     undoable: false,
