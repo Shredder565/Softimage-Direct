@@ -18,7 +18,7 @@ import * as C from '../core/curves';
 import { FCurve } from '../core/animation';
 import { edgeKey, fromPolys, toPolys, splitEdges, weldPoints, dissolvePolygons, disconnectPolygons, sliceAxis, dicePolygons } from '../core/topology';
 import { floatingWindows } from '../ui/floating';
-import { siCreateSkeleton, makeOwnMaterialCopy } from './chainsModelB17b';
+import { makeOwnMaterialCopy } from './chainsModelB17b';
 import { openAssembleNurbsDialog } from '../ui/assembleNurbsDialog';
 
 const CURVE_PRESETS = ['Arc', 'Circle', 'Spiral', 'Square'];
@@ -316,10 +316,12 @@ export function registerModelCommands(app: App) {
 
   // ------------------------------------------------------------ skeletons
   // CMD-B17b: Create2DSkeleton / Create3DSkeleton call SICreateSkeleton (src/commands/chainsModelB17b.ts); its body is the stand-in there
-  app.register({ name: 'SICreateSkeleton', label: 'Create skeleton', category: 'Animation', args: [{ name: 'Rx', default: 0 }, { name: 'Ry', default: 0 }, { name: 'Rz', default: 0 }, { name: 'Ex', default: 1 }, { name: 'Ey', default: 0 }, { name: 'Ez', default: 0 }, { name: 'Nx', default: 0 }, { name: 'Ny', default: 0 }, { name: 'Nz', default: 1 }, { name: 'ViewType', default: 3 }, { name: 'Bone', default: null }, { name: 'Effector', default: null }, { name: 'SkeletonType', default: 2 }, { name: 'AlignRootToFirstBone', default: false }], execute: (app, a) => siCreateSkeleton(app, a) });
+  // SICreateSkeleton: viewinteraction.dll 59c1e31b, CMD-B20b (src/commands/groupsB20b.ts)
   const rootOf = (app: App): S2.ChainRoot | null => { for (const n of app.selection) { let o: any = n; while (o && !(o instanceof S2.ChainRoot)) o = o.parentObj ?? o.parent; if (o) return o; } return null; };
   app.register({ name: 'AlignRootToFirstBone', label: 'Align Root to First Bone', category: 'Animation', args: [], execute(app) { const root = rootOf(app); if (!root?.bones[0]) throw new Error('Select a chain'); const b = root.bones[0]; for (const ax of ['x', 'y', 'z']) { const r = root.kinematics.local.get('rot' + ax)!, bl = b.kinematics.local.get('rot' + ax)!; app.setParam(r, r.value + bl.value); app.setParam(bl, 0); } } });
   app.register({ name: 'SetNeutralPose', label: 'Set Neutral Pose', category: 'Animation', args: [{ name: 'InputObjs', default: '' }, { name: 'Type', default: '' }, { name: 'Reset', default: false }], execute(app, a) { for (const o of app.selectedObjects) { const l = o.kinematics.local; for (const ax of ['x', 'y', 'z']) { const n = l.get('npos' + ax)!, p = l.get('pos' + ax)!; if (a.Reset) { app.setParam(p, p.value + n.value); app.setParam(n, 0); } else { app.setParam(n, n.value + p.value); app.setParam(p, 0); } } } } });
+  // The scripting name MoveJoint is the viewinteraction.dll task (CMD-B20b, groupsB20b.ts); this tool-arming body is kept
+  // because toolsB16a.ts captures it as the Move Joint Tool class body before groupsB20b.ts replaces the name.
   app.register({ name: 'MoveJoint', label: 'Move Joint', category: 'Animation', args: [{ name: 'InputObjs', default: '' }, { name: 'X', default: 0 }, { name: 'Y', default: 0 }, { name: 'Z', default: 0 }], execute(app) { app.setSelMode('object'); (window as any).__tool?.setMode?.('translate'); app.logMsg('info', 'Move Joint: drag the selected bone/effector with the translate tool (V)'); } });
   app.register({ name: 'DuplicateSymmetry', label: 'Duplicate Symmetry', category: 'Edit', args: [{ name: 'InputObjs', default: '' }], execute(app) { const made = app.run('Duplicate', { InputObjs: app.selectedObjects }) as X3DObject[]; for (const o of made) { const l = o.kinematics.local; app.setParam(l.get('posx')!, -l.val('posx')); app.setParam(l.get('sclx')!, -l.val('sclx')); } } });
   app.register({ name: 'StoreSkeletonPose', label: 'Store Skeleton Pose', category: 'Animation', args: [], execute(app) { const r = rootOf(app); if (!r) throw new Error('Select a chain'); const pose = r.bones.map(b => ['x', 'y', 'z'].map(ax => b.kinematics.local.val('rot' + ax))); if (!r.get('storedpose')) r.add(str('storedpose', '', 'Stored Pose', { readOnly: true })); app.setParam(r.get('storedpose')!, JSON.stringify(pose)); } });
@@ -516,11 +518,7 @@ export function registerModelCommands(app: App) {
     inp.click();
   } });
   // WR-12 — Softimage Paint* tools (commands_full Clsid). Brush stroke GDI LOCK — arm tool + weight/CAV path only.
-  app.register({
-    name: 'CreateVertexColorSupport', label: 'Color At Vertices Map', category: 'Texturing',
-    args: [{ name: 'InputObjs', default: '' }],
-    execute: (app, a) => app.run('AddProp', { PresetObj: 'Color At Vertices Map', InputObjs: a.InputObjs }),
-  });
+  // CreateVertexColorSupport: gap.dll ab483760, CMD-B20b (src/commands/groupsB20b.ts)
   const paintTools: [string, string, string][] = [
     ['PaintTool', 'Paint Tool', '{BABE02C7-A8B6-11D1-9306-0060970A2BC8}'],
     ['PaintVertexColorTool', 'Paint Vertex Color Tool', '{D9066020-ADD5-11D4-B91C-0800690C8BD0}'],

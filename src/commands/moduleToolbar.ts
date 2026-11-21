@@ -250,16 +250,7 @@ export function registerModuleToolbarCommands(app: App) {
     name: 'DeleteCurrentPass', label: 'Delete Current Pass', category: 'Rendering', args: [{ name: 'InputObj', default: PASSES_CURRENT }],
     execute(app, a) { deleteObjList(app, 'DeleteCurrentPass', a.InputObj); },
   });
-  // WR-05 — Softimage SICreatePartition / AddToPartition / RemoveFromPartition on Pass.partitions.
-  const resolvePartitionTarget = (app: App, target: unknown): Partition | null => {
-    if (target instanceof Partition) return target;
-    const name = target != null && target !== '' ? String(target) : '';
-    const pass = app.scene.passes[app.scene.passes.length - 1];
-    if (!pass) return null;
-    if (name) return pass.partitions.find(p => p.name === name) ?? null;
-    const fromSel = app.selection.find((n): n is Partition => n instanceof Partition);
-    return fromSel ?? pass.partitions[pass.partitions.length - 1] ?? null;
-  };
+  // WR-05 — Softimage CreatePartition on Pass.partitions (AddToPartition / RemoveFromPartition: CMD-B20b, groupsB20b.ts).
   app.register({
     name: 'CreatePartition', label: 'New Partition', category: 'Rendering',
     args: [{ name: 'Target', default: '' }, { name: 'Name', default: 'Partition' }, { name: 'InputObjs', default: '' }],
@@ -277,33 +268,7 @@ export function registerModuleToolbarCommands(app: App) {
       return p;
     },
   });
-  app.register({
-    name: 'AddToPartition', label: 'Add Object to Partition', category: 'Rendering',
-    args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }],
-    execute(app, a) {
-      const part = resolvePartitionTarget(app, a.Target);
-      if (!part) throw new Error('AddToPartition: no partition Target');
-      const objs = app.targets(a.InputObjs);
-      if (!objs.length) throw new Error('AddToPartition: select objects');
-      for (const o of objs) part.members.add(o);
-      app.events.emit('scene');
-      app.logMsg('info', `AddToPartition → ${part.name}: ${objs.map(o => o.name).join(', ')}`);
-      return part;
-    },
-  });
-  app.register({
-    name: 'RemoveFromPartition', label: 'Remove Object from Partition', category: 'Rendering',
-    args: [{ name: 'Target', default: null }, { name: 'InputObjs', default: null }],
-    execute(app, a) {
-      const part = resolvePartitionTarget(app, a.Target);
-      if (!part) throw new Error('RemoveFromPartition: no partition Target');
-      const objs = app.targets(a.InputObjs);
-      for (const o of objs) part.members.delete(o);
-      app.events.emit('scene');
-      app.logMsg('info', `RemoveFromPartition → ${part.name}: ${objs.map(o => o.name).join(', ') || '(none)'}`);
-      return part;
-    },
-  });
+  // AddToPartition / RemoveFromPartition: grouptask.dll 4e021856 / 4e021857, CMD-B20b (src/commands/groupsB20b.ts)
 
   // WR-01/02 — Softimage RenderPass(es)/CurrentFrame + OnBegin/OnEndRenderPass (sceneRender).
   // true-95pct: Format=pic; ResolvedFilename; do not conflate empty RenderPasses with CurrentFrame.

@@ -91,6 +91,7 @@ import { registerSelectionB19dCommands } from './commands/selectionB19d';
 import { registerRenderRegionSaveB19dCommands } from './commands/renderRegionSaveB19d';
 import { registerTasksB16cCommands } from './commands/tasksB16c';
 import { registerTasksB19bCommands } from './commands/tasksB19b';
+import { registerGroupsB20bCommands } from './commands/groupsB20b';
 import { registerB16eCommands } from './commands/b16eActioncoreOptasksGap';
 import { registerShellsB15ElseCommands } from './commands/shellsB15Else';
 import { registerShadertasksB16bCommands } from './commands/shadertasksB16b';
@@ -269,6 +270,7 @@ registerTasksB19bCommands(app);   // CMD-B19b (tasks.dll scene / clipboard / lay
 registerOptasksB19cCommands(app);   // CMD-B19c (optasks ICE attributes / compounds / constraints / envelope locks, SwapOperators, ConnectMap, ...)
 registerSelectionB19dCommands(app);   // CMD-B19d (selectionmgr / mcp transport / vm Center, Isolate, FrameContextual / SwitchToolbar / ShowFaceRobotActPanel; replaces the earlier registrations)
 registerRenderRegionSaveB19dCommands(app);   // CMD-B19d RenderRegionSave (rendercore.dll 8ab0e935; replaces the moduleToolbar.ts body)
+registerGroupsB20bCommands(app);   // CMD-B20b (grouptask partitions / groups, environments, MoveJoint / SICreateSkeleton, gap vertex colours, CopyCluster, SaveKeyOnPath)
 (window as any).__anchorMenuItems = (anchor?: string) => anchorMenuItems(anchor).map(i => ({ anchor: i.anchor, label: i.label })); (window as any).__runAnchorMenu = (anchor: string, label: string) => runAnchorMenuItem(app, anchor, label);
 // Softimage default scene: Camera + light + sphere (still plates must show geo, not ambience static).
 ensureSoftimageDefaultScene(app);
