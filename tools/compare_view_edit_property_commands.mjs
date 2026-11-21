@@ -31,13 +31,14 @@ const COMMANDS = [
   // Edit
   'ToggleSelectability', 'ParentObjects', 'Clone', 'Instance', 'SIInstantiate', 'GetMaster', 'GetInstances', 'SIDuplicate',
   'DuplicateModelFromObj', 'DeleteModelFromObj', 'DeleteAll', 'DeleteObjPermanent', 'ToggleParameterValue',
-  'MoveOperatorAfter', 'MoveOperatorBefore', 'SwapOperators', 'DeactivateAbove', 'CreateTransformGroup', 'RemoveTransformGroup',
+  // SwapOperators / RemoveCnsType / GetConstrainedObjects: CMD-B19c contract (optasksB19c.ts), checked by tools/compare_optasks_b19c.mjs
+  'MoveOperatorAfter', 'MoveOperatorBefore', 'DeactivateAbove', 'CreateTransformGroup', 'RemoveTransformGroup',
   // Property
   'SIAddProp', 'SIAddPropEx', 'RemoveProperties', 'RemoveAllProperties', 'SIAssignMaterial', 'SIUnAssignMaterial',
   'MakeLocal', 'SIMakeLocal', 'SelectMaterialsUsedBy', 'SelectObjectsUsingMaterial', 'IncreaseSubdivision', 'DecreaseSubdivision',
   'AutoInspectEnabled', 'ToggleBooleanUserPref', 'InspectLastOperator',
   // Constraint
-  'RemoveAllCns', 'RemoveCnsType', 'GetConstrainedObjects', 'SelectConstrainedObjects', 'SIApplyCns', 'SIApplyConstraint',
+  'RemoveAllCns', 'SelectConstrainedObjects', 'SIApplyCns', 'SIApplyConstraint',
   // Transport Control
   'PlayBackwardsFromEnd', 'PlayFrame', 'PlayRealTime', 'PlayRealTimeFromStart',
   // General
@@ -382,7 +383,7 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
     r = run('GetConstrainedObjects', { InputObj: 'vsphere' }); ck('GetConstrainedObjects', 'nothing constrained: empty', ok(r) && r.v.length === 0, r);
     r = run('SelectConstrainedObjects'); ck('SelectConstrainedObjects', 'default args: selects them', ok(r) && eq(names(A.selection), ['vcube']), names(A.selection));
     r = run('SelectConstrainedObjects', { ConstrainingObj: [sph] }); ck('SelectConstrainedObjects', 'nothing constrained: empty selection', ok(r) && A.selection.length === 0, r);
-    let i0 = A.log.length; A.select([cube]); r = run('RemoveCnsType'); ck('RemoveCnsType', 'default args (empty Type): nothing removed, logged', ok(r) && r.v === 0 && cns(cube).length === 2 && /RemoveCnsType: not yet attested/.test(logSince(i0)), r);
+    let i0 = A.log.length; A.select([cube]); r = run('RemoveCnsType'); ck('RemoveCnsType', 'default args (empty Type): CMD-B19c, the SIGetKineCnsIDFromName failure, nothing removed', /status 0x80004005/.test(r.err ?? '') && cns(cube).length === 2 && /RemoveCnsType: .* \(status 0x80004005\)/.test(logSince(i0)), r);
     r = run('RemoveCnsType', { Type: 'Position', ConstrainedObj: [cube] }); ck('RemoveCnsType', 'by preset name', ok(r) && r.v === 1 && eq(names(cns(cube)), ['Orientation Cns']), names(cns(cube)));
     A.undo(); ck('RemoveCnsType', 'undo', eq(names(cns(cube)), ['Position Cns', 'Orientation Cns']), names(cns(cube)));
     r = run('RemoveCnsType', { Type: 'oricns' }); ck('RemoveCnsType', 'by constraint type, on the selection', ok(r) && r.v === 1 && eq(names(cns(cube)), ['Position Cns']), names(cns(cube))); A.undo();

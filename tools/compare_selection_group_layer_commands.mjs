@@ -63,6 +63,16 @@ const registry = COMMANDS.map(n => {
   const c = all.find(x => x.scripting_name === n) ?? all.find(x => !x.scripting_name && x.name === n);
   return c ? { key: n, name: c.name, category: c.category, args: c.args.map(a => ({ name: a.name, default: a.default })) } : { key: n, missing: true };
 });
+// CMD-B19c: SelectBranch / SelectTree / SelectModel / SelectChain also take the registry's hidden SelectObj arguments
+// (data/command_registry.json: SelectionList, HierarchyLevel with the level default) after the catalogue argument.
+{
+  const regCmds = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../data/command_registry.json'), 'utf8')).commands;
+  for (const r of registry) {
+    if (!['SelectBranch', 'SelectTree', 'SelectModel', 'SelectChain'].includes(r.key) || r.missing) continue;
+    const e = regCmds.find(x => x.scripting_name === r.key);
+    for (const a of e?.args ?? []) if ((a.flags & 1) && !(a.flags & 512)) r.args.push({ name: a.name, default: a.default ?? null });
+  }
+}
 
 const b = await chromium.launch({ executablePath: CHROME, args: ['--headless=new', '--use-gl=swiftshader', '--enable-unsafe-swiftshader'] });
 const page = await b.newPage();

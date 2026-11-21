@@ -7,7 +7,7 @@
 import { makeOwnMaterialCopy } from './chainsModelB17b';
 import { App, UndoEntry } from '../core/commands';
 import { X3DObject, Node, Property, Material, Constraint, makeSiShader } from '../core/scene';
-import { addConstraint, CNS_PRESETS } from './constraints';
+import { addConstraint } from './constraints';
 import { tasksB16c, NO_NAME_OPERATION } from './tasksB16c';
 import {
   reg, nya, logNya, unset, siConst, boolArg, objs, nodes, findNode, findObject, findMaterial,
@@ -219,25 +219,7 @@ function registerConstraint(app: App) {
     args: [{ name: 'ConstrainedObj', default: null }, { name: 'Propagation', default: 3 }],
     execute(app, a) { let n = 0; for (const o of objs(app, a.ConstrainedObj)) for (const c of cnsOf(o)) { removeProp(app, o, c); n++; } return n; },
   });
-  // inferred: Type is a constraint preset name ("Position"), a constraint name ("Position Cns") or a type ("poscns")
-  reg(app, {
-    name: 'RemoveCnsType', label: 'Remove Constraints By Type', category: 'Constraint', description: 'Removes the constraints of a type from the input objects',
-    args: [{ name: 'Type', default: '' }, { name: 'ConstrainedObj', default: null }],
-    execute(app, a) {
-      if (unset(a.Type)) { logNya(app, 'RemoveCnsType', 'an empty Type; nothing is removed'); return 0; }
-      const t = String(a.Type).replace(/\.Preset$/i, '').toLowerCase();
-      const preset = Object.keys(CNS_PRESETS).find(k => k.toLowerCase() === t);
-      const match = (c: Constraint) => preset ? c.name === CNS_PRESETS[preset].label : (c.type.toLowerCase() === t || c.name.toLowerCase() === t);
-      let n = 0; for (const o of objs(app, a.ConstrainedObj)) for (const c of cnsOf(o)) if (match(c)) { removeProp(app, o, c); n++; }
-      return n;
-    },
-  });
-  // inferred: OutputObjs is the output argument; the list is the return value here
-  reg(app, {
-    name: 'GetConstrainedObjects', label: 'Get Constrained Objects from Constraining', category: 'Constraint', description: 'Returns the objects constrained to the input object', undoable: false,
-    args: [{ name: 'InputObj', default: null }, { name: 'OutputObjs', default: null }],
-    execute(app, a) { return constrainedBy(new Set(objs(app, a.InputObj))); },
-  });
+  // RemoveCnsType / GetConstrainedObjects: CMD-B19c (optasksB19c.ts)
   // inferred
   reg(app, {
     name: 'SelectConstrainedObjects', label: 'Select Constrained Objects from Constraining', category: 'Constraint', description: 'Selects the objects constrained to the input object(s)', undoable: false,

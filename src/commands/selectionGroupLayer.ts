@@ -291,25 +291,37 @@ export function registerSelectionGroupLayerCommands(app: App) {
   // inferred: replaces the selection with the listed elements, except that listed elements which were selected end up deselected
   sel('SetAndToggleSelection', 'Set And Toggle Selection', LIST_ARGS, listOp('SetAndToggleSelection', 'settoggle'));
 
-  const reselect = (f: (o: X3DObject) => X3DObject[] | null) => (app: App, a: Record<string, any>) => {
-    const objs = app.selectedObjects; if (!objs.length) return;
+  // CMD-B19c (docs/ghidra/cmd-b19c-optasks-ice-cns-envelope.md, SelectBranch / SelectTree / SelectChain / SelectModel):
+  // selectionmgr.dll serves the four names as the SelectObj class (79581ba0) with HierarchyLevel = BRANCH / TREE / CHAIN /
+  // MODEL carried by the registry default, plus CheckObjectSelectability. The registry's hidden arguments SelectionList
+  // (default: the selection) and HierarchyLevel follow the catalogue argument. The SelectObj UnPack of HierarchyLevel
+  // was not read (Q5): the level is applied with this file's hierarchy rules and other levels log "not yet attested".
+  const LEVEL_GUID = '{0907F360-B147-11d2-8BC8-00AA006130EF}:';
+  const levelOf = (v: any, dflt: string) => { const s = String(empty(v) ? dflt : v).replace(/^\{[0-9a-f-]{36}\}:/i, '').trim().toUpperCase(); return s || dflt; };
+  const reselect = (command: string, level: string, f: (o: X3DObject) => X3DObject[] | null) => (app: App, a: Record<string, any>) => {
+    const given = !empty(a.SelectionList);
+    const list = given ? resolve(app, a.SelectionList).nodes : [...app.selection];
+    const lv = levelOf(a.HierarchyLevel, level);
+    if (lv !== level) { app.logMsg('info', `${command}: not yet attested: HierarchyLevel "${lv}" on ${command} (SelectObj UnPack, CMD-B19c Q5); level ${level} used`); }
+    const objs = list.filter((n): n is X3DObject => n instanceof X3DObject); if (!objs.length) return;
     const out: Node[] = [];
     for (const o of objs) { const r = f(o); if (r) out.push(...r); }
     if (!out.length) return;
     app.compSel = null; app.select(checkSelectable(uniq(out), a.CheckObjectSelectability));
   };
+  const selArgs = (level: string) => [{ name: 'CheckObjectSelectability', default: null }, { name: 'SelectionList', default: null }, { name: 'HierarchyLevel', default: LEVEL_GUID + level }];
   // inferred: turns the selected objects into branch selections (node + descendants, the existing branch representation)
-  sel('SelectBranch', 'Select Branch', [{ name: 'CheckObjectSelectability', default: null }], reselect(branch));
+  sel('SelectBranch', 'Select Branch', selArgs('BRANCH'), reselect('SelectBranch', 'BRANCH', branch));
   // inferred: selects the whole hierarchy tree each selected object belongs to (top ancestor below the scene root, as branch)
-  sel('SelectTree', 'Select Tree', [{ name: 'CheckObjectSelectability', default: null }], reselect(o => branch(treeTop(app, o))));
+  sel('SelectTree', 'Select Tree', selArgs('TREE'), reselect('SelectTree', 'TREE', o => branch(treeTop(app, o))));
   // inferred: selects the model each selected object belongs to, as branch. Objects directly under the scene root have
   // no model other than Scene_Root; what the command does for them is not attested, they keep their selection.
-  sel('SelectModel', 'Select Model', [{ name: 'CheckObjectSelectability', default: null }], reselect(o => {
+  sel('SelectModel', 'Select Model', selArgs('MODEL'), reselect('SelectModel', 'MODEL', o => {
     const m = o.model; if (m && m !== app.scene.root) return branch(m);
-    app.logMsg('info', `SelectModel: not yet attested: ${o.name} is not inside a model below the scene root; selection kept`); return [o];
+    app.logMsg('info', `SelectModel: not yet attested: ${o.name} is not inside a model below the scene root; selection kept (CMD-B19c)`); return [o];
   }));
   // inferred: selects the complete chain (root, bones, effector) each selected chain element belongs to
-  sel('SelectChain', 'Select Chain', [{ name: 'CheckObjectSelectability', default: null }], reselect(o => {
+  sel('SelectChain', 'Select Chain', selArgs('CHAIN'), reselect('SelectChain', 'CHAIN', o => {
     let n: X3DObject | null = o; while (n && !(n instanceof ChainRoot)) n = n.parentObj;
     if (!(o instanceof ChainRoot || o instanceof Bone || o instanceof Effector) || !(n instanceof ChainRoot)) return [o];
     return uniq([n as X3DObject, ...n.bones, ...(n.effector ? [n.effector] : [])]);

@@ -270,7 +270,7 @@ export function registerAnimCommands(app: App) {
     }
     app.events.emit('scene'); return names ? made : made[0];
   } });
-  app.register({ name: 'RemoveProxyParam', label: 'Remove Proxy Param', category: 'Animation', args: [{ name: 'InputObjs', default: '' }], execute(app, a) { let n = 0; for (const o of app.targets(a.InputObjs).length ? app.targets(a.InputObjs) : app.selectedObjects) { const cs = o.properties.find(p => p.type === 'customparamset'); if (!cs) continue; for (const p of [...cs.params]) if ((p as any).proxied || A.expression(p)) { const i = cs.params.indexOf(p); cs.params.splice(i, 1); A.removeAnimation(p); n++; } } app.events.emit('scene'); return n; } });
+  // RemoveProxyParam: CMD-B19c (optasksB19c.ts; only the listed proxy parameters, propertytasks.dll contract)
   // CreateDisplayInfo / RandomizeParameters / SampleParameterValues: replaced by the CMD-B17g contract (paramsToolsB17g.ts)
 
   // ---- plot (Tools > Plot): bake evaluated values onto fcurves over the play range
