@@ -174,15 +174,7 @@ export function registerInferredB10Scene(app: App) {
       for (const n of items) { const i = f.members.indexOf(n); app.record('RemoveFromFolder', () => f.members.splice(f.members.indexOf(n), 1), () => f.members.splice(i, 0, n)); }
     },
   });
-  regB10(app, 'RemoveFolder', { // inferred: deletes the folder; its members stay in the scene
-    execute(app, a) {
-      const f = nodeOf(app, a.InputObjs) ?? app.selection.find(n => n instanceof FolderNode);
-      if (!(f instanceof FolderNode) || !f.owner) throw new Error('RemoveFolder: input is not a folder');
-      const list = foldersOf(f.owner); const i = list.indexOf(f);
-      app.record('RemoveFolder', () => list.splice(list.indexOf(f), 1), () => list.splice(i, 0, f));
-      return true;
-    },
-  });
+  // RemoveFolder: tasks.dll de5fd1e2, CMD-B19b (src/commands/tasksB19b.ts)
 
   // ---------------------------------------------------------------- NavigateNode / environments
   // B11d §3.1: one navigation step from Source in its element hierarchy (here: the scene object tree, models included)
@@ -361,17 +353,7 @@ export function registerInferredB10Scene(app: App) {
     },
   });
   pinCmd('PinUVComponents', 1); pinCmd('UnPinUVComponents', 3); pinCmd('PinAllUVComponents', 2); pinCmd('UnPinAllUVComponents', 4);
-  regB10(app, 'ConnectMap', { // inferred: connects a map property (weight map / texture map / vertex colours) to the Target operator or property
-    execute(app, a) {
-      const map = nodeOf(app, a.PropObj); const tgt = nodeOf(app, a.Target);
-      if (!(map instanceof Property)) throw new Error('ConnectMap: PropObj is not a map property');
-      if (!tgt) throw new Error('ConnectMap: no Target');
-      const old = (tgt as any).connectedMap ?? null;
-      app.record('ConnectMap', () => { (tgt as any).connectedMap = map; }, () => { (tgt as any).connectedMap = old; });
-      logNyaB10(app, 'ConnectMap', `how ${tgt.name} evaluates the connected map`);
-      return map;
-    },
-  });
+  // ConnectMap: CMD-B19c (optasksB19c.ts; a Map Component operator with inputs [PropObj, Target])
 
   // ---------------------------------------------------------------- Camera Sequencer, AddToTOC (inferredB10CamSeq.ts)
   registerInferredB10CamSeq(app);
@@ -391,20 +373,9 @@ export function registerInferredB10Scene(app: App) {
     return op;
   };
   regB10(app, 'AddScriptedOp', { execute: (app, a) => addScripted('AddScriptedOp', a, String(a.Code ?? '')) }); // inferred
-  regB10(app, 'AddScriptedOpFromFile', { // inferred
-    execute(app, a) { const f = String(a.FileName ?? ''); if (!f) throw new Error('AddScriptedOpFromFile: FileName is required'); return addScripted('AddScriptedOpFromFile', { ...a, Language: a.Language || (/\.(py)$/i.test(f) ? 'Python' : /\.vbs$/i.test(f) ? 'VBScript' : 'JScript') }, hostFs.readFile(f)); },
-  });
+  // AddScriptedOpFromFile / ConvertScriptedOp: CMD-B19c (optasksB19c.ts)
   regB10(app, 'AddCustomOp', { // inferred: an operator of a registered custom type; no plug-in types exist in this build
     execute(app, a) { if (unset(a.Type)) throw new Error('AddCustomOp: Type is required'); logNyaB10(app, 'AddCustomOp', `the plug-in operator type ${a.Type}`); return addScripted('AddCustomOp', a, '', String(a.Type)); },
-  });
-  regB10(app, 'ConvertScriptedOp', { // inferred: makes a scripted operator into a self-installed (plug-in) operator definition
-    execute(app, a) {
-      const n = nodeOf(app, a.Source) ?? app.selection[0];
-      const op = n instanceof ScriptedOperatorB10 ? n : (n instanceof X3DObject ? n.primitive?.operators.find(o => o instanceof ScriptedOperatorB10) : undefined);
-      if (!op) throw new Error('ConvertScriptedOp: Source is not a scripted operator');
-      logNyaB10(app, 'ConvertScriptedOp', 'writing the plug-in file for the converted operator');
-      return op.name;
-    },
   });
 
   // ---------------------------------------------------------------- selection: sizes
@@ -520,16 +491,7 @@ export function registerInferredB10Scene(app: App) {
   }
 
   // ---------------------------------------------------------------- transform
-  regB10(app, 'DeleteMotionDerivator', { // inferred: removes the simulation motion derivator operator(s) of the input
-    execute(app, a) {
-      let n = 0;
-      for (const o of objsOf(app, a.InputObj)) {
-        const prim = o.primitive; if (!prim) continue;
-        for (const op of prim.operators.filter(q => /motion ?deriv/i.test(q.type) || /motion ?deriv/i.test(q.name))) { const i = prim.operators.indexOf(op); app.record('DeleteMotionDerivator', () => prim.removeOperator(op), () => { prim.operators.splice(i, 0, op); op.parent = prim; (prim as any).dirty = true; }); n++; }
-      }
-      return n;
-    },
-  });
+  // DeleteMotionDerivator: CMD-B19c (optasksB19c.ts; the global kinematic state's derivator, velaccactive off)
   // B11d §3.9 / B11i: MoveComponent is implemented neither in tasks.dll nor in transformmanager.dll (Q12 open; next viewinteraction.dll)
   regB10(app, 'MoveComponent', { // inferred: the transform tool's component move: a Move Component operator on top of each object's stack
     execute(app, a) {
@@ -543,15 +505,7 @@ export function registerInferredB10Scene(app: App) {
 
   // ---------------------------------------------------------------- custom preferences
   const customPrefs = (): Map<string, Property> => ((app as any).customPreferencesB10 ??= new Map());
-  regB10(app, 'InstallCustomPreferences', { // inferred: a custom property becomes a preference category under Name
-    execute(app, a) {
-      const p = nodesOf(app, a.InputObjs).find((n): n is Property => n instanceof Property);
-      if (!p) throw new Error('InstallCustomPreferences: input is not a custom property');
-      const name = String(a.Name || p.name); const M = customPrefs(); const old = M.get(name);
-      app.record('InstallCustomPreferences', () => M.set(name, p), () => { if (old) M.set(name, old); else M.delete(name); });
-      return name;
-    },
-  });
+  // InstallCustomPreferences: tasks.dll 3d2d0215, CMD-B19b (src/commands/tasksB19b.ts; same customPreferencesB10 map)
   // CMD-B16c (tasks.dll b5097d5a row 10): the custom preference set is re-read (its pages refresh). No args, no return.
   regB10(app, 'RefreshCustomPreferences', {
     undoable: false,

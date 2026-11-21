@@ -56,6 +56,10 @@ export interface SceneRenderOptions {
   autoWriteDisk?: boolean;
   /** Cap sequence length (Softimage Render Manager parity). */
   maxFrames?: number;
+  /** Explicit pass list (CMD-B19a render jobs); overrides `passes`. */
+  passList?: Pass[] | null;
+  /** Explicit frames per pass (CMD-B19a render jobs: frame set, range or the pass's own range). */
+  framesByPass?: Map<Pass, number[]> | null;
 }
 
 /** Electron preload bridge (WR-MSLINK-01 Softimage Render_Pictures auto-write). */
@@ -741,7 +745,7 @@ function storePicture(path: string, file: RenderedFile) {
  * Sequence → virtual + disk plates + capped Flipbook (avoid OOM).
  */
 export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): SceneRenderResult {
-  const passList = resolvePasses(app, opts.passes);
+  const passList = opts.passList ? [...opts.passList] : resolvePasses(app, opts.passes);
   if (!passList.length) {
     const err = 'No render pass in scene';
     app.logMsg('error', err);
@@ -792,8 +796,12 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
     if (!Number.isFinite(f0)) f0 = app.anim.frame;
     if (!Number.isFinite(f1)) f1 = f0;
     if (f1 < f0) [f0, f1] = [f1, f0];
+    const explicit = opts.framesByPass?.get(pass) ?? null;
+    const frameList: number[] = [];
+    if (explicit) frameList.push(...explicit);
+    else for (let f = f0; f <= f1; f += step) frameList.push(f);
 
-    const multi = f0 !== f1;
+    const multi = explicit ? explicit.length > 1 : f0 !== f1;
     mode = multi ? 'sequence' : 'still';
     // Softimage plates always use Framebuffer Format (pic). Movie is Pass MovieCreate / product mp4 sidecar.
     const plateFormat = stillFormatFor(pass, fb, opts.formatOverride);
@@ -811,7 +819,7 @@ export function renderScenePasses(app: App, opts: SceneRenderOptions = {}): Scen
     // Softimage: full plates on disk. AfterImage: still = full-res; sequence = Flipbook thumbs
     // + Softimage-path attestation for the rest (avoids sync main-thread OOM / UI freeze).
     const preview = multi ? scaleToMaxEdge(w, h, SEQUENCE_PREVIEW_MAX_EDGE) : { w, h };
-    for (let f = f0; f <= f1; f += step) {
+    for (const f of frameList) {
       if (count >= maxFrames) break;
       app.anim.frame = f;
       const dataUrl = !multi

@@ -5,8 +5,8 @@
 // ShowPreviousOGLProjection, CreateCGFX, CreateFX, LaunchFlipbookForPass, ExportMI2File, ExportAllPassesToMI2,
 // EditShaderCompoundPPGLogic, and the PPG-logic editor shared with EditICECompoundPPGLogic.
 //
-// Callees that are not on the bus and are produced here as documented stand-ins: SICreateEmptyPartition,
-// MoveToPartition, SICreatePass, SetCurrentPass, SIGetPreset (hook), SIGetShaderOnCnxPoint, CreateMaterial for the
+// SICreateEmptyPartition, MoveToPartition and SICreatePass are called on the bus (CMD-B19a, renderB19a.ts).
+// Callees that are not on the bus and are produced here as documented stand-ins: SetCurrentPass, SIGetPreset (hook), SIGetShaderOnCnxPoint, CreateMaterial for the
 // FX presets, GetShaderCompoundProperties / SetShaderCompoundPropertiesEx (storage on the node).
 import { App, type CommandDef } from '../core/commands';
 import { Node, X3DObject, Property, Pass, Partition, Framebuffer, Light, Camera, Group, Material, Shader, makeVisibility } from '../core/scene';
@@ -23,34 +23,20 @@ type Reg = (def: CommandDef) => void;
 // ------------------------------------------------------------------ partitions and passes
 /** Properties added to a partition (this build's Partition node has members only). */
 export const partitionProperties = (p: Partition): Property[] => ((p as any).properties ??= []);
-const isLightPartition = (p: Partition) => (p as any).partitionType === 'siLightPartition';
-function uniquePartitionName(pass: Pass, base: string): string {
-  const taken = new Set(pass.partitions.map(p => p.name));
-  if (!taken.has(base)) return base;
-  let i = 1; while (taken.has(`${base}${i}`)) i++;
-  return `${base}${i}`;
-}
-/** Stand-in for the C++ `SICreateEmptyPartition Target, Name, Type, Value`. */
+/** `SICreateEmptyPartition Target, Name, Type, Value` on the bus (CMD-B19a); the first partition made is returned. */
 function createEmptyPartition(app: App, target: unknown, name: unknown, type: unknown): Partition {
-  trace(app, 'SICreateEmptyPartition', [target, name, type], 'stand-in');
+  trace(app, 'SICreateEmptyPartition', [target, name, type], 'bus');
   const pass = passOf(app, target);
   if (!pass) throw new Error(`SICreateEmptyPartition: no pass "${String((target as any)?.name ?? target)}"`);
-  const t = enumName(type);
-  if (typeof t === 'number') nya(app, 'SICreateEmptyPartition', `numeric partition type ${t} (siPartitionType values are not attested); an object partition is made`);
-  const light = t === 'siLightPartition';
-  // inferred: an empty name falls back to the callee's default; uniqueness inside the pass is the callee's
-  const p = new Partition(uniquePartitionName(pass, unset(name) ? 'Partition' : String(name)));
-  (p as any).partitionType = light ? 'siLightPartition' : 'siObjectPartition';
-  app.record('Create partition', () => { p.parent = pass as any; pass.partitions.push(p); }, () => { const i = pass.partitions.indexOf(p); if (i >= 0) pass.partitions.splice(i, 1); p.parent = null; });
-  return p;
+  // a type the scripts give by name is the siPartitionType enum; an unset Type / Name takes the registry default
+  const made: Partition[] = app.run('SICreateEmptyPartition', { Target: pass, Name: name ?? undefined, Type: unset(type) ? undefined : type }) ?? [];
+  if (!made[0]) throw new Error(`SICreateEmptyPartition: nothing created in ${pass.name}`);
+  return made[0];
 }
-/** Stand-in for `MoveToPartition <partition>, <objects>, Target`: membership is exclusive among the pass's partitions. */
+/** `MoveToPartition <partition>, <objects>, Target` on the bus (CMD-B19a): membership is exclusive among the pass's partitions. */
 function moveToPartition(app: App, part: Partition, items: Node[], target: unknown) {
-  trace(app, 'MoveToPartition', [part, items, target], 'stand-in');
-  const pass = (part as any).parent as Pass;
-  const before = pass.partitions.map(p => [p, [...p.members]] as const);
-  app.record('Move to partition', () => { for (const p of pass.partitions) for (const o of items) p.members.delete(o as X3DObject); for (const o of items) part.members.add(o as X3DObject); },
-    () => { for (const [p, m] of before) { p.members.clear(); for (const o of m) p.members.add(o); } });
+  trace(app, 'MoveToPartition', [part, items, target], 'bus');
+  app.run('MoveToPartition', { Target: [part], InputObjs: items, Source: [(part as any).parent] });
 }
 function siCreatePartition(app: App, a: Record<string, any>): Partition | undefined {
   // 1. the two lists. An empty InputObjs is the current selection (inferred from the filter command's convention).
@@ -65,18 +51,11 @@ function siCreatePartition(app: App, a: Record<string, any>): Partition | undefi
   app.events.emit('scene');
   return last;   // output argument Value: the last partition created (the light partition when both are made)
 }
-/** Stand-in for `SICreatePass PresetObj, Name` and `SetCurrentPass`: the newest pass is this build's current pass. */
-function createPass(app: App, preset: unknown, name: unknown, keepCurrent = false): Pass {
-  trace(app, 'SICreatePass', [preset, name], 'stand-in');
-  const presetName = String(preset ?? 'Pass').split(/[\\/]/).pop()!.replace(/\.preset$/i, '') || 'Pass';
-  if (presetName !== 'Pass') nya(app, 'SICreatePass', `pass preset "${presetName}": only the default pass is modelled, the preset's partitions and shaders are not applied`);
-  const scene = app.scene; const before = (scene as any).currentPass;
-  const pass = new Pass(scene.uniqueName(unset(name) ? presetName : String(name)));   // inferred: an empty name gives the preset's name
-  app.record('Create pass', () => {
-    pass.parent = scene;
-    // "the last pass" is this build's current pass: a pass that must not become current goes in front of it
-    if (keepCurrent && scene.passes.length) scene.passes.splice(scene.passes.length - 1, 0, pass); else scene.passes.push(pass);
-  }, () => { const i = scene.passes.indexOf(pass); if (i >= 0) scene.passes.splice(i, 1); pass.parent = null; (scene as any).currentPass = before; });
+/** `SICreatePass PresetObj, Name` on the bus (CMD-B19a; the handler does not make the pass current). */
+function createPass(app: App, preset: unknown, name: unknown): Pass {
+  trace(app, 'SICreatePass', [preset, name], 'bus');
+  const pass: Pass | undefined = app.run('SICreatePass', { PresetObj: preset ?? 'Pass', Name: unset(name) ? '' : String(name) });
+  if (!pass) throw new Error(`SICreatePass: preset "${String(preset)}" did not make a pass`);
   return pass;
 }
 function setCurrentPass(app: App, pass: Pass) {
@@ -369,7 +348,7 @@ export function registerRenderingScriptCommands(app: App, reg: Reg) {
       const chosen = browse ? browse('siPassFamily', '') : null;
       if (unset(chosen)) return cancel('GetPass');
       stateOf(app).out.GetPass = { PresetObj: chosen };
-      createPass(app, chosen, a.Name, true);   // no current-pass change
+      createPass(app, chosen, a.Name);   // no current-pass change (SICreatePass never makes the pass current)
       app.events.emit('scene');
       return undefined;
     },

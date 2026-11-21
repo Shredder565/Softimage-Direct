@@ -23,23 +23,24 @@ const COMMANDS = [
   // Viewing (HideUnselected, SIHideObjects, SIUnhideObjects, UnghostAll, MakeAllUnselectable: now CMD-B17a,
   // checked by compare_selection_layers_b17a.mjs; the behaviour checks below still run against the new bodies)
   'HideAndUnselect',
-  'IsolateAll', 'IsolateAddSelected', 'IsolateRemoveSelected', 'IsolateToggleSelected',
+  // IsolateAll / IsolateAdd/Remove/ToggleSelected, CenterSelection, FrameContextual and the Transport Control commands
+  // PlayBackwardsFromEnd / PlayFrame / PlayRealTime / PlayRealTimeFromStart: CMD-B19d, checked by compare_selection_b19d.mjs
   // ColorizeObject / ShadeObject: CMD-B17g contract (tools.vbs pick loops), checked by tools/compare_params_rigs_b17gh.mjs
   'SetViewDisplayMode', 'ToggleViewDisplayMode', 'ToggleWireOnShadedDisplay', 'ToggleHeadlightDisplayMode',
-  'CenterSelection', 'FrameContextual',
   'SetUserKeyword', 'GetUserKeyword', 'RemoveUserKeyword', 'ClearUserKeyword', 'SetUserTab', 'GetUserTab', 'AddUserTab', 'RemoveUserTab', 'ClearUserTab',
   // Edit
   'ToggleSelectability', 'ParentObjects', 'Clone', 'Instance', 'SIInstantiate', 'GetMaster', 'GetInstances', 'SIDuplicate',
-  'DuplicateModelFromObj', 'DeleteModelFromObj', 'DeleteAll', 'DeleteObjPermanent', 'ToggleParameterValue',
-  'MoveOperatorAfter', 'MoveOperatorBefore', 'SwapOperators', 'DeactivateAbove', 'CreateTransformGroup', 'RemoveTransformGroup',
+  // DeleteAll / InspectLastOperator: tasks.dll contract of CMD-B19b (DeleteAll = the NewScene handler), checked by
+  // tools/compare_tasks_b19b.mjs
+  'DuplicateModelFromObj', 'DeleteModelFromObj', 'DeleteObjPermanent', 'ToggleParameterValue',
+  // SwapOperators / RemoveCnsType / GetConstrainedObjects: CMD-B19c contract (optasksB19c.ts), checked by tools/compare_optasks_b19c.mjs
+  'MoveOperatorAfter', 'MoveOperatorBefore', 'DeactivateAbove', 'CreateTransformGroup', 'RemoveTransformGroup',
   // Property
   'SIAddProp', 'SIAddPropEx', 'RemoveProperties', 'RemoveAllProperties', 'SIAssignMaterial', 'SIUnAssignMaterial',
   'MakeLocal', 'SIMakeLocal', 'SelectMaterialsUsedBy', 'SelectObjectsUsingMaterial', 'IncreaseSubdivision', 'DecreaseSubdivision',
-  'AutoInspectEnabled', 'ToggleBooleanUserPref', 'InspectLastOperator',
+  'AutoInspectEnabled', 'ToggleBooleanUserPref',
   // Constraint
-  'RemoveAllCns', 'RemoveCnsType', 'GetConstrainedObjects', 'SelectConstrainedObjects', 'SIApplyCns', 'SIApplyConstraint',
-  // Transport Control
-  'PlayBackwardsFromEnd', 'PlayFrame', 'PlayRealTime', 'PlayRealTimeFromStart',
+  'RemoveAllCns', 'SelectConstrainedObjects', 'SIApplyCns', 'SIApplyConstraint',
   // General
   'BeginUndo', 'EndUndo',
 ];
@@ -106,16 +107,7 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
     r = run('UnghostAll'); ck('UnghostAll', 'default args: no object is ghosted', ok(r) && allObjs().every(o => o.property('visibility').val('ghosting') === false), r);
     A.undo(); ck('UnghostAll', 'undo restores ghosting', cube.property('visibility').val('ghosting') === true && sph.property('visibility').val('ghosting') === true);
   }
-  {
-    const { cube, sph } = S(); const iso = () => VM.active().x.isolate; let i0 = A.log.length;
-    let r = run('IsolateAddSelected'); ck('IsolateAddSelected', 'default args outside isolation: no-op with a log line', ok(r) && iso() === null && /not in isolation mode/.test(logSince(i0)), r);
-    A.select([cube]); VM.cameraMenu('Isolate Selection');
-    A.select([sph]); r = run('IsolateAddSelected'); ck('IsolateAddSelected', 'adds the selection to the isolate set', ok(r) && iso()?.has(cube) && iso()?.has(sph) && iso().size === 2, r);
-    A.select([cube]); r = run('IsolateRemoveSelected'); ck('IsolateRemoveSelected', 'default args: removes the selection from the isolate set', ok(r) && !iso().has(cube) && iso().has(sph), r);
-    A.select([cube, sph]); r = run('IsolateToggleSelected'); ck('IsolateToggleSelected', 'default args: toggles membership', ok(r) && iso().has(cube) && !iso().has(sph), r);
-    r = run('IsolateAll'); ck('IsolateAll', 'default args: every view leaves isolation', ok(r) && VM.viewports().every(vp => vp.x.isolate === null), r);
-    A.select([cube]); VM.cameraMenu('Isolate Selection'); r = run('IsolateAll', { All: false, View: -1 }); ck('IsolateAll', 'All=False: the active view leaves isolation', ok(r) && iso() === null, r);
-  }
+  // Isolate*: CMD-B19d (compare_selection_b19d.mjs)
   // ColorizeObject / ShadeObject moved to the CMD-B17g contract (pick loops); see tools/compare_params_rigs_b17gh.mjs
   {
     S(); const flag = k => !!VM.flags()[k];
@@ -136,22 +128,7 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
     r = run('ToggleHeadlightDisplayMode'); ck('ToggleHeadlightDisplayMode', 'flips back', ok(r) && flag('Headlight') === f0, r);
     const u = A.undoStack.length; run('SetViewDisplayMode'); run('ToggleWireOnShadedDisplay'); run('ToggleWireOnShadedDisplay'); ck('SetViewDisplayMode', 'view state commands add no undo entries', A.undoStack.length === u);
   }
-  {
-    const { cube } = S(); A.run('Translate', { InputObj: [cube], X: 7, Y: 0, Z: 0 });
-    const cam = () => VM.active().camera.position.toArray();
-    A.select([cube]); const p0 = cam(); let r = run('CenterSelection', { AllObjects: false, AllViews: false, View: -1 }); const p1 = cam();
-    ck('CenterSelection', 'AllViews=False: the active view camera moves onto the selection', ok(r) && !eq(p0, p1) && near(p1[0] - p0[0], 7), [r, p0, p1]);
-    A.run('Translate', { InputObj: [cube], X: 0, Y: 3, Z: 2 }); const p1b = cam(); r = run('CenterSelection'); const p2 = cam();
-    // an orthographic view is centred when the selection centre lies on its view axis
-    const offAxis = vp => { const c = cube.globalMatrix().elements.slice(12, 15); const d = vp.camera.getWorldDirection(vp.camera.position.clone()); const v = c.map((x, i) => x - vp.camera.position.toArray()[i]); const t = v[0] * d.x + v[1] * d.y + v[2] * d.z; return Math.hypot(v[0] - d.x * t, v[1] - d.y * t, v[2] - d.z * t); };
-    const orthos = VM.viewports().filter(vp => vp !== VM.active() && vp.kind === 'ortho');
-    ck('CenterSelection', 'default args (AllViews=True): active view and every orthographic view are centred', ok(r) && near(p2[1] - p1b[1], 3) && near(p2[2] - p1b[2], 2) && orthos.length > 0 && orthos.every(vp => offAxis(vp) < 1e-6), [r, p1b, p2, orthos.map(offAxis)]);
-    r = run('CenterSelection'); const p3 = cam();
-    ck('CenterSelection', 'already centred: no further move', ok(r) && p2.every((v, i) => Math.abs(v - p3[i]) < 1e-6), [p2, p3]);
-    const seen = []; const h1 = () => seen.push('framesel'), h2 = () => seen.push('frameall'); window.addEventListener('framesel', h1); window.addEventListener('frameall', h2);
-    r = run('FrameContextual'); A.select([]); const r2 = run('FrameContextual'); window.removeEventListener('framesel', h1); window.removeEventListener('frameall', h2);
-    ck('FrameContextual', 'default args: frames the selection, or everything when nothing is selected', ok(r) && ok(r2) && eq(seen, ['framesel', 'frameall']), [r, r2, seen]);
-  }
+  // CenterSelection / FrameContextual: CMD-B19d (compare_selection_b19d.mjs)
   for (const [W, field] of [['Keyword', 'userKeywords'], ['Tab', 'userTabs']]) {
     const { cube, sph } = S(); A.select([cube]);
     // CMD-B7a (docs/ghidra/cmd-b7a-uitasks-group-view-binary.md) replaced the inferred registrations: the attribute is the
@@ -244,12 +221,7 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
     r = run('DeleteModelFromObj', { InputObj: 'vnull' }); ck('DeleteModelFromObj', 'deletes the owning model and its content', ok(r) && !allObjs().includes(model) && !allObjs().includes(cube) && !allObjs().includes(nul), r);
     A.undo(); ck('DeleteModelFromObj', 'undo restores the model', allObjs().includes(model) && allObjs().includes(nul) && cube.parentObj === model);
 
-    const realConfirm = window.confirm; const asked = []; let answer = false; window.confirm = m => { asked.push(m); return answer; };
-    const n2 = A.scene.root.children.length; r = run('DeleteAll'); ck('DeleteAll', 'default args (Confirm=True), declined: nothing deleted', ok(r) && r.v === false && asked.length === 1 && A.scene.root.children.length === n2, [r, asked]);
-    answer = true; r = run('DeleteAll'); ck('DeleteAll', 'confirmed: the scene root is empty', ok(r) && r.v === true && asked.length === 2 && A.scene.root.children.length === 0 && allObjs().length === 0, r);
-    A.undo(); ck('DeleteAll', 'undo restores every object', A.scene.root.children.length === n2 && allObjs().includes(cube));
-    r = run('DeleteAll', { Confirm: false }); ck('DeleteAll', 'Confirm=False: no question asked', ok(r) && asked.length === 2 && allObjs().length === 0, r);
-    A.undo(); window.confirm = realConfirm;
+    // DeleteAll (CMD-B19b): the NewScene handler, not a delete over all objects; see tools/compare_tasks_b19b.mjs
 
     const i0 = A.log.length; A.select([nul]); r = run('DeleteObjPermanent');
     ck('DeleteObjPermanent', 'default args: the selection is deleted; the "permanent" part is logged as not yet attested', ok(r) && !allObjs().includes(nul) && /DeleteObjPermanent: not yet attested/.test(logSince(i0)), r);
@@ -382,7 +354,7 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
     r = run('GetConstrainedObjects', { InputObj: 'vsphere' }); ck('GetConstrainedObjects', 'nothing constrained: empty', ok(r) && r.v.length === 0, r);
     r = run('SelectConstrainedObjects'); ck('SelectConstrainedObjects', 'default args: selects them', ok(r) && eq(names(A.selection), ['vcube']), names(A.selection));
     r = run('SelectConstrainedObjects', { ConstrainingObj: [sph] }); ck('SelectConstrainedObjects', 'nothing constrained: empty selection', ok(r) && A.selection.length === 0, r);
-    let i0 = A.log.length; A.select([cube]); r = run('RemoveCnsType'); ck('RemoveCnsType', 'default args (empty Type): nothing removed, logged', ok(r) && r.v === 0 && cns(cube).length === 2 && /RemoveCnsType: not yet attested/.test(logSince(i0)), r);
+    let i0 = A.log.length; A.select([cube]); r = run('RemoveCnsType'); ck('RemoveCnsType', 'default args (empty Type): CMD-B19c, the SIGetKineCnsIDFromName failure, nothing removed', /status 0x80004005/.test(r.err ?? '') && cns(cube).length === 2 && /RemoveCnsType: .* \(status 0x80004005\)/.test(logSince(i0)), r);
     r = run('RemoveCnsType', { Type: 'Position', ConstrainedObj: [cube] }); ck('RemoveCnsType', 'by preset name', ok(r) && r.v === 1 && eq(names(cns(cube)), ['Orientation Cns']), names(cns(cube)));
     A.undo(); ck('RemoveCnsType', 'undo', eq(names(cns(cube)), ['Position Cns', 'Orientation Cns']), names(cns(cube)));
     r = run('RemoveCnsType', { Type: 'oricns' }); ck('RemoveCnsType', 'by constraint type, on the selection', ok(r) && r.v === 1 && eq(names(cns(cube)), ['Position Cns']), names(cns(cube))); A.undo();
@@ -402,22 +374,7 @@ const got = await page.evaluate(async ({ COMMANDS }) => {
     i0 = A.log.length; r = run('SIApplyConstraint', { PresetObj: 'Position', ConstrainedObj: [sph], ConstrainingObj: [nul], Offset1X: 1 }); ck('SIApplyConstraint', 'Offset arguments: constraint applied, offsets logged as not yet attested', ok(r) && cns(sph).length === 1 && /SIApplyConstraint: not yet attested: the Offset1/.test(logSince(i0)), r);
   }
 
-  // -------------------------------------------------------------------------------------- Transport Control
-  {
-    S(); const an = A.anim; an.stop(); A.run('SetPlayRange', { Start: 1, End: 100 });
-    an.frame = 10; let r = run('PlayBackwardsFromEnd'); const f0 = an.frame;
-    ck('PlayBackwardsFromEnd', 'default args: playing backwards from the last frame', ok(r) && an.playing === true && f0 === an.endFrame && an.dir === -1, [r, f0]);
-    await sleep(500); ck('PlayBackwardsFromEnd', 'the frame counts down', an.playing && an.frame < f0, an.frame); A.run('PlaybackStop');
-    A.run('SetPlayRange', { Start: 1, End: 4 }); an.fps = 120; run('PlayBackwardsFromEnd'); const seen = []; for (let i = 0; i < 12; i++) { await sleep(60); seen.push(an.frame); }
-    ck('PlayBackwardsFromEnd', 'loops inside the play range', an.playing && seen.every(f => f >= 1 && f <= 4) && new Set(seen).size > 1, seen); A.run('PlaybackStop'); an.fps = 30; A.run('SetPlayRange', { Start: 1, End: 100 });
-    an.frame = 20; r = run('PlayFrame'); ck('PlayFrame', 'default args, stopped: starts playing forwards', ok(r) && an.playing && an.dir === 1, r);
-    r = run('PlayFrame'); ck('PlayFrame', 'while playing: reverses the direction', ok(r) && an.playing && an.dir === -1, r);
-    r = run('PlayFrame'); ck('PlayFrame', 'and again', ok(r) && an.playing && an.dir === 1, r); A.run('PlaybackStop');
-    an.realtime = false; an.frame = 30; r = run('PlayRealTime'); ck('PlayRealTime', 'default args: real-time playback forwards from the current frame', ok(r) && an.playing && an.realtime === true && an.dir === 1 && an.frame === 30, [r, an.frame]);
-    await sleep(400); ck('PlayRealTime', 'the frame advances', an.frame > 30, an.frame); A.run('PlaybackStop');
-    an.realtime = false; an.frame = 50; r = run('PlayRealTimeFromStart'); ck('PlayRealTimeFromStart', 'default args: real-time playback from the first frame', ok(r) && an.playing && an.realtime === true && an.dir === 1 && an.frame === an.startFrame, [r, an.frame]);
-    A.run('PlaybackStop'); ck('PlayRealTimeFromStart', 'PlaybackStop stops it', an.playing === false); an.frame = 1;
-  }
+  // Transport Control: CMD-B19d (compare_selection_b19d.mjs)
 
   // ------------------------------------------------------------------------------------------------ General
   {

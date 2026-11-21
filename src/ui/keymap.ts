@@ -96,12 +96,12 @@ export const ACTIONS: Record<string, Action> = {
   'MCP Setting: Set Transform Tool Axis X': () => mcp('axis', 'x'), 'MCP Setting: Set Transform Tool Axis Y': () => mcp('axis', 'y'), 'MCP Setting: Set Transform Tool Axis Z': () => mcp('axis', 'z'),
   'MCP Setting: Toggle Prop Modeling': () => mcp('prop', null), 'MCP Setting: Set Transform Modifier COG': () => mcp('cog', null), 'MCP Setting: Set Transform Modifier Sym': () => mcp('sym', null),
   // file
-  'New Scene': (app) => { if (confirm('New scene? (unsaved work is lost)')) app.run('NewScene'); }, 'Save Scene': () => window.dispatchEvent(new CustomEvent('savescene')), 'Open Scene': () => window.dispatchEvent(new CustomEvent('openscene')),
+  'New Scene': (app) => { if (confirm('New scene? (unsaved work is lost)')) app.run('NewScene', { Confirm: false }); }, 'Save Scene': () => window.dispatchEvent(new CustomEvent('savescene')), 'Open Scene': () => window.dispatchEvent(new CustomEvent('openscene')),
   'Quit': () => { /* browser */ }, 'Users Guide': () => window.open('https://help.autodesk.com/view/SI/2015/ENU/', '_blank'),
 
   // ---- floating windows / clipboard (Global context)
   'Close Floating Window': () => floatWin('close'), 'Next Floating Window': () => floatWin('next'), 'Previous Floating Window': () => floatWin('prev'),
-  'Copy': (app) => app.run('Copy'), 'Cut': (app) => { app.run('Copy'); app.run('DeleteObj'); }, 'Paste': (app) => app.run('Paste'),
+  'Copy': (app) => app.run('Copy'), 'Cut': (app) => { try { app.run('Cut'); } catch { /* logged */ } }, 'Paste': (app) => app.run('Paste'),
   'Undo (alternate)': (app) => app.undo(), 'Redo (alternate)': (app) => app.redo(), 'Undo Camera': () => vm()?.undoCamera(), 'Undo Camera (alternate)': () => vm()?.undoCamera(), 'Redo Camera': () => vm()?.redoCamera(), 'Redo Camera (alternate)': () => vm()?.redoCamera(),
   // ---- views (View Shortcuts context)
   'Animation Editor': () => view('Animation Editor'), 'Animation Mixer': () => view('Animation Mixer'), 'Browser': () => view('Netview'), 'Expression Editor': () => view('Expression Editor'), 'Fx Tree': (app) => app.logMsg('info', 'Fx Tree: compositing is not part of the Model toolset'), 'Fx Viewer': (app) => app.logMsg('info', 'Fx Viewer: compositing is not part of the Model toolset'),

@@ -405,8 +405,10 @@ const got = await page.evaluate(async ({ NAMES, registry, copyEntries, removeEnt
     reset(); S.dialog = (q) => { seen = [q.title, q.property.name, q.property.val('Language'), q.property.val('Logic')]; q.property.set('Logic', '// edited'); return true; };
     run('EditICECompoundPPGLogic', { InputObj: 'sphere1' });
     eq('EditICECompoundPPGLogic: property "ICE Compound PPG Logic", title 1516, logic / language at 11 / 12', seen, ['ICE Compound PPG Logic', 'ICE Compound PPG Logic', 'JScript', 'function OnInit() {}']);
-    eq('EditICECompoundPPGLogic OK: EditICECompoundProperties <obj>, values 0..10 unchanged, new logic, language', [calls().map(c => [c[0], c[1]]), ice[11], S.out.EditICECompoundPPGLogic.result],
-      [[['GetICECompoundProperties', ['sphere1']], ['EditICECompoundProperties', ['sphere1', 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, '// edited', 'JScript']]], '// edited', true]);
+    // CMD-B19c puts EditICECompoundProperties on the bus (optasksB19cIce.ts): the call goes there; sphere1 is not an ICE
+    // compound, so the bus command has nothing to edit and the stand-in array keeps its logic
+    eq('EditICECompoundPPGLogic OK: EditICECompoundProperties <obj>, values 0..10 unchanged, new logic, language (bus command since CMD-B19c)', [calls().map(c => [c[0], c[1], c[2]]), ice[11], S.out.EditICECompoundPPGLogic.result],
+      [[['GetICECompoundProperties', ['sphere1'], 'stand-in'], ['EditICECompoundProperties', ['sphere1', 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, '// edited', 'JScript'], 'bus']], 'function OnInit() {}', true]);
     reset(); sphere1.compoundProperties = ice.slice(0, 12); S.dialog = () => { opened = true; return true; }; opened = false; run('EditICECompoundPPGLogic', { InputObj: 'sphere1' });
     eq('EditICECompoundPPGLogic: fewer than 13 values stops (False)', [opened, S.out.EditICECompoundPPGLogic.result], [false, false]);
     // the real modal page
@@ -612,6 +614,9 @@ const EXPECT_ERR = {
   FindPeriods: (d) => d.cancelled,                                     // 1021, cancel
   CreateFX: (d) => !!d.err && !d.cancelled,                            // the file cannot be opened
   ExportAllPassesToMI2: (d) => /ExportAllPassesToMI2Proc not found/.test(d.err ?? ''),   // stale registration
+  // CMD-B19a (WIRE_CORRECTIONS_B19 item 17): the default ParamName "" reaches SICreateEmptyPartition, which refuses an
+  // empty Name with E_INVALIDARG (the old stand-in fell back to "Partition").
+  CreatePassWithPartition: (d) => /SICreateEmptyPartition: empty Name \(status 0x80070057\)/.test(d.err ?? ''),
 };
 for (const n of NAMES) {
   const d = got.defaults[n];

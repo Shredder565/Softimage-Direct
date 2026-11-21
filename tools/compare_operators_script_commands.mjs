@@ -98,6 +98,7 @@ const got = await page.evaluate(async ({ NAMES, UI }) => {
     app.select([]); app.compSel = null; const m = mark(); const before = names().length;
     const r = run(n);
     out.defaults[n] = { r: pub(r), log: logFrom(m), made: names().slice(before) };
+    if (n === 'CreateSimulationBracket') { const env = find(names().slice(before)[0]); out.defaults[n].containers = (env?.simulationEnvironment?.containers ?? []).map(c => [c.type, c.name]); }
   }
   app.Interactive = true; app.select([]);
   try { app.run('SetSelFilter', { SelFilter: 'object' }); } catch { /* ignore */ }
@@ -451,7 +452,8 @@ ok('Convert defaults: SIConvert flagged not yet attested', D.Convert.r.v === NON
 eq('CreateClusterCenter defaults: text 1092 logged, box degraded to "Warning: ..."', [D.CreateClusterCenter.r, D.CreateClusterCenter.log], [{ v: NONE }, [`info:${T1092}`, `info:Warning: ${T1092}`]]);
 eq('CreateClusterCenterWithNull defaults (Func entry): error log, no box', [D.CreateClusterCenterWithNull.r, D.CreateClusterCenterWithNull.log], [{ v: NONE }, [`error:CreateClusterCenter: ${T1092}`]]);
 eq('CreateNonOverlappingCluster defaults', [D.CreateNonOverlappingCluster.r, D.CreateNonOverlappingCluster.log], [{ v: NONE }, ['info:Tag some components first']]);
-ok('CreateSimulationBracket defaults: returns 0, creates the environment, container flagged', D.CreateSimulationBracket.r.v === 0 && D.CreateSimulationBracket.made.length === 1 && /^Environment/.test(D.CreateSimulationBracket.made[0]) && D.CreateSimulationBracket.log.some(l => /not yet attested: the environment container command/.test(l)), D.CreateSimulationBracket);
+// CMD-B19b: AddContainerToEnvironment is on the bus now (environments.dll contract), so the "Forces" container is made
+ok('CreateSimulationBracket defaults: returns 0, creates the environment with its "Forces" container', D.CreateSimulationBracket.r.v === 0 && D.CreateSimulationBracket.made.length === 1 && /^Environment/.test(D.CreateSimulationBracket.made[0]) && JSON.stringify(D.CreateSimulationBracket.containers) === JSON.stringify([['Force', 'Forces']]) && !D.CreateSimulationBracket.log.some(l => /not yet attested: the environment container command/.test(l)), D.CreateSimulationBracket);
 ok('ApplyDeformBySpine defaults: nothing applied, pick flagged', D.ApplyDeformBySpine.r.v === NONE && /not yet attested: picking the inputs/.test(D.ApplyDeformBySpine.log[0] ?? ''), D.ApplyDeformBySpine);
 ok('ApplySpringOp defaults: missing inputs fail (no validation in the script)', /needs the driven object and its anchor/.test(D.ApplySpringOp.r.err ?? ''), D.ApplySpringOp);
 ok('InspectSpringPropertiesProc defaults: empty list flagged (Q11)', D.InspectSpringPropertiesProc.r.v === NONE && /InspectObj with an empty list/.test(D.InspectSpringPropertiesProc.log[0] ?? ''), D.InspectSpringPropertiesProc);

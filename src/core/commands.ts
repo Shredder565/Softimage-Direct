@@ -70,6 +70,8 @@ export class App {
   /** Selection filter from the MCP: object, or a component kind. */
   selMode: 'object' | CompKind = 'object';
   compSel: ComponentSelection | null = null;
+  /** Selection manager "active elements" list (CMD-B19d §2, CMD-B7a): objects whose components are being edited. */
+  activeElements: X3DObject[] = [];
   activeTool: InteractiveTool | null = null;
   proportional = { on: false, radius: 3 };
   private cancellingTool = false;

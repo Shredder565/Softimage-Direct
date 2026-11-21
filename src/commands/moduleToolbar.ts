@@ -11,8 +11,6 @@ import { deleteObjList, PASSES_CURRENT } from './tasksB16c';
 import {
   exportObjectRenderArchive,
   exportRenderArchive,
-  exportRenderArchiveAllPasses,
-  resolveSelectedOrCurrentPasses,
 } from '../core/renderArchive';
 
 const addObject = (app: App, obj: X3DObject, parent?: X3DObject | null) => {
@@ -115,8 +113,6 @@ export function registerModuleToolbarCommands(app: App) {
     { name: 'MatchUVW', label: 'Match UVW', args: 3 },
     { name: 'CycleUVW', label: 'Cycle UVW', args: 3 },
     { name: 'FlipUVW', label: 'Flip UVW', args: 3 },
-    { name: 'CopyUVW', label: 'Copy UVW', args: 2 },
-    { name: 'PasteUVW', label: 'Paste UVW', args: 3 },
     { name: 'FreezeUVWTransformation', label: 'Freeze UVW transformation', args: 1 },
     { name: 'RelaxUVW', label: 'Relax UVW', args: 2 },
     { name: 'IslandHealUVW', label: 'Island Heal UVW', args: 5 },
@@ -211,45 +207,7 @@ export function registerModuleToolbarCommands(app: App) {
       return still;
     },
   });
-  app.register({
-    name: 'RenderRegionRefresh', label: 'Refresh Render Region', category: 'Rendering',
-    args: [{ name: 'Viewport', default: '' }], undoable: false,
-    execute(app) {
-      window.dispatchEvent(new CustomEvent('renderregion-refresh'));
-      app.logMsg('info', 'Render region refreshed');
-      app.events.emit('frame');
-    },
-  });
-  app.register({
-    name: 'RenderRegionToggleVisibility', label: 'Show/Hide Render Region', category: 'Rendering',
-    args: [{ name: 'Viewport', default: '' }], undoable: false,
-    execute(app) {
-      rr.visible = !rr.visible;
-      window.dispatchEvent(new CustomEvent('renderregion-toggle'));
-      app.logMsg('info', `Render region ${rr.visible ? 'shown' : 'hidden'}`);
-    },
-  });
-  app.register({ name: 'RenderRegionToggleSelectionTracking', label: 'Toggle Selection Tracking for Render Region', category: 'Rendering', args: [{ name: 'Viewport', default: '' }], undoable: false, execute(app) { rr.track = !rr.track; app.logMsg('info', `Render region track selection ${rr.track ? 'ON' : 'OFF'}`); } });
-  app.register({
-    name: 'RenderRegionSetRefreshMode', label: 'Set Refresh Mode for Render Region', category: 'Rendering',
-    args: [{ name: 'Viewport', default: '' }, { name: 'RefreshMode', default: '' }], undoable: false,
-    execute(app, a) {
-      const m = String(a.RefreshMode || '');
-      rr.refresh = m.includes('Manual') ? 'Manual' : (m.includes('CTRS') || m.includes('Camera')) ? 'Camera/Time/Region' : 'Interactive';
-      app.logMsg('info', `Render region refresh: ${rr.refresh}`);
-    },
-  });
-  app.register({
-    name: 'RenderRegionSetDisplayType', label: 'Set Render Region Display Type', category: 'Rendering',
-    args: [{ name: 'Viewport', default: '' }, { name: 'Type', default: '' }], undoable: false,
-    execute(app, a) {
-      const t = String(a.Type || '');
-      rr.display = t.includes('Alpha') && !t.includes('RGBA') && !t.includes('RGB') ? 'Alpha'
-        : t.includes('Red') ? 'Red' : t.includes('Green') ? 'Green' : t.includes('Blue') ? 'Blue'
-          : t.includes('RGB') && !t.includes('RGBA') ? 'RGB' : 'RGBA';
-      app.logMsg('info', `Render region display: ${rr.display}`);
-    },
-  });
+  // RenderRegionRefresh / ToggleVisibility / ToggleSelectionTracking / SetRefreshMode / SetDisplayType: CMD-B19a (renderB19a.ts)
   app.register({
     name: 'InspectViewportRenderRegionOptions', label: 'Inspect Viewport Render Region Options', category: 'Rendering',
     args: [{ name: 'View', default: '' }], undoable: false,
@@ -375,19 +333,7 @@ export function registerModuleToolbarCommands(app: App) {
     description: 'Render selected passes',
     execute: (app, a) => executeRenderPass(app, { Passes: a.Passes ?? 'Passes.Current' }),
   });
-  app.register({
-    name: 'RenderSelectedPasses', label: 'Render Selected Passes', category: 'Rendering',
-    args: [{ name: 'Passes', default: null }], undoable: false,
-    execute(app, a) {
-      if (a.Passes) return executeRenderPass(app, { Passes: a.Passes });
-      // Softimage: selected Pass explorer nodes, else Passes.Current (registry Collection).
-      const passes = resolveSelectedOrCurrentPasses(app);
-      const key = passes.length === 1
-        ? (passes[0]!.name || 'Passes.Current')
-        : passes.map(p => p.name).join(',');
-      return renderScenePasses(app, { passes: key || 'Passes.Current' });
-    },
-  });
+  // RenderSelectedPasses: CMD-B19a (renderB19a.ts); no fallback to the current pass in the handler
   app.register({
     name: 'RenderAllPasses', label: 'Render All Passes', category: 'Rendering',
     args: [
@@ -426,12 +372,7 @@ export function registerModuleToolbarCommands(app: App) {
     description: 'Export a list of passes to a render archive, or the current pass if none specified',
     execute: (app, a) => exportRenderArchive(app, a),
   });
-  app.register({
-    name: 'ExportRenderArchiveAllPasses', label: 'Export All Passes to Render Archives', category: 'Rendering',
-    args: [{ name: 'Passes', default: 'Passes.List.*' }], undoable: false,
-    description: 'Export All Passes to Render Archives',
-    execute: (app, a) => exportRenderArchiveAllPasses(app, a),
-  });
+  // ExportRenderArchiveAllPasses: CMD-B19a (renderB19a.ts)
   app.register({
     name: 'ExportObjectRenderArchive', label: 'Export an Object to a Render Archive', category: 'Rendering',
     args: [
@@ -550,17 +491,7 @@ export function registerModuleToolbarCommands(app: App) {
     undoable: false,
     execute: (app) => app.run('Toggle Simulation'),
   });
-  app.register({
-    name: 'CreateEnvironment', label: 'Create Environment', category: 'Simulation',
-    args: [{ name: 'Name', default: 'Environment' }],
-    execute(app, a) {
-      const n = new Null(app.scene.uniqueName(a.Name || 'Environment'));
-      n.add(str('simenv', '1', 'Simulation Environment', { readOnly: true }));
-      addObject(app, n);
-      app.select([n]);
-      return n;
-    },
-  });
+  // CreateEnvironment: environments.dll 98531be5, CMD-B19b (src/commands/tasksB19b.ts)
   // ApplySoftBody / ApplyCloth: row CMD-B17f (animPrimsB17ef.ts, particle.vbs contract)
   app.register({
     name: 'AddClothClusters', label: 'Add Cloth Clusters', category: 'Simulation', args: [{ name: 'InputObj', default: '' }],

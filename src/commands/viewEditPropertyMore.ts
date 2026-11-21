@@ -7,7 +7,7 @@
 import { makeOwnMaterialCopy } from './chainsModelB17b';
 import { App, UndoEntry } from '../core/commands';
 import { X3DObject, Node, Property, Material, Constraint, makeSiShader } from '../core/scene';
-import { addConstraint, CNS_PRESETS } from './constraints';
+import { addConstraint } from './constraints';
 import { tasksB16c, NO_NAME_OPERATION } from './tasksB16c';
 import {
   reg, nya, logNya, unset, siConst, boolArg, objs, nodes, findNode, findObject, findMaterial,
@@ -17,7 +17,6 @@ import {
 export function registerViewEditPropertyMore(app: App) {
   registerProperty(app);
   registerConstraint(app);
-  registerTransport(app);
   registerGeneral(app);
 }
 
@@ -200,12 +199,7 @@ function registerProperty(app: App) {
       bag[k] = !boolArg(bag[k]); return bag[k];
     },
   });
-  // inferred
-  reg(app, {
-    name: 'InspectLastOperator', label: 'Last Operator in Stack', category: 'Property|Edit', description: 'Inspect the last operator in the operator stack of each of the selected object(s)', undoable: false,
-    args: [{ name: 'InputObjs', default: null }],
-    execute(app, a) { for (const o of objs(app, a.InputObjs)) { const ops = o.primitive?.operators ?? []; const op = ops[ops.length - 1]; if (op) app.events.emit('inspect', op); } },
-  });
+  // InspectLastOperator: tasks.dll ee0d5df0, CMD-B19b (src/commands/tasksB19b.ts)
 }
 
 // =================================================================================================== Constraint
@@ -219,25 +213,7 @@ function registerConstraint(app: App) {
     args: [{ name: 'ConstrainedObj', default: null }, { name: 'Propagation', default: 3 }],
     execute(app, a) { let n = 0; for (const o of objs(app, a.ConstrainedObj)) for (const c of cnsOf(o)) { removeProp(app, o, c); n++; } return n; },
   });
-  // inferred: Type is a constraint preset name ("Position"), a constraint name ("Position Cns") or a type ("poscns")
-  reg(app, {
-    name: 'RemoveCnsType', label: 'Remove Constraints By Type', category: 'Constraint', description: 'Removes the constraints of a type from the input objects',
-    args: [{ name: 'Type', default: '' }, { name: 'ConstrainedObj', default: null }],
-    execute(app, a) {
-      if (unset(a.Type)) { logNya(app, 'RemoveCnsType', 'an empty Type; nothing is removed'); return 0; }
-      const t = String(a.Type).replace(/\.Preset$/i, '').toLowerCase();
-      const preset = Object.keys(CNS_PRESETS).find(k => k.toLowerCase() === t);
-      const match = (c: Constraint) => preset ? c.name === CNS_PRESETS[preset].label : (c.type.toLowerCase() === t || c.name.toLowerCase() === t);
-      let n = 0; for (const o of objs(app, a.ConstrainedObj)) for (const c of cnsOf(o)) if (match(c)) { removeProp(app, o, c); n++; }
-      return n;
-    },
-  });
-  // inferred: OutputObjs is the output argument; the list is the return value here
-  reg(app, {
-    name: 'GetConstrainedObjects', label: 'Get Constrained Objects from Constraining', category: 'Constraint', description: 'Returns the objects constrained to the input object', undoable: false,
-    args: [{ name: 'InputObj', default: null }, { name: 'OutputObjs', default: null }],
-    execute(app, a) { return constrainedBy(new Set(objs(app, a.InputObj))); },
-  });
+  // RemoveCnsType / GetConstrainedObjects: CMD-B19c (optasksB19c.ts)
   // inferred
   reg(app, {
     name: 'SelectConstrainedObjects', label: 'Select Constrained Objects from Constraining', category: 'Constraint', description: 'Selects the objects constrained to the input object(s)', undoable: false,
@@ -275,43 +251,7 @@ function registerConstraint(app: App) {
   });
 }
 
-// ============================================================================================ Transport Control
-function registerTransport(app: App) {
-  const A = app.anim as any;
-  // Backward playback started here wraps (or stops, in "once" mode) at the first frame of the play range.
-  app.anim.onFrame((f) => {
-    if (!A._vepBackward) return;
-    if (!app.anim.playing || A.dir >= 0) { A._vepBackward = false; return; }
-    if (f < app.anim.startFrame) { if (app.anim.loopMode === 'once') { app.anim.frame = app.anim.startFrame; app.anim.stop(); } else if (app.anim.loopMode === 'loop') app.anim.frame = app.anim.endFrame; }
-  });
-  const start = (dir: 1 | -1) => { app.anim.stop(); A.dir = dir; A._vepBackward = dir < 0; app.anim.play(); };
-  const transport = (cmd: string, a: Record<string, any>, expect: number) => { if (Number(a.Transport) !== expect) logNya(app, cmd, `Transport=${a.Transport} (the registry default ${expect} is used)`); };
-
-  // inferred
-  reg(app, {
-    name: 'PlayBackwardsFromEnd', label: 'Play Backwards From End', category: 'Transport Control', description: 'Play backwards frame by frame from end', undoable: false,
-    args: [{ name: 'Transport', default: 11 }],
-    execute(app, a) { transport('PlayBackwardsFromEnd', a, 11); app.anim.stop(); app.anim.frame = app.anim.endFrame; start(-1); },
-  });
-  // inferred: starts playing, or reverses the direction when already playing
-  reg(app, {
-    name: 'PlayFrame', label: 'Play/Reverse Play', category: 'Transport Control', description: 'Start playing animation or reverse direction of playing ', undoable: false,
-    args: [{ name: 'Transport', default: 4 }],
-    execute(app, a) { transport('PlayFrame', a, 4); if (app.anim.playing) start(A.dir < 0 ? 1 : -1); else start(1); },
-  });
-  // inferred
-  reg(app, {
-    name: 'PlayRealTime', label: 'Play in Real Time', category: 'Transport Control', description: 'Start playing in real time', undoable: false,
-    args: [{ name: 'Transport', default: 5 }],
-    execute(app, a) { transport('PlayRealTime', a, 5); app.anim.realtime = true; start(1); },
-  });
-  // inferred
-  reg(app, {
-    name: 'PlayRealTimeFromStart', label: 'Play in Real Time From Start', category: 'Transport Control', description: 'Start playing in real time from the start', undoable: false,
-    args: [{ name: 'Transport', default: 9 }],
-    execute(app, a) { transport('PlayRealTimeFromStart', a, 9); app.anim.stop(); app.anim.realtime = true; app.anim.frame = app.anim.startFrame; start(1); },
-  });
-}
+// Transport Control (PlayBackwardsFromEnd, PlayFrame, PlayRealTime, PlayRealTimeFromStart): CMD-B19d (selectionB19d.ts, mcp.dll)
 
 // ====================================================================================================== General
 function registerGeneral(app: App) {

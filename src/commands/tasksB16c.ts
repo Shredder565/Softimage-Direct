@@ -27,7 +27,7 @@
 // Add3DObjectToScene (unparented objects only, Visibility property), SetReference2 (reference filter, self reference),
 // Undo / Redo Repetitions (0 = nothing; negative = conversion failure).
 import { App, type UndoEntry } from '../core/commands';
-import { Node, X3DObject, Cluster, Layer, Pass, Shader, Model, Camera, Material, Primitive, Property, makeVisibility } from '../core/scene';
+import { Node, X3DObject, Cluster, Layer, Pass, Framebuffer, Shader, Model, Camera, Material, Primitive, Property, makeVisibility } from '../core/scene';
 import { Parameter } from '../core/params';
 import { hostFs } from '../core/sdkHelpersHostFs';
 import { SiStatusError } from './alembicSeqCam';
@@ -223,6 +223,17 @@ export function deleteObjList(app: App, cmd: string, input: any, mode = 0): numb
         const S = sc as any; const idx = ps.indexOf(n); const before = S.currentPass;
         app.record('Delete ' + n.name, () => { ps.splice(ps.indexOf(n), 1); if (S.currentPass === n) S.currentPass = ps[ps.length - 1]; },
           () => { ps.splice(idx, 0, n); S.currentPass = before; });
+        return true;
+      });
+      goneOther.add(n);
+    } else if (n instanceof Framebuffer) {
+      // inferred (CMD-B19a RemoveRenderChannel): a framebuffer is removed from its pass's framebuffer list
+      const pass = sc.passes.find(p => p.framebuffers.includes(n));
+      if (!pass) continue;
+      doable.push(() => {
+        const list = pass.framebuffers as Framebuffer[]; const idx = list.indexOf(n);
+        if (idx < 0) return false;
+        app.record('Delete ' + n.name, () => { const k = list.indexOf(n); if (k >= 0) list.splice(k, 1); }, () => { if (!list.includes(n)) list.splice(Math.min(idx, list.length), 0, n); });
         return true;
       });
       goneOther.add(n);

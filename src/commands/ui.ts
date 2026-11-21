@@ -8,13 +8,8 @@ const ev = (name: string, detail?: any) => window.dispatchEvent(new CustomEvent(
 export function registerUICommands(app: App) {
   const reg = (name: string, label: string, execute: (app: App, a: Record<string, any>) => any, args: { name: string; default: any }[] = []) => app.register({ name, label, category: 'UI', args, undoable: false, execute });
   // TranslateTool / RotationTool / ScalingTool: toolmanager.dll activation commands (CMD-B16a, toolsB16a.ts).
-  reg('ActivateSelectTool', 'Select Tool', () => tool.setMode('select'));
+  // ActivateSelectTool, Activate{Vertex,Edge,Polygon,RaycastEdge,RaycastPoly}SelTool, IsolateSelected: CMD-B19d (selectionB19d.ts)
   reg('ActivateObjectSelTool', 'Object Select Tool', (app) => { tool.setMode('select'); app.setSelMode('object'); });
-  reg('ActivateVertexSelTool', 'Point Select Tool', (app) => app.setSelMode('point'));
-  reg('ActivateEdgeSelTool', 'Edge Select Tool', (app) => app.setSelMode('edge'));
-  reg('ActivatePolygonSelTool', 'Polygon Select Tool', (app) => app.setSelMode('polygon'));
-  reg('ActivateRaycastEdgeSelTool', 'Raycast Edge Select Tool', (app) => app.setSelMode('edge'));
-  reg('ActivateRaycastPolySelTool', 'Raycast Polygon Select Tool', (app) => app.setSelMode('polygon'));
   reg('ActivateRaycastSelTool', 'Raycast Select Tool', (app) => { tool.setMode('select'); app.setSelMode('object'); });
   // FrameSelection / FrameAll / CameraReset: vm.dll commands of CMD-B17i (src/commands/inferredB10Views.ts).
   reg('ResetCamera', 'Reset Camera', () => ev('frameall'), [{ name: 'View', default: -1 }]);
@@ -23,14 +18,12 @@ export function registerUICommands(app: App) {
   reg('GetFocusedViewport', 'Get Focused Viewport', () => 'B');
   reg('ToggleOptionalPanel', 'Toggle Optional Panel', (_, a) => ev('togglepanel', { name: a.Name }), [{ name: 'Name', default: '' }]);
   reg('ShowOptionalPanel', 'Show Optional Panel', (_, a) => ev('togglepanel', { name: a.Name, show: true }), [{ name: 'Name', default: '' }]);
-  reg('IsolateSelected', 'Isolate Selected', (app, a) => { const sel = new Set(app.selectedObjects); const all = [...app.scene.allObjects()]; const vis = (o: any, v: boolean) => { const p = o.property('visibility')?.get('viewvis'); if (p) app.setParam(p, v, 'Isolate'); }; const hidden = all.filter(o => !sel.has(o) && !o.visible); if (hidden.length && !a.Force) { for (const o of all) vis(o, true); } else for (const o of all) if (!sel.has(o)) vis(o, false); }, [{ name: 'Force', default: false }, { name: 'View', default: -1 }]);
   // GetPrimStereoCamera: the StereoCamera.js rig (three cameras, Stereo property, constraint operators), CMD-B18d
   // (src/commands/faceRobotB18d.ts, WIRE_CORRECTIONS_B18 item 12); it was a plain GetPrim Camera here.
   reg('SetViewManagerLayout', 'View Manager Layout', (_, a) => ev('vmlayout', { layout: a.Layout }), [{ name: 'Layout', default: 'standard' }]);
   reg('MaximizeViewport', 'Maximize/Restore Viewport', () => ev('maximizeview'));
   reg('OpenPreferences', 'Preferences', (_, a) => ev('openprefs', { page: a.Page }), [{ name: 'Page', default: '' }]);
-  reg('SaveScene', 'Save Scene', () => ev('savescene'));
-  reg('OpenScene', 'Open Scene', () => ev('openscene'));
+  // SaveScene / OpenScene: tasks.dll scene tasks, CMD-B19b (src/commands/tasksB19b.ts)
 
   // Softimage ToggleValue (commands_full Viewing) — harvest Hair ACTIVE via ScriptingName ToggleValue.
   // ParamName e.g. objhair; toggles a boolean display flag bag (no invent camera bitmaps).

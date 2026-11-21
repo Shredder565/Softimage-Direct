@@ -1,6 +1,7 @@
 // Selection / Group / Layer command families on the command bus (INFERRED batch, no analyst note).
 // Contract check, not a golden compare: there is no dump of these commands' behaviour in data/dump.
-// For every command registered by src/commands/selectionGroupLayer.ts this checks
+// For every command registered by src/commands/selectionGroupLayer.ts this checks (the ones CMD-B19b replaced are checked by
+// tools/compare_tasks_b19b.mjs)
 //   (1) registration against data/commands_full.json (display name, category, argument names + defaults),
 //   (2) a run with default arguments (no throw, or the documented error text),
 //   (3) the resulting scene state (selection list, component selection, group / layer membership, undo).
@@ -23,27 +24,28 @@ if (!CHROME) { console.error('No Chromium; set PW_CHROME'); process.exit(2); }
 
 const COMMANDS = [
   // selection list
-  'AddToSelection', 'RemoveFromSelection', 'ToggleSelection', 'SetAndToggleSelection', 'SelectBranch', 'SelectTree', 'SelectModel',
-  'SelectChain', 'SelectMembers', 'SelectNeighborObj',
+  // (SetAndToggleSelection, SelectMembers, SelectAllUsingFilter, Select{Object,Vertex,Edge,Polygon,SampledPoint}Filter and the
+  //  Activate...SelToolWithNoObjStateChange commands: CMD-B19d, src/commands/selectionB19d.ts, compare_selection_b19d.mjs;
+  //  the SetAndToggleSelection / SelectMembers checks below still run against the new bodies)
+  'AddToSelection', 'RemoveFromSelection', 'ToggleSelection', 'SelectBranch', 'SelectTree', 'SelectModel',
+  'SelectChain', 'SelectNeighborObj',
   // filters
-  'SelectAllUsingFilter', 'DeselectAllUsingFilter', 'SelectFilter', 'SetSelFilter', 'SelectObjectFilter', 'SelectVertexFilter',
-  'SelectEdgeFilter', 'SelectPolygonFilter', 'SelectSampledPointFilter', 'SetPointSelectionFilter', 'SetEdgeSelectionFilter',
+  'SelectFilter', 'SetSelFilter', 'SetPointSelectionFilter', 'SetEdgeSelectionFilter',
   'SetPolygonSelectionFilter', 'SetSampleSelectionFilter', 'ToggleObjectComponentSelectionFilter', 'Cycle Selection Mode',
-  'ActivateObjectSelToolWithNoObjStateChange', 'ActivateVertexSelToolWithNoObjStateChange', 'ActivateEdgeSelToolWithNoObjStateChange',
-  'ActivateRaycastEdgeSelToolWithNoObjStateChange', 'ActivateRaycastPolySelToolWithNoObjStateChange',
   // components
   // (GrowSelection, ShrinkSelection, SelectAdjacent, ConvertSelection*, SelectNSidedPolygons, GetNeighborSubcomponents,
   //  Select*EdgeLoop, SICreateLayerFromSelection*, ToggleGhosting: CMD-B17a, compare_selection_layers_b17a.mjs)
-  'SelectAllConnectedComponents', 'SelectGeometryComponents', 'SelectAllComponentLoops',
-  'GrowSelectedLoops', 'ShrinkSelectedLoops', 'SelectPolygonOutline',
+  // (SelectAllConnectedComponents, SelectAllComponentLoops, Grow/ShrinkSelectedLoops, SelectPolygonOutline,
+  //  DeselectAllUsingFilter, SICreateLayer[2], MoveObjectToLayer, CreateLayerGroup, CutLayerParent:
+  //  CMD-B19b (src/commands/tasksB19b.ts, tasks.dll / selectionmgr.dll contract; checked by tools/compare_tasks_b19b.mjs))
+  'SelectGeometryComponents',
   // info
   'InfoSelection', 'InfoScene',
   // groups
   'AddToGroup', 'SIAddToGroup', 'SIAddToGroupLowLevel', 'RemoveFromGroup', 'SIRemoveFromGroup', 'SICreateGroup',
   'CreateGroupFromObjects', 'AddGroup', 'RemoveGroup', 'SetInstanceGroup', 'RemoveInstanceGroup',
   // layers
-  'SICreateLayer', 'SICreateLayer2', 'MoveObjectToLayer',
-  'GetCurrentLayer', 'CreateLayerGroup', 'CutLayerParent',
+  'GetCurrentLayer',
 ];
 // default-argument runs that are specified to fail, with the expected error text
 const DEFAULT_ERRORS = {
@@ -51,7 +53,6 @@ const DEFAULT_ERRORS = {
   SIAddToGroup: /^not yet attested: the pick session that asks for the Target group/,
   SIAddToGroupLowLevel: /^not yet attested: the pick session that asks for the Target group/,
   AddGroup: /^not yet attested: the pick session that asks for the Target model/,
-  MoveObjectToLayer: /^not yet attested: the pick session that asks for the Target layer/,
   // CMD-B7a (docs/ghidra/cmd-b7a-uitasks-group-view-binary.md) replaced the inferred registrations: an empty Object list is 0x8000ffff
   SetInstanceGroup: /^SetInstanceGroup: the Object list is empty \(status 0x8000ffff\)$/,
   RemoveInstanceGroup: /^RemoveInstanceGroup: the Object list is empty \(status 0x8000ffff\)$/,
@@ -63,6 +64,16 @@ const registry = COMMANDS.map(n => {
   const c = all.find(x => x.scripting_name === n) ?? all.find(x => !x.scripting_name && x.name === n);
   return c ? { key: n, name: c.name, category: c.category, args: c.args.map(a => ({ name: a.name, default: a.default })) } : { key: n, missing: true };
 });
+// CMD-B19c: SelectBranch / SelectTree / SelectModel / SelectChain also take the registry's hidden SelectObj arguments
+// (data/command_registry.json: SelectionList, HierarchyLevel with the level default) after the catalogue argument.
+{
+  const regCmds = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../data/command_registry.json'), 'utf8')).commands;
+  for (const r of registry) {
+    if (!['SelectBranch', 'SelectTree', 'SelectModel', 'SelectChain'].includes(r.key) || r.missing) continue;
+    const e = regCmds.find(x => x.scripting_name === r.key);
+    for (const a of e?.args ?? []) if ((a.flags & 1) && !(a.flags & 512)) r.args.push({ name: a.name, default: a.default ?? null });
+  }
+}
 
 const b = await chromium.launch({ executablePath: CHROME, args: ['--headless=new', '--use-gl=swiftshader', '--enable-unsafe-swiftshader'] });
 const page = await b.newPage();
@@ -206,28 +217,9 @@ const got = await page.evaluate(({ COMMANDS }) => {
   eq('SelectNeighborObj: unknown direction is not attested', /^not yet attested: NavigDirection 9/.test(run('SelectNeighborObj', { InputObjs: 'gc', NavigDirection: 9 }).err ?? ''), true);
 
   // ================================================================ filters
-  reset(); let r = run('SelectAllUsingFilter', { SelFilter: 'object' });
-  eq('SelectAllUsingFilter: object = every visible object', [sorted(selNames()), sorted(names(r.v))], [sorted(names([...A.scene.allObjects()].filter(o => o.visible))), sorted(names([...A.scene.allObjects()].filter(o => o.visible)))]);
-  reset(); r = run('SelectAllUsingFilter', { SelFilter: 'null' });
-  eq('SelectAllUsingFilter: null filter', sorted(selNames()), sorted(names([...A.scene.allObjects()].filter(o => o.type === 'null' && o.visible))));
-  eq('SelectAllUsingFilter: null filter selects only nulls', A.selection.length > 5 && A.selection.every(o => o.type === 'null'), true);
-  reset(); r = run('SelectAllUsingFilter', { SelFilter: 'polymsh', AffectSelectionList: false });
-  eq('SelectAllUsingFilter: AffectSelectionList false only returns', [selNames(), sorted(names(r.v))], [[], sorted(names([...A.scene.allObjects()].filter(o => o.type === 'polymsh' && o.visible)))]);
-  reset(); A.run('SelectObj', { InputObjs: 'cube' }); r = run('SelectAllUsingFilter', { SelFilter: 'Polygon' });
-  eq('SelectAllUsingFilter: Polygon = all polygons of the selected mesh', [comp(), r.v, A.selMode], [{ obj: 'cube', kind: 'polygon', items: [0, 1, 2, 3, 4, 5] }, ['cube.poly[0,1,2,3,4,5]'], 'polygon']);
-  r = run('SelectAllUsingFilter', { SelFilter: 'Edge' });
-  eq('SelectAllUsingFilter: Edge', [comp()?.kind, items()], ['edge', sorted(CF.edges)]);
-  A.setSelMode('point'); r = run('SelectAllUsingFilter');
-  eq('SelectAllUsingFilter: no SelFilter = current filter', [comp()?.kind, items()], ['point', [0, 1, 2, 3, 4, 5, 6, 7]]);
-  eq('SelectAllUsingFilter: unknown filter is not attested', /^not yet attested: filter "bogus_filter"/.test(run('SelectAllUsingFilter', { SelFilter: 'bogus_filter' }).err ?? ''), true);
-  reset(); A.run('SelectObj', { InputObjs: 'cube,sphere,root_null,pA' }); run('DeselectAllUsingFilter', { SelFilter: 'null' });
-  eq('DeselectAllUsingFilter: drops the objects the filter matches', selNames(), ['cube', 'sphere']);
-  run('DeselectAllUsingFilter', { SelFilter: 'object' });
-  eq('DeselectAllUsingFilter: object', selNames(), []);
-  reset(); run('AddToSelection', { SelectionList: 'cube.poly[0,1]' }); run('DeselectAllUsingFilter', { SelFilter: 'Edge' });
-  eq('DeselectAllUsingFilter: other component kind leaves the selection', items(), [0, 1]);
-  run('DeselectAllUsingFilter', { SelFilter: 'Polygon' });
-  eq('DeselectAllUsingFilter: component kind clears those components', items(), []);
+  // SelectAllUsingFilter: CMD-B19d (compare_selection_b19d.mjs; the component path uses the active elements)
+  // DeselectAllUsingFilter: CMD-B19b (src/commands/tasksB19b.ts, tasks.dll / selectionmgr.dll contract; checked by tools/compare_tasks_b19b.mjs)
+  let r;
 
   const filt = (name, args) => { reset(); const x = run(name, args); return [x.v ?? x.err, A.selFilter, A.selMode]; };
   eq('SelectFilter: Edge', filt('SelectFilter', { SelFilter: 'Edge' }), ['Edge', 'Edge', 'edge']);
@@ -237,12 +229,12 @@ const got = await page.evaluate(({ COMMANDS }) => {
   run('SelectFilter', { SelFilter: 'Polygon' });
   eq('SelectFilter: no argument returns the current filter and changes nothing', [run('SelectFilter').v, A.selMode], ['Polygon', 'polygon']);
   eq('SetSelFilter: sets the filter', filt('SetSelFilter', { SelFilter: 'Polygon' }), ['Polygon', 'Polygon', 'polygon']);
-  for (const [n, f, m] of [['SelectObjectFilter', 'Object', 'object'], ['SelectVertexFilter', 'Point', 'point'], ['SelectEdgeFilter', 'Edge', 'edge'], ['SelectPolygonFilter', 'Polygon', 'polygon'],
+  for (const [n, f, m] of [
     ['SetPointSelectionFilter', 'Point', 'point'], ['SetEdgeSelectionFilter', 'Edge', 'edge'], ['SetPolygonSelectionFilter', 'Polygon', 'polygon']]) {
     reset(); if (m === 'object') A.setSelMode('point');
     run(n); eq(`${n}: filter ${f}`, [A.selFilter, A.selMode], [f, m]);
   }
-  for (const n of ['SelectSampledPointFilter', 'SetSampleSelectionFilter']) {
+  for (const n of ['SetSampleSelectionFilter']) {
     reset(); A.setSelMode('edge'); const l = A.log.length; run(n);
     eq(`${n}: records the SampledPoint filter, logs the unattested part`, [A.selFilter, A.selMode, logFrom(l).some(t => t.startsWith(`${n}: filter set to SampledPoint; not yet attested: sampled-point component picking`))], ['SampledPoint', 'object', true]);
   }
@@ -252,11 +244,7 @@ const got = await page.evaluate(({ COMMANDS }) => {
   eq('ToggleObjectComponentSelectionFilter: from another component filter goes to Object', A.selMode, 'object');
   reset(); const cyc = []; for (let i = 0; i < 5; i++) { run('Cycle Selection Mode'); cyc.push(A.selMode); }
   eq('Cycle Selection Mode: object > point > edge > polygon > object', cyc, ['point', 'edge', 'polygon', 'object', 'point']);
-  for (const [n, m] of [['ActivateObjectSelToolWithNoObjStateChange', 'object'], ['ActivateVertexSelToolWithNoObjStateChange', 'point'], ['ActivateEdgeSelToolWithNoObjStateChange', 'edge'],
-    ['ActivateRaycastEdgeSelToolWithNoObjStateChange', 'edge'], ['ActivateRaycastPolySelToolWithNoObjStateChange', 'polygon']]) {
-    reset(); if (m === 'object') A.setSelMode('point'); A.select([cube, sphere]);
-    run(n); eq(`${n}: sets the ${m} filter, object selection unchanged`, [A.selMode, selNames()], [m, ['cube', 'sphere']]);
-  }
+  // Activate...SelToolWithNoObjStateChange: CMD-B19d (compare_selection_b19d.mjs)
 
   // ================================================================ members
   reset(); A.run('SelectObj', { InputObjs: 'cube,sphere' }); const G = A.run('CreateGroup', { Name: 'GrpM' });
@@ -282,23 +270,13 @@ const got = await page.evaluate(({ COMMANDS }) => {
   const grow0 = sorted(polysTouching(cm, P0));
   const p0edges = sorted(cm.polygons[0].map((a, i) => ek(a, cm.polygons[0][(i + 1) % 4])));
   // CMD-B17a moved these to compare_selection_layers_b17a.mjs (wire contract replaced the inferred behaviour)
-  setPoly([0]); run('SelectAllConnectedComponents');
-  eq('SelectAllConnectedComponents: island of a cube polygon = all 6', items(), [0, 1, 2, 3, 4, 5]);
-  reset(); run('SelectAllConnectedComponents', { InputObjs: 'cube.pnt[3]' });
-  eq('SelectAllConnectedComponents: points', items(), [0, 1, 2, 3, 4, 5, 6, 7]);
+  // SelectAllConnectedComponents: CMD-B19b (src/commands/tasksB19b.ts, tasks.dll / selectionmgr.dll contract; checked by tools/compare_tasks_b19b.mjs)
 
   // CMD-B17a moved these to compare_selection_layers_b17a.mjs (wire contract replaced the inferred behaviour)
 
   // CMD-B17a moved these to compare_selection_layers_b17a.mjs (wire contract replaced the inferred behaviour)
 
-  setPoly([0]); run('SelectPolygonOutline');
-  eq('SelectPolygonOutline: one polygon -> its 4 edges, edge filter', [comp()?.kind, items(), A.selMode], ['edge', p0edges, 'edge']);
-  { const nb = grow0.find(i => i !== 0 && cm.polygons[i].filter(v => P0.has(v)).length === 2);
-    const cnt = new Map(); for (const pi of [0, nb]) cm.polygons[pi].forEach((a, i) => { const k = ek(a, cm.polygons[pi][(i + 1) % 4]); cnt.set(k, (cnt.get(k) ?? 0) + 1); });
-    setPoly([0, nb]); run('SelectPolygonOutline');
-    eq('SelectPolygonOutline: two adjacent polygons -> 6 outline edges (shared edge left out)', [items(), items().length], [sorted([...cnt].filter(([, n]) => n === 1).map(([k]) => k)), 6]); }
-  reset(); r = run('SelectPolygonOutline', { InputObjs: 'cube.pnt[0]' });
-  eq('SelectPolygonOutline: needs polygons', /^not yet attested: point selections/.test(r.err ?? ''), true);
+  // SelectPolygonOutline: CMD-B19b (src/commands/tasksB19b.ts, tasks.dll / selectionmgr.dll contract; checked by tools/compare_tasks_b19b.mjs)
 
   // CMD-B17a moved these to compare_selection_layers_b17a.mjs (wire contract replaced the inferred behaviour)
 
@@ -315,25 +293,7 @@ const got = await page.evaluate(({ COMMANDS }) => {
   const eMid = GF.edges.find(k => { const [a, b2] = ends(k); return gz(a) === zMid && gz(b2) === zMid && Math.min(gx(a), gx(b2)) === xA && Math.max(gx(a), gx(b2)) === xB; });
   const gsel = (kind, list) => { reset(); run('SelectGeometryComponents', { SelectionList: `grid.${kind}[${list.join(',')}]` }); };
   // CMD-B17a moved these to compare_selection_layers_b17a.mjs (wire contract replaced the inferred behaviour)
-  gsel('edge', [gIdx(eBorder)]); run('SelectAllComponentLoops', { AroundCorners: false });
-  eq('SelectAllComponentLoops: edges, AroundCorners false = one side', items(), sorted(rowEdges(zs[0])));
-  gsel('edge', [gIdx(eBorder)]); run('SelectAllComponentLoops');
-  eq('SelectAllComponentLoops: edges, AroundCorners true (default) turns the corners = whole border', items(), sorted(border));
-  gsel('pnt', ends(eMid)); run('SelectAllComponentLoops');
-  eq('SelectAllComponentLoops: two points joined by an edge -> the line of points', [comp()?.kind, items()], ['point', sorted([...Array(GF.n).keys()].filter(v => gz(v) === zMid))]);
-  { const ps = GF.edgePolys.get(eMid); const cx = pi => gm.polygons[pi].reduce((s, v) => s + gx(v), 0) / 4;
-    gsel('poly', ps); run('SelectAllComponentLoops');
-    eq('SelectAllComponentLoops: two polygons sharing an edge -> the strip of quads', [comp()?.kind, items(), items().length],
-      ['polygon', sorted(gm.polygons.map((f, i) => i).filter(i => cx(i) === cx(ps[0]))), zs.length - 1]); }
-  gsel('edge', [gIdx(eMid)]); run('GrowSelectedLoops');
-  const grown = items();
-  eq('GrowSelectedLoops: one edge longer at both ends', [grown, grown.length], [sorted(rowEdges(zMid).filter(k => { const lo = Math.min(...ends(k).map(gx)); return lo === xs[1] || lo === xs[2] || lo === xs[3]; })), 3]);
-  run('ShrinkSelectedLoops');
-  eq('ShrinkSelectedLoops: one edge shorter at both ends', items(), [eMid]);
-  gsel('pnt', [0]); r = run('GrowSelectedLoops');
-  eq('GrowSelectedLoops: point selections are not attested', /^not yet attested: point selections/.test(r.err ?? ''), true);
-  r = run('ShrinkSelectedLoops');
-  eq('ShrinkSelectedLoops: point selections are not attested', /^not yet attested: point selections/.test(r.err ?? ''), true);
+  // SelectAllComponentLoops / GrowSelectedLoops / ShrinkSelectedLoops: CMD-B19b (src/commands/tasksB19b.ts, tasks.dll / selectionmgr.dll contract; checked by tools/compare_tasks_b19b.mjs)
   // CMD-B17a moved these to compare_selection_layers_b17a.mjs (wire contract replaced the inferred behaviour)
 
   // ================================================================ info
@@ -421,49 +381,20 @@ const got = await page.evaluate(({ COMMANDS }) => {
   reset(); let l0 = L.length;
   r = run('GetCurrentLayer');
   eq('GetCurrentLayer: returns the current layer', r.v === L[0], true);
-  r = run('SICreateLayer', { Name: 'LA' }); const LA = r.v;
-  eq('SICreateLayer: creates and returns the layer; current layer and selection unchanged', [LA?.name, L.includes(LA), L.length - l0, A.currentLayer === L[0], selNames(), LA?.members.size], ['LA', true, 1, true, [], 0]);
-  undoRedo('SICreateLayer', () => L.includes(LA), false, true);
-  A.run('SetCurrentLayer', { Name: 'LA' });
+  // SICreateLayer[2], CreateLayerGroup, CutLayerParent, MoveObjectToLayer, SetCurrentLayer: CMD-B19b (src/commands/tasksB19b.ts, tasks.dll / selectionmgr.dll contract; checked by tools/compare_tasks_b19b.mjs)
+  const LA = A.run('SICreateLayer', { Name: 'LA' });
+  A.run('SetCurrentLayer', { Value: 'LA' });
   eq('GetCurrentLayer: follows SetCurrentLayer', run('GetCurrentLayer').v === LA, true);
   A.currentLayer = L[0];
-  r = run('SICreateLayer', { Name: 'LA' }); eq('SICreateLayer: unique name', r.v?.name, 'LA1'); A.undo();
-  { const l = A.log.length; r = run('SICreateLayer', { PresetObj: 'Some_Other_Preset', Name: 'LP' });
-    eq('SICreateLayer: other presets are not attested (logged), layer still created', [L.includes(r.v), logFrom(l).some(t => /^SICreateLayer: not yet attested: layer preset "Some_Other_Preset"/.test(t))], [true, true]); A.undo(); }
-
-  r = run('CreateLayerGroup'); const LG = r.v;
-  eq('CreateLayerGroup: creates a layer group named LayerGroup', [LG?.name, A.scene.layerGroups.includes(LG), LG?.layers.length, LG?.parentGroup], ['LayerGroup', true, 0, null]);
-  undoRedo('CreateLayerGroup', () => A.scene.layerGroups.includes(LG), false, true);
-  r = run('CreateLayerGroup', { InputObj: 'LayerGroup', Name: 'Inner' }); const LG2 = r.v;
-  eq('CreateLayerGroup: InputObj layer group = parent', [LG2?.name, LG2?.parentGroup === LG], ['Inner', true]);
-  r = run('CutLayerParent', { InputObjs: 'Inner' });
-  eq('CutLayerParent: disconnects the layer group from its parent', [LG2.parentGroup, r.v], [null, 1]);
-  undoRedo('CutLayerParent', () => LG2.parentGroup?.name ?? null, 'LayerGroup', null);
-
-  l0 = L.length; r = run('SICreateLayer2', { Name: 'LB', LayerGroupName: 'LayerGroup' }); const LB = r.v;
-  eq('SICreateLayer2: creates the layer inside the layer group and returns it', [LB?.name, L.length - l0, names(LG.layers), LB?.layerGroup === LG], ['LB', 1, ['LB'], true]);
-  undoRedo('SICreateLayer2', () => [L.includes(LB), names(LG.layers)], [false, []], [true, ['LB']]);
-  eq('SICreateLayer2: unknown layer group', run('SICreateLayer2', { Name: 'LX', LayerGroupName: 'Nope' }).err, 'layer group "Nope" not found');
-  r = run('SICreateLayer2', { Name: 'LC' });
-  eq('SICreateLayer2: no layer group', [r.v?.name, r.v?.layerGroup ?? null], ['LC', null]); A.undo();
-  r = run('CutLayerParent', { InputObjs: LB });
-  eq('CutLayerParent: takes a layer out of its layer group', [names(LG.layers), LB.layerGroup, r.v], [[], null, 1]);
-  undoRedo('CutLayerParent (layer)', () => names(LG.layers), ['LB'], []);
 
   reset(); A.run('SelectObj', { InputObjs: 'cube,sphere' }); const cubePrev = cube.layer;
   r = run('SICreateLayerFromSelection', { Name: 'LS' }); const LS = r.v;
   eq('SICreateLayerFromSelection: new layer holding the selection', [LS?.name, lmem(LS), cube.layer === LS, sphere.layer === LS, selNames()], ['LS', ['cube', 'sphere'], true, true, ['cube', 'sphere']]);
   undoRedo('SICreateLayerFromSelection', () => [L.includes(LS), cube.layer === cubePrev || cube.layer === LS && false, cube.layer === LS], [false, true, false], [true, false, true]);
   reset(); r = run('SICreateLayerFromSelection2', { Name: 'LT', InputObjs: 'root_null,cube', LayerGroupName: 'LayerGroup' }); const LT = r.v;
-  eq('SICreateLayerFromSelection2: InputObjs moved into the new layer, layer placed in the group', [LT?.name, lmem(LT), lmem(LS), names(LG.layers), cube.layer === LT], ['LT', ['cube', 'root_null'], ['sphere'], ['LT'], true]);
+  eq('SICreateLayerFromSelection2: InputObjs moved into the new layer (LayerGroupName not used, CMD-B19b)', [LT?.name, lmem(LT), lmem(LS), LT?.parentLayer ?? null, cube.layer === LT], ['LT', ['cube', 'root_null'], ['sphere'], null, true]);
   undoRedo('SICreateLayerFromSelection2', () => [L.includes(LT), lmem(LS), cube.layer === LS], [false, ['cube', 'sphere'], true], [true, ['sphere'], false]);
 
-  reset(); run('MoveObjectToLayer', { Target: 'LA', InputObjs: 'cube' });
-  eq('MoveObjectToLayer: object moves to the target layer and leaves the old one', [lmem(LA), lmem(LT), cube.layer === LA], [['cube'], ['root_null'], true]);
-  undoRedo('MoveObjectToLayer', () => [lmem(LA), lmem(LT)], [[], ['cube', 'root_null']], [['cube'], ['root_null']]);
-  reset(); A.run('SelectObj', { InputObjs: 'sphere' }); run('MoveObjectToLayer', { Target: LA });
-  eq('MoveObjectToLayer: default InputObjs = the selection', lmem(LA), ['cube', 'sphere']);
-  eq('MoveObjectToLayer: unknown layer', run('MoveObjectToLayer', { Target: 'NoLayer', InputObjs: 'cube' }).err, 'layer "NoLayer" not found');
 
   const ghost = o => o.property('visibility').val('ghosting');
   reset(); A.run('SelectObj', { InputObjs: 'cube,sphere' }); const g0 = [ghost(cube), ghost(sphere)];

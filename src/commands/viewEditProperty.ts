@@ -57,43 +57,7 @@ function registerViewing(app: App) {
   });
   // SIHideObjects / SIUnhideObjects / UnghostAll: CMD-B17a (selectionLayersB17a.ts)
 
-  // ---- isolation: the per-viewport isolate set the camera menu's "Isolate Selection" already drives (view state, not undoable)
-  const viewports = (view: any, all = false): any[] => {
-    const m = vm(); if (!m) throw new Error('no 3D view is available');
-    const vps: any[] = m.viewports();
-    if (all) return vps;
-    const i = typeof view === 'number' ? view : -1;
-    return [i >= 0 && i < vps.length ? vps[i] : m.active()];
-  };
-  const isolateEdit = (name: string, view: any, edit: (set: Set<X3DObject>, sel: X3DObject[]) => void) => {
-    let n = 0;
-    for (const vp of viewports(view)) { const x = vp.x; if (!x?.isolate) continue; edit(x.isolate, app.selectedObjects); n++; }
-    if (!n) app.logMsg('info', `${name}: the view is not in isolation mode`);
-  };
-  // inferred: ends isolation (every object is shown again); All = every viewport, else the given / active one
-  reg(app, {
-    name: 'IsolateAll', label: 'Isolate All', category: 'Viewing', description: 'Isolate all objects', undoable: false,
-    args: [{ name: 'All', default: true }, { name: 'View', default: -1 }],
-    execute(app, a) { for (const vp of viewports(a.View, boolArg(a.All))) if (vp.x) vp.x.isolate = null; },
-  });
-  // inferred
-  reg(app, {
-    name: 'IsolateAddSelected', label: 'Isolate Add Selected', category: 'Viewing', description: 'Isolate add selected objects', undoable: false,
-    args: [{ name: 'View', default: false }],
-    execute(_app, a) { isolateEdit('IsolateAddSelected', a.View, (set, sel) => sel.forEach(o => set.add(o))); },
-  });
-  // inferred
-  reg(app, {
-    name: 'IsolateRemoveSelected', label: 'Isolate Remove Selected', category: 'Viewing', description: 'Isolate remove selected objects', undoable: false,
-    args: [{ name: 'View', default: false }],
-    execute(_app, a) { isolateEdit('IsolateRemoveSelected', a.View, (set, sel) => sel.forEach(o => set.delete(o))); },
-  });
-  // inferred
-  reg(app, {
-    name: 'IsolateToggleSelected', label: 'Isolate Toggle Selected', category: 'Viewing', description: 'Isolate toggle selected objects', undoable: false,
-    args: [{ name: 'View', default: false }],
-    execute(_app, a) { isolateEdit('IsolateToggleSelected', a.View, (set, sel) => sel.forEach(o => { if (set.has(o)) set.delete(o); else set.add(o); })); },
-  });
+  // IsolateSelected / IsolateAll / IsolateAdd/Remove/ToggleSelected: CMD-B19d (selectionB19d.ts, vm.dll 93c85bba)
   // ColorizeObject / ShadeObject: replaced by the CMD-B17g contract (tools.vbs pick loops, paramsToolsB17g.ts)
 
   const displayKey = (): string => {
@@ -133,35 +97,7 @@ function registerViewing(app: App) {
     execute() { if (!vm()) throw new Error('no 3D view is available'); ev('displaytoggle', { item: 'Headlight' }); },
   });
 
-  // inferred
-  reg(app, {
-    name: 'CenterSelection', label: 'Center Selection (All 3D Views)', category: 'Viewing', description: 'Center selection in all views', undoable: false,
-    args: [{ name: 'AllObjects', default: false }, { name: 'AllViews', default: true }, { name: 'View', default: -1 }],
-    execute(app, a) {
-      const m = vm(); if (!m) throw new Error('no 3D view is available');
-      if (boolArg(a.AllObjects)) logNya(app, 'CenterSelection', 'AllObjects=True (centring on every object); the selection is centred');
-      const act = m.active(); const before = act.camera.position.clone();
-      m.center(false);
-      const delta = act.camera.position.clone().sub(before);
-      if (!boolArg(a.AllViews)) return;
-      // The view manager keeps one orbit target, so the other views are moved here: orthographic views slide in their
-      // plane until the same centre is on their axis, other perspective views take the same offset.
-      const c = new THREE.Vector3(); const sel = app.selectedObjects; if (!sel.length) return;
-      for (const o of sel) c.add(new THREE.Vector3().setFromMatrixPosition(o.globalMatrix())); c.divideScalar(sel.length);
-      for (const vp of m.viewports() as any[]) {
-        if (vp === act) continue;
-        if (vp.kind === 'ortho') { const dir = vp.camera.getWorldDirection(new THREE.Vector3()); const v = c.clone().sub(vp.camera.position); vp.camera.position.add(v.sub(dir.multiplyScalar(v.dot(dir)))); }
-        else vp.camera.position.add(delta);
-        vp.camera.updateMatrixWorld();
-      }
-    },
-  });
-  // inferred: frame the selection, or everything when nothing is selected
-  reg(app, {
-    name: 'FrameContextual', label: 'Frame Contextual (All 3D Views)', category: 'Viewing', description: 'Frame selection or all objects (if nothing is selected) in all views', undoable: false,
-    args: [{ name: 'AllViews', default: true }, { name: 'View', default: -1 }],
-    execute(app) { ev(app.selection.length ? 'framesel' : 'frameall'); },
-  });
+  // CenterSelection / FrameContextual: CMD-B19d (selectionB19d.ts, vm.dll)
 
   // ---- user keywords / user tabs: per-node string annotations
   const words = (v: any): string[] => unset(v) ? [] : (Array.isArray(v) ? v : String(v).split(',')).map(s => String(s).trim()).filter(Boolean);
@@ -409,18 +345,7 @@ function registerEdit(app: App) {
       return undefined;
     },
   });
-  // inferred: Confirm asks first (the wording of Softimage's own dialog is not attested)
-  reg(app, {
-    name: 'DeleteAll', label: 'Delete All', category: 'Edit', description: 'Delete all objects in the scene',
-    args: [{ name: 'Confirm', default: true }],
-    execute(app, a) {
-      const all = [...app.scene.root.children]; if (!all.length) return false;
-      if (boolArg(a.Confirm) && !window.confirm('Delete all objects in the scene?')) return false;
-      // CMD-B17j Q17: the tasks.dll worker's "delete all" mode bit 0x8 (internal callers) skips the camera guard (inferred caller)
-      deleteObjList(app, 'DeleteAll', all, 0x8);
-      return true;
-    },
-  });
+  // DeleteAll: the NewScene handler 6e4d3de5 (CMD-B19b, src/commands/tasksB19b.ts)
   // inferred: deletes like DeleteObj; what "permanently" adds is not attested
   reg(app, {
     name: 'DeleteObjPermanent', label: 'Delete Selected Permanently', category: 'Edit', description: 'Deletes the input objects',
@@ -481,18 +406,7 @@ function registerEdit(app: App) {
     args: [{ name: 'Object', default: null }, { name: 'OperatorToMove', default: null }, { name: 'OperatorReference', default: null }],
     execute(_app, a) { move('MoveOperatorBefore', a, false); },
   });
-  // inferred
-  reg(app, {
-    name: 'SwapOperators', label: 'SwapOperators', category: 'Edit', description: 'exchange order of operators',
-    args: [{ name: 'Object', default: null }, { name: 'Operator1', default: null }, { name: 'Operator2', default: null }],
-    execute(_app, a) {
-      const { prim, ops: [p, q] } = stackOf('SwapOperators', a.Object, a.Operator1, a.Operator2);
-      if (p === q) throw new Error('SwapOperators: the two operators are the same');
-      if (prim.operators[0] === p || prim.operators[0] === q) throw new Error('SwapOperators: the generator operator cannot be moved');
-      const next = [...prim.operators]; const i = next.indexOf(p), j = next.indexOf(q); next[i] = q; next[j] = p;
-      reorder('SwapOperators', prim, next, new Map([[p, q.region], [q, p.region]]));
-    },
-  });
+  // SwapOperators: CMD-B19c (optasksB19c.ts; F3DSwapPortConnections error mapping)
   // inferred: sets Mute on every operator evaluated after the given one
   reg(app, {
     name: 'DeactivateAbove', label: 'DeactivateAbove', category: 'Edit', description: 'Deactivate above operator',
