@@ -43,25 +43,7 @@ const FR_CONTROL_PANEL = 'Face Robot Control Panel';
 export function registerFaceRobotModuleCommands(app: App) {
   restoreFaceRobotFlag(app);
 
-  // commands_full: ShowFaceRobotActPanel — Face Robot Act Floating Panel (Synoptic View)
-  const act = (frTops as typeof frTops).act_panel;
-  app.register({
-    name: 'ShowFaceRobotActPanel',
-    label: 'Face Robot Act Floating Panel',
-    category: '',
-    description: 'Opens the face robot contextual synoptic view',
-    args: [
-      { name: 'Path', default: act?.args?.Path ?? '$FACEROBOTROOT\\Application\\views\\synoptic\\FaceRobotContext.htm' },
-      { name: 'OffsetX', default: act?.args?.OffsetX ?? 3 },
-      { name: 'OffsetY', default: act?.args?.OffsetY ?? 335 },
-    ],
-    undoable: false,
-    execute(app, a) {
-      (app as any).__faceRobotActArgs = { Path: a.Path, OffsetX: a.OffsetX, OffsetY: a.OffsetY };
-      openView('Face Robot Act Floating Panel');
-      return null;
-    },
-  });
+  // ShowFaceRobotActPanel: CMD-B19d (selectionB19d.ts, siuitasks.dll 3ea2aaac)
 
   // Desktop ExecuteCommand names (Commands.found=false on Softimage — still execute).
   app.register({

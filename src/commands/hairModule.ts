@@ -40,40 +40,9 @@ export function registerHairModuleCommands(app: App) {
     });
   }
 
-  // ActivateTipSelTool — Selection category (modules_hair.json)
-  if (!app.commands.has('ActivateTipSelTool')) {
-    app.register({
-      name: 'ActivateTipSelTool',
-      label: 'Hair Tip Select Tool',
-      category: 'Selection',
-      args: [],
-      undoable: false,
-      execute(app) {
-        app.setSelMode('object');
-        app.logMsg('info', 'Hair Tip Select Tool: filter Hair Tip (stub)');
-        return null;
-      },
-    });
-  }
+  // ActivateTipSelTool: CMD-B19d (selectionB19d.ts, selectionmgr.dll d9eb4110)
 
-  // Ensure SwitchToolbar Target=6 (Hair) exists even if Render OM register order changes.
-  if (!app.commands.has('SwitchToolbar')) {
-    app.register({
-      name: 'SwitchToolbar',
-      label: 'Switch to Hair Toolbar',
-      category: 'Toolbar',
-      args: [{ name: 'Target', default: 6 }],
-      undoable: false,
-      execute(app, a) {
-        // true-95pct: Target 6 and 7 both → Hair (SwitchToolbar(7) ACTIVE invoke OK).
-        const map: Record<number, App['module']> = { 1: 'Model', 2: 'Animate', 3: 'Render', 4: 'ICE', 5: 'Simulate', 6: 'Hair', 7: 'Hair' };
-        const mod = map[Number(a.Target)] ?? 'Hair';
-        app.module = mod;
-        app.events.emit('module');
-        return mod;
-      },
-    });
-  }
+  // SwitchToolbar: CMD-B19d (selectionB19d.ts, toolbarobj.dll)
 }
 
 /** Audit for __uiAudit / compare_hair_module — dump-backed Hair MCP tops + ApplyHair* + Hair Panel xsivw shell. */

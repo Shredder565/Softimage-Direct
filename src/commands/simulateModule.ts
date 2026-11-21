@@ -23,23 +23,7 @@ export function registerSimulateModuleCommands(app: App) {
     });
   }
 
-  // Ensure SwitchToolbar Target=5 (Simulate) exists even if Render OM register order changes.
-  if (!app.commands.has('SwitchToolbar')) {
-    app.register({
-      name: 'SwitchToolbar',
-      label: 'Switch to Simulate Toolbar',
-      category: 'Toolbar',
-      args: [{ name: 'Target', default: 5 }],
-      undoable: false,
-      execute(app, a) {
-        const map: Record<number, App['module']> = { 1: 'Model', 2: 'Animate', 3: 'Render', 4: 'ICE', 5: 'Simulate', 6: 'Hair', 7: 'Hair' };
-        const mod = map[Number(a.Target)] ?? 'Simulate';
-        app.module = mod;
-        app.events.emit('module');
-        return mod;
-      },
-    });
-  }
+  // SwitchToolbar: CMD-B19d (selectionB19d.ts, toolbarobj.dll)
 }
 
 /** Audit for __uiAudit / compare_simulate_module — dump-backed Simulate MCP tops + prefs + cmds. */

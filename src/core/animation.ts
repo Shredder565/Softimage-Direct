@@ -140,7 +140,14 @@ export class AnimationManager {
   /** Playback menu: Play All Frames (false) or Real-Time Playback at `speed` (1, .75, .5, .25). */
   realtime = true; speed = 1;
   /** Loop button / Playback Options: 'loop' | 'once' | 'bounce'. */
-  loopMode: 'loop' | 'once' | 'bounce' = 'loop'; private dir = 1;
+  loopMode: 'loop' | 'once' | 'bounce' = 'loop';
+  /** Playback direction: +1 forwards, -1 backwards (the sign of the player's frame increment, CMD-B19d). */
+  dir = 1;
+  /** Size of one frame step (the player's |frame increment|, CMD-B19d §3.7); 1 in this build. */
+  frameStep = 1;
+  /** Play mode of the running playback (CMD-B19d §3.7: mcp transport play mode 0 real time / 2 every frame, at a rate);
+   *  null = the Playback menu setting (`realtime` / `speed`). Cleared by stop(). */
+  playMode: { realtime: boolean; speed: number } | null = null;
   playbackView = 'All Views'; updateMode = 'Update All';
   /** Marked parameters (Animation > Parameters, keying panel marks) and named marking sets. */
   readonly marked = new Set<Parameter>(); readonly markingSets = new Map<string, Parameter[]>();
@@ -189,24 +196,26 @@ export class AnimationManager {
   keyTimes(params: Iterable<Parameter>) { const s = new Set<number>(); for (const p of params) for (const k of this.fcurve(p)?.keys ?? []) s.add(k.time); return [...s].sort((a, b) => a - b); }
 
   private timer: number | null = null;
-  play() {
+  play(mode?: { realtime: boolean; speed: number }) {
     if (this.playing) return;
-    this.playing = true;
+    this.playing = true; this.playMode = mode ?? null;
     let last = performance.now();
     const step = () => {
       if (!this.playing) return;
       const now = performance.now();
-      const dt = this.realtime ? 1000 / (this.fps * this.speed) : 0;
+      const rt = this.playMode ? this.playMode.realtime : this.realtime; const sp = this.playMode ? this.playMode.speed : this.speed;
+      const dt = rt ? 1000 / (this.fps * sp) : 0;
       if (now - last >= dt) {
-        const steps = this.realtime ? Math.max(1, Math.floor((now - last) / dt)) : 1; last = now;
-        let f = this._frame + steps * this.dir;
+        const steps = rt ? Math.max(1, Math.floor((now - last) / dt)) : 1; last = now;
+        let f = this._frame + steps * this.dir * this.frameStep;
         if (this.loopMode === 'bounce') { if (f > this.endFrame) { f = this.endFrame; this.dir = -1; } else if (f < this.startFrame) { f = this.startFrame; this.dir = 1; } }
         else if (f > this.endFrame) { if (this.loopMode === 'once') { this.frame = this.endFrame; this.stop(); return; } f = this.startFrame; }
+        else if (f < this.startFrame && this.dir < 0) { if (this.loopMode === 'once') { this.frame = this.startFrame; this.stop(); return; } f = this.endFrame; } // backward playback wraps at the start
         this.frame = f;
       }
       this.timer = requestAnimationFrame(step);
     };
     this.timer = requestAnimationFrame(step);
   }
-  stop() { this.playing = false; if (this.timer !== null) cancelAnimationFrame(this.timer); this.timer = null; }
+  stop() { this.playing = false; this.playMode = null; if (this.timer !== null) cancelAnimationFrame(this.timer); this.timer = null; }
 }

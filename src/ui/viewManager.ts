@@ -364,7 +364,7 @@ export function viewManager(app: App, host: HTMLElement) {
   };
   const child = (g: THREE.Object3D, k: string) => g.children.find(c => (c as any)._kind === k);
   const removeChild = (g: THREE.Object3D, k: string) => { const c = child(g, k); if (c) g.remove(c); };
-  const compTarget = () => app.compSel?.obj ?? (app.selMode !== 'object' ? app.selectedObjects.find(o => o.primitive && geomPoints(o.primitive.geom())) : undefined);
+  const compTarget = () => app.compSel?.obj ?? (app.selMode !== 'object' ? [...app.selectedObjects, ...app.activeElements].find(o => o.primitive && geomPoints(o.primitive.geom())) : undefined); // CMD-B19d: active elements are component-edited
   const syncHighlights = () => {
     const cs = app.compSel; const obj = compTarget();
     const pts = obj?.primitive ? geomPoints(obj.primitive.geom()) : null; const mesh = obj?.primitive?.mesh() ?? null;

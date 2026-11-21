@@ -30,7 +30,7 @@ const NAV: Record<string, string> = {
 const isCam = (o: any): o is X3DObject => o instanceof X3DObject && (o instanceof Camera || o.type === 'camera');
 /** View argument (B11h §2): -1 (or unset) = the active view, any other value a 0-based view index (siViewportA..D accepted);
  *  -1 when the view does not exist. */
-function viewAt(v: any): number {
+export function viewAt(v: any): number {
   const V = vm(); if (!V) return -1;
   const all = viewports(); const letter = /siViewport([A-D])(?![a-z])/i.exec(String(v ?? ''))?.[1];
   const n = letter ? letter.toUpperCase().charCodeAt(0) - 65 : Math.trunc(num(v, -1));
@@ -44,7 +44,7 @@ function expandByObject(box: THREE.Box3, o: X3DObject) {
   else box.expandByPoint(new THREE.Vector3().setFromMatrixPosition(M));
 }
 /** Frame one view on objects: orthographic views centre and zoom on the box, perspective views keep their direction. */
-function frameView(vp: VP, objs: X3DObject[]) {
+export function frameView(vp: VP, objs: X3DObject[]) {
   const box = new THREE.Box3(); for (const o of objs) expandByObject(box, o); if (box.isEmpty()) return;
   const c = box.getCenter(new THREE.Vector3()); const size = Math.max(box.getSize(new THREE.Vector3()).length(), 2); const cam = vp.camera as any;
   if (vp.kind === 'ortho') { const dir = cam.getWorldDirection(new THREE.Vector3()); cam.position.copy(c).sub(dir.multiplyScalar(100)); cam._zoom = size * 0.6; cam.lookAt(c); }
