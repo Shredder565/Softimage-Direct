@@ -257,7 +257,8 @@ export function registerBuiltins(app: App) {
   // selection helpers for components
   app.register({ name: 'SelectAllComponents', label: 'Select All Components', category: 'Selection', args: [], undoable: false, execute(app) { const o = app.selectedObjects[0]; const m = o?.primitive?.mesh(); if (!o || !m || app.selMode === 'object') return; if (app.selMode === 'point') app.selectComponents(o, 'point', m.positions.length / 3 > 0 ? [...Array(m.positions.length / 3).keys()] : []); else if (app.selMode === 'polygon') app.selectComponents(o, 'polygon', m.polygons.map((_, i) => i)); else app.selectComponents(o, 'edge', meshEdges(m).map(e => e[0] + '-' + e[1])); } });
   app.register({ name: 'InvertSelection', label: 'Invert Selection', category: 'Selection', args: [], undoable: false, execute(app) { const c = app.compSel; const o = app.selectedObjects[0]; const m = o?.primitive?.mesh(); if (!c || !m) return; if (c.kind === 'point') app.selectComponents(o, 'point', [...Array(m.positions.length / 3).keys()].filter(i => !c.points.has(i))); else if (c.kind === 'polygon') app.selectComponents(o, 'polygon', m.polygons.map((_, i) => i).filter(i => !c.polygons.has(i))); else app.selectComponents(o, 'edge', meshEdges(m).map(e => e[0] + '-' + e[1]).filter(k => !c.edges.has(k))); } });
-  for (const [name, mode, label] of [['ActivateObjectSelTool', 'object', 'Object Select Tool'], ['ActivateVertexSelTool', 'point', 'Point Select Tool'], ['ActivateEdgeSelTool', 'edge', 'Edge Select Tool'], ['ActivatePolygonSelTool', 'polygon', 'Polygon Select Tool'], ['ActivateRaycastPolySelTool', 'polygon', 'Raycast Polygon Select Tool'], ['ActivateRaycastEdgeSelTool', 'edge', 'Raycast Edge Select Tool'], ['ActivatePolygonSelToolWithNoObjStateChange', 'polygon', 'Polygon Select Tool (Extended)']] as const)
+  // the other Activate...SelTool commands: CMD-B19d (selectionB19d.ts)
+  for (const [name, mode, label] of [['ActivateObjectSelTool', 'object', 'Object Select Tool']] as const)
     app.register({ name, label, category: 'Selection', args: [], undoable: false, execute(app) { app.setSelMode(mode as any); } });
 
   // -------------------------------------------------------------- material
@@ -319,17 +320,16 @@ export function registerBuiltins(app: App) {
   app.register({ name: 'SetCurrentFrame', label: 'Set Current Frame', category: 'Transport Control', args: [{ name: 'Frame', default: 1 }], undoable: false, execute(app, a) { app.anim.frame = Number(a.Frame); } });
   app.register({ name: 'PlayForwardsFromStart', label: 'Play', category: 'Transport Control', args: [], undoable: false, execute(app) { app.anim.frame = app.anim.startFrame; app.anim.play(); } });
   app.register({ name: 'PlayForwards', label: 'Play Forwards', category: 'Transport Control', args: [], undoable: false, execute(app) { app.anim.play(); } });
-  app.register({ name: 'PlaybackStop', label: 'Stop', category: 'Transport Control', args: [], undoable: false, execute(app) { app.anim.stop(); } });
+  // PlaybackStop / PrevFrame: CMD-B19d (selectionB19d.ts, mcp.dll transport)
   app.register({ name: 'FirstFrame', label: 'First Frame', category: 'Transport Control', args: [], undoable: false, execute(app) { app.anim.frame = app.anim.startFrame; } });
   app.register({ name: 'LastFrame', label: 'Last Frame', category: 'Transport Control', args: [], undoable: false, execute(app) { app.anim.frame = app.anim.endFrame; } });
   app.register({ name: 'NextFrame', label: 'Next Frame', category: 'Transport Control', args: [], undoable: false, execute(app) { app.anim.frame = Math.min(app.anim.endFrame, app.anim.frame + 1); } });
-  app.register({ name: 'PrevFrame', label: 'Previous Frame', category: 'Transport Control', args: [], undoable: false, execute(app) { app.anim.frame = Math.max(app.anim.startFrame, app.anim.frame - 1); } });
   app.register({ name: 'SetPlayRange', label: 'Set Play Range', category: 'Transport Control', args: [{ name: 'Start', default: 1 }, { name: 'End', default: 100 }], undoable: false, execute(app, a) { app.anim.startFrame = a.Start | 0; app.anim.endFrame = a.End | 0; app.events.emit('frame'); } });
 
   // -------------------------------------------------------------- selection
   app.register({ name: 'SelectObj', label: 'Select Object', category: 'Selection', args: [{ name: 'InputObjs', default: '' }, { name: 'Mode', default: 'replace' }], undoable: false, execute(app, a) { app.select(app.targets(a.InputObjs), a.Mode); } });
   app.register({ name: 'DeselectAll', label: 'Deselect All', category: 'Selection', args: [], undoable: false, execute(app) { app.select([]); } });
-  app.register({ name: 'SelectAll', label: 'Select All', category: 'Selection', args: [], undoable: false, execute(app) { app.select([...app.scene.allObjects()].filter(o => o.visible)); } });
+  // SelectAll: CMD-B19d (selectionB19d.ts)
   app.register({ name: 'SelectChildNodes', label: 'Select Children', category: 'Selection', args: [{ name: 'InputObjs', default: '' }], undoable: false, execute(app, a) { const s: X3DObject[] = []; for (const o of app.targets(a.InputObjs)) { s.push(o); s.push(...o.descendants()); } app.select(s); } });
 
   // ------------------------------------------------------------------ misc

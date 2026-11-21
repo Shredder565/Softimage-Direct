@@ -230,7 +230,7 @@ export function registerAnimCommands(app: App) {
   app.register({ name: 'SetLoopMode', label: 'Loop Mode', category: 'Playback', args: [{ name: 'Mode', default: 'loop' }], undoable: false, execute(app, a) { A.loopMode = a.Mode; app.events.emit('frame'); } });
   app.register({ name: 'SetPlaybackView', label: 'Playback View', category: 'Playback', args: [{ name: 'View', default: 'All Views' }], undoable: false, execute(app, a) { A.playbackView = a.View; } });
   app.register({ name: 'SetPlaybackUpdateMode', label: 'Playback Update Mode', category: 'Playback', args: [{ name: 'Mode', default: 'Update All' }], undoable: false, execute(app, a) { A.updateMode = a.Mode; } });
-  app.register({ name: 'PlayBackwards', label: 'Play Backwards', category: 'Playback', args: [], undoable: false, execute() { (A as any).dir = -1; A.loopMode = A.loopMode === 'once' ? 'once' : A.loopMode; A.play(); } });
+  // PlayBackwards: CMD-B19d (selectionB19d.ts, mcp.dll transport)
   app.register({ name: 'SetGlobalRange', label: 'Set Global Range', category: 'Playback', args: [{ name: 'Start', default: 1 }, { name: 'End', default: 100 }], undoable: false, execute(app, a) { A.globalStart = Number(a.Start); A.globalEnd = Number(a.End); A.startFrame = Math.max(A.startFrame, A.globalStart); A.endFrame = Math.min(A.endFrame, A.globalEnd); app.events.emit('frame'); } });
   app.register({ name: 'SetFrameRate', label: 'Frame Rate', category: 'Playback', args: [{ name: 'FPS', default: 30 }], undoable: false, execute(app, a) { A.fps = Number(a.FPS) || 30; app.events.emit('frame'); } });
   // ---- layers (Scene Layer Manager)

@@ -355,22 +355,7 @@ export function registerIceModuleCommands(app: App) {
   // AddStaticICEAttribute / RemoveStaticICEAttribute / RenameStaticICEAttribute / SetStaticICEAttributeType /
   // ToggleICEAttributeAlwaysEvaluated: CMD-B19c (optasksB19cIce.ts; attributes live on the geometry of Object)
 
-  if (!app.commands.has('SwitchToolbar')) {
-    app.register({
-      name: 'SwitchToolbar',
-      label: 'Switch to ICE Toolbar',
-      category: 'Toolbar',
-      args: [{ name: 'Target', default: 4 }],
-      undoable: false,
-      execute(app, a) {
-        const map: Record<number, App['module']> = { 1: 'Model', 2: 'Animate', 3: 'Render', 4: 'ICE', 5: 'Simulate', 6: 'Hair', 7: 'Hair' };
-        const mod = map[Number(a.Target)] ?? 'ICE';
-        app.module = mod;
-        app.events.emit('module');
-        return mod;
-      },
-    });
-  }
+  // SwitchToolbar: CMD-B19d (selectionB19d.ts, toolbarobj.dll)
 }
 
 /** Audit for __uiAudit / compare_ice_module — dump-backed ICE MCP tops + tour HIGH. */

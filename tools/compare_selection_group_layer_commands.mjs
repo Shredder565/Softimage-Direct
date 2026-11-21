@@ -24,14 +24,14 @@ if (!CHROME) { console.error('No Chromium; set PW_CHROME'); process.exit(2); }
 
 const COMMANDS = [
   // selection list
-  'AddToSelection', 'RemoveFromSelection', 'ToggleSelection', 'SetAndToggleSelection', 'SelectBranch', 'SelectTree', 'SelectModel',
-  'SelectChain', 'SelectMembers', 'SelectNeighborObj',
+  // (SetAndToggleSelection, SelectMembers, SelectAllUsingFilter, Select{Object,Vertex,Edge,Polygon,SampledPoint}Filter and the
+  //  Activate...SelToolWithNoObjStateChange commands: CMD-B19d, src/commands/selectionB19d.ts, compare_selection_b19d.mjs;
+  //  the SetAndToggleSelection / SelectMembers checks below still run against the new bodies)
+  'AddToSelection', 'RemoveFromSelection', 'ToggleSelection', 'SelectBranch', 'SelectTree', 'SelectModel',
+  'SelectChain', 'SelectNeighborObj',
   // filters
-  'SelectAllUsingFilter', 'SelectFilter', 'SetSelFilter', 'SelectObjectFilter', 'SelectVertexFilter',
-  'SelectEdgeFilter', 'SelectPolygonFilter', 'SelectSampledPointFilter', 'SetPointSelectionFilter', 'SetEdgeSelectionFilter',
+  'SelectFilter', 'SetSelFilter', 'SetPointSelectionFilter', 'SetEdgeSelectionFilter',
   'SetPolygonSelectionFilter', 'SetSampleSelectionFilter', 'ToggleObjectComponentSelectionFilter', 'Cycle Selection Mode',
-  'ActivateObjectSelToolWithNoObjStateChange', 'ActivateVertexSelToolWithNoObjStateChange', 'ActivateEdgeSelToolWithNoObjStateChange',
-  'ActivateRaycastEdgeSelToolWithNoObjStateChange', 'ActivateRaycastPolySelToolWithNoObjStateChange',
   // components
   // (GrowSelection, ShrinkSelection, SelectAdjacent, ConvertSelection*, SelectNSidedPolygons, GetNeighborSubcomponents,
   //  Select*EdgeLoop, SICreateLayerFromSelection*, ToggleGhosting: CMD-B17a, compare_selection_layers_b17a.mjs)
@@ -217,21 +217,9 @@ const got = await page.evaluate(({ COMMANDS }) => {
   eq('SelectNeighborObj: unknown direction is not attested', /^not yet attested: NavigDirection 9/.test(run('SelectNeighborObj', { InputObjs: 'gc', NavigDirection: 9 }).err ?? ''), true);
 
   // ================================================================ filters
-  reset(); let r = run('SelectAllUsingFilter', { SelFilter: 'object' });
-  eq('SelectAllUsingFilter: object = every visible object', [sorted(selNames()), sorted(names(r.v))], [sorted(names([...A.scene.allObjects()].filter(o => o.visible))), sorted(names([...A.scene.allObjects()].filter(o => o.visible)))]);
-  reset(); r = run('SelectAllUsingFilter', { SelFilter: 'null' });
-  eq('SelectAllUsingFilter: null filter', sorted(selNames()), sorted(names([...A.scene.allObjects()].filter(o => o.type === 'null' && o.visible))));
-  eq('SelectAllUsingFilter: null filter selects only nulls', A.selection.length > 5 && A.selection.every(o => o.type === 'null'), true);
-  reset(); r = run('SelectAllUsingFilter', { SelFilter: 'polymsh', AffectSelectionList: false });
-  eq('SelectAllUsingFilter: AffectSelectionList false only returns', [selNames(), sorted(names(r.v))], [[], sorted(names([...A.scene.allObjects()].filter(o => o.type === 'polymsh' && o.visible)))]);
-  reset(); A.run('SelectObj', { InputObjs: 'cube' }); r = run('SelectAllUsingFilter', { SelFilter: 'Polygon' });
-  eq('SelectAllUsingFilter: Polygon = all polygons of the selected mesh', [comp(), r.v, A.selMode], [{ obj: 'cube', kind: 'polygon', items: [0, 1, 2, 3, 4, 5] }, ['cube.poly[0,1,2,3,4,5]'], 'polygon']);
-  r = run('SelectAllUsingFilter', { SelFilter: 'Edge' });
-  eq('SelectAllUsingFilter: Edge', [comp()?.kind, items()], ['edge', sorted(CF.edges)]);
-  A.setSelMode('point'); r = run('SelectAllUsingFilter');
-  eq('SelectAllUsingFilter: no SelFilter = current filter', [comp()?.kind, items()], ['point', [0, 1, 2, 3, 4, 5, 6, 7]]);
-  eq('SelectAllUsingFilter: unknown filter is not attested', /^not yet attested: filter "bogus_filter"/.test(run('SelectAllUsingFilter', { SelFilter: 'bogus_filter' }).err ?? ''), true);
+  // SelectAllUsingFilter: CMD-B19d (compare_selection_b19d.mjs; the component path uses the active elements)
   // DeselectAllUsingFilter: CMD-B19b (src/commands/tasksB19b.ts, tasks.dll / selectionmgr.dll contract; checked by tools/compare_tasks_b19b.mjs)
+  let r;
 
   const filt = (name, args) => { reset(); const x = run(name, args); return [x.v ?? x.err, A.selFilter, A.selMode]; };
   eq('SelectFilter: Edge', filt('SelectFilter', { SelFilter: 'Edge' }), ['Edge', 'Edge', 'edge']);
@@ -241,12 +229,12 @@ const got = await page.evaluate(({ COMMANDS }) => {
   run('SelectFilter', { SelFilter: 'Polygon' });
   eq('SelectFilter: no argument returns the current filter and changes nothing', [run('SelectFilter').v, A.selMode], ['Polygon', 'polygon']);
   eq('SetSelFilter: sets the filter', filt('SetSelFilter', { SelFilter: 'Polygon' }), ['Polygon', 'Polygon', 'polygon']);
-  for (const [n, f, m] of [['SelectObjectFilter', 'Object', 'object'], ['SelectVertexFilter', 'Point', 'point'], ['SelectEdgeFilter', 'Edge', 'edge'], ['SelectPolygonFilter', 'Polygon', 'polygon'],
+  for (const [n, f, m] of [
     ['SetPointSelectionFilter', 'Point', 'point'], ['SetEdgeSelectionFilter', 'Edge', 'edge'], ['SetPolygonSelectionFilter', 'Polygon', 'polygon']]) {
     reset(); if (m === 'object') A.setSelMode('point');
     run(n); eq(`${n}: filter ${f}`, [A.selFilter, A.selMode], [f, m]);
   }
-  for (const n of ['SelectSampledPointFilter', 'SetSampleSelectionFilter']) {
+  for (const n of ['SetSampleSelectionFilter']) {
     reset(); A.setSelMode('edge'); const l = A.log.length; run(n);
     eq(`${n}: records the SampledPoint filter, logs the unattested part`, [A.selFilter, A.selMode, logFrom(l).some(t => t.startsWith(`${n}: filter set to SampledPoint; not yet attested: sampled-point component picking`))], ['SampledPoint', 'object', true]);
   }
@@ -256,11 +244,7 @@ const got = await page.evaluate(({ COMMANDS }) => {
   eq('ToggleObjectComponentSelectionFilter: from another component filter goes to Object', A.selMode, 'object');
   reset(); const cyc = []; for (let i = 0; i < 5; i++) { run('Cycle Selection Mode'); cyc.push(A.selMode); }
   eq('Cycle Selection Mode: object > point > edge > polygon > object', cyc, ['point', 'edge', 'polygon', 'object', 'point']);
-  for (const [n, m] of [['ActivateObjectSelToolWithNoObjStateChange', 'object'], ['ActivateVertexSelToolWithNoObjStateChange', 'point'], ['ActivateEdgeSelToolWithNoObjStateChange', 'edge'],
-    ['ActivateRaycastEdgeSelToolWithNoObjStateChange', 'edge'], ['ActivateRaycastPolySelToolWithNoObjStateChange', 'polygon']]) {
-    reset(); if (m === 'object') A.setSelMode('point'); A.select([cube, sphere]);
-    run(n); eq(`${n}: sets the ${m} filter, object selection unchanged`, [A.selMode, selNames()], [m, ['cube', 'sphere']]);
-  }
+  // Activate...SelToolWithNoObjStateChange: CMD-B19d (compare_selection_b19d.mjs)
 
   // ================================================================ members
   reset(); A.run('SelectObj', { InputObjs: 'cube,sphere' }); const G = A.run('CreateGroup', { Name: 'GrpM' });

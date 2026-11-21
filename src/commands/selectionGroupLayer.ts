@@ -263,8 +263,7 @@ export function registerSelectionGroupLayerCommands(app: App) {
   sel('RemoveFromSelection', 'Remove From Selection', [{ name: 'SelectionList', default: null }, { name: 'HierarchyLevel', default: 'NODE OR BRANCH' }], listOp('RemoveFromSelection', 'remove'));
   // inferred: toggles the listed elements in the selection list (registry display name "Extend And Toggle Selection")
   sel('ToggleSelection', 'Extend And Toggle Selection', LIST_ARGS, listOp('ToggleSelection', 'toggle'));
-  // inferred: replaces the selection with the listed elements, except that listed elements which were selected end up deselected
-  sel('SetAndToggleSelection', 'Set And Toggle Selection', LIST_ARGS, listOp('SetAndToggleSelection', 'settoggle'));
+  // SetAndToggleSelection: CMD-B19d (selectionB19d.ts)
 
   // CMD-B19c (docs/ghidra/cmd-b19c-optasks-ice-cns-envelope.md, SelectBranch / SelectTree / SelectChain / SelectModel):
   // selectionmgr.dll serves the four names as the SelectObj class (79581ba0) with HierarchyLevel = BRANCH / TREE / CHAIN /
@@ -302,29 +301,7 @@ export function registerSelectionGroupLayerCommands(app: App) {
     return uniq([n as X3DObject, ...n.bones, ...(n.effector ? [n.effector] : [])]);
   }));
 
-  // inferred: selects the members of the listed groups / layers, or the components of the listed clusters.
-  // AffectSelectionList=false only returns them.
-  sel('SelectMembers', 'Select Members/Components', [{ name: 'SelectionList', default: null }, { name: 'AffectSelectionList', default: true }, { name: 'CheckObjectSelectability', default: false }], (app, a) => {
-    const nodes = empty(a.SelectionList) ? [...app.selection] : resolve(app, a.SelectionList).nodes;
-    const members: X3DObject[] = []; let cluster: Cluster | null = null;
-    for (const n of nodes) {
-      if (n instanceof Group) members.push(...n.members);
-      else if (n instanceof Layer) members.push(...n.members);
-      else if (n instanceof LayerGroup) for (const l of n.layers) members.push(...l.members);
-      else if (n instanceof Cluster) cluster = n;
-    }
-    const affect = a.AffectSelectionList === undefined || a.AffectSelectionList === null || isTrue(a.AffectSelectionList);
-    if (cluster && !members.length) {
-      const o = cluster.obj; const m = meshOf(o); if (!o || !m) return [];
-      const kind: CompKind | null = cluster.compKind === 'pnt' ? 'point' : cluster.compKind === 'edge' ? 'edge' : cluster.compKind === 'poly' ? 'polygon' : null;
-      if (!kind) throw new Unattested('SelectMembers', 'sample clusters');
-      if (affect) setComponents(app, o, kind, cluster.elements);
-      return [compString(o, T.adjacencyOf(m), kind, cluster.elements)];
-    }
-    const out = checkSelectable(uniq(members), a.CheckObjectSelectability) as X3DObject[];
-    if (affect && out.length) { app.compSel = null; app.select(out); }
-    return out;
-  });
+  // SelectMembers: CMD-B19d (selectionB19d.ts)
 
   // inferred: hierarchy navigation. NavigDirection from the registry's menu entries: 0 parent, 1 first child,
   // 2 previous sibling, 3 next sibling, 4 first, 5 last (first / last taken as first / last sibling).
@@ -349,24 +326,7 @@ export function registerSelectionGroupLayerCommands(app: App) {
 
   // ================================================================ filters
 
-  // inferred: selects everything the filter matches. Component filters select all components of that kind on the
-  // selected mesh object; object filters select the matching visible objects (as SelectAll does).
-  // CheckComponentVisibility is accepted but has nothing to act on: the app has no hidden components.
-  sel('SelectAllUsingFilter', 'Select All Using Filter', [{ name: 'SelFilter', default: null }, { name: 'CheckComponentVisibility', default: ':siCheckComponentVisibility:siComponentVisibilityMode' }, { name: 'AffectSelectionList', default: true }, { name: 'CheckObjectSelectability', default: false }], (app, a) => {
-    const f = empty(a.SelFilter) ? app.selMode : a.SelFilter;
-    const k = filterKind(f); const affect = a.AffectSelectionList === null || a.AffectSelectionList === undefined || isTrue(a.AffectSelectionList);
-    if (k === 'sample') throw new Unattested('SelectAllUsingFilter', 'the SampledPoint filter (no sample component kind)');
-    if (k === 'point' || k === 'edge' || k === 'polygon') {
-      const o = app.compSel?.obj ?? app.selectedObjects.find(x => !!meshOf(x)); const m = meshOf(o); if (!o || !m) return [];
-      const adj = T.adjacencyOf(m); const all = T.allItems(adj, k);
-      if (affect) setComponents(app, o, k, all);
-      return [compString(o, adj, k, all)];
-    }
-    const pred = objectFilter(app, f); if (!pred) throw new Unattested('SelectAllUsingFilter', `filter "${f}"`);
-    const out = checkSelectable([...app.scene.allObjects()].filter(o => o.visible && pred(o)), a.CheckObjectSelectability) as X3DObject[];
-    if (affect) { app.compSel = null; app.select(out); }
-    return out;
-  });
+  // SelectAllUsingFilter: CMD-B19d (selectionB19d.ts)
   // DeselectAllUsingFilter: selectionmgr.dll 16532fa0, CMD-B19b (src/commands/tasksB19b.ts)
 
   // inferred: makes SelFilter the current selection filter (same state the MCP filter box writes: app.selFilter + app.selMode)
@@ -377,12 +337,8 @@ export function registerSelectionGroupLayerCommands(app: App) {
     if (app.commands.has('ActivateSelectTool')) app.run('ActivateSelectTool');
     return r;
   });
+  // Select{Object,Vertex,Edge,Polygon,SampledPoint}Filter: CMD-B19d (selectionB19d.ts, set-filter task 91d68770)
   for (const [name, label, filter, description] of [
-    ['SelectObjectFilter', 'Set Filter to Object', 'Object', 'Select Object as the current filter'],
-    ['SelectVertexFilter', 'Set Filter to Point', 'Point', 'Select Point as the current filter'],
-    ['SelectEdgeFilter', 'Set Filter to Edge', 'Edge', 'Select Edge as the current filter'],
-    ['SelectPolygonFilter', 'Set Filter to Polygon', 'Polygon', 'Select Polygon as the current filter'],
-    ['SelectSampledPointFilter', 'Set Filter to SampledPoint', 'SampledPoint', 'Select SampledPoint as the current filter'],
     ['SetPointSelectionFilter', 'Set Point Selection Filter', 'Point', 'Set selection filter to point'],
     ['SetEdgeSelectionFilter', 'Set Edge Selection Filter', 'Edge', 'Set selection filter to edge'],
     ['SetPolygonSelectionFilter', 'Set Polygon Selection Filter', 'Polygon', 'Set selection filter to polygons'],
@@ -401,18 +357,7 @@ export function registerSelectionGroupLayerCommands(app: App) {
     return setFilter(app, FILTER_LABEL[order[(order.indexOf(app.selMode) + 1) % order.length]], 'Cycle Selection Mode');
   }, 'Cycle through available selection modes');
 
-  // inferred: mirror the registered Activate...SelTool commands (index.ts: set the selection mode). The object
-  // selection is left alone ("with no object state change"); SelRegionMode is the registry default of each tool.
-  for (const [name, label, mode, region] of [
-    ['ActivateObjectSelToolWithNoObjStateChange', 'Object Select Tool (Extended Selection)', 'object', null],
-    ['ActivateVertexSelToolWithNoObjStateChange', 'Point Select Tool (Extended Selection)', 'point', 'vertex'],
-    ['ActivateEdgeSelToolWithNoObjStateChange', 'Edge Select Tool (Extended Selection)', 'edge', 'edge'],
-    ['ActivateRaycastEdgeSelToolWithNoObjStateChange', 'Raycast Edge Select Tool (Extended Selection)', 'edge', 'edge'],
-    ['ActivateRaycastPolySelToolWithNoObjStateChange', 'Raycast Polygon Select Tool (Extended Selection)', 'polygon', 'polygon'],
-  ] as const) {
-    // inferred
-    sel(name, label, region === null ? [] : [{ name: 'SelRegionMode', default: region }], (app) => { const keep = [...app.selection]; (app as any).selFilter = FILTER_LABEL[mode]; app.setSelMode(mode); app.selection = keep; app.events.emit('selection'); });
-  }
+  // Activate...SelToolWithNoObjStateChange: CMD-B19d (selectionB19d.ts)
 
   // ================================================================ component selection
 

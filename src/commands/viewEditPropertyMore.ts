@@ -17,7 +17,6 @@ import {
 export function registerViewEditPropertyMore(app: App) {
   registerProperty(app);
   registerConstraint(app);
-  registerTransport(app);
   registerGeneral(app);
 }
 
@@ -252,43 +251,7 @@ function registerConstraint(app: App) {
   });
 }
 
-// ============================================================================================ Transport Control
-function registerTransport(app: App) {
-  const A = app.anim as any;
-  // Backward playback started here wraps (or stops, in "once" mode) at the first frame of the play range.
-  app.anim.onFrame((f) => {
-    if (!A._vepBackward) return;
-    if (!app.anim.playing || A.dir >= 0) { A._vepBackward = false; return; }
-    if (f < app.anim.startFrame) { if (app.anim.loopMode === 'once') { app.anim.frame = app.anim.startFrame; app.anim.stop(); } else if (app.anim.loopMode === 'loop') app.anim.frame = app.anim.endFrame; }
-  });
-  const start = (dir: 1 | -1) => { app.anim.stop(); A.dir = dir; A._vepBackward = dir < 0; app.anim.play(); };
-  const transport = (cmd: string, a: Record<string, any>, expect: number) => { if (Number(a.Transport) !== expect) logNya(app, cmd, `Transport=${a.Transport} (the registry default ${expect} is used)`); };
-
-  // inferred
-  reg(app, {
-    name: 'PlayBackwardsFromEnd', label: 'Play Backwards From End', category: 'Transport Control', description: 'Play backwards frame by frame from end', undoable: false,
-    args: [{ name: 'Transport', default: 11 }],
-    execute(app, a) { transport('PlayBackwardsFromEnd', a, 11); app.anim.stop(); app.anim.frame = app.anim.endFrame; start(-1); },
-  });
-  // inferred: starts playing, or reverses the direction when already playing
-  reg(app, {
-    name: 'PlayFrame', label: 'Play/Reverse Play', category: 'Transport Control', description: 'Start playing animation or reverse direction of playing ', undoable: false,
-    args: [{ name: 'Transport', default: 4 }],
-    execute(app, a) { transport('PlayFrame', a, 4); if (app.anim.playing) start(A.dir < 0 ? 1 : -1); else start(1); },
-  });
-  // inferred
-  reg(app, {
-    name: 'PlayRealTime', label: 'Play in Real Time', category: 'Transport Control', description: 'Start playing in real time', undoable: false,
-    args: [{ name: 'Transport', default: 5 }],
-    execute(app, a) { transport('PlayRealTime', a, 5); app.anim.realtime = true; start(1); },
-  });
-  // inferred
-  reg(app, {
-    name: 'PlayRealTimeFromStart', label: 'Play in Real Time From Start', category: 'Transport Control', description: 'Start playing in real time from the start', undoable: false,
-    args: [{ name: 'Transport', default: 9 }],
-    execute(app, a) { transport('PlayRealTimeFromStart', a, 9); app.anim.stop(); app.anim.realtime = true; app.anim.frame = app.anim.startFrame; start(1); },
-  });
-}
+// Transport Control (PlayBackwardsFromEnd, PlayFrame, PlayRealTime, PlayRealTimeFromStart): CMD-B19d (selectionB19d.ts, mcp.dll)
 
 // ====================================================================================================== General
 function registerGeneral(app: App) {
