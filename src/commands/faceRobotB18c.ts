@@ -266,7 +266,7 @@ export function registerFaceRobotB18cCommands(app: App) {
       const text = readTextFile(app, textF); if (text === null) throw new Error('unreadable transcript');
       const extractor = numArg(a.Language, 0) > 0 ? 'ExtractPhonemesToSpeechOpJapanese' : 'ExtractPhonemesToSpeechOp';
       callStrict(app, extractor, { InputObj: clip, FileName: audio, GuideText: text.replace(/;/g, ' '), FrameOffset: offset, SilenceDuration: silence });
-      call(app, 'AddClipRelation', { Master: clip, Slave: aclip });
+      call(app, 'AddClipRelation', { From: [clip, aclip] });   // CMD-B20a: a two-item From gives master and slave
     } catch {
       siError(app, 'ImportSpeech: phoneme recognition failed');
       for (const t of trackSet) call(app, 'DeleteObj', { InputObj: t }); call(app, 'DeleteObj', { InputObj: action }); call(app, 'DeleteObj', { InputObj: src });

@@ -1,5 +1,5 @@
 // Smoke Softimage Direct Mixer nested Sources/Tracks/Transitions/Compounds.
-// Needs `vite preview` on :4173. Usage: node tools/compare_mixer.mjs
+// Needs `vite preview` (SI_URL, default :4173/?demo). Usage: node tools/compare_mixer.mjs
 import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
@@ -15,7 +15,7 @@ if (!CHROME) { console.error('No Chromium; set PW_CHROME'); process.exit(2); }
 
 const b = await chromium.launch({ executablePath: CHROME, args: ['--headless=new', '--use-gl=swiftshader'] });
 const page = await b.newPage();
-await page.goto('http://localhost:4173/?demo'); await page.waitForTimeout(1000);
+await page.goto(process.env.SI_URL || 'http://localhost:4173/?demo'); await page.waitForTimeout(1000);
 await page.evaluate(() => { window.prompt = (_m, d) => d ?? 'Action'; window.confirm = () => true; });
 
 const r = await page.evaluate(() => {
@@ -28,16 +28,22 @@ const r = await page.evaluate(() => {
   A.run('SelectObj', { InputObjs: 'cube' });
   A.run('StoreAction', { Name: 'A', Mode: 1, AddClip: true, ClipOffset: 1 });
   A.run('StoreAction', { Name: 'B', Mode: 1, AddClip: true, ClipOffset: 40 });
-  const tr = A.run('AddTransition', { Length: 8 });
-  const bridge = A.run('AddBridgeTransition', { Length: 5 });
-  // Softimage Desktop pass3: AddTWTransition → Mixer.TW1 (type=2, weight=1, active=true)
-  const tw = A.run('AddTWTransition', { Length: 6 });
-  const cpd = A.run('CreateCompound', { Name: 'Combo' });
+  // CMD-B20a: AddTransition / AddTWTransition take the two clips (From / To); the transition spans the clips' overlap.
+  const pair = A.scene.root.property('mixer').clips.slice(0, 2).map(c => c.name);
+  const tr = A.run('AddTransition', { From: pair[0], To: pair[1] });
+  const trSeen = { name: tr?.name, kind: tr?.kind, type: tr?.type };
+  const bridge = A.run('AddBridgeTransition', { From: pair[0], To: pair[1], Length: 5 });
+  const bridgeSeen = { kind: bridge?.kind };
+  // Softimage Desktop pass3: AddTWTransition → Mixer.TW1 (type=2, weight=1, active=true); its AddTransition sub-task
+  // replaces the pair's earlier transitions, one transition is left (golden n_transitions = 1)
+  const tw = A.run('AddTWTransition', { From: pair[0], To: pair[1] });
+  const cpd = A.run('CreateCompound', { InputObj: pair, Name: 'Combo' });
   A.run('EqualizeClips');
   // Clip A @1–30, clip B @31–60 after equalize; transition length 8 ending at B.start
   // Mid-crossfade should blend both weights.
   const clips = (A.scene.root.property('mixer')).clips;
-  const mid = clips[1].start - 4;
+  const twLen = (A.scene.root.property('mixer')).transitions.find(t => t.name === 'TW1')?.length ?? 8;
+  const mid = clips[1].start - Math.round(twLen / 2);   // the middle of the transition window
   A.anim.frame = mid;
   const evalMid = A.run('EvaluateMixer', { Frame: mid, Apply: true });
   A.anim.frame = clips[0].start + 2;
@@ -76,7 +82,7 @@ const r = await page.evaluate(() => {
     nested: ['Name', 'Hidden', 'Active', 'start', 'duration', 'sources', 'tracks', 'transitions', 'compounds', 'relations', 'autotransition']
       .map(k => ({ k, has: mix.get(k) != null })),
     nestedSI,
-    tr, bridge, tw, cpd,
+    tr: trSeen, bridge: bridgeSeen, tw: { name: tw?.name, type: tw?.type }, cpd: cpd?.name,
     evalMid, evalInA, evalWeighted, evalMuted,
     presetKeys, evalEaseStart, expLock,
     posxMid: cube.kinematics.local.val('posx'),
@@ -88,8 +94,9 @@ if (!r.present) diffs.push('no Mixer');
 if (r.name !== 'Mixer') diffs.push(`Name ${r.name}`);
 if (r.sources.length < 2) diffs.push(`sources ${JSON.stringify(r.sources)}`);
 if (r.tracks.length < 2) diffs.push(`tracks ${r.tracks.length}`);
-if (!r.transitions.some(t => t.kind === 'standard')) diffs.push('missing standard transition');
-if (!r.transitions.some(t => t.kind === 'bridge')) diffs.push('missing bridge transition');
+if (!(r.tr?.kind === 'standard' && r.tr?.name === 'Transition' && r.tr?.type === 0)) diffs.push(`AddTransition: expected standard Mixer.Transition (golden), got ${JSON.stringify(r.tr)}`);
+if (r.bridge?.kind !== 'bridge') diffs.push('missing bridge transition');
+if (r.transitions.length !== 1) diffs.push(`transitions after AddTWTransition: ${r.transitions.length} != 1 (Desktop pass3 golden n_transitions)`);
 const twDirect = r.transitions.find(t => t.kind === 'timewarp' || t.type === 2);
 if (!twDirect) diffs.push('missing timewarp transition (AddTWTransition)');
 else {

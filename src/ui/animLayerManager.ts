@@ -95,7 +95,7 @@ export function animationLayerManager(app: App, host: HTMLElement) {
 
     const actions = el('div', 'alm-actions');
     actions.append(
-      btn('Add Transition', 'Standard transition between last two clips', () => { app.run('AddTransition'); render(); }),
+      btn('Add Transition', 'Standard transition between last two clips', () => { const c: any[] = (mixerOf(hostModel as any) as any).clips ?? []; try { app.run('AddTransition', { From: c[c.length - 2]?.name ?? null, To: c[c.length - 1]?.name ?? null }); } catch { /* logged by app.run (CMD-B20a: From / To are required) */ } render(); }),
       btn('Equalize', 'Pack clips end-to-end', () => { app.run('EqualizeClips'); render(); }),
       btn('Evaluate', 'Evaluate mixer at current frame', () => { app.run('EvaluateMixer', { Frame: app.anim.frame, Apply: true }); }),
     );

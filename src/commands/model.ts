@@ -898,26 +898,7 @@ export function registerModelAliases(app: App) {
     }
     app.select([src]); return src;
   } });
-  app.register({ name: 'ApplyAction', label: 'Apply Action', category: 'Animation Mixer', args: [{ name: 'Source', default: '' }, { name: 'Time', default: null }], execute(app, a) {
-    const byName = a.Source ? (app.selectedObjects[0]?.model ?? app.scene.root).properties.find(p => p.type === 'actionsource' && p.name === a.Source) : undefined;
-    const src = byName ?? (app.selection.find(n => n.type === 'actionsource') as Property | undefined) ?? (app.selectedObjects[0]?.model ?? app.scene.root).properties.filter(p => p.type === 'actionsource').pop();
-    if (!src) throw new Error('No action source to apply (store one first)');
-    const values = JSON.parse(src.val('data') || '{}') as Record<string, number>;
-    let fcurves: Record<string, { time: number; value: number; interp?: number }[]> = {}; try { fcurves = JSON.parse(src.val('fcurves') || '{}'); } catch { /* */ }
-    const t = a.Time != null ? Number(a.Time) : null;
-    for (const [path, v] of Object.entries(values)) { const p = findParamPath(app, path) ?? findParam(app, path); if (p && (t == null || !fcurves[path]?.length)) app.setParam(p, v as number); }
-    for (const [path, keys] of Object.entries(fcurves)) {
-      const p = findParamPath(app, path) ?? findParam(app, path); if (!p || !keys?.length) continue;
-      if (t != null) {
-        // Evaluate action fcurves at Time without installing keys (one-shot pose).
-        const fc = new FCurve(p); fc.keys = keys.map(k => ({ time: k.time, value: k.value, left: k.value, right: k.value, interp: k.interp ?? 3 }));
-        app.setParam(p, fc.eval(t));
-      } else {
-        const fc = app.anim.fcurve(p, true)!; fc.keys = keys.map(k => ({ time: k.time, value: k.value, left: k.value, right: k.value, interp: k.interp ?? fc.interp }));
-      }
-    }
-    app.events.emit('params'); app.events.emit('frame');
-  } });
+  // ApplyAction: CMD-B20a (actionB20a.ts; registry argument list Source, Target, Consider Time, StartFrame, EndFrame, Ripple, RemoveLayerAnimation)
   app.commands.get('StoreSkeletonPose')!.execute = (app) => app.run('StoreAction', { Name: 'StoredStaticPose' });
   app.commands.get('ApplySkeletonPose')!.execute = (app) => app.run('ApplyAction');
   // chain up-vector / preferred axis
@@ -944,7 +925,7 @@ export function registerModelAliases(app: App) {
   };
   topo.execute = (app, a) => { if (/Dissolve/.test(a.PresetObj) && /Clean/.test(a.PresetObj)) return te(app, { ...a, PresetObj: 'Dissolve Component', Preset: 'Dissolve Component' }); if (/Extrude Component Along Curve/.test(a.PresetObj)) { const cs = app.componentSel(); const curve = app.selectedObjects.find(o => o.primitive?.curve()); if (!cs || cs.sel.kind !== 'polygon') throw new Error('Select polygons (Y) and Shift-select a curve'); const len = curve ? C.curveLength(curve.primitive!.curve()!) : 2; const op = makeTopologyOperator('Extrude Along Normal', cs.sel)!; op.set('length', len); const prim = cs.obj.primitive!; app.record('Extrude Along Curve', () => prim.addOperator(op), () => prim.removeOperator(op)); app.compSel = null; app.select([op]); return op; } return te(app, a); };
 }
-function findParamPath(app: App, path: string) {
+export function findParamPath(app: App, path: string) {
   const obj = [...app.scene.allObjects()].find(o => path === o.fullName || path.startsWith(o.fullName + '.'));
   if (!obj) return undefined;
   const rest = path.slice(obj.fullName.length + 1); // e.g. kine.local.posx

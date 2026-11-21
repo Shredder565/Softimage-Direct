@@ -134,7 +134,7 @@ const got = await page.evaluate(({ NAMES, DEFAULT_FAILS: DF }) => {
     undoAll(u0); ok('SetupEvolverVisemes undo', srcs().length === n0); }
   // ---- CopyShape, shape groups, Open SE
   { reset(); const u0 = A.undoStack.length; const nPts = cube.primitive.mesh().positions.length / 3;
-    const sk = A.run('StoreShapeKey', { InputObj: 'cube', Name: 'SK1' });
+    const sk = A.run('StoreShapeKey', { InputObj: 'cube', Name: 'SK1', RefMode: ':siShapeLocalReferenceMode:siShapeReferenceMode' });   // a local-reference key (CMD-B20a: the registry default RefMode is the object mode)
     A.compSel = { obj: cube, kind: 'point', points: new Set([...Array(nPts).keys()]), edges: new Set(), polygons: new Set() }; const clAll = A.run('CreateCluster', { Name: 'AllPts' });
     A.compSel = { obj: cube, kind: 'point', points: new Set([0, 1]), edges: new Set(), polygons: new Set() }; const clTwo = A.run('CreateCluster', { Name: 'TwoPts' }); A.compSel = null;
     const r = run('CopyShape', { Source: sk, Target: [clAll, clTwo] }); const key = r.v?.[0];
