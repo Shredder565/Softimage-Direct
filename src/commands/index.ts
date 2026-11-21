@@ -257,9 +257,7 @@ export function registerBuiltins(app: App) {
   // selection helpers for components
   app.register({ name: 'SelectAllComponents', label: 'Select All Components', category: 'Selection', args: [], undoable: false, execute(app) { const o = app.selectedObjects[0]; const m = o?.primitive?.mesh(); if (!o || !m || app.selMode === 'object') return; if (app.selMode === 'point') app.selectComponents(o, 'point', m.positions.length / 3 > 0 ? [...Array(m.positions.length / 3).keys()] : []); else if (app.selMode === 'polygon') app.selectComponents(o, 'polygon', m.polygons.map((_, i) => i)); else app.selectComponents(o, 'edge', meshEdges(m).map(e => e[0] + '-' + e[1])); } });
   app.register({ name: 'InvertSelection', label: 'Invert Selection', category: 'Selection', args: [], undoable: false, execute(app) { const c = app.compSel; const o = app.selectedObjects[0]; const m = o?.primitive?.mesh(); if (!c || !m) return; if (c.kind === 'point') app.selectComponents(o, 'point', [...Array(m.positions.length / 3).keys()].filter(i => !c.points.has(i))); else if (c.kind === 'polygon') app.selectComponents(o, 'polygon', m.polygons.map((_, i) => i).filter(i => !c.polygons.has(i))); else app.selectComponents(o, 'edge', meshEdges(m).map(e => e[0] + '-' + e[1]).filter(k => !c.edges.has(k))); } });
-  // the other Activate...SelTool commands: CMD-B19d (selectionB19d.ts)
-  for (const [name, mode, label] of [['ActivateObjectSelTool', 'object', 'Object Select Tool']] as const)
-    app.register({ name, label, category: 'Selection', args: [], undoable: false, execute(app) { app.setSelMode(mode as any); } });
+  // the Activate...SelTool commands, ActivateObjectSelTool included: CMD-B19d / CMD-B20c (selectionB19d.ts)
 
   // -------------------------------------------------------------- material
   app.register({
@@ -318,12 +316,8 @@ export function registerBuiltins(app: App) {
   app.register({ name: 'RemoveKey', label: 'Remove Key', category: 'Animation', args: [{ name: 'InputObjs', default: '' }, { name: 'Time', default: null }], execute(app, a) { const t = a.Time ?? app.anim.frame; for (const p of keyableParams(app, a.InputObjs)) { const fc = app.anim.fcurve(p); const had = fc?.keys.find(k => k.time === t); if (!had) continue; app.record('Remove key', () => fc!.removeKey(t), () => fc!.addKey(t, had.value)); } app.events.emit('params'); } });
   app.register({ name: 'RemoveAnimation', label: 'Remove Animation', category: 'Animation', args: [{ name: 'InputObjs', default: '' }], execute(app, a) { for (const p of keyableParams(app, a.InputObjs)) { const fc = app.anim.fcurve(p); if (!fc) continue; const keys = [...fc.keys]; app.record('Remove anim', () => { fc.keys = []; }, () => { fc.keys = keys; }); } app.events.emit('params'); } });
   app.register({ name: 'SetCurrentFrame', label: 'Set Current Frame', category: 'Transport Control', args: [{ name: 'Frame', default: 1 }], undoable: false, execute(app, a) { app.anim.frame = Number(a.Frame); } });
-  app.register({ name: 'PlayForwardsFromStart', label: 'Play', category: 'Transport Control', args: [], undoable: false, execute(app) { app.anim.frame = app.anim.startFrame; app.anim.play(); } });
-  app.register({ name: 'PlayForwards', label: 'Play Forwards', category: 'Transport Control', args: [], undoable: false, execute(app) { app.anim.play(); } });
-  // PlaybackStop / PrevFrame: CMD-B19d (selectionB19d.ts, mcp.dll transport)
-  app.register({ name: 'FirstFrame', label: 'First Frame', category: 'Transport Control', args: [], undoable: false, execute(app) { app.anim.frame = app.anim.startFrame; } });
-  app.register({ name: 'LastFrame', label: 'Last Frame', category: 'Transport Control', args: [], undoable: false, execute(app) { app.anim.frame = app.anim.endFrame; } });
-  app.register({ name: 'NextFrame', label: 'Next Frame', category: 'Transport Control', args: [], undoable: false, execute(app) { app.anim.frame = Math.min(app.anim.endFrame, app.anim.frame + 1); } });
+  // NextFrame / FirstFrame / LastFrame / PlayForwards / PlayForwardsFromStart / PlaybackStop / PrevFrame ...:
+  // the mcp.dll transport of CMD-B19d / CMD-B20c (selectionB19d.ts)
   app.register({ name: 'SetPlayRange', label: 'Set Play Range', category: 'Transport Control', args: [{ name: 'Start', default: 1 }, { name: 'End', default: 100 }], undoable: false, execute(app, a) { app.anim.startFrame = a.Start | 0; app.anim.endFrame = a.End | 0; app.events.emit('frame'); } });
 
   // -------------------------------------------------------------- selection

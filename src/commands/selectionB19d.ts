@@ -59,13 +59,19 @@ export interface B19dState {
   subTasks: { task: string; detail?: any }[];
   /** Post-selection script requests of SetAndToggleSelection. */
   postSelection: boolean[];
+  /** Activate...SelTool calls that asked the exec context "do not record" (CMD-B20c Q41), newest last. */
+  doNotRecord: string[];
 }
 export function b19d(app: App): B19dState {
   const A = app as any;
-  return (A.selB19d ??= { status: {}, tags: [], supraGroupSelMode: null, actPanel: null, subTasks: [], postSelection: [] } as B19dState);
+  const s = (A.selB19d ??= { status: {}, tags: [], supraGroupSelMode: null, actPanel: null, subTasks: [], postSelection: [], doNotRecord: [] } as B19dState);
+  s.doNotRecord ??= [];
+  return s;
 }
 const fail = (cmd: string, status: number, what: string) => new SiStatusError(status, `${cmd}: ${what}`);
 export function nyaB19d(app: App, command: string, what: string) { app.logMsg('info', `${command}: not yet attested: ${what} (${NOTE})`); }
+/** Parts still open after the CMD-B20c answers (docs/ghidra/cmd-b20c-pr201-answers.md). */
+function nya20(app: App, command: string, what: string) { app.logMsg('info', `${command}: not yet attested: ${what} (CMD-B20c)`); }
 const setStatus = (app: App, cmd: string, code: number) => { b19d(app).status[cmd] = code; };
 const unset = (v: any) => v === undefined || v === null || v === '';
 const boolOf = (v: any, d = false) => unset(v) ? d : typeof v === 'string' ? /^(true|1|-1|yes)$/i.test(v.trim()) : !!v;
@@ -333,7 +339,9 @@ function selectMembers(app: App, cmd: string, a: Record<string, any>): any[] {
 }
 
 // ------------------------------------------------------------------ SetAndToggleSelection (section 3.1)
-const LEVEL_NAMES: Record<string, number | null> = { ASITIS: 0, NODE: null, BRANCH: null, TREE: null, MODEL: null };
+// The {0907F360-...} hierarchy-level names the registry uses (CMD-B20c Q40); only ASITIS = 0 has a known number (the
+// name -> number conversion is done before the handler). NODE is kept for the callers of this build that pass it.
+const LEVEL_NAMES: Record<string, number | null> = { ASITIS: 0, 'NODE OR BRANCH': null, BRANCH: null, TREE: null, CHAIN: null, MODEL: null, NODE: null };
 function hierarchyLevel(cmd: string, v: any): { code: number | null; name: string | null } {
   if (unset(v)) return { code: 0, name: 'ASITIS' };
   const s = String(v).replace(/^\{[0-9a-f-]+\}:/i, '').trim();
@@ -342,7 +350,7 @@ function hierarchyLevel(cmd: string, v: any): { code: number | null; name: strin
     if (!Number.isInteger(n) || n < 0 || n > 7 || n === 4) throw fail(cmd, E_INVALIDARG, `HierarchyLevel ${s} is not accepted (0..7, not 4)`);
     return { code: n, name: null };
   }
-  const up = s.toUpperCase();
+  const up = s.toUpperCase().replace(/\s+/g, ' ');
   if (!(up in LEVEL_NAMES)) throw fail(cmd, E_INVALIDARG, `HierarchyLevel "${s}" is not a hierarchy level`);
   return { code: LEVEL_NAMES[up], name: up };
 }
@@ -355,6 +363,7 @@ function expandLevel(app: App, cmd: string, nodes: Node[], lv: { code: number | 
   if (lv.name === 'BRANCH') return ex(branch);
   if (lv.name === 'TREE') return ex(o => branch(top(o)));
   if (lv.name === 'MODEL') return ex(o => { const m = o.model; return m && m !== app.scene.root ? branch(m) : [o]; });
+  if (lv.name === 'NODE OR BRANCH' || lv.name === 'CHAIN') { nya20(app, cmd, `the number of hierarchy level ${lv.name} and how the selection service expands the list for it; the list is used as given`); return nodes; }
   nyaB19d(app, cmd, `how the selection service expands the list for hierarchy level ${lv.code}; the list is used as given`);
   return nodes;
 }
@@ -362,9 +371,23 @@ function setAndToggleSelection(app: App, cmd: string, a: Record<string, any>): v
   const lv = hierarchyLevel(cmd, a.HierarchyLevel);
   const post = boolOf(a.SupportPostSelectionScript);
   // CheckObjectSelectability is registered but not read by this class
+  const S = b19d(app);
+  if (unset(a.SelectionList) || (Array.isArray(a.SelectionList) && !a.SelectionList.length)) {
+    // CMD-B20c Q35: an empty SelectionList is not expanded and the split gets no list at all (undefined in the binary)
+    nya20(app, cmd, 'an empty SelectionList (the split is called with no list); the selection is not touched');
+    S.postSelection.push(post);
+    setStatus(app, cmd, S_NOTHING_CHANGED);
+    return;
+  }
   const r = resolveList(app, a.SelectionList);
-  if (r.nodes.length || r.comps.length) nyaB19d(app, cmd, 'the owner pre-check (task slot 10) that may end the command with "nothing changed" or E_UNEXPECTED; it is passed');
   const nodes = expandLevel(app, cmd, r.nodes, lv);
+  // pre-check (task slot 10, CMD-B20c Q35): the expanded list filtered into the working list; nothing usable ->
+  // "nothing changed" and the selection is not touched
+  if (!nodes.length && !r.comps.some(c => c.items.length)) {
+    S.postSelection.push(post);
+    setStatus(app, cmd, S_NOTHING_CHANGED);
+    return;
+  }
   // split (mode 1): A = the items / component indices not currently selected
   const curObjs = new Set<Node>(readW(app).items);
   const keepNodes = nodes.filter(n => !curObjs.has(n));
@@ -372,7 +395,6 @@ function setAndToggleSelection(app: App, cmd: string, a: Record<string, any>): v
     const cur = app.compSel && app.compSel.obj === c.obj && app.compSel.kind === c.kind ? compSet(app.compSel) : new Set<number | string>();
     return { ...c, items: c.items.filter(i => !cur.has(i)) };
   }).filter(c => c.items.length);
-  const S = b19d(app);
   const changed = selectionStep(app, cmd, (w) => {
     const before = [...w.items];
     selectObj(app, w, keepNodes, keepComps, false); // the set-selection helper, with SupportPostSelectionScript
@@ -433,10 +455,11 @@ function activateSelTool(app: App, cmd: string, a: Record<string, any>): void {
     setStatus(app, cmd, S_FALSE);
     return;
   }
+  let filterChanged = false;
   if (!(held && repeat)) {
     if (held) S.supraGroupSelMode = groupSelMode(app);
     // 1. the set-filter task as an undoable sub-task (kept only when it changed something); a key-held call records nothing
-    if (f) setFilterTask(app, cmd, f, deselect, !held);
+    if (f) filterChanged = setFilterTask(app, cmd, f, deselect, !held);
     // 2. / 3. ambient values, written when different
     if (hasGroup && groupSelMode(app) !== boolOf(a.GroupMode)) setGroupSelMode(app, boolOf(a.GroupMode));
     if (region !== null && rectSelRegionMode(app) !== region) prefsBag(app).SI3D_RECTSEL_REGION_MODE = region;
@@ -445,16 +468,23 @@ function activateSelTool(app: App, cmd: string, a: Record<string, any>): void {
   const tool = chooseTool(app, cmd, f);
   if (tm.isCurrent(tool) !== 0) { subTask(app, 'ActivateTool', tool); tm.activateTool(tool, ctx); }
   app.events.emit('selection');
-  setStatus(app, cmd, held ? S_FALSE : S_OK);
+  // CMD-B20c Q41: S_OK only when the filter step reported a change; otherwise the exec context is asked "do not
+  // record" (value 2) and the command returns S_FALSE, for normal calls too
+  if (filterChanged) { setStatus(app, cmd, S_OK); return; }
+  S.doNotRecord.push(cmd);
+  nya20(app, cmd, 'whether the exec context\'s "do not record" also suppresses the script log line; the line is logged');
+  setStatus(app, cmd, S_FALSE);
 }
-function chooseTool(app: App, cmd: string, f: Filter | null): string {
+/**
+ * Tool chooser 0x18000e0a0 (CMD-B20c Q36): the effective filter is SelFilter or the current filter; a component filter
+ * whose families derive from the component family root {0F47FE72-D0E9-11D2-B7F9-00A0243E3694} activates
+ * {E9CDD760-D183-11D2-8BCF-00AA006130EF}, anything else the selection tool {11778840-8C5C-11D1-84B5-00AA00135F7B}.
+ * inferred: every sub-component filter of this build (point, edge, polygon, sampled point, hair tip) derives from it.
+ */
+function chooseTool(app: App, _cmd: string, f: Filter | null): string {
   const eff = f ?? currentFilter(app);
-  if (eff.component) {
-    // the family test (interface 93c3a700 +0xb8 with type 0f47fe72) was not read: this build answers "no"
-    nyaB19d(app, cmd, `the component-family test (type {0F47FE72-D0E9-11D2-B7F9-00A0243E3694}) that picks tool {E9CDD760-D183-11D2-8BCF-00AA006130EF} for the ${eff.label} filter; the selection tool {11778840-8C5C-11D1-84B5-00AA00135F7B} is activated`);
-  }
   ensureComponentSelectClass(app);
-  return SELECT_TOOL;
+  return eff.component ? COMPONENT_SELECT_TOOL : SELECT_TOOL;
 }
 
 // ------------------------------------------------------------------ playback transport (mcp.dll, section 3.7)
@@ -652,7 +682,7 @@ function showFaceRobotActPanel(app: App, cmd: string, a: Record<string, any>): v
 type Arg = [string, any];
 interface Row { name: string; label: string; category: string; description: string; args: Arg[]; undoable: boolean; run: (app: App, a: Record<string, any>) => any }
 const SELF = (n: string) => `${FILTER_GUID}:${n}`;
-const TOOL_ROWS: [name: string, label: string, filter: string | null, deselect: boolean, third: Arg | null, description: string][] = [
+const TOOL_ROWS: [name: string, label: string, filter: string | null, deselect: boolean, third: Arg | Arg[] | null, description: string][] = [
   ['ActivatePolygonSelTool', 'Polygon Select Tool', 'polygon', true, ['SelRegionMode', 1], 'Activates the Rectangle Select tool, sets the filter to Polygon, and selects previously tagged polygons'],
   ['ActivatePolygonSelToolWithNoObjStateChange', 'Polygon Select Tool (Extended Selection)', 'polygon', false, ['SelRegionMode', 1], 'Activates the Rectangle Select tool, sets the filter to Polygon, and adds previously tagged polygons to selection'],
   ['ActivateRaycastPolySelTool', 'Raycast Polygon Select Tool', 'polygon', true, ['SelRegionMode', 2], 'Activates the Raycast Select tool, sets the filter to Polygon, and selects previously tagged polygons'],
@@ -665,8 +695,16 @@ const TOOL_ROWS: [name: string, label: string, filter: string | null, deselect: 
   ['ActivateRaycastEdgeSelToolWithNoObjStateChange', 'Raycast Edge Select Tool (Extended Selection)', 'edge', false, ['SelRegionMode', 2], 'Activates the Raycast Select tool, sets the filter to Edge, and adds previously tagged edges to selection'],
   ['ActivateTipSelTool', 'Hair Tip Select Tool', 'tip', true, ['SelRegionMode', 1], 'Activates the Rectangle Select tool and sets the filter to Hair Tip'],
   ['ActivateObjectSelToolWithNoObjStateChange', 'Object Select Tool (Extended Selection)', 'object_only_if_current_is_subcomponent_one', false, ['GroupMode', false], 'Activates the Select tool and sets the filter to Object without changing the object selection'],
+  // CMD-B20c item 14: same class d9eb4110; registry 1214 (SelFilter, DeselectOnNewFilter true, GroupMode false, SelRegionMode 1)
+  ['ActivateObjectSelTool', 'Object Select Tool', 'object_only_if_current_is_subcomponent_one', true, [['GroupMode', false], ['SelRegionMode', 1]], 'Activates the Rectangle Select tool and sets the filter to Object'],
 ];
 const TRANSPORT_ROWS: [name: string, label: string, type: number, description: string][] = [
+  // CMD-B20c Q46: the five below share handler 9ff65990 and transport worker 0x18003d7f0 with the rest
+  ['NextFrame', 'Next Frame', 0, 'Go to next frame'],
+  ['FirstFrame', 'First Frame', 2, 'Go to first frame'],
+  ['LastFrame', 'Last Frame', 3, 'Go to last frame'],
+  ['PlayForwards', 'Play Forwards', 7, 'Play forwards frame by frame'],
+  ['PlayForwardsFromStart', 'Play Forwards From Start', 10, 'Play forwards frame by frame from the start'],
   ['PrevFrame', 'Previous Frame', 1, 'Go to previous frame'],
   ['PlayFrame', 'Play/Reverse Play', 4, 'Start playing animation or reverse direction of playing '],
   ['PlayRealTime', 'Play in Real Time', 5, 'Start playing in real time'],
@@ -702,7 +740,7 @@ export const B19D_ROWS: Row[] = [
   ...FILTER_ROWS.map(([name, label, filter]): Row => ({ name, label, category: 'Selection', description: `Select ${filter === 'vertex' ? 'Point' : filter === 'object' ? 'Object' : filter === 'polygon' ? 'Polygon' : filter === 'edge' ? 'Edge' : filter} as the current filter`, undoable: true,
     args: [['SelFilter', SELF(filter)], ['DeselectOnNewFilter', true]], run: (app, a) => selectFilterCmd(app, name, a) })),
   ...TOOL_ROWS.map(([name, label, filter, deselect, third, description]): Row => ({ name, label, category: 'Selection', description, undoable: true,
-    args: [['SelFilter', SELF(filter!)], ['DeselectOnNewFilter', deselect], ...(third ? [third] : [])], run: (app, a) => activateSelTool(app, name, a) })),
+    args: [['SelFilter', SELF(filter!)], ['DeselectOnNewFilter', deselect], ...(!third ? [] : Array.isArray(third[0]) ? third as Arg[] : [third as Arg])], run: (app, a) => activateSelTool(app, name, a) })),
   { name: 'ActivateSelectTool', label: 'Select Tool', category: 'Selection', description: 'Activate the Select tool', undoable: true, args: [], run: (app, a) => activateSelTool(app, 'ActivateSelectTool', a) },
   ...TRANSPORT_ROWS.map(([name, label, type, description]): Row => ({ name, label, category: 'Transport Control', description, undoable: true,
     args: [['Type', type], ['Transport', 0]], run: (app, a) => transportCmd(app, name, a) })),
